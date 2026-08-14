@@ -1,0 +1,63 @@
+          captured_at          
+-------------------------------
+ 2026-08-14 01:44:51.750035+00
+(1 row)
+
+ schemaname | matviewname 
+------------+-------------
+(0 rows)
+
+ matviews_with_date_trunc 
+--------------------------
+                        0
+(1 row)
+
+ matviews_with_at_time_zone 
+----------------------------
+                          0
+(1 row)
+
+  viewname   
+-------------
+ bi_silver_6
+ bi_silver_9
+(2 rows)
+
+ silver_views_with_date_trunc 
+------------------------------
+                            0
+(1 row)
+
+ silver_views_with_at_time_zone 
+--------------------------------
+                              0
+(1 row)
+
+          bi_silver_6_head          
+------------------------------------
+  SELECT t14.id AS _bi_row_key,    +
+     t14.state AS f_1075,          +
+     t14.move_type AS f_1076,      +
+     t14.invoice_date AS f_1092,   +
+     t14.amount_total AS f_1109,   +
+     t14.amount_residual AS f_1110,+
+     t14.payment_state AS f_1117,  +
+     t14.campaign_id AS f_1067,    +
+     t14.source_id AS f_1068,      +
+     t14.medium_id AS f_1069,      +
+     t14.sequence_prefix AS f_1070,+
+     t14.sequence_number AS f_1071,+
+     t14.name AS f_1072,           +
+ 
+(1 row)
+
+ id | storage_mode |   state   | job | job_state |    last_refresh     | matview 
+----+--------------+-----------+-----+-----------+---------------------+---------
+  5 | live         | published |     |           |                     | 
+  6 | live         | published |     |           |                     | 
+  7 | live         | published |     |           |                     | 
+  8 | live         | published |     |           |                     | 
+  9 | live         | published |     |           |                     | 
+ 10 | gold         | published |   1 | idle      | 2026-08-13 15:43:34 | 
+(6 rows)
+

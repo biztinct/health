@@ -77,6 +77,60 @@ class TestRelationLabels(BiCase):
             'rows': [[self.country_a.id, 30.0], [self.country_b.id, 30.0]],
         }
 
+    def test_every_id_present_is_labelled_not_just_the_first_2000(self):
+        """A wide relation column used to fall off a cliff.
+
+        `MAX_LABEL_LOOKUP = 2000` SKIPPED the whole lookup once a result held
+        more distinct ids than that, so a big Records export of a many2one
+        column silently reverted to raw ids — the one remaining path by which
+        an id reached a user (RT-1 report §9). Every id present is resolved
+        now, in chunks, and the row caps the engine already applies are what
+        bound the work.
+        """
+        Partner = self.env['res.partner'].with_context(
+            tracking_disable=True, no_reset_password=True,
+            mail_create_nosubscribe=True, mail_create_nolog=True)
+        many = Partner.create([
+            {'name': 'BI Label Probe %04d' % index} for index in range(2500)])
+        self.assertEqual(len(many), 2500)
+
+        # the lookup is keyed on the COLUMN's relation_model, so any column
+        # pointing at res.partner exercises it; borrow the country column's
+        # slot rather than depend on which m2o the scanner classified.
+        self.f_country_id.relation_model = 'res.partner'
+        envelope = {
+            'columns': [{'ref': 'd0', 'field_id': self.f_country_id.id},
+                        {'ref': 'm0', 'field_id': self.f_latitude.id}],
+            'rows': [[partner.id, 1.0] for partner in many],
+        }
+
+        cursor = self.env.cr
+        original = cursor.execute
+        counter = {'n': 0}
+
+        def counting(*args, **kwargs):
+            counter['n'] += 1
+            return original(*args, **kwargs)
+
+        cursor.execute = counting
+        try:
+            result = self.engine._attach_relation_labels(envelope)
+        finally:
+            cursor.execute = original
+
+        labels = result['columns'][0].get('value_labels') or {}
+        self.assertEqual(len(labels), 2500,
+                         "every id present in the rows must be labelled")
+        for partner in many[:5] + many[-5:]:
+            self.assertEqual(labels[str(partner.id)], partner.display_name)
+
+        # 2500 ids, 3 chunks: a per-id query would be ~2500 statements. The
+        # bound is deliberately loose — this asserts the SHAPE of the work,
+        # not a query budget that a prefetch change would flip red.
+        self.assertLess(counter['n'], 60,
+                        "labels must resolve in chunks, never one query per "
+                        "id (%s statements)" % counter['n'])
+
     def test_unreadable_lookup_records_fall_back_to_ids(self):
         """A reader the comodel's record rules hide sees the raw id, not
         someone else's record name — and nothing raises.

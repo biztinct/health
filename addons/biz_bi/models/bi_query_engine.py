@@ -24,8 +24,9 @@ from odoo import _, api, fields, models
 from odoo.exceptions import AccessError, UserError
 from odoo.tools import SQL
 
-from ..bi_tz import (as_calendar_date, day_start_utc, to_user_tz,
-                     user_timezone, user_tz_name)
+from ..bi_tz import (as_calendar_date, as_wall_clock_datetime, day_start_utc,
+                     sql_timezone_name, to_user_tz, user_timezone,
+                     user_tz_name, wall_clock_to_utc)
 from .bi_expression import ExpressionCompiler, ExpressionError
 
 _logger = logging.getLogger(__name__)
@@ -56,9 +57,12 @@ ALLOWED_GRAINS = {'year', 'quarter', 'month', 'week', 'day'}
 
 # A many2one column groups by id (distinct entities) but must READ as the
 # record's name. Resolution is per-user and never cached, so the comodel's
-# own record rules decide whose name is shown; above this many distinct
-# values a legend of names is useless anyway, so we leave the raw ids.
-MAX_LABEL_LOOKUP = 2000
+# own record rules decide whose name is shown. EVERY id present in the rows
+# is resolved — a skip above some threshold is how an export of a wide
+# Records table silently reverted to raw ids — in chunks of this size, so
+# the `IN (...)` list stays sane. The work is bounded by the row caps the
+# engine already applies (5000 preview / `biz_bi.export_row_cap`).
+LABEL_LOOKUP_CHUNK = 1000
 
 RELATIVE_RANGES = {
     'today': lambda today: (today, today + relativedelta(days=1)),
@@ -239,17 +243,25 @@ class BiQueryEngine(models.AbstractModel):
             model_name = field.relation_model
             if not model_name or model_name not in self.env:
                 continue
-            ids = {row[index] for row in rows
-                   if isinstance(row[index], int)
-                   and not isinstance(row[index], bool)}
-            if not ids or len(ids) > MAX_LABEL_LOOKUP:
+            ids = sorted({row[index] for row in rows
+                          if isinstance(row[index], int)
+                          and not isinstance(row[index], bool)})
+            if not ids:
                 continue
+            labels = {}
             try:
-                records = self.env[model_name].search([('id', 'in', list(ids))])
-                # JSON object keys are strings — match how the client looks
-                # them up (the same contract as selection_labels).
-                labels = {str(record.id): record.display_name
-                          for record in records}
+                for start in range(0, len(ids), LABEL_LOOKUP_CHUNK):
+                    chunk = ids[start:start + LABEL_LOOKUP_CHUNK]
+                    # `search` (not browse/sudo): the comodel's own record
+                    # rules decide which ids resolve, per reader, and the
+                    # display names come back in one prefetched read per
+                    # chunk — never one query per id.
+                    records = self.env[model_name].search(
+                        [('id', 'in', chunk)])
+                    # JSON object keys are strings — match how the client
+                    # looks them up (the same contract as selection_labels).
+                    labels.update({str(record.id): record.display_name
+                                   for record in records})
             except AccessError:
                 continue  # no read access to the lookup model — show ids
             if labels:
@@ -419,6 +431,34 @@ class BiQueryEngine(models.AbstractModel):
             resolver, allow_aggregates=allow_aggregates)
         return compiler.compile(field.expression), compiler.uses_aggregates
 
+    def _grain_expr(self, expr, grain, data_type):
+        """The ONE grain-truncation expression, used at every grain site.
+
+        A bucket is cut on the VIEWER's wall clock: `DATE_TRUNC(grain,
+        (col AT TIME ZONE 'UTC') AT TIME ZONE <viewer zone>)`. Without the
+        conversion a Vietnamese "August" starts at 07:00 local on 1 August
+        and seven hours of rows sit in July — BG-2 fixed how a bucket is
+        LABELLED, this fixes where the cut lands. The naive result IS the
+        calendar label the client renders un-shifted (`columnIsInstant` is
+        false for a grained column), so the two halves agree by construction.
+
+        A `date` column is already a calendar and truncates as it always did.
+
+        Trust boundary: the grain comes from `ALLOWED_GRAINS` and the zone
+        from `pytz` (`sql_timezone_name`), and BOTH go in as bound VALUES —
+        never an identifier, never a format-string interpolation. This
+        expression must be byte-identical everywhere inside one query
+        (SELECT, GROUP BY, the top-N "Others" predicate), which is why every
+        caller comes through here.
+        """
+        if grain not in ALLOWED_GRAINS:
+            raise UserError(_("Invalid date grain '%s'.", grain))
+        if data_type == 'datetime':
+            return SQL(
+                "DATE_TRUNC(%s, (%s AT TIME ZONE 'UTC') AT TIME ZONE %s)",
+                grain, expr, sql_timezone_name(self.env))
+        return SQL("DATE_TRUNC(%s, %s)", grain, expr)
+
     def _dimension_expr(self, dim, spec, target, lang):
         """SELECT/GROUP BY expression for one dimension, in either mode.
 
@@ -442,7 +482,7 @@ class BiQueryEngine(models.AbstractModel):
         else:
             expr = self._field_expr(field, target, lang)
         if dim['grain']:
-            expr = SQL("DATE_TRUNC('" + dim['grain'] + "', %s)", expr)
+            expr = self._grain_expr(expr, dim['grain'], field.data_type)
         return expr
 
     def _build_sql(self, dataset, spec):
@@ -711,12 +751,21 @@ class BiQueryEngine(models.AbstractModel):
 
     @api.model
     def window_bounds_for_field(self, start, end, field):
-        """Calendar boundaries -> what to compare against THIS column.
+        """Reader-calendar boundaries -> what to compare against THIS column.
 
-        A `date` column keeps them (a date has no clock). A `datetime`
-        column gets the UTC instants of those local midnights. A bound that
-        already carries a time — a dashboard drill-down passes real bucket
-        boundaries like `2026-04-01 00:00:00` — is left exactly as it is.
+        A `date` column keeps them (a date has no clock). For a `datetime`
+        column, stored in UTC, both shapes of boundary are in the READER's
+        calendar and both have to come back to UTC:
+
+        * a plain date (`relative`, `date_range` of days) becomes the UTC
+          instant at which that local day begins;
+        * a bound that carries a CLOCK is a wall-clock moment. Until BG-3 it
+          was passed through untouched, because the only producer — the
+          dashboard drill-down, which hands back a bucket's own edges — was
+          quoting a bucket that had been cut in UTC. Now that a bucket is cut
+          in the viewer's zone (`_grain_expr`), `2026-04-01 00:00:00` names
+          *local* midnight, and drilling into the April bucket would
+          otherwise return the UTC April: seven hours out at both ends.
         """
         if getattr(field, 'data_type', None) != 'datetime':
             return start, end
@@ -724,8 +773,43 @@ class BiQueryEngine(models.AbstractModel):
         bounds = []
         for bound in (start, end):
             day = as_calendar_date(bound)
-            bounds.append(day_start_utc(day, tz) if day is not None else bound)
+            if day is not None:
+                bounds.append(day_start_utc(day, tz))
+                continue
+            moment = as_wall_clock_datetime(bound)
+            bounds.append(wall_clock_to_utc(moment, tz)
+                          if moment is not None else bound)
         return bounds[0], bounds[1]
+
+    @api.model
+    def apply_limit_override(self, request, limit_override):
+        """A client may SHRINK a derived request's row limit, never grow it.
+
+        A dashboard tile renders 200 rows (§5.139's render cap) while the
+        saved Records chart carries a 5000-row limit, so the tile pulls
+        4800 rows nobody draws. The tile can therefore ask for fewer — the
+        same posture as `hard_cap`, in the other direction: the server keeps
+        the authority, honours the request only when it is strictly smaller
+        AND the derived request is detail mode, and `meta.total_count` still
+        carries the honest total behind the tile's overflow row.
+
+        Aggregate requests are left alone: a shrunk aggregate limit would
+        change the ANSWER (fewer groups), not merely the page.
+        """
+        if limit_override is None or not isinstance(request, dict):
+            return request
+        if isinstance(limit_override, bool):
+            return request  # JSON `true` is not a row count
+        try:
+            value = int(limit_override)
+        except (TypeError, ValueError):
+            return request
+        if value < 1 or request.get('mode') != 'detail':
+            return request
+        saved = int(request.get('limit') or 0)
+        if not saved or value >= saved:
+            return request
+        return dict(request, limit=value)
 
     @api.model
     def shift_filters_previous(self, filters):

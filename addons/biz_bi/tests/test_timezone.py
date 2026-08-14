@@ -91,13 +91,24 @@ class TestTimezoneWindows(DetailCase):
                 start, end, self.f_date_localization),
             (start, end))
 
-        # a bound that already carries a clock is somebody's real instant —
-        # the dashboard drill-down passes bucket edges — and is left alone
+        # a bound that carries a CLOCK is a wall-clock moment in the reader's
+        # zone. BG-2 passed it through untouched, because its only producer —
+        # the dashboard drill-down quoting a bucket's own edges — was quoting
+        # a bucket cut in UTC. BG-3 cuts buckets on the viewer's wall clock,
+        # so the same string now names LOCAL midnight and has to come back to
+        # UTC or drilling into the VN April returns the UTC April.
         self.assertEqual(
             self.engine_vn.window_bounds_for_field(
                 '2026-04-01 00:00:00', '2026-05-01 00:00:00',
                 self.f_create_date),
-            ('2026-04-01 00:00:00', '2026-05-01 00:00:00'))
+            (datetime.datetime(2026, 3, 31, 17, 0),
+             datetime.datetime(2026, 4, 30, 17, 0)))
+        # ...and for a UTC reader that conversion is the identity in value
+        self.assertEqual(
+            self.engine_utc.window_bounds_for_field(
+                '2026-04-01 00:00:00', '2026-05-01 00:00:00',
+                self.f_create_date),
+            (datetime.datetime(2026, 4, 1), datetime.datetime(2026, 5, 1)))
 
         # and for a UTC reader the conversion is the identity in VALUE, even
         # though the type becomes a datetime

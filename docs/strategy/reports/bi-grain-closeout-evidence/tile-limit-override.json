@@ -1,0 +1,56 @@
+{
+  "columns": [
+    {
+      "ref": "d0",
+      "field_id": 1376,
+      "label": "Opportunity",
+      "type": "text",
+      "role": "dimension",
+      "grain": null,
+      "format": {},
+      "selection_labels": {}
+    },
+    {
+      "ref": "d1",
+      "field_id": 1423,
+      "label": "Created On",
+      "type": "datetime",
+      "role": "date",
+      "grain": null,
+      "format": {},
+      "selection_labels": {}
+    },
+    {
+      "ref": "d2",
+      "field_id": 1499,
+      "label": "Stage",
+      "type": "text",
+      "role": "dimension",
+      "grain": null,
+      "format": {},
+      "selection_labels": {}
+    }
+  ],
+  "meta": {
+    "row_count": 201,
+    "truncated": true,
+    "duration_ms": 15,
+    "freshness_at": "2026-08-14 01:43:26",
+    "source": "live",
+    "cache": "miss",
+    "mode": "detail",
+    "total_count": 483,
+    "export_cap": 20000
+  },
+  "row_count_returned": 201,
+  "first_row": [
+    "5 VP Chairs",
+    "2025-11-28T01:11:16.227711",
+    "Proposition"
+  ],
+  "last_row": [
+    "KH Ho",
+    "2026-06-06T02:16:34.915459",
+    "Initial Contact"
+  ]
+}

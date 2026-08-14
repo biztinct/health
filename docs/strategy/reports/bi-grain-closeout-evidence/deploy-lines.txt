@@ -1,0 +1,17 @@
+=== BG-3 deploy evidence (vietuat) ===
+
+-- migration, first upgrade run /tmp/bg3/deploy.log (19.0.1.6.0 -> 19.0.1.7.0):
+2026-08-14 01:23:51,763 2585928 INFO vietuat odoo.modules.migration: module biz_bi: Running migration [19.0.1.7.0>] post-truncate-query-cache 
+2026-08-14 01:23:51,782 2585928 INFO vietuat post-truncate-query-cache: biz_bi BG-3: truncated bi_query_cache — 4 pre-BG-3 envelope(s) dropped so no stale UTC-cut grain bucket can be served 
+
+-- final full-suite run on the committed tree, /tmp/bg3/final.log, EXIT:0:
+2026-08-14 01:49:52,071 2590442 INFO vietuat odoo.tests.stats: biz_bi: 149 tests 29.80s 18060 queries 
+2026-08-14 01:49:52,071 2590442 INFO vietuat odoo.tests.stats: biz_bi_cms: 31 tests 7.60s 5589 queries 
+2026-08-14 01:49:52,071 2590442 INFO vietuat odoo.tests.result: 0 failed, 0 error(s) of 134 tests when loading database 'vietuat' 
+
+-- executed test methods / setUpClass errors / FAIL+ERROR lines:
+executed=134 setupclass_errors=0 fail_error_lines=0
+
+-- server after the final restart:
+listeners_on_8069=1
+web_login=HTTP:200

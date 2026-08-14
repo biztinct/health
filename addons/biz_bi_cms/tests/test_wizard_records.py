@@ -315,3 +315,43 @@ class TestWizardRecords(BiCase):
             'static/src/components/explore/data_table.js').read_text()
         self.assertIn('suppressOverflowRow: { type: Boolean, optional: true }',
                       data_table)
+
+    # ------------------------------------------------------------------
+    # T5 — the escape hatch carries the Records state (BG-3 §3.4)
+    # ------------------------------------------------------------------
+    def test_records_escape_carries_columns_and_filters(self):
+        """"Open in advanced builder" used to lose the columns.
+
+        An unsaved report travelled as a bare `dataset_id`, so Explore opened
+        in Summary with an empty canvas and the ticked columns were simply
+        gone. Both ends are OWL and there is no JS tier here, so the contract
+        is asserted on the source — with fingerprints that carry operators, so
+        prose cannot satisfy them (§5.72) — and DRIVEN in the evidence pack.
+        """
+        import pathlib
+
+        import odoo.addons.biz_bi as biz_bi_module
+
+        wizard = pathlib.Path(__file__).parent.parent.joinpath(
+            'static/src/components/wizard/report_wizard.js').read_text()
+        # a SAVED report still travels as chart_id (Explore rebuilds it from
+        # config_json) — the escape only adds state the server does not hold
+        self.assertIn('params = { chart_id: this.state.chartId };', wizard)
+        self.assertIn('params.records_config = {', wizard)
+        self.assertIn(
+            'columns: this.state.recordColumns.map((chip) => chip.id),',
+            wizard)
+        self.assertIn('filters: this.filterEntries,', wizard)
+        # ...and only on the Records path with something to carry
+        self.assertIn('if (this.isRecords && this.state.recordColumns.length)',
+                      wizard)
+
+        # the receiving end reads exactly that shape
+        explore = pathlib.Path(biz_bi_module.__file__).parent.joinpath(
+            'static/src/components/explore/explore_action.js').read_text()
+        self.assertIn('applyRecordsConfig(config) {', explore)
+        self.assertIn('this.applyRecordsConfig(params.records_config);',
+                      explore)
+        self.assertIn('(config.columns || [])', explore)
+        self.assertIn('(config.filters || [])', explore)
+        self.assertIn('this.state.tableMode = "records";', explore)

@@ -26,8 +26,33 @@ const MIN_SIZES = {
 // drill ladder: each date-bucket click zooms one level deeper
 const GRAIN_LADDER = { year: "quarter", quarter: "month", month: "day", week: "day" };
 
+// A Records tile renders 200 rows (DataTable's maxRows) but its saved chart
+// carries a 5000-row limit, so it used to pull 4800 rows nobody draws. 200 to
+// render + 1 to KNOW there are more: the extra row is what makes the tile's
+// overflow line true without a second query. The server honours this only
+// when it SHRINKS a detail request — a client can never grow its own ceiling.
+const RECORDS_TILE_FETCH = 201;
+
+/**
+ * The end of a date bucket, in the same calendar the bucket itself is in.
+ *
+ * Since BG-3 a grain bucket is cut in the VIEWER's zone, so `2026-04-01
+ * 00:00:00` is a local wall clock and the arithmetic has to happen on that
+ * wall clock. `new Date("2026-04-01T00:00:00")` is parsed as BROWSER-local
+ * (ledger §5.159d) and the UTC setters would then shift the boundary by the
+ * machine's own offset — a drill-down computed on a Sydney laptop asked the
+ * server for a window ten hours out. Parse as UTC, do the calendar maths,
+ * hand the naive wall clock back.
+ */
 function bucketEnd(startIso, grain) {
-    const date = new Date(startIso);
+    const text = String(startIso).trim().replace(" ", "T");
+    const date = new Date(
+        /^\d{4}-\d{2}-\d{2}$/.test(text)
+            ? text + "T00:00:00Z"
+            : text.endsWith("Z") ? text : text + "Z");
+    if (isNaN(date)) {
+        return startIso;
+    }
     switch (grain) {
         case "year": date.setUTCFullYear(date.getUTCFullYear() + 1); break;
         case "quarter": date.setUTCMonth(date.getUTCMonth() + 3); break;
@@ -198,6 +223,13 @@ export class DashboardAction extends Component {
         return { [last.fieldId]: GRAIN_LADDER[last.grain] || "day" };
     }
 
+    /** Records tiles fetch what they draw (+1). Everything else is
+     *  undefined, so its request — and its cache key — is unchanged. */
+    _widgetLimitOverride(widget) {
+        const mode = (widget.config || {}).mode;
+        return mode === "detail" ? RECORDS_TILE_FETCH : undefined;
+    }
+
     async loadAllWidgetData({ noCache = false } = {}) {
         const dashboard = this.state.dashboard;
         if (!dashboard || !dashboard.widgets.length) {
@@ -210,7 +242,8 @@ export class DashboardAction extends Component {
         for (const widget of dashboard.widgets) {
             const extra = this._widgetExtraFilters(widget);
             requests.push({ chart_id: widget.chart_id, extra_filters: extra,
-                            grain_overrides: this._widgetGrainOverrides(widget) });
+                            grain_overrides: this._widgetGrainOverrides(widget),
+                            limit_override: this._widgetLimitOverride(widget) });
             mapping.push({ widgetId: widget.id, kind: "main" });
             if (widget.chart_type === "kpi") {
                 requests.push({ chart_id: widget.chart_id,

@@ -122,6 +122,10 @@ export class ExploreAction extends Component {
                 await this.loadChart(params.chart_id);
             } else if (params.dataset_id) {
                 await this.selectDataset(params.dataset_id);
+                // an escape hatch out of the guided wizard's Records list
+                // arrives with the columns already ticked — opening Explore
+                // in Summary with an empty canvas is losing the user's work
+                this.applyRecordsConfig(params.records_config);
             } else if (this.state.datasets.length === 1) {
                 await this.selectDataset(this.state.datasets[0].id);
             }
@@ -208,6 +212,46 @@ export class ExploreAction extends Component {
                 }
             }
         }
+    }
+
+    /**
+     * Boot Explore straight into Records mode with somebody else's state.
+     *
+     * `{columns: [field_id, ...], filters: [{field_id, op, value}, ...]}` —
+     * the guided wizard's Records list hands this over when the user clicks
+     * "Open in advanced builder" on an UNSAVED report (a saved one travels
+     * as `chart_id` and comes back through `materializeConfig`).
+     *
+     * Ids the dataset's metadata does not know are dropped silently: this
+     * is a hand-off, not a save, and refusing to open the builder because
+     * one field was archived would strand the user with nothing at all.
+     */
+    applyRecordsConfig(config) {
+        if (!config || !this.state.metadata) {
+            return;
+        }
+        const byId = Object.fromEntries(
+            this.state.metadata.fields.map((f) => [f.id, f]));
+        const columns = (config.columns || [])
+            .map((fieldId) => byId[fieldId])
+            .filter(Boolean)
+            .map((field) => ({ ...field }));
+        if (!columns.length) {
+            return;
+        }
+        this.state.chartType = "table";
+        this.state.userPickedType = true;
+        this.state.tableMode = "records";
+        this.state.recordsSeeded = true;
+        this.state.recordColumns = columns;
+        this.state.slots.filters = (config.filters || [])
+            .filter((entry) => byId[entry.field_id])
+            .map((entry) => ({
+                ...byId[entry.field_id],
+                op: entry.op,
+                value: entry.value,
+            }));
+        this.refresh();
     }
 
     resetRecordsState() {

@@ -278,9 +278,14 @@ class BiController(http.Controller):
                         continue
                     expanded.append(compare_request)
                 else:
-                    expanded.append(chart._to_query_request(
-                        entry.get('extra_filters'),
-                        grain_overrides=entry.get('grain_overrides')))
+                    # `limit_override` may only SHRINK a detail request's
+                    # limit (a dashboard tile draws 200 rows, not 5000) —
+                    # the engine refuses anything that would grow it.
+                    expanded.append(engine.apply_limit_override(
+                        chart._to_query_request(
+                            entry.get('extra_filters'),
+                            grain_overrides=entry.get('grain_overrides')),
+                        entry.get('limit_override')))
             else:
                 expanded.append(entry)
         results = engine.run_batch([e for e in expanded if e is not None])

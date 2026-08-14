@@ -705,11 +705,28 @@ export class ReportWizard extends Component {
         this.props.onClose();
     }
 
-    /** The escape hatch: hand the exact same state to the full builder. */
+    /** The escape hatch: hand the exact same state to the full builder.
+     *
+     *  A SAVED report travels as `chart_id` and Explore rebuilds everything
+     *  from its `config_json`. An unsaved one used to travel as a bare
+     *  `dataset_id`, which opened the builder in Summary with an empty
+     *  canvas — the columns somebody had just ticked were simply gone.
+     *  `records_config` is the Records path's state in the shape
+     *  `explore_action.js::applyRecordsConfig` reads (field ids + the same
+     *  filter entries `buildRequest` sends); the chart path is unchanged. */
     openAdvanced() {
-        const params = this.state.chartId
-            ? { chart_id: this.state.chartId }
-            : { dataset_id: this.state.datasetId };
+        let params;
+        if (this.state.chartId) {
+            params = { chart_id: this.state.chartId };
+        } else {
+            params = { dataset_id: this.state.datasetId };
+            if (this.isRecords && this.state.recordColumns.length) {
+                params.records_config = {
+                    columns: this.state.recordColumns.map((chip) => chip.id),
+                    filters: this.filterEntries,
+                };
+            }
+        }
         this.props.onClose();
         this.actionService.doAction({
             type: "ir.actions.client",

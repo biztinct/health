@@ -44,6 +44,17 @@ def user_timezone(env):
         return pytz.UTC
 
 
+def sql_timezone_name(env):
+    """The zone name to hand SQL as a BOUND VALUE for `AT TIME ZONE`.
+
+    Never an identifier, never a format-string interpolation (the engine
+    file header's trust-boundary rules): the name is round-tripped through
+    `pytz.timezone()` first, so anything the database sees is a zone pytz
+    itself accepted — an unknown or missing preference becomes `'UTC'`.
+    """
+    return str(user_timezone(env))
+
+
 def to_user_tz(value, tz):
     """Naive-UTC datetime -> naive datetime in `tz`.
 
@@ -70,6 +81,42 @@ def day_start_utc(day, tz):
     if tz is None:
         return naive
     return tz.localize(naive).astimezone(pytz.UTC).replace(tzinfo=None)
+
+
+def wall_clock_to_utc(value, tz):
+    """A naive WALL-CLOCK datetime in `tz` -> the naive UTC instant it names.
+
+    The inverse of `to_user_tz`. Since BG-3 every grain bucket the engine
+    emits is a wall clock in the reader's zone, so a boundary the client
+    hands back (a dashboard drill-down passes the bucket's own edges) is a
+    local wall clock too and has to come back to UTC before it touches a UTC
+    column. Anything that is not a datetime is returned untouched.
+    """
+    if not isinstance(value, datetime.datetime) or tz is None:
+        return value
+    if value.tzinfo is not None:
+        return value.astimezone(pytz.UTC).replace(tzinfo=None)
+    return tz.localize(value).astimezone(pytz.UTC).replace(tzinfo=None)
+
+
+def as_wall_clock_datetime(value):
+    """A naive datetime carrying a real clock, or None.
+
+    The complement of `as_calendar_date`: `'2026-04-01 00:00:00'` is a
+    moment on somebody's wall clock, `'2026-04-01'` is a calendar day, and
+    the two need opposite treatment at a window boundary.
+    """
+    if isinstance(value, datetime.datetime):
+        return value
+    if isinstance(value, datetime.date):
+        return None
+    if isinstance(value, str):
+        text = value.strip()
+        if len(text) > 10:
+            parsed = parse_engine_datetime(text)
+            if isinstance(parsed, datetime.datetime):
+                return parsed
+    return None
 
 
 def as_calendar_date(value):

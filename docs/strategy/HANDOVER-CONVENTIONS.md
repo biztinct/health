@@ -2711,3 +2711,75 @@ a no-op.
     and returns midnight, so a parser that tries the datetime form first
     silently turns every calendar date into an instant — offer a 10-character
     string to `date.fromisoformat` FIRST. (BG-2.)
+
+- **§5.163 — the moment a value is computed in the READER's calendar, every
+    boundary the client hands back is in that calendar too — and the rule you
+    wrote one phase earlier becomes false.** BG-2 converted relative-window
+    boundaries UTC-ward and explicitly left a bound *carrying a clock* alone,
+    with a correct justification: its only producer was the dashboard
+    drill-down quoting a bucket edge, and buckets were cut in UTC, so
+    `2026-04-01 00:00:00` already WAS the instant the column stores. BG-3 moved
+    the cut into the viewer's zone (`DATE_TRUNC(grain, (col AT TIME ZONE 'UTC')
+    AT TIME ZONE <viewer>)`) and that sentence silently inverted: the same
+    string now names LOCAL midnight, so drilling into a Vietnamese April
+    returned the UTC April — seven hours wrong at both ends, in the one gesture
+    whose whole purpose is "show me the rows behind THIS bar". The fix is the
+    mirror conversion (`wall_clock_to_utc`) and it required editing BG-2's own
+    passing test, which is the tell: **when a phase moves where a value is
+    computed, grep for every place that value comes BACK** — a round trip has
+    two ends and only one of them is in your diff. Two riders. (a) The client
+    end had the same bug from the other direction: `bucketEnd()` did
+    `new Date("2026-04-01T00:00:00")` (browser-local, §5.159d) and then UTC
+    arithmetic, so a drill computed on a Sydney laptop asked for a window ten
+    hours off — parse the bucket as UTC, do the calendar maths, hand the naive
+    wall clock back. (b) Nothing in the REQUEST payload changes when the
+    MEANING of a request changes, so a cached envelope from before the cut
+    moved is indistinguishable from a fresh one: a phase that redefines an
+    expression must TRUNCATE its result cache in the migration, not merely key
+    it correctly. (BG-3.)
+
+- **§5.164 — composing an `SQL` object into a `%s` slot substitutes CODE, a
+    plain argument stays a PARAMETER, and that difference is the trust
+    boundary — so assert on `query.code` + `query.params`, never on the format
+    string.** `SQL("DATE_TRUNC(%s, (%s AT TIME ZONE 'UTC') AT TIME ZONE %s)",
+    grain, expr, tz)` reaches the database as
+    `DATE_TRUNC(%s, ("t1"."create_date" AT TIME ZONE 'UTC') AT TIME ZONE %s)`
+    with two bound values: the nested SQL was inlined, the two strings were
+    not. A test that fingerprints the literal format string therefore fails
+    against perfectly correct code (cost one red run here). Assert instead that
+    the zone name is **absent** from `query.code` and **present** in
+    `list(query.params)` — which is a strictly better assertion, because it
+    proves the property that matters (a user-supplied string never becomes SQL
+    text) rather than the spelling of the line that implements it. Same idea
+    for the grain: bind it too, even though it is enum-validated, so the
+    expression has no interpolation left to review. (BG-3.)
+
+- **§5.165 — an unrelated module's floating widget silently swallows
+    chrome-devtools clicks, and the symptom is identical to a broken
+    handler.** Three consecutive clicks on Explore's chart-type gallery and
+    filter-chip × buttons "succeeded" and did nothing; the OWL state never
+    moved and the console was clean. The thief was the health_learn *Care
+    Coach* drawer (`lrn-drawer` / `lrn-fab`), and behind it the Zalo chat panel
+    (`zalo-chat-panel`), both floating over the right-hand config panel at
+    1600×1200. Diagnose in one call — take the target's own bounding box and
+    ask `document.elementFromPoint(cx, cy)` whether the top element IS the
+    target; if it is not, its class names the widget. Do not reach for §5.126
+    (untrusted clicks) or start doubting the handler until that check has been
+    made. Park the offenders with `style.display='none'` for the drive and say
+    so in the evidence pack — and note that a real user on that viewport has
+    the same collision, so it is a UI bug to report, not merely a QA nuisance.
+    (BG-3.)
+
+- **§5.166 — `bi.refresh.job.is_healthy()` is a claim about the JOB ROW, not
+    about the materialisation, and on vietuat they disagree.** Dataset 10
+    (*Visit Margin*) is `storage_mode = 'gold'`, `state = 'published'`, with an
+    `idle` job whose `last_refresh` is hours old — so the engine routes every
+    query for it to `bi_gold_10`, which **does not exist**
+    (`psycopg2.errors.UndefinedTable`, surfaced to the user as the generic
+    "Query failed — see server log"). `is_healthy()` reads
+    `state != 'error' and bool(last_refresh)`; nothing checks the relation.
+    Verify a materialisation with `to_regclass('public.<matview>')`, never with
+    a status column, and treat "the job says idle" as evidence about the job.
+    Found while establishing (correctly) that gold needed no refresh for BG-3:
+    silver views and gold matviews store RAW columns, so grain is applied only
+    at query time. (BG-3, pre-existing defect, reported not fixed.)
