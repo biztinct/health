@@ -1,0 +1,28 @@
+  id  |     created_at      | event  |        res_model        |                                   payload_json                                   
+------+---------------------+--------+-------------------------+----------------------------------------------------------------------------------
+ 2614 | 2026-08-13 18:30:00 | query  | BG2-TZ-B-vn-today-only  | {"bg2_fixture": true}
+ 2615 | 2026-08-13 10:00:00 | query  | BG2-TZ-C-neither        | {"bg2_fixture": true}
+ 2616 | 2026-08-14 18:00:00 | query  | BG2-TZ-D-utc-today-only | {"bg2_fixture": true}
+ 2617 | 2026-08-14 03:00:00 | query  | BG2-TZ-A-both           | {"bg2_fixture": true}
+ 2618 | 2026-08-14 00:50:16 | query  |                         | {"rows": 375, "duration_ms": 18}
+ 2619 | 2026-08-14 00:50:39 | query  |                         | {"rows": 376, "duration_ms": 17}
+ 2620 | 2026-08-14 00:50:39 | export |                         | {"mode": "detail", "rows": 376, "capped": false, "format": "xlsx", "columns": 3}
+ 2621 | 2026-08-14 00:51:14 | query  |                         | {"rows": 5, "duration_ms": 13}
+ 2622 | 2026-08-14 00:52:08 | query  |                         | {"rows": 6, "duration_ms": 17}
+
+  id   |            name            | file_size | create_uid 
+-------+----------------------------+-----------+------------
+ 83628 | bg2-browser-export-vn.xlsx |     10971 |       8625
+
+ charts 
+--------
+      0
+
+ dashboards 
+------------
+          0
+
+ ai_logs 
+---------
+       0
+

@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-import datetime
 import io
 import json
-
-import pytz
 
 from odoo import _, http
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.http import request
+
+from ..bi_tz import (cell_value, column_is_instant, parse_engine_datetime,
+                     to_user_tz, user_timezone)
 
 XLSX_CONTENT_TYPE = ('application/vnd.openxmlformats-officedocument'
                      '.spreadsheetml.sheet')
@@ -123,22 +123,18 @@ class BiController(http.Controller):
         user opening the file saw every appointment seven hours early, with
         nothing on the cell to say it was UTC. Excel has no timezone concept
         at all, so the only honest cell is the user's own wall clock.
+
+        The rule itself lives in `biz_bi/bi_tz.py`, shared with the scheduled
+        snapshot workbook and mirrored in the client formatter.
         """
-        env = env if env is not None else request.env
-        try:
-            return pytz.timezone(env.user.tz or 'UTC')
-        except (pytz.UnknownTimeZoneError, AttributeError):
-            return pytz.UTC
+        return user_timezone(env if env is not None else request.env)
 
     @staticmethod
     def _to_user_tz(value, tz):
         """Naive-UTC datetime -> naive datetime in `tz`. Dates are untouched:
         a pure date has no time to shift, and moving it would change the day.
         """
-        if not isinstance(value, datetime.datetime) or tz is None:
-            return value
-        aware = pytz.UTC.localize(value) if value.tzinfo is None else value
-        return aware.astimezone(tz).replace(tzinfo=None)
+        return to_user_tz(value, tz)
 
     @staticmethod
     def _sheet_name(title):
@@ -233,14 +229,16 @@ class BiController(http.Controller):
             sheet.write_boolean(row_index, col_index, value)
             return
         if column.get('type') in ('date', 'datetime'):
-            parsed = self._parse_date(value)
+            # `cell_value` converts an INSTANT into the reader's zone and
+            # leaves a calendar value (a date column, a grain bucket) alone —
+            # shifting `2026-04-01 00:00` UTC for a UTC-5 reader would label
+            # the April bucket "March".
+            parsed = cell_value(value, column, tz)
             if parsed is not None:
-                if column.get('type') == 'datetime':
-                    parsed = self._to_user_tz(parsed, tz)
                 sheet.write_datetime(
                     row_index, col_index, parsed,
-                    date_format if column.get('type') == 'date'
-                    else datetime_format)
+                    datetime_format if column_is_instant(column)
+                    else date_format)
                 return
         if isinstance(value, (int, float)):
             sheet.write_number(row_index, col_index, value)
@@ -249,20 +247,7 @@ class BiController(http.Controller):
 
     @staticmethod
     def _parse_date(value):
-        if isinstance(value, datetime.datetime):
-            return value
-        if isinstance(value, datetime.date):
-            return value
-        if not isinstance(value, str):
-            return None
-        text = value.strip().replace('Z', '')
-        for parser in (datetime.datetime.fromisoformat,
-                       datetime.date.fromisoformat):
-            try:
-                return parser(text)
-            except ValueError:
-                continue
-        return None
+        return parse_engine_datetime(value)
 
     # ==================================================================
     # Query

@@ -1,0 +1,62 @@
+BG-2 — the same record's datetime, three ways: PostgreSQL, the screen, the export
+================================================================================
+
+Persona: bg2_qa (uid 8625), a BI *creator* — has_group(biz_bi.group_bi_creator)
+True, group_bi_modeler / group_bi_admin both False. Session timezone
+Asia/Ho_Chi_Minh, read back INSIDE the session immediately before measuring
+(§5.158). The BROWSER's own zone is Australia/Sydney (UTC+10) throughout, so
+every value below also proves the screen follows the reader's *Odoo* timezone
+and not the machine's — which the pre-BG-2 formatter could not do at all
+(`new Date("2026-08-13T18:30:00")` is parsed as browser-local).
+
+Dataset: "BI Usage" (bi.audit.log), Records list, columns Res Model / When /
+Event. Four rows were inserted as QA fixtures (payload_json {"bg2_fixture":
+true}); everything about them is stated below and they are deleted in
+qa-fixture-cleanup.txt.
+
+  row                       stored (UTC, psql)     screen (VN)        export cell (VN)
+  ------------------------  ---------------------  -----------------  ---------------------
+  BG2-TZ-A-both             2026-08-14 03:00:00    14 Aug 26 10:00    46248.41666666666
+                                                                      = 2026-08-14 10:00
+  BG2-TZ-B-vn-today-only    2026-08-13 18:30:00    14 Aug 26 01:30    46248.0625
+                                                                      = 2026-08-14 01:30
+  BG2-TZ-C-neither          2026-08-13 10:00:00    13 Aug 26 17:00    46247.70833333334
+                                                                      = 2026-08-13 17:00
+  BG2-TZ-D-utc-today-only   2026-08-14 18:00:00    15 Aug 26 01:00    46249.04166666666
+                                                                      = 2026-08-15 01:00
+
+Every line is UTC + 07:00, and rows B and D cross MIDNIGHT: the stored day and
+the displayed day are different days. That is the case BG-1's report flagged
+and could not fix — before this phase the screen would have shown B as
+"14 Aug 26 04:30" (the browser's Sydney clock) while the export said 01:30.
+
+The screen values are the COMPUTED DOM text of the preview table, not a
+reading of the screenshot:
+
+  {"browserTz":"Australia/Sydney",
+   "domRows":[["Res Model","When","Event"],
+              ["BG2-TZ-A-both","14 Aug 26 10:00","Query Executed"],
+              ["BG2-TZ-B-vn-today-only","14 Aug 26 01:30","Query Executed"],
+              ["BG2-TZ-C-neither","13 Aug 26 17:00","Query Executed"],
+              ["BG2-TZ-D-utc-today-only","15 Aug 26 01:00","Query Executed"]]}
+
+The export cells are the raw `<v>` serials read out of
+xl/worksheets/sheet1.xml in `bg2-browser-export-vn.xlsx` — the bytes the
+**Excel** button produced in this session (POST /bi/export/xlsx → 200, 10 971
+bytes, audit row 2620, `rows: 376, capped: false`), captured by wrapping
+window.fetch and posting them back as ir.attachment 83628, because the
+headless context does not persist downloads. A date is a NUMBER in xlsx, not
+a string, which is exactly how an export can be seven hours wrong while every
+string assertion passes.
+
+Screenshots: 03-records-preview-vn-wallclock.png (VN reader),
+05-today-filter-utc-reader.png (the same session after the reader's timezone
+was set to UTC — the same rows then read 03:00 / 18:00 / 00:50, unshifted).
+
+Served-bundle check (§5.147) — the fix is in the bytes the browser actually
+received, not merely in the repo:
+
+  /web/assets/c09723a/web.assets_web.min.js  (10 715 250 bytes)
+    contains "columnIsInstant"        -> true
+    contains "T00:00:00Z"             -> true
+    contains "new Date(value)"        -> FALSE   (the bare constructor is gone)

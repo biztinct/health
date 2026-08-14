@@ -1,0 +1,30 @@
+       audited_at_utc       
+----------------------------
+ 2026-08-14 00:44:56.528026
+
+ id |          dashboard          | active | schedule_enabled | schedule_interval | schedule_hour | next_send | last_sent | owner_id |        create_date         
+----+-----------------------------+--------+------------------+-------------------+---------------+-----------+-----------+----------+----------------------------
+  1 | Operations Overview         | t      | f                | weekly            |             7 |           |           |        1 | 2026-07-02 04:46:15.0602
+  2 | Revenue & Receivables       | t      | f                | weekly            |             7 |           |           |        1 | 2026-07-02 04:46:15.0602
+  5 | Báo cáo hoạt động điều hành | t      | f                | weekly            |             7 |           |           |        1 | 2026-07-02 06:23:02.590779
+  6 | BI Usage Analytics          | t      | f                | weekly            |             7 |           |           |        1 | 2026-07-02 07:13:12.70202
+  7 | Visit Margin                | t      | f                | weekly            |             7 |           |           |        1 | 2026-07-09 12:58:50.979235
+  9 | Monthly Revenue by Facility | t      | f                | weekly            |             7 |           |           |        2 | 2026-07-14 10:57:58.300695
+ 10 | Facility Analytics          | t      | f                | weekly            |             7 |           |           |        2 | 2026-08-06 04:53:18.206904
+
+ dashboards_that_would_send 
+----------------------------
+                          0
+
+ snapshot_recipient_rows 
+-------------------------
+                       0
+
+ snapshot_email_audit_rows 
+---------------------------
+                         0
+
+ cron_id | active | interval_number | interval_type |      nextcall       |      lastcall       
+---------+--------+-----------------+---------------+---------------------+---------------------
+      96 | t      |               1 | hours         | 2026-08-14 00:59:56 | 2026-08-14 00:04:26
+

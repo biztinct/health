@@ -1,5 +1,58 @@
 # -*- coding: utf-8 -*-
+import datetime
+import html
+import io
+import re
+import zipfile
+
 from odoo.tests import TransactionCase
+
+
+# ----------------------------------------------------------------------
+# xlsx readers — shared by every suite that has to look INSIDE a workbook
+# ----------------------------------------------------------------------
+
+def excel_serial(when):
+    """The number xlsxwriter actually writes for a datetime in the 1900 date
+    system (day 0 is 1899-12-30 because of Excel's leap-year bug)."""
+    origin = datetime.datetime(1899, 12, 30)
+    return (when - origin).total_seconds() / 86400.0
+
+
+def xlsx_numbers(content, column_letter, sheet=1):
+    """Every NUMERIC cell of one column of a sheet.
+
+    A date is not a string in xlsx — it is a serial number in `<v>` with a
+    number format on it — so `xlsx_strings` cannot see a datetime cell at
+    all, which is exactly how an export can be seven hours wrong while every
+    string assertion passes.
+    """
+    with zipfile.ZipFile(io.BytesIO(content)) as archive:
+        raw = archive.read(
+            'xl/worksheets/sheet%d.xml' % sheet).decode('utf-8')
+    values = []
+    for ref, attrs, text in re.findall(
+            r'<c r="([A-Z]+\d+)"([^>]*)>(?:<v>([^<]*)</v>)?</c>', raw):
+        if not text or 't="' in attrs:  # t= means string/bool/inline
+            continue
+        if re.sub(r'\d+$', '', ref) != column_letter:
+            continue
+        values.append(float(text))
+    return values
+
+
+def xlsx_strings(content, sheet=1):
+    """Every string cell of a sheet — parsed with zipfile so the test carries
+    no openpyxl dependency."""
+    with zipfile.ZipFile(io.BytesIO(content)) as archive:
+        names = archive.namelist()
+        raw = ''
+        if 'xl/sharedStrings.xml' in names:
+            raw += archive.read('xl/sharedStrings.xml').decode('utf-8')
+        raw += archive.read(
+            'xl/worksheets/sheet%d.xml' % sheet).decode('utf-8')
+    return [html.unescape(text)
+            for text in re.findall(r'<t[^>]*>(.*?)</t>', raw, re.S)]
 
 
 class BiCase(TransactionCase):
@@ -66,6 +119,13 @@ class BiCase(TransactionCase):
         # same on every database: key rules on the CODE, assert on the name.
         cls.f_country_code = field(cls.node_country, 'code')
         cls.f_create_date = field(cls.node_root, 'create_date')
+        # A pure calendar DATE column, shipped by base_geolocalize beside the
+        # `partner_latitude` this fixture already leans on. It is the other
+        # half of the timezone contract: an instant moves with the reader,
+        # a calendar date never does.
+        cls.f_date_localization = field(cls.node_root, 'date_localization')
+        cls.f_date_localization.write({'visibility': 'visible',
+                                       'is_filterable': True})
 
         # scanner may classify latitude as non-measure; force it for tests
         cls.f_latitude.write({'role': 'measure', 'default_agg': 'sum',

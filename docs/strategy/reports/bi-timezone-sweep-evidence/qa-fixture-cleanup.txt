@@ -1,0 +1,45 @@
+BG-2 — QA fixture cleanup, and the fresh-cursor proof (§5.34 / §5.128 / §5.142)
+===============================================================================
+
+What this pass created on vietuat:
+  * res.users 8625 / res.partner 20388  — the throwaway BI-creator persona
+  * bi_audit_log 2614-2617              — the four backdated TZ fixture rows
+                                          (payload_json {"bg2_fixture": true})
+  * bi_audit_log 2618-2622              — the session's own query/export rows
+  * ir_attachment 83628                 — the captured Excel workbook
+  * NOTHING else: no chart and no dashboard were saved (the wizard's
+    "Save report" button was never pressed), so nothing entered anyone's
+    Analytics hub.
+
+Order matters. bi.audit.log is append-only (unlink() raises — it is evidence)
+and its user_id is a required Many2one, which PostgreSQL materialises as
+ON DELETE RESTRICT, so a QA persona that merely runs a query becomes
+undeletable through the ORM (§5.128). The raw, uid-scoped DELETEs therefore
+run FIRST and in their own committed transaction (§5.142: an ORM unlink that a
+later SQL error rolls back still prints as done — a cleanup script's own log
+is not evidence that it cleaned anything).
+
+$ psql -v ON_ERROR_STOP=1 -c "BEGIN; DELETE FROM bi_audit_log WHERE user_id=8625;
+                              DELETE FROM ir_attachment WHERE id=83628; COMMIT;"
+BEGIN
+DELETE 9
+DELETE 1
+COMMIT
+
+then, in an odoo-bin shell:  res.users(8625).unlink(); res.partner(20388).unlink()
+  -> UNLINKED user 8625 partner 20388
+
+--- fresh cursor, a DIFFERENT process from the one that did the deleting ---
+ users | partners | audit_rows | fixture_rows | ai_rows | attachments | charts | dashboards | scheduled_dashboards
+-------+----------+------------+--------------+---------+-------------+--------+------------+----------------------
+     0 |        0 |          0 |            0 |       0 |           0 |      0 |          0 |                    0
+
+The last column is the §1.3 audit re-run after the drive: still zero dashboards
+with a schedule enabled, so this pass created no scheduled sender either.
+
+Deliberately NOT deleted: bi_query_cache. That model sets _log_access = False
+and has no create_uid at all — its columns are cache_key / created_at /
+dataset_id / expires_at / hit_count / id / result_json (the very trap of
+§5.142) — so there is no uid to scope a delete to. The rows are keyed by an
+RLS fingerprint that includes the now-deleted uid, hold no personal data, and
+expire on a 60-second TTL for a live dataset.

@@ -12,8 +12,13 @@ MAX_CACHE_MB = 200
 
 class BiQueryCache(models.Model):
     """Cross-worker query result cache. The key includes the user's RLS
-    fingerprint and language, so two users with different row/column rules
-    (or languages) never share an entry."""
+    fingerprint, language and TIMEZONE, so two users with different row/column
+    rules (or languages, or calendars) never share an entry.
+
+    The timezone belongs in the key because a relative window is resolved in
+    the reader's zone: "today" is a different set of rows for a Vietnamese
+    reader than for a UTC one, and without the zone the second reader is
+    served the first one's day."""
     _name = 'bi.query.cache'
     _description = 'BI Query Cache'
     _log_access = False
@@ -27,10 +32,10 @@ class BiQueryCache(models.Model):
     hit_count = fields.Integer(default=0)
 
     @api.model
-    def make_key(self, request_payload, rls_fingerprint, lang):
+    def make_key(self, request_payload, rls_fingerprint, lang, tz=None):
         canonical = json.dumps(request_payload, sort_keys=True,
                                separators=(',', ':'), default=str)
-        raw = '%s|%s|%s' % (canonical, rls_fingerprint, lang)
+        raw = '%s|%s|%s|%s' % (canonical, rls_fingerprint, lang, tz or 'UTC')
         return hashlib.sha256(raw.encode()).hexdigest()
 
     @api.model

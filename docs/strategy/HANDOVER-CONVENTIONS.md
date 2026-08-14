@@ -2638,3 +2638,76 @@ a no-op.
     measurement you care about. General rule for any evidence pack that
     depends on a user preference: read the preference back inside the session
     that will exercise it, never from the shell that set it. (BG-1.)
+
+- **§5.159 — a timezone story has FOUR halves, not two, and the one that
+    silently disagrees with the others is the client formatter.** §5.157 said
+    "say which half of a timezone story you fixed"; BG-2 counted the halves
+    and there are four, each with its own way of being wrong: (a) the ENGINE's
+    relative windows, which resolve calendar boundaries in the reader's zone
+    and then compare them against UTC columns with no conversion — seven
+    hours of yesterday counted as today and seven hours of today missing;
+    (b) the interactive EXPORT (BG-1 fixed this one); (c) a SECOND writer
+    nobody remembers — `bi.dashboard._build_snapshot_xlsx`, the scheduled
+    email workbook, which wrote `str(value)` and never went near the export
+    writer; and (d) the CLIENT formatter, where `new Date("2026-08-13
+    18:30:00")` is parsed as BROWSER-local, so the screen shows the reader's
+    machine clock while the (correct) export shows their Odoo preference —
+    two different answers on the same page. The tell that (d) is separate
+    from (a)–(c) is that it is the only half whose input is a *string* rather
+    than a Python datetime, and JS's two string forms are wrong in OPPOSITE
+    directions: `new Date("2026-08-13")` is parsed as UTC midnight (a day
+    early for every negative offset) while `new Date("2026-08-13 18:30:00")`
+    is parsed as local. Fix pattern that worked: ONE predicate, mirrored
+    python↔JS with a test asserting the mirrored expression character for
+    character — **an instant is a `datetime` column with NO grain; a `date`
+    column and every grain truncation are calendar labels that must never
+    shift** (shifting `DATE_TRUNC('month')`'s `2026-04-01 00:00` for a UTC-5
+    reader renames the April bucket "March"). `biz_bi/bi_tz.py` +
+    `columnIsInstant` in `static/src/core/formats.js`. (BG-2.)
+
+- **§5.160 — a per-reader window makes the TIMEZONE part of the cache key,
+    and forgetting it serves one reader another reader's day.** `biz_bi`'s
+    query cache keyed on (request, RLS fingerprint, language). Once "today"
+    means the reader's calendar day, two users in different zones ask an
+    identical request and must get different rows — so without the zone in
+    the key the second one is served the first one's answer for the whole
+    TTL, with `meta.cache: 'hit'` as the only trace. Same shape as language
+    (already keyed) and RLS (already keyed): **anything the ANSWER depends on
+    that is not in the request payload belongs in the key.** Proof that costs
+    one query: `bi.query.engine.run` returns on a cache hit *before* it writes
+    its `bi.audit.log` row, so the existence of a second audit row for the
+    second reader is itself the miss. (BG-2.)
+
+- **§5.161 — §5.158's mechanism, found: Odoo overwrites `res.users.tz` from
+    the browser cookie on the FIRST login of an account, even when the tz is
+    already set.** `/odoo/odoo-server/odoo/addons/base/models/res_users.py:771-774`,
+    inside `_update_last_login()`:
+    `tz = request.cookies.get('tz'); if tz in pytz.all_timezones and (not
+    user.tz or not user.login_date): user.tz = tz`. The guard is an **or**,
+    and a brand-new account has no `login_date` — so the second clause fires
+    and a deliberately-set timezone is replaced by the QA machine's. It is a
+    once-per-account event (afterwards `login_date` is set and the value
+    sticks), which is exactly why every QA persona on vietuat carries
+    `Australia/Sydney` while `ash`, who logged in long ago, still carries
+    `Asia/Ho_Chi_Minh`. The §5.158 remedy is unchanged and now has a reason:
+    set the preference THROUGH the authenticated session **after** the first
+    login and read it back inside that session before measuring. Corollary
+    for evidence design: leave the browser in a DIFFERENT zone from the
+    persona on purpose — a screen that agrees with the persona while the
+    machine says something else is proof; a screen that agrees with both
+    proves nothing. (BG-2.)
+
+- **§5.162 — an Excel serial is a float, so a datetime assertion must have a
+    tolerance.** `18:30` becomes `46085.770833333336` on one side of an xlsx
+    round trip and `46085.77083333334` on the other (the value is
+    seconds/86400), so `assertEqual(cells, [expected])` fails on a correct
+    export — twice, in the same run, before it was believed. `assertAlmostEqual
+    (…, places=6)` is still 1/1000th of a second, i.e. far tighter than any
+    timezone offset it exists to catch. BG-1's own export test already used
+    `abs(a - b) < 1e-6` and the lesson did not travel to the next test file;
+    the readers now live in `tests/common.py` with an `assertSerials` helper
+    beside them. Sibling trap in the same helper family:
+    `datetime.datetime.fromisoformat('2026-03-04')` SUCCEEDS in Python 3.10+
+    and returns midnight, so a parser that tries the datetime form first
+    silently turns every calendar date into an instant — offer a 10-character
+    string to `date.fromisoformat` FIRST. (BG-2.)

@@ -10,3 +10,4 @@ from . import test_ai_coerce
 from . import test_relation_labels
 from . import test_detail_mode
 from . import test_ai_attribution
+from . import test_timezone

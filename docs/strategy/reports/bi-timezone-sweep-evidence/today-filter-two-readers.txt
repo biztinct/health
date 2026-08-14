@@ -1,0 +1,43 @@
+BG-2 — one "Today" filter, two readers, two honest answers
+==========================================================
+
+Measured live at 2026-08-14 00:51-00:52 UTC. At that instant the two
+calendars disagree: UTC is on 14 August since 00:00 UTC, Vietnam has been on
+14 August since 17:00 UTC on the 13th. So "today" is a genuinely different
+window for the two readers, and it stays different until 17:00 UTC.
+
+  VN window : [2026-08-13 17:00 UTC, 2026-08-14 17:00 UTC)
+  UTC window: [2026-08-14 00:00 UTC, 2026-08-15 00:00 UTC)
+
+Same persona, same dataset, same wizard, same "Today" button; only
+res.users.tz differs (written through the authenticated session and read back
+before each run — §5.158).
+
+--- reader tz = Asia/Ho_Chi_Minh (screenshot 04) --- 5 rows
+  BG2-TZ-A-both             stored 2026-08-14 03:00 UTC   shown 14 Aug 26 10:00
+  BG2-TZ-B-vn-today-only    stored 2026-08-13 18:30 UTC   shown 14 Aug 26 01:30
+  (this session's own rows) stored 2026-08-14 00:50 UTC   shown 14 Aug 26 07:50  x3
+  EXCLUDED: BG2-TZ-C-neither (13 Aug 17:00 VN — yesterday for this reader)
+  EXCLUDED: BG2-TZ-D-utc-today-only (15 Aug 01:00 VN — tomorrow for them)
+
+--- reader tz = UTC (screenshot 05) --- 6 rows
+  BG2-TZ-A-both             stored 2026-08-14 03:00 UTC   shown 14 Aug 26 03:00
+  BG2-TZ-D-utc-today-only   stored 2026-08-14 18:00 UTC   shown 14 Aug 26 18:00
+  (this session's own rows) stored 2026-08-14 00:50 UTC   shown 14 Aug 26 00:50  x4
+  EXCLUDED: BG2-TZ-B-vn-today-only (2026-08-13 18:30 UTC is yesterday in UTC)
+  EXCLUDED: BG2-TZ-C-neither
+
+Each reader gets one row the other does not, in BOTH directions, so this
+cannot pass by the window merely being wide. B is the row a Vietnamese user
+was previously robbed of; D is the row they were previously shown by mistake.
+
+Server-side corroboration, and the cache (bi_audit_log, this persona):
+
+  2621 | 2026-08-14 00:51:14 | query | {"rows": 5,  "duration_ms": 13}   <- VN
+  2622 | 2026-08-14 00:52:08 | query | {"rows": 6,  "duration_ms": 17}   <- UTC
+
+`bi.query.engine.run` returns on a cache hit BEFORE it writes its audit row,
+so the existence of row 2622 at all is proof that the UTC reader's request was
+a cache MISS — i.e. the timezone really is part of the cache key, and the
+second reader was not served the first one's day. Two rows, two row counts,
+one request payload.

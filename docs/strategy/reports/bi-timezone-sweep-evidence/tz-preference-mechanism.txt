@@ -1,0 +1,37 @@
+BG-2 — the mechanism behind ledger §5.158, found and cited
+===========================================================
+
+§5.158 recorded, from BG-1, that "a res.users.tz set from a shell did not
+survive the persona's first browser login; the surviving value was the
+BROWSER's zone", and deliberately did not explain it. This phase reproduced it
+exactly and then found the line.
+
+Reproduction (bg2_qa, uid 8625):
+
+  created in odoo-bin shell with tz='Asia/Ho_Chi_Minh', committed
+  psql, a DIFFERENT process     : res_partner(20388).tz = Asia/Ho_Chi_Minh
+  --- log in at /web/login once ---
+  session user_context.tz       : Australia/Sydney      <- the browser's zone
+  psql, again                   : res_partner(20388).tz = Australia/Sydney
+
+Cause — /odoo/odoo-server/odoo/addons/base/models/res_users.py:771-774,
+inside `_update_last_login()`:
+
+    tz = request.cookies.get('tz') if request else None
+    if tz in pytz.all_timezones and (not user.tz or not user.login_date):
+        # first login or missing tz -> set tz to browser tz
+        user.tz = tz
+
+The guard is `not user.tz OR not user.login_date`. A brand-new account has no
+`login_date`, so the SECOND half fires and Odoo overwrites a timezone that was
+already set — the comment says "first login **or** missing tz" and means it.
+It is a once-per-account event: after that login `login_date` is set and the
+value sticks. That is why every persona created for a QA pass on this database
+carries `Australia/Sydney` while `ash` (uid 2), who logged in long ago, still
+carries `Asia/Ho_Chi_Minh`.
+
+Remedy, unchanged from §5.158 and used here: set the preference THROUGH the
+authenticated session after the first login (an ordinary
+`res.users.write({'tz': …})`, which is what the Preferences dialog makes), then
+read it back inside that session immediately before measuring. Both reads are
+in today-filter-two-readers.txt.

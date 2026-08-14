@@ -1,0 +1,21 @@
+BG-2 — console log for the whole drive (isolated browser context `bg2qa`)
+=========================================================================
+
+Every screen of the pass — /web/login, the /bizapp shell, the Analytics hub,
+the three wizard steps twice over, the Excel export — produced ZERO console
+errors and ZERO console warnings.
+
+list_console_messages(includePreservedMessages: true), the complete output:
+
+  msgid=10 [issue] A form field element should have an id or name attribute (count: 1)
+  msgid=11 [issue] Incorrect use of <label for=FORM_ELEMENT> (count: 1)
+  msgid=12 [debug] web_debranding: field_upgrade.js loaded (Odoo 19 compatibility mode)
+  msgid=13 [log]   ✅ Zalo Bus Service initialized
+  msgid=14 [issue] A form field element should have an id or name attribute (count: 1)
+  msgid=15 [issue] Incorrect use of <label for=FORM_ELEMENT> (count: 1)
+
+All six are pre-existing and none belongs to biz_bi:
+  * 10/11 and 14/15 are DevTools accessibility *issues* (not console errors)
+    about a form field without an id, on the login page and again on the CMS
+    shell. BG-1's evidence pack records the identical pair.
+  * 12 is health-module debranding, 13 is the Zalo bus service.

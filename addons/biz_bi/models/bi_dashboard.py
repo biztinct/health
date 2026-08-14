@@ -6,6 +6,8 @@ from datetime import timedelta
 
 from odoo import _, api, fields, models
 
+from ..bi_tz import cell_value, column_is_instant, user_timezone
+
 _logger = logging.getLogger(__name__)
 
 
@@ -141,16 +143,28 @@ class BiDashboard(models.Model):
         return extra
 
     def _build_snapshot_xlsx(self):
-        """One workbook, one sheet per widget, dashboard defaults applied."""
+        """One workbook, one sheet per widget, dashboard defaults applied.
+
+        Datetimes read in the SENDING environment's timezone, exactly like
+        the interactive export (`biz_bi/bi_tz.py`) and exactly like the date
+        in this mail's own subject line (`_send_snapshot` already uses
+        `context_today`). This writer used to emit `str(value)`, i.e. the raw
+        naive-UTC ISO string, so a Vietnamese recipient read every timestamp
+        seven hours early — and, after 17:00 UTC, on the wrong day.
+        """
         import xlsxwriter
 
         self.ensure_one()
         engine = self.env['bi.query.engine']
+        tz = user_timezone(self.env)
         buffer = io.BytesIO()
         workbook = xlsxwriter.Workbook(buffer, {'in_memory': True})
         header_format = workbook.add_format(
             {'bold': True, 'bg_color': '#EEF1F5', 'border': 1})
         number_format = workbook.add_format({'num_format': '#,##0.00'})
+        date_format = workbook.add_format({'num_format': 'yyyy-mm-dd'})
+        datetime_format = workbook.add_format(
+            {'num_format': 'yyyy-mm-dd hh:mm:ss'})
         used_names = set()
         for widget in self.widget_ids:
             chart = widget.chart_id
@@ -171,13 +185,24 @@ class BiDashboard(models.Model):
                 sheet.set_column(col_index, col_index, 18)
             for row_index, row in enumerate(envelope['rows'], start=1):
                 for col_index, value in enumerate(row):
+                    if col_index >= len(columns):
+                        break
+                    column = columns[col_index]
                     if isinstance(value, (int, float)) and \
-                            columns[col_index].get('role') == 'measure':
+                            not isinstance(value, bool) and \
+                            column.get('role') == 'measure':
                         sheet.write_number(row_index, col_index, value,
                                            number_format)
-                    else:
-                        sheet.write(row_index, col_index,
-                                    '' if value is None else str(value))
+                        continue
+                    when = cell_value(value, column, tz)
+                    if when is not None:
+                        sheet.write_datetime(
+                            row_index, col_index, when,
+                            datetime_format if column_is_instant(column)
+                            else date_format)
+                        continue
+                    sheet.write(row_index, col_index,
+                                '' if value is None else str(value))
         workbook.close()
         return buffer.getvalue()
 

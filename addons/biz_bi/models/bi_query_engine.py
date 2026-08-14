@@ -24,6 +24,8 @@ from odoo import _, api, fields, models
 from odoo.exceptions import AccessError, UserError
 from odoo.tools import SQL
 
+from ..bi_tz import (as_calendar_date, day_start_utc, to_user_tz,
+                     user_timezone, user_tz_name)
 from .bi_expression import ExpressionCompiler, ExpressionError
 
 _logger = logging.getLogger(__name__)
@@ -159,7 +161,8 @@ class BiQueryEngine(models.AbstractModel):
         # export serve it back (or vice versa).
         key_payload = dict(request, __hard_cap__=int(hard_cap)) \
             if hard_cap else request
-        cache_key = Cache.make_key(key_payload, fingerprint, lang)
+        cache_key = Cache.make_key(key_payload, fingerprint, lang,
+                                   user_tz_name(self.env))
         cached = Cache.fetch_result(cache_key)
         if cached is not None:
             cached.setdefault('meta', {})['cache'] = 'hit'
@@ -648,24 +651,81 @@ class BiQueryEngine(models.AbstractModel):
             return SQL("%s IS NULL", column)
         if op == 'relative':
             start, end = self.relative_bounds(value)
+            start, end = self.window_bounds_for_field(start, end, field)
             return SQL("(%s >= %s AND %s < %s)", column, start, column, end)
         if op == 'date_range':
             # internal half-open range [start, end) — used for shifted
-            # previous-period comparisons
+            # previous-period comparisons and for dashboard drill-down
             if not isinstance(value, (list, tuple)) or len(value) != 2:
                 raise UserError(_("'date_range' filter needs [start, end)."))
-            return SQL("(%s >= %s AND %s < %s)",
-                       column, value[0], column, value[1])
+            start, end = self.window_bounds_for_field(
+                value[0], value[1], field)
+            return SQL("(%s >= %s AND %s < %s)", column, start, column, end)
         raise UserError(_("Unknown filter operator '%s'.", op))
+
+    # ------------------------------------------------------------------
+    # Relative date windows — the caller's CALENDAR, the column's CLOCK
+    # ------------------------------------------------------------------
+    #
+    # A window has two halves and they live in different systems. The
+    # boundaries are CALENDAR dates in the reader's timezone ("today" for a
+    # Vietnamese user is the Vietnamese day). The column is either a
+    # calendar `date` — in which case those boundaries go in as they are —
+    # or a `datetime` stored in UTC, in which case each boundary becomes the
+    # UTC INSTANT at which that local day begins. Comparing a user-tz
+    # calendar date against a UTC timestamp with no conversion (what this
+    # engine did until now, ledger §5.157) shifts every window by the
+    # offset: seven hours of yesterday counted as today, and seven hours of
+    # today missing from it.
+
+    @api.model
+    def _tz(self):
+        return user_timezone(self.env)
+
+    @api.model
+    def _relative_now(self):
+        """The UTC instant every relative window is measured from.
+
+        A seam, deliberately: pinning a near-midnight window in a test means
+        patching this, never sleeping until 23:59 (handover BG-2 §1.2).
+        """
+        return fields.Datetime.now()
+
+    @api.model
+    def relative_today(self):
+        """`today` as the CALLER's calendar sees it — their timezone, not
+        UTC. Equivalent to `fields.Date.context_today`, but derived through
+        the module's own tz resolution so the window and the bounds
+        conversion below can never disagree about which zone is in force."""
+        return to_user_tz(self._relative_now(), self._tz()).date()
 
     @api.model
     def relative_bounds(self, value):
+        """Half-open [start, end) CALENDAR boundaries for a named range."""
         builder = RELATIVE_RANGES.get(value)
         if not builder:
             raise UserError(_(
                 "Unknown relative range '%s'. Allowed: %s",
                 value, ', '.join(sorted(RELATIVE_RANGES))))
-        return builder(fields.Date.context_today(self))
+        return builder(self.relative_today())
+
+    @api.model
+    def window_bounds_for_field(self, start, end, field):
+        """Calendar boundaries -> what to compare against THIS column.
+
+        A `date` column keeps them (a date has no clock). A `datetime`
+        column gets the UTC instants of those local midnights. A bound that
+        already carries a time — a dashboard drill-down passes real bucket
+        boundaries like `2026-04-01 00:00:00` — is left exactly as it is.
+        """
+        if getattr(field, 'data_type', None) != 'datetime':
+            return start, end
+        tz = self._tz()
+        bounds = []
+        for bound in (start, end):
+            day = as_calendar_date(bound)
+            bounds.append(day_start_utc(day, tz) if day is not None else bound)
+        return bounds[0], bounds[1]
 
     @api.model
     def shift_filters_previous(self, filters):

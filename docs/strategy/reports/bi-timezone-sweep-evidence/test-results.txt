@@ -1,0 +1,29 @@
+=== BG-2 FULL biz_bi SUITE, vietuat, -u biz_bi (the regression gate) ===
+2026-08-14 00:44:16,630 2580129 INFO vietuat odoo.tests.stats: biz_bi: 126 tests 19.72s 10728 queries 
+2026-08-14 00:44:16,630 2580129 INFO vietuat odoo.tests.result: 0 failed, 0 error(s) of 96 tests when loading database 'vietuat' 
+
+=== exit status of that run: EXIT:0 (captured live), post-restart /web/login: HTTP:200 ===
+
+=== the run really executed its tests (§5.83/§5.90) ===
+executed test methods : 96
+ERROR: setUpClass     : 0
+
+=== the 18 methods of the two suites this phase touched ===
+TestExportXlsx.test_datatable_can_suppress_a_duplicate_overflow_row
+TestExportXlsx.test_export_datetime_reads_in_the_users_timezone
+TestExportXlsx.test_export_row_cap_is_server_side_only
+TestExportXlsx.test_export_tz_helpers
+TestExportXlsx.test_export_xlsx_get_saved_chart_uses_labels
+TestExportXlsx.test_export_xlsx_post
+TestExportXlsx.test_sheet_name_is_sanitised
+TestTimezoneWindows.test_01_window_bounds_convert_only_for_a_datetime_column
+TestTimezoneWindows.test_02_today_is_the_readers_day_not_the_utc_one
+TestTimezoneWindows.test_03_last_7_days_moves_with_the_reader
+TestTimezoneWindows.test_04_this_month_at_a_month_boundary
+TestTimezoneWindows.test_05_a_date_column_never_shifts
+TestTimezoneWindows.test_06_two_timezones_never_share_a_cached_answer
+TestTimezoneWindows.test_07_tz_helpers
+TestTimezoneWindows.test_08_only_an_ungrained_datetime_is_an_instant
+TestTimezoneWorkbooks.test_09_export_shifts_an_instant_and_leaves_a_bucket_alone
+TestTimezoneWorkbooks.test_10_snapshot_email_workbook_reads_in_the_users_timezone
+TestTimezoneWorkbooks.test_11_client_formatter_mirrors_the_instant_rule

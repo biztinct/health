@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 import datetime
-import html
-import io
 import json
 import re
-import zipfile
 
 from odoo.exceptions import UserError
 from odoo.tests import HttpCase, new_test_user, tagged
 
-from .common import BiCase
+from .common import BiCase, excel_serial, xlsx_numbers, xlsx_strings
 
 
 class DetailCase(BiCase):
@@ -266,46 +263,11 @@ class TestExportXlsx(DetailCase, HttpCase):
         self.assertTrue(match, "no csrf token in the backend page")
         return match.group(1)
 
-    @staticmethod
-    def _excel_serial(when):
-        """The number xlsxwriter actually writes for a datetime in the 1900
-        date system (day 0 is 1899-12-30 because of Excel's leap-year bug)."""
-        origin = datetime.datetime(1899, 12, 30)
-        return (when - origin).total_seconds() / 86400.0
-
-    @staticmethod
-    def _xlsx_numbers(content, column_letter):
-        """Every NUMERIC cell of one column of sheet 1.
-
-        A date is not a string in xlsx — it is a serial number in `<v>` with a
-        number format on it — so `_xlsx_strings` cannot see a datetime cell at
-        all, which is exactly how an export can be seven hours wrong while
-        every string assertion passes.
-        """
-        with zipfile.ZipFile(io.BytesIO(content)) as archive:
-            raw = archive.read('xl/worksheets/sheet1.xml').decode('utf-8')
-        values = []
-        for ref, attrs, text in re.findall(
-                r'<c r="([A-Z]+\d+)"([^>]*)>(?:<v>([^<]*)</v>)?</c>', raw):
-            if not text or 't="' in attrs:  # t= means string/bool/inline
-                continue
-            if re.sub(r'\d+$', '', ref) != column_letter:
-                continue
-            values.append(float(text))
-        return values
-
-    @staticmethod
-    def _xlsx_strings(content):
-        """Every string cell of sheet 1 — parsed with zipfile so the test
-        carries no openpyxl dependency."""
-        with zipfile.ZipFile(io.BytesIO(content)) as archive:
-            names = archive.namelist()
-            raw = ''
-            if 'xl/sharedStrings.xml' in names:
-                raw += archive.read('xl/sharedStrings.xml').decode('utf-8')
-            raw += archive.read('xl/worksheets/sheet1.xml').decode('utf-8')
-        return [html.unescape(text)
-                for text in re.findall(r'<t[^>]*>(.*?)</t>', raw, re.S)]
+    # the xlsx readers themselves now live in tests/common.py — the BG-2
+    # snapshot suite needs the identical pair, and one copy is one behaviour
+    _excel_serial = staticmethod(excel_serial)
+    _xlsx_numbers = staticmethod(xlsx_numbers)
+    _xlsx_strings = staticmethod(xlsx_strings)
 
     def _post_export(self, payload, title='QA Records'):
         response = self.url_open('/bi/export/xlsx', data={
