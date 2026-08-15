@@ -26,6 +26,14 @@ from odoo.addons.health_fhir_core.serializers.everything import (
     build_everything_bundle,
 )
 
+
+def _gender(env, code):
+    """The `gender` vocabulary row for a code — gender is a lookup value, not
+    a Selection, since it joined the client-editable dropdowns."""
+    return env['health.lookup.value'].with_context(active_test=False).search(
+        [('category_code', '=', 'gender'), ('code', '=', code)], limit=1)
+
+
 BASELINE_PATH = 'health_fhir_core/conformance/capability_baseline.json'
 
 
@@ -62,7 +70,7 @@ class TestFHIRConformanceGC1(TransactionCase):
             'catchment_province_id': cls.province.id,
             'mobile': '+84 913 111 222',
             'birth_date': '1949-03-11',
-            'gender': 'female',
+            'gender_id': _gender(env, 'female').id,
         })
 
         # A minimally-scoped service user: ONE healthcare group, nothing from
@@ -130,7 +138,7 @@ class TestFHIRConformanceGC1(TransactionCase):
         (or, worse, tempt someone to restore the blanket fetch)."""
         declared = set(REGISTRY['Patient'].prefetch_fields)
         for name in ('name', 'active', 'patient_code', 'insurance_number',
-                     'phone', 'mobile', 'email', 'gender', 'birth_date',
+                     'phone', 'mobile', 'email', 'gender_id', 'birth_date',
                      'deceased', 'street', 'street2', 'city', 'zip',
                      'district_id', 'state_id', 'country_id',
                      'primary_facility_id', 'write_date'):

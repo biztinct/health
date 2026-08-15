@@ -58,7 +58,7 @@ class PatientSerializer(FHIRSerializer):
     # store-filter in serialize_batch would drop them anyway.
     prefetch_fields = [
         'name', 'active', 'patient_code', 'insurance_number',
-        'phone', 'mobile', 'email', 'zalo_user_id', 'gender', 'birth_date',
+        'phone', 'mobile', 'email', 'zalo_user_id', 'gender_id', 'birth_date',
         'deceased', 'street', 'street2', 'vietnamese_address', 'city', 'zip',
         'district_id', 'state_id', 'country_id', 'primary_facility_id',
         'write_date',
@@ -82,7 +82,7 @@ class PatientSerializer(FHIRSerializer):
         telecom = self._telecom(partner)
         if telecom:
             resource['telecom'] = telecom
-        gender = _GENDER_MAP.get(partner.gender)
+        gender = _GENDER_MAP.get(partner.gender_code)
         if gender:
             resource['gender'] = gender
         if partner.birth_date:

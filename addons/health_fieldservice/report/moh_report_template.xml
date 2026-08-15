@@ -81,9 +81,9 @@
                                     <span t-field="o.patient_id.age"/>
                                 </td>
                                 <td style="text-align: center; border: 1px solid black; padding: 8px;">
-                                    <span t-if="o.patient_id.gender == 'male'">Male / Nam</span>
-                                    <span t-if="o.patient_id.gender == 'female'">Female / Nữ</span>
-                                    <span t-if="o.patient_id.gender not in ['male', 'female']">Other / Khác</span>
+                                    <span t-if="o.patient_id.gender_code == 'male'">Male / Nam</span>
+                                    <span t-if="o.patient_id.gender_code == 'female'">Female / Nữ</span>
+                                    <span t-if="o.patient_id.gender_code not in ['male', 'female']">Other / Khác</span>
                                 </td>
                                 <td style="border: 1px solid black; padding: 8px; font-size: 10px;">
                                     <span t-if="o.patient_id.vietnamese_address" t-field="o.patient_id.vietnamese_address"/>
@@ -253,8 +253,8 @@
                                     <span t-field="o.patient_id.age"/>
                                 </td>
                                 <td style="text-align: center; border: 1px solid black; padding: 5px;">
-                                    <span t-if="o.patient_id.gender == 'male'">M</span>
-                                    <span t-elif="o.patient_id.gender == 'female'">F</span>
+                                    <span t-if="o.patient_id.gender_code == 'male'">M</span>
+                                    <span t-elif="o.patient_id.gender_code == 'female'">F</span>
                                     <span t-else="">-</span>
                                 </td>
                                 <td style="border: 1px solid black; padding: 5px; font-size: 8px;">

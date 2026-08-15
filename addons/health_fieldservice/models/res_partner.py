@@ -209,8 +209,8 @@ class ResPartner(models.Model):
         age_gender = ''
         if partner.age:
             age_gender = partner.env._("%s years old", partner.age)
-            if partner.gender and partner.gender in gender_map:
-                age_gender += f" ({gender_map[partner.gender]})"
+            if partner.gender_code and partner.gender_code in gender_map:
+                age_gender += f" ({gender_map[partner.gender_code]})"
 
         profile = {
             'id': partner.id,

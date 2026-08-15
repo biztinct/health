@@ -20,6 +20,14 @@ from odoo.addons.health_fhir_core.serializers.base import (
     FHIRNotFound, FHIRNotSupported, validate_resource,
 )
 
+
+def _gender(env, code):
+    """The `gender` vocabulary row for a code — gender is a lookup value, not
+    a Selection, since it joined the client-editable dropdowns."""
+    return env['health.lookup.value'].with_context(active_test=False).search(
+        [('category_code', '=', 'gender'), ('code', '=', code)], limit=1)
+
+
 EXPECTED_RESOURCES = (
     'Patient', 'Practitioner', 'Organization', 'Location',
     'Encounter', 'Appointment', 'ServiceRequest', 'DocumentReference',
@@ -60,7 +68,7 @@ class TestFHIRCore(TransactionCase):
             'catchment_province_id': cls.province.id,
             'mobile': '+84 912 345 678',
             'birth_date': '1954-02-19',
-            'gender': 'male',
+            'gender_id': _gender(env, 'male').id,
         })
 
         # -- practitioner ---------------------------------------------------

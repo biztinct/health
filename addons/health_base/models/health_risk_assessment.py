@@ -144,7 +144,9 @@ class ReadmissionRisk(models.Model):
     
     # Risk Factors
     age = fields.Integer('Age', related='patient_id.age', store=True)
-    gender = fields.Selection('Gender', related='patient_id.gender', store=True)
+    gender_id = fields.Many2one(
+        'health.lookup.value', string='Gender',
+        related='patient_id.gender_id', store=True)
     
     # Medical History
     chronic_conditions = fields.Integer('Number of Chronic Conditions', default=0)

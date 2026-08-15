@@ -96,7 +96,7 @@ class OpsClientList extends Component {
         this.state.isLoading = true;
         try {
             const fields = [
-                'name', 'patient_code', 'mobile', 'email', 'gender', 'age',
+                'name', 'patient_code', 'mobile', 'email', 'gender_id', 'age',
                 'patient_status', 'catchment_province_id', 'primary_facility_id',
                 'preferred_staff_id', 'last_visit_date', 'total_assignments',
                 'patient_category_id', 'deleted',

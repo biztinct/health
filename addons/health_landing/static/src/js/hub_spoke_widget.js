@@ -129,7 +129,7 @@ export class HubSpokeWidget extends Component {
                 [this.props.patientId],
                 {
                     fields: [
-                        "name", "patient_code", "age", "gender",
+                        "name", "patient_code", "age", "gender_id",
                         "phone", "mobile", "email",
                         "street", "city", "state_id", "country_id",
                         "partner_latitude", "partner_longitude",

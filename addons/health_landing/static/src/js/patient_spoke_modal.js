@@ -95,7 +95,7 @@ export class PatientSpokeModal extends Component {
             [this.props.patientId],
             {
                 fields: [
-                    "name", "patient_code", "age", "gender", "date_of_birth",
+                    "name", "patient_code", "age", "gender_id", "date_of_birth",
                     "phone", "mobile", "email",
                     "street", "street2", "city", "state_id", "country_id", "zip",
                     "primary_caregiver_id", "primary_emergency_contact_id",

@@ -43,7 +43,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="text-muted small" t-esc="this.t('Age / Gender')"/>
-                                <div class="fw-bold"><t t-esc="state.data.age"/> years / <t t-esc="state.data.gender"/></div>
+                                <div class="fw-bold"><t t-esc="state.data.age"/> years / <t t-esc="state.data.gender_id and state.data.gender_id[1] or ''"/></div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="text-muted small" t-esc="this.t('Phone')"/>
