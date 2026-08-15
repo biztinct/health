@@ -1,0 +1,1221 @@
+// Taupō Hospital & Health Society public website design system.
+// Page content remains standard Odoo Website snippets and stays editor-compatible.
+
+$thhs-navy: #0c3855;
+$thhs-blue: #4b8fba;
+$thhs-green: #88ad59;
+$thhs-ink: #203b49;
+$thhs-muted: #617783;
+$thhs-mist: #eef5f6;
+$thhs-cream: #f7f8f3;
+$thhs-white: #ffffff;
+
+:root {
+    --thhs-navy: #{$thhs-navy};
+    --thhs-blue: #{$thhs-blue};
+    --thhs-green: #{$thhs-green};
+    --thhs-ink: #{$thhs-ink};
+    --thhs-muted: #{$thhs-muted};
+    --thhs-mist: #{$thhs-mist};
+    --thhs-cream: #{$thhs-cream};
+    --thhs-radius: 22px;
+    --thhs-shadow: 0 20px 55px rgba(12, 56, 85, 0.12);
+    --thhs-shadow-soft: 0 12px 34px rgba(12, 56, 85, 0.09);
+}
+
+body {
+    color: $thhs-ink;
+    background: $thhs-white;
+    font-family: Montserrat, "Odoo Unicode Support Noto", system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.68;
+    -webkit-font-smoothing: antialiased;
+}
+
+html,
+body,
+#wrapwrap {
+    overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.display-1,
+.display-2,
+.display-3,
+.display-4,
+.display-1-fs,
+.display-2-fs,
+.display-3-fs,
+.display-4-fs {
+    color: $thhs-navy;
+    font-family: "League Spartan", "Odoo Unicode Support Noto", sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+}
+
+p:last-child {
+    margin-bottom: 0;
+}
+
+a {
+    text-underline-offset: 3px;
+}
+
+// Header and brand -----------------------------------------------------------
+header#top {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+
+    .navbar {
+        padding: 0;
+        border: 0 !important;
+        border-bottom: 1px solid rgba($thhs-navy, 0.09) !important;
+        background: rgba($thhs-white, 0.97) !important;
+        box-shadow: 0 9px 30px rgba($thhs-navy, 0.07) !important;
+        backdrop-filter: blur(16px);
+    }
+
+    #o_main_nav {
+        min-height: 142px;
+        padding-right: clamp(20px, 3vw, 58px);
+        padding-left: clamp(20px, 3vw, 58px);
+    }
+
+    .navbar-brand.logo {
+        width: 218px;
+        height: 126px;
+        margin-right: clamp(22px, 3vw, 54px) !important;
+        overflow: hidden;
+        flex: 0 0 218px;
+
+        > span {
+            display: block;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        img {
+            width: 218px !important;
+            height: 218px !important;
+            max-width: none !important;
+            max-height: none !important;
+            object-fit: contain;
+            transform: translateY(-43px);
+        }
+    }
+
+    #top_menu {
+        align-items: stretch;
+        gap: clamp(2px, 0.45vw, 9px);
+
+        > .nav-item > .nav-link {
+            min-height: 142px;
+            padding-right: clamp(9px, 0.8vw, 15px);
+            padding-left: clamp(9px, 0.8vw, 15px);
+            border-radius: 12px;
+            color: $thhs-navy;
+            font-size: clamp(15px, 1vw, 18px);
+            transition: color 180ms ease;
+
+            &:hover,
+            &:focus,
+            &.active {
+                color: $thhs-navy;
+                background: transparent;
+            }
+        }
+    }
+
+    .dropdown-menu {
+        min-width: 250px;
+        margin-top: 0 !important;
+        padding: 17px;
+        border: 0;
+        border-radius: 0 0 14px 14px;
+        background: $thhs-navy;
+        box-shadow: var(--thhs-shadow);
+
+        .dropdown-item {
+            padding: 12px 14px;
+            border-radius: 8px;
+            color: rgba($thhs-white, 0.82) !important;
+            background: transparent;
+            font-family: "League Spartan", "Odoo Unicode Support Noto", sans-serif;
+            font-size: clamp(15px, 1vw, 18px);
+            font-weight: 600;
+            line-height: 1.25;
+            letter-spacing: 0;
+
+            &:hover,
+            &:focus,
+            &.active {
+                color: $thhs-white !important;
+                background: rgba($thhs-green, 0.28) !important;
+            }
+        }
+
+        // Override Bootstrap's active-link colour while retaining the forest panel.
+        .dropdown-item:active,
+        .dropdown-item[aria-current="page"],
+        .active > .dropdown-item {
+            color: $thhs-white !important;
+            background: rgba($thhs-green, 0.28) !important;
+        }
+    }
+}
+
+// Shared page language -------------------------------------------------------
+#wrap {
+    overflow: clip;
+}
+
+.thhs-page-hero,
+#wrap > .s_title:first-child,
+#wrap > .s_text_block:first-child.oe_img_bg {
+    position: relative;
+    min-height: 0;
+    // These are defaults only. Odoo's editor applies inline padding while the
+    // top/bottom resize handles are dragged, so do not mark them !important.
+    padding-top: 82px;
+    padding-bottom: 82px;
+    border: 0;
+    background-color: $thhs-navy !important;
+    background-blend-mode: multiply;
+    background-position: center !important;
+    background-size: cover !important;
+
+    &::after {
+        position: absolute;
+        right: -110px;
+        bottom: -155px;
+        width: 430px;
+        height: 260px;
+        border: 44px solid rgba($thhs-green, 0.26);
+        border-radius: 50%;
+        content: "";
+        transform: rotate(-12deg);
+        pointer-events: none;
+    }
+
+    .container {
+        position: relative;
+        z-index: 1;
+    }
+
+    h1,
+    h2,
+    h3,
+    .display-3-fs {
+        margin: 0;
+        color: $thhs-white !important;
+        font-size: clamp(42px, 6vw, 76px);
+        line-height: 0.98;
+        text-align: left !important;
+        text-shadow: 0 8px 30px rgba(0, 0, 0, 0.22);
+
+        * {
+            color: inherit !important;
+        }
+    }
+}
+
+.thhs-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 14px;
+    color: darken($thhs-green, 12%);
+    font-family: "League Spartan", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+
+    &::before {
+        width: 34px;
+        height: 3px;
+        border-radius: 999px;
+        background: $thhs-green;
+        content: "";
+    }
+}
+
+#wrap .thhs-section {
+    // Premium defaults only. Odoo's pt*/pb* classes created by the vertical
+    // resize pills deliberately take precedence.
+    padding-top: clamp(70px, 8vw, 116px);
+    padding-bottom: clamp(70px, 8vw, 116px);
+}
+
+.thhs-section-muted {
+    background: linear-gradient(135deg, $thhs-cream, $thhs-mist);
+}
+
+.thhs-intro {
+    max-width: 790px;
+    color: $thhs-muted;
+    font-size: clamp(19px, 2vw, 23px);
+    line-height: 1.55;
+}
+
+.thhs-card {
+    height: 100%;
+    padding: clamp(26px, 3vw, 42px);
+    border: 1px solid rgba($thhs-navy, 0.08);
+    border-radius: var(--thhs-radius);
+    background: $thhs-white;
+    box-shadow: var(--thhs-shadow-soft);
+    transition: transform 220ms ease, box-shadow 220ms ease;
+
+    &:hover {
+        box-shadow: var(--thhs-shadow);
+        transform: translateY(-5px);
+    }
+
+    .fa {
+        display: inline-grid;
+        width: 52px;
+        height: 52px;
+        margin-bottom: 22px;
+        place-items: center;
+        border-radius: 15px;
+        color: $thhs-white;
+        background: linear-gradient(145deg, $thhs-blue, $thhs-navy);
+        font-size: 22px;
+    }
+}
+
+.btn-primary,
+.btn-secondary,
+.thhs-button {
+    padding: 12px 25px;
+    border: 0;
+    border-radius: 999px;
+    color: $thhs-white !important;
+    background: $thhs-navy;
+    box-shadow: 0 10px 24px rgba($thhs-navy, 0.18);
+    font-family: "League Spartan", sans-serif;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+
+    &:hover,
+    &:focus {
+        color: $thhs-white !important;
+        background: darken($thhs-green, 13%);
+        box-shadow: 0 14px 30px rgba($thhs-green, 0.24);
+        transform: translateY(-2px);
+    }
+}
+
+// Homepage ------------------------------------------------------------------
+#wrap .thhs-home-hero {
+    min-height: calc(100vh - 110px);
+    padding-top: clamp(130px, 15vw, 230px);
+    padding-bottom: clamp(130px, 15vw, 230px);
+
+    &::before {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        background: linear-gradient(90deg, rgba($thhs-navy, 0.94) 0%, rgba($thhs-navy, 0.72) 46%, rgba($thhs-navy, 0.14) 100%);
+        content: "";
+    }
+
+    .container,
+    .row,
+    .o_grid_item {
+        position: relative;
+        z-index: 1;
+    }
+
+    h1 {
+        max-width: 850px;
+        color: $thhs-white !important;
+        font-size: clamp(56px, 8vw, 104px);
+        line-height: 0.9;
+    }
+
+    .thhs-home-kicker {
+        color: lighten($thhs-green, 13%);
+        font-family: "League Spartan", sans-serif;
+        font-size: clamp(20px, 2vw, 28px);
+        font-weight: 600;
+    }
+
+    .thhs-home-copy {
+        max-width: 710px;
+        margin: 24px 0 32px;
+        color: rgba($thhs-white, 0.9);
+        font-size: clamp(19px, 2vw, 24px);
+    }
+}
+
+// Once an editor has used either vertical resize handle, let the saved Odoo
+// spacing define the hero height rather than retaining the full-screen floor.
+#wrap .thhs-home-hero[class*=" pt"],
+#wrap .thhs-home-hero[class*=" pb"] {
+    min-height: 0;
+}
+
+.thhs-impact-strip {
+    position: relative;
+    z-index: 3;
+    margin-top: -62px;
+
+    .container {
+        padding: 34px clamp(26px, 4vw, 56px);
+        border-radius: 24px;
+        background: $thhs-white;
+        box-shadow: var(--thhs-shadow);
+    }
+
+    .thhs-impact-item {
+        border-left: 3px solid $thhs-green;
+        padding-left: 20px;
+
+        strong {
+            display: block;
+            color: $thhs-navy;
+            font-family: "League Spartan", sans-serif;
+            font-size: 28px;
+            line-height: 1.05;
+        }
+    }
+}
+
+// Homepage WOW refresh ------------------------------------------------------
+// The saved Welcome snippet remains editor-owned. These rules enhance only
+// its presentation and do not replace its image or wording.
+#wrap .thhs-home-hero {
+    isolation: isolate;
+
+    .o_we_bg_filter {
+        z-index: 0;
+        opacity: 0.72;
+    }
+
+    .container {
+        padding-top: clamp(24px, 4vw, 62px);
+        padding-bottom: clamp(34px, 5vw, 78px);
+    }
+
+    h1:first-of-type {
+        margin-bottom: 8px;
+        color: $thhs-white !important;
+        font-size: clamp(54px, 7vw, 98px);
+        line-height: 0.88;
+        text-shadow: 0 12px 36px rgba($thhs-navy, 0.3);
+    }
+
+    h1.thhs-home-copy {
+        max-width: 760px;
+        margin: 0 0 18px;
+        font-size: clamp(31px, 4.2vw, 61px) !important;
+        line-height: 0.98;
+
+        strong,
+        font {
+            color: $thhs-white !important;
+        }
+    }
+
+    p.thhs-home-copy {
+        max-width: 720px;
+        padding-left: 20px;
+        border-left: 4px solid $thhs-green;
+        color: rgba($thhs-white, 0.94) !important;
+        font-size: clamp(17px, 1.5vw, 22px);
+
+        strong,
+        font {
+            color: inherit !important;
+        }
+    }
+
+    .btn-outline-light {
+        border: 2px solid rgba($thhs-white, 0.82);
+        color: $thhs-white;
+        background: rgba($thhs-white, 0.08);
+        backdrop-filter: blur(10px);
+    }
+}
+
+.thhs-wow-ribbon {
+    position: relative;
+    z-index: 5;
+    margin-top: -32px;
+
+    .thhs-wow-ribbon-inner {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        overflow: hidden;
+        border: 1px solid rgba($thhs-navy, 0.08);
+        border-radius: 24px;
+        background: rgba($thhs-white, 0.97);
+        box-shadow: 0 24px 65px rgba($thhs-navy, 0.16);
+        backdrop-filter: blur(18px);
+    }
+
+    .thhs-wow-ribbon-item {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 28px 34px;
+
+        + .thhs-wow-ribbon-item {
+            border-left: 1px solid rgba($thhs-navy, 0.1);
+        }
+
+        > .fa {
+            display: grid;
+            width: 48px;
+            height: 48px;
+            flex: 0 0 48px;
+            place-items: center;
+            border-radius: 15px;
+            color: $thhs-white;
+            background: linear-gradient(145deg, $thhs-green, darken($thhs-green, 18%));
+            box-shadow: 0 10px 24px rgba($thhs-green, 0.28);
+        }
+
+        strong,
+        span {
+            display: block;
+        }
+
+        strong {
+            color: $thhs-navy;
+            font-family: "League Spartan", sans-serif;
+            font-size: 22px;
+            line-height: 1.1;
+        }
+
+        span {
+            margin-top: 4px;
+            color: $thhs-muted;
+            font-size: 14px;
+            line-height: 1.35;
+        }
+    }
+}
+
+.thhs-wow-story {
+    position: relative;
+    background:
+        radial-gradient(circle at 90% 14%, rgba($thhs-green, 0.14) 0 105px, transparent 106px),
+        linear-gradient(180deg, $thhs-white, #f8fbfa);
+
+    .thhs-wow-image-frame {
+        position: relative;
+        padding: 0 28px 28px 0;
+
+        &::before {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 72%;
+            height: 76%;
+            border-radius: 28px;
+            background: linear-gradient(145deg, $thhs-green, $thhs-blue);
+            content: "";
+        }
+
+        img {
+            position: relative;
+            z-index: 1;
+            min-height: 480px;
+            border-radius: 28px;
+            box-shadow: var(--thhs-shadow);
+            object-fit: cover;
+        }
+    }
+
+    .thhs-wow-image-note {
+        position: absolute;
+        right: -8px;
+        bottom: 58px;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 18px 22px;
+        border-radius: 18px;
+        color: $thhs-white;
+        background: $thhs-navy;
+        box-shadow: var(--thhs-shadow);
+        font-family: "League Spartan", sans-serif;
+        font-weight: 650;
+        line-height: 1.15;
+
+        .fa {
+            color: lighten($thhs-green, 9%);
+            font-size: 24px;
+        }
+    }
+
+    h2 {
+        max-width: 680px;
+        font-size: clamp(45px, 5vw, 72px);
+        line-height: 0.98;
+    }
+}
+
+.thhs-wow-focus {
+    position: relative;
+    color: rgba($thhs-white, 0.8);
+    background:
+        radial-gradient(circle at 100% 0%, rgba($thhs-blue, 0.33), transparent 34%),
+        radial-gradient(circle at 0% 100%, rgba($thhs-green, 0.18), transparent 32%),
+        $thhs-navy;
+
+    &::before {
+        position: absolute;
+        inset: 0;
+        opacity: 0.08;
+        background-image: radial-gradient(rgba($thhs-white, 0.8) 1px, transparent 1px);
+        background-size: 26px 26px;
+        content: "";
+        pointer-events: none;
+    }
+
+    .container {
+        position: relative;
+        z-index: 1;
+    }
+
+    h2 {
+        color: $thhs-white;
+        line-height: 0.95;
+    }
+
+    .thhs-eyebrow {
+        color: lighten($thhs-green, 15%);
+    }
+
+    .thhs-wow-focus-intro {
+        color: rgba($thhs-white, 0.7);
+        font-size: 20px;
+    }
+
+    .thhs-wow-focus-card {
+        position: relative;
+        height: 100%;
+        overflow: hidden;
+        padding: clamp(28px, 3vw, 42px);
+        border: 1px solid rgba($thhs-white, 0.14);
+        border-radius: 24px;
+        background: rgba($thhs-white, 0.075);
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.16);
+        backdrop-filter: blur(14px);
+        transition: transform 220ms ease, background 220ms ease;
+
+        &:hover {
+            background: rgba($thhs-white, 0.12);
+            transform: translateY(-7px);
+        }
+
+        > .fa {
+            display: grid;
+            width: 58px;
+            height: 58px;
+            margin-bottom: 28px;
+            place-items: center;
+            border-radius: 17px;
+            color: $thhs-navy;
+            background: $thhs-green;
+            font-size: 24px;
+        }
+
+        h3 {
+            color: $thhs-white;
+            font-size: 31px;
+        }
+
+        p {
+            color: rgba($thhs-white, 0.72);
+        }
+
+        a {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+            color: lighten($thhs-green, 16%);
+            font-family: "League Spartan", sans-serif;
+            font-weight: 700;
+            text-decoration: none;
+        }
+    }
+
+    .thhs-wow-number {
+        position: absolute;
+        top: 18px;
+        right: 24px;
+        color: rgba($thhs-white, 0.09);
+        font-family: "League Spartan", sans-serif;
+        font-size: 72px;
+        font-weight: 700;
+        line-height: 1;
+    }
+}
+
+.thhs-wow-cta {
+    background: linear-gradient(180deg, #f8fbfa, $thhs-white);
+
+    .thhs-wow-cta-panel {
+        position: relative;
+        overflow: hidden;
+        padding: clamp(38px, 6vw, 82px);
+        border-radius: 30px;
+        color: rgba($thhs-white, 0.84);
+        background: linear-gradient(120deg, darken($thhs-green, 16%), $thhs-green 58%, $thhs-blue 140%);
+        box-shadow: 0 28px 70px rgba($thhs-green, 0.26);
+
+        &::after {
+            position: absolute;
+            right: -90px;
+            bottom: -165px;
+            width: 370px;
+            height: 370px;
+            border: 42px solid rgba($thhs-white, 0.13);
+            border-radius: 50%;
+            content: "";
+            pointer-events: none;
+        }
+
+        .row {
+            position: relative;
+            z-index: 1;
+        }
+
+        h2 {
+            max-width: 900px;
+            color: $thhs-white;
+            line-height: 1;
+        }
+
+        p {
+            max-width: 760px;
+            font-size: 19px;
+        }
+
+        .thhs-eyebrow {
+            color: $thhs-white;
+
+            &::before {
+                background: $thhs-white;
+            }
+        }
+
+        .btn-light {
+            padding: 15px 27px;
+            border-radius: 999px;
+            color: $thhs-navy;
+            box-shadow: 0 14px 30px rgba($thhs-navy, 0.2);
+            font-family: "League Spartan", sans-serif;
+            font-weight: 700;
+        }
+    }
+}
+
+// Board page ----------------------------------------------------------------
+#wrap .thhs-board-list {
+    padding-top: clamp(60px, 7vw, 100px);
+    padding-bottom: clamp(70px, 8vw, 120px);
+    background: linear-gradient(180deg, $thhs-mist 0%, $thhs-white 52%, $thhs-cream 100%) !important;
+
+    > .container {
+        max-width: 1020px;
+    }
+
+    > .container > .row {
+        display: grid;
+        gap: 34px;
+    }
+
+    .s_media_list_item {
+        width: 100%;
+        padding: 0 !important;
+
+        > .row {
+            display: grid;
+            grid-template-columns: 230px minmax(0, 1fr);
+            align-items: start;
+            min-height: 0;
+            padding: clamp(28px, 4vw, 46px) !important;
+            border: 1px solid rgba($thhs-navy, 0.08);
+            border-radius: 24px;
+            background: $thhs-white !important;
+            box-shadow: var(--thhs-shadow-soft);
+            transition: transform 220ms ease, box-shadow 220ms ease;
+
+            &:hover {
+                box-shadow: var(--thhs-shadow);
+                transform: translateY(-4px);
+            }
+        }
+    }
+
+    .s_media_list_img_wrapper {
+        width: 220px;
+        height: 220px;
+        min-height: 220px;
+        margin: 0 auto;
+        overflow: hidden;
+        border: 8px solid $thhs-white;
+        border-radius: 50%;
+        background: linear-gradient(145deg, rgba($thhs-blue, 0.12), rgba($thhs-green, 0.13));
+        box-shadow: 0 0 0 1px rgba($thhs-navy, 0.08), 0 16px 38px rgba($thhs-navy, 0.15);
+    }
+
+    .s_media_list_img {
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        border-radius: inherit !important;
+        object-fit: cover;
+        // Keep this overridable: Odoo's crop/reposition tool may save a more
+        // suitable inline focal point for an individual portrait.
+        object-position: center;
+        filter: saturate(0.9) contrast(1.03);
+    }
+
+    .s_media_list_body {
+        width: auto;
+        padding: 0 0 0 clamp(24px, 4vw, 44px);
+        align-self: start;
+
+        h3 {
+            margin-bottom: 3px;
+            color: $thhs-navy;
+            font-size: clamp(28px, 3vw, 38px);
+        }
+
+        // Only explicit role labels use the green pill. Biography text must
+        // remain a normal editable paragraph instead of being auto-styled.
+        .lead {
+            display: inline-block;
+            margin: 0 0 20px;
+            padding: 5px 13px;
+            border-radius: 999px;
+            color: darken($thhs-green, 17%);
+            background: rgba($thhs-green, 0.14);
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        p {
+            color: #405a67;
+        }
+    }
+}
+
+// News page ---------------------------------------------------------------
+.thhs-news-lead {
+    // Defaults only. Odoo's vertical resize handles add spacing utility
+    // classes, which must be allowed to override these values.
+    padding-top: clamp(62px, 7vw, 96px);
+    padding-bottom: clamp(62px, 7vw, 96px);
+    background: linear-gradient(180deg, $thhs-mist 0%, $thhs-white 100%) !important;
+}
+
+.thhs-news-feature,
+.thhs-news-article {
+    overflow: hidden;
+    border: 1px solid rgba($thhs-navy, 0.08);
+    border-radius: 26px;
+    background: $thhs-white;
+    box-shadow: var(--thhs-shadow-soft);
+}
+
+.thhs-news-feature {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.2fr);
+    align-items: stretch;
+
+    .thhs-news-image {
+        min-height: 520px;
+    }
+}
+
+.thhs-news-image {
+    width: 100%;
+    height: 100%;
+    min-height: 340px;
+    object-fit: cover;
+    object-position: center;
+}
+
+.thhs-news-copy {
+    padding: clamp(30px, 5vw, 64px);
+
+    h2 {
+        margin-bottom: 18px;
+        font-size: clamp(34px, 4vw, 54px);
+        line-height: 1;
+    }
+}
+
+.thhs-news-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin: 30px 0;
+
+    > div {
+        padding: 17px;
+        border-radius: 15px;
+        background: rgba($thhs-green, 0.13);
+    }
+
+    strong {
+        display: block;
+        color: $thhs-navy;
+        font-family: "League Spartan", sans-serif;
+        font-size: 27px;
+        line-height: 1;
+    }
+
+    span {
+        display: block;
+        margin-top: 6px;
+        color: $thhs-muted;
+        font-size: 13px;
+        line-height: 1.35;
+    }
+}
+
+.thhs-news-body {
+    max-width: 920px;
+    margin: 0 auto;
+
+    h3 {
+        margin-top: 42px;
+        margin-bottom: 14px;
+        font-size: clamp(25px, 3vw, 34px);
+    }
+
+    p {
+        margin-bottom: 20px;
+    }
+}
+
+.thhs-news-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 30px;
+
+    .thhs-news-article {
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+    }
+
+    .thhs-news-copy {
+        flex: 1 1 auto;
+    }
+}
+
+.thhs-news-caption {
+    margin-top: 13px;
+    color: $thhs-muted;
+    font-size: 14px;
+    font-style: italic;
+}
+
+.thhs-news-quote {
+    margin: 28px 0;
+    padding: 24px 26px;
+    border-left: 4px solid $thhs-green;
+    border-radius: 0 16px 16px 0;
+    color: $thhs-navy;
+    background: rgba($thhs-green, 0.1);
+    font-size: 19px;
+}
+
+// Existing Odoo snippets ----------------------------------------------------
+#wrap .s_text_image:not(.thhs-section),
+#wrap .s_image_text:not(.thhs-section),
+#wrap .s_image_text_overlap:not(.thhs-section) {
+    // Keep the premium spacing as the default without defeating Website
+    // Builder's top/bottom resize pills (pt*/pb* utility classes).
+    padding-top: clamp(70px, 8vw, 110px);
+    padding-bottom: clamp(70px, 8vw, 110px);
+
+    img {
+        border-radius: 22px !important;
+        box-shadow: var(--thhs-shadow);
+    }
+}
+
+#wrap .s_cards_soft .card {
+    overflow: hidden;
+    border: 1px solid rgba($thhs-navy, 0.08);
+    border-radius: 22px;
+    box-shadow: var(--thhs-shadow-soft);
+}
+
+// Footer --------------------------------------------------------------------
+footer.o_footer {
+    border: 0 !important;
+    color: rgba($thhs-white, 0.78);
+    background: $thhs-navy !important;
+
+    #footer {
+        border: 0 !important;
+        background: transparent;
+    }
+
+    .thhs-footer {
+        padding-top: 74px;
+        padding-bottom: 58px;
+    }
+
+    h4,
+    h5 {
+        color: $thhs-white;
+    }
+
+    a {
+        color: rgba($thhs-white, 0.82);
+        text-decoration: none;
+
+        &:hover {
+            color: lighten($thhs-green, 18%);
+        }
+    }
+
+    .thhs-footer-brand {
+        max-width: 430px;
+
+        strong {
+            display: block;
+            margin-bottom: 12px;
+            color: $thhs-white;
+            font-family: "League Spartan", sans-serif;
+            font-size: 27px;
+            line-height: 1.1;
+        }
+    }
+
+    .o_footer_copyright {
+        border-top: 1px solid rgba($thhs-white, 0.13);
+        color: rgba($thhs-white, 0.58);
+        background: darken($thhs-navy, 4%) !important;
+    }
+}
+
+@media (max-width: 1199.98px) {
+    header#top {
+        #o_main_nav {
+            min-height: 118px;
+        }
+
+        .navbar-brand.logo {
+            width: 184px;
+            height: 106px;
+            flex-basis: 184px;
+
+            img {
+                width: 184px !important;
+                height: 184px !important;
+                transform: translateY(-36px);
+            }
+        }
+
+        #top_menu > .nav-item > .nav-link {
+            min-height: 118px;
+            font-size: 15px;
+        }
+    }
+}
+
+@media (max-width: 991.98px) {
+    header#top {
+        position: sticky;
+
+        .o_header_mobile .o_main_nav {
+            min-height: 88px;
+            padding: 0 18px;
+        }
+
+        .navbar-brand.logo {
+            width: 154px;
+            height: 82px;
+            margin-right: 12px !important;
+            flex-basis: 154px;
+
+            img {
+                width: 154px !important;
+                height: 154px !important;
+                transform: translateY(-33px);
+            }
+        }
+
+        #top_menu > .nav-item > .nav-link {
+            min-height: 62px;
+            justify-content: flex-start;
+            padding: 10px 18px;
+            font-size: 17px;
+        }
+
+        .dropdown-menu {
+            margin-top: 0 !important;
+            border-radius: 14px;
+            box-shadow: none;
+        }
+    }
+
+    .thhs-board-list {
+        .s_media_list_item > .row {
+            grid-template-columns: 200px minmax(0, 1fr);
+        }
+
+        .s_media_list_img_wrapper {
+            width: 190px;
+            height: 190px;
+            min-height: 190px !important;
+        }
+
+        .s_media_list_img {
+            width: 100% !important;
+            height: 100% !important;
+            min-height: 0 !important;
+        }
+    }
+
+    .thhs-news-feature {
+        grid-template-columns: minmax(230px, 0.7fr) minmax(0, 1.3fr);
+    }
+
+    .thhs-wow-ribbon {
+        margin-top: -24px;
+
+        .thhs-wow-ribbon-inner {
+            grid-template-columns: 1fr;
+        }
+
+        .thhs-wow-ribbon-item + .thhs-wow-ribbon-item {
+            border-top: 1px solid rgba($thhs-navy, 0.1);
+            border-left: 0;
+        }
+    }
+}
+
+@media (max-width: 767.98px) {
+    body {
+        font-size: 16px;
+    }
+
+    .thhs-page-hero,
+    #wrap > .s_title:first-child,
+    #wrap > .s_text_block:first-child.oe_img_bg {
+        min-height: 0;
+        padding-top: 60px;
+        padding-bottom: 60px;
+    }
+
+    .thhs-home-hero {
+        min-height: 650px;
+    }
+
+    #wrap .thhs-home-hero[class*=" pt"],
+    #wrap .thhs-home-hero[class*=" pb"] {
+        min-height: 0;
+    }
+
+    .thhs-impact-strip {
+        margin-top: -38px;
+
+        .thhs-impact-item {
+            margin: 9px 0;
+        }
+    }
+
+    .thhs-board-list {
+        .s_media_list_item > .row {
+            display: block;
+            min-height: 0;
+            padding: 28px 22px 34px !important;
+        }
+
+        .s_media_list_img_wrapper {
+            width: 180px;
+            height: 180px;
+            min-height: 180px !important;
+        }
+
+        .s_media_list_img {
+            width: 100% !important;
+            height: 100% !important;
+            min-height: 0 !important;
+        }
+
+        .s_media_list_body {
+            padding: 26px 0 0;
+        }
+    }
+
+    .thhs-news-feature,
+    .thhs-news-grid {
+        display: block;
+    }
+
+    .thhs-news-feature .thhs-news-image,
+    .thhs-news-image {
+        height: 300px;
+        min-height: 300px;
+    }
+
+    .thhs-news-grid .thhs-news-article + .thhs-news-article {
+        margin-top: 28px;
+    }
+
+    .thhs-news-stats {
+        grid-template-columns: 1fr;
+    }
+
+    #wrap .thhs-home-hero {
+        .container {
+            padding-top: 20px;
+            padding-bottom: 38px;
+        }
+
+        p.thhs-home-copy {
+            padding-left: 14px;
+        }
+    }
+
+    .thhs-wow-ribbon .thhs-wow-ribbon-item {
+        padding: 20px 22px;
+    }
+
+    .thhs-wow-story {
+        .thhs-wow-image-frame {
+            padding: 0 15px 20px 0;
+
+            img {
+                min-height: 320px;
+            }
+        }
+
+        .thhs-wow-image-note {
+            right: -3px;
+            bottom: 34px;
+        }
+    }
+
+    .thhs-wow-cta .thhs-wow-cta-panel {
+        border-radius: 23px;
+    }
+}

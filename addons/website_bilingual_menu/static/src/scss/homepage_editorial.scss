@@ -1,0 +1,631 @@
+@font-face {
+    font-family: "THHS DM Sans";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/website_bilingual_menu/static/src/fonts/dm-sans-400.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "THHS DM Sans";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("/website_bilingual_menu/static/src/fonts/dm-sans-700.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "THHS DM Sans";
+    font-style: normal;
+    font-weight: 800;
+    font-display: swap;
+    src: url("/website_bilingual_menu/static/src/fonts/dm-sans-800.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "THHS Playfair";
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url("/website_bilingual_menu/static/src/fonts/playfair-display-600.ttf") format("truetype");
+}
+
+$editorial-paper: #eef4f1;
+$editorial-ink: #07344a;
+$editorial-coral: #88ad59;
+$editorial-leaf: #4f817d;
+$editorial-sun: #b8df70;
+
+// Alpine Pulse Welcome treatment. This is presentation-only: the saved hero
+// markup, wording and mountain background image remain untouched.
+#wrap .thhs-home-hero {
+    min-height: clamp(610px, 72vh, 790px);
+    isolation: isolate;
+    overflow: hidden;
+    color: #fff;
+
+    // Tone down the editor-saved light wash so the mountain remains visible
+    // beneath the cinematic navy treatment.
+    .o_we_bg_filter {
+        z-index: 0;
+        opacity: 0.08;
+    }
+
+    &::before {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background:
+            linear-gradient(90deg, rgba(2, 35, 53, 0.93) 0%, rgba(4, 53, 75, 0.62) 43%, rgba(10, 102, 143, 0.18) 76%, rgba(10, 102, 143, 0.06) 100%),
+            linear-gradient(0deg, rgba(2, 31, 47, 0.16) 0%, rgba(2, 31, 47, 0.05) 28%, transparent 52%);
+        content: "";
+        pointer-events: none;
+    }
+
+    &::after {
+        content: none;
+    }
+
+    .container {
+        position: relative;
+        z-index: 3;
+        display: flex;
+        width: calc(100% - 72px);
+        max-width: 1480px;
+        min-height: inherit;
+        align-items: center;
+        padding-top: clamp(34px, 5vh, 72px);
+        padding-bottom: clamp(42px, 6vh, 82px);
+    }
+
+    .row,
+    .col-lg-9 {
+        width: 100%;
+    }
+
+    .col-lg-9 {
+        max-width: none;
+        flex: 0 0 100%;
+    }
+
+    h1:first-of-type {
+        max-width: 1020px;
+        margin: 0;
+        color: #fff !important;
+        font-family: "THHS DM Sans", sans-serif !important;
+        font-size: clamp(76px, 10vw, 154px);
+        font-weight: 700;
+        line-height: 0.78;
+        letter-spacing: -0.085em;
+        text-shadow: 0 14px 46px rgba(0, 18, 29, 0.28);
+    }
+
+    h1.thhs-home-copy {
+        max-width: 920px;
+        margin: 6px 0 20px;
+        padding: 0;
+        border: 0;
+        font-family: "THHS Playfair", serif !important;
+        font-size: clamp(62px, 8.2vw, 124px) !important;
+        font-style: italic;
+        font-weight: 600;
+        line-height: 0.78;
+        letter-spacing: -0.065em;
+
+        span,
+        strong,
+        font {
+            color: #b8df70 !important;
+            font-family: inherit !important;
+            font-size: inherit !important;
+            font-style: inherit;
+            font-weight: inherit;
+            line-height: inherit;
+        }
+    }
+
+    p.thhs-home-copy {
+        width: 53%;
+        max-width: 620px;
+        margin: 8px 0 24px 0;
+        padding: 0 0 0 72px;
+        border: 0;
+        color: rgba(255, 255, 255, 0.94) !important;
+        font-family: "THHS DM Sans", sans-serif;
+        font-size: clamp(17px, 1.45vw, 22px);
+        font-weight: 400;
+        line-height: 1.5;
+        text-shadow: 0 2px 12px rgba(0, 22, 34, 0.48);
+
+        &::before {
+            position: absolute;
+            width: 54px;
+            height: 1px;
+            margin-top: 0.8em;
+            margin-left: -72px;
+            background: rgba(255, 255, 255, 0.72);
+            content: "";
+        }
+
+        strong,
+        font {
+            color: inherit !important;
+            font-family: inherit !important;
+            font-weight: inherit;
+        }
+    }
+
+    .d-flex.flex-wrap.gap-3 {
+        margin-left: 0;
+        padding-left: 72px;
+    }
+
+    .btn-primary {
+        color: #06283a !important;
+        background: #b8df70;
+        box-shadow: 0 14px 34px rgba(0, 25, 38, 0.28);
+    }
+
+    .btn-outline-light {
+        border-color: rgba(255, 255, 255, 0.62);
+        color: #fff !important;
+        background: rgba(255, 255, 255, 0.07);
+        backdrop-filter: blur(12px);
+    }
+}
+
+// Everything is scoped to thhs-editorial-* classes. No rule targets the
+// header, menu, logo, Welcome snippet or generic Odoo elements.
+.thhs-editorial-intro,
+.thhs-editorial-ticker,
+.thhs-editorial-stories,
+.thhs-editorial-care {
+    font-family: "THHS DM Sans", sans-serif;
+}
+
+.thhs-editorial-shell {
+    width: calc(100% - 54px);
+    max-width: 1420px;
+    margin: 0 auto;
+}
+
+.thhs-editorial-intro {
+    padding: clamp(76px, 8vw, 122px) 0 82px;
+    color: $editorial-ink;
+    background:
+        radial-gradient(circle at 92% 8%, rgba(116, 178, 187, 0.15), transparent 25%),
+        linear-gradient(135deg, $editorial-paper 0%, #f8fbf9 100%);
+}
+
+.thhs-editorial-overline {
+    display: flex;
+    justify-content: space-between;
+    color: #536b6f;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.thhs-editorial-display {
+    position: relative;
+    margin: 18px 0 38px;
+    color: $editorial-ink !important;
+    font-family: "THHS DM Sans", sans-serif !important;
+    font-size: clamp(68px, 11.4vw, 180px);
+    font-weight: 700;
+    line-height: 0.77;
+    letter-spacing: -0.082em;
+}
+
+.thhs-editorial-serif {
+    font-family: "THHS Playfair", serif;
+    font-weight: 600;
+}
+
+.thhs-editorial-coral {
+    color: $editorial-coral;
+}
+
+.thhs-editorial-stamp {
+    position: absolute;
+    top: 5%;
+    right: 7%;
+    display: grid;
+    width: 120px;
+    height: 120px;
+    place-items: center;
+    border-radius: 50%;
+    color: $editorial-ink;
+    background: $editorial-sun;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: 0.09em;
+    text-align: center;
+    text-transform: uppercase;
+    animation: thhs-editorial-bob 4s ease-in-out infinite;
+}
+
+.thhs-editorial-mosaic {
+    display: grid;
+    grid-template-columns: 1.25fr 0.7fr 0.65fr;
+    grid-template-rows: 210px 260px;
+    gap: 16px;
+}
+
+.thhs-editorial-tile {
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+}
+
+.thhs-editorial-image {
+    grid-row: 1 / 3;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 700ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    &:hover img {
+        transform: scale(1.045);
+    }
+}
+
+.thhs-editorial-quote {
+    display: flex;
+    align-items: flex-end;
+    padding: 27px;
+    color: #fff;
+    background: linear-gradient(145deg, #07344a, #0c4960);
+
+    p {
+        margin: 0;
+        font-family: "THHS Playfair", serif;
+        font-size: clamp(23px, 2.35vw, 37px);
+        font-weight: 600;
+        line-height: 1.05;
+    }
+}
+
+.thhs-editorial-stat {
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: linear-gradient(145deg, $editorial-leaf, #3e716f);
+    text-align: center;
+
+    strong {
+        display: block;
+        font-size: clamp(42px, 4vw, 58px);
+        font-weight: 800;
+        line-height: 0.95;
+    }
+
+    span {
+        display: block;
+        margin-top: 8px;
+        font-size: 13px;
+    }
+}
+
+.thhs-editorial-message {
+    grid-column: 2 / 4;
+    padding: 28px;
+    background: #fff;
+
+    p {
+        max-width: 650px;
+        margin: 0;
+        color: $editorial-ink;
+        font-size: 19px;
+        line-height: 1.55;
+    }
+}
+
+.thhs-editorial-ticker {
+    overflow: hidden;
+    padding: 17px 0;
+    color: $editorial-ink;
+    background: linear-gradient(90deg, #a9d363, $editorial-sun 48%, #9dca70);
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    > div {
+        display: flex;
+        width: max-content;
+        gap: 28px;
+        align-items: center;
+        animation: thhs-editorial-marquee 24s linear infinite;
+    }
+}
+
+.thhs-editorial-wrap {
+    width: calc(100% - 48px);
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.thhs-editorial-stories {
+    padding: clamp(90px, 10vw, 150px) 0;
+    color: $editorial-ink;
+    background: #fff;
+}
+
+.thhs-editorial-section-head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: end;
+
+    h2 {
+        margin: 0;
+        color: $editorial-ink !important;
+        font-family: "THHS DM Sans", sans-serif !important;
+        font-size: clamp(56px, 8vw, 120px);
+        font-weight: 700;
+        line-height: 0.82;
+        letter-spacing: -0.075em;
+
+        span {
+            color: $editorial-leaf;
+        }
+    }
+
+    p {
+        max-width: 500px;
+        margin: 0;
+        color: #425f64;
+        font-size: 20px;
+        line-height: 1.6;
+    }
+}
+
+.thhs-editorial-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 80px;
+}
+
+.thhs-editorial-card {
+    position: relative;
+    min-height: 570px;
+    overflow: hidden;
+    border-radius: 28px;
+    background: $editorial-paper;
+    transition: transform 450ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 450ms ease;
+
+    &:nth-child(2) {
+        margin-top: 100px;
+        background: #deece8;
+    }
+
+    &:hover {
+        box-shadow: 0 28px 65px rgba($editorial-ink, 0.16);
+        transform: translateY(-8px);
+    }
+}
+
+.thhs-editorial-card-image {
+    overflow: hidden;
+
+    img {
+        width: 100%;
+        height: 360px;
+        object-fit: cover;
+        transition: transform 700ms ease;
+    }
+
+    .thhs-editorial-card:hover & img {
+        transform: scale(1.04);
+    }
+}
+
+.thhs-editorial-card-copy {
+    padding: 30px 88px 34px 30px;
+
+    small {
+        color: #6c7f7d;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    h3 {
+        margin: 9px 0;
+        color: $editorial-ink !important;
+        font-family: "THHS Playfair", serif !important;
+        font-size: clamp(31px, 3vw, 40px);
+        font-weight: 600;
+        line-height: 1;
+    }
+
+    p {
+        color: #50696a;
+    }
+}
+
+.thhs-editorial-circle-link {
+    position: absolute;
+    right: 25px;
+    bottom: 24px;
+    display: grid;
+    width: 53px;
+    height: 53px;
+    place-items: center;
+    border: 1px solid $editorial-ink;
+    border-radius: 50%;
+    color: $editorial-ink;
+    text-decoration: none;
+    transition: color 220ms ease, background 220ms ease, transform 220ms ease;
+
+    &:hover {
+        color: #fff;
+        background: $editorial-ink;
+        transform: rotate(45deg);
+    }
+}
+
+.thhs-editorial-care {
+    padding: clamp(90px, 10vw, 145px) 0;
+    color: #fff;
+    background:
+        radial-gradient(circle at 86% 15%, rgba(115, 190, 190, 0.26), transparent 29%),
+        linear-gradient(125deg, #062c42 0%, #0a4358 58%, #17616a 100%);
+}
+
+.thhs-editorial-care-grid {
+    display: grid;
+    grid-template-columns: 0.65fr 1.35fr;
+    gap: 8vw;
+}
+
+.thhs-editorial-care-label {
+    color: #b8df70;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.thhs-editorial-care h2 {
+    margin: 0;
+    color: #fff !important;
+    font-family: "THHS Playfair", serif !important;
+    font-size: clamp(54px, 8vw, 120px);
+    font-weight: 600;
+    line-height: 0.84;
+    letter-spacing: -0.055em;
+
+    em {
+        color: #b8df70;
+    }
+}
+
+.thhs-editorial-cta {
+    display: inline-block;
+    margin-top: 35px;
+    padding: 17px 24px;
+    border-radius: 999px;
+    color: #062c42 !important;
+    background: #b8df70;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 220ms ease, box-shadow 220ms ease;
+
+    &:hover {
+        box-shadow: 0 16px 35px rgba(184, 223, 112, 0.24);
+        transform: translateY(-3px);
+    }
+}
+
+.thhs-editorial-reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 850ms ease, transform 850ms cubic-bezier(0.2, 0.7, 0.2, 1);
+
+    &.is-visible {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes thhs-editorial-bob {
+    50% { transform: rotate(3deg) translateY(-9px); }
+}
+
+@keyframes thhs-editorial-marquee {
+    to { transform: translateX(-50%); }
+}
+
+@media (max-width: 850px) {
+    #wrap .thhs-home-hero {
+        min-height: 650px;
+
+        .container {
+            width: calc(100% - 30px);
+            padding-top: 64px;
+            padding-bottom: 64px;
+        }
+
+        h1:first-of-type {
+            font-size: clamp(68px, 22vw, 105px);
+        }
+
+        h1.thhs-home-copy {
+            margin-top: 12px;
+            font-size: clamp(49px, 15vw, 76px) !important;
+            line-height: 0.84;
+        }
+
+        p.thhs-home-copy {
+            width: 100%;
+            margin: 32px 0 24px;
+            padding-left: 46px;
+            font-size: 17px;
+
+            &::before {
+                width: 32px;
+                margin-left: -46px;
+            }
+        }
+
+        .d-flex.flex-wrap.gap-3 {
+            margin-left: 0;
+            padding-left: 46px;
+        }
+    }
+
+    .thhs-editorial-shell {
+        width: calc(100% - 30px);
+        max-width: 1420px;
+    }
+
+    .thhs-editorial-display .thhs-editorial-stamp {
+        width: 78px;
+        height: 78px;
+        font-size: 9px;
+    }
+
+    .thhs-editorial-mosaic {
+        grid-template-columns: 1fr;
+        grid-template-rows: 360px 220px 180px 230px;
+    }
+
+    .thhs-editorial-image {
+        grid-row: auto;
+    }
+
+    .thhs-editorial-message {
+        grid-column: auto;
+    }
+
+    .thhs-editorial-section-head,
+    .thhs-editorial-care-grid,
+    .thhs-editorial-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .thhs-editorial-card:nth-child(2) {
+        margin-top: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .thhs-editorial-stamp,
+    .thhs-editorial-ticker > div {
+        animation: none;
+    }
+
+    .thhs-editorial-reveal {
+        opacity: 1;
+        transform: none;
+    }
+}

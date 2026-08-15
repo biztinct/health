@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="bilingual_menu_label" name="Bilingual Menu Label">
+        <t t-if="'|' in submenu.name">
+            <t t-set="bilingual_menu_parts" t-value="submenu.name.split('|', 1)"/>
+            <span class="tt-menu-copy">
+                <span class="tt-menu-primary" t-out="bilingual_menu_parts[0].strip()"/>
+                <span class="tt-menu-secondary" t-out="bilingual_menu_parts[1].strip()"/>
+            </span>
+        </t>
+        <span t-else="" t-field="submenu.name"/>
+    </template>
+
+    <template
+        id="website_submenu_bilingual"
+        inherit_id="website.submenu"
+        name="Bilingual Website Menu"
+        priority="50"
+    >
+        <!-- Regular menu links. -->
+        <xpath expr="//li[@t-if]/a/span[@t-field='submenu.name']" position="replace">
+            <t t-call="website_bilingual_menu.bilingual_menu_label"/>
+        </xpath>
+
+        <!-- Desktop dropdown and mega-menu headings. -->
+        <xpath expr="//a[@t-if='not is_accordion_nav']/span[@t-field='submenu.name']" position="replace">
+            <t t-call="website_bilingual_menu.bilingual_menu_label"/>
+        </xpath>
+
+        <!-- Mobile/sidebar accordion headings. -->
+        <xpath expr="//div[@t-elif='is_accordion_nav']/a/span[@t-field='submenu.name']" position="replace">
+            <t t-call="website_bilingual_menu.bilingual_menu_label"/>
+        </xpath>
+    </template>
+
+    <template
+        id="website_footer_dynamic_name"
+        inherit_id="website.footer_copyright_company_name"
+        name="Website Name in Footer Copyright"
+        priority="60"
+    >
+        <xpath expr="//span[hasclass('o_footer_copyright_name')]" position="replace">
+            <span class="o_footer_copyright_name me-2 small">
+                Copyright © <t t-out="website.name"/>
+            </span>
+        </xpath>
+    </template>
+
+    <template
+        id="website_footer_remove_brand_promotion"
+        inherit_id="website.brand_promotion"
+        name="Remove Website Brand Promotion"
+        priority="80"
+    >
+        <xpath expr="//t[@t-call='web.brand_promotion_message']" position="replace"/>
+    </template>
+</odoo>
