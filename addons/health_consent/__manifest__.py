@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Healthcare Consent Management',
-    'version': '19.0.1.1.1',
+    'version': '19.0.1.2.0',
     'category': 'Healthcare/Clinical',
     'summary': 'Consent capture (verbal/written/digital signature), expiry '
                'lifecycle and check_consent() service API (FHIR Consent)',

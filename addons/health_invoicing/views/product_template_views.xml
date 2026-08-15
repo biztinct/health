@@ -23,12 +23,12 @@
                 <group name="healthcare_package_config" string="Healthcare Package Configuration"
                        invisible="type != 'healthcare_package'">
                     <group>
-                        <field name="healthcare_package_type" required="type == 'healthcare_package'"/>
+                        <field name="healthcare_package_type_id" required="type == 'healthcare_package'"/>
                         <field name="healthcare_service_count" required="type == 'healthcare_package'"/>
                         <field name="healthcare_price_per_visit" readonly="1"/>
                     </group>
                     <group>
-                        <field name="healthcare_service_location"/>
+                        <field name="healthcare_service_location_id"/>
                         <field name="healthcare_package_duration"/>
                         <field name="currency_id" invisible="1"/>
                     </group>

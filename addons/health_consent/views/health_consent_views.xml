@@ -30,7 +30,7 @@
                         <group>
                             <field name="client_id"
                                    readonly="state != 'draft'"/>
-                            <field name="consent_type"
+                            <field name="consent_type_id"
                                    readonly="state != 'draft'"/>
                             <field name="scope_note"
                                    readonly="state != 'draft'"/>
@@ -105,7 +105,7 @@
             <list default_order="create_date desc">
                 <field name="name"/>
                 <field name="client_id"/>
-                <field name="consent_type"/>
+                <field name="consent_type_id"/>
                 <field name="method"/>
                 <field name="self_granted" optional="hide"/>
                 <field name="granted_by_partner_id"
@@ -141,20 +141,20 @@
                         domain="[('state', '=', 'withdrawn')]"/>
                 <separator/>
                 <filter name="filter_service" string="Service Delivery"
-                        domain="[('consent_type', '=', 'service')]"/>
+                        domain="[('consent_type_code', '=', 'service')]"/>
                 <filter name="filter_data_sharing" string="Data Sharing"
-                        domain="[('consent_type', '=', 'data_sharing')]"/>
+                        domain="[('consent_type_code', '=', 'data_sharing')]"/>
                 <filter name="filter_photography" string="Photography/Media"
-                        domain="[('consent_type', '=', 'photography')]"/>
+                        domain="[('consent_type_code', '=', 'photography')]"/>
                 <filter name="filter_emergency" string="Emergency Treatment"
-                        domain="[('consent_type', '=', 'emergency_treatment')]"/>
+                        domain="[('consent_type_code', '=', 'emergency_treatment')]"/>
                 <filter name="filter_marketing" string="Marketing"
-                        domain="[('consent_type', '=', 'marketing')]"/>
+                        domain="[('consent_type_code', '=', 'marketing')]"/>
                 <separator/>
                 <filter name="group_by_client" string="Client"
                         context="{'group_by': 'client_id'}"/>
                 <filter name="group_by_type" string="Consent Type"
-                        context="{'group_by': 'consent_type'}"/>
+                        context="{'group_by': 'consent_type_id'}"/>
                 <filter name="group_by_state" string="Status"
                         context="{'group_by': 'state'}"/>
             </search>

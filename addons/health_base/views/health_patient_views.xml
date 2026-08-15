@@ -107,7 +107,7 @@
                                 <div class="vu-summary-row">
                                     <span class="vu-summary-row__label">Gender</span>
                                     <span class="vu-summary-row__value">
-                                        <field name="gender" readonly="1" nolabel="1"/>
+                                        <field name="gender_id" readonly="1" nolabel="1"/>
                                     </span>
                                 </div>
                             </div>
@@ -217,7 +217,7 @@
                                                     <field name="vietnamese_name" placeholder="Tên tiếng Việt"/>
                                                     <field name="birth_date"/>
                                                     <field name="deceased"/>
-                                                    <field name="gender"/>
+                                                    <field name="gender_id"/>
                                                 </group>
                                             </div>
 
@@ -564,7 +564,7 @@
                 <field name="patient_code"/>
                 <field name="name"/>
                 <field name="age_display"/>
-                <field name="gender"/>
+                <field name="gender_id"/>
                 <field name="phone" widget="phone"/>
                 <field name="national_id" optional="show"/>
                 <field name="patient_category_id"/>
@@ -607,7 +607,7 @@
                 <field name="name"/>
                 <field name="patient_code"/>
                 <field name="age_display"/>
-                <field name="gender"/>
+                <field name="gender_id"/>
                 <field name="phone"/>
                 <field name="patient_status"/>
                 <field name="patient_category_id"/>
@@ -634,7 +634,7 @@
 
                                 <div class="o_patient_card_info">
                                     <div class="o_patient_code"><i class="fa fa-id-card-o"/> <field name="patient_code"/></div>
-                                    <div><i class="fa fa-venus-mars"/> <field name="age_display"/> • <field name="gender"/></div>
+                                    <div><i class="fa fa-venus-mars"/> <field name="age_display"/> • <field name="gender_id"/></div>
                                     <div><i class="fa fa-phone"/> <field name="phone"/></div>
                                 </div>
 

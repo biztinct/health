@@ -136,7 +136,7 @@ class HealthPrepaidPackageWizard(models.TransientModel):
             if wizard.package_product_id:
                 product = wizard.package_product_id
                 wizard.package_name = product.name
-                wizard.service_type = product.healthcare_package_type
+                wizard.service_type = product.healthcare_package_type_id.code
                 wizard.total_services = product.healthcare_service_count
                 wizard.package_price = product.list_price
                 wizard.price_per_service = product.healthcare_price_per_visit

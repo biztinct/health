@@ -320,6 +320,28 @@ class MigrationRunner(models.Model):
     def _parse_dob(self, v):
         return self._parse_date_any(v)
 
+    def _gender_id(self, raw):
+        """GENDER_MAP code -> health.lookup.value id, or False.
+
+        Gender stopped being a Selection when it joined the client-editable
+        dropdown vocabularies, so the migration resolves the code it already
+        derives into the `gender` vocabulary rather than writing a varchar.
+        Cached per run: this is called once per imported row.
+        """
+        code = GENDER_MAP.get(_norm(raw))
+        if not code:
+            return False
+        cache = getattr(self, '_gender_id_cache', None)
+        if cache is None:
+            cache = {
+                v.code: v.id
+                for v in self.env['health.lookup.value']
+                .with_context(active_test=False)
+                .search([('category_code', '=', 'gender')])
+            }
+            type(self)._gender_id_cache = cache
+        return cache.get(code, False)
+
     def _parse_dt(self, v):
         """'dd/mm/yyyy HH:MM' -> naive datetime (treated as local, stored UTC)."""
         if not v:
@@ -787,9 +809,9 @@ class MigrationRunner(models.Model):
             'catchment_province_id': catch.id,
             'primary_facility_id': fac.id if fac else False,
         }
-        g = GENDER_MAP.get(_norm(row.get('Contact_gioi_tinh')))
+        g = self._gender_id(row.get('Contact_gioi_tinh'))
         if g:
-            vals['gender'] = g
+            vals['gender_id'] = g
         dob = self._parse_dob(row.get('Contact_nam_sinh'))
         if dob:
             vals['birth_date'] = dob
@@ -1178,9 +1200,9 @@ class MigrationRunner(models.Model):
             outcome = CONTACT_OUTCOME_MAP.get(_norm_key(row.get('cskh_3')))
             if outcome:
                 vals['health_contact_outcome'] = outcome
-            g = GENDER_MAP.get(_norm(row.get('gioi_tinh')))
+            g = self._gender_id(row.get('gioi_tinh'))
             if g:
-                vals['gender'] = g
+                vals['gender_id'] = g
             dob = self._parse_dob(row.get('nam_sinh'))
             if dob:
                 vals['birth_date'] = dob

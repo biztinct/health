@@ -94,7 +94,7 @@
                             <list>
                                 <field name="representative_id"/>
                                 <field name="role"/>
-                                <field name="relationship_type"/>
+                                <field name="relationship_type_id"/>
                                 <field name="is_primary" widget="boolean_toggle"/>
                                 <field name="can_make_medical_decisions" widget="boolean_toggle"/>
                                 <field name="financial_responsibility" widget="percentage"/>
@@ -110,7 +110,7 @@
                             <list>
                                 <field name="client_id"/>
                                 <field name="role"/>
-                                <field name="relationship_type"/>
+                                <field name="relationship_type_id"/>
                                 <field name="is_primary" widget="boolean_toggle"/>
                                 <field name="can_make_medical_decisions" widget="boolean_toggle"/>
                                 <field name="financial_responsibility" widget="percentage"/>

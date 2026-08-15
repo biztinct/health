@@ -96,11 +96,12 @@ class CarePlanSerializer(FHIRSerializer):
             description = strip_html(plan.description)
             if description:
                 resource['description'] = description
-        if plan.category:
+        if plan.category_id:
             resource['category'] = [{
                 'coding': [{
                     'system': CAREPLAN_CATEGORY_SYSTEM,
-                    'code': plan.category,
+                    'code': plan.category_id.code,
+                    'display': plan.category_id.name or '',
                 }],
             }]
         period = {}
@@ -271,14 +272,13 @@ class TaskSerializer(FHIRSerializer):
             'intent': 'order',
             'code': {'text': task.name or ''},
         }
-        if task.state == 'not_done' and task.not_done_reason:
-            label = dict(task._fields['not_done_reason']
-                         ._description_selection(task.env)).get(
-                             task.not_done_reason)
+        if task.state == 'not_done' and task.not_done_reason_id:
+            label = task.not_done_reason_id.name
             resource['statusReason'] = {
                 'coding': [{
                     'system': NOT_DONE_REASON_SYSTEM,
-                    'code': task.not_done_reason,
+                    'code': task.not_done_reason_id.code,
+                    'display': label or '',
                 }],
                 'text': task.not_done_note or label or '',
             }

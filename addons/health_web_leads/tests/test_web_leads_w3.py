@@ -99,7 +99,7 @@ class TestWebLeadsW3(TransactionCase):
             'email_from': email or ('%s@webleads.invalid'
                                     % uuid.uuid4().hex[:12]),
             'catchment_province_id': self.province.id,
-            'mode_of_contact': 'website',
+            'mode_of_contact_id': self.env['health.lookup.value']._default_for('mode_of_contact', 'website'),
             'external_submission_id': submission_id,
             'web_consent_marketing': consent,
             'web_consent_text_version': version,
@@ -111,7 +111,7 @@ class TestWebLeadsW3(TransactionCase):
             'lead_id': lead.id,
             'occurred_at': occurred_at,
             'received_at': fields.Datetime.now() - timedelta(days=2),
-            'touchpoint_type': 'form_submit',
+            'touchpoint_type_id': self.env['health.lookup.value']._default_for('touchpoint_type', 'form_submit'),
             'source_system': 'wordpress',
             'external_event_id': submission_id,
             'utm_campaign': False,
@@ -128,7 +128,7 @@ class TestWebLeadsW3(TransactionCase):
     def _marketing_consents(self, patient):
         return self.Consent.sudo().with_context(active_test=False).search(
             [('client_id', '=', patient.id),
-             ('consent_type', '=', 'marketing')])
+             ('consent_type_code', '=', 'marketing')])
 
     @staticmethod
     def _bodies(record):
@@ -240,7 +240,7 @@ class TestWebLeadsW3(TransactionCase):
             'phone': phone, 'email': email,
             'catchment_province_id': self.province.id})
         staff_consent = self.Consent.create({
-            'client_id': patient.id, 'consent_type': 'marketing',
+            'client_id': patient.id, 'consent_type_id': self.env['health.lookup.value']._default_for('consent_type', 'marketing'),
             'method': 'verbal', 'self_granted': True,
             'verbal_witness_id': self.env.uid,
             'scope_note': 'Captured at the desk by a human'})
@@ -356,7 +356,7 @@ class TestWebLeadsW3(TransactionCase):
             'is_patient': True, 'is_company': False,
             'catchment_province_id': self.province.id})
         draft = self.Consent.create({
-            'client_id': other.id, 'consent_type': 'marketing',
+            'client_id': other.id, 'consent_type_id': self.env['health.lookup.value']._default_for('consent_type', 'marketing'),
             'method': WEB_FORM_METHOD, 'self_granted': True})
         with self.assertRaises(UserError):
             draft.action_grant()
@@ -581,7 +581,7 @@ class TestWebLeadsW3(TransactionCase):
             'lead_id': lead.id,
             'occurred_at': fields.Datetime.now() - timedelta(days=31),
             'received_at': fields.Datetime.now() - timedelta(days=31),
-            'touchpoint_type': 'form_submit',
+            'touchpoint_type_id': self.env['health.lookup.value']._default_for('touchpoint_type', 'form_submit'),
             'source_system': 'wordpress',
             'external_event_id': self._sid('old'),
             'utm_campaign': 'hn_w3_retention_202606',
@@ -590,7 +590,7 @@ class TestWebLeadsW3(TransactionCase):
             'lead_id': lead.id,
             'occurred_at': fields.Datetime.now() - timedelta(days=5),
             'received_at': fields.Datetime.now() - timedelta(days=5),
-            'touchpoint_type': 'form_submit',
+            'touchpoint_type_id': self.env['health.lookup.value']._default_for('touchpoint_type', 'form_submit'),
             'source_system': 'wordpress',
             'external_event_id': self._sid('recent'),
             'raw_payload': '{"kept": "definitely"}'})
@@ -629,7 +629,7 @@ class TestWebLeadsW3(TransactionCase):
         # evidence that the touch happened (binding non-goal).
         self.assertTrue(old.exists())
         self.assertEqual(old.lead_id, lead)
-        self.assertEqual(old.touchpoint_type, 'form_submit')
+        self.assertEqual(old.touchpoint_type_code, 'form_submit')
         self.assertEqual(old.utm_campaign, 'hn_w3_retention_202606')
         self.assertTrue(old.external_event_id)
         self.assertTrue(old.occurred_at)

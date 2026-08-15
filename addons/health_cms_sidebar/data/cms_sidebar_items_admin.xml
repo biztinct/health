@@ -26,7 +26,8 @@
         <field name="sequence">30</field>
         <field name="icon">fa fa-database</field>
         <field name="action_xmlid">health_landing.action_admin_facilities</field>
-        <field name="match_action_xmlids">health_landing.action_admin_facilities,health_landing.action_admin_catchments,health_landing.action_admin_service_types,health_landing.action_admin_symptoms,health_landing.action_admin_referral_sources,health_landing.action_admin_insurance,health_landing.action_admin_urgency,health_landing.action_admin_categories,health_landing.action_admin_specialties,health_landing.action_admin_districts</field>
+        <field name="match_action_xmlids">health_landing.action_admin_facilities,health_landing.action_admin_catchments,health_landing.action_admin_service_types,health_landing.action_admin_symptoms,health_landing.action_admin_referral_sources,health_landing.action_admin_insurance,health_landing.action_admin_urgency,health_landing.action_admin_categories,health_landing.action_admin_specialties,health_landing.action_admin_districts,health_landing.action_admin_provinces,health_landing.action_admin_contact_reasons,health_landing.action_admin_lead_reasons,health_landing.action_admin_lost_reasons,health_landing.action_admin_service_categories,health_landing.action_admin_protocols,health_landing.action_admin_booking_stages,health_landing.action_admin_fs_teams,health_landing.action_admin_cancel_reasons,health_landing.action_admin_deletion_reasons,health_cms_sidebar.action_admin_observation_types,health_cms_sidebar.action_admin_notgiven_reasons,health_landing.action_admin_lookup_values,health_landing.action_admin_lookup_categories</field>
+        <field name="match_models">health.lookup.value,health.lookup.category</field>
     </record>
 
     <record id="item_admin_pricing" model="cms.sidebar.item">
@@ -34,8 +35,8 @@
         <field name="section_id" ref="section_admin"/>
         <field name="sequence">40</field>
         <field name="icon">fa fa-tags</field>
-        <field name="action_xmlid">health_landing.action_admin_pricelists</field>
-        <field name="match_action_xmlids">health_landing.action_admin_pricelists,health_landing.action_admin_pricing_rules,health_landing.action_admin_quick_edit_rules,health_landing.action_admin_packages</field>
+        <field name="action_xmlid">health_landing.action_admin_services</field>
+        <field name="match_action_xmlids">health_landing.action_admin_services,health_landing.action_admin_pricelists,health_landing.action_admin_pricing_rules,health_landing.action_admin_quick_edit_rules,health_landing.action_admin_packages</field>
     </record>
 
     <record id="item_admin_staff" model="cms.sidebar.item">

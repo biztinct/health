@@ -104,30 +104,31 @@ class Symptom(models.Model):
     """Common symptoms for initial patient assessment"""
     _name = 'health.symptom'
     _description = 'Health Symptom'
-    _order = 'category, name'
+    _order = 'category_id, name'
 
     name = fields.Char('Symptom Name', required=True, translate=True)
     code = fields.Char('Symptom Code', size=10)
-    category = fields.Selection([
-        ('general', 'General'),
-        ('pain', 'Pain & Discomfort'),
-        ('respiratory', 'Respiratory'),
-        ('cardiovascular', 'Cardiovascular'),
-        ('digestive', 'Digestive'),
-        ('neurological', 'Neurological'),
-        ('skin', 'Skin & Dermatological'),
-        ('musculoskeletal', 'Musculoskeletal'),
-        ('mental_health', 'Mental Health'),
-        ('other', 'Other')
-    ], string='Category', default='general')
+    category_id = fields.Many2one(
+        'health.lookup.value',
+        string='Category',
+        domain="[('category_code', '=', 'symptom_category'), ('active', '=', True)]",
+        ondelete='restrict',
+        default=lambda self: self.env['health.lookup.value']._default_for(
+            'symptom_category', 'general'))
     
     severity_levels = fields.Text('Severity Levels', default='Mild, Moderate, Severe')
-    urgency_level = fields.Selection([
-        ('low', 'Low Priority'),
-        ('medium', 'Medium Priority'),
-        ('high', 'High Priority'),
-        ('emergency', 'Emergency')
-    ], string='Default Urgency', default='medium')
+    # Points at health.urgency.level, NOT the generic lookup table: urgency is
+    # already its own client-editable model with its own Master Data tab and
+    # its own extra columns. Giving symptoms a parallel "urgency" vocabulary
+    # would be the exact drift this programme exists to remove.
+    urgency_level_id = fields.Many2one(
+        'health.urgency.level', string='Default Urgency', ondelete='restrict',
+        help='Default triage urgency suggested when this symptom is reported.')
+    # Companion for view expressions and domains: an Odoo view attribute
+    # (invisible=, decoration-, domain=) cannot traverse a many2one, and
+    # this keeps every existing comparison a one-word change.
+    urgency_level_code = fields.Char(
+        related='urgency_level_id.code', string='Urgency Level Code', readonly=True)
     
     description = fields.Text('Description', translate=True)
     active = fields.Boolean('Active', default=True)
@@ -138,22 +139,17 @@ class ReferralSource(models.Model):
     """Referral sources for patient tracking"""
     _name = 'health.referral.source'
     _description = 'Referral Source'
-    _order = 'source_type, name'
+    _order = 'source_type_id, name'
 
-    name = fields.Char('Source Name', required=True)
-    source_type = fields.Selection([
-        ('facebook', 'Facebook'),
-        ('zalo', 'Zalo'),
-        ('website', 'Website'),
-        ('google', 'Google'),
-        ('doctor', 'Doctor Referral'),
-        ('hospital', 'Hospital Referral'),
-        ('friend', 'Friend/Family'),
-        ('advertisement', 'Advertisement'),
-        ('other', 'Other')
-    ], string='Source Type', required=True)
+    name = fields.Char('Source Name', required=True, translate=True)
+    source_type_id = fields.Many2one(
+        'health.lookup.value',
+        string='Source Type',
+        domain="[('category_code', '=', 'referral_source_type'), ('active', '=', True)]",
+        ondelete='restrict',
+        required=True)
     
-    description = fields.Text('Description')
+    description = fields.Text('Description', translate=True)
     contact_person = fields.Char('Contact Person')
     contact_phone = fields.Char('Contact Phone')
     contact_email = fields.Char('Contact Email')
@@ -179,7 +175,7 @@ class InsuranceProvider(models.Model):
     _description = 'Insurance Provider'
     _order = 'name'
 
-    name = fields.Char('Provider Name', required=True)
+    name = fields.Char('Provider Name', required=True, translate=True)
     code = fields.Char('Provider Code', size=10)
     contact_phone = fields.Char('Contact Phone')
     contact_email = fields.Char('Contact Email')
@@ -242,21 +238,23 @@ class VietnameseDistricts(models.Model):
     _description = 'Vietnamese District'
     _order = 'province_name, name'
 
-    name = fields.Char('District Name', required=True)
-    province_name = fields.Char('Province Name', required=True)
-    region = fields.Selection([
-        ('north', 'Northern Vietnam'),
-        ('central', 'Central Vietnam'),
-        ('south', 'Southern Vietnam')
-    ], string='Region', default='south')
+    name = fields.Char('District Name', required=True, translate=True)
+    province_name = fields.Char('Province Name', required=True, translate=True)
+    region_id = fields.Many2one(
+        'health.lookup.value',
+        string='Region',
+        domain="[('category_code', '=', 'vn_region'), ('active', '=', True)]",
+        ondelete='restrict',
+        default=lambda self: self.env['health.lookup.value']._default_for('vn_region', 'south'))
     
     # Service delivery
     supports_home_visits = fields.Boolean('Supports Home Visits', default=True)
-    travel_zone = fields.Selection([
-        ('zone_1', 'Zone 1 (Inner City)'),
-        ('zone_2', 'Zone 2 (Suburban)'),
-        ('zone_3', 'Zone 3 (Outer Areas)')
-    ], string='Travel Zone', default='zone_2')
+    travel_zone_id = fields.Many2one(
+        'health.lookup.value',
+        string='Travel Zone',
+        domain="[('category_code', '=', 'travel_zone'), ('active', '=', True)]",
+        ondelete='restrict',
+        default=lambda self: self.env['health.lookup.value']._default_for('travel_zone', 'zone_2'))
     
     base_travel_fee = fields.Float('Base Travel Fee (VND)', default=0.0)
     currency_id = fields.Many2one('res.currency', string='Currency', 
@@ -278,12 +276,12 @@ class BookingCancellationReason(models.Model):
     _order = 'sequence, name'
 
     name = fields.Char('Reason', required=True, translate=True)
-    reason_type = fields.Selection([
-        ('patient', 'Patient-initiated'),
-        ('provider', 'Provider-initiated'),
-        ('system', 'System/Technical'),
-        ('emergency', 'Emergency/Force Majeure'),
-    ], string='Reason Type', required=True)
+    reason_type_id = fields.Many2one(
+        'health.lookup.value',
+        string='Reason Type',
+        domain="[('category_code', '=', 'cancellation_reason_type'), ('active', '=', True)]",
+        ondelete='restrict',
+        required=True)
     sequence = fields.Integer('Sequence', default=10)
     active = fields.Boolean('Active', default=True)
     description = fields.Text('Description', translate=True)

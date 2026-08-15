@@ -12,11 +12,14 @@ class HealthContactReason(models.Model):
     """
     _name = "health.contact.reason"
     _description = "Healthcare Contact Reason"
+    _inherit = ["health.vi.alias.mixin"]
+    _vi_alias_field = "name_vietnamese"
     _order = "sequence, name"
     
     name = fields.Char(
         string="Reason Name",
         required=True,
+        translate=True,
         help="Name of the contact reason"
     )
     
@@ -27,6 +30,7 @@ class HealthContactReason(models.Model):
     
     description = fields.Text(
         string="Description",
+        translate=True,
         help="Detailed description of when to use this reason"
     )
     
@@ -36,15 +40,13 @@ class HealthContactReason(models.Model):
         help="Sequence for ordering reasons"
     )
     
-    category = fields.Selection([
-        ('sales', 'Sales Inquiry'),
-        ('om', 'Operations Management'),
-        ('support', 'Customer Support'),
-        ('emergency', 'Emergency Contact'),
-        ('follow_up', 'Follow-up Contact'),
-        ('other', 'Other'),
-    ], string='Category', default='sales',
-       help='Category of contact reason for reporting purposes')
+    category_id = fields.Many2one(
+        'health.lookup.value',
+        string='Category',
+        domain="[('category_code', '=', 'contact_reason_category'), ('active', '=', True)]",
+        ondelete='restrict',
+        default=lambda self: self.env['health.lookup.value']._default_for('contact_reason_category', 'sales'),
+        help='Category of contact reason for reporting purposes')
     
     active = fields.Boolean(
         string="Active",
@@ -53,8 +55,15 @@ class HealthContactReason(models.Model):
     )
     
     # Vietnamese specific fields
+    #
+    # Not a column any more: this mirrors the vi_VN translation of `name`, so
+    # the value shows up in every many2one dropdown instead of sitting in a
+    # field nothing renders. See health.vi.alias.mixin.
     name_vietnamese = fields.Char(
         string="Vietnamese Name",
+        compute="_compute_vi_alias",
+        inverse="_inverse_vi_alias",
+        store=False,
         help="Vietnamese translation of the reason name"
     )
     

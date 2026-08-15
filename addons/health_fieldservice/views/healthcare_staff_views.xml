@@ -69,7 +69,7 @@
                             <field name="is_duty_doctor" invisible="not is_doctor_role"/>
                             <field name="is_head_nurse" invisible="not is_nurse_role"/>
                             <field name="employment_status" required="is_healthcare_staff"/>
-                            <field name="employment_type" required="is_healthcare_staff"
+                            <field name="employment_type_id" required="is_healthcare_staff"
                                    help="Full-time staff can create invoices; Part-time/Casual require Operations invoicing"/>
                             <field name="can_create_invoices" readonly="1"
                                    invisible="not is_healthcare_staff"/>
@@ -84,9 +84,9 @@
 
                         <group string="Assignment Preferences">
                             <field name="max_daily_assignments"/>
-                            <field name="preferred_shift"/>
+                            <field name="preferred_shift_id"/>
                             <field name="travel_radius_km"/>
-                            <field name="availability_status"/>
+                            <field name="availability_status_id"/>
                         </group>
                     </group>
                     
@@ -130,7 +130,7 @@
                         invisible="not is_healthcare_staff">
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_value">
-                            <field name="availability_status" readonly="1"/>
+                            <field name="availability_status_id" readonly="1"/>
                         </span>
                         <span class="o_stat_text">Status</span>
                     </div>

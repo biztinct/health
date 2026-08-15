@@ -138,7 +138,7 @@ class TestUpload(HttpCase, ScribeCommon):
         # photography consent check-log row written (log-only).
         log = self.env['health.consent.check.log'].sudo().search([
             ('client_id', '=', self.patient.id),
-            ('consent_type', '=', 'photography')], limit=1)
+            ('consent_type_code', '=', 'photography')], limit=1)
         self.assertTrue(log)
 
     def test_non_audio_rejected(self):

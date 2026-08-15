@@ -8,6 +8,39 @@
     position: sticky;
     top: 0;
     z-index: 5;
+
+    // Sectioned groups (Master Data) stack one labelled row per section
+    // instead of one long undifferentiated run of pills.
+    &.o_sectioned {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+.admin-nav-section {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    min-width: 0;
+}
+
+.admin-nav-section-label {
+    flex: 0 0 auto;
+    width: 130px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: #B0BEC5;
+    text-align: right;
+    padding-top: 8px;
+}
+
+.admin-nav-section-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    min-width: 0;
 }
 
 .admin-nav-tab {
@@ -41,5 +74,19 @@
         font-weight: 600;
 
         i { color: #FFD54F; }
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-nav-section {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 2px;
+    }
+
+    .admin-nav-section-label {
+        width: auto;
+        text-align: left;
+        padding-top: 4px;
     }
 }

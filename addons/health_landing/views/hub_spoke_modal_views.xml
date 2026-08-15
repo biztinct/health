@@ -68,7 +68,7 @@
                             <field name="birth_date"/>
                             <field name="age_display"/>
                             <field name="deceased"/>
-                            <field name="gender"/>
+                            <field name="gender_id"/>
                         </group>
 
                         <group string="Other Information">
@@ -387,7 +387,7 @@
                         <group string="Lead Details">
                             <field name="phone"/>
                             <field name="email_from"/>
-                            <field name="gender"/>
+                            <field name="gender_id"/>
                             <field name="birth_date"/>
                             <field name="national_id" string="National ID (CCCD/CMND)"/>
                             <field name="stage_id"/>
@@ -398,7 +398,7 @@
                         <group string="Status &amp; Follow-up">
                             <field name="contact_outcome"/>
                             <field name="health_contact_outcome" invisible="1"/>
-                            <field name="service_interest"/>
+                            <field name="service_interest_id"/>
                             <field name="lead_followup_required"/>
                             <field name="next_follow_up_date"/>
                             <field name="partner_id" invisible="1"/>

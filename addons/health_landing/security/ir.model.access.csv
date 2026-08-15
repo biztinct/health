@@ -9,3 +9,7 @@ access_health_fso_confirm_booking_wizard_user,health.fso.confirm.booking.wizard.
 access_health_fso_staff_assignment_wizard_user,health.fso.staff.assignment.wizard.user,model_health_fso_staff_assignment_wizard,health_base.group_healthcare_base,1,1,1,1
 access_health_fso_start_service_wizard_user,health.fso.start.service.wizard.user,model_health_fso_start_service_wizard,health_base.group_healthcare_base,1,1,1,1
 access_health_fso_payment_received_wizard_user,health.fso.payment.received.wizard.user,model_health_fso_payment_received_wizard,health_base.group_healthcare_base,1,1,1,1
+access_product_category_health_admin,product.category healthcare admin,product.model_product_category,health_base.group_healthcare_admin,1,1,1,0
+access_product_category_health_owner,product.category healthcare owner,product.model_product_category,health_base.group_healthcare_owner,1,1,1,1
+access_crm_lost_reason_health_admin,crm.lost.reason healthcare admin,crm.model_crm_lost_reason,health_base.group_healthcare_admin,1,1,1,0
+access_crm_lost_reason_health_owner,crm.lost.reason healthcare owner,crm.model_crm_lost_reason,health_base.group_healthcare_owner,1,1,1,1

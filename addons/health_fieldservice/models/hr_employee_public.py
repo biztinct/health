@@ -22,11 +22,8 @@ class HrEmployeePublic(models.Model):
         ('terminated', 'Terminated')
     ], string='Employment Status', readonly=True)
 
-    employment_type = fields.Selection([
-        ('full_time', 'Full-Time Staff'),
-        ('part_time', 'Part-Time Staff'),
-        ('casual', 'Casual/Contract'),
-    ], string='Employment Type', readonly=True)
+    employment_type_id = fields.Many2one(
+        'health.lookup.value', string='Employment Type', readonly=True)
 
     can_create_invoices = fields.Boolean('Can Create Invoices', readonly=True)
     
@@ -114,20 +111,15 @@ class HrEmployeePublic(models.Model):
     # Additional fields
     certification_expiry = fields.Date('Certification Expiry', readonly=True)
     max_daily_assignments = fields.Integer('Max Daily Assignments', readonly=True)
-    preferred_shift = fields.Selection([
-        ('morning', 'Morning Shift'),
-        ('afternoon', 'Afternoon Shift'),
-        ('evening', 'Evening Shift'),
-        ('night', 'Night Shift'),
-        ('flexible', 'Flexible')
-    ], string='Preferred Shift', readonly=True)
+    # hr.employee.public is a SQL VIEW over hr_employee, so its columns must
+    # track the source model exactly. When preferred_shift became a lookup
+    # Many2one the old varchar was dropped and the view stopped building —
+    # "column e.preferred_shift does not exist".
+    preferred_shift_id = fields.Many2one(
+        'health.lookup.value', string='Preferred Shift', readonly=True)
     travel_radius_km = fields.Float('Travel Radius (KM)', readonly=True)
-    availability_status = fields.Selection([
-        ('available', 'Available'),
-        ('busy', 'Busy'),
-        ('break', 'On Break'),
-        ('offline', 'Offline')
-    ], string='Availability Status', readonly=True)
+    availability_status_id = fields.Many2one(
+        'health.lookup.value', string='Availability Status', readonly=True)
     
     # Workload and Performance Metrics
     daily_capacity = fields.Integer('Daily Capacity', readonly=True)

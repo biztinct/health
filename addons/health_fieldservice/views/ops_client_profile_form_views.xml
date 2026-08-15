@@ -82,7 +82,7 @@
                                             <field name="email" widget="email"/>
                                             <field name="birth_date"/>
                                             <field name="deceased"/>
-                                            <field name="gender"/>
+                                            <field name="gender_id"/>
                                         </group>
                                     </div>
 

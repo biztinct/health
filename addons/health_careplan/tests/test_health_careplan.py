@@ -55,7 +55,7 @@ class TestHealthCareplan(TransactionCase):
                    frequency_interval=1, visit_filter='all', **plan_vals):
         plan = self.Careplan.create(dict({
             'client_id': self.patient.id,
-            'category': 'home_care',
+            'category_id': self.env['health.lookup.value']._default_for('careplan_category', 'home_care'),
             'title': 'Test plan',
             'period_start': fields.Date.today() - timedelta(days=10),
         }, **plan_vals))
@@ -110,7 +110,7 @@ class TestHealthCareplan(TransactionCase):
     def test_activate_requires_goals(self):
         plan = self.Careplan.create({
             'client_id': self.patient.id,
-            'category': 'chronic',
+            'category_id': self.env['health.lookup.value']._default_for('careplan_category', 'chronic'),
         })
         with self.assertRaises(UserError):
             plan.action_activate()
@@ -190,14 +190,14 @@ class TestHealthCareplan(TransactionCase):
             task.action_mark_not_done()
         task.action_mark_not_done(reason='client_refused', note='asleep')
         self.assertEqual(task.state, 'not_done')
-        self.assertEqual(task.not_done_reason, 'client_refused')
+        self.assertEqual(task.not_done_reason_id.code, 'client_refused')
         self.assertEqual(task.not_done_note, 'asleep')
         self.assertEqual(task.completed_by_id, self.env.user)
         self.assertTrue(task.completed_datetime)
         # Correction: not_done → done is allowed.
         task.action_mark_done()
         self.assertEqual(task.state, 'done')
-        self.assertFalse(task.not_done_reason)
+        self.assertFalse(task.not_done_reason_id)
         task.action_reset_pending()
         self.assertEqual(task.state, 'pending')
         self.assertFalse(task.completed_by_id)

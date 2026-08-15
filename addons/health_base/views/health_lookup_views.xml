@@ -169,11 +169,12 @@
         <field name="name">health.symptom.list</field>
         <field name="model">health.symptom</field>
         <field name="arch" type="xml">
-            <list string="Symptoms" decoration-danger="urgency_level=='emergency'" decoration-warning="urgency_level=='high'">
+            <list string="Symptoms" decoration-danger="urgency_level_code=='emergency'" decoration-warning="urgency_level_code=='high'">
+                <field name="urgency_level_code" column_invisible="True" invisible="1"/>
                 <field name="name"/>
                 <field name="code"/>
-                <field name="category"/>
-                <field name="urgency_level"/>
+                <field name="category_id"/>
+                <field name="urgency_level_id"/>
                 <field name="severity_levels"/>
                 <field name="color" widget="color"/>
                 <field name="active" widget="boolean_toggle"/>
@@ -204,8 +205,8 @@
                                 <group col="2">
                                     <field name="name"/>
                                     <field name="code"/>
-                                    <field name="category"/>
-                                    <field name="urgency_level"/>
+                                    <field name="category_id"/>
+                                    <field name="urgency_level_id"/>
                                     <field name="color" widget="color"/>
                                     <field name="active"/>
                                 </group>
@@ -240,7 +241,7 @@
         <field name="arch" type="xml">
             <list string="Referral Sources" decoration-info="is_paid_source==True">
                 <field name="name"/>
-                <field name="source_type"/>
+                <field name="source_type_id"/>
                 <field name="contact_person"/>
                 <field name="contact_phone"/>
                 <field name="is_paid_source" widget="boolean_toggle"/>
@@ -274,7 +275,7 @@
                                 </div>
                                 <group col="2">
                                     <field name="name"/>
-                                    <field name="source_type"/>
+                                    <field name="source_type_id"/>
                                     <field name="active"/>
                                 </group>
                             </div>
@@ -521,8 +522,8 @@
             <list string="Vietnamese Districts" decoration-info="supports_home_visits==True">
                 <field name="name"/>
                 <field name="province_name"/>
-                <field name="region"/>
-                <field name="travel_zone"/>
+                <field name="region_id"/>
+                <field name="travel_zone_id"/>
                 <field name="base_travel_fee" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                 <field name="average_travel_time"/>
                 <field name="supports_home_visits" widget="boolean_toggle"/>
@@ -555,7 +556,7 @@
                                 <group col="2">
                                     <field name="name"/>
                                     <field name="province_name"/>
-                                    <field name="region"/>
+                                    <field name="region_id"/>
                                     <field name="active"/>
                                 </group>
                             </div>
@@ -566,7 +567,7 @@
                                 </div>
                                 <group col="2">
                                     <field name="supports_home_visits" widget="boolean_toggle"/>
-                                    <field name="travel_zone"/>
+                                    <field name="travel_zone_id"/>
                                     <field name="base_travel_fee" widget="monetary"/>
                                     <field name="average_travel_time"/>
                                 </group>

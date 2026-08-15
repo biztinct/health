@@ -25,7 +25,7 @@
                               decoration-muted="state == 'retired'"
                               decoration-warning="state == 'suspended'">
                             <field name="name"/>
-                            <field name="device_type" widget="badge"/>
+                            <field name="device_type_id" widget="badge"/>
                             <field name="external_id"/>
                             <field name="vendor" optional="hide"/>
                             <field name="state" widget="badge"

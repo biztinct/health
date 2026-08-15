@@ -136,13 +136,13 @@ class HealthIncident(models.Model):
     investigation_notes = fields.Html(help='Findings.')
     root_cause = fields.Text(help='RCA summary.')
     contributing_factors = fields.Text()
-    outcome = fields.Selection([
-        ('no_harm', 'No Harm'),
-        ('minor_harm', 'Minor Harm'),
-        ('moderate_harm', 'Moderate Harm'),
-        ('severe_harm', 'Severe Harm'),
-        ('death', 'Death'),
-    ], tracking=True, help='FHIR AdverseEvent.outcome')
+    outcome_id = fields.Many2one(
+        'health.lookup.value',
+        string='Outcome',
+        domain="[('category_code', '=', 'incident_outcome'), ('active', '=', True)]",
+        ondelete='restrict',
+        tracking=True,
+        help='FHIR AdverseEvent.outcome')
     notifiable = fields.Boolean(
         default=False, tracking=True, index=True,
         help='Regulatory-notifiable flag (no hard constraint ties it '

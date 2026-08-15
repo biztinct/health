@@ -144,7 +144,7 @@ class TestGatewayCore(TransactionCase):
         if not reason:
             reason = self.env['health.booking.cancellation.reason'].create({
                 'name': 'Gateway Test Reason',
-                'reason_type': 'patient',
+                'reason_type_id': self.env['health.lookup.value']._default_for('cancellation_reason_type', 'patient'),
             })
         outbox_before = self.env['integration.outbox'].search_count(
             [('event_code', '=', 'booking.cancelled')])

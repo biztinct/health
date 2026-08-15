@@ -59,12 +59,12 @@ class HealthObservation(models.Model):
         default=lambda self: self.env.uid,
         help='FHIR performer')
     method = fields.Char(help='FHIR method.text')
-    body_position = fields.Selection([
-        ('sitting', 'Sitting'),
-        ('standing', 'Standing'),
-        ('lying', 'Lying'),
-        ('unknown', 'Unknown'),
-    ], string='Body Position', help='FHIR extension bodyPosition')
+    body_position_id = fields.Many2one(
+        'health.lookup.value',
+        string='Body Position',
+        domain="[('category_code', '=', 'body_position'), ('active', '=', True)]",
+        ondelete='restrict',
+        help='FHIR extension bodyPosition')
     device = fields.Char(help='FHIR device.display')
     order_id = fields.Many2one(
         'health.fieldservice.order', string='Visit',
@@ -413,7 +413,7 @@ class HealthObservation(models.Model):
             raise UserError(_(
                 '%s is not a panel type.') % panel_type.display_name)
         allowed = ('effective_datetime', 'order_id', 'method',
-                   'body_position', 'device', 'clinical_note_id',
+                   'body_position_id', 'device', 'clinical_note_id',
                    'performer_id', 'state')
         common_vals = {key: value for key, value in common.items()
                        if key in allowed and value}

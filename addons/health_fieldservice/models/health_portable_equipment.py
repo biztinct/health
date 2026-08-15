@@ -15,14 +15,13 @@ class HealthPortableEquipment(models.Model):
     description = fields.Text('Description')
     
     # Equipment classification
-    equipment_type = fields.Selection([
-        ('diagnostic', 'Diagnostic Equipment'),
-        ('therapeutic', 'Therapeutic Equipment'),
-        ('monitoring', 'Monitoring Equipment'),
-        ('safety', 'Safety Equipment'),
-        ('supplies', 'Medical Supplies'),
-        ('documentation', 'Documentation Equipment')
-    ], string='Equipment Type', required=True, tracking=True)
+    equipment_type_id = fields.Many2one(
+        'health.lookup.value',
+        string='Equipment Type',
+        domain="[('category_code', '=', 'equipment_type'), ('active', '=', True)]",
+        ondelete='restrict',
+        required=True,
+        tracking=True)
     
     category = fields.Char('Category', help="Specific category within type (e.g., 'Blood Pressure Monitor')")
     
@@ -78,13 +77,11 @@ class HealthPortableEquipment(models.Model):
     # Equipment specifications
     weight_kg = fields.Float('Weight (kg)')
     dimensions = fields.Char('Dimensions')
-    power_source = fields.Selection([
-        ('battery', 'Battery Powered'),
-        ('mains', 'Mains Power'),
-        ('both', 'Battery + Mains'),
-        ('manual', 'Manual Operation'),
-        ('none', 'No Power Required')
-    ], string='Power Source')
+    power_source_id = fields.Many2one(
+        'health.lookup.value',
+        string='Power Source',
+        domain="[('category_code', '=', 'equipment_power_source'), ('active', '=', True)]",
+        ondelete='restrict')
     
     battery_life_hours = fields.Float('Battery Life (hours)')
     

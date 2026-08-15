@@ -100,7 +100,7 @@ class HealthEmarPWAController(http.Controller):
             'medication_name': admin.medication_id.name or '',
             'medication_name_vi': admin.medication_id.vietnamese_name or '',
             'dose': dose,
-            'route': order.route or '',
+            'route': order.route_code or '',
             'planned_datetime': (admin.planned_datetime.isoformat()
                                  if admin.planned_datetime else None),
             'state': admin.state,
@@ -120,7 +120,7 @@ class HealthEmarPWAController(http.Controller):
             'medication_name': order.medication_id.name or '',
             'medication_name_vi': order.medication_id.vietnamese_name or '',
             'dose': dose,
-            'route': order.route or '',
+            'route': order.route_code or '',
             'frequency': order.frequency or '',
             'is_prn': order.is_prn,
             'prn_reason': order.prn_reason or '',
@@ -205,7 +205,7 @@ class HealthEmarPWAController(http.Controller):
                     'dose': ('%g %s' % (order.dose_quantity,
                                         order.dose_unit or '')).strip()
                             if order.dose_quantity else '',
-                    'route': order.route or '',
+                    'route': order.route_code or '',
                     'prn_reason': order.prn_reason or '',
                 } for order in prn_orders],
                 'reasons': self._serialize_reasons(),

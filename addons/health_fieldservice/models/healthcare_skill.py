@@ -12,13 +12,12 @@ class HealthStaffSkill(models.Model):
     name = fields.Char('Skill Name', required=True)
     active = fields.Boolean('Active', default=True)
     description = fields.Text('Description')
-    skill_category = fields.Selection([
-        ('medical', 'Medical'),
-        ('nursing', 'Nursing'),
-        ('technical', 'Technical'),
-        ('administrative', 'Administrative'),
-        ('emergency', 'Emergency Response')
-    ], string='Category', default='medical')
+    skill_category_id = fields.Many2one(
+        'health.lookup.value',
+        string='Category',
+        domain="[('category_code', '=', 'staff_skill_category'), ('active', '=', True)]",
+        ondelete='restrict',
+        default=lambda self: self.env['health.lookup.value']._default_for('staff_skill_category', 'medical'))
     
     required_certification = fields.Boolean('Requires Certification', default=False)
     certification_body = fields.Char('Certification Body')

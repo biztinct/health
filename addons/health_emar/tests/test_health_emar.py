@@ -64,7 +64,7 @@ class TestHealthEmar(TransactionCase):
         suffix = uuid.uuid4().hex[:6]
         cls.med_para = cls.env['health.medication'].create({
             'name': 'EMAR Test Paracetamol %s' % suffix,
-            'form': 'tablet',
+            'form_id': cls.env['health.lookup.value']._default_for('medication_form', 'tablet'),
             'strength': '500 mg',
         })
         cls.med_warfarin = cls.env['health.medication'].create({
@@ -86,7 +86,7 @@ class TestHealthEmar(TransactionCase):
             'medication_id': (medication or self.med_para).id,
             'dose_quantity': 1.0,
             'dose_unit': 'tablet',
-            'route': 'oral',
+            'route_id': self.env['health.lookup.value']._default_for('medication_route', 'oral'),
             'frequency': 'od',
             'start_date': fields.Date.today() + timedelta(days=1),
         }
@@ -133,7 +133,7 @@ class TestHealthEmar(TransactionCase):
         order.write({
             'dose_quantity': 1.0,
             'dose_unit': 'tablet',
-            'route': 'oral',
+            'route_id': self.env['health.lookup.value']._default_for('medication_route', 'oral'),
             'frequency': 'od',
             'start_date': fields.Date.today() + timedelta(days=1),
         })

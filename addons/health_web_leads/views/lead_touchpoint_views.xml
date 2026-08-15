@@ -30,7 +30,7 @@
                 <field name="occurred_at"/>
                 <field name="received_at" optional="show"/>
                 <field name="lead_id"/>
-                <field name="touchpoint_type"/>
+                <field name="touchpoint_type_id"/>
                 <field name="source_system" optional="show"/>
                 <field name="catchment_province_id" optional="show"/>
                 <field name="city_source" optional="show"/>
@@ -57,7 +57,7 @@
                         </group>
                         <group string="What">
                             <field name="lead_id" readonly="1"/>
-                            <field name="touchpoint_type" readonly="1"/>
+                            <field name="touchpoint_type_id" readonly="1"/>
                             <field name="source_system" readonly="1"/>
                             <field name="external_event_id" readonly="1"/>
                         </group>
@@ -107,7 +107,7 @@
                 <field name="catchment_province_id"/>
                 <separator/>
                 <filter name="filter_form_submit" string="Form Submissions"
-                        domain="[('touchpoint_type', '=', 'form_submit')]"/>
+                        domain="[('touchpoint_type_code', '=', 'form_submit')]"/>
                 <filter name="filter_wordpress" string="From WordPress"
                         domain="[('source_system', '=', 'wordpress')]"/>
                 <separator/>
@@ -125,7 +125,7 @@
                 <!-- Ledger §5.10: group-by filters go straight in <search>,
                      never inside a <group expand="0"> wrapper. -->
                 <filter name="groupby_type" string="Touchpoint Type"
-                        context="{'group_by': 'touchpoint_type'}"/>
+                        context="{'group_by': 'touchpoint_type_id'}"/>
                 <filter name="groupby_source_system" string="Source System"
                         context="{'group_by': 'source_system'}"/>
                 <filter name="groupby_city" string="City"

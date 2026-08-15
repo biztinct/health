@@ -813,7 +813,7 @@ class TestCareCommand(TransactionCase):
     # ======================================================================
     def test_39_declared_derivation(self):
         lead = self.env["crm.lead"].create({
-            "name": "fb39", "phone": "0912345639", "mode_of_contact": "facebook"})
+            "name": "fb39", "phone": "0912345639", "mode_of_contact_id": self.env['health.lookup.value']._default_for('mode_of_contact', "facebook")})
         conv = self.Care.search([("lead_id", "=", lead.id)], limit=1)
         self.assertTrue(conv)
         self.assertEqual(conv.channel_declared, "fb")
@@ -824,7 +824,7 @@ class TestCareCommand(TransactionCase):
         # as a channel). The invariant that matters is unchanged and asserted
         # below: a lead is a declaration, never traffic.
         wlead = self.env["crm.lead"].create({
-            "name": "walk39", "phone": "0912345699", "mode_of_contact": "walk_in"})
+            "name": "walk39", "phone": "0912345699", "mode_of_contact_id": self.env['health.lookup.value']._default_for('mode_of_contact', "walk_in")})
         wconv = self.Care.search([("lead_id", "=", wlead.id)], limit=1)
         self.assertTrue(wconv)
         self.assertEqual(wconv.channel_declared, "walk_in")
@@ -838,7 +838,7 @@ class TestCareCommand(TransactionCase):
     # ======================================================================
     def test_40_traffic_wins(self):
         lead = self.env["crm.lead"].create({
-            "name": "fb40", "phone": "0912345640", "mode_of_contact": "facebook"})
+            "name": "fb40", "phone": "0912345640", "mode_of_contact_id": self.env['health.lookup.value']._default_for('mode_of_contact', "facebook")})
         conv = self.Care.search([("lead_id", "=", lead.id)], limit=1)
         self.assertEqual(conv.channel_declared, "fb")
         self.assertEqual(conv.channel_effective, "fb")
@@ -865,7 +865,7 @@ class TestCareCommand(TransactionCase):
              "event_at": fields.Datetime.now()})
         # … and a declared-only lead (no activity)
         lead = self.env["crm.lead"].create({
-            "name": "lead41", "phone": "0912340042", "mode_of_contact": "website"})
+            "name": "lead41", "phone": "0912340042", "mode_of_contact_id": self.env['health.lookup.value']._default_for('mode_of_contact', "website")})
         lconv = self.Care.search([("lead_id", "=", lead.id)], limit=1)
         self.assertTrue(lconv and not lconv.has_channel_activity)
 
@@ -902,7 +902,7 @@ class TestCareCommand(TransactionCase):
     def test_42_filter_on_effective(self):
         U = self.Care.with_user(self.crm_user)
         lead = self.env["crm.lead"].create({
-            "name": "fb42", "phone": "0912340043", "mode_of_contact": "facebook"})
+            "name": "fb42", "phone": "0912340043", "mode_of_contact_id": self.env['health.lookup.value']._default_for('mode_of_contact', "facebook")})
         lconv = self.Care.search([("lead_id", "=", lead.id)], limit=1)
         # declared-only → visible under the leads/all view, filtered by fb
         ids = [c["id"] for c in U.get_workspace_data(view="all", channel="fb")["conversations"]]
@@ -926,7 +926,7 @@ class TestCareCommand(TransactionCase):
     def test_43_payload_contract(self):
         U = self.Care.with_user(self.crm_user)
         lead = self.env["crm.lead"].create({
-            "name": "fb43", "phone": "0912340044", "mode_of_contact": "facebook"})
+            "name": "fb43", "phone": "0912340044", "mode_of_contact_id": self.env['health.lookup.value']._default_for('mode_of_contact', "facebook")})
         lconv = self.Care.search([("lead_id", "=", lead.id)], limit=1)
         data = U.get_workspace_data(view="all")
         # active_channels IS _channel_keys(): all 8 here, narrowed to the base
@@ -960,7 +960,7 @@ class TestCareCommand(TransactionCase):
     def test_44_backfill(self):
         # legacy lead-anchored conversation with NO declared channel yet
         llead = self.env["crm.lead"].create({
-            "name": "bf44", "phone": "0912340045", "mode_of_contact": "zalo"})
+            "name": "bf44", "phone": "0912340045", "mode_of_contact_id": self.env['health.lookup.value']._default_for('mode_of_contact', "zalo")})
         lconv = self.Care.search([("lead_id", "=", llead.id)], limit=1)
         lconv.write({"channel_declared": False})  # simulate a pre-Phase-5 row
         # legacy traffic conversation flagged has_channel_activity=False
@@ -990,7 +990,7 @@ class TestCareCommand(TransactionCase):
         t_zalo = Tpl.create({"name": "T45 Zalo", "body": "b", "channel": "zalo"})
         t_email = Tpl.create({"name": "T45 Email", "body": "b", "channel": "email"})
         lead = self.env["crm.lead"].create({
-            "name": "tpl45", "phone": "0912340047", "mode_of_contact": "zalo"})
+            "name": "tpl45", "phone": "0912340047", "mode_of_contact_id": self.env['health.lookup.value']._default_for('mode_of_contact', "zalo")})
         conv = self.Care.search([("lead_id", "=", lead.id)], limit=1)
         self.assertFalse(conv.channel_primary)
         self.assertEqual(conv.channel_effective, "zalo")

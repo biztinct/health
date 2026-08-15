@@ -12,7 +12,12 @@ class HealthClinicalProtocol(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'name'
     
+    # translate=True is load-bearing here: health_base declares the same model
+    # with a translatable `name`, but this module loads AFTER it, so this
+    # definition is the one that wins. Dropping the flag silently un-translates
+    # the protocol names shown in every dropdown.
     name = fields.Char('Protocol Name', required=True, tracking=True,
+                      translate=True,
                       help="e.g., 'Blood Draw Protocol', 'Wound Care Protocol'")
     
     description = fields.Text('Protocol Description', translate=True)
@@ -39,12 +44,18 @@ class HealthClinicalProtocol(models.Model):
     expiry_date = fields.Date('Expiry Date')
     
     # Protocol classification
-    complexity_level = fields.Selection([
-        ('basic', 'Basic'),
-        ('intermediate', 'Intermediate'), 
-        ('advanced', 'Advanced'),
-        ('specialist', 'Specialist')
-    ], string='Complexity Level', default='basic', required=True)
+    complexity_level_id = fields.Many2one(
+        'health.lookup.value',
+        string='Complexity Level',
+        domain="[('category_code', '=', 'protocol_complexity'), ('active', '=', True)]",
+        ondelete='restrict',
+        required=True,
+        default=lambda self: self.env['health.lookup.value']._default_for('protocol_complexity', 'basic'))
+    # Companion for view expressions and domains: an Odoo view attribute
+    # (invisible=, decoration-, domain=) cannot traverse a many2one, and
+    # this keeps every existing comparison a one-word change.
+    complexity_level_code = fields.Char(
+        related='complexity_level_id.code', string='Complexity Level Code', readonly=True)
     
     duration_estimate_minutes = fields.Integer('Estimated Duration (minutes)', default=30)
     
@@ -52,13 +63,17 @@ class HealthClinicalProtocol(models.Model):
     safety_requirements = fields.Text('Safety Requirements',
                                      help="Special safety considerations for this protocol")
     
-    infection_control_level = fields.Selection([
-        ('standard', 'Standard Precautions'),
-        ('contact', 'Contact Precautions'),
-        ('droplet', 'Droplet Precautions'),
-        ('airborne', 'Airborne Precautions'),
-        ('enhanced', 'Enhanced Precautions')
-    ], string='Infection Control Level', default='standard')
+    infection_control_level_id = fields.Many2one(
+        'health.lookup.value',
+        string='Infection Control Level',
+        domain="[('category_code', '=', 'infection_control_level'), ('active', '=', True)]",
+        ondelete='restrict',
+        default=lambda self: self.env['health.lookup.value']._default_for('infection_control_level', 'standard'))
+    # Companion for view expressions and domains: an Odoo view attribute
+    # (invisible=, decoration-, domain=) cannot traverse a many2one, and
+    # this keeps every existing comparison a one-word change.
+    infection_control_level_code = fields.Char(
+        related='infection_control_level_id.code', string='Infection Control Level Code', readonly=True)
     
     # Required qualifications
     required_qualifications = fields.Text('Required Staff Qualifications',
@@ -129,9 +144,9 @@ class HealthClinicalProtocol(models.Model):
             {
                 'name': 'Blood Draw Protocol',
                 'description': 'Standard protocol for phlebotomy services',
-                'complexity_level': 'basic',
+                'complexity_level_id': self.env['health.lookup.value']._default_for('protocol_complexity', 'basic'),
                 'duration_estimate_minutes': 15,
-                'infection_control_level': 'standard',
+                'infection_control_level_id': self.env['health.lookup.value']._default_for('infection_control_level', 'standard'),
                 'action_steps_template': {
                     'steps': [
                         {'step': 1, 'action': 'Verify patient identity using two identifiers', 'required': True, 'time_minutes': 2},
@@ -155,9 +170,9 @@ class HealthClinicalProtocol(models.Model):
             {
                 'name': 'Wound Care Protocol',
                 'description': 'Standard protocol for home wound care services',
-                'complexity_level': 'intermediate',
+                'complexity_level_id': self.env['health.lookup.value']._default_for('protocol_complexity', 'intermediate'),
                 'duration_estimate_minutes': 45,
-                'infection_control_level': 'contact',
+                'infection_control_level_id': self.env['health.lookup.value']._default_for('infection_control_level', 'contact'),
                 'action_steps_template': {
                     'steps': [
                         {'step': 1, 'action': 'Verify patient identity and review care plan', 'required': True, 'time_minutes': 3},
@@ -182,9 +197,9 @@ class HealthClinicalProtocol(models.Model):
             {
                 'name': 'Medication Administration Protocol',
                 'description': 'Protocol for home medication administration',
-                'complexity_level': 'intermediate',
+                'complexity_level_id': self.env['health.lookup.value']._default_for('protocol_complexity', 'intermediate'),
                 'duration_estimate_minutes': 20,
-                'infection_control_level': 'standard',
+                'infection_control_level_id': self.env['health.lookup.value']._default_for('infection_control_level', 'standard'),
                 'action_steps_template': {
                     'steps': [
                         {'step': 1, 'action': 'Verify patient identity using two identifiers', 'required': True, 'time_minutes': 2},
@@ -206,9 +221,9 @@ class HealthClinicalProtocol(models.Model):
             {
                 'name': 'Vital Signs Assessment Protocol',
                 'description': 'Standard protocol for comprehensive vital signs assessment',
-                'complexity_level': 'basic',
+                'complexity_level_id': self.env['health.lookup.value']._default_for('protocol_complexity', 'basic'),
                 'duration_estimate_minutes': 15,
-                'infection_control_level': 'standard',
+                'infection_control_level_id': self.env['health.lookup.value']._default_for('infection_control_level', 'standard'),
                 'action_steps_template': {
                     'steps': [
                         {'step': 1, 'action': 'Verify patient identity and explain procedure', 'required': True, 'time_minutes': 2},

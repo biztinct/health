@@ -47,13 +47,13 @@ class HealthFormTemplate(models.Model):
         ('retired', 'Retired'),
     ], default='draft', required=True, tracking=True,
         help='FHIR Questionnaire.status (published maps to active).')
-    category = fields.Selection([
-        ('assessment', 'Assessment'),
-        ('screening', 'Screening'),
-        ('intake', 'Intake'),
-        ('outcome', 'Outcome Measure'),
-        ('other', 'Other'),
-    ], default='assessment', required=True)
+    category_id = fields.Many2one(
+        'health.lookup.value',
+        string='Category',
+        domain="[('category_code', '=', 'form_template_category'), ('active', '=', True)]",
+        ondelete='restrict',
+        required=True,
+        default=lambda self: self.env['health.lookup.value']._default_for('form_template_category', 'assessment'))
     description = fields.Html(translate=True)
     service_type_ids = fields.Many2many(
         'health.service.type', 'health_form_template_service_type_rel',
@@ -332,7 +332,7 @@ class HealthFormTemplate(models.Model):
             schema = dict(template.schema_json or template._compile_schema())
             schema.update({
                 'id': template.id,
-                'category': template.category,
+                'category': template.category_id.code or '',
                 'service_type_ids': template.service_type_ids.ids,
             })
             result.append(schema)

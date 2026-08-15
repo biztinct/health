@@ -19,14 +19,18 @@ class HealthcareCalendarLeaves(models.Model):
     _inherit = 'resource.calendar.leaves'
 
     # Healthcare-specific holiday classification
-    holiday_type = fields.Selection([
-        ('national', 'National Holiday'),
-        ('tet', 'TET Holiday'),
-        ('regional', 'Regional Holiday'),
-        ('observance', 'Observance'),
-    ], string='Holiday Type',
-       help='Type of public holiday for pricing rules and scheduling',
-       tracking=True)
+    holiday_type_id = fields.Many2one(
+        'health.lookup.value',
+        string='Holiday Type',
+        domain="[('category_code', '=', 'holiday_type'), ('active', '=', True)]",
+        ondelete='restrict',
+        tracking=True,
+        help='Type of public holiday for pricing rules and scheduling')
+    # Companion for view expressions and domains: an Odoo view attribute
+    # (invisible=, decoration-, domain=) cannot traverse a many2one, and
+    # this keeps every existing comparison a one-word change.
+    holiday_type_code = fields.Char(
+        related='holiday_type_id.code', string='Holiday Type Code', readonly=True)
 
     price_multiplier = fields.Float(
         'Price Multiplier',

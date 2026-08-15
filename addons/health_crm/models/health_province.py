@@ -12,17 +12,26 @@ class HealthProvince(models.Model):
     """
     _name = "health.province"
     _description = "Vietnamese Province/City"
+    _inherit = ["health.vi.alias.mixin"]
+    _vi_alias_field = "name_vietnamese"
     _order = "sequence, name"
     
     name = fields.Char(
         string="Province Name",
         required=True,
+        translate=True,
         help="English name of the province/city"
     )
     
+    # Mirrors the vi_VN translation of `name` rather than storing a second
+    # copy — see health.vi.alias.mixin. `required` is dropped with the column:
+    # a non-stored field cannot be NOT NULL, and the province is already
+    # required in English.
     name_vietnamese = fields.Char(
         string="Vietnamese Name",
-        required=True,
+        compute="_compute_vi_alias",
+        inverse="_inverse_vi_alias",
+        store=False,
         help="Vietnamese name of the province/city"
     )
     
@@ -32,12 +41,14 @@ class HealthProvince(models.Model):
         help="Short code for the province (e.g., HCM, HN, DN)"
     )
     
-    region = fields.Selection([
-        ('north', 'Northern Vietnam'),
-        ('central', 'Central Vietnam'), 
-        ('south', 'Southern Vietnam'),
-    ], string='Region', required=True, default='south',
-       help='Geographic region of Vietnam')
+    region_id = fields.Many2one(
+        'health.lookup.value',
+        string='Region',
+        domain="[('category_code', '=', 'vn_region'), ('active', '=', True)]",
+        ondelete='restrict',
+        required=True,
+        default=lambda self: self.env['health.lookup.value']._default_for('vn_region', 'south'),
+        help='Geographic region of Vietnam')
     
     sequence = fields.Integer(
         string="Sequence",

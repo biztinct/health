@@ -1,13 +1,19 @@
 # -*- coding: utf-8 -*-
+from .lookup_migration import seed_lookup_values
+
 
 def post_init_hook(env):
     """
     Post-installation hook to ensure database schema consistency
-    
+
     This prevents the 'column res_partner.is_caregiver does not exist' error
     by ensuring all healthcare fields are properly created in database.
+
+    Also seeds the client-maintained dropdown vocabularies, so a fresh install
+    starts with exactly the options the old hardcoded Selection lists offered.
     """
-    
+    seed_lookup_values(env)
+
     # Ensure healthcare categories exist
     categories = [
         ('Patient', 1),

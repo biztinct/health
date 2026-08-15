@@ -89,20 +89,18 @@ class HealthMedicationOrder(models.Model):
     dose_unit = fields.Char(
         string='Dose Unit', tracking=True,
         help='UCUM or common unit: mg, mL, tablet, IU, puff')
-    route = fields.Selection([
-        ('oral', 'Oral'),
-        ('sublingual', 'Sublingual'),
-        ('topical', 'Topical'),
-        ('subcutaneous', 'Subcutaneous'),
-        ('intramuscular', 'Intramuscular'),
-        ('intravenous', 'Intravenous'),
-        ('inhalation', 'Inhalation'),
-        ('rectal', 'Rectal'),
-        ('ophthalmic', 'Ophthalmic'),
-        ('otic', 'Otic'),
-        ('nasal', 'Nasal'),
-        ('other', 'Other'),
-    ], tracking=True, help='FHIR Dosage.route')
+    route_id = fields.Many2one(
+        'health.lookup.value',
+        string='Route',
+        domain="[('category_code', '=', 'medication_route'), ('active', '=', True)]",
+        ondelete='restrict',
+        tracking=True,
+        help='FHIR Dosage.route')
+    # Companion for view expressions and domains: an Odoo view attribute
+    # (invisible=, decoration-, domain=) cannot traverse a many2one, and
+    # this keeps every existing comparison a one-word change.
+    route_code = fields.Char(
+        related='route_id.code', string='Route Code', readonly=True)
     frequency = fields.Selection([
         ('od', 'Once daily (OD)'),
         ('bd', 'Twice daily (BD)'),

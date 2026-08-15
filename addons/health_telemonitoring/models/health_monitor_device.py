@@ -31,15 +31,13 @@ class HealthMonitorDevice(models.Model):
         'res.partner', string='Client', required=True, index=True,
         ondelete='restrict', domain=[('is_patient', '=', True)],
         tracking=True)
-    device_type = fields.Selection([
-        ('bp_monitor', 'Blood-pressure monitor'),
-        ('pulse_oximeter', 'Pulse oximeter'),
-        ('thermometer', 'Thermometer'),
-        ('glucometer', 'Glucometer'),
-        ('scale', 'Weighing scale'),
-        ('wearable', 'Wearable'),
-        ('other', 'Other'),
-    ], string='Device Type', required=True, index=True, tracking=True)
+    device_type_id = fields.Many2one(
+        'health.lookup.value',
+        string='Device Type',
+        domain="[('category_code', '=', 'monitor_device_type'), ('active', '=', True)]",
+        ondelete='restrict',
+        required=True,
+        tracking=True)
     external_id = fields.Char(
         string='External ID', required=True, index=True, tracking=True,
         help='The identifier the partner/vendor sends per reading (device '

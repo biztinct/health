@@ -85,13 +85,13 @@ class PwaFamilyBase(HttpCase):
         return self.env['health.client.relation'].create({
             'client_id': (patient or self.patient).id,
             'representative_id': self.representative.id,
-            'role': 'caregiver', 'relationship_type': 'child',
+            'role': 'caregiver', 'relationship_type_id': self.env['health.lookup.value']._default_for('relationship_type', 'child'),
             'receives_visit_updates': opt_in, 'can_receive_medical_info': True})
 
     def _grant_consent(self, patient=None):
         consent = self.env['health.consent'].create({
             'client_id': (patient or self.patient).id,
-            'consent_type': 'data_sharing', 'method': 'verbal',
+            'consent_type_id': self.env['health.lookup.value']._default_for('consent_type', 'data_sharing'), 'method': 'verbal',
             'verbal_witness_id': self.env.uid,
             'effective_date': fields.Date.today()})
         consent.action_grant()

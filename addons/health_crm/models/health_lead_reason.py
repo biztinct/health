@@ -13,11 +13,14 @@ class HealthLeadReason(models.Model):
     """
     _name = "health.lead.reason"
     _description = "Healthcare Lead Reason"
+    _inherit = ["health.vi.alias.mixin"]
+    _vi_alias_field = "name_vietnamese"
     _order = "sequence, name"
     
     name = fields.Char(
         string="Reason Name",
         required=True,
+        translate=True,
         help="Name of the lead reason"
     )
     
@@ -28,6 +31,7 @@ class HealthLeadReason(models.Model):
     
     description = fields.Text(
         string="Description",
+        translate=True,
         help="Detailed description of when to use this reason"
     )
     
@@ -37,25 +41,21 @@ class HealthLeadReason(models.Model):
         help="Sequence for ordering reasons"
     )
     
-    category = fields.Selection([
-        ('service_interest', 'Service Interest'),
-        ('referral', 'Referral'),
-        ('marketing', 'Marketing Campaign'),
-        ('website', 'Website Inquiry'),
-        ('social_media', 'Social Media'),
-        ('event', 'Health Event/Fair'),
-        ('emergency', 'Emergency Need'),
-        ('follow_up', 'Follow-up Opportunity'),
-        ('other', 'Other'),
-    ], string='Category', default='service_interest',
-       help='Category of lead reason for reporting purposes')
+    category_id = fields.Many2one(
+        'health.lookup.value',
+        string='Category',
+        domain="[('category_code', '=', 'lead_reason_category'), ('active', '=', True)]",
+        ondelete='restrict',
+        default=lambda self: self.env['health.lookup.value']._default_for('lead_reason_category', 'service_interest'),
+        help='Category of lead reason for reporting purposes')
     
-    lead_type = fields.Selection([
-        ('lead', 'Lead'),
-        ('opportunity', 'Opportunity'), 
-        ('both', 'Both'),
-    ], string='Applicable To', default='both',
-       help='Whether this reason applies to leads, opportunities, or both')
+    lead_type_id = fields.Many2one(
+        'health.lookup.value',
+        string='Applicable To',
+        domain="[('category_code', '=', 'lead_reason_applies_to'), ('active', '=', True)]",
+        ondelete='restrict',
+        default=lambda self: self.env['health.lookup.value']._default_for('lead_reason_applies_to', 'both'),
+        help='Whether this reason applies to leads, opportunities, or both')
     
     active = fields.Boolean(
         string="Active",
@@ -64,8 +64,15 @@ class HealthLeadReason(models.Model):
     )
     
     # Vietnamese specific fields
+    #
+    # Not a column any more: this mirrors the vi_VN translation of `name`, so
+    # the value shows up in every many2one dropdown instead of sitting in a
+    # field nothing renders. See health.vi.alias.mixin.
     name_vietnamese = fields.Char(
         string="Vietnamese Name",
+        compute="_compute_vi_alias",
+        inverse="_inverse_vi_alias",
+        store=False,
         help="Vietnamese translation of the reason name"
     )
     

@@ -63,14 +63,13 @@ class HealthCareplan(models.Model):
     ], default='draft', required=True, tracking=True,
         help="FHIR CarePlan.status (draft/active/completed/revoked; "
              "'under_review' is a local sub-state of active).")
-    category = fields.Selection([
-        ('home_care', 'Home Care'),
-        ('post_acute', 'Post-Acute'),
-        ('chronic', 'Chronic Disease'),
-        ('palliative', 'Palliative'),
-        ('rehabilitation', 'Rehabilitation'),
-        ('other', 'Other'),
-    ], default='home_care', tracking=True,
+    category_id = fields.Many2one(
+        'health.lookup.value',
+        string='Category',
+        domain="[('category_code', '=', 'careplan_category'), ('active', '=', True)]",
+        ondelete='restrict',
+        tracking=True,
+        default=lambda self: self.env['health.lookup.value']._default_for('careplan_category', 'home_care'),
         help='FHIR CarePlan.category')
     title = fields.Char(
         translate=True, help='Human title, FHIR CarePlan.title')
@@ -206,7 +205,7 @@ class HealthCareplan(models.Model):
                 raise ValidationError(
                     _('Review cycle must be positive.'))
 
-    @api.constrains('state', 'client_id', 'category')
+    @api.constrains('state', 'client_id', 'category_id')
     def _check_one_active_per_category(self):
         for plan in self:
             if plan.state not in ('active', 'under_review'):
@@ -214,7 +213,7 @@ class HealthCareplan(models.Model):
             duplicate = self.search([
                 ('id', '!=', plan.id),
                 ('client_id', '=', plan.client_id.id),
-                ('category', '=', plan.category),
+                ('category_id', '=', plan.category_id.id),
                 ('state', 'in', ('active', 'under_review')),
             ], limit=1)
             if duplicate:
@@ -223,9 +222,7 @@ class HealthCareplan(models.Model):
                     '%(category)s care plan (%(plan)s). Complete or '
                     'cancel it first.',
                     client=plan.client_id.name,
-                    category=dict(plan._fields['category']
-                                  ._description_selection(plan.env)
-                                  ).get(plan.category, plan.category),
+                    category=plan.category_id.name or '',
                     plan=duplicate.name))
 
     # ------------------------------------------------------------------
@@ -599,8 +596,8 @@ class HealthCareplan(models.Model):
         plans = self.search([('client_id', '=', patient_id)], limit=50)
         state_sel = dict(
             self._fields['state']._description_selection(self.env))
-        cat_sel = dict(
-            self._fields['category']._description_selection(self.env))
+        # Category labels come off the lookup record now, already in the
+        # reader's language — no selection dict to translate.
         rows = []
         for plan in plans:
             rows.append({
@@ -608,7 +605,7 @@ class HealthCareplan(models.Model):
                 'title': plan.title or plan.name or '',
                 'state': plan.state,
                 'state_label': state_sel.get(plan.state, plan.state),
-                'category_label': cat_sel.get(plan.category, plan.category or ''),
+                'category_label': plan.category_id.name or '',
                 'period_start': _tab_date(plan.period_start),
                 'period_end': _tab_date(plan.period_end),
                 'next_review_date': _tab_date(plan.next_review_date),

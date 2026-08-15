@@ -294,7 +294,7 @@ class CrmLead(models.Model):
         #    archived consent is not "already on file" for anybody.
         existing = Consent.search(
             [('client_id', '=', patient.id),
-             ('consent_type', '=', 'marketing'),
+             ('consent_type_code', '=', 'marketing'),
              ('state', '=', 'active')], limit=1)
         if existing:
             self.web_consent_bridged = 'skipped_existing'
@@ -314,7 +314,7 @@ class CrmLead(models.Model):
         with self.env.cr.savepoint():
             consent = Consent.create({
                 'client_id': patient.id,
-                'consent_type': 'marketing',
+                'consent_type_id': self.env['health.lookup.value']._default_for('consent_type', 'marketing'),
                 'method': WEB_FORM_METHOD,
                 'self_granted': True,
                 'effective_date': self._web_leads_effective_date(occurred_at),
@@ -369,7 +369,7 @@ class CrmLead(models.Model):
         """
         touch = self.env['health.lead.touchpoint'].sudo().search(
             [('lead_id', '=', self.id),
-             ('touchpoint_type', '=', 'form_submit'),
+             ('touchpoint_type_code', '=', 'form_submit'),
              ('external_event_id', '=', self.external_submission_id)],
             order='occurred_at asc, id asc', limit=1)
         return touch.occurred_at or self.create_date \

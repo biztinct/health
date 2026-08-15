@@ -9,14 +9,11 @@ snapshots taken at compile time. Nurses tick tasks done / not-done
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
-NOT_DONE_REASONS = [
-    ('client_refused', 'Client Refused'),
-    ('client_unavailable', 'Client Unavailable/Asleep'),
-    ('clinical_judgement', 'Withheld — Clinical Judgement'),
-    ('no_supplies', 'Missing Supplies/Equipment'),
-    ('out_of_time', 'Ran Out of Time'),
-    ('other', 'Other'),
-]
+# The not-done reasons are client-maintained now — see the
+# 'task_not_done_reason' vocabulary in health.lookup.value. The PWA keeps a
+# hardcoded copy in careplan-components.js for offline rendering; it falls
+# back to the code, so an added reason degrades to its key rather than
+# breaking the picker.
 
 
 class HealthCareplanTask(models.Model):
@@ -56,8 +53,11 @@ class HealthCareplanTask(models.Model):
     ], default='pending', required=True, index=True,
         help='FHIR Task.status (pending → requested, done → '
              'completed, not_done → failed with statusReason).')
-    not_done_reason = fields.Selection(
-        NOT_DONE_REASONS, string='Not Done Reason',
+    not_done_reason_id = fields.Many2one(
+        'health.lookup.value',
+        string='Not Done Reason',
+        domain="[('category_code', '=', 'task_not_done_reason'), ('active', '=', True)]",
+        ondelete='restrict',
         help='FHIR Task.statusReason')
     not_done_note = fields.Char(
         string='Reason Detail', help='Free-text reason detail.')
@@ -141,7 +141,7 @@ class HealthCareplanTask(models.Model):
                     'Task "%s" is already done.') % task.name)
             task.write({
                 'state': 'done',
-                'not_done_reason': False,
+                'not_done_reason_id': False,
                 'not_done_note': False,
                 'completed_by_id': self.env.uid,
                 'completed_datetime': fields.Datetime.now(),
@@ -156,10 +156,14 @@ class HealthCareplanTask(models.Model):
                 'completed_datetime': fields.Datetime.now(),
             }
             if reason:
-                vals['not_done_reason'] = reason
+                # The PWA and the JSON API pass a CODE, not an id — that
+                # contract is unchanged by the lookup conversion.
+                vals['not_done_reason_id'] = reason if isinstance(reason, int) else \
+                    self.env['health.lookup.value']._default_for(
+                        'task_not_done_reason', reason)
             if note:
                 vals['not_done_note'] = note
-            if not vals.get('not_done_reason') and not task.not_done_reason:
+            if not vals.get('not_done_reason_id') and not task.not_done_reason_id:
                 raise ValidationError(_(
                     'A reason is required to mark a task not done.'))
             task.write(vals)
@@ -169,7 +173,7 @@ class HealthCareplanTask(models.Model):
         for task in self:
             task.write({
                 'state': 'pending',
-                'not_done_reason': False,
+                'not_done_reason_id': False,
                 'not_done_note': False,
                 'completed_by_id': False,
                 'completed_datetime': False,
@@ -224,7 +228,7 @@ class HealthCareplanTask(models.Model):
                 'is_prn': bool(task.is_prn),
                 'careplan_id': task.careplan_id.id or False,
                 'careplan_name': task.careplan_id.display_name or '',
-                'not_done_reason': task.not_done_reason or '',
+                'not_done_reason': task.not_done_reason_id.code or '',
                 'not_done_note': task.not_done_note or '',
                 'completed_by': task.completed_by_id.display_name or '',
                 'completed_datetime': _tab_dt(task, task.completed_datetime),

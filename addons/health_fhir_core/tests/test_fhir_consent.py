@@ -40,7 +40,7 @@ class TestFhirConsentGate(TransactionCase):
         # Active data_sharing consent for the consented patient only.
         consent = cls.env['health.consent'].create({
             'client_id': cls.consented.id,
-            'consent_type': 'data_sharing',
+            'consent_type_id': cls.env['health.lookup.value']._default_for('consent_type', 'data_sharing'),
             'method': 'verbal',
         })
         consent.action_grant()
@@ -49,7 +49,7 @@ class TestFhirConsentGate(TransactionCase):
     def _logs_for(self, partner):
         return self.env['health.consent.check.log'].sudo().search([
             ('client_id', '=', partner.id),
-            ('consent_type', '=', 'data_sharing'),
+            ('consent_type_code', '=', 'data_sharing'),
             ('source', '=', 'fhir_facade')])
 
     # -- log-only (default) --------------------------------------------------

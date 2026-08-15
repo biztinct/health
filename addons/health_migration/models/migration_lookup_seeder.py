@@ -94,14 +94,6 @@ MEDICAL_SPECIALTIES = [('Surgery', 'Khám ngoại')]
 # Vietnamese labels for every selection value the migration relabels.
 # {(model, field): {key: vietnamese label}}
 SELECTION_VI_LABELS = {
-    ('res.partner', 'gender'): {
-        'male': 'Nam', 'female': 'Nữ', 'other': 'Khác',
-        'prefer_not_to_say': 'Không xác định',
-    },
-    ('crm.lead', 'gender'): {
-        'male': 'Nam', 'female': 'Nữ', 'other': 'Khác',
-        'prefer_not_to_say': 'Không xác định',
-    },
     ('crm.lead', 'service_interest'): {
         'palliative': 'Chăm sóc giảm nhẹ',
         'personal_care': 'Chăm sóc cá nhân',
@@ -218,6 +210,18 @@ class MigrationLookupSeeder(models.Model):
             active_test=False, skip_auto_geocode=True,
             skip_distance_recompute=True)
 
+    def _lookup(self, category_code, value_code):
+        """Resolve a Tier-1 vocabulary CODE to its health.lookup.value id.
+
+        The legacy tables in this module are keyed by the old Selection codes;
+        those codes survived the lookup conversion unchanged, which is exactly
+        what makes this a one-line translation rather than a re-mapping.
+        """
+        if not value_code:
+            return False
+        return self.env['health.lookup.value']._default_for(
+            category_code, value_code)
+
     def _set_vi(self, record, field, vietnamese):
         """Write the vi_VN translation of a translatable field."""
         try:
@@ -235,11 +239,15 @@ class MigrationLookupSeeder(models.Model):
         for en, vi, rtype, seq in CANCELLATION_REASONS:
             rec = Reason.search([('name', '=', en)], limit=1)
             if not rec:
-                rec = Reason.create({'name': en, 'reason_type': rtype,
+                rec = Reason.create({'name': en,
+                                     'reason_type_id': self._lookup(
+                                         'cancellation_reason_type', rtype),
                                      'sequence': seq, 'active': True})
                 out['created'] += 1
             else:
-                rec.write({'reason_type': rtype, 'sequence': seq, 'active': True})
+                rec.write({'reason_type_id': self._lookup(
+                    'cancellation_reason_type', rtype),
+                    'sequence': seq, 'active': True})
                 out['updated'] += 1
             self._set_vi(rec, 'name', vi)
             keep |= rec
@@ -280,7 +288,8 @@ class MigrationLookupSeeder(models.Model):
             rec = Fac.search([('code', '=', code)], limit=1)
             catch = self.env.ref(CATCHMENT_XMLID[city], raise_if_not_found=False)
             vals = {
-                'name': en, 'code': code, 'facility_type': ftype,
+                'name': en, 'code': code,
+                'facility_type_id': self._lookup('facility_type', ftype),
                 'facility_status': 'operational', 'active': True,
                 'catchment_province_id': catch.id if catch else False,
             }

@@ -16,7 +16,7 @@
                     <group>
                         <group>
                             <field name="code"/>
-                            <field name="category"/>
+                            <field name="category_id"/>
                             <field name="sequence"/>
                         </group>
                         <group>
@@ -43,7 +43,7 @@
                 <field name="sequence" widget="handle"/>
                 <field name="code"/>
                 <field name="name"/>
-                <field name="category"/>
+                <field name="category_id"/>
                 <field name="usage_count"/>
                 <field name="active" widget="boolean_toggle"/>
             </list>
@@ -91,8 +91,8 @@
                     <group>
                         <group>
                             <field name="code"/>
-                            <field name="category"/>
-                            <field name="lead_type"/>
+                            <field name="category_id"/>
+                            <field name="lead_type_id"/>
                             <field name="sequence"/>
                         </group>
                         <group>
@@ -119,8 +119,8 @@
                 <field name="sequence" widget="handle"/>
                 <field name="code"/>
                 <field name="name"/>
-                <field name="category"/>
-                <field name="lead_type"/>
+                <field name="category_id"/>
+                <field name="lead_type_id"/>
                 <field name="usage_count"/>
                 <field name="active" widget="boolean_toggle"/>
             </list>
@@ -169,7 +169,7 @@
                         <group>
                             <field name="name_vietnamese"/>
                             <field name="code"/>
-                            <field name="region"/>
+                            <field name="region_id"/>
                         </group>
                         <group>
                             <field name="sequence"/>
@@ -191,7 +191,7 @@
                 <field name="code"/>
                 <field name="name"/>
                 <field name="name_vietnamese"/>
-                <field name="region"/>
+                <field name="region_id"/>
                 <field name="usage_count"/>
                 <field name="active" widget="boolean_toggle"/>
             </list>

@@ -9,7 +9,7 @@
         <field name="arch" type="xml">
             <list string="Healthcare Skills">
                 <field name="name"/>
-                <field name="skill_category"/>
+                <field name="skill_category_id"/>
                 <field name="required_certification"/>
                 <field name="weight"/>
                 <field name="is_active"/>
@@ -35,7 +35,7 @@
                             <div class="vu-card">
                                 <group col="2">
                                     <field name="name"/>
-                                    <field name="skill_category"/>
+                                    <field name="skill_category_id"/>
                                     <field name="required_certification"/>
                                 </group>
                             </div>

@@ -7,13 +7,14 @@
         <field name="model">resource.calendar.leaves</field>
         <field name="arch" type="xml">
             <list string="Public Holidays"
-                  decoration-warning="holiday_type == 'tet'"
-                  decoration-info="holiday_type == 'national'"
+                  decoration-warning="holiday_type_code == 'tet'"
+                  decoration-info="holiday_type_code == 'national'"
                   decoration-muted="not is_pricing_holiday">
+                <field name="holiday_type_code" column_invisible="True" invisible="1"/>
                 <field name="name"/>
                 <field name="date_from"/>
                 <field name="date_to"/>
-                <field name="holiday_type"/>
+                <field name="holiday_type_id"/>
                 <field name="price_multiplier" string="Price × "/>
                 <field name="province_id"/>
                 <field name="is_pricing_holiday" widget="boolean_toggle"/>
@@ -62,7 +63,7 @@
                                     <span>Pricing Configuration</span>
                                 </div>
                                 <group col="2">
-                                    <field name="holiday_type"/>
+                                    <field name="holiday_type_id"/>
                                     <field name="price_multiplier" widget="monetary"/>
                                     <field name="is_pricing_holiday"/>
                                     <field name="province_id" placeholder="Leave blank for national holidays"/>
@@ -114,7 +115,7 @@
         <field name="arch" type="xml">
             <search string="Public Holidays">
                 <field name="name"/>
-                <field name="holiday_type"/>
+                <field name="holiday_type_id"/>
                 <field name="province_id"/>
             </search>
         </field>

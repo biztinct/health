@@ -11,10 +11,16 @@ from odoo import fields, models
 class HealthMedicationNotgivenReason(models.Model):
     _name = 'health.medication.notgiven.reason'
     _description = 'Medication Not-Given Reason'
+    _inherit = ['health.vi.alias.mixin']
     _order = 'sequence, name'
 
     name = fields.Char(required=True, translate=True)
-    name_vi = fields.Char(string='Vietnamese Name')
+    # Mirrors the vi_VN translation of `name` instead of being a second
+    # column — a many2one dropdown renders `name`, so a standalone name_vi was
+    # never visible where users pick the value. See health.vi.alias.mixin.
+    name_vi = fields.Char(
+        string='Vietnamese Name', compute='_compute_vi_alias',
+        inverse='_inverse_vi_alias', store=False)
     code = fields.Char(required=True)
     applies_to = fields.Selection([
         ('refused', 'Refused'),

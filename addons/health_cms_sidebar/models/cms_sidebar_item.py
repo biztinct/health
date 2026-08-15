@@ -33,6 +33,13 @@ class CmsSidebarItem(models.Model):
         help='Tag for OWL client actions, e.g. crm_dashboard',
     )
     role_ids = fields.Many2many('access.role', string='Allowed Roles')
+    effective_role_ids = fields.Many2many(
+        'access.role', string='Effective Roles',
+        compute='_compute_effective_role_ids', compute_sudo=True,
+        help='What actually gates this item: its own roles PLUS everything '
+             'inherited from its section and its parent items. Empty means '
+             'the item is visible to everyone.',
+    )
     active = fields.Boolean(default=True)
     match_action_tags = fields.Char(
         string='Match Action Tags',
@@ -46,6 +53,42 @@ class CmsSidebarItem(models.Model):
         string='Match Models',
         help='Comma-separated model names that highlight this item',
     )
+
+    # Deliberately depends on the parent's RAW roles, not on its computed
+    # effective_role_ids: a field that depends on itself through parent_id
+    # needs `recursive=True` and the ORM's cycle machinery, and the loop below
+    # already walks the whole chain. The field is not stored, so it is
+    # recomputed each request anyway.
+    @api.depends('role_ids', 'section_id.role_ids',
+                 'parent_id.role_ids', 'parent_id.section_id.role_ids')
+    def _compute_effective_role_ids(self):
+        """Roles gating this item once inheritance is applied.
+
+        Assigning roles at the SECTION level is the coarse control: it flows to
+        every item underneath, so locking "ADMIN" to Owner+Admin does not mean
+        revisiting fourteen leaves. An item that carries its own roles is
+        visible to those roles IN ADDITION to the inherited ones — the union,
+        never an override — so a leaf can widen access for one extra role
+        without being cut off from the people who own the section.
+
+        Parent ITEMS pass their effective roles down the same way, which is why
+        this depends on the parent's computed value rather than its raw
+        `role_ids`: a grandchild inherits the section through the parent.
+
+        An empty result means "no gate at all" — visible to everyone. That is
+        only reached when the section, the parent chain AND the item are all
+        unrestricted.
+        """
+        # Parents before children so a child reads a settled parent value.
+        for item in self.sorted(lambda i: bool(i.parent_id)):
+            roles = item.role_ids | item.section_id.role_ids
+            parent = item.parent_id
+            seen = set()
+            while parent and parent.id not in seen:
+                seen.add(parent.id)
+                roles |= parent.role_ids | parent.section_id.role_ids
+                parent = parent.parent_id
+            item.effective_role_ids = roles
 
     @api.model
     def get_match_keys(self):
@@ -152,14 +195,18 @@ class CmsSidebarItem(models.Model):
             [('active', '=', True)], order='section_id, sequence, id',
         )
 
+        # `effective_role_ids`, not `role_ids`: roles set on the SECTION (and on
+        # a parent item) flow down to every item underneath, and an item's own
+        # roles are added to — never replace — what it inherits. See
+        # _compute_effective_role_ids.
         if is_admin:
             visible_items = all_items
         elif user_role:
             visible_items = all_items.filtered(
-                lambda i: not i.role_ids or user_role in i.role_ids
+                lambda i: not i.effective_role_ids or user_role in i.effective_role_ids
             )
         else:
-            visible_items = all_items.filtered(lambda i: not i.role_ids)
+            visible_items = all_items.filtered(lambda i: not i.effective_role_ids)
 
         def _split(val):
             return [v.strip() for v in (val or '').split(',') if v.strip()]

@@ -77,7 +77,7 @@ class HealthCareplanPWAController(http.Controller):
             'state': task.state,
             'sequence': task.sequence,
             'is_prn': task.is_prn,
-            'not_done_reason': task.not_done_reason or None,
+            'not_done_reason': task.not_done_reason_id.code or None,
             'not_done_note': task.not_done_note or '',
             'completed_by': task.completed_by_id.name or '',
             'completed_at': (
@@ -118,7 +118,7 @@ class HealthCareplanPWAController(http.Controller):
                     'id': plan.id,
                     'name': plan.name,
                     'title': plan.title or '',
-                    'category': plan.category,
+                    'category': plan.category_id.code or '',
                 } if plan else None,
                 'prn_activities': [{
                     'id': activity.id,
@@ -237,7 +237,7 @@ class HealthCareplanPWAController(http.Controller):
                     'id': plan.id,
                     'name': plan.name,
                     'title': plan.title or '',
-                    'category': plan.category,
+                    'category': plan.category_id.code or '',
                     'state': plan.state,
                     'period_start': (
                         fields.Date.to_string(plan.period_start)

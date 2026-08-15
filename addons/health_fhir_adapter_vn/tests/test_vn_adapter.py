@@ -46,7 +46,7 @@ class TestVnAdapter(TransactionCase):
         self.env['health.observation'].create_coded(
             self.patient.id, '8867-4', 72, fso_id=self.fso.id)
         consent = self.env['health.consent'].create({
-            'client_id': self.patient.id, 'consent_type': 'service',
+            'client_id': self.patient.id, 'consent_type_id': self.env['health.lookup.value']._default_for('consent_type', 'service'),
             'method': 'verbal', 'effective_date': fields.Date.today()})
         consent.action_grant()
         note = self.env['health.clinical.note'].create({

@@ -28,7 +28,7 @@
                 <field name="contact_outcome" string="Outcome"
                        widget="badge" optional="show"/>
                 <field name="contact_datetime" string="Date" widget="datetime"/>
-                <field name="mode_of_contact" string="Channel" optional="show"/>
+                <field name="mode_of_contact_id" string="Channel" optional="show"/>
                 <field name="user_id" string="Agent" widget="many2one_avatar_user" optional="show"/>
                 <button name="action_convert_to_booking" type="object"
                         string="Book" icon="fa-calendar-plus-o"
@@ -102,7 +102,7 @@
                             <field name="name" string="Contact Name" required="1"/>
                             <field name="phone" widget="phone"/>
                             <field name="email_from" widget="email" string="Email"/>
-                            <field name="mode_of_contact"/>
+                            <field name="mode_of_contact_id"/>
                             <field name="contact_datetime"/>
                         </group>
                         <group>
@@ -122,7 +122,7 @@
                                          free-text Client Name (a client is created on first booking). -->
                                     <field name="patient_id" string="Client" invisible="not patient_id"/>
                                     <field name="client_name" string="Client Name" invisible="patient_id"/>
-                                    <field name="service_interest"/>
+                                    <field name="service_interest_id"/>
                                     <field name="clinical_priority"/>
                                 </group>
                                 <group>
@@ -233,7 +233,7 @@
                 <filter name="has_followup" string="Follow-up Scheduled" domain="[('calendar_date', '!=', False)]"/>
                 <filter name="group_by_status" string="Status" context="{'group_by': 'contact_status'}"/>
                 <filter name="group_by_area" string="Area" context="{'group_by': 'catchment_province_id'}"/>
-                <filter name="group_by_channel" string="Channel" context="{'group_by': 'mode_of_contact'}"/>
+                <filter name="group_by_channel" string="Channel" context="{'group_by': 'mode_of_contact_id'}"/>
                 <filter name="group_by_agent" string="Agent" context="{'group_by': 'user_id'}"/>
                 <filter name="group_by_date" string="Date" context="{'group_by': 'create_date:day'}"/>
             </search>

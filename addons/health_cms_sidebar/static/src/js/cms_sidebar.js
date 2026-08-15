@@ -397,6 +397,22 @@ const ALL_XMLIDS = new Set([
     "health_landing.action_admin_categories",
     "health_landing.action_admin_specialties",
     "health_landing.action_admin_districts",
+    "health_landing.action_admin_provinces",
+    "health_landing.action_admin_contact_reasons",
+    "health_landing.action_admin_lead_reasons",
+    "health_landing.action_admin_lost_reasons",
+    "health_landing.action_admin_service_categories",
+    "health_landing.action_admin_protocols",
+    "health_cms_sidebar.action_admin_medications",
+    "health_cms_sidebar.action_admin_observation_types",
+    "health_cms_sidebar.action_admin_notgiven_reasons",
+    "health_landing.action_admin_booking_stages",
+    "health_landing.action_admin_fs_teams",
+    "health_landing.action_admin_cancel_reasons",
+    "health_landing.action_admin_deletion_reasons",
+    "health_landing.action_admin_lookup_values",
+    "health_landing.action_admin_lookup_categories",
+    "health_landing.action_admin_services",
     "health_landing.action_admin_pricelists",
     "health_landing.action_admin_pricing_rules",
     "health_landing.action_admin_quick_edit_rules",
@@ -426,6 +442,10 @@ const ALL_MODELS = new Set([
     // staff record form (opened from the Staff Roster, Staff Assignment, …)
     // must keep the CMS sidebar like every other CMS record form
     "hr.employee",
+    // The dropdown-vocabulary screens: the per-category drill-in is an
+    // act_window built in python, so it has no xml_id to match on — the
+    // model is the only stable handle that keeps the CMS shell.
+    "health.lookup.value", "health.lookup.category",
     // NB: clinical / interop / future record models are added at runtime
     // from cms.sidebar.item.match_models by the cms_sidebar_keys service.
 ]);

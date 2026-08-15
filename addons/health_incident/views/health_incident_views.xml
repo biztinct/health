@@ -96,7 +96,7 @@
                                 <group>
                                     <field name="investigator_id"
                                            readonly="state == 'closed'"/>
-                                    <field name="outcome"
+                                    <field name="outcome_id"
                                            readonly="state == 'closed'"/>
                                 </group>
                             </group>

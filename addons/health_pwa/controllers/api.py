@@ -211,7 +211,7 @@ class HealthPWAAPIController(http.Controller):
                     'phone': patient.phone or patient.mobile,
                     'email': patient.email,
                     'age': patient.age,
-                    'gender': patient.gender,
+                    'gender': patient.gender_code,
                     'blood_group': patient.blood_group,
                     'patient_status': patient.patient_status,
                     'last_visit_date': patient.last_visit_date,
@@ -273,7 +273,7 @@ class HealthPWAAPIController(http.Controller):
                 'last_name': patient.last_name,
                 'birth_date': patient.birth_date,
                 'age': patient.age,
-                'gender': patient.gender,
+                'gender': patient.gender_code,
                 'blood_group': patient.blood_group,
                 'phone': patient.phone,
                 'mobile': patient.mobile,
@@ -503,7 +503,7 @@ class HealthPWAAPIController(http.Controller):
                     'patient_code': order.patient_id.patient_code if order.patient_id else None,
                     'phone': order.patient_id.phone or order.patient_id.mobile if order.patient_id else None,
                     'age': order.patient_id.age if order.patient_id else None,
-                    'gender': order.patient_id.gender if order.patient_id else None,
+                    'gender': order.patient_id.gender_code if order.patient_id else None,
                     'allergies': order.patient_id.allergies if order.patient_id else None,
                 },
                 'primary_contact': primary_contact,
@@ -762,7 +762,7 @@ class HealthPWAAPIController(http.Controller):
             reasons_data = [{
                 'id': r.id,
                 'name': r.name,
-                'reason_type': r.reason_type,
+                'reason_type': r.reason_type_id.code or '',
             } for r in reasons]
 
             return self._prepare_json_response(data={'reasons': reasons_data})

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Healthcare Structured Vitals',
-    'version': '19.0.1.2.0',
+    'version': '19.0.1.4.0',
     'category': 'Healthcare/Clinical',
     'summary': 'LOINC-coded observations, vital-sign catalog, per-client '
                'alert thresholds, trending (FHIR Observation)',

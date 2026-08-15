@@ -37,14 +37,14 @@ class Facility(models.Model):
     )
 
     # Facility type
-    facility_type = fields.Selection([
-        ('main_clinic', 'Main Clinic'),
-        ('branch_clinic', 'Branch Clinic'),
-        ('home_care_center', 'Home Care Center'),
-        ('telemedicine_center', 'Telemedicine Center'),
-        ('mobile_unit', 'Mobile Unit'),
-        ('partner_clinic', 'Partner Clinic')
-    ], string='Facility Type', required=True, default='branch_clinic', tracking=True)
+    facility_type_id = fields.Many2one(
+        'health.lookup.value',
+        string='Facility Type',
+        domain="[('category_code', '=', 'facility_type'), ('active', '=', True)]",
+        ondelete='restrict',
+        required=True,
+        tracking=True,
+        default=lambda self: self.env['health.lookup.value']._default_for('facility_type', 'branch_clinic'))
     
     # Contact Information
     partner_id = fields.Many2one('res.partner', string='Contact', ondelete='cascade')

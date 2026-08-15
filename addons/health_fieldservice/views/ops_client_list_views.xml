@@ -16,7 +16,7 @@
                 <field name="patient_code" string="Patient ID" optional="show"/>
                 <field name="mobile" string="Phone" optional="show"/>
                 <field name="email" string="Email" optional="hide"/>
-                <field name="gender" string="Gender" optional="hide"/>
+                <field name="gender_id" string="Gender" optional="hide"/>
                 <field name="primary_facility_id" string="Facility" optional="hide"/>
                 <field name="patient_status" string="Status"
                        widget="badge"

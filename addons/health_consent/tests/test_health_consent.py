@@ -63,7 +63,7 @@ class TestHealthConsent(TransactionCase):
             'client_id': cls.patient.id,
             'representative_id': cls.representative.id,
             'role': 'legal_guardian',
-            'relationship_type': 'child',
+            'relationship_type_id': cls.env['health.lookup.value']._default_for('relationship_type', 'child'),
             'can_make_medical_decisions': True,
             'can_receive_medical_info': True,
         })
@@ -75,7 +75,7 @@ class TestHealthConsent(TransactionCase):
             'client_id': cls.patient.id,
             'representative_id': cls.plain_rep.id,
             'role': 'client_representative',
-            'relationship_type': 'neighbor',
+            'relationship_type_id': cls.env['health.lookup.value']._default_for('relationship_type', 'neighbor'),
             'can_make_medical_decisions': False,
             'can_receive_medical_info': False,
         })
@@ -90,7 +90,8 @@ class TestHealthConsent(TransactionCase):
                       grant=False, **vals):
         consent = self.Consent.create(dict({
             'client_id': self.patient.id,
-            'consent_type': consent_type,
+            'consent_type_id': self.env['health.lookup.value']._default_for(
+                'consent_type', consent_type),
             'method': method,
         }, **vals))
         if grant:
@@ -292,7 +293,7 @@ class TestHealthConsent(TransactionCase):
         with self.assertRaises(ValidationError):
             self.Consent.create({
                 'client_id': other.id,
-                'consent_type': 'marketing',
+                'consent_type_id': self.env['health.lookup.value']._default_for('consent_type', 'marketing'),
                 'method': 'verbal',
                 'self_granted': False,
                 'granted_by_relation_id': self.relation_plain.id,
@@ -351,7 +352,7 @@ class TestHealthConsent(TransactionCase):
         with self.assertRaises(UserError):
             consent.write({'signature': PNG_B64})
         with self.assertRaises(UserError):
-            consent.write({'consent_type': 'marketing'})
+            consent.write({'consent_type_id': self.env['health.lookup.value']._default_for('consent_type', 'marketing')})
 
     # ------------------------------------------------------------------
     # Acceptance #8 — immutable audit records (unlink)

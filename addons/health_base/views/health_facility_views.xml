@@ -10,7 +10,7 @@
                 <field name="name"/>
                 <field name="code"/>
                 <field name="catchment_province_id"/>
-                <field name="facility_type"/>
+                <field name="facility_type_id"/>
                 <field name="city"/>
                 <field name="state_id"/>
                 <field name="facility_status"/>
@@ -77,7 +77,7 @@
                             <div class="health-subtitle">
                                 <field name="code" placeholder="Facility code..."/>
                                 <span class="health-badge health-badge-info ml-2">
-                                    <field name="facility_type"/>
+                                    <field name="facility_type_id"/>
                                 </span>
                             </div>
                         </div>
@@ -100,7 +100,7 @@
                                             <span>Facility Details</span>
                                         </div>
                                         <group col="2">
-                                            <field name="facility_type"/>
+                                            <field name="facility_type_id"/>
                                             <field name="catchment_province_id" options="{'no_create': True}"/>
                                             <field name="phone" widget="phone"/>
                                             <field name="email" widget="email"/>
@@ -329,7 +329,7 @@
                 <field name="id"/>
                 <field name="name"/>
                 <field name="code"/>
-                <field name="facility_type"/>
+                <field name="facility_type_id"/>
                 <field name="facility_status"/>
                 <field name="city"/>
                 <field name="state_id"/>
@@ -371,7 +371,7 @@
                                     </div>
                                     <div class="col-6">
                                         <small class="health-text-xs">Type</small><br/>
-                                        <field name="facility_type"/>
+                                        <field name="facility_type_id"/>
                                     </div>
                                 </div>
                                 <div class="row mt-2">

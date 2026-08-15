@@ -592,8 +592,8 @@ class HealthContact(models.Model):
 
             # Format relationship type for display
             relationship_type_display = ''
-            if relation.relationship_type:
-                relationship_type_display = relation.relationship_type.replace('_', ' ').title()
+            if relation.relationship_type_id:
+                relationship_type_display = relation.relationship_type_id.name or ''
 
             return {
                 'id': partner.id,

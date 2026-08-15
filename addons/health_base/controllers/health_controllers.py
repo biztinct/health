@@ -46,7 +46,7 @@ class HealthcareController(http.Controller):
                     'patient_code': patient.patient_code,
                     'name': patient.name,
                     'age_display': patient.age_display,
-                    'gender': patient.gender,
+                    'gender': patient.gender_code,
                     'phone': patient.phone,
                     'mobile': patient.mobile,
                     'email': patient.email,
@@ -93,7 +93,7 @@ class HealthcareController(http.Controller):
                     'vietnamese_name': patient.vietnamese_name,
                     'first_name': patient.first_name,
                     'last_name': patient.last_name,
-                    'gender': patient.gender,
+                    'gender': patient.gender_code,
                     'birth_date': patient.birth_date.strftime('%Y-%m-%d') if patient.birth_date else '',
                     'age': patient.age,
                     'age_display': patient.age_display,
@@ -161,7 +161,8 @@ class HealthcareController(http.Controller):
             domain = [('active', '=', True)]
             
             if kwargs.get('facility_type'):
-                domain.append(['facility_type', '=', kwargs['facility_type']])
+                # Still filtered by CODE — the public API contract is unchanged.
+                domain.append(['facility_type_id.code', '=', kwargs['facility_type']])
             if kwargs.get('home_visits_only'):
                 domain.append(['covers_home_visits', '=', True])
             if kwargs.get('city'):
@@ -175,7 +176,7 @@ class HealthcareController(http.Controller):
                     'id': facility.id,
                     'name': facility.name,
                     'code': facility.code,
-                    'type': facility.facility_type,
+                    'type': facility.facility_type_id.code or '',
                     'status': facility.facility_status,
                     'address': f"{facility.street}, {facility.city}",
                     'phone': facility.phone,
@@ -256,8 +257,8 @@ class HealthcareController(http.Controller):
                 elif model == 'districts':
                     item.update({
                         'province': record.province_name,
-                        'region': record.region,
-                        'travel_zone': record.travel_zone,
+                        'region': record.region_id.code or '',
+                        'travel_zone': record.travel_zone_id.code or '',
                         'travel_fee': record.base_travel_fee,
                         'travel_time': record.average_travel_time
                     })

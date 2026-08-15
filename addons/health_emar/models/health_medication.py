@@ -17,18 +17,12 @@ class HealthMedication(models.Model):
         string='RxNorm RXCUI', index=True,
         help='Canonical code (FHIR Medication.code, system '
              'http://www.nlm.nih.gov/research/umls/rxnorm)')
-    form = fields.Selection([
-        ('tablet', 'Tablet'),
-        ('capsule', 'Capsule'),
-        ('liquid', 'Liquid/Syrup'),
-        ('injection', 'Injection'),
-        ('patch', 'Patch'),
-        ('cream', 'Cream/Ointment'),
-        ('inhaler', 'Inhaler'),
-        ('drops', 'Drops'),
-        ('suppository', 'Suppository'),
-        ('other', 'Other'),
-    ], string='Form', help='FHIR Medication.doseForm')
+    form_id = fields.Many2one(
+        'health.lookup.value',
+        string='Form',
+        domain="[('category_code', '=', 'medication_form'), ('active', '=', True)]",
+        ondelete='restrict',
+        help='FHIR Medication.doseForm')
     strength = fields.Char(
         string='Strength',
         help="Display strength, e.g. '500 mg'; "

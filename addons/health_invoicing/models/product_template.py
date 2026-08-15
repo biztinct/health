@@ -24,22 +24,12 @@ class ProductTemplate(models.Model):
     )
     
     # Healthcare Package Configuration
-    healthcare_package_type = fields.Selection([
-        ('physiotherapy', 'Physiotherapy'),
-        ('blood_pressure_monitoring', 'Blood Pressure Monitoring'),
-        ('diabetes_management', 'Diabetes Management'),
-        ('home_visit', 'Home Visit'),
-        ('clinic_visit', 'Clinic Visit'),
-        ('consultation', 'Consultation'),
-        ('emergency', 'Emergency Care'),
-        ('follow_up', 'Follow-up Care'),
-        ('preventive', 'Preventive Care'),
-        ('rehabilitation', 'Rehabilitation'),
-        ('vaccination', 'Vaccination'),
-        ('diagnostic', 'Diagnostic Services'),
-        ('other', 'Other Service'),
-    ], string='Package Service Type',
-       help='Type of healthcare service included in this package')
+    healthcare_package_type_id = fields.Many2one(
+        'health.lookup.value',
+        string='Package Service Type',
+        domain="[('category_code', '=', 'package_service_type'), ('active', '=', True)]",
+        ondelete='restrict',
+        help='Type of healthcare service included in this package')
     
     healthcare_service_count = fields.Integer(
         'Number of Services/Visits',
@@ -55,14 +45,13 @@ class ProductTemplate(models.Model):
         help='Calculated price per individual service/visit'
     )
     
-    healthcare_service_location = fields.Selection([
-        ('home', 'Patient Home'),
-        ('clinic', 'Clinic Visit'),
-        ('remote', 'Remote/Telemedicine'),
-        ('flexible', 'Flexible Location'),
-    ], string='Service Location',
-       default='flexible',
-       help='Where services in this package are typically delivered')
+    healthcare_service_location_id = fields.Many2one(
+        'health.lookup.value',
+        string='Service Location',
+        domain="[('category_code', '=', 'service_location'), ('active', '=', True)]",
+        ondelete='restrict',
+        default=lambda self: self.env['health.lookup.value']._default_for('service_location', 'flexible'),
+        help='Where services in this package are typically delivered')
     
     healthcare_package_duration = fields.Integer(
         'Package Duration (Weeks)',
@@ -128,8 +117,9 @@ class ProductTemplate(models.Model):
         """Set defaults when healthcare package is selected"""
         if self.type == 'healthcare_package':
             # Set healthcare package defaults if not set
-            if not self.healthcare_package_type:
-                self.healthcare_package_type = 'other'
+            if not self.healthcare_package_type_id:
+                self.healthcare_package_type_id = self.env['health.lookup.value']._default_for(
+                    'package_service_type', 'other')
             if not self.healthcare_service_count:
                 self.healthcare_service_count = 1
             if not self.healthcare_package_duration:
@@ -143,9 +133,9 @@ class ProductTemplate(models.Model):
                 
         elif self._origin.type == 'healthcare_package':
             # Clear healthcare fields when changing away from package
-            self.healthcare_package_type = False
+            self.healthcare_package_type_id = False
             self.healthcare_service_count = 0
-            self.healthcare_service_location = False
+            self.healthcare_service_location_id = False
             self.healthcare_package_duration = 0
             self.healthcare_terms = False
     
@@ -185,7 +175,10 @@ class ProductTemplate(models.Model):
             'name': f"{self.name} - {self.env['res.partner'].browse(patient_id).name}",
             'product_template_id': self.id,
             'patient_id': patient_id,
-            'service_type': self.healthcare_package_type or 'other',  # Default to 'other' if not set
+            # health.service.package.service_type is still a Selection, so the
+            # package type crosses over as its CODE — this is what the code
+            # column on health.lookup.value is for.
+            'service_type': self.healthcare_package_type_id.code or 'other',
             'total_services': self.healthcare_service_count or 1,
             'package_price': self.list_price or 0.0,
             'expiration_date': fields.Date.add(fields.Date.today(), weeks=self.healthcare_package_duration) if self.healthcare_package_duration else False,
@@ -206,7 +199,7 @@ class ProductTemplate(models.Model):
         result = super().write(vals)
         
         # If this is a healthcare package and key fields changed, log message
-        healthcare_fields = ['healthcare_service_count', 'healthcare_package_type', 'list_price']
+        healthcare_fields = ['healthcare_service_count', 'healthcare_package_type_id', 'list_price']
         if any(field in vals for field in healthcare_fields):
             for product in self.filtered('is_healthcare_package'):
                 active_packages = self.env['health.service.package'].search([

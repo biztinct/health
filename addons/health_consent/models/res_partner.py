@@ -41,7 +41,7 @@ class ResPartner(models.Model):
         by_partner = {}
         for consent in actives:
             by_partner.setdefault(
-                consent.client_id.id, set()).add(consent.consent_type)
+                consent.client_id.id, set()).add(consent.consent_type_code)
         for partner in self:
             granted = by_partner.get(partner.id, set())
             partner.consent_summary = ', '.join(

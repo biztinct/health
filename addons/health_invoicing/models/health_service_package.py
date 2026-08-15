@@ -270,7 +270,7 @@ class HealthServicePackage(models.Model):
                 self.name = template.name
             
             if not self.service_type:
-                self.service_type = template.healthcare_package_type
+                self.service_type = template.healthcare_package_type_id.code
                 
             if not self.total_services:
                 self.total_services = template.healthcare_service_count
@@ -300,7 +300,7 @@ class HealthServicePackage(models.Model):
                     vals['name'] = f"{template.name}{patient_name}"
                 
                 if not vals.get('service_type'):
-                    vals['service_type'] = template.healthcare_package_type
+                    vals['service_type'] = template.healthcare_package_type_id.code
                 
                 if not vals.get('total_services'):
                     vals['total_services'] = template.healthcare_service_count

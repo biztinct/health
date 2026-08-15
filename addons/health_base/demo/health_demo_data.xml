@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="1">
 
+    <!-- The dropdown vocabularies are seeded from lookup_registry.py by
+         health_base's post_init_hook, which runs AFTER this file. Seed them
+         here first so the `search=` lookups below resolve. Idempotent. -->
+    <function model="health.lookup.value" name="_seed_from_registry"/>
+
     <!-- Demo Healthcare Facilities -->
     <record id="demo_facility_main_clinic" model="health.facility">
         <field name="name">VAFHS Main Clinic</field>
         <field name="code">MAIN001</field>
         <field name="province_code">02</field>
         <field name="catchment_province_id" ref="catchment_province_hcm"/>
-        <field name="facility_type">main_clinic</field>
+        <field name="facility_type_id" search="[('category_code', '=', 'facility_type'), ('code', '=', 'main_clinic')]"/>
         <field name="street">123 Nguyen Hue Street</field>
         <field name="city">Ho Chi Minh City</field>
         <field name="state_id" ref="base.state_vn_79"/>
@@ -43,7 +48,7 @@ Sunday: Emergency only</field>
         <field name="code">BR002</field>
         <field name="province_code">02</field>
         <field name="catchment_province_id" ref="catchment_province_hcm"/>
-        <field name="facility_type">branch_clinic</field>
+        <field name="facility_type_id" search="[('category_code', '=', 'facility_type'), ('code', '=', 'branch_clinic')]"/>
         <field name="street">456 Tran Hung Dao Street</field>
         <field name="city">Ho Chi Minh City</field>
         <field name="state_id" ref="base.state_vn_79"/>
@@ -75,7 +80,7 @@ Sunday: Emergency only</field>
         <field name="code">HOME001</field>
         <field name="province_code">02</field>
         <field name="catchment_province_id" ref="catchment_province_hcm"/>
-        <field name="facility_type">home_care_center</field>
+        <field name="facility_type_id" search="[('category_code', '=', 'facility_type'), ('code', '=', 'home_care_center')]"/>
         <field name="street">789 Le Van Sy Street</field>
         <field name="city">Ho Chi Minh City</field>
         <field name="state_id" ref="base.state_vn_79"/>
@@ -107,7 +112,7 @@ Sunday: Emergency only</field>
         <field name="code">HAN001</field>
         <field name="province_code">01</field>
         <field name="catchment_province_id" ref="catchment_province_hanoi"/>
-        <field name="facility_type">branch_clinic</field>
+        <field name="facility_type_id" search="[('category_code', '=', 'facility_type'), ('code', '=', 'branch_clinic')]"/>
         <field name="street">Hanoi street</field>
         <field name="city">Hanoi</field>
         <field name="state_id" ref="base.state_vn_01"/>
@@ -142,7 +147,7 @@ Sunday: Emergency only</field>
         <field name="vietnamese_name">Nguyễn Văn A</field>
         <field name="first_name">Van A</field>
         <field name="last_name">Nguyen</field>
-        <field name="gender">male</field>
+        <field name="gender_id" search="[('category_code', '=', 'gender'), ('code', '=', 'male')]"/>
         <field name="birth_date">1985-03-15</field>
         <field name="phone">+84 90 123 4567</field>
         <field name="mobile">+84 90 123 4567</field>
@@ -177,7 +182,7 @@ Sunday: Emergency only</field>
         <field name="vietnamese_name">Lê Thị C</field>
         <field name="first_name">Thi C</field>
         <field name="last_name">Le</field>
-        <field name="gender">female</field>
+        <field name="gender_id" search="[('category_code', '=', 'gender'), ('code', '=', 'female')]"/>
         <field name="birth_date">1978-07-22</field>
         <field name="phone">+84 90 987 6543</field>
         <field name="mobile">+84 90 987 6543</field>
@@ -213,7 +218,7 @@ Sunday: Emergency only</field>
         <field name="vietnamese_name">Hoàng Văn E</field>
         <field name="first_name">Van E</field>
         <field name="last_name">Hoang</field>
-        <field name="gender">male</field>
+        <field name="gender_id" search="[('category_code', '=', 'gender'), ('code', '=', 'male')]"/>
         <field name="birth_date">1950-12-05</field>
         <field name="phone">+84 90 555 7777</field>
         <field name="mobile">+84 90 555 7777</field>
@@ -248,7 +253,7 @@ Sunday: Emergency only</field>
         <field name="vietnamese_name">Nguyễn Thị G</field>
         <field name="first_name">Thi G</field>
         <field name="last_name">Nguyen</field>
-        <field name="gender">female</field>
+        <field name="gender_id" search="[('category_code', '=', 'gender'), ('code', '=', 'female')]"/>
         <field name="birth_date">2010-04-18</field>
         <field name="phone">+84 90 111 2222</field>
         <field name="mobile">+84 90 111 2222</field>

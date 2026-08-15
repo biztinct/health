@@ -421,7 +421,7 @@ class WebLeadService(models.AbstractModel):
         if existing:
             return self._result('duplicate', existing, submission_id)
         touch = Touchpoint.search(
-            [('touchpoint_type', '=', 'form_submit'),
+            [('touchpoint_type_code', '=', 'form_submit'),
              ('external_event_id', '=', submission_id)], limit=1)
         if touch:
             return self._result('duplicate', touch.lead_id, submission_id)
@@ -602,7 +602,7 @@ class WebLeadService(models.AbstractModel):
             'catchment_province_id': catchment.id if catchment else False,
 
             # Reused healthcare fields — this is a website form, said once.
-            'mode_of_contact': 'website',
+            'mode_of_contact_id': self.env['health.lookup.value']._default_for('mode_of_contact', 'website'),
             'contact_source': 'website_form',
             'healthcare_lead_source': 'website_form',
             'vietnamese_channel': 'website',
@@ -679,7 +679,7 @@ class WebLeadService(models.AbstractModel):
             'lead_id': lead.id,
             'occurred_at': occurred_at,          # rail R7 — the visitor's time
             'received_at': fields.Datetime.now(),
-            'touchpoint_type': 'form_submit',
+            'touchpoint_type_id': self.env['health.lookup.value']._default_for('touchpoint_type', 'form_submit'),
             'source_system': 'wordpress',
             'catchment_province_id': catchment.id if catchment else False,
             'city_source': city_source,
@@ -775,7 +775,7 @@ class WebLeadService(models.AbstractModel):
             [('external_submission_id', 'in', ids)]
         ).mapped('external_submission_id'))
         known |= set(self.env['health.lead.touchpoint'].search(
-            [('touchpoint_type', '=', 'form_submit'),
+            [('touchpoint_type_code', '=', 'form_submit'),
              ('external_event_id', 'in', ids)]
         ).mapped('external_event_id'))
 
@@ -800,7 +800,7 @@ class WebLeadService(models.AbstractModel):
         except (ValueError, TypeError):
             raise ApiError(_('date must be formatted YYYY-MM-DD'), 422)
         rows = self.env['health.lead.touchpoint'].search([
-            ('touchpoint_type', '=', 'form_submit'),
+            ('touchpoint_type_code', '=', 'form_submit'),
             ('received_at', '>=', start),
             ('received_at', '<', start + timedelta(days=1)),
         ])

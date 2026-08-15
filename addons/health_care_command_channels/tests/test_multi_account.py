@@ -227,7 +227,7 @@ class TestContactCapture(ChannelSpineCase):
         self.assertEqual(counts['unknown'], 1)
         self.assertEqual(self.Care.search_count([]), before,
                          'an unknown page must NOT create a conversation')
-        row = self.Capture.search([('reason', '=', 'unknown_resource')])
+        row = self.Capture.search([('reason_code', '=', 'unknown_resource')])
         self.assertEqual(len(row), 1)
         self.assertEqual(row.resource_external_id, 'PAGE_NOBODY_CONNECTED')
         self.assertEqual(row.state, 'new')
@@ -237,7 +237,7 @@ class TestContactCapture(ChannelSpineCase):
                           resource_external_id=FB_PAGE_ID)
         counts = self.Message._dispatch_connection(conn, self.fb_payload())
         self.assertEqual(counts['ignored'], 1)
-        row = self.Capture.search([('reason', '=', 'not_ingestable')])
+        row = self.Capture.search([('reason_code', '=', 'not_ingestable')])
         self.assertEqual(len(row), 1)
         self.assertEqual(row.connection_id, conn)
 
@@ -288,7 +288,7 @@ class TestContactCapture(ChannelSpineCase):
                                     phone='0901234567')
         user_env = row.with_user(self.env.ref('base.user_admin'))
         with self.assertRaises(UserError):
-            user_env.write({'reason': 'spam_suspect'})
+            user_env.write({'reason_id': self.env['health.lookup.value']._default_for('unrouted_contact_reason', 'spam_suspect')})
         with self.assertRaises(UserError):
             user_env.write({'channel': 'zalo'})
 
@@ -326,7 +326,7 @@ class TestContactCapture(ChannelSpineCase):
         """A visitor who left a phone number and typed nothing."""
         self._wc_conn()
         self.Message._webchat_start(name='Chị Lan', phone='0901234567')
-        row = self.Capture.search([('reason', '=', 'webchat_abandoned')])
+        row = self.Capture.search([('reason_code', '=', 'webchat_abandoned')])
         self.assertEqual(len(row), 1)
         self.assertEqual(row.phone_normalized, '0901234567')
 
@@ -340,7 +340,7 @@ class TestContactCapture(ChannelSpineCase):
         self.Message._webchat_start(session=started['session'],
                                     name='Chị Lan', phone='0901234567')
         self.assertEqual(
-            self.Capture.search_count([('reason', '=', 'webchat_abandoned')]),
+            self.Capture.search_count([('reason_code', '=', 'webchat_abandoned')]),
             1, 'first capture stands; a live chat adds nothing')
 
     def _stored_score(self, conv):
@@ -497,7 +497,7 @@ class TestChannelAttribution(ChannelSpineCase):
     def test_at_08_touchpoint_must_belong_to_something(self):
         with self.assertRaises(ValidationError):
             self.Touch.sudo().create({
-                'touchpoint_type': 'manual',
+                'touchpoint_type_id': self.env['health.lookup.value']._default_for('touchpoint_type', 'manual'),
                 'occurred_at': fields.Datetime.now(),
             })
 

@@ -16,7 +16,7 @@
                   decoration-muted="state == 'dismissed'">
                 <field name="occurred_at"/>
                 <field name="channel"/>
-                <field name="reason"/>
+                <field name="reason_id"/>
                 <field name="peer_hint"/>
                 <field name="phone_normalized"/>
                 <field name="email_normalized"/>
@@ -38,6 +38,7 @@
         <field name="model">care.contact.capture</field>
         <field name="arch" type="xml">
             <form string="Unrouted Contact">
+                <field name="reason_code" column_invisible="True" invisible="1"/>
                 <header>
                     <button name="action_convert" type="object" string="Convert to conversation"
                             class="btn-primary" invisible="state != 'new'"/>
@@ -48,20 +49,20 @@
                 </header>
                 <sheet>
                     <div class="alert alert-info" role="status"
-                         invisible="reason != 'unknown_resource'">
+                         invisible="reason_code != 'unknown_resource'">
                         This message arrived for an account this system does not
                         recognise. If it is one of yours, connect it in the
                         Channel Center — every future message will then reach the
                         wall by itself.
                     </div>
                     <div class="alert alert-info" role="status"
-                         invisible="reason != 'not_ingestable'">
+                         invisible="reason_code != 'not_ingestable'">
                         Somebody messaged a channel that is not finished being set
                         up. Complete its setup in the Channel Center to stop this
                         recurring.
                     </div>
                     <div class="alert alert-info" role="status"
-                         invisible="reason != 'no_voip_config'">
+                         invisible="reason_code != 'no_voip_config'">
                         A call arrived before Calls was configured, so no call
                         record could be created. The caller's number is below.
                     </div>
@@ -74,7 +75,7 @@
                         </group>
                         <group string="Where it came from">
                             <field name="channel"/>
-                            <field name="reason"/>
+                            <field name="reason_id"/>
                             <field name="connection_id"/>
                             <field name="resource_external_id"/>
                             <field name="occurred_at"/>
@@ -120,7 +121,7 @@
                      Odoo 19; both are rejected by the search-view schema. -->
                 <group>
                     <filter name="g_reason" string="Reason"
-                            context="{'group_by': 'reason'}"/>
+                            context="{'group_by': 'reason_id'}"/>
                     <filter name="g_channel" string="Channel"
                             context="{'group_by': 'channel'}"/>
                     <filter name="g_account" string="Account"

@@ -23,7 +23,7 @@
                             <field name="value_quantity"/>
                             <field name="unit_display"/>
                             <field name="effective_datetime"/>
-                            <field name="body_position"/>
+                            <field name="body_position_id"/>
                             <field name="alert_level" widget="badge"
                                    decoration-danger="alert_level == 'critical'"
                                    decoration-warning="alert_level == 'warning'"/>

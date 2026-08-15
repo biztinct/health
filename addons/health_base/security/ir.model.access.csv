@@ -106,3 +106,16 @@ access_health_deletion_reason_manager,health.deletion.reason manager,model_healt
 access_health_deletion_reason_admin,health.deletion.reason admin,model_health_deletion_reason,group_healthcare_admin,1,1,1,0
 access_health_deletion_reason_owner,health.deletion.reason owner,model_health_deletion_reason,group_healthcare_owner,1,1,1,1
 access_health_archive_log_custodian,health.archive.log custodian,model_health_archive_log,group_healthcare_custodian,1,0,0,0
+access_health_medication_base,health.medication base,model_health_medication,group_healthcare_base,1,0,0,0
+access_health_medication_manager,health.medication manager,model_health_medication,group_healthcare_manager,1,1,1,0
+access_health_medication_admin,health.medication admin,model_health_medication,group_healthcare_admin,1,1,1,0
+access_health_medication_owner,health.medication owner,model_health_medication,group_healthcare_owner,1,1,1,1
+access_health_lookup_category_base,health.lookup.category base,model_health_lookup_category,group_healthcare_base,1,0,0,0
+access_health_lookup_category_admin,health.lookup.category admin,model_health_lookup_category,group_healthcare_admin,1,1,0,0
+access_health_lookup_category_owner,health.lookup.category owner,model_health_lookup_category,group_healthcare_owner,1,1,1,1
+access_health_lookup_value_base,health.lookup.value base,model_health_lookup_value,group_healthcare_base,1,0,0,0
+access_health_lookup_value_manager,health.lookup.value manager,model_health_lookup_value,group_healthcare_manager,1,1,1,0
+access_health_lookup_value_admin,health.lookup.value admin,model_health_lookup_value,group_healthcare_admin,1,1,1,1
+access_health_lookup_value_owner,health.lookup.value owner,model_health_lookup_value,group_healthcare_owner,1,1,1,1
+access_health_lookup_import_wizard,health.lookup.import.wizard,model_health_lookup_import_wizard,group_healthcare_admin,1,1,1,1
+access_health_lookup_import_wizard_owner,health.lookup.import.wizard owner,model_health_lookup_import_wizard,group_healthcare_owner,1,1,1,1

@@ -21,11 +21,13 @@ class HealthCatchmentProvince(models.Model):
     name = fields.Char(
         string="Name",
         required=True,
+        translate=True,
         help="Name of the catchment province/area"
     )
     
     description = fields.Text(
         string="Description",
+        translate=True,
         help="Description of this catchment province/area"
     )
     

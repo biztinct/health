@@ -317,8 +317,9 @@ class Partner(models.Model):
                 'service_count': pt.healthcare_service_count,
                 'price': pt.list_price,
                 'price_per_service': pt.healthcare_price_per_visit,
-                'package_type': pt.healthcare_package_type or '',
-                'package_type_label': dict(pt._fields['healthcare_package_type'].selection).get(pt.healthcare_package_type, ''),
+                'package_type': pt.healthcare_package_type_id.code or '',
+                # Reads in the user's language now, which the Selection dict never did.
+                'package_type_label': pt.healthcare_package_type_id.name or '',
                 'expiration': expiration,
                 'notes': pt.healthcare_terms or '',
             })

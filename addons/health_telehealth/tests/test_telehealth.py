@@ -238,11 +238,11 @@ class TestConsentLogged(TeleBase):
         fso = self._make_fso(online=True)
         before = self.env['health.consent.check.log'].search_count([
             ('client_id', '=', self.patient.id),
-            ('consent_type', '=', 'service')])
+            ('consent_type_code', '=', 'service')])
         self._confirm(fso)
         after = self.env['health.consent.check.log'].search_count([
             ('client_id', '=', self.patient.id),
-            ('consent_type', '=', 'service')])
+            ('consent_type_code', '=', 'service')])
         self.assertGreater(after, before)
         self.assertEqual(fso.state, 'confirmed')
 

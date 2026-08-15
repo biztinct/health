@@ -109,7 +109,7 @@ class DaystripMixin:
             'client_id': self.patient.id,
             'representative_id': self.representative.id,
             'role': 'caregiver',
-            'relationship_type': 'child',
+            'relationship_type_id': self.env['health.lookup.value']._default_for('relationship_type', 'child'),
             'receives_visit_updates': True,
             'can_receive_medical_info': True,
         })

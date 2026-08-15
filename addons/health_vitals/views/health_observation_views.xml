@@ -58,7 +58,7 @@
                             <field name="effective_datetime"/>
                             <field name="performer_id"/>
                             <field name="method"/>
-                            <field name="body_position"/>
+                            <field name="body_position_id"/>
                             <field name="device"/>
                             <field name="catchment_province_id"/>
                             <field name="company_id" groups="base.group_multi_company"/>

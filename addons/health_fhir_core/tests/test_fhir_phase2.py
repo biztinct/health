@@ -219,7 +219,7 @@ class TestFHIRPhase2(TransactionCase):
             'dav_reg_no': 'VD-12345-20'})
         order = self.env['health.medication.order'].create({
             'client_id': self.patient.id, 'medication_id': med.id,
-            'dose_quantity': 1.0, 'dose_unit': 'tablet', 'route': 'oral',
+            'dose_quantity': 1.0, 'dose_unit': 'tablet', 'route_id': self.env['health.lookup.value']._default_for('medication_route', 'oral'),
             'frequency': 'od',
             'start_date': fields.Date.today() + timedelta(days=1)})
         order.action_activate()  # single order → no interaction API call
@@ -369,7 +369,7 @@ class TestFHIRPhase2(TransactionCase):
     # ------------------------------------------------------------------
     def test_consent_active_and_withdrawn(self):
         active = self.env['health.consent'].create({
-            'client_id': self.patient.id, 'consent_type': 'service',
+            'client_id': self.patient.id, 'consent_type_id': self.env['health.lookup.value']._default_for('consent_type', 'service'),
             'method': 'verbal', 'effective_date': fields.Date.today()})
         active.action_grant()
         resource = REGISTRY['Consent'].to_fhir(active)
@@ -382,7 +382,7 @@ class TestFHIRPhase2(TransactionCase):
         self._validate(resource)
 
         withdrawn = self.env['health.consent'].create({
-            'client_id': self.patient.id, 'consent_type': 'photography',
+            'client_id': self.patient.id, 'consent_type_id': self.env['health.lookup.value']._default_for('consent_type', 'photography'),
             'method': 'verbal', 'effective_date': fields.Date.today()})
         withdrawn.action_grant()
         withdrawn.write({'withdrawal_reason': 'Client asked'})

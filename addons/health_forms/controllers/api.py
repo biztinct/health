@@ -188,7 +188,7 @@ class HealthFormsPWAController(http.Controller):
                     'code': template.code,
                     'name': template.name,
                     'name_vi': template.name_vi or '',
-                    'category': template.category,
+                    'category': template.category_id.code or '',
                 } for template in templates],
                 'instances': [self._serialize_instance(instance)
                               for instance in instances],

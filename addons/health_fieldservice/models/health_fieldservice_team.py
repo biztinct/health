@@ -10,8 +10,8 @@ class HealthFieldServiceTeam(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'name'
     
-    name = fields.Char('Team Name', required=True, tracking=True)
-    description = fields.Text('Description')
+    name = fields.Char('Team Name', required=True, tracking=True, translate=True)
+    description = fields.Text('Description', translate=True)
     
     # Team composition
     leader_id = fields.Many2one('res.users', string='Team Leader', tracking=True)

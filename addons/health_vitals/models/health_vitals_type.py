@@ -11,12 +11,18 @@ from odoo import api, fields, models
 class HealthVitalsType(models.Model):
     _name = 'health.vitals.type'
     _description = 'Vital Sign / Observation Type'
+    _inherit = ['health.vi.alias.mixin']
     _order = 'sequence, name'
 
     name = fields.Char(
         required=True, translate=True,
         help="English display name (FHIR code.coding.display).")
-    name_vi = fields.Char(string='Vietnamese Name')
+    # Mirrors the vi_VN translation of `name` instead of being a second
+    # column — a many2one dropdown renders `name`, so a standalone name_vi was
+    # never visible where users pick the value. See health.vi.alias.mixin.
+    name_vi = fields.Char(
+        string='Vietnamese Name', compute='_compute_vi_alias',
+        inverse='_inverse_vi_alias', store=False)
     code = fields.Char(
         required=True,
         help="Internal short code (bp_sys, hr, ...) used by the PWA "

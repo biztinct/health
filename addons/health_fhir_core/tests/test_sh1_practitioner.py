@@ -40,7 +40,7 @@ class TestSh1PractitionerQualification(TransactionCase):
                 'catchment_province_id': cls.province.id})
 
         cls.skill = env['health.staff.skill'].create({
-            'name': 'SH1 Wound Care %s' % tag, 'skill_category': 'nursing'})
+            'name': 'SH1 Wound Care %s' % tag, 'skill_category_id': cls.env['health.lookup.value']._default_for('staff_skill_category', 'nursing')})
         cls.employee = env['hr.employee'].create({
             'name': 'SH1 Practitioner %s' % tag,
             'healthcare_facility_id': cls.facility.id,

@@ -97,6 +97,11 @@
         <field name="arch" type="xml">
             <xpath expr="//list" position="attributes">
                 <attribute name="js_class">admin_model_navigator_view</attribute>
+                <!-- Inline editing puts the EN/VI translate globe on the row
+                     itself, which is the whole point of this screen. Only set
+                     where the list already carries every required field, so
+                     "New" can save without opening the form. -->
+                <attribute name="editable">bottom</attribute>
             </xpath>
         </field>
     </record>
@@ -118,6 +123,11 @@
         <field name="arch" type="xml">
             <xpath expr="//list" position="attributes">
                 <attribute name="js_class">admin_model_navigator_view</attribute>
+                <!-- Inline editing puts the EN/VI translate globe on the row
+                     itself, which is the whole point of this screen. Only set
+                     where the list already carries every required field, so
+                     "New" can save without opening the form. -->
+                <attribute name="editable">bottom</attribute>
             </xpath>
         </field>
     </record>
@@ -139,6 +149,11 @@
         <field name="arch" type="xml">
             <xpath expr="//list" position="attributes">
                 <attribute name="js_class">admin_model_navigator_view</attribute>
+                <!-- Inline editing puts the EN/VI translate globe on the row
+                     itself, which is the whole point of this screen. Only set
+                     where the list already carries every required field, so
+                     "New" can save without opening the form. -->
+                <attribute name="editable">bottom</attribute>
             </xpath>
         </field>
     </record>
@@ -160,6 +175,11 @@
         <field name="arch" type="xml">
             <xpath expr="//list" position="attributes">
                 <attribute name="js_class">admin_model_navigator_view</attribute>
+                <!-- Inline editing puts the EN/VI translate globe on the row
+                     itself, which is the whole point of this screen. Only set
+                     where the list already carries every required field, so
+                     "New" can save without opening the form. -->
+                <attribute name="editable">bottom</attribute>
             </xpath>
         </field>
     </record>
@@ -181,6 +201,11 @@
         <field name="arch" type="xml">
             <xpath expr="//list" position="attributes">
                 <attribute name="js_class">admin_model_navigator_view</attribute>
+                <!-- Inline editing puts the EN/VI translate globe on the row
+                     itself, which is the whole point of this screen. Only set
+                     where the list already carries every required field, so
+                     "New" can save without opening the form. -->
+                <attribute name="editable">bottom</attribute>
             </xpath>
         </field>
     </record>
@@ -244,6 +269,11 @@
         <field name="arch" type="xml">
             <xpath expr="//list" position="attributes">
                 <attribute name="js_class">admin_model_navigator_view</attribute>
+                <!-- Inline editing puts the EN/VI translate globe on the row
+                     itself, which is the whole point of this screen. Only set
+                     where the list already carries every required field, so
+                     "New" can save without opening the form. -->
+                <attribute name="editable">bottom</attribute>
             </xpath>
         </field>
     </record>
@@ -257,8 +287,360 @@
     </record>
 
     <!-- =============================================== -->
+    <!--  ADMIN CENTER — Master Data, lookup tables      -->
+    <!--                                                 -->
+    <!--  Every many2one/many2many reference table that  -->
+    <!--  backs a dropdown on a CMS-reachable form, so   -->
+    <!--  the client maintains its own vocabularies      -->
+    <!--  without a developer. Grouped into the four     -->
+    <!--  sections declared in admin_model_navigator.js  -->
+    <!--  (places / clients / care / operations).        -->
+    <!-- =============================================== -->
+
+    <!-- Provinces & Cities (health_crm lookup, distinct from catchments) -->
+    <record id="view_admin_province_list" model="ir.ui.view">
+        <field name="name">admin.province.list</field>
+        <field name="model">health.province</field>
+        <field name="inherit_id" ref="health_crm.view_health_province_tree"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+                <!-- Inline editing puts the EN/VI translate globe on the row
+                     itself, which is the whole point of this screen. Only set
+                     where the list already carries every required field, so
+                     "New" can save without opening the form. -->
+                <attribute name="editable">bottom</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_provinces" model="ir.actions.act_window">
+        <field name="name">Provinces / Cities</field>
+        <field name="res_model">health.province</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_province_list')})]"/>
+    </record>
+
+    <!-- Contact Reasons -->
+    <record id="view_admin_contact_reason_list" model="ir.ui.view">
+        <field name="name">admin.contact.reason.list</field>
+        <field name="model">health.contact.reason</field>
+        <field name="inherit_id" ref="health_crm.view_health_contact_reason_tree"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+                <!-- Inline editing puts the EN/VI translate globe on the row
+                     itself, which is the whole point of this screen. Only set
+                     where the list already carries every required field, so
+                     "New" can save without opening the form. -->
+                <attribute name="editable">bottom</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_contact_reasons" model="ir.actions.act_window">
+        <field name="name">Contact Reasons</field>
+        <field name="res_model">health.contact.reason</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_contact_reason_list')})]"/>
+    </record>
+
+    <!-- Lead Reasons -->
+    <record id="view_admin_lead_reason_list" model="ir.ui.view">
+        <field name="name">admin.lead.reason.list</field>
+        <field name="model">health.lead.reason</field>
+        <field name="inherit_id" ref="health_crm.view_health_lead_reason_tree"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+                <!-- Inline editing puts the EN/VI translate globe on the row
+                     itself, which is the whole point of this screen. Only set
+                     where the list already carries every required field, so
+                     "New" can save without opening the form. -->
+                <attribute name="editable">bottom</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_lead_reasons" model="ir.actions.act_window">
+        <field name="name">Lead Reasons</field>
+        <field name="res_model">health.lead.reason</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_lead_reason_list')})]"/>
+    </record>
+
+    <!-- Lost Reasons (core CRM lookup, shown on the lead form) -->
+    <record id="view_admin_lost_reason_list" model="ir.ui.view">
+        <field name="name">admin.lost.reason.list</field>
+        <field name="model">crm.lost.reason</field>
+        <field name="inherit_id" ref="crm.crm_lost_reason_view_tree"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_lost_reasons" model="ir.actions.act_window">
+        <field name="name">Lost Reasons</field>
+        <field name="res_model">crm.lost.reason</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_lost_reason_list')})]"/>
+    </record>
+
+    <!-- Service Categories — the product.category taxonomy the price-list
+         import builds (Service Type → Service Category). -->
+    <!-- Authored rather than inherited: core's category list shows
+         `display_name` (the full "Parent / Child" path), which is computed and
+         so cannot be edited or translated in place. This one shows `name`, the
+         field that actually carries the en_US/vi_VN pair. -->
+    <record id="view_admin_service_category_list" model="ir.ui.view">
+        <field name="name">admin.service.category.list</field>
+        <field name="model">product.category</field>
+        <!-- Explicit reset: this record shipped once as an inherited view, and
+             simply dropping <inherit_id> from the XML leaves the old parent on
+             the existing row — the upgrade then fails with "cannot be located
+             in parent view" because a standalone <list> is not a valid patch. -->
+        <field name="inherit_id" eval="False"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <list string="Service Categories" js_class="admin_model_navigator_view"
+                  editable="bottom">
+                <field name="name" string="Category"/>
+                <field name="parent_id" string="Parent"/>
+                <field name="complete_name" string="Full Path" readonly="1" optional="show"/>
+                <field name="product_count" string="Services" readonly="1" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_admin_service_categories" model="ir.actions.act_window">
+        <field name="name">Service Categories</field>
+        <field name="res_model">product.category</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_service_category_list')})]"/>
+    </record>
+
+    <!-- Clinical Protocols -->
+    <record id="view_admin_protocol_list" model="ir.ui.view">
+        <field name="name">admin.clinical.protocol.list</field>
+        <field name="model">health.clinical.protocol</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_clinical_protocol_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+                <!-- Inline editing puts the EN/VI translate globe on the row
+                     itself, which is the whole point of this screen. Only set
+                     where the list already carries every required field, so
+                     "New" can save without opening the form. -->
+                <attribute name="editable">bottom</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_protocols" model="ir.actions.act_window">
+        <field name="name">Clinical Protocols</field>
+        <field name="res_model">health.clinical.protocol</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_protocol_list')})]"/>
+    </record>
+
+    <!-- NB: Medications (health.medication) is NOT here. health_base defines
+         the model but never loads health_medication_safety_views.xml, so
+         `health_base.view_health_medication_list` does not exist in the
+         registry — ref()ing it hard-fails the upgrade. The only live list
+         view is health_emar's, so that tab is contributed from
+         health_cms_sidebar (which depends on health_emar) instead. -->
+
+    <!-- Booking Stages -->
+    <record id="view_admin_booking_stage_list" model="ir.ui.view">
+        <field name="name">admin.booking.stage.list</field>
+        <field name="model">health.fieldservice.stage</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_fieldservice_stage_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_booking_stages" model="ir.actions.act_window">
+        <field name="name">Booking Stages</field>
+        <field name="res_model">health.fieldservice.stage</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_booking_stage_list')})]"/>
+    </record>
+
+    <!-- Field Service Teams -->
+    <record id="view_admin_fs_team_list" model="ir.ui.view">
+        <field name="name">admin.fieldservice.team.list</field>
+        <field name="model">health.fieldservice.team</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_fieldservice_team_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+                <!-- Inline editing puts the EN/VI translate globe on the row
+                     itself, which is the whole point of this screen. Only set
+                     where the list already carries every required field, so
+                     "New" can save without opening the form. -->
+                <attribute name="editable">bottom</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_fs_teams" model="ir.actions.act_window">
+        <field name="name">Field Service Teams</field>
+        <field name="res_model">health.fieldservice.team</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_fs_team_list')})]"/>
+    </record>
+
+    <!-- Booking Cancellation Reasons — no list view shipped upstream, so this
+         one is authored here rather than inherited. -->
+    <record id="view_admin_cancel_reason_list" model="ir.ui.view">
+        <field name="name">admin.cancellation.reason.list</field>
+        <field name="model">health.booking.cancellation.reason</field>
+        <field name="arch" type="xml">
+            <list string="Cancellation Reasons" js_class="admin_model_navigator_view"
+                  editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="reason_type_id"/>
+                <field name="description" optional="show"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_admin_cancel_reasons" model="ir.actions.act_window">
+        <field name="name">Cancellation Reasons</field>
+        <field name="res_model">health.booking.cancellation.reason</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'active_test': False}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_cancel_reason_list')})]"/>
+    </record>
+
+    <!-- Deletion Reasons -->
+    <record id="view_admin_deletion_reason_list" model="ir.ui.view">
+        <field name="name">admin.deletion.reason.list</field>
+        <field name="model">health.deletion.reason</field>
+        <field name="inherit_id" ref="health_base.view_health_deletion_reason_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_deletion_reasons" model="ir.actions.act_window">
+        <field name="name">Deletion Reasons</field>
+        <field name="res_model">health.deletion.reason</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_deletion_reason_list')})]"/>
+    </record>
+
+    <!-- Dropdown Values — the vocabularies behind the converted Selection
+         fields. One model, one screen; the per-vocabulary drill-in lives on
+         the Categories tab (health.lookup.category.action_open_values), which
+         is also the screen the client imports a single vocabulary from. -->
+    <record id="view_admin_lookup_value_list" model="ir.ui.view">
+        <field name="name">admin.lookup.value.list</field>
+        <field name="model">health.lookup.value</field>
+        <field name="inherit_id" ref="health_base.view_health_lookup_value_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_lookup_values" model="ir.actions.act_window">
+        <field name="name">Dropdown Values</field>
+        <field name="res_model">health.lookup.value</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'active_test': False, 'search_default_group_category': 1}</field>
+        <field name="search_view_id" ref="health_base.view_health_lookup_value_search"/>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_lookup_value_list')})]"/>
+    </record>
+
+    <record id="view_admin_lookup_category_list" model="ir.ui.view">
+        <field name="name">admin.lookup.category.list</field>
+        <field name="model">health.lookup.category</field>
+        <field name="inherit_id" ref="health_base.view_health_lookup_category_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_lookup_categories" model="ir.actions.act_window">
+        <field name="name">Value Categories</field>
+        <field name="res_model">health.lookup.category</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'active_test': False}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_lookup_category_list')})]"/>
+    </record>
+
+    <!-- =============================================== -->
     <!--  ADMIN CENTER — Pricing (4 tabs)                -->
     <!-- =============================================== -->
+
+    <!-- Services — the product list the "Import Price List" wizard populates
+         (product.template, type='service'). This is the first Pricing tab;
+         the pricing ENGINE list is deliberately not a tab any more — there is
+         a single engine and it is not something the client maintains. The
+         action below is kept so the legacy Odoo menu entry still resolves. -->
+    <record id="view_admin_service_list" model="ir.ui.view">
+        <field name="name">admin.service.list</field>
+        <field name="model">product.template</field>
+        <field name="arch" type="xml">
+            <list string="Services" js_class="admin_model_navigator_view" multi_edit="1">
+                <field name="currency_id" column_invisible="True"/>
+                <field name="default_code" string="Item Code"/>
+                <field name="name" string="Service"/>
+                <field name="categ_id" string="Category"/>
+                <field name="list_price" string="Base Fee" widget="monetary"
+                       options="{'currency_field': 'currency_id'}"/>
+                <field name="uom_id" string="Unit" optional="show" groups="uom.group_uom"/>
+                <field name="rounding_rule" optional="show"/>
+                <field name="sale_ok" string="Can be Sold" optional="hide"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_admin_services" model="ir.actions.act_window">
+        <field name="name">Services</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('type', '=', 'service')]</field>
+        <field name="context">{'active_test': False, 'default_type': 'service', 'default_sale_ok': True}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_service_list')})]"/>
+    </record>
 
     <record id="view_admin_pricelist_list" model="ir.ui.view">
         <field name="name">admin.pricing.engine.list</field>

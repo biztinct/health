@@ -109,7 +109,7 @@ class AiCodingBase(TransactionCase):
     def _grant_consent(self, patient=None):
         consent = self.env['health.consent'].create({
             'client_id': (patient or self.patient).id,
-            'consent_type': 'data_sharing',
+            'consent_type_id': self.env['health.lookup.value']._default_for('consent_type', 'data_sharing'),
             'method': 'verbal',
             'verbal_witness_id': self.env.uid,
             'effective_date': fields.Date.today(),

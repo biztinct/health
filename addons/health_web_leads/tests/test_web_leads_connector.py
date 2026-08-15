@@ -142,7 +142,7 @@ class TestWebLeadsConnector(ConnectorCaseMixin, TransactionCase):
             'lead_id': lead.id,
             'occurred_at': received_at or fields.Datetime.now(),
             'received_at': received_at or fields.Datetime.now(),
-            'touchpoint_type': 'form_submit',
+            'touchpoint_type_id': self.env['health.lookup.value']._default_for('touchpoint_type', 'form_submit'),
             'source_system': 'wordpress',
             'external_event_id': 'w25-%s' % uuid.uuid4().hex[:16]})
 

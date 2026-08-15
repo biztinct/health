@@ -112,9 +112,18 @@ class HealthLeadTouchpoint(models.Model):
         help='When this system accepted the touch. The gap to Occurred At is '
              'the relay skew.')
 
-    touchpoint_type = fields.Selection(
-        TOUCHPOINT_TYPE_SELECTION, string='Touchpoint Type', required=True,
+    touchpoint_type_id = fields.Many2one(
+        'health.lookup.value',
+        string='Touchpoint Type',
+        domain="[('category_code', '=', 'touchpoint_type'), ('active', '=', True)]",
+        ondelete='restrict',
+        required=True,
         index=True)
+    # Companion for view expressions and domains: an Odoo view attribute
+    # (invisible=, decoration-, domain=) cannot traverse a many2one, and
+    # this keeps every existing comparison a one-word change.
+    touchpoint_type_code = fields.Char(
+        related='touchpoint_type_id.code', string='Touchpoint Type Code', readonly=True)
     source_system = fields.Selection(
         SOURCE_SYSTEM_SELECTION, string='Source System')
 
@@ -193,19 +202,18 @@ class HealthLeadTouchpoint(models.Model):
         records._check_attached()
         return records
 
-    @api.depends('touchpoint_type', 'occurred_at')
+    @api.depends('touchpoint_type_id', 'occurred_at')
     def _compute_display_name(self):
         """The model has no `name`, so without this every breadcrumb, m2o
         label and log line reads `health.lead.touchpoint,97`.
 
-        The type label comes from `fields_get`, which returns the TRANSLATED
-        selection — so the name follows the reader's language for free and
-        costs the catalogue no new msgid.
+        The type label now comes from the lookup record, whose `name` is a
+        translated jsonb column — so the name still follows the reader's
+        language, and the client can rename a touchpoint type without a
+        developer.
         """
-        labels = dict(self.fields_get(
-            ['touchpoint_type'])['touchpoint_type']['selection'])
         for touch in self:
-            parts = [labels.get(touch.touchpoint_type) or '']
+            parts = [touch.touchpoint_type_id.name or '']
             if touch.occurred_at:
                 parts.append(fields.Datetime.to_string(touch.occurred_at))
             touch.display_name = ' · '.join(p for p in parts if p) \
@@ -313,6 +321,6 @@ class HealthLeadTouchpoint(models.Model):
         # the concurrency backstop for two relay deliveries racing.
         self.env.cr.execute("""
             CREATE UNIQUE INDEX IF NOT EXISTS health_lead_touchpoint_ext_uidx
-            ON health_lead_touchpoint (touchpoint_type, external_event_id)
+            ON health_lead_touchpoint (touchpoint_type_id, external_event_id)
             WHERE external_event_id IS NOT NULL
         """)

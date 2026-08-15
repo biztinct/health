@@ -15,15 +15,6 @@ _logger = logging.getLogger(__name__)
 # can therefore be translated per user language (a plain list of literals is
 # not picked up by the translation catalog). Labels mirror the legacy system's
 # wording — see Migration_Audit_Report_v3.
-def _selection_partner_gender(model):
-    return [
-        ('male', model.env._('Male')),
-        ('female', model.env._('Female')),
-        ('other', model.env._('Other')),
-        ('prefer_not_to_say', model.env._('Unspecified')),
-    ]
-
-
 def _selection_client_source(model):
     return [
         ('facebook', model.env._('Facebook')),
@@ -94,9 +85,16 @@ class ResPartner(models.Model):
     birth_date = fields.Date('Date of Birth', tracking=True)
     age = fields.Integer('Age', compute='_compute_age', store=True)
     age_display = fields.Char('Age Display', compute='_compute_age_display')
-    gender = fields.Selection(
-        _selection_partner_gender, string='Gender', tracking=True)
-    
+    gender_id = fields.Many2one(
+        'health.lookup.value', string='Gender', tracking=True,
+        domain="[('category_code', '=', 'gender'), ('active', '=', True)]",
+        ondelete='restrict')
+    # Companion for view expressions and every non-ORM reader: an Odoo view
+    # attribute cannot traverse a many2one, and the PWA / /api/v1 / FHIR
+    # payloads must keep emitting the same code string they always did.
+    gender_code = fields.Char(
+        related='gender_id.code', string='Gender Code', readonly=True)
+
     # Healthcare Specific Fields
     patient_category_id = fields.Many2one('health.patient.category', string='Client Category')
     blood_group = fields.Selection([
@@ -344,18 +342,29 @@ class ResPartner(models.Model):
         help='clients I referred'
     )
     
-    def _generate_patient_code(self, catchment_province=None):
+    # Person-identifier numbering. Shared by client IDs (`res.partner.
+    # patient_code`) and contact IDs (`crm.lead.unique_contact_code`) so a lead
+    # that converts to a client keeps the same identifier — health_crm calls
+    # `_generate_person_code` directly, do not fork a second implementation.
+    PERSON_CODE_PADDING = 4
+
+    def _generate_person_code(self, catchment_province=None):
         """
-        Generate unique patient code in format: PP 00000YYYY
+        Generate a unique person code in format: PP 0000YY
         Where:
         - PP = province code from catchment province
-        - 00000 = sequential number (resets yearly, with leading zeros)
-        - YYYY = current year
+        - 0000 = sequential number (resets yearly, 4 digits with leading zeros)
+        - YY = 2-digit calendar year
+
+        e.g. `02 088126`. Capacity is 9,999 new enrolments per province per
+        year. Codes issued before this format change keep their original
+        PP 00000YYYY shape — they are never rewritten.
         """
         from datetime import datetime
 
-        # Get catchment province (from parameter or assigned catchment province)
-        if not catchment_province and self.catchment_province_id:
+        # Get catchment province (from parameter or assigned catchment
+        # province). `self` is empty when health_crm calls this on the model.
+        if not catchment_province and self:
             catchment_province = self.catchment_province_id
 
         # Get province code from catchment province
@@ -367,8 +376,10 @@ class ResPartner(models.Model):
 
         # Get current year
         current_year = datetime.now().year
+        year_suffix = f'{current_year % 100:02d}'
 
-        # Generate sequence code specific to province and year
+        # Generate sequence code specific to province and year. The key keeps
+        # the full year so the pre-existing per-year sequences stay addressable.
         sequence_code = f'patient.{province_code}.{current_year}'
 
         # Check if sequence exists, if not create it
@@ -379,22 +390,28 @@ class ResPartner(models.Model):
         if not sequence:
             # Create new sequence for this province/year combination
             sequence = self.env['ir.sequence'].sudo().create({
-                'name': f'Patient ID - Province {province_code} - {current_year}',
+                'name': f'Client/Contact ID - Province {province_code} - {current_year}',
                 'code': sequence_code,
                 'implementation': 'standard',
                 'prefix': '',
-                'padding': 5,  # 5 digits with leading zeros
+                'padding': self.PERSON_CODE_PADDING,
                 'number_increment': 1,
                 'number_next': 1,
             })
+        elif sequence.padding != self.PERSON_CODE_PADDING:
+            # Sequences created under the old 5-digit format are re-padded in
+            # place; the running number is preserved, only its width changes.
+            sequence.sudo().padding = self.PERSON_CODE_PADDING
 
         # Get next sequence number
         seq_number = sequence.next_by_id()
 
-        # Format: PP 00000YYYY (note the space)
-        patient_code = f'{province_code} {seq_number}{current_year}'
+        # Format: PP 0000YY (note the space)
+        return f'{province_code} {seq_number}{year_suffix}'
 
-        return patient_code
+    def _generate_patient_code(self, catchment_province=None):
+        """Client ID for this partner. See `_generate_person_code`."""
+        return self._generate_person_code(catchment_province)
     
     @api.depends('province_code', 'named_area', 'apartment_number', 'building_name',
                  'house_number', 'sub_alley_number', 'alley_number', 'street', 'street2',
@@ -652,7 +669,7 @@ class ResPartner(models.Model):
         _logger.info(f"=== _message_track called ===")
 
         hidden_from_chatter_fields = {
-            'is_patient', 'patient_code', 'first_name', 'last_name', 'birth_date', 'gender',
+            'is_patient', 'patient_code', 'first_name', 'last_name', 'birth_date', 'gender_id',
             'patient_status', 'source_type', 'partner_latitude', 'partner_longitude',
             'date_localization', 'street', 'street2', 'city', 'state_id', 'country_id', 'zip',
             'ward_commune', 'house_number', 'alley_number', 'sub_alley_number', 'named_area',
@@ -676,7 +693,7 @@ class ResPartner(models.Model):
         Shared by both message_post() and _message_log() to ensure consistent filtering.
         """
         hidden_from_chatter_fields = {
-            'is_patient', 'patient_code', 'first_name', 'last_name', 'birth_date', 'gender',
+            'is_patient', 'patient_code', 'first_name', 'last_name', 'birth_date', 'gender_id',
             'patient_status', 'source_type', 'partner_latitude', 'partner_longitude',
             'date_localization', 'street', 'street2', 'city', 'state_id', 'country_id', 'zip',
             'ward_commune', 'house_number', 'alley_number', 'sub_alley_number', 'named_area',
@@ -743,7 +760,7 @@ class ResPartner(models.Model):
         - NO empty/blank messages appear in chatter
         """
         hidden_from_chatter_fields = {
-            'is_patient', 'patient_code', 'first_name', 'last_name', 'birth_date', 'gender',
+            'is_patient', 'patient_code', 'first_name', 'last_name', 'birth_date', 'gender_id',
             'patient_status', 'source_type', 'partner_latitude', 'partner_longitude',
             'date_localization', 'street', 'street2', 'city', 'state_id', 'country_id', 'zip',
             'ward_commune', 'house_number', 'alley_number', 'sub_alley_number', 'named_area',

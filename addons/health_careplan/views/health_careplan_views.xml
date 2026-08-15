@@ -74,7 +74,7 @@
                         <group string="Plan">
                             <field name="client_id"
                                    readonly="state != 'draft'"/>
-                            <field name="category"/>
+                            <field name="category_id"/>
                             <field name="facility_id"/>
                             <field name="author_id"/>
                             <field name="protocol_id"/>
@@ -153,7 +153,7 @@
                   decoration-muted="deleted or (state == 'cancelled')" decoration-danger="deleted">
                 <field name="name"/>
                 <field name="client_id"/>
-                <field name="category"/>
+                <field name="category_id"/>
                 <field name="period_start"/>
                 <field name="next_review_date"/>
                 <field name="adherence_rate" widget="percentage"/>
@@ -194,7 +194,7 @@
                             </div>
                             <div class="text-muted">
                                 <field name="name"/>
-                                &#160;<field name="category"/>
+                                &#160;<field name="category_id"/>
                             </div>
                             <div>
                                 <span><field name="goal_count"/> goals</span>
@@ -234,7 +234,7 @@
                 <filter string="Client" name="group_client"
                         context="{'group_by': 'client_id'}"/>
                 <filter string="Category" name="group_category"
-                        context="{'group_by': 'category'}"/>
+                        context="{'group_by': 'category_id'}"/>
                 <filter string="Facility" name="group_facility"
                         context="{'group_by': 'facility_id'}"/>
                 <filter string="Status" name="group_state"

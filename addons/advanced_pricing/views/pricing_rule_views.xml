@@ -114,13 +114,13 @@
                         <group>
                             <group string="Visit &amp; time">
                                 <field name="requires_home_service" string="Only at the client's home"/>
-                                <field name="service_location" string="Service location"/>
+                                <field name="service_location_id" string="Service location"/>
                                 <field name="service_type" string="Service type"/>
                                 <field name="is_after_hours_or_weekend" string="After-hours or weekend"/>
                                 <field name="is_after_hours_required" string="After hours only"/>
                                 <field name="is_weekend_required" string="Weekends only"/>
                                 <field name="is_holiday_required" string="Holidays only"/>
-                                <field name="holiday_type" string="Holiday type" invisible="not is_holiday_required"/>
+                                <field name="holiday_type_id" string="Holiday type" invisible="not is_holiday_required"/>
                             </group>
                             <group string="Distance, hours &amp; quantities">
                                 <field name="distance_min" string="Min distance (km)" placeholder="ignore"/>

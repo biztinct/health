@@ -23,7 +23,7 @@
                         </group>
                         <group string="eMAR Coding" name="emar_coding">
                             <field name="rxnorm_code"/>
-                            <field name="form"/>
+                            <field name="form_id"/>
                             <field name="strength"/>
                             <field name="dav_reg_no"/>
                         </group>
@@ -41,7 +41,7 @@
                 <field name="name"/>
                 <field name="generic_name" optional="show"/>
                 <field name="rxnorm_code" optional="show"/>
-                <field name="form" optional="show"/>
+                <field name="form_id" optional="show"/>
                 <field name="strength" optional="show"/>
                 <field name="medication_class" optional="hide"/>
             </list>

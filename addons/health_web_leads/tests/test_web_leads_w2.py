@@ -58,7 +58,7 @@ class TestWebLeadsW2(TransactionCase):
             'lead_id': lead.id,
             'occurred_at': received_at or fields.Datetime.now(),
             'received_at': received_at or fields.Datetime.now(),
-            'touchpoint_type': 'form_submit',
+            'touchpoint_type_id': self.env['health.lookup.value']._default_for('touchpoint_type', 'form_submit'),
             'source_system': 'wordpress',
             'external_event_id': event_id,
         })
@@ -102,7 +102,7 @@ class TestWebLeadsW2(TransactionCase):
         other_kind = self._sid('cdr')
         self.Touchpoint.create({
             'lead_id': host.id, 'occurred_at': fields.Datetime.now(),
-            'touchpoint_type': 'call_cdr', 'source_system': 'manual',
+            'touchpoint_type_id': self.env['health.lookup.value']._default_for('touchpoint_type', 'call_cdr'), 'source_system': 'manual',
             'external_event_id': other_kind})
         self.assertEqual(
             self.Service.reconcile({'submission_ids': [other_kind]})['missing'],

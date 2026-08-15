@@ -16,7 +16,7 @@
                 <field name="state" widget="badge"
                        decoration-success="state == 'done'"
                        decoration-danger="state == 'not_done'"/>
-                <field name="not_done_reason" optional="show"/>
+                <field name="not_done_reason_id" optional="show"/>
                 <field name="completed_by_id"/>
                 <field name="completed_datetime"/>
                 <field name="careplan_id" optional="hide"/>
@@ -59,7 +59,7 @@
                             <field name="sequence"/>
                         </group>
                         <group string="Completion">
-                            <field name="not_done_reason"
+                            <field name="not_done_reason_id"
                                    required="state == 'not_done'"/>
                             <field name="not_done_note"/>
                             <field name="completed_by_id"/>

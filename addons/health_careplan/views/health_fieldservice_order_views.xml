@@ -37,7 +37,7 @@
                             <field name="state" widget="badge"
                                    decoration-success="state == 'done'"
                                    decoration-danger="state == 'not_done'"/>
-                            <field name="not_done_reason"/>
+                            <field name="not_done_reason_id"/>
                             <field name="completed_by_id"/>
                             <field name="completed_datetime" optional="show"/>
                         </list>

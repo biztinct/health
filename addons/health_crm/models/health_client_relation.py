@@ -68,20 +68,17 @@ class HealthClientRelation(models.Model):
        help="The role this representative plays for the client")
     
     # Relationship type (family/professional relationship)
-    relationship_type = fields.Selection([
-        ('spouse', 'Spouse'),
-        ('child', 'Child'),
-        ('parent', 'Parent'),
-        ('sibling', 'Sibling'),
-        ('grandparent', 'Grandparent'),
-        ('grandchild', 'Grandchild'),
-        ('relative', 'Other Relative'),
-        ('professional', 'Professional Service Provider'),
-        ('friend', 'Friend'),
-        ('neighbor', 'Neighbor'),
-        ('other', 'Other'),
-    ], string='Relationship Type', 
-       help="The personal or professional relationship type")
+    relationship_type_id = fields.Many2one(
+        'health.lookup.value',
+        string='Relationship Type',
+        domain="[('category_code', '=', 'relationship_type'), ('active', '=', True)]",
+        ondelete='restrict',
+        help='The personal or professional relationship type')
+    # Companion for view expressions and domains: an Odoo view attribute
+    # (invisible=, decoration-, domain=) cannot traverse a many2one, and
+    # this keeps every existing comparison a one-word change.
+    relationship_type_code = fields.Char(
+        related='relationship_type_id.code', string='Relationship Type Code', readonly=True)
     
     # Primary contact designation
     is_primary = fields.Boolean(
@@ -196,7 +193,7 @@ class HealthClientRelation(models.Model):
          'A person cannot be their own representative.'),
     ]
 
-    @api.depends("client_id", "representative_id", "role", "relationship_type")
+    @api.depends("client_id", "representative_id", "role", "relationship_type_id")
     def _compute_display_name(self):
         """Compute a meaningful display name for the relationship"""
         for record in self:
@@ -204,9 +201,8 @@ class HealthClientRelation(models.Model):
             rep_name = record.representative_id.name or "Unknown Representative" 
             role_label = dict(record._fields['role'].selection).get(record.role, record.role)
             
-            if record.relationship_type:
-                rel_type_label = dict(record._fields['relationship_type'].selection).get(
-                    record.relationship_type, record.relationship_type)
+            if record.relationship_type_id:
+                rel_type_label = record.relationship_type_id.name or ''
                 record.display_name = f"{client_name} ↔ {rep_name} ({role_label} - {rel_type_label})"
             else:
                 record.display_name = f"{client_name} ↔ {rep_name} ({role_label})"

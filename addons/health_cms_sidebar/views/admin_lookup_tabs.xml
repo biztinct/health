@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Clinical lookup tables contributed to the Admin Center's MASTER DATA
+        strip (section "care").
+
+        They live HERE, not in health_landing, because health_landing sits
+        below the clinical modules and cannot ref() their views. This module
+        already depends on health_landing, health_vitals and health_emar, so
+        it is the lowest module that can see all three — no new dependency
+        edge is created. The tabs themselves are declared in
+        static/src/js/admin_lookup_tabs.js through the
+        `health_landing.admin_tabs` registry.
+    -->
+
+    <!-- Observation Types (health.vitals.type) -->
+    <record id="view_admin_vitals_type_list" model="ir.ui.view">
+        <field name="name">admin.vitals.type.list</field>
+        <field name="model">health.vitals.type</field>
+        <field name="inherit_id" ref="health_vitals.view_health_vitals_type_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+                <!-- Inline editing puts the EN/VI translate globe on the row
+                     itself, which is the whole point of this screen. Only set
+                     where the list already carries every required field, so
+                     "New" can save without opening the form. -->
+                <attribute name="editable">bottom</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_observation_types" model="ir.actions.act_window">
+        <field name="name">Observation Types</field>
+        <field name="res_model">health.vitals.type</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_vitals_type_list')})]"/>
+    </record>
+
+    <!-- Medications (health.medication). The model is declared in health_base
+         but its only LOADED list view ships with health_emar — health_base's
+         health_medication_safety_views.xml is not in that module's manifest. -->
+    <record id="view_admin_medication_list" model="ir.ui.view">
+        <field name="name">admin.medication.list</field>
+        <field name="model">health.medication</field>
+        <field name="inherit_id" ref="health_emar.view_health_medication_list_emar"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+                <!-- Inline editing puts the EN/VI translate globe on the row
+                     itself, which is the whole point of this screen. Only set
+                     where the list already carries every required field, so
+                     "New" can save without opening the form. -->
+                <attribute name="editable">bottom</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_medications" model="ir.actions.act_window">
+        <field name="name">Medications</field>
+        <field name="res_model">health.medication</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_medication_list')})]"/>
+    </record>
+
+    <!-- Medication Not-Given Reasons (health.medication.notgiven.reason) -->
+    <record id="view_admin_notgiven_reason_list" model="ir.ui.view">
+        <field name="name">admin.notgiven.reason.list</field>
+        <field name="model">health.medication.notgiven.reason</field>
+        <field name="inherit_id" ref="health_emar.view_health_medication_notgiven_reason_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_notgiven_reasons" model="ir.actions.act_window">
+        <field name="name">Not-Given Reasons</field>
+        <field name="res_model">health.medication.notgiven.reason</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_notgiven_reason_list')})]"/>
+    </record>
+
+</odoo>

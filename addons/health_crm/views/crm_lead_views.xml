@@ -372,7 +372,7 @@
                                             <field name="phone_duplicate_name" invisible="1"/>
                                             <field name="phone_duplicate_code" invisible="1"/>
                                             <field name="contact_datetime" string="Contact Date and Time"/>
-                                            <field name="mode_of_contact" string="Mode of Contact"/>
+                                            <field name="mode_of_contact_id" string="Mode of Contact"/>
                                             <field name="referrer_id" string="Referrer" options="{'no_create': True}"/>
                                             <field name="emergency_contact_id" string="Emergency Contact" options="{'no_create': True}"/>
                                         </group>
@@ -397,7 +397,7 @@
                                             <span>Personal Information</span>
                                         </div>
                                         <group col="2">
-                                            <field name="gender"/>
+                                            <field name="gender_id"/>
                                             <field name="birth_date"/>
                                             <field name="national_id" string="National ID (CCCD/CMND)"/>
                                             <field name="contact_name" string="Patient Name"/>
@@ -441,7 +441,7 @@
                                         <group col="2">
                                             <field name="contact_type" string="Contact Type"/>
                                             <field name="contact_reason_id" string="Contact Reason" options="{'no_create': True}"/>
-                                            <field name="service_interest" string="Service Interest"/>
+                                            <field name="service_interest_id" string="Service Interest"/>
                                             <field name="reason_if_rejected" string="Reason if Rejected" invisible="stage_id != 'lost'"/>
                                         </group>
                                     </div>

@@ -378,7 +378,7 @@ class TestVisitOffer(WorkflowAutoBase):
             'patient_id': self.patient.id,
             'partner_id': self.patient.id,
             'phone': '0912345678',
-            'service_interest': 'home_visit',
+            'service_interest_id': self.env['health.lookup.value']._default_for('service_interest', 'home_visit'),
         })
 
     def test_e5_1_offer_created_with_slots_and_delivery(self):
@@ -402,7 +402,7 @@ class TestVisitOffer(WorkflowAutoBase):
             'name': 'No Phone Lead',
             'patient_id': self.patient.id,
             'partner_id': self.patient.id,
-            'service_interest': 'home_visit',
+            'service_interest_id': self.env['health.lookup.value']._default_for('service_interest', 'home_visit'),
         })
         offer = lead._launch_first_visit_offer()
         # No crash, no offer record; an activity was scheduled on the lead.

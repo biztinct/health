@@ -123,7 +123,7 @@
                                 <list string="Web Touchpoints" create="0" edit="0" delete="0">
                                     <field name="occurred_at"/>
                                     <field name="received_at" optional="show"/>
-                                    <field name="touchpoint_type"/>
+                                    <field name="touchpoint_type_id"/>
                                     <field name="source_system" optional="hide"/>
                                     <field name="catchment_province_id"/>
                                     <field name="city_source"/>
@@ -230,7 +230,7 @@
                             <list string="Web Touchpoints" create="0" edit="0" delete="0">
                                 <field name="occurred_at"/>
                                 <field name="received_at" optional="show"/>
-                                <field name="touchpoint_type"/>
+                                <field name="touchpoint_type_id"/>
                                 <field name="catchment_province_id"/>
                                 <field name="city_source"/>
                                 <field name="utm_campaign" optional="show"/>
@@ -262,7 +262,7 @@
                 <filter name="filter_web_city_conflict" string="City conflict"
                         domain="[('city_conflict', '=', True)]"/>
                 <filter name="filter_web_leads" string="Web leads"
-                        domain="[('mode_of_contact', '=', 'website')]"/>
+                        domain="[('mode_of_contact_code', '=', 'website')]"/>
                 <filter name="groupby_web_city_source" string="City Source"
                         context="{'group_by': 'city_source'}"/>
             </xpath>
@@ -288,7 +288,7 @@
                 <filter name="filter_web_city_conflict" string="City conflict"
                         domain="[('city_conflict', '=', True)]"/>
                 <filter name="filter_web_leads" string="Web leads"
-                        domain="[('mode_of_contact', '=', 'website')]"/>
+                        domain="[('mode_of_contact_code', '=', 'website')]"/>
                 <filter name="groupby_web_city_source" string="City Source"
                         context="{'group_by': 'city_source'}"/>
             </xpath>
@@ -320,7 +320,7 @@
             <pivot string="Lead Funnel" sample="1">
                 <field name="catchment_province_id" type="row"/>
                 <field name="contact_status" type="row"/>
-                <field name="mode_of_contact" type="col"/>
+                <field name="mode_of_contact_id" type="col"/>
             </pivot>
         </field>
     </record>
@@ -331,7 +331,7 @@
         <field name="arch" type="xml">
             <graph string="Lead Funnel" type="bar" stacked="1" sample="1">
                 <field name="catchment_province_id"/>
-                <field name="mode_of_contact"/>
+                <field name="mode_of_contact_id"/>
             </graph>
         </field>
     </record>

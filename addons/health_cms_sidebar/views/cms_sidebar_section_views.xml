@@ -5,11 +5,16 @@
         <field name="name">cms.sidebar.section.tree</field>
         <field name="model">cms.sidebar.section</field>
         <field name="arch" type="xml">
-            <list editable="bottom">
+            <list editable="bottom" js_class="admin_model_navigator_view">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="technical_key"/>
                 <field name="icon"/>
+                <!-- Set roles here to gate the WHOLE section; every item under
+                     it inherits them (an item's own roles are added, not
+                     replaced). See cms.sidebar.item._compute_effective_role_ids. -->
+                <field name="role_ids" widget="many2many_tags"
+                       options="{'no_create': True, 'no_quick_create': True}"/>
                 <field name="active"/>
             </list>
         </field>
@@ -33,6 +38,16 @@
                             <field name="active"/>
                         </group>
                     </group>
+                    <group string="Access Control">
+                        <field name="role_ids" widget="many2many_tags"
+                               options="{'no_create': True, 'no_quick_create': True}"/>
+                        <div colspan="2" class="text-muted">
+                            Roles set here gate the whole section. Every menu item
+                            below inherits them; an item that lists roles of its own
+                            is shown to those roles <b>in addition</b> to these.
+                            Leave empty to gate item by item.
+                        </div>
+                    </group>
                     <notebook>
                         <page string="Menu Items">
                             <field name="item_ids">
@@ -43,6 +58,9 @@
                                     <field name="action_xmlid"/>
                                     <field name="action_tag"/>
                                     <field name="role_ids" widget="many2many_tags"/>
+                                    <field name="effective_role_ids" widget="many2many_tags"
+                                           readonly="1" optional="show"
+                                           string="Effective (incl. inherited)"/>
                                     <field name="active"/>
                                 </list>
                             </field>

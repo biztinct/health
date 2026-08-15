@@ -40,12 +40,20 @@ class HrEmployee(models.Model):
     ], string='Employment Status', default='active', tracking=True)
 
     # Part-Time Workflow Support
-    employment_type = fields.Selection([
-        ('full_time', 'Full-Time Staff'),
-        ('part_time', 'Part-Time Staff'),
-        ('casual', 'Casual/Contract'),
-    ], string='Employment Type', default='full_time', required=True, tracking=True,
-       help='Full-time staff can create invoices; part-time/casual staff require Operations invoicing')
+    employment_type_id = fields.Many2one(
+        'health.lookup.value',
+        string='Employment Type',
+        domain="[('category_code', '=', 'employment_type'), ('active', '=', True)]",
+        ondelete='restrict',
+        required=True,
+        tracking=True,
+        default=lambda self: self.env['health.lookup.value']._default_for('employment_type', 'full_time'),
+        help='Full-time staff can create invoices; part-time/casual staff require Operations invoicing')
+    # Companion for view expressions and domains: an Odoo view attribute
+    # (invisible=, decoration-, domain=) cannot traverse a many2one, and
+    # this keeps every existing comparison a one-word change.
+    employment_type_code = fields.Char(
+        related='employment_type_id.code', string='Employment Type Code', readonly=True)
 
     can_create_invoices = fields.Boolean(
         'Can Create Invoices',
@@ -190,20 +198,24 @@ class HrEmployee(models.Model):
     # Additional fields for healthcare staff views
     certification_expiry = fields.Date('Certification Expiry')
     max_daily_assignments = fields.Integer('Max Daily Assignments', default=8)
-    preferred_shift = fields.Selection([
-        ('morning', 'Morning Shift'),
-        ('afternoon', 'Afternoon Shift'),
-        ('evening', 'Evening Shift'),
-        ('night', 'Night Shift'),
-        ('flexible', 'Flexible')
-    ], string='Preferred Shift', default='morning')
+    preferred_shift_id = fields.Many2one(
+        'health.lookup.value',
+        string='Preferred Shift',
+        domain="[('category_code', '=', 'preferred_shift'), ('active', '=', True)]",
+        ondelete='restrict',
+        default=lambda self: self.env['health.lookup.value']._default_for('preferred_shift', 'morning'))
     travel_radius_km = fields.Float('Travel Radius (KM)', default=15.0)
-    availability_status = fields.Selection([
-        ('available', 'Available'),
-        ('busy', 'Busy'),
-        ('break', 'On Break'),
-        ('offline', 'Offline')
-    ], string='Availability Status', default='available')
+    availability_status_id = fields.Many2one(
+        'health.lookup.value',
+        string='Availability Status',
+        domain="[('category_code', '=', 'staff_availability_status'), ('active', '=', True)]",
+        ondelete='restrict',
+        default=lambda self: self.env['health.lookup.value']._default_for('staff_availability_status', 'available'))
+    # Companion for view expressions and domains: an Odoo view attribute
+    # (invisible=, decoration-, domain=) cannot traverse a many2one, and
+    # this keeps every existing comparison a one-word change.
+    availability_status_code = fields.Char(
+        related='availability_status_id.code', string='Availability Status Code', readonly=True)
     
     # ============================================================================
     # Workload and Performance Metrics
@@ -338,11 +350,11 @@ class HrEmployee(models.Model):
         sequence = self.env['ir.sequence'].next_by_code('hr.employee.healthcare') or '0001'
         return f'S{sequence}'
     
-    @api.depends('employment_type')
+    @api.depends('employment_type_id')
     def _compute_can_create_invoices(self):
         """Compute invoice creation permission based on employment type"""
         for employee in self:
-            employee.can_create_invoices = employee.employment_type == 'full_time'
+            employee.can_create_invoices = employee.employment_type_code == 'full_time'
 
     @api.onchange('healthcare_facility_id')
     def _onchange_healthcare_facility_id(self):
@@ -600,9 +612,9 @@ class HrEmployee(models.Model):
         if self.assignment_status == 'off_duty':
             return res('off')
         # 4. Break / offline
-        if self.availability_status == 'break':
+        if self.availability_status_code == 'break':
             return res('break')
-        if self.availability_status == 'offline':
+        if self.availability_status_code == 'offline':
             return res('off')
 
         # day's assignments (reuse caller's set when provided)

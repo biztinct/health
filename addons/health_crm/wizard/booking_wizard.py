@@ -63,11 +63,9 @@ class HealthBookingWizard(models.TransientModel):
     client_email = fields.Char('Email')
     client_address = fields.Text('Address')  # Kept for backward compatibility
     client_dob = fields.Date('Date of Birth')
-    client_gender = fields.Selection([
-        ('male', 'Male'),
-        ('female', 'Female'),
-        ('other', 'Other'),
-    ], string='Gender')
+    client_gender_id = fields.Many2one(
+        'health.lookup.value', string='Gender',
+        domain="[('category_code', '=', 'gender'), ('active', '=', True)]")
     
     # Address sub-fields for popup editor
     address_house_number = fields.Char('House Number')
@@ -415,8 +413,8 @@ class HealthBookingWizard(models.TransientModel):
                 update_vals['email'] = self.client_email
             if self.client_dob and self.client_dob != client.birth_date:
                 update_vals['birth_date'] = self.client_dob
-            if self.client_gender and self.client_gender != (client.gender or ''):
-                update_vals['gender'] = self.client_gender
+            if self.client_gender_id and self.client_gender_id != client.gender_id:
+                update_vals['gender_id'] = self.client_gender_id.id
             if self.client_address and self.client_address != (client.street or ''):
                 update_vals['street'] = self.client_address
             if self.catchment_province_id and self.catchment_province_id != client.catchment_province_id:
@@ -431,7 +429,7 @@ class HealthBookingWizard(models.TransientModel):
                 'email': self.client_email,
                 'street': self.client_address,
                 'birth_date': self.client_dob,
-                'gender': self.client_gender,
+                'gender_id': self.client_gender_id.id or False,
                 'catchment_province_id': self.catchment_province_id.id if self.catchment_province_id else False,
                 'primary_facility_id': self.facility_id.id if self.facility_id else False,
             })
@@ -446,8 +444,8 @@ class HealthBookingWizard(models.TransientModel):
                 update_vals['street'] = self.client_address
             if self.client_dob:
                 update_vals['birth_date'] = self.client_dob
-            if self.client_gender and self.client_gender != (client.gender or ''):
-                update_vals['gender'] = self.client_gender
+            if self.client_gender_id and self.client_gender_id != client.gender_id:
+                update_vals['gender_id'] = self.client_gender_id.id
             if self.catchment_province_id and self.catchment_province_id != client.catchment_province_id:
                 update_vals['catchment_province_id'] = self.catchment_province_id.id
             if update_vals:
@@ -471,7 +469,7 @@ class HealthBookingWizard(models.TransientModel):
                 'street': self.client_address,
                 'is_patient': True,
                 'birth_date': self.client_dob,
-                'gender': self.client_gender,
+                'gender_id': self.client_gender_id.id or False,
                 'catchment_province_id': catchment_province.id if catchment_province else False,
             })
         else:
@@ -630,8 +628,8 @@ class HealthBookingWizard(models.TransientModel):
                 defaults['client_address'] = client.street or ''
                 if hasattr(client, 'birth_date'):
                     defaults['client_dob'] = client.birth_date
-                if hasattr(client, 'gender'):
-                    defaults['client_gender'] = client.gender
+                if 'gender_id' in client._fields:
+                    defaults['client_gender_id'] = client.gender_id.id
             else:
                 defaults['is_new_client'] = True
                 # Check relationship type to avoid phone contamination

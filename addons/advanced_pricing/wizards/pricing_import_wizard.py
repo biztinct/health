@@ -388,40 +388,47 @@ class PricingImportWizard(models.TransientModel):
     def _get_or_create_category(self, parent_en, parent_vi, child_en, child_vi, log_lines):
         """Find or create a 2-level product category hierarchy.
 
-        Uses Vietnamese names as primary (since users are Vietnamese).
-        Falls back to English if Vietnamese is not available.
-        product.category.name is NOT translatable (varchar) in this Odoo install.
+        `product.category.name` is translatable in this install (advanced_pricing
+        overrides it), so BOTH languages from the sheet are stored on the same
+        record: English in en_US, Vietnamese in vi_VN. The category then reads
+        correctly in whichever language the user logged in with.
+
+        Categories created before that override hold a single Vietnamese-primary
+        string in en_US; matching therefore falls back to the Vietnamese name so
+        a re-import updates the existing row instead of duplicating it.
         """
         ProductCategory = self.env['product.category']
-        # Use Vietnamese as primary name, English as fallback
-        parent_name = parent_vi or parent_en
-        child_name = child_vi or child_en
 
-        if not parent_name and not child_name:
+        if not (parent_en or parent_vi or child_en or child_vi):
             return self.env.ref('product.product_category_all').id
 
-        # Find or create parent category (service_type level)
-        parent_categ = False
-        if parent_name:
-            parent_categ = ProductCategory.search([('name', '=', parent_name)], limit=1)
-            if not parent_categ:
-                parent_categ = ProductCategory.create({'name': parent_name})
-                log_lines.append(f"  Created category: {parent_name}")
+        def _find_or_create(name_en, name_vi, parent=False):
+            """One category, keyed on English, with the Vietnamese translation
+            written alongside it."""
+            primary = name_en or name_vi
+            if not primary:
+                return False
+            # Match on either language: pre-override rows are named in
+            # Vietnamese, post-override rows in English.
+            candidates = [primary] + ([name_vi] if name_vi and name_vi != primary else [])
+            domain_base = [('parent_id', '=', parent.id)] if parent else []
+            categ = ProductCategory.search(
+                domain_base + [('name', 'in', candidates)], limit=1)
+            if not categ:
+                categ = ProductCategory.create(dict(
+                    {'name': primary},
+                    **({'parent_id': parent.id} if parent else {})))
+                log_lines.append(f"  Created category: {primary}")
+            if name_vi:
+                # Only the vi_VN key is touched; en_US keeps the English name.
+                categ.with_context(lang='vi_VN').name = name_vi
+            return categ
 
-        # Find or create child category (service_category level)
-        if child_name:
-            domain = [('name', '=', child_name)]
-            if parent_categ:
-                domain.append(('parent_id', '=', parent_categ.id))
-            child_categ = ProductCategory.search(domain, limit=1)
-            if not child_categ:
-                vals = {'name': child_name}
-                if parent_categ:
-                    vals['parent_id'] = parent_categ.id
-                child_categ = ProductCategory.create(vals)
-                log_lines.append(f"  Created category: {parent_name} / {child_name}")
+        parent_categ = _find_or_create(parent_en, parent_vi)
+        child_categ = _find_or_create(child_en, child_vi, parent=parent_categ)
+
+        if child_categ:
             return child_categ.id
-
         return parent_categ.id if parent_categ else self.env.ref('product.product_category_all').id
 
     def _find_uom(self, unit_en):

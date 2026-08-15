@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Healthcare Incident Management',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Healthcare/Clinical',
     'summary': 'Adverse-event capture, investigation workflow, corrective '
                'actions and incident register (FHIR AdverseEvent/Flag)',

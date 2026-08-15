@@ -164,7 +164,7 @@ class TestDeviceIngest(HttpCase):
         self.Receipt = self.env['health.device.receipt']
         self.device = self.Device.create({
             'name': 'Omron HTTP', 'client_id': self.patient.id,
-            'device_type': 'bp_monitor', 'external_id': 'OMRON-HTTP-1',
+            'device_type_id': self.env['health.lookup.value']._default_for('monitor_device_type', 'bp_monitor'), 'external_id': 'OMRON-HTTP-1',
             'state': 'active'})
         # §5.32 discipline: pin off side-effects we do not assert on.
         ICP = self.env['ir.config_parameter'].sudo()

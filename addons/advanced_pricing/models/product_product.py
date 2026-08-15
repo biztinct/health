@@ -2,6 +2,22 @@
 from odoo import models, fields, api
 
 
+class ProductCategory(models.Model):
+    """Service categories are a CLIENT-FACING taxonomy here, not an accounting
+    bucket: the price-list import builds them from the sheet's
+    `service_type` / `service_category` columns, which ship in both languages,
+    and they surface in the Services list and the product dropdowns.
+
+    Core Odoo leaves `name` untranslated, which forced the importer to pick one
+    language and store it as the whole name (see `_get_or_create_category`).
+    Making it translatable lets both live on the same record and lets the CMS
+    Master Data > Service Categories tab edit either side.
+    """
+    _inherit = 'product.category'
+
+    name = fields.Char(translate=True)
+
+
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 

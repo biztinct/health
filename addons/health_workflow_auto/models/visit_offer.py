@@ -195,7 +195,9 @@ class HealthVisitOffer(models.Model):
     # ------------------------------------------------------------------
     def _fso_service_type(self):
         self.ensure_one()
-        interest = self.lead_id.service_interest
+        # health.fieldservice.order.service_type is still a Selection, so the
+        # lead's interest crosses over as its CODE.
+        interest = self.lead_id.service_interest_id.code
         if interest in _FSO_SERVICE_TYPES:
             return interest
         return 'consultation'

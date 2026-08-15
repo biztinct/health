@@ -9,7 +9,7 @@
                 <field name="name"/>
                 <field name="code"/>
                 <field name="version"/>
-                <field name="category"/>
+                <field name="category_id"/>
                 <field name="state" widget="badge"
                        decoration-success="state == 'published'"
                        decoration-muted="state == 'retired'"/>
@@ -54,7 +54,7 @@
                             <field name="name_vi"/>
                             <field name="code"/>
                             <field name="version"/>
-                            <field name="category"/>
+                            <field name="category_id"/>
                             <field name="is_latest"/>
                         </group>
                         <group>
@@ -135,7 +135,7 @@
                 <filter name="group_by_code" string="Form Code"
                         context="{'group_by': 'code'}"/>
                 <filter name="group_by_category" string="Category"
-                        context="{'group_by': 'category'}"/>
+                        context="{'group_by': 'category_id'}"/>
             </search>
         </field>
     </record>

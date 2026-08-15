@@ -15,7 +15,7 @@
               <field name="client_id" options="{'no_create': True}"/>
               <field name="representative_id" options="{'no_create': True}"/>
               <field name="role"/>
-              <field name="relationship_type"/>
+              <field name="relationship_type_id"/>
               <field name="is_primary"/>
             </group>
             <group>
@@ -46,7 +46,7 @@
           <field name="client_id"/>
           <field name="representative_id"/>
           <field name="role"/>
-          <field name="relationship_type"/>
+          <field name="relationship_type_id"/>
           <field name="is_primary" widget="boolean_toggle"/>
           <field name="start_date"/>
           <field name="financial_responsibility" widget="percentage" optional="hide"/>
@@ -78,7 +78,7 @@
           <field name="client_id"/>
           <field name="representative_id"/>
           <field name="role"/>
-          <field name="relationship_type"/>
+          <field name="relationship_type_id"/>
           <field name="is_primary"/>
           <templates>
             <t t-name="kanban-box">
@@ -87,7 +87,7 @@
                   <strong><field name="client_id"/></strong>
                   <div><field name="representative_id"/></div>
                   <div><field name="role"/></div>
-                  <div><field name="relationship_type"/></div>
+                  <div><field name="relationship_type_id"/></div>
                 </div>
               </div>
             </t>

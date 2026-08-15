@@ -95,12 +95,17 @@ class AdvancedPricingRule(models.Model):
     
     is_weekend_required = fields.Boolean('Weekend Only', help='Apply only for weekend appointments')
     is_holiday_required = fields.Boolean('Holiday Only', help='Apply only for holiday appointments')
-    holiday_type = fields.Selection([
-        ('national', 'National Holiday'),
-        ('tet', 'TET Holiday'),
-        ('regional', 'Regional Holiday'),
-        ('observance', 'Observance'),
-    ], string='Holiday Type', help='Apply only for specific holiday type (requires Holiday Only to be checked)')
+    holiday_type_id = fields.Many2one(
+        'health.lookup.value',
+        string='Holiday Type',
+        domain="[('category_code', '=', 'holiday_type'), ('active', '=', True)]",
+        ondelete='restrict',
+        help='Apply only for specific holiday type (requires Holiday Only to be checked)')
+    # Companion for view expressions and domains: an Odoo view attribute
+    # (invisible=, decoration-, domain=) cannot traverse a many2one, and
+    # this keeps every existing comparison a one-word change.
+    holiday_type_code = fields.Char(
+        related='holiday_type_id.code', string='Holiday Type Code', readonly=True)
     is_after_hours_required = fields.Boolean('After Hours Only', help='Apply only for after-hours appointments')
     
     service_type = fields.Selection([
@@ -114,13 +119,17 @@ class AdvancedPricingRule(models.Model):
         ('consultation', 'Consultation')
     ], string='Service Type', help='Apply only for this service type')
     
-    service_location = fields.Selection([
-        ('home', 'Home'),
-        ('clinic', 'Clinic'),
-        ('hospital', 'Hospital'),
-        ('care_facility', 'Care Facility'),
-        ('remote', 'Remote/Online')
-    ], string='Service Location', help='Apply only for this service location')
+    service_location_id = fields.Many2one(
+        'health.lookup.value',
+        string='Service Location',
+        domain="[('category_code', '=', 'service_location'), ('active', '=', True)]",
+        ondelete='restrict',
+        help='Apply only for this service location')
+    # Companion for view expressions and domains: an Odoo view attribute
+    # (invisible=, decoration-, domain=) cannot traverse a many2one, and
+    # this keeps every existing comparison a one-word change.
+    service_location_code = fields.Char(
+        related='service_location_id.code', string='Service Location Code', readonly=True)
     
     urgency_level = fields.Selection([
         ('low', 'Low'),
@@ -562,8 +571,8 @@ class AdvancedPricingRule(models.Model):
             if not context_data.get('is_holiday', False):
                 return False
             # Check specific holiday type if specified
-            if self.holiday_type:
-                if context_data.get('holiday_type') != self.holiday_type:
+            if self.holiday_type_id:
+                if context_data.get('holiday_type') != self.holiday_type_code:
                     return False
         
         # After hours condition
@@ -580,8 +589,8 @@ class AdvancedPricingRule(models.Model):
                 return False
         
         # Service location condition
-        if self.service_location:
-            if context_data.get('service_location') != self.service_location:
+        if self.service_location_id:
+            if context_data.get('service_location') != self.service_location_code:
                 return False
         
         # Urgency level condition
@@ -801,16 +810,21 @@ class AdvancedPricingRule(models.Model):
 
     @api.depends('applied_on', 'product_tmpl_id', 'product_id', 'categ_id', 'region',
                  'distance_min', 'distance_max', 'appointment_hour_min', 'appointment_hour_max',
-                 'is_weekend_required', 'is_holiday_required', 'holiday_type',
+                 'is_weekend_required', 'is_holiday_required', 'holiday_type_id',
                  'is_after_hours_required', 'is_after_hours_or_weekend',
-                 'service_type', 'service_location', 'requires_home_service',
+                 'service_type', 'service_location_id', 'requires_home_service',
                  'wound_count_min', 'wound_count_max', 'injection_count_min',
                  'iv_fluid_count_min', 'medication_count_min',
                  'action_type', 'action_value', 'per_unit_field')
     def _compute_rule_summary_html(self):
         """Build a live FOR … WHEN … THEN sentence. Never raise (display only)."""
         type_labels = dict(self._fields['service_type']._description_selection(self.env))
-        loc_labels = dict(self._fields['service_location']._description_selection(self.env))
+        # Service locations are client-maintained lookup rows now; their
+        # `name` is a translated column, so this still follows the reader's
+        # language without a selection dict.
+        loc_labels = {v.code: v.name for v in self.env['health.lookup.value']
+                      .with_context(active_test=False)
+                      .search([('category_code', '=', 'service_location')])}
         for rule in self:
             try:
                 rule.rule_summary_html = rule._build_rule_summary(type_labels, loc_labels)
@@ -835,10 +849,11 @@ class AdvancedPricingRule(models.Model):
 
         # WHEN (conditions)
         conds = []
-        if self.requires_home_service or self.service_location == 'home':
+        if self.requires_home_service or self.service_location_code == 'home':
             conds.append(_("at the client's home"))
-        elif self.service_location:
-            conds.append(loc_labels.get(self.service_location, self.service_location))
+        elif self.service_location_id:
+            conds.append(loc_labels.get(self.service_location_code,
+                                        self.service_location_id.name or ''))
         if self.service_type:
             conds.append(type_labels.get(self.service_type, self.service_type))
         if self.is_after_hours_or_weekend:
@@ -848,7 +863,7 @@ class AdvancedPricingRule(models.Model):
         if self.is_weekend_required:
             conds.append(_("weekends"))
         if self.is_holiday_required:
-            conds.append(_("holidays (%s)", self.holiday_type or _('public')))
+            conds.append(_("holidays (%s)", self.holiday_type_id.name or _('public')))
         if self.appointment_hour_min and self.appointment_hour_max:
             conds.append(
                 _("between %(start)02dh and %(end)02dh",

@@ -94,7 +94,7 @@
                         <group name="dosage" string="Dosage">
                             <field name="dose_quantity"/>
                             <field name="dose_unit"/>
-                            <field name="route"/>
+                            <field name="route_id"/>
                             <field name="frequency"/>
                             <field name="admin_times"
                                    invisible="is_prn"/>

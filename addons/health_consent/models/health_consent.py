@@ -47,7 +47,7 @@ MEDICAL_INFO_TYPES = ('data_sharing',)
 # Evidence fields become immutable once the record leaves draft
 # (active/withdrawn/expired consents are audit records — spec §6.3).
 EVIDENCE_LOCKED_FIELDS = (
-    'client_id', 'consent_type', 'scope_note', 'self_granted',
+    'client_id', 'consent_type_id', 'scope_note', 'self_granted',
     'granted_by_relation_id', 'method', 'signature',
     'evidence_attachment_ids', 'verbal_witness_id', 'effective_date',
 )
@@ -71,15 +71,20 @@ class HealthConsent(models.Model):
         domain=[('is_patient', '=', True)], ondelete='restrict',
         index=True, tracking=True,
         help='FHIR Consent.patient')
-    consent_type = fields.Selection([
-        ('service', 'Service Delivery'),
-        ('data_sharing', 'Data Sharing'),
-        ('photography', 'Photography/Media'),
-        ('emergency_treatment', 'Emergency Treatment'),
-        ('marketing', 'Marketing Communications'),
-    ], required=True, tracking=True, index=True,
-        help='FHIR Consent.scope + category '
-             '(local CodeSystem health19-consent-types).')
+    consent_type_id = fields.Many2one(
+        'health.lookup.value',
+        string='Consent Type',
+        domain="[('category_code', '=', 'consent_type'), ('active', '=', True)]",
+        ondelete='restrict',
+        required=True,
+        tracking=True,
+        index=True,
+        help='FHIR Consent.scope + category ')
+    # Companion for view expressions and domains: an Odoo view attribute
+    # (invisible=, decoration-, domain=) cannot traverse a many2one, and
+    # this keeps every existing comparison a one-word change.
+    consent_type_code = fields.Char(
+        related='consent_type_id.code', string='Consent Type Code', readonly=True)
     scope_note = fields.Char(
         string='Scope / Limitations',
         help='Free-text narrowing, e.g. "photos for clinical record '
@@ -173,16 +178,13 @@ class HealthConsent(models.Model):
     # ------------------------------------------------------------------
     # Computes / onchange
     # ------------------------------------------------------------------
-    @api.depends('client_id.name', 'consent_type', 'name')
+    @api.depends('client_id.name', 'consent_type_id', 'name')
     def _compute_display_name(self):
-        types = dict(self._fields['consent_type']
-                     ._description_selection(self.env))
         for consent in self:
-            if consent.client_id and consent.consent_type:
+            if consent.client_id and consent.consent_type_id:
                 consent.display_name = '%s — %s' % (
                     consent.client_id.name,
-                    types.get(consent.consent_type,
-                              consent.consent_type))
+                    consent.consent_type_id.name or '')
             else:
                 consent.display_name = consent.name or _('New')
 
@@ -220,7 +222,7 @@ class HealthConsent(models.Model):
                 raise ValidationError(
                     _('Expiry must be after effective date.'))
 
-    @api.constrains('state', 'client_id', 'consent_type')
+    @api.constrains('state', 'client_id', 'consent_type_id')
     def _check_one_active(self):
         """At most one active consent per (client, type) — granting a
         new one supersedes the previous inside action_grant()."""
@@ -230,7 +232,7 @@ class HealthConsent(models.Model):
             duplicate = self.search([
                 ('id', '!=', consent.id),
                 ('client_id', '=', consent.client_id.id),
-                ('consent_type', '=', consent.consent_type),
+                ('consent_type_id', '=', consent.consent_type_id.id),
                 ('state', '=', 'active'),
             ], limit=1)
             if duplicate:
@@ -240,11 +242,11 @@ class HealthConsent(models.Model):
                     'automatically — withdraw it first when editing '
                     'manually.',
                     client=consent.client_id.name,
-                    type=consent.consent_type,
+                    type=consent.consent_type_id.name or '',
                     name=duplicate.name))
 
     @api.constrains('self_granted', 'granted_by_relation_id',
-                    'client_id', 'consent_type')
+                    'client_id', 'consent_type_id')
     def _check_grantor(self):
         """Grantor is the client (self_granted) or a kinship relation
         whose health.client.relation permissions allow it (spec §6.4 +
@@ -265,14 +267,14 @@ class HealthConsent(models.Model):
                 raise ValidationError(_(
                     'The grantor relation is archived — only active '
                     'relations may grant consent.'))
-            if (consent.consent_type in MEDICAL_DECISION_TYPES
+            if (consent.consent_type_code in MEDICAL_DECISION_TYPES
                     and not relation.can_make_medical_decisions):
                 raise ValidationError(_(
                     '%(rep)s cannot grant %(type)s consent: the '
                     'relation lacks "Can Make Medical Decisions".',
                     rep=relation.representative_id.name,
-                    type=consent.consent_type))
-            if (consent.consent_type in MEDICAL_INFO_TYPES
+                    type=consent.consent_type_id.name or ''))
+            if (consent.consent_type_code in MEDICAL_INFO_TYPES
                     and not (relation.can_make_medical_decisions
                              or relation.can_receive_medical_info)):
                 raise ValidationError(_(
@@ -280,7 +282,7 @@ class HealthConsent(models.Model):
                     'relation may neither make medical decisions nor '
                     'receive medical information.',
                     rep=relation.representative_id.name,
-                    type=consent.consent_type))
+                    type=consent.consent_type_id.name or ''))
 
     @api.constrains('client_mutation_id')
     def _check_client_mutation_id(self):
@@ -404,7 +406,7 @@ class HealthConsent(models.Model):
         previous = self.search([
             ('id', '!=', self.id),
             ('client_id', '=', self.client_id.id),
-            ('consent_type', '=', self.consent_type),
+            ('consent_type_code', '=', self.consent_type_code),
             ('state', '=', 'active'),
         ])
         today = fields.Date.context_today(self)
@@ -488,7 +490,9 @@ class HealthConsent(models.Model):
         # granted consent into a deny for a nurse outside catchment.
         consents = self.sudo().search([
             ('client_id', '=', partner_id),
-            ('consent_type', '=', consent_type),
+            # `consent_type` stays a CODE in this public interface — every
+            # caller across the clinical spine passes a string.
+            ('consent_type_code', '=', consent_type),
             ('state', '=', 'active'),
             ('effective_date', '<=', at_date),
             '|', ('expiry_date', '=', False),
@@ -581,7 +585,7 @@ class HealthConsent(models.Model):
         today = fields.Date.context_today(self)
         consents = self.sudo().search([
             ('client_id', '=', partner_id),
-            ('consent_type', 'in', list(consent_types)),
+            ('consent_type_code', 'in', list(consent_types)),
             ('state', '=', 'active'),
             ('effective_date', '<=', today),
             '|', ('expiry_date', '=', False),
@@ -589,7 +593,7 @@ class HealthConsent(models.Model):
         ])
         by_type = {}
         for consent in consents:
-            by_type.setdefault(consent.consent_type, consent)
+            by_type.setdefault(consent.consent_type_code, consent)
         result = {}
         for consent_type in consent_types:
             consent = by_type.get(consent_type, self.sudo().browse())
@@ -639,15 +643,12 @@ class HealthConsent(models.Model):
         if not activity_type:
             _logger.warning('Todo activity type not found')
             return
-        types = dict(self._fields['consent_type']
-                     ._description_selection(self.env))
         try:
             self.activity_schedule(
                 activity_type_id=activity_type.id,
                 summary=_('Consent expiring: %(client)s — %(type)s',
                           client=self.client_id.name,
-                          type=types.get(self.consent_type,
-                                         self.consent_type)),
+                          type=self.consent_type_id.name or ''),
                 date_deadline=self.expiry_date,
                 user_id=user.id,
             )

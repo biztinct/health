@@ -166,7 +166,10 @@ class HealthVitalsPWAController(http.Controller):
                     'effective_datetime': (
                         _parse_client_datetime(item.get('effective_datetime'))
                         or fields.Datetime.now()),
-                    'body_position': item.get('body_position') or False,
+                    # Payload still carries a CODE; resolve it to the lookup.
+                    'body_position_id': request.env['health.lookup.value']
+                    ._default_for('body_position', item.get('body_position'))
+                    if item.get('body_position') else False,
                     'method': item.get('method') or vtype.default_method or '',
                     'device': item.get('device') or '',
                 }

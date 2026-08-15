@@ -90,7 +90,7 @@ class HealthConsentPWAController(http.Controller):
         return {
             'id': consent.id,
             'name': consent.name,
-            'consent_type': consent.consent_type,
+            'consent_type': consent.consent_type_code,
             'state': consent.state,
             'method': consent.method,
             'effective_date': (
@@ -199,7 +199,8 @@ class HealthConsentPWAController(http.Controller):
                     status_code=400)
             vals = {
                 'client_id': patient.id,
-                'consent_type': consent_type,
+                'consent_type_id': request.env['health.lookup.value']
+                ._default_for('consent_type', consent_type),
                 'method': body.get('method') or 'verbal',
                 'self_granted': bool(body.get('self_granted', True)),
                 'scope_note': body.get('scope_note') or False,

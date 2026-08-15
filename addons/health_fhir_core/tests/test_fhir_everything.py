@@ -23,6 +23,14 @@ from odoo.addons.health_fhir_core.serializers.everything import (
     build_everything_bundle, patient_compartment,
 )
 
+
+def _gender(env, code):
+    """The `gender` vocabulary row for a code — gender is a lookup value, not
+    a Selection, since it joined the client-editable dropdowns."""
+    return env['health.lookup.value'].with_context(active_test=False).search(
+        [('category_code', '=', 'gender'), ('code', '=', code)], limit=1)
+
+
 # Registry resources that are NOT in a patient compartment. Patient is the
 # compartment ROOT (added explicitly, has no patient/subject search param);
 # the rest are non-PHI reference/terminology resources (patient_ids_of == []).
@@ -63,7 +71,8 @@ class TestFhirEverything(TransactionCase):
             'name': 'Nguyễn Văn Everything', 'is_patient': True,
             'catchment_province_id': cls.province.id,
             'primary_facility_id': cls.facility.id,
-            'birth_date': '1950-01-01', 'gender': 'male'})
+            'birth_date': '1950-01-01',
+            'gender_id': _gender(env, 'male').id})
         # a SECOND patient in the other catchment (must never leak in)
         cls.other_patient = env['res.partner'].create({
             'name': 'Trần Thị Other', 'is_patient': True,
@@ -98,7 +107,7 @@ class TestFhirEverything(TransactionCase):
 
         # a careplan
         cls.plan = env['health.careplan'].create({
-            'client_id': cls.patient.id, 'category': 'chronic',
+            'client_id': cls.patient.id, 'category_id': cls.env['health.lookup.value']._default_for('careplan_category', 'chronic'),
             'title': 'BP control', 'period_start': fields.Date.today()})
 
         # a resource that belongs to the OTHER patient (isolation probe)
@@ -217,7 +226,7 @@ class TestFhirEverything(TransactionCase):
     def _logs(self, patient):
         return self.env['health.consent.check.log'].sudo().search([
             ('client_id', '=', patient.id),
-            ('consent_type', '=', 'data_sharing'),
+            ('consent_type_code', '=', 'data_sharing'),
             ('source', '=', 'fhir_everything')])
 
     def test_05a_enforced_without_consent_denies_and_logs(self):
@@ -237,7 +246,7 @@ class TestFhirEverything(TransactionCase):
 
     def test_05b_enforced_with_consent_returns_full(self):
         consent = self.env['health.consent'].create({
-            'client_id': self.patient.id, 'consent_type': 'data_sharing',
+            'client_id': self.patient.id, 'consent_type_id': self.env['health.lookup.value']._default_for('consent_type', 'data_sharing'),
             'method': 'verbal'})
         consent.action_grant()
         bundle, _ = build_everything_bundle(

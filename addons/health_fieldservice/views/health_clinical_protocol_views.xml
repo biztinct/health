@@ -45,9 +45,9 @@
                                     <span>Classification</span>
                                 </div>
                                 <group col="2">
-                                    <field name="complexity_level"/>
+                                    <field name="complexity_level_id"/>
                                     <field name="duration_estimate_minutes"/>
-                                    <field name="infection_control_level"/>
+                                    <field name="infection_control_level_id"/>
                                     <field name="usage_count" readonly="1"/>
                                 </group>
                             </div>
@@ -139,9 +139,9 @@
             <list string="Clinical Protocols">
                 <field name="name"/>
                 <field name="version"/>
-                <field name="complexity_level"/>
+                <field name="complexity_level_id"/>
                 <field name="duration_estimate_minutes"/>
-                <field name="infection_control_level"/>
+                <field name="infection_control_level_id"/>
                 <field name="usage_count"/>
                 <field name="effective_date"/>
                 <field name="active"/>

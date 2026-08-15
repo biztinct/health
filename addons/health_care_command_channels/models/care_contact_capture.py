@@ -93,9 +93,19 @@ class CareContactCapture(models.Model):
              'read one. An id we do not recognise is exactly the interesting '
              'case.')
 
-    reason = fields.Selection(
-        CAPTURE_REASONS, required=True, index=True,
+    reason_id = fields.Many2one(
+        'health.lookup.value',
+        string='Reason',
+        domain="[('category_code', '=', 'unrouted_contact_reason'), ('active', '=', True)]",
+        ondelete='restrict',
+        required=True,
+        index=True,
         help='Why this contact could not be routed to a conversation.')
+    # Companion for view expressions and domains: an Odoo view attribute
+    # (invisible=, decoration-, domain=) cannot traverse a many2one, and
+    # this keeps every existing comparison a one-word change.
+    reason_code = fields.Char(
+        related='reason_id.code', string='Reason Code', readonly=True)
 
     # Whatever we could learn about who this was. All optional — the whole
     # point is that these contacts arrived without enough to anchor on.

@@ -2799,3 +2799,39 @@ a no-op.
     `to_regclass`; `_refresh_one()` republishes instead of refreshing a
     missing matview. The engine already fell back to live once health said
     no — the health check was the single point of blindness.
+
+- **§5.168 — a converted Selection leaves THREE kinds of reader behind, and
+    only one of them is a view.** Gender was left out of the Tier-1/2
+    dropdown conversion because `res.partner.gender` is read by more
+    non-view consumers than any other vocabulary: the FHIR Patient facade
+    (`_GENDER_MAP`), `/api/v1`, the PWA sync payload, three OWL `read()`
+    field lists and the MoH QWeb report's `== 'male'` comparisons. Converting
+    it (2026-08-15) is the template for any remaining one: (a) view/QWeb and
+    python comparisons move to the `<field>_code` companion, which returns
+    the SAME string the Selection did, so no JSON contract changes; (b) OWL
+    `read()` field lists must be renamed to `<field>_id` or the read raises,
+    and their templates then get `[1]` (the label) instead of the raw code —
+    a free translation upgrade; (c) an importer that wrote the code string
+    (`health_migration`'s `GENDER_MAP`) needs a code→id resolver, not a
+    rename. Grep for the field name in `*.py`, `*.xml` AND `*.js` before
+    declaring the footprint known.
+
+- **§5.169 — demo/data XML cannot resolve a lookup value, because the
+    vocabularies are seeded by `post_init_hook`, which runs AFTER both.**
+    `health_base/demo/health_demo_data.xml` still carried
+    `<field name="facility_type">main_clinic</field>` months after that
+    field became `facility_type_id` — demo installs were broken and nobody
+    noticed, because demo data is not loaded on UAT. The fix is
+    `<field name="x_id" search="[('category_code','=',...),('code','=',...)]"/>`
+    plus a `<function model="health.lookup.value" name="_seed_from_registry"/>`
+    as the FIRST node of the file, so the table is populated before the
+    searches run. Idempotent, and post_init_hook still does its own pass.
+
+- **§5.170 — dropping a field silently deletes the client's field-requirement
+    rules.** `health.field.requirement.rule.field_id` is a Many2one to
+    `ir.model.fields`; when Odoo removes a converted field it deletes that
+    row and cascades the rule away. Any "Gender is mandatory at stage X" rule
+    configured in the UI is gone after the upgrade with no error and no log
+    line — re-create it against the new `_id` field. Same family as the
+    noupdate-seed and access.role-row traps: the code changed, but the
+    CONFIGURATION lived in the database.

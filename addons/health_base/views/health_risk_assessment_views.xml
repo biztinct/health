@@ -182,7 +182,7 @@
                                     <field name="patient_id"/>
                                     <field name="assessment_date"/>
                                     <field name="age" readonly="1"/>
-                                    <field name="gender" readonly="1"/>
+                                    <field name="gender_id" readonly="1"/>
                                 </group>
                             </div>
                             <div class="vu-card">

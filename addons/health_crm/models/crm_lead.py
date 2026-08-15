@@ -5,15 +5,6 @@ from odoo.exceptions import UserError, ValidationError
 from odoo.addons.health_base.models.phone_utils import normalize_vn_phone
 
 
-def _selection_lead_gender(model):
-    return [
-        ('male', model.env._('Male')),
-        ('female', model.env._('Female')),
-        ('other', model.env._('Other')),
-        ('prefer_not_to_say', model.env._('Unspecified')),
-    ]
-
-
 def _selection_service_interest(model):
     """The service groups a contact can be interested in.
 
@@ -155,8 +146,11 @@ class HealthLead(models.Model):
     _inherit = ['crm.lead', 'health.lifecycle.mixin']
 
     # Healthcare-specific service interest
-    service_interest = fields.Selection(
-        _selection_service_interest, string='Service Interest',
+    service_interest_id = fields.Many2one(
+        'health.lookup.value',
+        string='Service Interest',
+        domain="[('category_code', '=', 'service_interest'), ('active', '=', True)]",
+        ondelete='restrict',
         help='Type of healthcare service the lead is interested in')
 
     # Healthcare contact outcome
@@ -259,9 +253,13 @@ class HealthLead(models.Model):
     ], string='Preferred Language', default='vietnamese')
 
     # Lead demographic information (captured pre-conversion; mirrors res.partner)
-    gender = fields.Selection(
-        _selection_lead_gender, string='Gender',
+    gender_id = fields.Many2one(
+        'health.lookup.value', string='Gender',
+        domain="[('category_code', '=', 'gender'), ('active', '=', True)]",
+        ondelete='restrict',
         help='Lead/client gender (Giới tính)')
+    gender_code = fields.Char(
+        related='gender_id.code', string='Gender Code', readonly=True)
     birth_date = fields.Date('Date of Birth', help='Lead/client date of birth (Năm sinh)')
     national_id = fields.Char('National ID (CCCD/CMND)', help='Vietnamese national identity number (Số CCCD)')
     phone2 = fields.Char('Second Phone', help='Alternate contact number (Số điện thoại 2)')
@@ -589,12 +587,18 @@ class HealthLead(models.Model):
     )
     
     # Mode of contact - how did the contact reach us
-    mode_of_contact = fields.Selection(
-        _selection_mode_of_contact,
+    mode_of_contact_id = fields.Many2one(
+        'health.lookup.value',
         string='Mode of Contact',
-        default='phone',
-        help='How the contact reached out to us',
-    )
+        domain="[('category_code', '=', 'mode_of_contact'), ('active', '=', True)]",
+        ondelete='restrict',
+        default=lambda self: self.env['health.lookup.value']._default_for('mode_of_contact', 'phone'),
+        help='How the contact reached out to us')
+    # Companion for view expressions and domains: an Odoo view attribute
+    # (invisible=, decoration-, domain=) cannot traverse a many2one, and
+    # this keeps every existing comparison a one-word change.
+    mode_of_contact_code = fields.Char(
+        related='mode_of_contact_id.code', string='Mode Of Contact Code', readonly=True)
     
     # Escalation tracking fields
     escalated_to = fields.Selection(
@@ -1301,60 +1305,18 @@ class HealthLead(models.Model):
     def _generate_unique_contact_code(self, vals):
         """
         Generate unique contact code using the same format as client IDs.
-        Format: PP 00000YYYY where:
-        - PP = province code from catchment province (first 2 chars)
-        - 00000 = sequential number (5 digits with leading zeros)
-        - YYYY = current year
-        
-        This shares the same sequence as patient codes so that when a lead
-        converts to a client, the same code is used.
+        Format: PP 0000YY — see `res.partner._generate_person_code`, which is
+        the single implementation. It shares the same per-province/year
+        sequence as client IDs so a lead that converts to a client keeps the
+        same code.
         """
-        from datetime import datetime
-        
-        # Get catchment province from vals or use default
         catchment_province_id = vals.get('catchment_province_id')
         catchment_province = None
-        
+
         if catchment_province_id:
             catchment_province = self.env['health.catchment.province'].browse(catchment_province_id)
-        
-        # Get province code from catchment province
-        if catchment_province and catchment_province.code:
-            province_code = catchment_province.code[:2] if len(catchment_province.code) >= 2 else catchment_province.code
-        else:
-            # Default to '99' if no catchment province specified
-            province_code = '99'
-        
-        # Get current year
-        current_year = datetime.now().year
-        
-        # Use the SAME sequence code as patient IDs (shared between leads and patients)
-        sequence_code = f'patient.{province_code}.{current_year}'
-        
-        # Check if sequence exists, if not create it
-        sequence = self.env['ir.sequence'].sudo().search([
-            ('code', '=', sequence_code)
-        ], limit=1)
-        
-        if not sequence:
-            # Create new sequence for this province/year combination
-            sequence = self.env['ir.sequence'].sudo().create({
-                'name': f'Client/Lead ID - Province {province_code} - {current_year}',
-                'code': sequence_code,
-                'implementation': 'standard',
-                'prefix': '',
-                'padding': 5,  # 5 digits with leading zeros
-                'number_increment': 1,
-                'number_next': 1,
-            })
-        
-        # Get next sequence number
-        seq_number = sequence.next_by_id()
-        
-        # Format: PP 00000YYYY (note the space)
-        contact_code = f'{province_code} {seq_number}{current_year}'
-        
-        return contact_code
+
+        return self.env['res.partner']._generate_person_code(catchment_province)
 
     def _process_contact_relationship(self):
         """Process contact relationship and create patient/representative records - ONLY for opportunities"""
@@ -1632,7 +1594,7 @@ class HealthLead(models.Model):
         """Convert lead directly to healthcare appointment"""
         self.ensure_one()
         
-        if not self.service_interest:
+        if not self.service_interest_id:
             raise UserError(_('Please specify the service interest before converting to appointment.'))
         
         # Create or get patient record
@@ -2526,10 +2488,8 @@ class HealthLead(models.Model):
 
         if self.create_date:
             channel = ''
-            if self.mode_of_contact:
-                channel = dict(
-                    self._fields['mode_of_contact']._description_selection(self.env)
-                ).get(self.mode_of_contact, '')
+            if self.mode_of_contact_id:
+                channel = self.mode_of_contact_id.name or ''
             events.append({
                 'type': 'created',
                 'date': self.create_date.strftime('%Y-%m-%d %H:%M:%S'),
@@ -2662,10 +2622,8 @@ class HealthLead(models.Model):
         )[:2].upper() or '??'
 
         channel = ''
-        if lead.mode_of_contact:
-            channel = dict(
-                self._fields['mode_of_contact']._description_selection(self.env)
-            ).get(lead.mode_of_contact, '')
+        if lead.mode_of_contact_id:
+            channel = lead.mode_of_contact_id.name or ''
 
         return {
             'id': lead.id,
@@ -2963,7 +2921,7 @@ class HealthLead(models.Model):
             'catchment_province_id': vals.get('catchment_province_id') or False,
             'contact_relationship_type': vals.get('contact_relationship_type') or False,
             'client_name': vals.get('client_name') or False,
-            'service_interest': vals.get('service_interest') or False,
+            'service_interest_id': vals.get('service_interest_id') or False,
             'clinical_priority': vals.get('clinical_priority', 'routine'),
             'reason_for_contact_id': vals.get('reason_for_contact_id') or False,
             'contact_status': 'active',

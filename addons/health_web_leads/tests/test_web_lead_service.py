@@ -167,7 +167,7 @@ class TestWebLeadService(TransactionCase):
 
         touchpoints = lead.web_touchpoint_ids
         self.assertEqual(len(touchpoints), 1)
-        self.assertEqual(touchpoints.touchpoint_type, 'form_submit')
+        self.assertEqual(touchpoints.touchpoint_type_code, 'form_submit')
         self.assertEqual(touchpoints.source_system, 'wordpress')
         self.assertEqual(touchpoints.external_event_id,
                          payload['submission_id'])
@@ -264,7 +264,7 @@ class TestWebLeadService(TransactionCase):
         self.assertEqual(self.Lead.search_count([]), leads_before,
                          'a merge must not create a second lead')
         self.assertEqual(len(existing.web_touchpoint_ids), 1)
-        self.assertEqual(existing.web_touchpoint_ids.touchpoint_type,
+        self.assertEqual(existing.web_touchpoint_ids.touchpoint_type_code,
                          'form_submit')
 
         if conversation:

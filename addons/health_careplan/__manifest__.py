@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Healthcare Care Plans',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Healthcare/Clinical',
     'summary': 'Care plans with goals, interventions and per-visit task '
                'checklists (FHIR CarePlan/Goal/Task)',
