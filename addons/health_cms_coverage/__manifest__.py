@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Healthcare CMS — Shipped-Feature Sidebar Coverage',
-    'version': '19.0.1.2.1',
+    'version': '19.0.1.3.1',
     'category': 'Healthcare',
     'summary': 'Puts nineteen already-shipped features into the /bizapp sidebar '
                '(CRM, Operations, Clinical, Finance). Data glue plus a role-'

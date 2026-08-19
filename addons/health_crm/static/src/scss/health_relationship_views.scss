@@ -1,0 +1,386 @@
+// Relationship workspace — the connection is the primary visual object.
+// Flat colours and restrained depth keep dense clinical data calm and legible.
+
+.o_health_relationship_form {
+    --hr-ink: #172033;
+    --hr-muted: #68758a;
+    --hr-line: #dce4ee;
+    --hr-blue: #1769c2;
+    --hr-blue-soft: #edf5ff;
+    --hr-teal: #137d72;
+    --hr-teal-soft: #eaf7f4;
+    --hr-surface: #ffffff;
+    --hr-canvas: #f4f7fb;
+
+    max-width: 1480px !important;
+    background: var(--hr-canvas);
+
+    .hr-relationship-hero {
+        display: grid;
+        grid-template-columns: minmax(260px, 1fr) minmax(260px, .82fr) minmax(260px, 1fr);
+        gap: 0;
+        align-items: stretch;
+        margin: 8px 0 22px;
+        border: 1px solid var(--hr-line);
+        border-radius: 18px;
+        background: var(--hr-surface);
+        overflow: hidden;
+        box-shadow: 0 12px 34px rgba(31, 52, 78, .08);
+    }
+
+    .hr-person-card {
+        min-height: 210px;
+        padding: 28px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 0 auto 0 0;
+            width: 5px;
+            background: var(--hr-blue);
+        }
+
+        &--representative::before {
+            inset: 0 0 0 auto;
+            background: var(--hr-teal);
+        }
+    }
+
+    .hr-eyebrow,
+    .hr-card-kicker {
+        color: var(--hr-muted);
+        font-size: 11px;
+        font-weight: 750;
+        letter-spacing: .11em;
+        text-transform: uppercase;
+    }
+
+    .hr-person-field {
+        margin: 14px 0 12px;
+
+        .o_field_many2one_avatar,
+        &.o_field_many2one_avatar {
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--hr-ink);
+        }
+
+        img {
+            width: 48px !important;
+            height: 48px !important;
+            border: 3px solid var(--hr-blue-soft);
+            box-shadow: 0 0 0 1px var(--hr-line);
+        }
+    }
+
+    .hr-person-card--representative .hr-person-field img {
+        border-color: var(--hr-teal-soft);
+    }
+
+    .hr-contact-lines {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 16px;
+        min-height: 28px;
+        color: var(--hr-muted);
+        font-size: 13px;
+
+        a {
+            color: var(--hr-muted);
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: var(--hr-blue);
+        }
+    }
+
+    .hr-relationship-bridge {
+        padding: 22px 24px 20px;
+        background: #f8fafc;
+        border-inline: 1px solid var(--hr-line);
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        label {
+            margin: 8px 0 4px;
+            color: var(--hr-muted);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+        }
+
+        .o_field_widget {
+            width: 100%;
+        }
+    }
+
+    .hr-bridge-line {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--hr-blue);
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 4px;
+
+        &::before,
+        &::after {
+            content: "";
+            height: 2px;
+            flex: 1;
+            background: #b8c8da;
+        }
+    }
+
+    .hr-role-field select,
+    .hr-relationship-bridge .o_input {
+        text-align: center;
+        font-weight: 650;
+        border-color: #cbd7e5;
+        background: #fff;
+    }
+
+    .hr-primary-switch {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        margin-top: 12px;
+
+        .o_field_widget {
+            width: auto;
+        }
+
+        label {
+            margin: 0;
+            text-transform: none;
+            letter-spacing: 0;
+            font-size: 12px;
+        }
+    }
+
+    .hr-relationship-grid {
+        display: grid;
+        grid-template-columns: minmax(320px, .8fr) minmax(460px, 1.2fr);
+        gap: 18px;
+        margin-bottom: 18px;
+    }
+
+    .hr-detail-card {
+        padding: 24px 26px;
+        background: var(--hr-surface);
+        border: 1px solid var(--hr-line);
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(31, 52, 78, .055);
+
+        .o_group {
+            margin-top: 18px;
+        }
+    }
+
+    .hr-card-heading,
+    .hr-tab-intro {
+        h3 {
+            margin: 4px 0;
+            color: var(--hr-ink);
+            font-size: 18px;
+            font-weight: 750;
+        }
+
+        p {
+            margin: 0;
+            color: var(--hr-muted);
+            font-size: 13px;
+        }
+    }
+
+    .hr-permission-list {
+        margin-top: 16px;
+        border-top: 1px solid var(--hr-line);
+    }
+
+    .hr-permission-row {
+        min-height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 10px 2px;
+        border-bottom: 1px solid var(--hr-line);
+
+        > div:first-child {
+            display: flex;
+            flex-direction: column;
+        }
+
+        strong {
+            color: var(--hr-ink);
+            font-size: 13px;
+        }
+
+        small {
+            color: var(--hr-muted);
+            font-size: 11px;
+        }
+
+        .o_field_widget {
+            flex: 0 0 auto;
+        }
+
+        &--financial .o_field_widget {
+            width: 96px;
+        }
+    }
+
+    .hr-relationship-notebook {
+        background: var(--hr-surface);
+        border: 1px solid var(--hr-line);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(31, 52, 78, .055);
+
+        .nav-tabs {
+            padding: 0 18px;
+            background: #f8fafc;
+        }
+
+        .tab-pane {
+            padding: 24px 26px 28px;
+        }
+
+        .hr-tab-intro {
+            margin-bottom: 18px;
+        }
+
+        textarea {
+            min-height: 150px;
+        }
+    }
+}
+
+.o_list_view .o_list_table.o_health_relationship_list {
+    --hr-list-line: #e4eaf1;
+
+    thead th {
+        height: 42px;
+        color: #667386;
+        font-size: 11px;
+        font-weight: 750;
+        letter-spacing: .045em;
+        text-transform: uppercase;
+        background: #f7f9fc;
+        border-bottom: 1px solid #d7e0ea;
+    }
+
+    tbody > tr {
+        height: 58px;
+        transition: background-color .14s ease, box-shadow .14s ease;
+
+        > td {
+            border-bottom-color: var(--hr-list-line);
+            vertical-align: middle;
+        }
+
+        &:hover {
+            background: #f4f8fd;
+            box-shadow: inset 4px 0 #1769c2;
+        }
+    }
+
+    .o_field_many2one_avatar {
+        font-weight: 650;
+        color: #18243a;
+
+        img {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #d5dfeb;
+        }
+    }
+
+    .o_field_badge {
+        border-radius: 999px;
+        padding: 5px 9px;
+        font-weight: 650;
+    }
+
+    td[data-name="authority_summary"] {
+        max-width: 310px;
+        color: #647286;
+        font-size: 12px;
+    }
+
+    td[data-name="is_primary"] {
+        text-align: center;
+    }
+}
+
+.o_health_relationship_kanban {
+    .hr-kanban-card {
+        border: 1px solid #dce4ee;
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: 0 7px 18px rgba(31, 52, 78, .06);
+    }
+
+    .hr-kanban-path {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 12px;
+        align-items: center;
+
+        div:last-child {
+            text-align: right;
+        }
+
+        small {
+            display: block;
+            color: #738094;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        strong {
+            color: #172033;
+        }
+
+        > span {
+            color: #1769c2;
+            font-size: 20px;
+        }
+    }
+
+    .hr-kanban-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 14px;
+    }
+}
+
+@media (max-width: 992px) {
+    .o_health_relationship_form {
+        .hr-relationship-hero,
+        .hr-relationship-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .hr-relationship-bridge {
+            border-inline: 0;
+            border-block: 1px solid var(--hr-line);
+        }
+
+        .hr-person-card {
+            min-height: 150px;
+        }
+    }
+}

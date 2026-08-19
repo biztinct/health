@@ -9189,3 +9189,166 @@ msgstr "Nhắc nhở"
 #: code:addons/health_crm/static/src/components/relationship_hierarchy/relationship_hierarchy.js:0
 msgid "Remove Relationship"
 msgstr "Xóa mối quan hệ"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+msgid "Set as Primary"
+msgstr "Đặt làm liên hệ chính"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+msgid "Client / Patient"
+msgstr "Khách hàng / Bệnh nhân"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+msgid "No contact details recorded"
+msgstr "Chưa có thông tin liên hệ"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_tree
+msgid "Acts as"
+msgstr "Vai trò"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+msgid "Personal relationship"
+msgstr "Mối quan hệ cá nhân"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+msgid "Primary for this role"
+msgstr "Liên hệ chính cho vai trò này"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+msgid "Validity"
+msgstr "Hiệu lực"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+msgid "Relationship timeline"
+msgstr "Thời gian mối quan hệ"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+msgid "When this connection applies and who should be contacted first."
+msgstr "Thời gian áp dụng và người cần được liên hệ trước."
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+msgid "Authority"
+msgstr "Quyền hạn"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+msgid "What can this person do?"
+msgstr "Người này được phép làm gì?"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+msgid "Grant only the permissions this representative needs."
+msgstr "Chỉ cấp các quyền mà người đại diện này cần."
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+#: code:addons/health_crm/models/health_client_relation.py:0
+msgid "Medical decisions"
+msgstr "Quyết định y tế"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+msgid "May consent to care decisions"
+msgstr "Có thể đồng ý với các quyết định chăm sóc"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+#: code:addons/health_crm/models/health_client_relation.py:0
+msgid "Medical information"
+msgstr "Thông tin y tế"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+msgid "May receive clinical updates"
+msgstr "Có thể nhận thông tin cập nhật lâm sàng"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+msgid "Appointment scheduling"
+msgstr "Đặt lịch hẹn"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+msgid "May book or change visits"
+msgstr "Có thể đặt hoặc thay đổi lịch khám"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+msgid "Share of charges assigned to this person"
+msgstr "Tỷ lệ chi phí được giao cho người này"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+msgid "Evidence supporting this relationship"
+msgstr "Bằng chứng xác nhận mối quan hệ"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+msgid "Capture legal authority only when documentation is required."
+msgstr "Chỉ ghi nhận thẩm quyền pháp lý khi cần có tài liệu chứng minh."
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+msgid "Context for the care team"
+msgstr "Thông tin dành cho đội ngũ chăm sóc"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
+msgid "Record practical details that help staff work with this representative."
+msgstr "Ghi lại thông tin thực tế giúp nhân viên phối hợp với người đại diện này."
+
+#. module: health_crm
+#: model:ir.model.fields,field_description:health_crm.field_health_client_relation__authority_summary
+msgid "Delegated Authority"
+msgstr "Quyền được ủy quyền"
+
+#. module: health_crm
+#: code:addons/health_crm/models/health_client_relation.py:0
+msgid "No delegated authority"
+msgstr "Không có quyền được ủy quyền"
+
+#. module: health_crm
+#: code:addons/health_crm/models/health_client_relation.py:0
+msgid "Scheduling"
+msgstr "Đặt lịch"
+
+#. module: health_crm
+#: code:addons/health_crm/models/health_client_relation.py:0
+msgid "%s%% financial"
+msgstr "%s%% tài chính"
+
+#. module: health_crm
+#: model:ir.model.fields.selection,name:health_crm.selection__health_client_relation__relationship_status__scheduled
+msgid "Scheduled"
+msgstr "Đã lên lịch"
+
+#. module: health_crm
+#: model:ir.model.fields.selection,name:health_crm.selection__health_client_relation__relationship_status__ended
+msgid "Ended"
+msgstr "Đã kết thúc"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_search
+msgid "Primary Contacts"
+msgstr "Liên hệ chính"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_search
+msgid "Medical Decision Makers"
+msgstr "Người có quyền quyết định y tế"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_search
+msgid "Current"
+msgstr "Hiện hành"

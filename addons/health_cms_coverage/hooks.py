@@ -121,9 +121,6 @@ def apply_role_gates(env):
 # The tab that replaces each one is named so this stays auditable.
 # --------------------------------------------------------------------------
 RETIRE = {
-    # → Client › Healthcare Relationships (tab already existed:
-    #   ops_client_profile_form_views.xml:337, relationship_hierarchy widget)
-    'health_cms_coverage.item_crm_relationships': 'Client › Healthcare Relationships',
     # → Contacts, as a calendar view mode
     'health_cms_coverage.item_crm_followup_calendar': 'Contacts (calendar view)',
     # NB Campaign Review is NOT retired here. health_web_leads' sidebar seed is
@@ -238,7 +235,6 @@ ATTACH_MATCH = {
     # host leaf xml-id -> action xmlids it should now also answer for
     'health_cms_sidebar.item_ops_clients': (
         'health_self_booking.action_selfbook_invite',
-        'health_crm.action_health_client_relation',
         'health_careplan.action_health_careplan',
         'health_portal.action_portal_access',
         # A retired leaf's ENTIRE match_action_xmlids list has to be re-homed,
@@ -281,6 +277,24 @@ def consolidate_sidebar(env):
                     raise_if_not_found=False)
 
     retired = relocated = collapsed = renamed = 0
+
+    # Relationships is once again a first-class CRM workspace.  An older
+    # consolidation retired that leaf and attached its action to Operations >
+    # Clients.  When the leaf was restored both items claimed the same action;
+    # the last-wins frontend index highlighted Clients.  Make ownership
+    # exclusive and idempotent on both fresh installs and upgrades.
+    relationships = _get(env, 'health_cms_coverage.item_crm_relationships')
+    if relationships:
+        relationships.write({'active': True})
+    clients = _get(env, 'health_cms_sidebar.item_ops_clients')
+    if clients:
+        stale_action = 'health_crm.action_health_client_relation'
+        matches = [
+            value.strip()
+            for value in (clients.match_action_xmlids or '').split(',')
+            if value.strip() and value.strip() != stale_action
+        ]
+        clients.write({'match_action_xmlids': ','.join(matches)})
 
     # --- B1: retire leaves whose records are now record tabs -----------
     for xmlid, tab in RETIRE.items():

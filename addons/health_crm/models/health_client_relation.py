@@ -55,6 +55,17 @@ class HealthClientRelation(models.Model):
                 if relation.client_id
                 else False
             )
+
+    client_phone = fields.Char(
+        related='client_id.phone', string='Client Phone', readonly=True)
+    client_email = fields.Char(
+        related='client_id.email', string='Client Email', readonly=True)
+    representative_phone = fields.Char(
+        related='representative_id.phone', string='Representative Phone',
+        readonly=True)
+    representative_email = fields.Char(
+        related='representative_id.email', string='Representative Email',
+        readonly=True)
     
     # Healthcare role classification - Limited to 6 essential roles
     role = fields.Selection([
@@ -179,6 +190,48 @@ class HealthClientRelation(models.Model):
         default=True,
         help="Is this relationship currently active?"
     )
+
+    relationship_status = fields.Selection([
+        ('active', 'Active'),
+        ('scheduled', 'Scheduled'),
+        ('ended', 'Ended'),
+        ('archived', 'Archived'),
+        ('deleted', 'Deleted'),
+    ], string='Status', compute='_compute_relationship_status')
+    authority_summary = fields.Char(
+        string='Delegated Authority', compute='_compute_authority_summary')
+
+    @api.depends('active', 'deleted', 'start_date', 'end_date')
+    def _compute_relationship_status(self):
+        today = fields.Date.context_today(self)
+        for relation in self:
+            if relation.deleted:
+                relation.relationship_status = 'deleted'
+            elif not relation.active:
+                relation.relationship_status = 'archived'
+            elif relation.end_date and relation.end_date < today:
+                relation.relationship_status = 'ended'
+            elif relation.start_date and relation.start_date > today:
+                relation.relationship_status = 'scheduled'
+            else:
+                relation.relationship_status = 'active'
+
+    @api.depends(
+        'can_make_medical_decisions', 'can_receive_medical_info',
+        'can_schedule_appointments', 'financial_responsibility')
+    def _compute_authority_summary(self):
+        for relation in self:
+            labels = []
+            if relation.can_make_medical_decisions:
+                labels.append(_('Medical decisions'))
+            if relation.can_receive_medical_info:
+                labels.append(_('Medical information'))
+            if relation.can_schedule_appointments:
+                labels.append(_('Scheduling'))
+            if relation.financial_responsibility:
+                labels.append(_(
+                    '%s%% financial', '%g' % relation.financial_responsibility))
+            relation.authority_summary = ' · '.join(labels) or _('No delegated authority')
 
     # SQL constraints
     _sql_constraints = [

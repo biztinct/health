@@ -1,6 +1,6 @@
 {
     'name': 'VAFHS Healthcare CRM Integration',
-    'version': '19.0.1.9.0',
+    'version': '19.0.1.10.0',
     'category': 'Healthcare/CRM',
     'summary': 'Healthcare CRM integration inheriting from standard Odoo CRM',
     'description': """
@@ -110,6 +110,7 @@
             'health_crm/static/src/js/relationship_graph_widget.js',
             'health_crm/static/src/xml/relationship_graph_widget.xml',
             'health_crm/static/src/scss/relationship_graph_widget.scss',
+            'health_crm/static/src/scss/health_relationship_views.scss',
             # Relationship hierarchy widget — now in health_base (removed from here to avoid duplicate registration)
             # Healthcare lead form redirect - redirects to hub-spoke dashboard
             'health_crm/static/src/js/healthcare_lead_form_redirect.js',

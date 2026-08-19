@@ -101,7 +101,6 @@ SECTIONS_TOUCHED = {'section_crm', 'section_ops', 'section_clinical',
 # active=False, never unlinked — the action stays reachable and deep links keep
 # resolving.
 CONSOLIDATED_RETIRED = {
-    'item_crm_relationships',      # -> Client > Healthcare Relationships
     'item_crm_followup_calendar',  # -> Contacts (calendar view + saved filter)
     'item_ops_telehealth',         # -> Booking > Telehealth
     'item_ops_selfbooking',        # -> Client > Booking Links
@@ -229,11 +228,13 @@ class TestCmsCoverage(TransactionCase):
         #     consolidation relocated are no longer in these sections, and
         #     retired ones no longer render, so both are excluded.
         retired = {self._item(k).id for k in CONSOLIDATED_RETIRED}
+        restored_relationship = self._item('item_crm_relationships').id
         for section_key in SECTIONS_TOUCHED:
             section = self.env.ref('health_cms_sidebar.%s' % section_key)
             in_section = Item.search([('section_id', '=', section.id)])
             mine = in_section.filtered(
-                lambda i: i.id in ours and i.id not in retired)
+                lambda i: i.id in ours and i.id not in retired
+                and i.id != restored_relationship)
             theirs = in_section.filtered(
                 lambda i: i.id not in ours and i.active)
             if not mine:
@@ -271,6 +272,18 @@ class TestCmsCoverage(TransactionCase):
             for xmlid in matches:
                 self.assertIn(xmlid, xmlids, '%s: %s' % (key, xmlid))
 
+    def test_04b_relationship_action_has_one_sidebar_owner(self):
+        """The dedicated CRM leaf, never Operations Clients, owns the action."""
+        action_xmlid = 'health_crm.action_health_client_relation'
+        Item = self.env['cms.sidebar.item']
+        owners = Item.search([]).filtered(
+            lambda item: action_xmlid in {
+                item.action_xmlid,
+                *[value.strip() for value in
+                  (item.match_action_xmlids or '').split(',') if value.strip()],
+            })
+        self.assertEqual(owners, self._item('item_crm_relationships'))
+
     # ------------------------------------------------------------------
     # T5 — the ungated CLINICAL leaves reach a user with no role at all
     # ------------------------------------------------------------------
@@ -304,6 +317,10 @@ class TestCmsCoverage(TransactionCase):
         Role = self.env['access.role'].sudo()
         for key, names in ROLE_GATES.items():
             item = self._item(key)
+            if not item.active:
+                # Retired leaves are not served by get_sidebar_data(), so
+                # retaining a role gate on them has no security or UX effect.
+                continue
             present = Role.search([('name', 'in', list(names))])
             if not present:
                 continue                      # nothing to assert on this DB
@@ -318,7 +335,10 @@ class TestCmsCoverage(TransactionCase):
         for key in ('item_clin_diagnoses', 'item_clin_unsigned_notes',
                     'item_clin_coding_review', 'item_clin_visit_tasks',
                     'item_clin_patient_portal', 'item_clin_consent_log'):
-            self.assertFalse(self._item(key).role_ids,
+            item = self._item(key)
+            if not item.active:
+                continue
+            self.assertFalse(item.role_ids,
                              '%s must stay ungated like every existing '
                              'CLINICAL item' % key)
 
@@ -351,14 +371,12 @@ class TestCmsCoverage(TransactionCase):
             self.assertNotIn(hidden, names,
                              '%r must not be offered to the CRM role — it '
                              'cannot open it' % hidden)
-        # Menu consolidation (19.0.1.2.0) retired 'Follow-up Calendar' (now a
-        # calendar view mode + saved filter on Contacts), 'Relationships' (the
-        # client profile already had the tab) and 'Diagnoses' (now a client
-        # tab), and moved 'Channels (setup)' / 'Reply Templates' to ADMIN. What
-        # this test is really about — the CRM role reaching what it can open —
-        # is now asserted against the leaves that stayed in CRM.
+        # Menu consolidation retired Follow-up Calendar and Diagnoses, and
+        # moved Channels / Reply Templates to ADMIN. Relationships was later
+        # restored as a dedicated cross-client workspace and must remain
+        # visible to the CRM role.
         for shown in ('Contacts', 'Activities', 'Web Touchpoints',
-                      'Lead Analysis'):
+                      'Lead Analysis', 'Relationships'):
             self.assertIn(shown, names,
                           '%r must still reach the CRM role' % shown)
 
@@ -372,3 +390,36 @@ class TestCmsCoverage(TransactionCase):
                 for child in item.get('children', []) or []:
                     names.add(child.get('name'))
         return names
+
+
+@tagged('post_install', '-at_install')
+class TestRelationshipSidebarOwnership(TransactionCase):
+    """Relationships has one visible, correctly gated sidebar owner."""
+
+    def test_relationship_workspace_owns_its_action(self):
+        Item = self.env['cms.sidebar.item']
+        relationship = self.env.ref(
+            'health_cms_coverage.item_crm_relationships')
+        clients = self.env.ref('health_cms_sidebar.item_ops_clients')
+        action_xmlid = 'health_crm.action_health_client_relation'
+
+        self.assertTrue(relationship.active)
+        self.assertEqual(relationship.action_xmlid, action_xmlid)
+        self.assertNotIn(
+            action_xmlid,
+            {value.strip() for value in
+             (clients.match_action_xmlids or '').split(',') if value.strip()})
+
+        owners = Item.search([]).filtered(
+            lambda item: action_xmlid in {
+                item.action_xmlid,
+                *[value.strip() for value in
+                  (item.match_action_xmlids or '').split(',') if value.strip()],
+            })
+        self.assertEqual(owners, relationship)
+
+        expected_roles = self.env['access.role'].search([
+            ('name', 'in', ['Owner', 'CRM']),
+        ])
+        if expected_roles:
+            self.assertEqual(relationship.role_ids, expected_roles)
