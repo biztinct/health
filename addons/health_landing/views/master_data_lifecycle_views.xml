@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        The shared lifecycle controller needs `deleted` in the list payload to
+        decide between Delete and Restore for the current selection.  These
+        fields stay invisible; the visible buttons are injected globally by
+        health_base's lifecycle policy.
+    -->
+    <record id="view_admin_catchment_lifecycle" model="ir.ui.view">
+        <field name="name">admin.catchment.lifecycle</field>
+        <field name="model">health.catchment.province</field>
+        <field name="inherit_id" ref="view_admin_catchment_list"/>
+        <field name="arch" type="xml"><xpath expr="//list" position="inside"><field name="deleted" column_invisible="1"/></xpath></field>
+    </record>
+    <record id="view_admin_province_lifecycle" model="ir.ui.view">
+        <field name="name">admin.province.lifecycle</field><field name="model">health.province</field>
+        <field name="inherit_id" ref="view_admin_province_list"/>
+        <field name="arch" type="xml"><xpath expr="//list" position="inside"><field name="deleted" column_invisible="1"/></xpath></field>
+    </record>
+    <record id="view_admin_district_lifecycle" model="ir.ui.view">
+        <field name="name">admin.district.lifecycle</field><field name="model">health.vietnamese.district</field>
+        <field name="inherit_id" ref="view_admin_district_list"/>
+        <field name="arch" type="xml"><xpath expr="//list" position="inside"><field name="deleted" column_invisible="1"/></xpath></field>
+    </record>
+    <record id="view_admin_category_lifecycle" model="ir.ui.view">
+        <field name="name">admin.patient.category.lifecycle</field><field name="model">health.patient.category</field>
+        <field name="inherit_id" ref="view_admin_category_list"/>
+        <field name="arch" type="xml"><xpath expr="//list" position="inside"><field name="deleted" column_invisible="1"/></xpath></field>
+    </record>
+    <record id="view_admin_contact_reason_lifecycle" model="ir.ui.view">
+        <field name="name">admin.contact.reason.lifecycle</field><field name="model">health.contact.reason</field>
+        <field name="inherit_id" ref="view_admin_contact_reason_list"/>
+        <field name="arch" type="xml"><xpath expr="//list" position="inside"><field name="deleted" column_invisible="1"/></xpath></field>
+    </record>
+    <record id="view_admin_lead_reason_lifecycle" model="ir.ui.view">
+        <field name="name">admin.lead.reason.lifecycle</field><field name="model">health.lead.reason</field>
+        <field name="inherit_id" ref="view_admin_lead_reason_list"/>
+        <field name="arch" type="xml"><xpath expr="//list" position="inside"><field name="deleted" column_invisible="1"/></xpath></field>
+    </record>
+    <record id="view_admin_referral_source_lifecycle" model="ir.ui.view">
+        <field name="name">admin.referral.source.lifecycle</field><field name="model">health.referral.source</field>
+        <field name="inherit_id" ref="view_admin_referral_source_list"/>
+        <field name="arch" type="xml"><xpath expr="//list" position="inside"><field name="deleted" column_invisible="1"/></xpath></field>
+    </record>
+    <record id="view_admin_insurance_lifecycle" model="ir.ui.view">
+        <field name="name">admin.insurance.lifecycle</field><field name="model">health.insurance.provider</field>
+        <field name="inherit_id" ref="view_admin_insurance_list"/>
+        <field name="arch" type="xml"><xpath expr="//list" position="inside"><field name="deleted" column_invisible="1"/></xpath></field>
+    </record>
+    <record id="view_admin_lost_reason_lifecycle" model="ir.ui.view">
+        <field name="name">admin.lost.reason.lifecycle</field><field name="model">crm.lost.reason</field>
+        <field name="inherit_id" ref="view_admin_lost_reason_list"/>
+        <field name="arch" type="xml"><xpath expr="//list" position="inside"><field name="deleted" column_invisible="1"/></xpath></field>
+    </record>
+    <record id="view_admin_service_type_lifecycle" model="ir.ui.view">
+        <field name="name">admin.service.type.lifecycle</field><field name="model">health.service.type</field>
+        <field name="inherit_id" ref="view_admin_service_type_list"/>
+        <field name="arch" type="xml"><xpath expr="//list" position="inside"><field name="deleted" column_invisible="1"/></xpath></field>
+    </record>
+    <record id="view_admin_service_category_lifecycle" model="ir.ui.view">
+        <field name="name">admin.service.category.lifecycle</field><field name="model">product.category</field>
+        <field name="inherit_id" ref="view_admin_service_category_list"/>
+        <field name="arch" type="xml"><xpath expr="//list" position="inside"><field name="active" column_invisible="1"/><field name="deleted" column_invisible="1"/></xpath></field>
+    </record>
+    <record id="view_admin_urgency_lifecycle" model="ir.ui.view">
+        <field name="name">admin.urgency.lifecycle</field><field name="model">health.urgency.level</field>
+        <field name="inherit_id" ref="view_admin_urgency_list"/>
+        <field name="arch" type="xml"><xpath expr="//list" position="inside"><field name="deleted" column_invisible="1"/></xpath></field>
+    </record>
+    <record id="view_admin_symptom_lifecycle" model="ir.ui.view">
+        <field name="name">admin.symptom.lifecycle</field><field name="model">health.symptom</field>
+        <field name="inherit_id" ref="view_admin_symptom_list"/>
+        <field name="arch" type="xml"><xpath expr="//list" position="inside"><field name="deleted" column_invisible="1"/></xpath></field>
+    </record>
+    <record id="view_admin_specialty_lifecycle" model="ir.ui.view">
+        <field name="name">admin.specialty.lifecycle</field><field name="model">health.medical.specialty</field>
+        <field name="inherit_id" ref="view_admin_specialty_list"/>
+        <field name="arch" type="xml"><xpath expr="//list" position="inside"><field name="deleted" column_invisible="1"/></xpath></field>
+    </record>
+    <record id="view_admin_protocol_lifecycle" model="ir.ui.view">
+        <field name="name">admin.protocol.lifecycle</field><field name="model">health.clinical.protocol</field>
+        <field name="inherit_id" ref="view_admin_protocol_list"/>
+        <field name="arch" type="xml"><xpath expr="//list" position="inside"><field name="deleted" column_invisible="1"/></xpath></field>
+    </record>
+    <record id="view_admin_lookup_value_lifecycle" model="ir.ui.view">
+        <field name="name">admin.lookup.value.lifecycle</field><field name="model">health.lookup.value</field>
+        <field name="inherit_id" ref="view_admin_lookup_value_list"/>
+        <field name="arch" type="xml"><xpath expr="//list" position="inside"><field name="deleted" column_invisible="1"/></xpath></field>
+    </record>
+    <record id="view_admin_lookup_category_lifecycle" model="ir.ui.view">
+        <field name="name">admin.lookup.category.lifecycle</field><field name="model">health.lookup.category</field>
+        <field name="inherit_id" ref="view_admin_lookup_category_list"/>
+        <field name="arch" type="xml"><xpath expr="//list" position="inside"><field name="deleted" column_invisible="1"/></xpath></field>
+    </record>
+    <record id="view_admin_booking_stage_lifecycle" model="ir.ui.view">
+        <field name="name">admin.booking.stage.lifecycle</field><field name="model">health.fieldservice.stage</field>
+        <field name="inherit_id" ref="view_admin_booking_stage_list"/>
+        <field name="arch" type="xml"><xpath expr="//list" position="inside"><field name="deleted" column_invisible="1"/></xpath></field>
+    </record>
+    <record id="view_admin_fs_team_lifecycle" model="ir.ui.view">
+        <field name="name">admin.fieldservice.team.lifecycle</field><field name="model">health.fieldservice.team</field>
+        <field name="inherit_id" ref="view_admin_fs_team_list"/>
+        <field name="arch" type="xml"><xpath expr="//list" position="inside"><field name="deleted" column_invisible="1"/></xpath></field>
+    </record>
+    <record id="view_admin_cancel_reason_lifecycle" model="ir.ui.view">
+        <field name="name">admin.cancellation.reason.lifecycle</field><field name="model">health.booking.cancellation.reason</field>
+        <field name="inherit_id" ref="view_admin_cancel_reason_list"/>
+        <field name="arch" type="xml"><xpath expr="//list" position="inside"><field name="deleted" column_invisible="1"/></xpath></field>
+    </record>
+    <record id="view_admin_deletion_reason_lifecycle" model="ir.ui.view">
+        <field name="name">admin.deletion.reason.lifecycle</field><field name="model">health.deletion.reason</field>
+        <field name="inherit_id" ref="view_admin_deletion_reason_list"/>
+        <field name="arch" type="xml"><xpath expr="//list" position="inside"><field name="deleted" column_invisible="1"/></xpath></field>
+    </record>
+
+    <!-- Deleted rows remain visible in the management table, while archived
+         rows follow Odoo's normal active_test behaviour and disappear. -->
+    <record id="action_admin_facilities" model="ir.actions.act_window"><field name="context">{'deleted_test': False}</field></record>
+    <record id="action_admin_catchments" model="ir.actions.act_window"><field name="context">{'deleted_test': False}</field></record>
+    <record id="action_admin_provinces" model="ir.actions.act_window"><field name="context">{'deleted_test': False}</field></record>
+    <record id="action_admin_districts" model="ir.actions.act_window"><field name="context">{'deleted_test': False}</field></record>
+    <record id="action_admin_categories" model="ir.actions.act_window"><field name="context">{'deleted_test': False}</field></record>
+    <record id="action_admin_contact_reasons" model="ir.actions.act_window"><field name="context">{'deleted_test': False}</field></record>
+    <record id="action_admin_lead_reasons" model="ir.actions.act_window"><field name="context">{'deleted_test': False}</field></record>
+    <record id="action_admin_referral_sources" model="ir.actions.act_window"><field name="context">{'deleted_test': False}</field></record>
+    <record id="action_admin_insurance" model="ir.actions.act_window"><field name="context">{'deleted_test': False}</field></record>
+    <record id="action_admin_lost_reasons" model="ir.actions.act_window"><field name="context">{'deleted_test': False}</field></record>
+    <record id="action_admin_service_types" model="ir.actions.act_window"><field name="context">{'deleted_test': False}</field></record>
+    <record id="action_admin_service_categories" model="ir.actions.act_window"><field name="context">{'deleted_test': False}</field></record>
+    <record id="action_admin_urgency" model="ir.actions.act_window"><field name="context">{'deleted_test': False}</field></record>
+    <record id="action_admin_symptoms" model="ir.actions.act_window"><field name="context">{'deleted_test': False}</field></record>
+    <record id="action_admin_specialties" model="ir.actions.act_window"><field name="context">{'deleted_test': False}</field></record>
+    <record id="action_admin_protocols" model="ir.actions.act_window"><field name="context">{'deleted_test': False}</field></record>
+    <record id="action_admin_booking_stages" model="ir.actions.act_window"><field name="context">{'deleted_test': False}</field></record>
+    <record id="action_admin_fs_teams" model="ir.actions.act_window"><field name="context">{'deleted_test': False}</field></record>
+    <record id="action_admin_cancel_reasons" model="ir.actions.act_window"><field name="context">{'deleted_test': False}</field></record>
+    <record id="action_admin_deletion_reasons" model="ir.actions.act_window"><field name="context">{'deleted_test': False}</field></record>
+    <record id="action_admin_lookup_values" model="ir.actions.act_window"><field name="context">{'deleted_test': False, 'search_default_group_category': 1}</field></record>
+    <record id="action_admin_lookup_categories" model="ir.actions.act_window"><field name="context">{'deleted_test': False}</field></record>
+</odoo>
