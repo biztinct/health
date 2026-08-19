@@ -280,10 +280,39 @@ surface.
 
 ---
 
-## T-009 — `health.clinical.note` has NO record rule, so every clinical grant is unnarrowed
+## T-009 — `health.clinical.note` has NO record rule, so every clinical grant is unnarrowed — **SCOPING CLOSED 2026-08-20, commit `f297d18c`; consent question still open**
 
-**Found:** SH-1 review (2026-08-03). Verified live: the model has **zero**
-active `ir.rule` rows.
+**Closed by the catchment phase**, not by a security phase —
+`health_fieldservice/security/catchment_gap_rules.xml` ships the pair
+`clinical_note_catchment_rule` ("Clinical Notes: staff see their own
+catchment", bound to nurse + doctor + operations_manager + manager, `r/w/c`,
+no unlink) and `clinical_note_catchment_owner_rule` (`[(1,'=',1)]`, owner
+only). Live on vietuat as ids **4823** and **4824**, both active. The owner
+twin is load-bearing, not decoration: group rules OR together and
+`group_healthcare_owner` implies manager, so without it an owner would be
+pinned to their own province by their inherited groups.
+
+Verified live 2026-08-20: **all 57 notes carry a `catchment_province_id`
+(0 NULL)**, so the rule genuinely narrows and no note falls into the
+invisible-to-everyone-but-owner hole that the domain's
+`('catchment_province_id','!=',False)` clause would otherwise create. A
+doctor in one province can no longer read every note in every province,
+which was the ticket's headline.
+
+**Still open — the second half of the fix shape.** The original ticket asked
+for the record rule **plus** "a decision on whether the note should also
+respect the patient's `data_sharing` consent the way the FHIR facade does".
+No such decision is recorded anywhere in `docs/strategy/`, and the shipped
+domains are purely geographic — there is no consent clause in either rule. So
+a clinician inside the right catchment still reads a note regardless of what
+the patient consented to, while the FHIR facade covering the same data does
+check. That asymmetry is a clinical-workflow decision, not a security patch,
+and it is what remains of this ticket. Do not re-derive the scoping half.
+
+*Original ticket text follows.*
+
+**Found:** SH-1 review (2026-08-03). Verified live **at that time**: the model
+had **zero** active `ir.rule` rows.
 
 Every ACL grant on `health.clinical.note` is therefore full-table. Nurse (57
 users), operations manager (14), manager/admin/owner and — after SH-1 §3.2 —
@@ -465,4 +494,8 @@ beyond this note.
 *Registered 2026-07-29 during the W3 review close-out; T-003 – T-008 added
 2026-08-03 by SH-1; T-009 – T-010 added 2026-08-03 by the SH-1 review;
 T-001 closed and T-011 – T-013 added 2026-08-03 by the SH-2 review;
-T-003 & T-012 closed and T-014 added 2026-08-04.*
+T-003 & T-012 closed and T-014 added 2026-08-04;
+T-009's scoping half closed 2026-08-20 (shipped by the catchment phase
+`f297d18c` on 2026-08-04 and left unstruck for sixteen days — a closed defect
+that still reads open costs the next phase a re-investigation, so strike the
+ticket in the commit that fixes it).*
