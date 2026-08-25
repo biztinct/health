@@ -334,45 +334,63 @@ class TestZaloCenter(ChannelSpineCase):
         conn = self._zalo_conn(state='testing',
                                resource_external_id=ZALO_OA_ID)
         conn.action_set_secret('provider_secret', ZALO_WEBHOOK_SECRET)
-        raw = b'{"oa_id":"OA_FIXTURE_1","event_name":"user_send_text"}'
 
         # -- the golden vector, computed here the way the spec words it -----
         ts = str(int(time.time() * 1000))
+        raw = json.dumps({
+            'oa_id': ZALO_OA_ID,
+            'event_name': 'user_send_text',
+            'timestamp': ts,
+        }, separators=(',', ':')).encode()
         expected = hashlib.sha256(
             ZALO_APP_ID.encode() + raw + ts.encode()
             + ZALO_WEBHOOK_SECRET.encode()).hexdigest()
-        headers = {'X-ZEvent-Signature': 'mac=%s' % expected,
-                   'X-ZEvent-Timestamp': ts}
+        # Current Zalo OA events carry timestamp in the signed JSON body; no
+        # separate timestamp header is sent.
+        headers = {'X-ZEvent-Signature': 'mac=%s' % expected}
         self.assertTrue(verify_zalo(conn.sudo(), raw, headers))
         # The `mac=` prefix is optional, the value is what matters.
         self.assertTrue(verify_zalo(
-            conn.sudo(), raw,
-            {'X-ZEvent-Signature': expected, 'X-ZEvent-Timestamp': ts}))
+            conn.sudo(), raw, {'X-ZEvent-Signature': expected}))
 
         # -- the refusal matrix — every one of these is fail-CLOSED --------
-        self.assertFalse(verify_zalo(conn.sudo(), raw,
-                                     {'X-ZEvent-Timestamp': ts}),
+        self.assertFalse(verify_zalo(conn.sudo(), raw, {}),
                          'missing signature header')
-        self.assertFalse(verify_zalo(conn.sudo(), raw,
-                                     {'X-ZEvent-Signature': 'mac=%s' % expected}),
-                         'missing timestamp header')
-        self.assertFalse(verify_zalo(conn.sudo(), raw, {}), 'no headers')
+        no_timestamp = b'{"oa_id":"OA_FIXTURE_1","event_name":"user_send_text"}'
+        self.assertFalse(verify_zalo(
+            conn.sudo(), no_timestamp,
+            {'X-ZEvent-Signature': 'mac=%s' % expected}),
+            'missing timestamp in both body and legacy header')
         self.assertFalse(
             verify_zalo(conn.sudo(), raw,
-                        {'X-ZEvent-Signature': 'mac=' + 'a' * 64,
-                         'X-ZEvent-Timestamp': ts}), 'wrong mac')
+                        {'X-ZEvent-Signature': 'mac=' + 'a' * 64}),
+            'wrong mac')
         self.assertFalse(verify_zalo(conn.sudo(), raw + b' ', headers),
                          'the body is signed byte for byte')
         stale = str(int((time.time() - 3600) * 1000))
+        stale_raw = json.dumps({
+            'oa_id': ZALO_OA_ID,
+            'event_name': 'user_send_text',
+            'timestamp': stale,
+        }, separators=(',', ':')).encode()
         stale_mac = hashlib.sha256(
-            ZALO_APP_ID.encode() + raw + stale.encode()
+            ZALO_APP_ID.encode() + stale_raw + stale.encode()
             + ZALO_WEBHOOK_SECRET.encode()).hexdigest()
         self.assertFalse(
-            verify_zalo(conn.sudo(), raw,
-                        {'X-ZEvent-Signature': 'mac=%s' % stale_mac,
-                         'X-ZEvent-Timestamp': stale}),
+            verify_zalo(conn.sudo(), stale_raw,
+                        {'X-ZEvent-Signature': 'mac=%s' % stale_mac}),
             'a correctly signed but hour-old event is a replay')
         self.assertFalse(verify_zalo(None, raw, headers), 'unknown oa_id')
+
+        # Compatibility only: old events without a body timestamp can still
+        # validate when they carry the historical timestamp header.
+        legacy_mac = hashlib.sha256(
+            ZALO_APP_ID.encode() + no_timestamp + ts.encode()
+            + ZALO_WEBHOOK_SECRET.encode()).hexdigest()
+        self.assertTrue(verify_zalo(
+            conn.sudo(), no_timestamp,
+            {'X-ZEvent-Signature': 'mac=%s' % legacy_mac,
+             'X-ZEvent-Timestamp': ts}))
 
         # An unknown oa_id really does resolve to nothing at controller level.
         self.assertFalse(self.Conn._find_for_resource('zalo', 'NOT_AN_OA'))

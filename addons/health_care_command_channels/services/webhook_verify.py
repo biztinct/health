@@ -21,6 +21,7 @@ signature proves the sender is Meta, not which tenant the payload belongs to.
 """
 import hashlib
 import hmac
+import json
 import logging
 import time
 
@@ -32,6 +33,9 @@ VERIFY_TOKEN_KEY = 'verify_token'
 # (NOT an HMAC — the secret is concatenated, not keyed). The per-OA secret is
 # tenant material from the app's portal page; the app id is platform material.
 ZALO_SIGNATURE_HEADER = 'X-ZEvent-Signature'
+# Older Zalo examples described the timestamp as a header.  The current OA
+# webhook contract puts it in the signed JSON body instead.  Keep the header
+# name only as a compatibility fallback for events which pre-date that change.
 ZALO_TIMESTAMP_HEADER = 'X-ZEvent-Timestamp'
 # Replay window (architecture §7.5). Widened, never disabled, through
 # `channel_hub.zalo_webhook_skew_seconds` — a deployment whose clock drifts is
@@ -131,6 +135,27 @@ def _zalo_timestamp_ok(env, raw_timestamp):
     return abs(time.time() - value) <= skew
 
 
+def _zalo_signed_timestamp(raw_body, headers):
+    """Return the timestamp Zalo appends to the signature input.
+
+    Current OA webhook payloads carry a top-level ``timestamp`` property and
+    send only ``X-ZEvent-Signature`` as a signature-related header.  Because
+    the JSON bytes themselves are part of the digest, using that property for
+    the replay check does not weaken the boundary.  The header fallback keeps
+    compatibility with the older contract without letting a header override a
+    timestamp that is present in the signed body.
+    """
+    try:
+        payload = json.loads(raw_body or b'{}')
+    except (TypeError, ValueError):
+        payload = None
+    if isinstance(payload, dict) and 'timestamp' in payload:
+        return str(payload.get('timestamp') or '').strip()
+    headers = headers or {}
+    return str(headers.get(ZALO_TIMESTAMP_HEADER)
+               or headers.get(ZALO_TIMESTAMP_HEADER.lower()) or '').strip()
+
+
 def verify_zalo(connection, raw_body, headers, platform_app=None):
     """``X-ZEvent-Signature: mac=<hex>`` over the RAW request bytes.
 
@@ -168,8 +193,7 @@ def verify_zalo(connection, raw_body, headers, platform_app=None):
     headers = headers or {}
     provided = (headers.get(ZALO_SIGNATURE_HEADER)
                 or headers.get(ZALO_SIGNATURE_HEADER.lower()) or '').strip()
-    timestamp = (headers.get(ZALO_TIMESTAMP_HEADER)
-                 or headers.get(ZALO_TIMESTAMP_HEADER.lower()) or '').strip()
+    timestamp = _zalo_signed_timestamp(raw_body, headers)
     if not provided or not timestamp:
         return False
     if provided.lower().startswith('mac='):
