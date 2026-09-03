@@ -18,10 +18,27 @@ The order is therefore, strictly:
    bytes with THAT connection's secret;
 5. only now escalate to ``su`` and ingest.
 
-Every refusal in steps 1-4 is the same bodyless **403**: a missing header, an
-unknown OA, a connection with no secret and a wrong mac are indistinguishable
-to the caller. After verification the answer is always 200 — Zalo retries hard,
-and a poisoned event must not become a retry storm.
+Every refusal in steps 1-4 is the same bodyless **200 with no ingestion**: a
+missing header, an unknown OA, a connection with no secret and a wrong mac are
+indistinguishable to the caller, and none of them reaches a single line of
+ingest code. After verification the answer is also 200 — Zalo retries hard, and
+a poisoned event must not become a retry storm.
+
+The status code is 200 rather than 403 because Zalo's developer console
+**refuses to save a webhook address that does not answer its unsigned probe
+with 200** ("Your Webhook will only be established when it returns HTTP code
+200 OK"). A 403 there is unrecoverable by construction: the probe carries no
+``oa_id`` and no signature, so it can never verify, so the address can never be
+saved, so no verified event can ever arrive to prove the address was pasted
+correctly. The security boundary is unchanged and is where it always was —
+``verify_zalo`` gates *ingestion*, never the status code — and a uniform 200
+is, if anything, less of an oracle than a uniform 403. Refusals are logged at
+WARNING and the first one writes a single ``webhook_probe`` audit row, so a
+misconfigured secret is diagnosable here rather than in Zalo's console.
+
+A ``GET`` on the same address answers a bodyless 200 too, so that pasting the
+URL into a browser — the first thing every operator does — proves the address
+is live instead of returning "Method Not Allowed".
 
 Ingest deliberately feeds the LEGACY ``zalo.message`` pipeline (handover §2.3):
 Care Command's timeline and ops send path read those rows today, and this phase
@@ -62,6 +79,43 @@ class ZaloWebhookController(http.Controller):
                 oa_id = recipient.get('id')
         return (str(oa_id) if oa_id else None), payload
 
+    @staticmethod
+    def _log_probe():
+        """One ``webhook_probe`` row for the whole deployment, ever.
+
+        Written on the REFUSAL path, which is the one place in this module
+        that touches ``su`` before verifying anything — deliberately, and with
+        nothing from the request in it: a constant event tag and a constant
+        detail, no oa_id, no header, no byte of the body. It exists because
+        the refusal is now a 200 and would otherwise be invisible to
+        everything except the log: this row is how the Connection Center can
+        say "Zalo reached this address" while the handshake row (step 4's
+        gate) stays reserved for a genuinely VERIFIED event.
+
+        Once-only, like the handshake row: a public route that appends per
+        request is an unbounded-growth surface for anyone who finds the URL.
+        """
+        try:
+            audit = request.env(su=True)['care.channel.audit']
+            if audit.search_count(
+                    [('event', '=', 'webhook_probe'), ('channel', '=', 'zalo')],
+                    limit=1):
+                return
+            audit._log('webhook_probe', channel='zalo',
+                       detail='unverified zalo request reached the webhook')
+        except Exception:  # noqa: BLE001 — evidence must never break the 200
+            _logger.exception('care_channels: zalo probe audit failed')
+
+    @http.route('/care_channels/zalo/webhook', type='http', auth='public',
+                methods=['GET'], csrf=False, save_session=False,
+                website=False)
+    def zalo_webhook_probe(self, **kwargs):
+        """Liveness only. Zalo events are POSTs; this exists so that a browser
+        (or any provider-side reachability check) sees the address answer
+        instead of 405. It reads nothing, writes nothing and says nothing
+        about which Official Accounts are connected here."""
+        return self._text('OK')
+
     @http.route('/care_channels/zalo/webhook', type='http', auth='public',
                 methods=['POST'], csrf=False, save_session=False,
                 website=False)
@@ -72,8 +126,13 @@ class ZaloWebhookController(http.Controller):
             ._find_for_resource('zalo', oa_id) if oa_id else None
         if not verify_zalo(connection, raw_body,
                            request.httprequest.headers):
-            _logger.warning('care_channels: zalo webhook rejected')
-            return self._text('', 403)
+            # 200, and NOT ONE LINE further: Zalo's console will not save an
+            # address that answers its unsigned probe with anything else, and
+            # the address is worthless unsaved. Nothing below this branch runs.
+            _logger.warning('care_channels: zalo webhook not verified — '
+                            'answered 200, ingested nothing')
+            self._log_probe()
+            return self._text('')
 
         # Verified: escalate only now, and answer 200 from here on.
         env = request.env(su=True)

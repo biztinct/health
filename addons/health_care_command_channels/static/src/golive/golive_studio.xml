@@ -398,8 +398,13 @@
                 <span class="ic ic-clock"/>
                 <div>
                   <p>Waiting for the provider's check to reach us…</p>
-                  <p class="gl-note-sub">Leave this screen open. It turns green by
-                    itself the moment the address you pasted is verified.</p>
+                  <p class="gl-note-sub" t-if="provider.provider === 'zalo'">Zalo's
+                    own "Check" only asks whether the address answers — it proves
+                    nothing about the account, so it cannot turn this green. Save
+                    it there, then message the Official Account once: the first
+                    real event turns this green by itself.</p>
+                  <p class="gl-note-sub" t-else="">Leave this screen open. It turns
+                    green by itself the moment the address you pasted is verified.</p>
                 </div>
               </div>
             </t>

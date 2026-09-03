@@ -1004,14 +1004,71 @@ class TestGoliveHandshakeHttp(HttpCase):
                          'every verified event would otherwise spam the audit')
         self.assertGreaterEqual(after, 1)
 
-        # An unsigned event is the same bodyless 403 it always was, and it
-        # proves nothing about anything.
-        resp = self.url_open('/care_channels/zalo/webhook',
-                             data=b'{"oa_id":"%s"}' % ZALO_OA_ID.encode(),
-                             headers={'Content-Type': 'application/json'})
-        self.assertEqual(resp.status_code, 403)
+        # An unsigned event answers a bodyless 200 — Zalo's console will not
+        # save an address that answers its unsigned probe with anything else —
+        # and it proves nothing about anything: no dispatch, and above all no
+        # handshake row, because step 4 is gated on a VERIFIED event.
+        with patch.object(CareChannelMessage, '_dispatch_zalo', counting):
+            resp = self.url_open('/care_channels/zalo/webhook',
+                                 data=b'{"oa_id":"%s"}' % ZALO_OA_ID.encode(),
+                                 headers={'Content-Type': 'application/json'})
+        self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.text, '')
+        self.assertEqual(len(calls), 2, 'an unverified body must not ingest')
         self.assertEqual(self._handshakes(['zalo']), after)
+
+    def test_gl1_zalo_unverified_is_200_and_probe_is_bounded(self):
+        """The console-check path: Zalo's own probe carries no oa_id and no
+        signature, and the address is worthless unless it answers 200.
+
+        Also pins the two things that make that safe: nothing is ingested, and
+        the evidence row a public route appends is capped at one.
+        """
+        Audit = self.env['care.channel.audit'].sudo()
+
+        def probes():
+            return Audit.search_count([('event', '=', 'webhook_probe'),
+                                       ('channel', '=', 'zalo')])
+
+        before_handshakes = self._handshakes(['zalo'])
+        calls = []
+
+        def counting(self, connection, payload):
+            calls.append(payload)
+            return {}
+
+        with patch.object(CareChannelMessage, '_dispatch_zalo', counting):
+            # Exactly what the developer console sends: an empty POST. It has
+            # to go through `opener.post` — `url_open` dispatches on the
+            # TRUTHINESS of `data`, so an empty body silently becomes a GET
+            # and would test the liveness route instead of this one.
+            empty = self.opener.post(
+                self.base_url() + '/care_channels/zalo/webhook', data=b'',
+                headers={'Content-Type': 'application/json'}, timeout=30)
+            # And the shapes around it: not-JSON, and a known OA with a mac
+            # that is simply wrong.
+            garbage = self.url_open('/care_channels/zalo/webhook',
+                                    data=b'not json',
+                                    headers={'Content-Type': 'application/json'})
+            bad_mac = self._post_zalo(
+                b'{"oa_id":"%s","event_name":"user_send_text"}'
+                % ZALO_OA_ID.encode(), secret='wrong-secret')
+
+        for resp in (empty, garbage, bad_mac):
+            self.assertEqual(resp.status_code, 200)
+            self.assertEqual(resp.text, '')
+        self.assertEqual(calls, [], 'nothing unverified may reach ingest')
+        self.assertEqual(self._handshakes(['zalo']), before_handshakes,
+                         'an unverified request must never complete step 4')
+        self.assertEqual(probes(), 1,
+                         'three refusals, one row — a public route that '
+                         'appends per request is an unbounded-growth surface')
+
+    def test_gl1_zalo_webhook_get_is_reachable(self):
+        """Pasting the address into a browser must prove it is live, not 405 —
+        it is the first thing every operator does with it."""
+        resp = self.url_open('/care_channels/zalo/webhook')
+        self.assertEqual(resp.status_code, 200)
 
     def _post_zalo(self, raw, secret=ZALO_WEBHOOK_SECRET):
         ts = str(int(time.time() * 1000))

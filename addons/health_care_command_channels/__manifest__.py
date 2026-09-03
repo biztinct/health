@@ -95,7 +95,12 @@ security boundary is replaced by the framework's fail-closed one:
   portal allows one URL per app), routed by ``oa_id`` and verified as
   ``sha256(app_id + raw_body + timestamp + per-OA secret)`` over the RAW
   bytes, with a replay window. Missing header, unknown OA, no secret and a
-  wrong mac are all the same bodyless 403.
+  wrong mac are all the same bodyless 200 that ingests NOTHING — Zalo's
+  console refuses to save an address that answers its unsigned probe with
+  anything but 200, and a 403 there made the address unsavable and therefore
+  the channel unusable. Verification still gates ingestion; only the status
+  code moved. The first refusal writes one ``webhook_probe`` audit row, and
+  ``GET`` answers 200 so a browser check proves the address is live.
 - The three legacy ``/zalo/*`` routes answer **410 Gone**.
 - ``zalo.config`` is a FACADE: tokens live encrypted on the connection, the
   10-module ZNS contract keeps working verbatim, and a successful ZNS send is
