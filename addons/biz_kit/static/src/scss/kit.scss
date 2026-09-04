@@ -1,0 +1,209 @@
+// =====================================================================
+//  Shared UI kit — the reusable `.bzk-*` primitives.
+//
+//  Every surface that opts in wraps itself in `.bzk` (and `.bzk-page` when
+//  it owns the whole screen); everything below is namespaced under it so
+//  nothing leaks into the rest of the client. Tokens come from
+//  kit_tokens.scss, which must load first.
+//
+//  Brand colours are read through `var(--bzk-…)`, never through the Sass
+//  variable, so a product's `--bzk-brand-*` block re-tints all of this
+//  without touching a line of it.
+// =====================================================================
+
+.bzk {
+    @include bzk-root-vars;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--bzk-text);
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    // ---- page shell ----
+    &.bzk-page { min-height: 100%; background: var(--bzk-bg); padding: 26px; overflow: auto; }
+    .bzk-wrap { max-width: 1240px; margin: 0 auto; }
+
+    // ---- headings ----
+    .bzk-h1 { font-size: 23px; font-weight: 800; letter-spacing: -.01em; }
+    .bzk-sub { font-size: 13.5px; color: var(--bzk-muted); margin-top: 3px; }
+    .bzk-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--bzk-muted); }
+    .bzk-h2 { font-size: 15px; font-weight: 800; }
+
+    // ---- surfaces ----
+    .bzk-card { background: var(--bzk-surface); border: 1px solid var(--bzk-line); border-radius: var(--bzk-r); box-shadow: var(--bzk-sh); }
+    .bzk-panel { background: var(--bzk-surface); border: 1px solid var(--bzk-line); border-radius: var(--bzk-r-lg); box-shadow: var(--bzk-sh); padding: 18px 20px; }
+    .bzk-panel-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+
+    // ---- hero (white card + indigo left rule + light-indigo icon avatar) ----
+    .bzk-hero { display: flex; align-items: center; gap: 18px; background: var(--bzk-surface); border: 1px solid var(--bzk-line); border-left: 4px solid var(--bzk-primary); border-radius: var(--bzk-r-lg); padding: 18px 22px; box-shadow: 0 1px 3px rgba(16,24,40,.04); }
+    .bzk-hero-av { flex: 0 0 auto; width: 56px; height: 56px; border-radius: 15px; background: var(--bzk-soft); color: var(--bzk-primary); display: grid; place-items: center; font-size: 20px; font-weight: 800; }
+    .bzk-hero-id { flex: 1; min-width: 0; }
+    .bzk-hero-id .nm { font-size: 19px; font-weight: 800; color: var(--bzk-ink); }
+    .bzk-hero-id .mt { font-size: 13px; color: #4a5578; margin-top: 1px; }
+    .bzk-hero-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 9px; }
+    .bzk-hero-net { text-align: right; }
+    .bzk-hero-net .v { font-size: 26px; font-weight: 800; color: var(--bzk-primary-strong); font-variant-numeric: tabular-nums; }
+    .bzk-hero-net .k { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--bzk-muted); }
+
+    // light-indigo chip (sits on the white hero)
+    .bzk-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--bzk-soft); color: var(--bzk-primary-strong); border-radius: var(--bzk-pill); padding: 4px 11px; font-size: 12px; font-weight: 700; }
+    .bzk-chip svg { width: 13px; height: 13px; }
+
+    // ---- KPI / stat tiles (white card + colored Lucide icon badge) ----
+    .bzk-stats { display: grid; gap: 12px; }
+    .bzk-stat { background: var(--bzk-surface); border: 1px solid var(--bzk-line); border-radius: 14px; padding: 13px 15px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 3px rgba(16,24,40,.04); }
+    .bzk-stat-ic { width: 42px; height: 42px; border-radius: 12px; flex: none; display: grid; place-items: center; background: var(--bzk-soft); color: var(--bzk-primary); }
+    .bzk-stat-ic svg { width: 21px; height: 21px; }
+    .bzk-stat-ic.green { background: var(--bzk-green-soft); color: var(--bzk-green); }
+    .bzk-stat-ic.blue  { background: var(--bzk-cyan-soft);  color: var(--bzk-cyan); }
+    .bzk-stat-ic.amber { background: var(--bzk-amber-soft); color: var(--bzk-amber); }
+    .bzk-stat-ic.rose  { background: var(--bzk-rose-soft);  color: var(--bzk-rose); }
+    .bzk-stat-ic.teal  { background: #D5F5F1; color: #0D9488; }
+    .bzk-stat-ic.pink  { background: #FCE7F3; color: #DB2777; }
+    .bzk-stat-tx { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .bzk-stat .n { font-size: 21px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.1; }
+    .bzk-stat .l { font-size: 11px; color: var(--bzk-muted); font-weight: 600; }
+    // tiles stay white; semantic colour lives in the icon badge + (money/error) number
+    .bzk-stat.ok  .n { color: var(--bzk-green); }
+    .bzk-stat.err .n { color: var(--bzk-rose); }
+    .bzk-stat .n.money { color: var(--bzk-green); }
+
+    // ---- numbered progress rail ----
+    .bzk-rail { display: flex; align-items: center; flex-wrap: wrap; }
+    .bzk-rail-step { display: flex; align-items: center; gap: 9px; }
+    .bzk-rail-dot { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 800; background: #fff; border: 2px solid var(--bzk-line); color: var(--bzk-muted); flex: 0 0 auto; }
+    .bzk-rail-step.done .bzk-rail-dot { background: var(--bzk-green); border-color: var(--bzk-green); color: #fff; }
+    .bzk-rail-step.cur  .bzk-rail-dot { background: var(--bzk-primary); border-color: var(--bzk-primary); color: #fff; box-shadow: 0 0 0 4px var(--bzk-ring); }
+    .bzk-rail-lab { font-size: 12.5px; font-weight: 700; color: var(--bzk-muted); }
+    .bzk-rail-step.cur  .bzk-rail-lab { color: var(--bzk-primary-strong); }
+    .bzk-rail-step.done .bzk-rail-lab { color: var(--bzk-text); }
+    .bzk-rail-bar { flex: 1 1 18px; min-width: 18px; height: 2px; background: var(--bzk-line); margin: 0 12px; }
+    .bzk-rail-bar.done { background: var(--bzk-green); }
+
+    // ---- data table ----
+    .bzk-tablewrap { border: 1px solid var(--bzk-line); border-radius: 12px; overflow: hidden; overflow-y: auto; }
+    .bzk-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .bzk-table th { text-align: left; font-size: 10.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--bzk-muted); padding: 9px 14px; background: var(--bzk-bg); position: sticky; top: 0; z-index: 1; }
+    .bzk-table td { padding: 9px 14px; border-top: 1px solid var(--bzk-line); }
+    .bzk-table tr.click { cursor: pointer; }
+    .bzk-table tr.click:hover td { background: var(--bzk-ring); }
+    .bzk-table td.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: #475569; }
+
+    // ---- status badge ----
+    .bzk-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 800; padding: 2px 9px; border-radius: var(--bzk-pill); text-transform: capitalize; background: var(--bzk-bg); color: var(--bzk-muted); }
+    .bzk-badge .d { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .bzk-badge.ok, .bzk-badge.done, .bzk-badge.connected { background: var(--bzk-green-soft); color: var(--bzk-green); }
+    .bzk-badge.info, .bzk-badge.new  { background: var(--bzk-soft);  color: var(--bzk-primary-strong); }
+    .bzk-badge.warn, .bzk-badge.connecting { background: var(--bzk-amber-soft); color: var(--bzk-amber); }
+    .bzk-badge.err, .bzk-badge.error { background: var(--bzk-rose-soft); color: var(--bzk-rose); }
+    .bzk-badge.muted, .bzk-badge.draft, .bzk-badge.disconnected { background: var(--bzk-slate-soft); color: var(--bzk-slate); }
+
+    // ---- filter chips ----
+    .bzk-chips { display: inline-flex; flex-wrap: wrap; gap: 7px; }
+    .bzk-fchip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--bzk-line); background: #fff; color: #475569; border-radius: var(--bzk-pill); padding: 5px 12px; font-size: 12px; font-weight: 700; cursor: pointer; transition: .14s; font-family: inherit; }
+    .bzk-fchip:hover { border-color: var(--bzk-primary-strong); }
+    .bzk-fchip .c { font-size: 11px; font-weight: 800; opacity: .65; }
+    .bzk-fchip.on { background: var(--bzk-soft); border-color: var(--bzk-primary); color: var(--bzk-primary); }
+    .bzk-fchip.on .c { opacity: .9; }
+
+    // ---- segmented control ----
+    .bzk-seg { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+    .bzk-segbtn { border: 1px solid var(--bzk-line); background: #fff; color: #475569; border-radius: var(--bzk-r-sm); padding: 8px 13px; font-size: 12px; font-weight: 700; font-family: inherit; cursor: pointer; transition: .14s; display: inline-flex; align-items: center; gap: 7px; }
+    .bzk-segbtn:hover { border-color: var(--bzk-primary); }
+    .bzk-segbtn.on { background: var(--bzk-primary); border-color: var(--bzk-primary); color: #fff; }
+
+    // ---- buttons ----
+    .bzk-btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; border-radius: var(--bzk-r-sm); padding: 9px 16px; font-size: 13px; font-weight: 800; cursor: pointer; border: 1px solid transparent; font-family: inherit; transition: .14s; white-space: nowrap; }
+    .bzk-btn svg { vertical-align: -.18em; }
+    .bzk-btn.primary { background: var(--bzk-primary); border-color: var(--bzk-primary); color: #fff; }
+    .bzk-btn.primary:hover { background: var(--bzk-primary-hover); border-color: var(--bzk-primary-hover); }
+    .bzk-btn.primary:active { background: var(--bzk-primary-dark); border-color: var(--bzk-primary-dark); }
+    .bzk-btn.outline { background: #fff; border-color: var(--bzk-primary); color: var(--bzk-primary); }
+    .bzk-btn.outline:hover { background: var(--bzk-soft); }
+    .bzk-btn.ghost { background: #fff; border-color: var(--bzk-line); color: var(--bzk-primary-strong); }
+    .bzk-btn.ghost:hover { background: var(--bzk-line-2); }
+    .bzk-btn.danger { background: #fff; border-color: #f3c7cf; color: var(--bzk-rose); }
+    .bzk-btn.danger:hover { background: var(--bzk-rose-soft); }
+    .bzk-btn:disabled { background: var(--bzk-line); border-color: var(--bzk-line); color: #94A3B8; cursor: not-allowed; }
+    .bzk-btn-sm { padding: 5px 11px; font-size: 11.5px; border-radius: 8px; }
+
+    // ---- mini inline button (table row ops) ----
+    .bzk-mini { border: 1px solid var(--bzk-primary); background: var(--bzk-soft); color: var(--bzk-primary); border-radius: 8px; padding: 5px 11px; font-size: 11.5px; font-weight: 700; cursor: pointer; font-family: inherit; }
+    .bzk-mini.ghost { background: #fff; color: #475569; border-color: var(--bzk-line); }
+
+    // ---- note / empty ----
+    .bzk-note { font-size: 12.5px; color: #41507e; background: var(--bzk-soft); border-radius: 9px; padding: 10px 12px; }
+    .bzk-empty { padding: 26px; text-align: center; color: var(--bzk-muted); font-size: 13px; }
+
+    // ---- busy overlay + spinner ----
+    .bzk-busy { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 60px 0; color: var(--bzk-muted); }
+    .bzk-spin { width: 38px; height: 38px; border: 3px solid var(--bzk-soft); border-top-color: var(--bzk-primary-strong); border-radius: 50%; animation: bzk-spin .8s linear infinite; }
+    @keyframes bzk-spin { to { transform: rotate(360deg); } }
+}
+
+// =====================================================================
+//  THE BACK CHIP — the one door back, rendered by <HubBackChip/>.
+//
+//  Root-scoped rather than nested inside `.bzk`, because a cockpit that
+//  owns its own header renders the chip ABOVE its `.bzk` wrapper as often
+//  as inside it, and a control styled by accident is a control that
+//  disappears without anybody seeing an error.
+//
+//  Deliberately NOT a solid primary button at rest: it would then outrank
+//  every real action on the page it sits above. Filled on hover, so it
+//  announces itself when it is reached for and stays second in the
+//  hierarchy when it is not. Contrast at rest is the primary hover ink on
+//  the soft tint; on hover it is white on the primary.
+// =====================================================================
+.bzk-back {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    max-width: 240px;
+    height: 32px;                       // a real hit area, not a caption
+    padding: 0 14px 0 11px;
+    border: 1px solid var(--bzk-primary, #5A4BB0);
+    border-radius: var(--bzk-r-sm, 10px);
+    background: var(--bzk-soft, #EDEAF8);
+    color: var(--bzk-primary-hover, #4A3D96);
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .12s, border-color .12s, color .12s;
+
+    svg { display: block; }
+    &:hover {
+        background: var(--bzk-primary, #5A4BB0);
+        border-color: var(--bzk-primary-hover, #4A3D96);
+        color: var(--bzk-surface, #ffffff);
+    }
+    &:active { background: var(--bzk-primary-hover, #4A3D96); }
+    &:focus-visible {
+        outline: 2px solid var(--bzk-primary, #5A4BB0);
+        outline-offset: 2px;
+    }
+    .bzk-back__ic { display: inline-flex; flex: none; }
+    .bzk-back__tx {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+// The dark tone, for a chip sitting on a deep command bar rather than on a
+// white header. Same shape, inverted ink — never a second component.
+.bzk-back--dark {
+    border-color: transparent;
+    background: rgba(255, 255, 255, .12);
+    color: #fff;
+
+    &:hover {
+        background: rgba(255, 255, 255, .22);
+        border-color: transparent;
+        color: #fff;
+    }
+    &:active { background: rgba(255, 255, 255, .3); }
+    &:focus-visible { outline-color: #fff; }
+}

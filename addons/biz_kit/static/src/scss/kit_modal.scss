@@ -1,0 +1,105 @@
+// =====================================================================
+//  `.bzk-modal` — the popup primitive.
+//  ---------------------------------------------------------------------
+//  The scrim-plus-card recipe, declared ONCE so no surface has to pick its
+//  own rgba(), its own radius and its own z-index by looking at whatever
+//  its neighbours happen to use. Two tokens carry it, and both come from
+//  kit_tokens.scss:
+//
+//    --bzk-scrim    the backdrop fill. A token, so a dialog that needs a
+//                   lighter one changes a variable rather than inventing a
+//                   hex — no invented colours anywhere in this kit.
+//    --bzk-z-modal  the stacking floor a dialog sits on.
+//
+//  This file is the scrim, the card and its head/foot rails, and the three
+//  behaviours every dialog should have: it scrolls INSIDE itself, it never
+//  lets the page behind it scroll away underneath, and it is reachable
+//  from a keyboard.
+// =====================================================================
+
+.bzk-modal-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: var(--bzk-z-modal, 1400);
+    background: var(--bzk-scrim, rgba(27, 23, 51, .46));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3vh 3vw;
+    // A scrim mounts OUTSIDE the surface that opened it as often as inside,
+    // and the tokens are declared on `.bzk`. Re-declared here so a dialog
+    // portalled into the client's overlay is not a colourless box.
+    --bzk-scrim: #{rgba($bzk-ink, .46)};
+    --bzk-z-modal: 1400;
+}
+
+.bzk-modal {
+    background: var(--bzk-surface, #fff);
+    border: 1px solid var(--bzk-line, #E2E8F0);
+    border-radius: var(--bzk-r-lg, 18px);
+    box-shadow: var(--bzk-sh-lg, 0 18px 44px rgba(40, 50, 90, .12));
+    width: 1040px;
+    max-width: 100%;
+    max-height: 94vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    // The card is the scroll container, never the page: a dialog that scrolls
+    // the document behind it loses the reader's place the moment it closes.
+    > .bzk-modal__body {
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
+    }
+
+    &.is-wide { width: 1240px; }
+    &.is-narrow { width: 720px; }
+}
+
+// Header / footer rails, sized to match `.pplw-head` and `.pplw-foot` so a
+// dialog and a wizard read as the same product.
+.bzk-modal__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--bzk-line, #E2E8F0);
+    flex: 0 0 auto;
+
+    .bzk-modal__ttl { font-size: 17px; font-weight: 800; color: var(--bzk-ink, #1B1733); }
+    .bzk-modal__sub { font-size: 12.5px; color: var(--bzk-muted, #64748B); margin-top: 2px; }
+    .bzk-modal__sp { flex: 1; }
+}
+
+.bzk-modal__foot {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-top: 1px solid var(--bzk-line, #E2E8F0);
+    background: var(--bzk-line-2, #F1F5F9);
+    flex: 0 0 auto;
+
+    .bzk-modal__sp { flex: 1; }
+}
+
+.bzk-modal__x {
+    border: none;
+    background: var(--bzk-bg, #F5F6FA);
+    width: 32px; height: 32px;
+    border-radius: var(--bzk-r-sm, 10px);
+    cursor: pointer;
+    color: var(--bzk-muted, #64748B);
+    display: flex; align-items: center; justify-content: center;
+
+    &:hover { background: var(--bzk-soft, #EDEAF8); color: var(--bzk-primary-strong, #5A4BB0); }
+    &:focus-visible { outline: 2px solid var(--bzk-primary, #5A4BB0); outline-offset: 2px; }
+}
+
+// A tall dialog on a short screen: the card gives up its rounded top rather
+// than its content. Measured at FULL height, which is the only position where
+// "does not fit" means "cannot be read" (W155).
+@media (max-height: 620px) {
+    .bzk-modal-scrim { padding: 0; align-items: stretch; }
+    .bzk-modal { max-height: 100vh; border-radius: 0; border: none; }
+}

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+  <!-- ====================================================== back chip -->
+  <!-- ONE class attribute: `t-attf-class` interpolating the condition is the
+       documented-safe way to combine a base class with a computed one; a
+       static `class` beside it would silently lose one of them. -->
+  <t t-name="biz_kit.HubBackChip">
+    <button t-attf-class="bzk-back {{ dark ? 'bzk-back--dark' : '' }}"
+            t-on-click="() => this.goBack()"
+            t-att-title="title">
+      <span class="bzk-back__ic" t-out="ic('back', 12)"/>
+      <span class="bzk-back__tx" t-esc="label"/>
+    </button>
+  </t>
+
+</templates>

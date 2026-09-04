@@ -1,0 +1,109 @@
+// =====================================================================
+//  Shared UI kit — design tokens.
+//
+//  ONE surface model: white cards, ONE solid primary, semantic status
+//  colours, flat fills, coloured icon badges on tiles. The primitive RULES
+//  live in kit.scss; this file only declares the values.
+//
+//  THE BRAND INDIRECTION IS THE ONE THING TO UNDERSTAND HERE.
+//  Every BRAND colour below is emitted as a custom property that reads a
+//  `--bzk-brand-*` override FIRST and falls back to the SCSS default. A
+//  product tints the whole kit by declaring those nine properties on
+//  `:root` in its own theme — no fork of this file, no Sass variable
+//  override, and no build-order dependency between two modules.
+//
+//  Consequence, and it is a rule rather than a preference: anything that
+//  paints a BRAND colour must use `var(--bzk-…)`, never `$bzk-…`. A rule
+//  written against the Sass variable is compiled with the default baked in
+//  and the product's override never reaches it. Neutrals, semantics and
+//  shape have no override hook and may stay Sass.
+// =====================================================================
+
+// --- the one brand colour (defaults; every product overrides them) ---
+$bzk-primary:        #5A4BB0 !default;   // SOLID primary (buttons, active tabs, links)
+$bzk-primary-hover:  #4A3D96 !default;
+$bzk-primary-strong: #5A4BB0 !default;   // accent text / icons / links (reads on white)
+$bzk-primary-light:  #CBC2EE !default;   // light tint (chip fill ref, hover)
+$bzk-primary-dark:   #241F52 !default;   // pressed / deep ink
+$bzk-ink:            #1B1733 !default;   // dark heading text (on white)
+
+// --- softs / borders / ring ---
+$bzk-soft:   #EDEAF8 !default;           // lightest tint (icon badges, hero av, note)
+$bzk-soft2:  #DDD6F2 !default;           // slightly deeper tint (hover/secondary)
+$bzk-sky:    #DDD6F2 !default;
+$bzk-border: #E2E8F0 !default;           // neutral hairline border
+$bzk-ring:   rgba(90, 75, 176, .18) !default; // focus / hover glow
+
+// --- neutrals ---
+$bzk-text:    #1B1733;
+$bzk-muted:   #64748B;
+$bzk-line:    #E2E8F0;
+$bzk-line-2:  #F1F5F9;
+$bzk-bg:      #F5F6FA;
+$bzk-surface: #ffffff;
+
+// --- semantic (money green, info blue, warning amber, error rose, slate) ---
+$bzk-green:      #2E7D4F;   // success / money
+$bzk-green-soft: #E3F2E9;
+$bzk-rose:       #DC2668;   // error
+$bzk-rose-soft:  #FCE7EF;
+$bzk-amber:      #D97706;   // warning
+$bzk-amber-soft: #FEF3C7;
+$bzk-cyan:       #2563EB;   // info / blue
+$bzk-cyan-soft:  #E5EDFD;
+$bzk-slate:      #64748B;
+$bzk-slate-soft: #EEF1F5;
+
+// --- shape ---
+$bzk-r:     14px;
+$bzk-r-sm:  10px;
+$bzk-r-lg:  18px;
+$bzk-pill:  999px;
+$bzk-sh:    0 8px 24px rgba(16, 12, 40, .07);
+$bzk-sh-lg: 0 18px 44px rgba(40, 50, 90, .12);
+
+// Emit the tokens as CSS custom properties so an OWL root can be re-tinted
+// and so a product's `--bzk-brand-*` block reaches every primitive.
+@mixin bzk-root-vars {
+    // brand — each reads the product's override first
+    --bzk-primary:        var(--bzk-brand-primary, #{$bzk-primary});
+    --bzk-primary-hover:  var(--bzk-brand-primary-hover, #{$bzk-primary-hover});
+    --bzk-primary-strong: var(--bzk-brand-primary-strong, #{$bzk-primary-strong});
+    --bzk-primary-light:  var(--bzk-brand-primary-light, #{$bzk-primary-light});
+    --bzk-primary-dark:   var(--bzk-brand-primary-dark, #{$bzk-primary-dark});
+    --bzk-ink:            var(--bzk-brand-ink, #{$bzk-ink});
+    --bzk-soft:           var(--bzk-brand-soft, #{$bzk-soft});
+    --bzk-soft2:          var(--bzk-brand-soft2, #{$bzk-soft2});
+    --bzk-sky:            var(--bzk-brand-soft2, #{$bzk-sky});
+    --bzk-ring:           var(--bzk-brand-ring, #{$bzk-ring});
+    // neutrals, semantics and shape: no override hook, on purpose — a
+    // hairline that changed with the brand is a hairline nobody can rely on.
+    --bzk-border:         #{$bzk-border};
+    --bzk-text:           #{$bzk-text};
+    --bzk-muted:          #{$bzk-muted};
+    --bzk-line:           #{$bzk-line};
+    --bzk-line-2:         #{$bzk-line-2};
+    --bzk-bg:             #{$bzk-bg};
+    --bzk-surface:        #{$bzk-surface};
+    --bzk-green:          #{$bzk-green};
+    --bzk-green-soft:     #{$bzk-green-soft};
+    --bzk-rose:           #{$bzk-rose};
+    --bzk-rose-soft:      #{$bzk-rose-soft};
+    --bzk-amber:          #{$bzk-amber};
+    --bzk-amber-soft:     #{$bzk-amber-soft};
+    --bzk-cyan:           #{$bzk-cyan};
+    --bzk-cyan-soft:      #{$bzk-cyan-soft};
+    --bzk-slate:          #{$bzk-slate};
+    --bzk-slate-soft:     #{$bzk-slate-soft};
+    --bzk-r:              #{$bzk-r};
+    --bzk-r-sm:           #{$bzk-r-sm};
+    --bzk-r-lg:           #{$bzk-r-lg};
+    --bzk-pill:           #{$bzk-pill};
+    --bzk-sh:             #{$bzk-sh};
+    --bzk-sh-lg:          #{$bzk-sh-lg};
+    // The scrim and the stacking floor of a dialog. Declared with the rest
+    // of the tokens so a modal portalled outside a `.bzk` subtree is not a
+    // colourless box.
+    --bzk-scrim:          #{rgba(#1B1733, .46)};
+    --bzk-z-modal:        1400;
+}
