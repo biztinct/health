@@ -73,6 +73,24 @@ class TestWindows(TransactionCase):
         self.assertEqual(opens, datetime(2026, 9, 4, 15, 0))
         self.assertEqual(closes, datetime(2026, 9, 4, 18, 0))
 
+    def test_a_window_already_open_still_closes_when_the_band_does(self):
+        """⚠ Found on a live screen. With the window ALREADY open,
+        `next_window` correctly answers "now" — and the close was being
+        computed as "span hours from now", so a band running 22:00–01:00 was
+        announced as "tonight 22:06–01:06" at six minutes past ten."""
+        six_past = datetime(2026, 9, 4, 15, 6)      # 22:06 in Ho Chi Minh City
+        opens, closes = window_bounds(six_past, VN, 22, 3)
+        self.assertEqual(to_local(opens, VN).strftime('%H:%M'), '22:06')
+        self.assertEqual(to_local(closes, VN).strftime('%H:%M'), '01:00')
+
+    def test_a_window_open_after_midnight_closes_at_the_right_hour(self):
+        """The same, one side of midnight further on: 00:30 local belongs to
+        the band that opened at 22:00 YESTERDAY."""
+        half_past = datetime(2026, 9, 4, 17, 30)    # 00:30 next day, local
+        opens, closes = window_bounds(half_past, VN, 22, 3)
+        self.assertEqual(to_local(opens, VN).strftime('%H:%M'), '00:30')
+        self.assertEqual(to_local(closes, VN).strftime('%H:%M'), '01:00')
+
     def test_the_operator_s_preview_equals_what_is_delivered(self):
         """Ledger F17: the conversion happens once, in one direction, and the
         window the screen shows is the window the worker will use."""

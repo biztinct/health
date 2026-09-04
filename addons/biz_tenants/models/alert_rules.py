@@ -144,6 +144,13 @@ def _alert(key, kind, severity, title, text, tenant_id=None):
             'title': title, 'text': text, 'tenant_id': tenant_id}
 
 
+def _plural(n, word):
+    """"for 1 hour", never "for 1 hours". A screen that cannot count to one is
+    a screen that announces it was written by a programme rather than by a
+    person."""
+    return 'for %d %s%s' % (n, word, '' if n == 1 else 's')
+
+
 def _hours_since(then, now):
     if not then or not now:
         return None
@@ -225,10 +232,10 @@ def _tenant_alerts(row, t, now):
             out.append(_alert(
                 'backup_stale:%s' % slug, 'backup_stale', 'critical',
                 "%s has no recent copy" % name,
-                "%s has not been copied for %d hours. The nightly copy runs at "
-                "19:30. What to do next: open them and press \"Copy now\", then "
-                "check the nightly job ran last night."
-                % (name, int(age)), tid))
+                "%s has not been copied %s. The nightly copy runs at 19:30. "
+                "What to do next: open them and press \"Copy now\", then check "
+                "the nightly job ran last night."
+                % (name, _plural(int(age), 'hour')), tid))
 
     # --- their certificate
     if row.get('cert_state') == 'none':
@@ -688,19 +695,27 @@ def status_state(open_alerts, notices, incidents, now, maintenance=False,
 
     rows = []
     for inc in (incidents or ()):
-        phrase = _PUBLIC_PHRASE.get(inc.get('kind'),
-                                    (None, None, 'A service issue'))[2]
-        if not phrase:
+        comp, lvl, phrase = _PUBLIC_PHRASE.get(
+            inc.get('kind'), (None, None, 'A service issue'))
+        # ⚠ IF IT WAS NEVER VISIBLE TO THE WORLD WHILE IT WAS HAPPENING, IT IS
+        # NOT AN INCIDENT AFTERWARDS. Found live: a copy that did not run is
+        # deliberately given no component above — nobody outside can see it —
+        # and it still turned up in "the last seven days" as
+        # "A scheduled copy did not complete for 1 minutes", because the
+        # incident list was reading only the PHRASE and not the component. A
+        # page that reports things its own service section says are fine is a
+        # page that reads as noise.
+        if not phrase or not comp or lvl == 'ok':
             continue
         mins = int(inc.get('minutes') or 0)
         if mins <= 0:
             length = 'briefly'
         elif mins < 60:
-            length = 'for %d minutes' % mins
+            length = _plural(mins, 'minute')
         elif mins < 60 * 36:
-            length = 'for %d hours' % max(1, int(round(mins / 60.0)))
+            length = _plural(max(1, int(round(mins / 60.0))), 'hour')
         else:
-            length = 'for %d days' % max(1, int(round(mins / 1440.0)))
+            length = _plural(max(1, int(round(mins / 1440.0))), 'day')
         rows.append({'when': str(inc.get('ended') or '')[:10],
                      'what': '%s %s' % (phrase, length)})
 

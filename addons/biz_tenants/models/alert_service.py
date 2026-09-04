@@ -1018,10 +1018,10 @@ class BizTenantsAlerts(models.AbstractModel):
                 "This is a POLICY, not a measurement. Opening one real "
                 "customer's system on this machine was measured at about 11 MB "
                 "across the three processes that serve it — but that is the "
-                "system sitting still. Sessions, screens already drawn, and a "
-                "a customer actually working in it are the rest, and none of them "
-                "can be "
-                "measured while nobody is using it. So this number is the "
+                "system sitting still. Sessions, screens already drawn, and "
+                "a customer actually working in it are the rest, and none of "
+                "them can be measured while nobody is using it. So this "
+                "number is the "
                 "measurement plus a deliberate allowance, and it is here to be "
                 "re-weighed as customers arrive."),
         }

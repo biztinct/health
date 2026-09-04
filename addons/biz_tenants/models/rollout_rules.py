@@ -206,12 +206,25 @@ def to_local(dt, tz):
 
 
 def window_bounds(now_utc, tz, start_hour, hours):
-    """`(opens, closes)` for the next window, as naive UTC."""
+    """`(opens, closes)` for the next window, as naive UTC.
+
+    ⚠ THE CLOSE IS THE BAND'S OWN CLOSE, NOT "SPAN HOURS FROM NOW". When the
+    window is ALREADY open, `next_window` correctly answers "now" — and adding
+    the span to that printed "tonight 22:06–01:06" for a band that runs
+    22:00–01:00. Six minutes is not much, and a sentence on a screen that is
+    quietly six minutes wrong is a sentence somebody will one day check.
+    """
     start, span = _clean_window(start_hour, hours)
     opens = next_window(now_utc, tz, start, span)
     zone = _zone(tz)
     local_open = _aware(opens).astimezone(zone)
-    local_close = local_open + timedelta(hours=span)
+    # Where the band this moment belongs to actually began. If the hour has
+    # already gone past midnight the band started yesterday.
+    band_open = local_open.replace(hour=start, minute=0, second=0,
+                                   microsecond=0)
+    if band_open > local_open:
+        band_open -= timedelta(days=1)
+    local_close = band_open + timedelta(hours=span)
     return opens, _naive(local_close)
 
 

@@ -1803,23 +1803,39 @@
           </span>
         </button>
       </div>
-      <table class="bzk-table" t-if="state.alertHistory">
-        <thead>
-          <tr><th>What</th><th>Customer</th><th>Lasted</th><th>Ended</th></tr>
-        </thead>
-        <tbody>
-          <tr t-foreach="state.alerts.history" t-as="h" t-key="h.id">
-            <td>
-              <span t-attf-class="bzk-badge {{ sevWord(h.severity).tone }}">
-                <span class="d"/> <t t-esc="h.subject"/>
-              </span>
-            </td>
-            <td t-esc="h.tenant or '—'"/>
-            <td t-esc="h.age"/>
-            <td t-esc="h.ended"/>
-          </tr>
-        </tbody>
-      </table>
+      <t t-if="state.alertHistory">
+        <div class="bzk-sub bzt-pad">
+          An urgent one that is closed here shows on the public page as an
+          incident for seven days. Anything raised while somebody was testing
+          the alarm should be removed instead, and that is what the button on
+          each line does.
+        </div>
+        <table class="bzk-table">
+          <thead>
+            <tr><th>What</th><th>Customer</th><th>Lasted</th><th>Ended</th>
+                <th/></tr>
+          </thead>
+          <tbody>
+            <tr t-foreach="state.alerts.history" t-as="h" t-key="h.id">
+              <td>
+                <span t-attf-class="bzk-badge {{ sevWord(h.severity).tone }}">
+                  <span class="d"/> <t t-esc="h.subject"/>
+                </span>
+              </td>
+              <td t-esc="h.tenant or '—'"/>
+              <td t-esc="h.age"/>
+              <td t-esc="h.ended"/>
+              <td class="bzt-right">
+                <button class="bzk-btn ghost bzk-btn-sm"
+                        t-on-click="() => this.deleteAlert(h.id)"
+                        title="Remove it altogether. An urgent one that is closed stays on the public page as an incident for seven days; removing it takes it off.">
+                  <t t-out="ic('trash', 13)"/> <span>Remove</span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </t>
     </div>
   </div>
 </t>
