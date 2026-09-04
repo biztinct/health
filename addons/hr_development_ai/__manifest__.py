@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'AI-Enabled Employee Development System',
-    'version': '19.0.5.4.0',
+    'version': '19.0.5.4.1',
     'category': 'Human Resources/Employee Development',
     'summary': 'AI-native employee development with skills intelligence, coaching, learning paths, and knowledge management',
     'description': """
@@ -46,8 +46,8 @@ Inspired by world-class platforms: SAP SuccessFactors, Workday Skills Cloud, Bet
     ],
     'data': [
         # Security
-        'security/hr_development_security.xml',
         'security/hr_development_groups.xml',
+        'security/hr_development_security.xml',
         'security/ir.model.access.csv',
 
         # Data

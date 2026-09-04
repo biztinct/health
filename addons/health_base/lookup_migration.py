@@ -47,6 +47,18 @@ def seed_lookup_values(env):
     Category = env['health.lookup.category'].with_context(active_test=False)
     Value = env['health.lookup.value'].with_context(active_test=False)
 
+    # Reading a translated field in a language the database does not have
+    # raises KeyError out of the ORM's cache, rather than falling back — so the
+    # Vietnamese half below has to be skipped entirely on a database where
+    # vi_VN is not installed. That is never the case on a database that has
+    # been running (this clinic added Vietnamese years ago); it is ALWAYS the
+    # case on a brand-new one, which is why nothing found this until the golden
+    # template was built from nothing. Skipping is safe: this function is
+    # idempotent, so the labels land on the first run after the language is
+    # added.
+    has_vi = bool(env['res.lang'].with_context(active_test=False).search_count(
+        [('code', '=', 'vi_VN'), ('active', '=', True)]))
+
     for code, spec in CATEGORIES.items():
         category = Category.search([('code', '=', code)], limit=1)
         if not category:
@@ -70,7 +82,7 @@ def seed_lookup_values(env):
                     'name': label_en,
                     'sequence': (index + 1) * 10,
                 })
-            if label_vi:
+            if label_vi and has_vi:
                 # Only fill a Vietnamese label that is not there yet — an empty
                 # translation reads back as the English fallback.
                 current = value.with_context(lang='vi_VN').name
