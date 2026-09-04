@@ -20,4 +20,17 @@
         <field name="tag">biz_tenancy_about</field>
     </record>
 
+    <!-- The page somebody reaches when they open a screen belonging to a part
+         of the product that is not switched on here.
+
+         IT IS NEVER REACHED FROM A MENU. Nothing links to it: the server hands
+         it back in place of the screen that was asked for, so it appears for
+         a bookmark, an old tab, a link in a message — every way somebody can
+         arrive at a door that is closed. A 404 would tell them the product is
+         broken; this tells them what it is and who to ask. -->
+    <record id="action_biz_tenancy_feature_off" model="ir.actions.client">
+        <field name="name">Not switched on</field>
+        <field name="tag">biz_tenancy_feature_off</field>
+    </record>
+
 </odoo>

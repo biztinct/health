@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<!-- ======================================================================
+     The rose bar. Comments ruled with `=`, never a doubled hyphen (H67).
+
+     IT HAS NO CLOSE BUTTON, and that is the design rather than an omission.
+     A notice saying somebody from another company is inside your system, which
+     the people in that system can close, is a notice that will be closed.
+
+     No `t-as` variable is named lt / gt / amp (ledger F15).
+     ====================================================================== -->
+
+<t t-name="biz_tenancy.SupportHost">
+  <BizTenancySupportBar t-if="showing"/>
+</t>
+
+<t t-name="biz_tenancy.SupportBar">
+  <div class="bztn-supbar" role="status" t-if="session">
+    <span class="bztn-supbar-ic"><t t-out="ic('shield', 16)"/></span>
+
+    <span class="bztn-supbar-t" t-esc="headline"/>
+    <span class="bztn-supbar-why" t-if="why" t-esc="why"/>
+
+    <span class="bztn-supbar-clock">
+      <t t-out="ic('clock', 14)"/>
+      <span t-esc="remaining"/>
+    </span>
+
+    <!-- ==================================================================
+         Only the person the door was opened FOR can finish it from here.
+         Everybody else on the system sees the same bar and no button: ending
+         somebody else's session is the customer's own decision, taken on
+         their own screen, not a control in the chrome.
+         ================================================================== -->
+    <button t-if="session.is_operator" class="bztn-supbar-end"
+            t-on-click="endNow">
+      <t t-out="ic('x', 13)"/><span>End now</span>
+    </button>
+  </div>
+</t>
+
+</templates>

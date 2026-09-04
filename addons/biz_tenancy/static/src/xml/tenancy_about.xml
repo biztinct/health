@@ -66,6 +66,80 @@
       </div>
     </div>
 
+
+    <!-- ==================================================================
+         SUPPORT ACCESS, ON THE CUSTOMER'S OWN SCREEN.
+
+         This is the half of the feature that makes the other half worth
+         having. Everything below is read from THIS system: who came in, when,
+         why, for how long, and which screens they opened. And the switch at
+         the top is the customer's, not the platform's: a door only one side
+         can open is not support, it is access.
+         ================================================================== -->
+    <div class="bzk-panel bztn-sup" t-if="support.loaded">
+      <div class="bzk-panel-h">
+        <div class="bzk-h2">Support access</div>
+      </div>
+
+      <div class="bztn-sup-switch">
+        <div class="bztn-sup-switch-t">
+          <div class="nm">Let <t t-esc="brand"/> come in to help</div>
+          <div class="sb">
+            When this is on, somebody from <t t-esc="brand"/> can open a
+            time-limited link into this system after typing a reason. Every
+            time they do, it is listed below. When it is off, they are refused
+            and the attempt is still listed.
+          </div>
+        </div>
+        <button t-if="support.mayChange"
+                t-attf-class="bzk-btn {{ support.allowed ? 'outline' : 'primary' }}"
+                t-on-click="toggleSupportAllowed">
+          <t t-if="support.allowed">
+            <t t-out="ic('lock', 15)"/> <span>Switch it off</span>
+          </t>
+          <t t-else="">
+            <t t-out="ic('check', 15)"/> <span>Switch it on</span>
+          </t>
+        </button>
+        <!-- A button that answers back is worse than no button. Somebody who
+             cannot change this is told so where the control would have been,
+             and told who can. -->
+        <div t-else="" class="bztn-sup-cannot">
+          <span t-if="support.allowed">It is on.</span>
+          <span t-else="">It is off.</span>
+          <span>Only somebody who administers this system can change it.</span>
+        </div>
+      </div>
+
+      <div class="bzk-sub bztn-sup-lede" t-esc="supportLede"/>
+
+      <div class="bztn-sup-row" t-foreach="supportSessions" t-as="sup"
+           t-key="sup.id">
+        <div class="bztn-sup-row-h">
+          <span t-attf-class="bzk-badge {{ supportTone(sup.state) }}"
+                t-esc="supportWords(sup.state)"/>
+          <span class="who" t-esc="sup.who"/>
+          <span class="when" t-esc="sup.opened_at or sup.issued_at"/>
+          <span class="mins"><t t-esc="sup.minutes"/> minutes</span>
+          <button class="bzk-btn ghost bzk-btn-sm"
+                  t-if="sup.state === 'active' or sup.state === 'issued'"
+                  t-on-click="() => this.endSupport(sup.id)">
+            <t t-out="ic('x', 13)"/> <span>End it now</span>
+          </button>
+        </div>
+        <div class="bztn-sup-why">"<t t-esc="sup.reason"/>"</div>
+        <div class="bztn-sup-end" t-if="sup.end_reason" t-esc="sup.end_reason"/>
+        <div class="bztn-sup-screens" t-if="sup.screens.length">
+          <div class="t">Screens they opened</div>
+          <div class="s" t-foreach="sup.screens" t-as="scr" t-key="scr.path">
+            <span class="nm" t-esc="scr.name or scr.path"/>
+            <span class="pt" t-esc="scr.path"/>
+            <span class="ct" t-if="scr.count > 1">x<t t-esc="scr.count"/></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- WHO TO ASK. Drawn only when there is somebody: an empty contact card
          is a dead end wearing the clothes of a door. -->
     <div class="bzk-panel bztn-contact" t-if="hasContact">

@@ -17,9 +17,10 @@
  * sentence explaining what will appear here and when, not a blank page. A
  * system with nobody to contact says so rather than drawing an empty row.
  */
-import { Component, useState } from "@odoo/owl";
+import { Component, onWillStart, useState } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
+import { rpc } from "@web/core/network/rpc";
 import { ic } from "@biz_kit/js/kit_icons";
 import { HubBackChip, hubBack } from "@biz_kit/js/kit_nav";
 import { _t } from "@web/core/l10n/translation";
@@ -65,6 +66,7 @@ export class BizTenancyAbout extends Component {
 
     setup() {
         this.tenancy = useService("biz_tenancy");
+        this.notification = useService("notification");
         // Subscribed, not merely fetched (ledger F47). This page is open while
         // a release is pushed often enough to matter: it is the page the
         // toast's own button leads to.
@@ -72,6 +74,94 @@ export class BizTenancyAbout extends Component {
         // Read ONCE, from props, never written back. Null when nobody sent us,
         // and the chip is then absent rather than inert.
         this.back = hubBack(this.props);
+
+        // SUPPORT ACCESS: the customer's own record of it, and their own
+        // switch. Fetched on this screen rather than carried on every page,
+        // because it is a whole list and nobody needs it until they come here.
+        this.support = useState({ loaded: false, allowed: true,
+                                  mayChange: false, sessions: [] });
+        onWillStart(() => this.loadSupport());
+    }
+
+    /** ⚠ THE ANSWER FIRST. Nothing on the support panel renders until the read
+     *  comes back; a panel drawn against nothing throws inside the component's
+     *  lifecycle and shows a stack trace before recovering (ledger H72). */
+    async loadSupport() {
+        try {
+            const res = await rpc("/biz_tenancy/support/trail", {});
+            this.support.allowed = !!res.allowed;
+            this.support.mayChange = !!res.may_change;
+            this.support.sessions = res.sessions || [];
+        } catch (e) {
+            console.debug("biz_tenancy: could not read the support record", e);
+        } finally {
+            this.support.loaded = true;
+        }
+    }
+
+    get supportSessions() { return this.support.sessions || []; }
+
+    /**
+     * "Nobody has been in" is a REASSURING sentence and it has to be said out
+     * loud. An empty list with no words under it reads as a screen that has
+     * not loaded.
+     */
+    get supportLede() {
+        if (!this.supportSessions.length) {
+            return _t("Nobody from %(brand)s has been into this system.",
+                      { brand: this.brand });
+        }
+        return _t("Every time somebody from %(brand)s has been into this " +
+                  "system, why, and which screens they opened.",
+                  { brand: this.brand });
+    }
+
+    supportWords(state) {
+        const words = {
+            issued: _t("A link was made and has not been used"),
+            active: _t("Somebody is in here now"),
+            ended: _t("Finished"),
+            expired: _t("The time ran out"),
+            refused: _t("Refused"),
+        };
+        return words[state] || state;
+    }
+
+    supportTone(state) {
+        if (state === "active") { return "warn"; }
+        if (state === "refused") { return "err"; }
+        if (state === "ended") { return "ok"; }
+        return "muted";
+    }
+
+    /**
+     * The customer's own switch. Turning it OFF is the interesting direction:
+     * from then on the platform's door refuses by name, and nobody on the
+     * platform can turn it back on.
+     */
+    async toggleSupportAllowed() {
+        const next = !this.support.allowed;
+        try {
+            const res = await rpc("/biz_tenancy/support/allow",
+                                  { allowed: next });
+            if (res.ok) {
+                this.support.allowed = res.allowed;
+            } else {
+                this.notification.add(res.message, { type: "warning" });
+            }
+        } catch (e) {
+            console.debug("biz_tenancy: could not change the setting", e);
+        }
+    }
+
+    /** End a session that is running, from the customer's own side. */
+    async endSupport(id) {
+        try {
+            await rpc("/biz_tenancy/support/end", { session_id: id });
+        } finally {
+            await this.loadSupport();
+            await this.tenancy.refresh();
+        }
     }
 
     ic(name, size = 16) { return ic(name, size); }

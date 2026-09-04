@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_biz_support_session_user,biz.support.session read,model_biz_support_session,base.group_user,1,0,0,0
+access_biz_support_screen_user,biz.support.screen read,model_biz_support_screen,base.group_user,1,0,0,0
+access_biz_support_session_system,biz.support.session system,model_biz_support_session,base.group_system,1,1,1,1
+access_biz_support_screen_system,biz.support.screen system,model_biz_support_screen,base.group_system,1,1,1,1

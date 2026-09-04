@@ -22,11 +22,15 @@ def _src(*parts):
 
 
 _PY = (('models', 'tenancy.py'), ('models', 'ir_http.py'),
+       ('models', 'support.py'),
        ('controllers', 'main.py'), ('__init__.py',))
 _JS = ('tenancy_range.js', 'tenancy_service.js', 'tenancy_banner.js',
+       'tenancy_support_bar.js', 'tenancy_feature_off.js',
        'tenancy_about.js')
-_XML = ('tenancy_banner.xml', 'tenancy_about.xml', 'webclient_patch.xml')
-_MARKUP = (('views', 'about_action.xml'),)
+_XML = ('tenancy_banner.xml', 'tenancy_about.xml', 'tenancy_support_bar.xml',
+        'tenancy_feature_off.xml', 'webclient_patch.xml')
+_MARKUP = (('views', 'about_action.xml'),
+           ('views', 'support_templates.xml'))
 
 
 @tagged('post_install', '-at_install')
@@ -198,6 +202,9 @@ class TestSourceGates(TransactionCase):
         # and are named here EXPLICITLY: a regex written to match one ternary
         # is a test of the regex, not of the icons.
         used |= {'wrench', 'info'}
+        # Same reason, one file down: the switched-off page and the support bar
+        # each pick an icon in a getter rather than in the markup.
+        used |= {'shield', 'clock', 'lock', 'home', 'x'}
         for name in sorted(used):
             self.assertIn(name, known,
                           "icon '%s' is not in the shared ic() registry" % name)

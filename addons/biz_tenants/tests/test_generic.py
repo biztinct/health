@@ -29,10 +29,14 @@ _PY = (('models', 'tenants_common.py'), ('models', 'sync_rules.py'),
        ('models', 'rollout_rules.py'), ('models', 'rollout.py'),
        ('models', 'rollout_service.py'), ('models', 'alert_rules.py'),
        ('models', 'alert.py'), ('models', 'alert_service.py'),
+       # H4c.
+       ('models', 'module_set.py'), ('models', 'feature.py'),
+       ('models', 'feature_service.py'), ('models', 'support_service.py'),
        ('models', '__init__.py'), ('__init__.py',))
 _JS = ('tenants.js',)
 _XML = ('tenants.xml',)
-_MARKUP = (('views', 'biz_tenants_action.xml'), ('data', 'ir_cron.xml'))
+_MARKUP = (('views', 'biz_tenants_action.xml'), ('data', 'ir_cron.xml'),
+           ('data', 'biz_feature.xml'))
 
 
 @tagged('post_install', '-at_install')

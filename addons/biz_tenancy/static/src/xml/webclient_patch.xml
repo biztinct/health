@@ -17,6 +17,10 @@
          is chrome. -->
     <t t-name="web.WebClient" t-inherit="web.WebClient" t-inherit-mode="extension">
         <xpath expr="//NavBar" position="after">
+            <!-- The support bar goes ABOVE the platform's notice bar, because
+                 "somebody is in your system right now" outranks "we are
+                 updating on Thursday" on any morning either of them appears. -->
+            <BizTenancySupportHost/>
             <BizTenancyBanner/>
         </xpath>
     </t>

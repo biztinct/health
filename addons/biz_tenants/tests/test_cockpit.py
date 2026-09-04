@@ -355,3 +355,87 @@ class TestContract(TransactionCase):
         )
         for ours, theirs in pairs:
             self.assertEqual(ours, theirs)
+
+
+@tagged('post_install', '-at_install')
+class TestReopen(TransactionCase):
+    """A customer whose system had to be rebuilt is not a dead end (SAAS H4c).
+
+    ⚠ THE HOLE THIS CLOSES. Closing a customer down leaves their record
+    holding their short name, and the new-customer screen refuses a short name
+    in use — so a customer could be closed and never created again, and the
+    only move left was to edit the database by hand. That is exactly the state
+    ledger H73 says this screen must not be able to reach.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.service = self.env['biz.tenants']
+        self.tenant = self.env['biz.tenant'].create({
+            'name': 'A closed customer', 'slug': 'reprobe',
+            'state': 'decommissioned', 'provision_step': 'done',
+            'health_state': 'down', 'http_status': 500,
+        })
+
+    def test_their_short_name_is_still_theirs_and_still_refused(self):
+        """The refusal is right — this is why the way back has to exist."""
+        with patch.object(type(self.service), '_all_databases',
+                          lambda self: ['carejiox']):
+            self.assertFalse(self.service.check_slug('reprobe')['ok'])
+
+    def test_building_it_again_puts_them_back_at_the_start(self):
+        with patch.object(type(self.service), '_db_exists',
+                          lambda self, name: False):
+            res = self.service.reopen(self.tenant.id, 'reprobe')
+        self.assertTrue(res['ok'])
+        self.assertEqual(self.tenant.state, 'draft')
+        self.assertFalse(self.tenant.provision_step)
+        self.assertEqual(self.tenant.health_state, 'unknown')
+        self.assertEqual(self.tenant.http_status, 0)
+
+    def test_the_same_record_keeps_their_copies_and_their_log(self):
+        """A second record with the same short name would put a customer's
+        history in two places and their address in one."""
+        self.env['biz.tenant.backup'].create({
+            'tenant_id': self.tenant.id, 'kind': 'final',
+            'path': '/odoo/backups/tenants/reprobe/final.dump', 'state': 'done',
+        })
+        before = self.tenant.provision_log or ''
+        with patch.object(type(self.service), '_db_exists',
+                          lambda self, name: False):
+            res = self.service.reopen(self.tenant.id, 'reprobe')
+        self.assertEqual(len(self.tenant.backup_ids), 1)
+        self.assertIn('final.dump', res['kept_backup'])
+        self.assertGreater(len(self.tenant.provision_log or ''), len(before))
+        self.assertIn('set up again', self.tenant.provision_log)
+
+    def test_it_refuses_while_anything_of_that_name_is_still_on_the_machine(self):
+        """That is the one state where "build it again" would mean
+        "overwrite what is there"."""
+        with patch.object(type(self.service), '_db_exists',
+                          lambda self, name: True):
+            try:
+                self.service.reopen(self.tenant.id, 'reprobe')
+            except UserError as e:
+                self.assertIn('still called', str(e))
+            else:
+                self.fail('it agreed to build over a system that is there')
+        self.assertEqual(self.tenant.state, 'decommissioned')
+
+    def test_a_customer_who_is_live_is_refused_by_name(self):
+        self.tenant.write({'state': 'live'})
+        try:
+            self.service.reopen(self.tenant.id, 'reprobe')
+        except UserError as e:
+            self.assertIn('has not been closed down', str(e))
+        else:
+            self.fail('a live customer was put back to the start')
+
+    def test_the_short_name_has_to_be_typed(self):
+        try:
+            self.service.reopen(self.tenant.id, 'something else')
+        except UserError as e:
+            self.assertIn('reprobe', str(e))
+        else:
+            self.fail('it rebuilt without the name being typed')
+        self.assertEqual(self.tenant.state, 'decommissioned')

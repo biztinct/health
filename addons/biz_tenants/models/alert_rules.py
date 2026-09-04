@@ -52,6 +52,14 @@ ALERT_KINDS = (
     'rollout_stopped',
     'status_page_unwritable',
     'mail_not_configured',      # the platform cannot reach a person at all
+    # ⚠ THE TWO THAT ARE NOT FAULTS. A support session is an ACT: somebody
+    # from this platform went into a customer's system. It is raised on the
+    # PRESS OF THE BUTTON and not by the sweep (ledger F67), because a
+    # thirty-minute session ended after two is over before the sweep ever
+    # looks — and the owner would hear nothing at all about somebody being
+    # inside a live customer's system.
+    'support_session',
+    'support_refused',          # somebody tried, and the customer said no
 )
 
 SEVERITIES = ('critical', 'warning', 'info')
@@ -72,6 +80,8 @@ KIND_LABEL = {
     'rollout_stopped': "A release stopped part-way",
     'status_page_unwritable': "The public page cannot be written",
     'mail_not_configured': "Nothing can be emailed from this platform",
+    'support_session': "Somebody from this platform went into a customer's system",
+    'support_refused': "A customer refused support access",
 }
 
 #: Which glyph the screen draws. Named from the shared icon set, so a kind
@@ -90,16 +100,24 @@ KIND_ICON = {
     'rollout_stopped': 'pause',
     'status_page_unwritable': 'globe',
     'mail_not_configured': 'bellOff',
+    'support_session': 'shield',
+    # `lock` and not a crossed-out shield: the shared icon set has no such
+    # glyph, and a name it does not know draws nothing at all.
+    'support_refused': 'lock',
 }
 
 #: Kinds the sweep NEVER resolves on its own, because no reading can see them.
-#: Nothing is on this list today: every kind above is measured every quarter of
-#: an hour, `mail_not_configured` included — it clears the moment an outgoing
-#: mail account exists, which is exactly the day it should. The list is kept
-#: because the next kind somebody adds may well be one nothing can measure, and
-#: a kind like that resolved fifteen minutes after it was raised is worse than
-#: no kind at all.
-SELF_MANAGED_KINDS = ()
+#:
+#: Everything the sweep MEASURES is resolved by the sweep — `mail_not_configured`
+#: included, which clears the moment an outgoing mail account exists.
+#:
+#: ⚠ THE TWO SUPPORT KINDS ARE HERE BECAUSE THEY ARE ACTS AND NOT FAULTS
+#: (ledger F67). They are raised on the press of a button and closed when the
+#: door is shut, both by the code that does those things. The sweep does not
+#: measure them at all, so if they were not on this list the very first sweep
+#: after a session started would decide it had cleared and close it — fifteen
+#: minutes of a thirty-minute session, quietly resolved.
+SELF_MANAGED_KINDS = ('support_session', 'support_refused')
 
 #: Every number this file judges by, in one place, each overridable as a
 #: setting. They are ARGUMENTS and not constants so a test can sit exactly on

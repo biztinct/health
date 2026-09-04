@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ======================================================================
+     The page somebody meets when a support link does not work.
+
+     IT IS A PAGE AND NOT AN ERROR, and it is served before anybody is signed
+     in, so it stands on its own: no menu, no assets bundle, no session. The
+     one sentence it carries is the REASON, written by the model in words a
+     person can act on ("this link ran out before it was used, ask for a new
+     one") rather than a code.
+
+     ⚠ AND IT IS A WHOLE DOCUMENT RATHER THAN A CALL TO THE SHARED FRONT-END
+     LAYOUT. That layout is the marketing website's, and rendering it on a
+     database without the website module dies with `KeyError: 'website'` — a
+     refusal page that raises is the one page in the product that absolutely
+     must not. Found by asking for a link that does not exist, on a clone of a
+     real system, which is the only place it could have been found.
+
+     NOTHING ON IT NAMES THE FRAMEWORK (rail R12). The product's name is the
+     brand setting; a system with no brand set reads "this system".
+     ====================================================================== -->
+<odoo>
+
+  <template id="support_link_refused" name="Support link">
+    <html t-att-lang="lang and lang.replace('_', '-')">
+      <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <meta name="robots" content="noindex, nofollow"/>
+        <title>This link cannot be used</title>
+        <style>
+          body { margin: 0; background: #F7F8FA; color: #0F172A;
+                 font-family: system-ui, -apple-system, "Segoe UI", Roboto,
+                              Helvetica, Arial, sans-serif; }
+          .card { max-width: 520px; margin: 12vh auto; background: #FFFFFF;
+                  border: 1px solid #E3E8EF; border-radius: 14px;
+                  padding: 28px 30px; }
+          h1 { font-size: 19px; margin: 0 0 10px; }
+          p  { margin: 0 0 14px; color: #475467; line-height: 1.6; }
+          .q { margin: 0; color: #667085; font-size: 13px; }
+        </style>
+      </head>
+      <body>
+        <div class="card">
+          <h1>This link cannot be used</h1>
+          <p t-esc="reason"/>
+          <p class="q">
+            Nothing has been changed on
+            <t t-esc="brand or 'this system'"/>, and nobody has been signed in.
+          </p>
+        </div>
+      </body>
+    </html>
+  </template>
+
+</odoo>
