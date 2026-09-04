@@ -671,3 +671,25 @@ in new surfaces. Chrome validation mandatory before a phase reports done.
   own sign-in page, `/web/database/manager` 404, 71 crons re-enabled exactly as recorded, 3.9
   seconds to copy 108 MB) and dropped. The procedure as first written would have failed for the
   first person who followed it. **Write a runbook step, then do the step.**
+- **H59** (H3) ⚠ **A BACKTICK IN AN UNQUOTED HEREDOC IS COMMAND SUBSTITUTION, AND THESE SCRIPTS RUN
+  AS ROOT.** `biz-tenant-cert` writes its nginx block from `<<EOF` (unquoted, because the hostname
+  and certificate path must expand). A comment added during this phase used markdown-style
+  backticks around ``listen`` and ``http2 on;`` — so running the script as root printed
+  `listen: command not found` and interpolated the (empty) output into a root-owned config file.
+  Harmless in effect and completely wrong in principle, in the one file whose entire justification
+  is that it validates before it writes. **Neither the 27 guard tests nor `nginx -t` could catch
+  it**: the guards stop before the block is written, and the result was valid nginx. Only running
+  the script for real did. **No backticks in a generated config, ever** — the rewritten comment
+  says so in the file.
+- **H60** (H3) **Running the three scripts for real proved the parts nothing else reaches — and
+  found that the installed copy was stale.** A full lifecycle on a throwaway hostname
+  (`zzcheck.carejiox.com`, no database, dropped afterwards): the odoo user, through sudo, obtained a
+  certificate; the block was written; `biz-domain-detach` removed both block and certificate; a
+  clean re-create worked; the hostname served **its own** Let's Encrypt certificate with a chain
+  that validated without `-k`; and detaching again left nothing behind. The first attempt also
+  failed on `unknown directive "http2"` — because the fix made in the repo earlier in this phase had
+  never been redeployed to `/usr/local/bin`, and **the script's own rollback removed the bad block
+  and left nginx loadable**, which is the safety net doing exactly its job. Two rules out of it:
+  redeploy a script the moment you fix it (`BIZ_BIN=/usr/local/bin bash tools/saas/test_scripts.sh`
+  tests what is actually installed), and a certificate script is only proven by issuing a
+  certificate.
