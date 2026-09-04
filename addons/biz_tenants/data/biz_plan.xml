@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ======================================================================
+     THE PLANS ARE NOT WRITTEN HERE, AND THAT IS DELIBERATE.
+
+     What a product sells, in which currency and at what price, is the
+     PRODUCT's answer and not the cockpit's (rail R11). So this file carries no
+     records at all: it calls the seeder, which reads whatever the product
+     registered and puts it in the table. On a machine where no product has
+     registered anything the table stays empty and the screen says so honestly.
+
+     WHY noupdate IS ABSENT (i.e. 0). The call must run on every upgrade, not
+     only on the first install: the product's overlay may be installed after
+     this module, or gain a plan later, and a seeding that ran once would leave
+     the new one missing until somebody noticed. The seeder itself never
+     touches a plan that already exists, so a re-run cannot undo a price
+     somebody has corrected.
+
+     ⚠ THE METHOD IT CALLS CARRIES `@api.model`, AND THAT IS LOAD-BEARING
+     (ledger F45): a `function` with no arguments reads the FIRST argument as
+     the records to call the method on, and without the marker the upgrade dies
+     on "not enough values to unpack" naming THIS LINE rather than the method.
+
+     ⚠ AND A BANDED PLAN IS CREATED WITH ITS BANDS IN ONE WRITE (ledger F60).
+     The model refuses a banded plan with no bands, correctly — so a data file
+     that made the plan and then added the bands would fail in between and take
+     the whole upgrade with it. That is the second reason the seeding is a
+     method and not a set of records here.
+     ====================================================================== -->
+<odoo>
+
+    <function model="biz.plan" name="ensure_seeded"/>
+
+</odoo>

@@ -272,6 +272,66 @@ FEATURES = (
 )
 
 
+# =============================================================================
+# WHAT A CLINIC CAN BE PUT ON, AND WHAT IT COSTS (SAAS H4d, owner's decision 4).
+#
+# ⚠ EVERY FIGURE BELOW IS A PLACEHOLDER AND EVERY ONE OF THEM SAYS SO ON THE
+# SCREEN. They exist so the owner has three shapes to react to rather than an
+# empty table and a blank form; not one of them has been agreed with anybody.
+# The owner edits them on the Plans screen and the `placeholder` flag comes off
+# the moment they save.
+#
+# Prices are in Vietnamese dong with no tax on them, because tax on a
+# subscription in this market is a decision the owner has not made yet and a
+# rate invented here would print on a document that goes to a paying clinic.
+#
+# THE THREE SHAPES, and they are three on purpose — one of each structure, so
+# every branch of the pricing rules has a real plan behind it:
+#   * a flat price a month, whatever the clinic does;
+#   * a price for each person in care, with an allowance;
+#   * one price a month by how many people are in care.
+# =============================================================================
+PLANS = (
+    {
+        'code': 'starter', 'name': "Starter", 'sequence': 10,
+        'blurb': "One price a month for a small clinic, however busy it gets.",
+        'price_kind': 'flat', 'price': 2000000.0,
+        'currency_xmlid': 'base.VND', 'vat_rate': 0.0,
+        'trial_days': 30, 'placeholder': True,
+    },
+    {
+        'code': 'growth', 'name': "Growth", 'sequence': 20,
+        'blurb': "Grows with the clinic: a price for each person in care, "
+                 "with the first fifty included.",
+        'price_kind': 'per_unit', 'meter_key': 'patients',
+        'price': 30000.0, 'included': 50,
+        'currency_xmlid': 'base.VND', 'vat_rate': 0.0,
+        'trial_days': 30, 'placeholder': True,
+    },
+    {
+        'code': 'clinic', 'name': "Clinic", 'sequence': 30,
+        'blurb': "One predictable price a month, set by how many people the "
+                 "clinic has in care.",
+        'price_kind': 'flat_tier', 'meter_key': 'patients',
+        'currency_xmlid': 'base.VND', 'vat_rate': 0.0,
+        'trial_days': 30, 'placeholder': True,
+        'tiers': (
+            {'up_to': 100, 'price': 5000000.0},
+            {'up_to': 300, 'price': 9000000.0},
+            # The top band also covers anything above it — see `pick_tier`.
+            {'up_to': 1000, 'price': 15000000.0},
+        ),
+    },
+)
+
+# ⚠ WHICH MODEL A SEAT LIMIT COUNTS ON A CLINIC'S OWN SYSTEM.
+# "Staff with a login" is the meter the owner is most likely to sell on, and it
+# is counted on the framework's own account table — the same table the `staff`
+# meter above counts, so the number on the platform's screen and the number the
+# clinic's own door enforces can never disagree.
+SEAT_MODEL = 'res.users'
+
+
 def _register():
     """Hand the five facts over. Skipped where the cockpit is not installed."""
     try:
@@ -336,6 +396,13 @@ def _register():
     #    every database this process ever loads (ledger H6).
     from .cms_sidebar import menu_preview as _preview
     common.register_menu_preview(_preview)
+
+    # 8. And what a clinic can be put on, and what it costs (SAAS H4d). Every
+    #    figure is a placeholder the owner overwrites; the flag rides onto the
+    #    record and onto the screen so nobody invoices from a number nobody has
+    #    looked at.
+    if hasattr(common, 'register_plans'):
+        common.register_plans(PLANS)
     return True
 
 

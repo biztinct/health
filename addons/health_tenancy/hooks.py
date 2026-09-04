@@ -235,7 +235,31 @@ def ensure_feature_catalogue(env):
     return len(made)
 
 
+def ensure_plan_catalogue(env):
+    """Put this product's plans in the cockpit's table.
+
+    ⚠ THE SAME LESSON AS `ensure_feature_catalogue` ABOVE, AND IT WAS MEASURED
+    AGAIN ON A REAL UPGRADE (SAAS H4d). The cockpit's own `<function>` runs
+    when the cockpit is installed or upgraded and reads a registry THIS module
+    fills at import time — and nothing guarantees this module has been imported
+    by then, because it deliberately does not depend on the cockpit. On the
+    rehearsal the cockpit's data file ran first, seeded nothing, and the plans
+    table stayed empty.
+
+    So the product seeds it too, from its own hook and its own migration.
+    Idempotent, never rewrites a price somebody corrected, and skipped on any
+    system without the cockpit — which is every customer's.
+    """
+    if 'biz.plan' not in env:
+        return 0
+    made = env['biz.plan'].sudo().ensure_seeded()
+    _logger.info("health_tenancy: the plans are in the cockpit's table "
+                 "(%d new).", len(made))
+    return len(made)
+
+
 def post_init_hook(env):
     wire_doors(env)
     wire_features(env)
     ensure_feature_catalogue(env)
+    ensure_plan_catalogue(env)
