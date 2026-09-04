@@ -43,11 +43,18 @@ CUSTOM_DOMAIN_PINNING=0
 PIN_HEADER=X-Odoo-dbfilter
 EOF
 export BIZ_CONF="$CONF"
-export BIZ_LIB="$HERE"
 
-CERT="$HERE/biz-tenant-cert"
-ATTACH="$HERE/biz-domain-attach"
-DETACH="$HERE/biz-domain-detach"
+# By default the checkout's own copies are tested. Point BIZ_BIN at
+# /usr/local/bin to run the same cases against what is actually INSTALLED on a
+# server — which is the only version whose guards protect anything, and is
+# worth doing after every deploy of these three.
+BIZ_BIN="${BIZ_BIN:-$HERE}"
+export BIZ_LIB="$BIZ_BIN"
+echo "testing: $BIZ_BIN (lib: $BIZ_LIB, conf: $BIZ_CONF)"
+
+CERT="$BIZ_BIN/biz-tenant-cert"
+ATTACH="$BIZ_BIN/biz-domain-attach"
+DETACH="$BIZ_BIN/biz-domain-detach"
 
 PASS=0; FAIL=0
 
