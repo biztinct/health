@@ -1,6 +1,6 @@
 # Retiring the previous access application — before and after
 
-Database: `vietuat_h2b` before, `vietuat_h2b` after. 73 / 81 colleague(s).
+Database: `vietuat_h2b` before, `vietuat_h2b` after. 73 / 73 colleague(s).
 
 ## The verdict
 
