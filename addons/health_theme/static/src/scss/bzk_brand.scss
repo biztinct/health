@@ -1,0 +1,46 @@
+// =============================================================================
+// THE SHARED UI KIT, IN THIS PRODUCT'S COLOURS.
+//
+// `biz_kit` ships a complete palette of its own and reads a `--bzk-brand-*`
+// override for every BRAND colour before falling back to it. Declaring those
+// nine properties here is the whole of tinting the kit: no fork of the kit, no
+// Sass variable override, and no build-order dependency between two modules.
+//
+// LAYER 3, derived from the Theme Engine's own semantic tokens where one exists
+// (`--vu-brand-primary`, `--vu-text-primary`), so a theme published from Theme
+// Studio re-tints the shared kit along with everything else. Where the semantic
+// layer has no equivalent, the value is the `$vu-deep-blue-*` family from
+// primary_variables.scss, written as its literal because a Sass variable
+// declared in `web._assets_primary_variables` is not in scope in this bundle.
+//
+// Flat colours only. No gradients anywhere in this product.
+//
+// INERT WITHOUT `biz_kit`. These are custom-property declarations and nothing
+// more: on a database where the kit is not installed nothing reads them, and
+// they cost one rule in the backend bundle.
+// =============================================================================
+:root {
+    // Deep blue — the action colour. $vu-deep-blue / $vu-deep-blue-base.
+    --bzk-brand-primary:        var(--vu-brand-primary, #1565C0);
+    // $vu-deep-blue-darker — the theme's own active/hover step.
+    --bzk-brand-primary-hover:  var(--vu-brand-primary-dark, #1356A9);
+    // Accent text and icons on white. The same blue: this palette reads at
+    // 5.3:1 on white, so it does not need a separate, darker accent the way an
+    // indigo one does.
+    --bzk-brand-primary-strong: var(--vu-brand-primary, #1565C0);
+    // $vu-deep-blue-light — hover backgrounds and light fills.
+    --bzk-brand-primary-light:  #83C5FA;
+    // $vu-deep-blue-darkest — pressed states and deep ink.
+    --bzk-brand-primary-dark:   #0D356B;
+    // $vu-text-primary — heading ink.
+    --bzk-brand-ink:            var(--vu-text-primary, #212121);
+    // $vu-deep-blue-lightest — icon badges, the hero avatar, note backgrounds.
+    --bzk-brand-soft:           var(--vu-surface-hover, #E4F4FD);
+    // One step deeper than `soft`, for a hover behind text. #E8F0FB is the
+    // Form Engine's own `--vuf-primary-soft`, which is the only tint in this
+    // palette between the lightest blue and $vu-deep-blue-light — reused rather
+    // than mixing a tenth blue nobody else has.
+    --bzk-brand-soft2:          #E8F0FB;
+    // The focus and hover glow, at the kit's own .18 alpha, in deep blue.
+    --bzk-brand-ring:           rgba(21, 101, 192, .18);
+}

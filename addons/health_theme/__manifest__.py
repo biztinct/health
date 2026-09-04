@@ -77,6 +77,10 @@
             'health_theme/static/src/scss/loading_spinner.scss',
             # VU Form Engine — rich UI for ALL native form views
             'health_theme/static/src/scss/vu_tokens.scss',
+            # Tints the shared UI kit (biz_kit) in this product's palette.
+            # Custom-property declarations only, so it is inert on a database
+            # where that kit is not installed.
+            'health_theme/static/src/scss/bzk_brand.scss',
             'health_theme/static/src/scss/vu_icons.scss',
             'health_theme/static/src/scss/vu_form_engine.scss',
             'health_theme/static/src/js/vu_form_hero_registry.js',
