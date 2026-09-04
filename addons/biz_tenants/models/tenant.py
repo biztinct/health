@@ -13,10 +13,20 @@ shortens it.
 """
 from odoo import api, fields, models
 
+from .billing_rules import SERVING_STATES as _SERVING
+
 #: The states, and the one line that matters about them: only `decommissioned`
 #: means the database is GONE. Everything else still has one, and is backed up,
 #: measured and watched exactly the same way.
-SERVING_STATES = ('provisioning', 'live', 'error')
+#:
+#: ⚠ `paused` IS ON THAT LIST ON PURPOSE (SAAS H4d). A paused customer's people
+#: cannot sign in, and that is exactly the week in which losing their copies
+#: would be unforgivable. Pausing is a DOOR, never a deletion.
+#:
+#: ONE DEFINITION, NEXT DOOR. `billing_rules.SERVING_STATES` is the list every
+#: nightly job, meter and invoice run works from; a second copy here would be a
+#: second thing to forget.
+SERVING_STATES = tuple(['provisioning', 'error'] + list(_SERVING))
 
 
 class BizTenant(models.Model):
@@ -37,7 +47,10 @@ class BizTenant(models.Model):
     state = fields.Selection([
         ('draft', 'Not started'),
         ('provisioning', 'Being set up'),
+        ('trial', 'On trial'),
         ('live', 'Live'),
+        ('paused', 'Paused'),
+        ('pending_deletion', 'Closing down'),
         ('error', 'Needs attention'),
         ('decommissioned', 'Closed'),
     ], default='draft', required=True, index=True)
@@ -100,6 +113,44 @@ class BizTenant(models.Model):
         ('shared', 'Falling back to the shared one'),
         ('none', 'Could not be read'),
     ], default='none')
+
+    # ======================================================================
+    #  WHAT THEY PAY, AND WHERE THEY STAND (SAAS H4d)
+    #
+    #  ⚠ NOTHING HERE EVER LOCKS ANYBODY OUT ON A TIMER, AND NOTHING HERE EVER
+    #  DELETES ANYTHING ON A SCHEDULE. `trial_ends_on` running out raises an
+    #  alert and says so; `delete_after` running out lets the cockpit OFFER the
+    #  button. Both are reminders to a person. The one automatic pause on this
+    #  platform is behind a switch that ships OFF.
+    # ======================================================================
+    plan_id = fields.Many2one('biz.plan', ondelete='set null', string="Plan",
+                              help="What they pay, and the number it is worked "
+                                   "out from.")
+    trial_ends_on = fields.Date(
+        string="Trial ends",
+        help="The last day of their trial. Nothing happens on this day on its "
+             "own — it raises a note on the Alerts screen.")
+    #: Which phase of the trial they have already been told about, so a nightly
+    #: job says each thing once rather than once a night (the same counted
+    #: shape the invoice reminders use).
+    trial_told = fields.Char(default='')
+    paused_at = fields.Datetime()
+    paused_reason = fields.Char(
+        help="Shown to their people on the page they meet, in these words.")
+    delete_after = fields.Date(
+        string="May be removed after",
+        help="A promise about how long their data is kept. NOTHING removes it "
+             "when this passes; the screen offers the button and a person "
+             "presses it.")
+    deletion_reason = fields.Char()
+    #: When the platform last told their system where they stand. A push that
+    #: did not land is the difference between a paused customer and a customer
+    #: who thinks they are paused.
+    standing_pushed_at = fields.Datetime()
+    invoice_ids = fields.One2many('biz.tenant.invoice', 'tenant_id')
+    #: Their own invoicing address, when it differs from the administrator's.
+    #: Read off THEIR system first (§3.4) — this is only the fallback.
+    billing_email = fields.Char(string="Send invoices to")
 
     # ---------------------------------------------------------------- the rest
     backup_ids = fields.One2many('biz.tenant.backup', 'tenant_id')
