@@ -364,6 +364,12 @@ class BizTenants(models.AbstractModel):
                 'closed': len(tenants.filtered(
                     lambda t: t.state == 'decommissioned')),
             },
+            # THE GAUGE. `free_mb` and `floor_mb` are kept as the words the
+            # fleet strip has always used; `capacity` is the real answer —
+            # how many MORE customers fit — and the refusal on new customers
+            # reads that and nothing else.
+            'capacity': self._capacity(),
+            'alert': self.alert_banner(),
             'machine': {
                 'free_mb': free_mb,
                 'floor_mb': common.memory_floor_mb(self.env),
@@ -489,18 +495,23 @@ class BizTenants(models.AbstractModel):
         elif not self._db_exists(template):
             problems.append('There is no blank system called "%s" on this '
                             'machine.' % template)
-        free_mb = self._free_memory_mb()
-        mem_ok, mem_reason = memory_verdict(
-            free_mb, common.memory_floor_mb(self.env))
-        if not mem_ok:
-            problems.append(mem_reason)
+        # THE DRY RUN ASKS THE SAME QUESTION THE REAL RUN WILL, so that a
+        # preview which says "this would work" cannot be followed by a refusal.
+        cap = self._capacity()
+        if cap['level'] == 'full':
+            problems.append(
+                "%s Nothing is broken — but there is no room for another "
+                "customer until this machine is made bigger "
+                "(docs/SAAS_RESIZE_RUNBOOK.md), or the memory one customer is "
+                "allowed (the %s setting) is re-weighed."
+                % (cap['reason'], common.P_TENANT_COST))
         template_size = self._db_size(template) if template else 0
         fs_size, fs_files = (self._filestore_size(template) if template
                              else (0, 0))
         return {
             'ok': not problems,
             'problems': problems,
-            'warnings': [mem_reason] if (mem_ok and mem_reason) else [],
+            'warnings': ([cap['reason']] if cap['level'] == 'warn' else []),
             'url': self._tenant_url(slug) if slug else '',
             'host': self._tenant_host(slug) if slug else '',
             'plan': [
@@ -528,8 +539,9 @@ class BizTenants(models.AbstractModel):
                  'what': 'Mark them live and show you the address, the sign-in '
                          'name and the password.'},
             ],
-            'machine': {'free_mb': free_mb,
-                        'floor_mb': common.memory_floor_mb(self.env)},
+            'machine': {'free_mb': cap['mem_available_mb'],
+                        'floor_mb': cap['reserve_mb']},
+            'capacity': cap,
         }
 
     @api.model
@@ -645,10 +657,14 @@ class BizTenants(models.AbstractModel):
                 'Something on this machine is already called "%s". Remove it '
                 'first, or undo this customer and pick another short name.',
                 slug))
-        ok, reason = memory_verdict(self._free_memory_mb(),
-                                    common.memory_floor_mb(self.env))
-        if not ok:
-            raise UserError(reason)
+        # ⚠ THE REAL CAPACITY GUARD, AND IT REPLACED A RAW MEMORY FLOOR. The
+        # floor asked "is there 400 MB free" — a fair question with no
+        # relationship at all to how much of it another customer would need.
+        # This asks the question that matters: is there room for ONE MORE,
+        # given what one customer is allowed and what has to stay free for the
+        # database and the operating system. It refuses BY NAME and points at
+        # the setting and at the one-page resize guide.
+        self._capacity_gate()
         say('Copying "%s" to "%s"…' % (template, slug))
         if preview:
             say('Would copy %s of data and %s of attachments.'
@@ -2095,6 +2111,14 @@ class BizTenants(models.AbstractModel):
         plan['release_pushed'] = False
         if plan.get('release_state') != 'on' or not rel:
             return
+        # ⚠ INSIDE A ROLLOUT THIS IS DEFERRED UNTIL THE HEALTH GATE HAS PASSED.
+        # The unit would otherwise announce "you are on release X — here is
+        # what changed" the moment the install finished, which on an update
+        # that is about to be called a failure is a message that cannot be
+        # taken back. The rollout stamps it itself, last, and only on success.
+        if self.env.context.get('biz_defer_release_stamp'):
+            plan['release_deferred'] = True
+            return
         try:
             res = self.push_settings(target, self._release_values(rel))
         except Exception:                                    # noqa: BLE001
@@ -2236,6 +2260,11 @@ class BizTenants(models.AbstractModel):
                          'notice_sent_at': fields.Datetime.now()})
                 t.log('Message sent to their people: "%s"' % text[:120])
             out.append({**res, 'tenant_id': t.id, 'name': t.name})
+        # The public page carries anything the owner is telling customers, so
+        # it is rewritten here. QUIETLY: sending a message must not fail
+        # because a folder on this machine is missing — that is an alert of its
+        # own, raised by the sweep, which is where it belongs.
+        self._refresh_status_page_quietly()
         return {'results': out,
                 'sent': len([r for r in out if r.get('ok')]),
                 'skipped': len([r for r in out if not r.get('ok')])}
@@ -2255,6 +2284,7 @@ class BizTenants(models.AbstractModel):
                          'notice_from': False, 'notice_to': False})
                 t.log('Message cleared.')
             out.append({**res, 'tenant_id': t.id, 'name': t.name})
+        self._refresh_status_page_quietly()
         return {'results': out}
 
     # =====================================================================

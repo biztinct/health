@@ -259,16 +259,27 @@ class TestRefusals(TransactionCase):
                 'name': 'Second', 'slug': 'bzttaken',
                 'contact_email': 'x@example.com'})
 
-    def test_provisioning_below_the_memory_floor_is_refused(self):
+    def test_provisioning_with_no_room_on_the_machine_is_refused(self):
         """Patched at the reading, so the refusal itself is the thing under
-        test rather than the machine's mood on the day."""
+        test rather than the machine's mood on the day.
+
+        ⚠ THE QUESTION CHANGED IN H4b, AND SO DID THIS TEST. The first version
+        asked "is there 400 MB free" — a fair question with no relationship at
+        all to how much of it another customer would need. The guard now asks
+        the question that matters: is there room for ONE MORE, given what one
+        customer is allowed and what has to stay free for the rest of the
+        machine.
+        """
         service = self.env['biz.tenants']
-        with patch.object(type(service), '_free_memory_mb', return_value=10):
+        with patch.object(type(service), '_memory_reading',
+                          return_value={'total_mb': 1910, 'available_mb': 410}):
             preview = service.provision_preview({
                 'name': 'Too big', 'slug': 'bztmem',
                 'contact_email': 'x@example.com'})
         self.assertFalse(preview['ok'])
-        self.assertTrue(any('memory' in p for p in preview['problems']))
+        self.assertTrue(any('no room' in p.lower()
+                            for p in preview['problems']),
+                        preview['problems'])
 
 
 @tagged('post_install', '-at_install')

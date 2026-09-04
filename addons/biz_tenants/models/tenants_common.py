@@ -46,6 +46,32 @@ P_STATUS_DIR = 'biz_tenants.status_dir'
 P_RECOVERY_LOGIN = 'biz_tenants.recovery_login'
 P_TEMPLATE_CRONS = 'biz_tenants.template_active_crons'
 
+#: THE CAPACITY GUARD'S TWO NUMBERS, and the first of them is a POLICY rather
+#: than a measurement (ledger F34). See `capacity_verdict` for the argument;
+#: the short version is that the MEASURED cost of a customer on this machine is
+#: about 11 MB of resident memory across the three processes that serve them,
+#: and that is not what a customer COSTS — sessions, asset caches and a busy
+#: clinic's working set are the rest, and none of them can be measured at rest.
+#: So the setting carries the measurement plus a deliberate allowance, and it is
+#: a SETTING so it can be re-weighed as customers arrive rather than redeployed.
+P_TENANT_COST = 'biz_tenants.tenant_cost_mb'
+P_CAPACITY_RESERVE = 'biz_tenants.capacity_reserve_mb'
+
+#: Who the platform would tell, if it could tell anybody. Empty means "every
+#: platform administrator with an address", which is the only state in which
+#: this matters most: a platform nobody has configured still reaches a human.
+P_ALERT_TO = 'biz_tenants.alert_to'
+#: How long before a problem says itself again, in hours, by severity.
+P_ALERT_EVERY_CRITICAL = 'biz_tenants.alert_every_critical'
+P_ALERT_EVERY_WARNING = 'biz_tenants.alert_every_warning'
+#: Whose clock the PUBLIC page speaks in. It has no reader to ask (F38), so the
+#: zone is named on the page itself and this is where it comes from.
+P_STATUS_TZ = 'biz_tenants.status_tz'
+#: When somebody last opened the Alerts screen — what "since you were last
+#: here" is measured from. With nothing being emailed, that strip is how the
+#: owner finds out anything happened at all.
+P_ALERTS_SEEN = 'biz_tenants.alerts_seen_at'
+
 #: What a bare install answers before any product has registered anything.
 #: DELIBERATELY NOT A PRODUCT NAME: a cockpit that says "the platform" on a
 #: database nobody has configured is honest; one that says somebody else's
@@ -73,6 +99,15 @@ _DEFAULTS = {
     P_HEALTH_IGNORE: '',
     P_STATUS_DIR: '',
     P_RECOVERY_LOGIN: '',
+    #: 60 MB is the POLICY (F34). The MEASUREMENT is ~11 MB. They are different
+    #: numbers answering different questions and the report says so out loud.
+    P_TENANT_COST: '60',
+    P_CAPACITY_RESERVE: '400',
+    P_ALERT_TO: '',
+    P_ALERT_EVERY_CRITICAL: '2',
+    P_ALERT_EVERY_WARNING: '6',
+    P_STATUS_TZ: '',
+    P_ALERTS_SEEN: '',
 }
 
 
@@ -139,6 +174,33 @@ def memory_floor_mb(env):
         return int(str(param(env, P_MEMORY_FLOOR)).strip())
     except (TypeError, ValueError):
         return int(_DEFAULTS[P_MEMORY_FLOOR])
+
+
+def _number(env, key, fallback):
+    try:
+        return float(str(param(env, key)).strip())
+    except (TypeError, ValueError):
+        return float(fallback)
+
+
+def tenant_cost_mb(env):
+    """How much memory ONE customer is allowed. A policy, not a measurement."""
+    return _number(env, P_TENANT_COST, _DEFAULTS[P_TENANT_COST])
+
+
+def capacity_reserve_mb(env):
+    """What must stay free for the database and the operating system."""
+    return _number(env, P_CAPACITY_RESERVE, _DEFAULTS[P_CAPACITY_RESERVE])
+
+
+def alert_intervals(env):
+    """`(critical_hours, warning_hours)` — how often a problem says itself
+    again. Zero or less means "never remind", which is the setting somebody
+    wants the week they are already looking at a known problem."""
+    return (_number(env, P_ALERT_EVERY_CRITICAL,
+                    _DEFAULTS[P_ALERT_EVERY_CRITICAL]),
+            _number(env, P_ALERT_EVERY_WARNING,
+                    _DEFAULTS[P_ALERT_EVERY_WARNING]))
 
 
 def health_ignore(env):
