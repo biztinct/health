@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================================================================
+         SOMEBODY NEW IS STARTING — the login, the staff record and the role,
+         asked in the order a person would say them out loud.
+
+         WHO THEY ARE first, because that is what somebody has in their hand.
+         WHAT THEY WILL DO next, with the role's own sentence read back
+         underneath it, so nobody is picking a word off a list. WHERE THEY
+         WORK last, because it is the part that gets looked up.
+         ================================================================== -->
+    <record id="view_health_access_new_person_form" model="ir.ui.view">
+        <field name="name">health.access.new.person.form</field>
+        <field name="model">health.access.new.person</field>
+        <field name="arch" type="xml">
+            <form string="Add a person">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Their full name"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group string="How they sign in">
+                            <field name="login"
+                                   placeholder="name@vietuccare.com"/>
+                            <field name="phone"/>
+                            <field name="password" password="True"
+                                   placeholder="Leave empty to send them a link"/>
+                        </group>
+                        <group string="Their settings">
+                            <field name="company_id"
+                                   groups="base.group_multi_company"/>
+                            <field name="lang"/>
+                            <field name="tz"/>
+                        </group>
+                    </group>
+
+                    <group string="What they will do">
+                        <field name="role_id" nolabel="1" colspan="2"
+                               options="{'no_create': True, 'no_open': True}"
+                               placeholder="Pick the job they are being given"/>
+                        <!-- THE SENTENCE, READ BACK. Nobody should be choosing
+                             a role off a list of words; the role's own
+                             description is what says what they are handing
+                             over, and it belongs beside the button. -->
+                        <field name="role_description" nolabel="1" colspan="2"
+                               readonly="1" invisible="not role_id"/>
+                        <field name="show_duty_doctor" invisible="1"/>
+                        <field name="show_head_nurse" invisible="1"/>
+                        <field name="is_duty_doctor"
+                               invisible="not show_duty_doctor"/>
+                        <field name="is_head_nurse"
+                               invisible="not show_head_nurse"/>
+                    </group>
+
+                    <group>
+                        <group string="Where they work">
+                            <field name="catchment_province_id"
+                                   options="{'no_create': True}"/>
+                            <field name="healthcare_facility_id"
+                                   options="{'no_create': True}"/>
+                        </group>
+                        <group string="Their contract">
+                            <field name="employment_status"/>
+                            <field name="employment_type_code"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Add them" name="action_create" type="object"
+                            class="btn-primary"/>
+                    <button string="Never mind" special="cancel"
+                            class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_health_access_new_person" model="ir.actions.act_window">
+        <field name="name">Add a person</field>
+        <field name="res_model">health.access.new.person</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

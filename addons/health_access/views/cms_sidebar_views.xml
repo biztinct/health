@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================================================================
+         THE SECOND GATE, ON THE PLAIN TABLES.
+
+         The Access home is where a gate is meant to be changed — it draws the
+         menu as the menu, says who each role lets in, and never shows anybody
+         a permission-group name. These two are the administrator's fallback:
+         the row itself, for the day something has to be looked at rather than
+         used. Read-only nowhere, but deliberately unglamorous.
+
+         Both lists sit BESIDE the older one rather than replacing it, because
+         while both are read, seeing only half of what gates an entry is how
+         somebody concludes it is narrower than it is.
+         ================================================================== -->
+
+    <record id="view_cms_sidebar_item_form_biz" model="ir.ui.view">
+        <field name="name">cms.sidebar.item.form.biz.roles</field>
+        <field name="model">cms.sidebar.item</field>
+        <field name="inherit_id"
+               ref="health_cms_sidebar.cms_sidebar_item_view_form"/>
+        <field name="arch" type="xml">
+            <field name="effective_role_ids" position="after">
+                <field name="biz_role_ids" widget="many2many_tags"
+                       options="{'no_create': True, 'no_quick_create': True}"
+                       string="Roles that open this entry"
+                       help="Holding one of these roles in full opens this entry. It is read together with the older list above — either one is enough."/>
+                <field name="effective_biz_role_ids" widget="many2many_tags"
+                       readonly="1"
+                       string="Roles that open it, inherited included"
+                       help="What actually gates this entry on this list: its own roles plus everything inherited from its block and from the entries above it."/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_cms_sidebar_section_form_biz" model="ir.ui.view">
+        <field name="name">cms.sidebar.section.form.biz.roles</field>
+        <field name="model">cms.sidebar.section</field>
+        <field name="inherit_id"
+               ref="health_cms_sidebar.cms_sidebar_section_view_form"/>
+        <field name="arch" type="xml">
+            <field name="role_ids" position="after">
+                <field name="biz_role_ids" widget="many2many_tags"
+                       options="{'no_create': True, 'no_quick_create': True}"
+                       string="Roles that see this block"
+                       help="Everything in this block is visible to the people who hold one of these roles in full. An entry inside it may name roles of its own — those are added to these, never instead of them."/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

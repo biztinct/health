@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ======================================================================
+     THE ACCESS HOME, ON THE LEFT MENU.
+
+     `noupdate="1"` like every other row on this rail: once it is on a live
+     database, what somebody has since done to it (moved it, renamed it,
+     re-gated it) is the truth, and an upgrade that re-asserted this file
+     would undo their work every release.
+
+     IT SHIPS UNGATED AND THE HOOK WRITES THE GATE. A `ref()` can only point
+     at a row that exists when this file is read, and the roles this entry is
+     meant to be limited to are created by the hook that runs afterwards. So
+     the gate is written there — see `hooks._gate_admin_item` — and a test
+     asserts it is present once the module has landed.
+     ====================================================================== -->
+<odoo noupdate="1">
+
+    <record id="item_admin_access" model="cms.sidebar.item">
+        <field name="name">Access &amp; roles</field>
+        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <!-- Straight after "Users &amp; Roles" (20), because for as long as
+             both exist they answer the same question and somebody looking for
+             one will find the other. -->
+        <field name="sequence">25</field>
+        <field name="icon">fa fa-key</field>
+        <field name="action_xmlid">biz_access.action_biz_access_home</field>
+        <field name="match_action_tags">biz_access_home</field>
+        <field name="match_action_xmlids">biz_access.action_biz_access_home</field>
+    </record>
+
+</odoo>
