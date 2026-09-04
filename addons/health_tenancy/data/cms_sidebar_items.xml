@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ======================================================================
+     TWO DOORS ON THE LEFT MENU, BOTH UNDER ADMIN.
+
+     "About Viet Uc Care" is for EVERY system, including a customer's. It opens
+     the platform link's own screen: which release this system is on, what
+     changed in it, and who to contact.
+
+     "Customers" is for the PLATFORM'S OWN system and nowhere else. Its action
+     lives in a module a customer never receives, so on a customer's system the
+     entry would open nothing at all — and an entry that opens nothing is a dead
+     end, which is worse than an absence. The hook that runs after this file
+     switches it OFF wherever its action does not resolve, and switches it back
+     ON if it ever does. Both entries ship UNGATED here and the hook writes the
+     gate, for the same reason `health_access` does: a `ref()` can only point at
+     a row that exists when this file is read, and the roles are created by
+     another module's hook that runs afterwards.
+
+     `noupdate="1"`, like every other row on this menu: once it is on a live
+     system, what somebody has since done to it (moved it, renamed it, re-gated
+     it) is the truth, and an upgrade that re-asserted this file would undo
+     their work every release.
+     ====================================================================== -->
+<odoo noupdate="1">
+
+    <record id="item_admin_about" model="cms.sidebar.item">
+        <field name="name">About Viet Uc Care</field>
+        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <!-- Last in the section: it is the thing somebody opens once, not the
+             thing they work in. -->
+        <field name="sequence">90</field>
+        <field name="icon">fa fa-info-circle</field>
+        <field name="action_xmlid">biz_tenancy.action_biz_tenancy_about</field>
+        <field name="match_action_tags">biz_tenancy_about</field>
+        <field name="match_action_xmlids">biz_tenancy.action_biz_tenancy_about</field>
+    </record>
+
+    <record id="item_admin_customers" model="cms.sidebar.item">
+        <field name="name">Customers</field>
+        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <field name="sequence">95</field>
+        <field name="icon">fa fa-building-o</field>
+        <!-- A PLAIN STRING, not a `ref`. The module that owns this action is
+             one this system may not have, and a `ref` to a missing xml id
+             refuses to load the file at all. -->
+        <field name="action_xmlid">biz_tenants.action_biz_tenants</field>
+        <field name="match_action_tags">biz_tenants</field>
+        <field name="match_action_xmlids">biz_tenants.action_biz_tenants</field>
+        <!-- Ships OFF and the hook switches it on where the cockpit is really
+             installed. Off is the safe direction: the wrong answer here is a
+             door to nowhere on somebody's menu, not a missing one on ours. -->
+        <field name="active" eval="False"/>
+    </record>
+
+</odoo>
