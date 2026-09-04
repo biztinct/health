@@ -1,7 +1,9 @@
 # SAAS PORT program — the tenant platform and the Access home, as generic `biz_*` cores in health19
 
-Status: **H0 DONE, H1 DONE, H2a DONE, H2b DONE 2026-09-04 (live — the previous
-access application is retired). H3 next.** Spec that started it:
+Status: **H0 DONE, H1 DONE, H2a DONE, H2b DONE, H3 DONE 2026-09-04 (live — the box is a
+platform: carejiox.com, one database per hostname, self-renewing certificates, a golden
+template). H4 next.** Operational documents for what H3 built:
+`docs/SAAS_RUNBOOK.md` and `docs/SAAS_RESIZE_RUNBOOK.md`. Spec that started it:
 `docs/handovers/PORT_FROM_PAYOBOOK_TENANCY_AND_ACCESS.md` (read it; its §1–§3 are the
 inventory of what exists on Payobook and why it cannot be copied verbatim). Payobook's own
 programme docs sit in `docs/handovers/from_payobook/` — FLEET_PROGRAM.md (rails R1–R8, ledger
@@ -50,13 +52,31 @@ customer database or a genuine scope decision.
 | **H1 Kit + Access core** | `biz_kit` (tokens, primitives, Lucide `ic()`, back chip, soft registry keys) + `biz_access` (roles-as-bundles, 4 lenses, builder, "See it as…", hand-overs) as product-neutral modules with a **rail provider** seam instead of the `pb.sidebar.item` inherit; installed and Chrome-validated on a scratch clone `vietuat_h1`; NOT on the live DB | **DONE** — `SAAS_H1_KIT_ACCESS_CORE.md`; 158 tests green, clone dropped |
 | **H2a `health_access` overlay (additive, live)** | cms.sidebar rail provider (bundle lane BESIDE the legacy lane, read as an OR), clinic ability→group catalogue + the 9 roles as bundles with xml-ids, native top-bar hiding + debug block (Rail A), People lens gains "Add a person" and the four person actions, rail item under ADMIN. Nothing uninstalled, nothing removed | **DONE 2026-09-04** — `SAAS_H2A_HEALTH_ACCESS_OVERLAY.md`; 233 tests green, per-user diff **0 lost** on the clone AND on live, deployed to `vietuat` |
 | **H2b retire `access_roles` + `health_user_admin`** | re-point every code reference, one gate on the left menu, the JOB as its own field, the clinic-administrator group re-homed, the left menu given the screens only the app bar reached, both apps uninstalled. H16 answered by the owner: **the bar above the screen is the platform administrator's alone** | **DONE 2026-09-04** — `SAAS_H2B_RETIRE_ACCESS_ROLES.md`; both apps uninstalled live, 27 tables dropped, 0 roles lost, 0 job flags changed across 73 colleagues |
-| **H3 Server plumbing** | `dbfilter = ^%d$`, carejiox.com apex + wildcard, nginx blocks (`/web/database` 404, `/status`), per-host HTTP-01 certs, golden template DB, scripts + sudoers, backups dir, stale-DB and shadowed-module cleanup, resize runbook | |
+| **H3 Server plumbing** | `dbfilter = ^%d$`, carejiox.com apex + wildcard, nginx blocks (`/web/database` 404, `/status`), per-host HTTP-01 certs, golden template DB, scripts + sudoers, backups dir, stale-DB and shadowed-module cleanup, resize runbook | **DONE 2026-09-04** — `SAAS_H3_SERVER_PLUMBING.md`; master renamed `vietuat`→`carejiox` in **26 s** of downtime, certbot repaired (snap 5.8.0, both certs now renewing to 2026-12-03), `odoo` reduced from the `sudo` group to three commands, 4 stale databases + 3 orphan filestores removed, `carejiox_template` built from scratch — which found **8 packaging faults across 7 modules** that no existing database could ever have shown (ledger H40–H43) |
 | **H4 `biz_tenancy` + `biz_tenants` + `health_tenancy`** | the tenant agent + the cockpit, parameterised (brand, domain, prefix, never-list, xmlids, meter registry, plan seeds, feature catalogue, status components); pilot tenant `hhh` | may split 4a/4b |
 | **H5 Validation** | every FLEET live check re-run on the pilot, Chrome-driven | |
 
 ---
 
 ## Verified plumbing (H0, 2026-09-04 — do not re-derive)
+
+> ⚠ **H3 CHANGED SEVEN OF THESE FACTS. Read this box before you trust anything below it.**
+> The H0 survey is kept verbatim because the ledger cites it, but as of 2026-09-04 the live
+> box is different in exactly these ways:
+>
+> | H0 said | It is now |
+> |---|---|
+> | `52.64.215.106` | **`54.206.18.111`** (EC2 `i-0fb43cd9281f12945`, `t3.small`, + a 2 GB swapfile). The `VietUcUAT` ssh alias is repointed. |
+> | database `vietuat` | **`carejiox`** — plus the golden template `carejiox_template`. |
+> | `db_name = vietuat`, `dbfilter = ^vietuat$` | **no `db_name`**, `dbfilter = ^%d$`. The cron worker therefore serves EVERY database (H2 reversed, see H36) and a test run on a clone MUST pass `--db-filter`. |
+> | two addons paths, `advanced_pricing` in both | **one path**, `/odoo/odoo-server/addons`. `/odoo/custom/addons` is gone. |
+> | `vietuat-deploy` | **`carejiox-deploy`**, with a new `-D <db>`. The old name is a symlink for one phase. |
+> | `care.biztinct.com`, no wildcard, `/web/database/manager` answers 200 | **`carejiox.com`** (+ `www`), `*.carejiox.com` wildcard block, the old host 301s, `/web/database/` is **404 on every hostname**, `/status` is served from disk, and an unclaimed hostname gets `444`. |
+> | `odoo` has `(ALL : ALL) ALL` | three commands, `/etc/sudoers.d/biz-tenants`. It is out of the `sudo` group. |
+>
+> Also gone: the stale databases `bi_test`, `care`, `care_biztinct`, `vietuc_uat` and the orphan
+> filestores `gc3_ci_probe`, `vietuat_h1`, `vietuat_h2`. Operational detail lives in
+> `docs/SAAS_RUNBOOK.md`, which is the document to hand somebody who has to run this.
 
 ### The box and the service
 - `VietUcUAT` (ssh alias; 52.64.215.106, user ubuntu). **1.9 GB RAM, 2 cores, 58 GB disk 24 % used.**
@@ -420,3 +440,159 @@ in new surfaces. Chrome validation mandatory before a phase reports done.
   real users: `_visible_menu_ids` 12–57 ms with the rule and 14–60 ms without (the difference is
   inside the noise), `load_menus` 25–57 ms end to end. The `ormcache` on the permission set plus the
   framework's own `load_menus` cache is enough; no extra caching was added, and none is warranted.
+- **H36** (H3, 2026-09-04) ⚠ **REMOVING `db_name` HANDS EVERY DATABASE ON THE CLUSTER TO THE CRON
+  WORKER, AND THE ORDER OF H3's OWN STEPS HAD TO CHANGE BECAUSE OF IT.** `cron_database_list()` is
+  literally `config['db_name'] or list_dbs(True)` (`odoo/service/server.py:110`), so the moment the
+  conf line goes, the one cron thread enumerates `pg_database`. The handover ran the rename (§4.4)
+  before the stale-database cleanup (§4.5); done in that order, five databases become cron targets
+  on a 1.9 GB box for the length of the gap. **The cleanup was moved BEFORE the rename** so that
+  exactly one database existed at the moment `db_name` disappeared. Nothing about the work changed,
+  only when it happened — and the reordering is the kind a phase should make, because it removes a
+  risk rather than adding scope. The mitigating detail, worth knowing before anybody panics about
+  a half-built template: `IrCron._process_jobs` opens a PLAIN cursor first, checks the base version,
+  and returns before touching a `Registry` if no job is due — and `_check_modules_state` raises
+  `BadModuleState` while any module is mid-install. A database being built is therefore skipped with
+  a warning and costs no memory. The window that matters is the one AFTER the build finishes, which
+  is why the crons are switched off in the same run.
+- **H37** (H3) **This build does NOT honour `X-Odoo-dbfilter`, so custom domains are not a feature
+  yet — and the script that would attach one now refuses.** `db_filter()` (`odoo/http.py:379–408`)
+  reads only `config['dbfilter']` and the Host header. The one request header the build does look at
+  is `X-Odoo-Database` (`http.py:1780`), and it is checked THROUGH `db_filter()` and sets
+  `session.can_save = False` — so it cannot pin a client-owned domain either, in the one direction
+  that matters. `biz-domain-attach` therefore exits 3 with the reason and a `CUSTOM_DOMAIN_PINNING`
+  switch in `/etc/biz-tenants.conf`, rather than writing a block that would route
+  `clinic.example.com` to a database called `clinic`. **A tool that silently does nothing is worse
+  than a tool that says no**, and this is the whole difference between the two.
+- **H38** (H3) **A server-level `return 301` swallows the certificate renewal, and that is how a
+  redirect quietly stops being trusted.** nginx runs a `server`-level `return` in the server rewrite
+  phase, which is BEFORE it picks a location — so the `/.well-known/acme-challenge/` location
+  certbot inserts at renewal never runs, and about seventy days later every visitor to the old
+  address gets a browser warning instead of a redirect. Payobook's blocks are shaped this way and
+  have never had to renew a redirect-only host. Every redirect on this box now lives inside
+  `location / { return 301 ...; }`, and the proof is a `certbot renew --dry-run` re-run AFTER
+  `care.biztinct.com` became a pure redirect: both certificates still simulate green.
+- **H39** (H3) **nginx here is 1.18: `http2 on;` is a 1.25 directive and fails `nginx -t`.** Cheap
+  to fix, worth writing down because the failure mode is the good one — `nginx -t` refused, so the
+  reload never happened and the previous config stayed live. Every generated block uses
+  `listen 443 ssl http2;`. The same run proved the other half of that discipline: `nginx -t &&
+  systemctl reload` is not synchronous, and a curl fired immediately after a successful reload can
+  still be answered by the old workers. Two failed assertions were the reload lag, not the config.
+- **H40** (H3) ⚠ **`noupdate="1"` HIDES A WHOLE CLASS OF BREAKAGE UNTIL SOMEBODY INSTALLS FROM
+  NOTHING.** The dropdown-vocabularies work (Tier 1) replaced 24 Selection fields with many2one
+  pointers and never rewrote the seed data: **182 `<field>` elements across 15 files, 20 distinct
+  (model, field) pairs in 4 modules**, all naming columns that no longer exist. Every one of those
+  files is `noupdate="1"`, so on any database where the records already existed they are never
+  written again and the dead name is never evaluated. A fresh install writes them for the first time
+  and dies on the first one (`ValueError: Invalid field 'category' in 'health.symptom'`).
+  **The golden template is the first thing in this product's history to install it from nothing, and
+  it found this in its second build.** Two lessons, and the second is the reusable one: (a) the fix
+  came from `lookup_registry.CONVERSIONS`, which is the authoritative map — nothing was guessed;
+  (b) the faults were then found ALL AT ONCE by walking every `<record model=…><field name=…>` in
+  all 1,107 xml data files of the module set against the live registry, instead of one failed
+  60-second build per fault. **Any phase that installs a product from scratch should run that sweep
+  first**; it is twenty lines and it turned an unknown number of build cycles into one.
+- **H41** (H3) **The same asymmetry again, one layer down: code that only works on a database that
+  has been around.** With the data files fixed, the seeder itself failed —
+  `seed_lookup_values` reads `value.with_context(lang='vi_VN').name`, and reading a translated field
+  in a language the database does not have raises `KeyError: 'health.lookup.value.name'` out of the
+  ORM cache rather than falling back to English. Always true on a brand-new database, never true on
+  this clinic's, which added Vietnamese years ago. Guarded on `res.lang` having an active `vi_VN`;
+  safe because the seeder is idempotent, so the labels land on the first run after the language is
+  installed. **"Works on the master" and "installs" are different claims**, and only a from-nothing
+  build can tell them apart.
+- **H42** (H3) **A missing `depends` is invisible for as long as something else happens to supply
+  it.** `health_theme` inherits `auth_signup.login` and declared only `web` and `base`. Every
+  database it had ever run on already had `auth_signup`, pulled in by `website`. On a fresh install
+  the data file loads first and the registry dies outright. Same family as H40/H41 and the same
+  detector: build it from nothing.
+- **H43** (H3) **Ordering inside one module: a data file cannot use what a post-init hook seeds.**
+  Once the seed data resolved lookup values with `search=`, health_base's OWN files still found an
+  empty table — `post_init_hook` runs after the data. `health.lookup.value._seed_from_registry()`
+  already existed for exactly this reason (the demo data has called it since the vocabularies
+  shipped); it is now also called from `data/health_lookup_seed.xml`, first in the manifest. Modules
+  ABOVE health_base need no equivalent: by the time they load, health_base is fully installed,
+  hook and all. **The non-demo half of a fix that already existed for demo data is a good place to
+  look whenever a from-scratch build fails and a demo build does not.**
+- **H44** (H3) **The odoo account's sudo was granted by GROUP MEMBERSHIP, not by a file.** `sudo -l
+  -U odoo` said `(ALL : ALL) ALL` and `grep -rn odoo /etc/sudoers /etc/sudoers.d/` found nothing,
+  because `odoo` was simply in the `sudo` group (`id odoo` → `27(sudo)`). `gpasswd -d odoo sudo`
+  plus `/etc/sudoers.d/biz-tenants` reduced it to three commands. Nothing in `addons/` shells out at
+  all — a grep for `subprocess`, `os.system`, `os.popen` and literal `sudo ` command strings across
+  the whole tree returns nothing — so there was nothing to break, and the permission had simply
+  never been questioned. **`sudo -l -U <user>` answers "what can they do"; only `id <user>` answers
+  "and where does that come from".**
+- **H45** (H3) **The deploy wrapper's own health check broke the moment routing became
+  hostname-based, and it broke SILENTLY UPWARDS.** It curled `localhost:8069/web/login`, which under
+  `dbfilter = ^%d$` asks for a database called `localhost` and gets a 303 to the database selector no
+  matter how healthy the service is. It now sends `Host: carejiox.com`. It asks for the APEX rather
+  than for the database it just upgraded, on purpose: the golden template's name contains an
+  underscore and is therefore unreachable by hostname, and that is a property to preserve rather
+  than to work around. **Every "is it up?" probe on this box is now a question about a hostname, not
+  about a port.**
+- **H46** (H3) **Browser validation on the new domain needed a session, and the honest way to get
+  one has a trap in it.** No password was available, so a session was minted server-side for the
+  platform administrator and planted as a cookie. It did not work: Odoo sets `session_id` with
+  `HttpOnly`, and any visit to the app plants one first, after which `document.cookie` can write a
+  shadowed duplicate that the browser reports back and never sends. The way through is to plant the
+  cookie from a page the APPLICATION never serves — `/status`, which nginx hands out itself — in a
+  fresh browser context. Even that failed once: the status page had no favicon, so the browser's
+  implicit `/favicon.ico` request went to the app and planted the HttpOnly cookie anyway. An inline
+  `<link rel="icon" href="data:,">` fixed it, and is worth having regardless. **A page served
+  entirely by nginx is a genuinely different origin-state from one served by the app, and the
+  difference is exactly one favicon wide.**
+- **H47** (H3) **Measured: the rename cost 26 seconds.** Stop to first HTTP 200, inside the deploy
+  lock, on a 253 MB database with a 950 MB attachment folder — `ALTER DATABASE … RENAME` is a
+  catalogue update and `mv` on the filestore is a directory rename within one filesystem, so neither
+  is proportional to size. The budget was ten minutes. **The expensive part of a rename is never the
+  rename**; it is the config, the nginx blocks and the seventeen places the old name is written
+  down, all of which can be prepared while the service is up.
+- **H48** (H3) ⚠ **THREE STATIC SWEEPS THAT SHOULD RUN BEFORE ANY FUTURE FROM-SCRATCH BUILD, AND
+  THE RULE THAT MAKES THEM WORTH IT.** Building `carejiox_template` took EIGHT attempts, and each
+  failed build costs 5–8 minutes of module loading to surface exactly one fault. The faults are all
+  one family — *something that is true on a database which already exists, and false on a new one* —
+  and all three sweeps are twenty lines each, read-only, and find every instance at once:
+  1. **Dead field names in data files.** Walk every `<record model=…><field name=…>` in every xml
+     file in every manifest's `data` list, and check the field against a live registry. Found 182
+     elements / 20 pairs in one pass (H40). Hidden by `noupdate="1"`.
+  2. **Forward references.** Walk each module's own `data` list in order and check that every xml id
+     it names is defined earlier. **`ref=` is only one of four ways to name one** — `action=` and
+     `parent=` on a menuitem, `%(xmlid)d` interpolated into an attribute, and `ref()` inside an
+     `eval=` are the others, and the first version of the sweep read only `ref=`, reported the tree
+     clean, and the next build failed anyway. Widened, it found three more.
+  3. **Undeclared cross-module dependencies.** Compute each module's TRANSITIVE depends closure from
+     the manifests on disk, then check every `<module>.<xmlid>` its data files name against it.
+     Found `health_theme`→`auth_signup` and `health_emar`→`health_pwa`. The transitive part is what
+     makes it usable rather than noisy: thirteen modules inherit `health_pwa.app_shell` and eleven
+     are fine because they reach it through something else.
+  **A green sweep is not a green build** — the sweeps are static and cannot see a hook, a compute or
+  a translated read (H41, H49 came from running it) — but they turn "one build per fault" into "one
+  build per CLASS of fault", and on this box that was the difference between an afternoon and a day.
+- **H49** (H3) **The Vietnamese-alias mixin required Vietnamese, and that is the whole product's
+  seed data.** `health.vi.alias.mixin` mirrors the `vi_VN` translation of `name` into the legacy
+  `name_vi` column for seven lookup models, in BOTH directions. Reading or writing a translated
+  field in a language the database does not have raises `KeyError: '<model>.<field>'` out of the ORM
+  cache — it does not fall back. So on any new database all seven models die loading their own seed
+  data. This is the same fault as H41 one layer down, which is the lesson: H41 was fixed at ONE call
+  site (`seed_lookup_values`) and the same bug was sitting in the mixin that the seed data actually
+  goes through. **Fix a language-availability fault in the mixin, not at the call site.**
+  `biz_bi_health/hooks.py` (`self.vi_active`, set once in `__init__` from `res.lang.get_installed()`)
+  is the module that got it right from the start and is the pattern to copy.
+- **H50** (H3) ⚠ **THE GOLDEN TEMPLATE IS ENGLISH-ONLY, AND H4 HAS TO DECIDE THAT DELIBERATELY.**
+  A fresh install installs no languages; the master has had `vi_VN` for years. With H49's guard the
+  template now BUILDS, and it builds with every Vietnamese label absent — so a clinic cloned from it
+  would be English-only, on a Vietnamese healthcare product. Deliberately not fixed here: which
+  languages a customer gets is a product decision belonging to provisioning, not something a
+  server-plumbing phase should quietly bake in. The remedy is two steps and idempotent — install
+  `vi_VN`, then re-run `health.lookup.value._seed_from_registry()` — and it must happen either on
+  the template or per tenant before the first customer is announced.
+- **H51** (H3) **A SQL-view model must be declared AFTER the table it selects from, because Odoo
+  initialises a module's models one at a time.** `registry.init_models` is literally
+  `for model in models: model._auto_init(); model.init()` — not "every `_auto_init` then every
+  `init`" — and the order is the order the classes are defined in. `hr_development_ai` adds
+  `branch_id` to both `hr.employee` and `hr.employee.public` in one file with the PUBLIC model
+  first, so on a fresh install the view is rebuilt before the column exists:
+  `psycopg2.errors.UndefinedColumn: column e.branch_id does not exist`. Stock Odoo never trips on
+  this because it keeps `hr.employee.public` in its own later-imported file. Fixed by swapping the
+  two classes, with a comment saying why, because the next person to tidy the file alphabetically
+  would undo it. **Wherever one module extends both a table and a view over that table, the view
+  goes last.**

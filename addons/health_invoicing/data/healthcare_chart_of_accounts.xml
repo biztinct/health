@@ -12,11 +12,27 @@
             AR  = Accounts Receivable (standard Odoo)
             CIT = Cash in Transit – Nurse
             CASH = Cash / Bank (company-controlled, standard Odoo)
+
+            THE `code` FIELDS ARE REQUIRED, even though this file shipped
+            without them. In Odoo 19 `account.account.code` is company-dependent
+            and constrained ("The code must be set for every company to which
+            this account belongs"), so creating one of these on a database that
+            has no chart of accounts loaded fails outright. It never fired on an
+            existing database because this file is noupdate="1" and the records
+            were created before the constraint — which is why the three accounts
+            on the live database still carry NO code at all today. Found
+            building the golden template (SAAS H3).
+
+            The codes sit in the generic chart's own ranges (1xxxxx current
+            assets, 2xxxxx current liabilities, 4xxxxx income) in gaps that
+            chart does not use, so loading generic_coa afterwards does not
+            collide with them.
         -->
 
         <!-- Service Revenue (SR) — Income account for healthcare services -->
         <record id="account_service_revenue" model="account.account">
             <field name="name">Service Revenue – Healthcare</field>
+            <field name="code">444000</field>
             <field name="account_type">income</field>
             <field name="reconcile" eval="False"/>
         </record>
@@ -24,6 +40,7 @@
         <!-- Unearned Revenue (UR) — Liability account for prepayments -->
         <record id="account_unearned_revenue" model="account.account">
             <field name="name">Unearned Revenue – Healthcare</field>
+            <field name="code">213000</field>
             <field name="account_type">liability_current</field>
             <field name="reconcile" eval="False"/>
         </record>
@@ -31,6 +48,7 @@
         <!-- Cash in Transit – Nurse (CIT) — Tracks cash held by nurse before OM handover -->
         <record id="account_cash_in_transit_nurse" model="account.account">
             <field name="name">Cash in Transit – Nurse</field>
+            <field name="code">101800</field>
             <field name="account_type">asset_current</field>
             <field name="reconcile" eval="False"/>
         </record>
