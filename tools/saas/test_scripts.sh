@@ -91,6 +91,32 @@ expect "deep subdomain of the slug"      2 no -- "$CERT" "www.hhh.carejiox.com" 
 expect "the apex itself"                 2 no -- "$CERT" "carejiox.com" hhh
 expect "good pair passes the guards"     0 no -- "$CERT" "hhh.carejiox.com" hhh --check-only
 
+# The block itself is only written after certbot has issued a certificate, so
+# the guards inside it cannot be exercised here. They are asserted against the
+# SOURCE instead, which is the honest version of the check: the question is
+# whether the text that will be written to a root-owned config carries them.
+echo "== the block biz-tenant-cert writes =="
+grep_src() {
+    local name="$1" pattern="$2"
+    if grep -q "$pattern" "$CERT"; then
+        PASS=$((PASS+1)); printf '  ok   %s\n' "$name"
+    else
+        FAIL=$((FAIL+1)); printf '  FAIL %s — not in %s\n' "$name" "$CERT"
+    fi
+}
+grep_src "refuses an underscore hostname"   'host ~ "_"'
+grep_src "refuses a -staging hostname"      'staging'
+grep_src "no database manager"              'location \^~ /web/database'
+# ⚠ ledger H38: a server-level "return" runs before nginx picks a location, so
+# it swallows the certificate-renewal check as well as the visitor.
+grep_src "the redirect is inside location /" 'location / { return 301'
+if grep -qE '^\s+return 301 https' "$CERT"; then
+    FAIL=$((FAIL+1))
+    printf '  FAIL a server-level redirect would swallow certificate renewal\n'
+else
+    PASS=$((PASS+1)); printf '  ok   no server-level redirect\n'
+fi
+
 echo "== biz-domain-attach =="
 expect "bad hostname"                    2 no -- "$ATTACH" "NOPE" acme
 expect "bad slug"                        2 no -- "$ATTACH" "clinic.example.com" "AC ME"

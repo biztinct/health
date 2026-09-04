@@ -113,6 +113,20 @@ server {
     listen 443 ssl http2;
     server_name ${HOSTNAME_ARG};
 
+    # KEEP THE TWO REFUSALS IN STEP WITH sites-available/biz-wildcard.
+    # This block matches ONE exact hostname, so neither can fire here today —
+    # they are written anyway because the two files are meant to be readable as
+    # copies of each other, and the day somebody widens this server_name the
+    # guards have to already be in it rather than be remembered.
+    #
+    # An underscore: a database name with one in it is never a customer, and
+    # the golden template is called carejiox_template.
+    if (\$host ~ "_") { return 444; }
+    # A practice copy: putting a customer's copy back to check it makes a full
+    # database called <slug>-staging, with that customer's data and passwords
+    # in it, on a hostname a browser can reach.
+    if (\$host ~ "^[^.]*-staging\\.") { return 444; }
+
     ssl_certificate ${LIVE}/fullchain.pem;
     ssl_certificate_key ${LIVE}/privkey.pem;
     include /etc/letsencrypt/options-ssl-nginx.conf;
@@ -171,7 +185,14 @@ server {
 server {
     listen 80;
     server_name ${HOSTNAME_ARG};
-    return 301 https://\$host\$request_uri;
+    # ⚠ THE REDIRECT LIVES INSIDE location /, NEVER AT THE TOP OF THE BLOCK.
+    # nginx runs a server-level "return" in the server rewrite phase, BEFORE it
+    # picks a location — so it also swallows the /.well-known/acme-challenge/
+    # location the certificate tool inserts at renewal time, and about seventy
+    # days later every visitor to this address gets a browser warning instead
+    # of a redirect. That is ledger H38, and this block was written the wrong
+    # way round; every other redirect on this machine was fixed then.
+    location / { return 301 https://\$host\$request_uri; }
 }
 EOF
 
