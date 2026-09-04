@@ -4,50 +4,22 @@ from odoo import models, fields, api, _
 from datetime import timedelta
 
 
-class HREmployeePublic(models.Model):
-    _inherit = 'hr.employee.public'
-
-    # BFSI fields exposed on public profile
-    branch_id = fields.Many2one(
-        'bfsi.branch',
-        string='Branch',
-        readonly=True
-    )
-
-    banker_type = fields.Selection([
-        ('rm', 'Relationship Manager'),
-        ('branch_manager', 'Branch Manager'),
-        ('regional_manager', 'Regional Manager'),
-        ('telesales', 'Telesales Agent'),
-        ('field_sales', 'Field Sales Officer'),
-        ('loan_officer', 'Loan Officer'),
-        ('insurance_advisor', 'Insurance Advisor'),
-        ('wealth_manager', 'Wealth Manager'),
-        ('banker', 'Banker (General)')
-    ], string='Banker Type', readonly=True)
-
-    current_month_rank = fields.Integer(string='Current Month Rank', readonly=True)
-    previous_month_rank = fields.Integer(string='Previous Month Rank', readonly=True)
-    rank_movement = fields.Integer(string='Rank Movement', readonly=True)
-    latest_overall_score = fields.Float(string='Latest Performance Score', readonly=True)
-    coaching_priority = fields.Selection([
-        ('low', 'Low'),
-        ('medium', 'Medium'),
-        ('high', 'High'),
-        ('critical', 'Critical')
-    ], string='Coaching Priority', readonly=True)
-    ai_coaching_enabled = fields.Boolean(string='AI Coaching Enabled', readonly=True)
-
-    # Skills & development fields
-    skill_count = fields.Integer(string='Skills', readonly=True)
-    avg_skill_proficiency = fields.Float(string='Avg. Proficiency', readonly=True)
-    skills_matrix_data = fields.Text(string='Skills Matrix Data', readonly=True)
-    active_development_plan_id = fields.Many2one('hr.development.plan', string='Active Plan', readonly=True)
-    earned_certification_count = fields.Integer(string='Certifications', readonly=True)
-    is_mentor = fields.Boolean(string='Available as Mentor', readonly=True)
-    mentoring_capacity = fields.Integer(string='Mentoring Capacity', readonly=True)
-    career_path_id = fields.Many2one('hr.career.path', string='Career Path', readonly=True)
-    career_goals = fields.Html(string='Career Goals', readonly=True)
+# NOTE ON ORDER: HREmployee comes FIRST and HREmployeePublic LAST, and that is
+# load-bearing, not tidiness.
+#
+# hr.employee.public is a SQL VIEW, rebuilt by its init() from the columns of
+# hr_employee. Odoo initialises a module's models ONE AT A TIME in definition
+# order (registry.init_models: `for model in models: model._auto_init();
+# model.init()`), so declaring the public model first builds the view before
+# hr_employee has the column it selects:
+#
+#     psycopg2.errors.UndefinedColumn: column e.branch_id does not exist
+#
+# Invisible on any database where the column already exists from an earlier
+# install — which was every one of them until the golden template was built
+# from nothing (SAAS H3). Stock Odoo avoids it by keeping the public model in
+# its own later-imported file; this module keeps both here, so the order of
+# the two classes IS the fix. Do not move them.
 
 
 class HREmployee(models.Model):
@@ -928,3 +900,49 @@ Coaching Priority: {context.get('coaching_priority', 'N/A')}
             result['team_members'] = team_data
 
         return result
+
+
+class HREmployeePublic(models.Model):
+    _inherit = 'hr.employee.public'
+
+    # BFSI fields exposed on public profile
+    branch_id = fields.Many2one(
+        'bfsi.branch',
+        string='Branch',
+        readonly=True
+    )
+
+    banker_type = fields.Selection([
+        ('rm', 'Relationship Manager'),
+        ('branch_manager', 'Branch Manager'),
+        ('regional_manager', 'Regional Manager'),
+        ('telesales', 'Telesales Agent'),
+        ('field_sales', 'Field Sales Officer'),
+        ('loan_officer', 'Loan Officer'),
+        ('insurance_advisor', 'Insurance Advisor'),
+        ('wealth_manager', 'Wealth Manager'),
+        ('banker', 'Banker (General)')
+    ], string='Banker Type', readonly=True)
+
+    current_month_rank = fields.Integer(string='Current Month Rank', readonly=True)
+    previous_month_rank = fields.Integer(string='Previous Month Rank', readonly=True)
+    rank_movement = fields.Integer(string='Rank Movement', readonly=True)
+    latest_overall_score = fields.Float(string='Latest Performance Score', readonly=True)
+    coaching_priority = fields.Selection([
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+        ('high', 'High'),
+        ('critical', 'Critical')
+    ], string='Coaching Priority', readonly=True)
+    ai_coaching_enabled = fields.Boolean(string='AI Coaching Enabled', readonly=True)
+
+    # Skills & development fields
+    skill_count = fields.Integer(string='Skills', readonly=True)
+    avg_skill_proficiency = fields.Float(string='Avg. Proficiency', readonly=True)
+    skills_matrix_data = fields.Text(string='Skills Matrix Data', readonly=True)
+    active_development_plan_id = fields.Many2one('hr.development.plan', string='Active Plan', readonly=True)
+    earned_certification_count = fields.Integer(string='Certifications', readonly=True)
+    is_mentor = fields.Boolean(string='Available as Mentor', readonly=True)
+    mentoring_capacity = fields.Integer(string='Mentoring Capacity', readonly=True)
+    career_path_id = fields.Many2one('hr.career.path', string='Career Path', readonly=True)
+    career_goals = fields.Html(string='Career Goals', readonly=True)
