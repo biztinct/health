@@ -45,7 +45,7 @@
         - Modern pill-shaped badges for healthcare workflows
         - Custom navbar and control panel styling
     ''',
-    'version': '19.0.5.1.1',
+    'version': '19.0.5.1.2',
     'category': 'Themes/Backend',
     'license': 'LGPL-3',
     'author': 'VAFHS Healthcare System - Vietnam-Australia Family Health Service',
@@ -53,6 +53,14 @@
     'depends': [
         'web',
         'base',
+        # views/webclient_templates.xml inherits `auth_signup.login` to relabel
+        # the sign-in field. On a database that already has auth_signup (every
+        # one this module had ever been installed on, where `website` pulls it
+        # in) the missing dependency is invisible; on a FRESH install the data
+        # file runs before auth_signup and the whole registry dies with
+        # "External ID not found in the system: auth_signup.login".
+        # Found building the golden template, SAAS H3.
+        'auth_signup',
     ],
     'data': [
         'security/ir.model.access.csv',
