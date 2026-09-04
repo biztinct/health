@@ -627,3 +627,35 @@ in new surfaces. Chrome validation mandatory before a phase reports done.
   is never legitimate. **Found by the numbered test that asked the question literally instead of
   restating the assumption**, which is the whole argument for writing tests that try the thing
   rather than tests that agree with the design.
+- **H55** (H3) ⚠ **`dbfilter = ^%d$` BREAKS EVERY HttpCase ON THIS BOX, AND IT LOOKS LIKE BROKEN
+  SECURITY RATHER THAN A BROKEN HARNESS.** An HttpCase calls `http://127.0.0.1:<port>`; the
+  application reads the first label of that Host — `127` — finds no such database, and answers 404
+  from a request that never reached the app. Three of `health_fieldservice`'s SH1 security tests
+  "failed" this way, and their assertion message ("neither /mail/data nor /mail/thread/data exists
+  on this build — the exploit probe proved nothing") is a test that was written carefully enough to
+  say it could not tell. **The giveaway is in the log: the request line names the database `?`
+  instead of the real one.** `carejiox-deploy` now adds `--db-filter=^$DB$` whenever `-t` is given —
+  the same pin H32 required for a clone, now required for every run. 5 failed → 0 failed on the same
+  tags. **Any harness that reaches the application over HTTP has to name the database from now on.**
+- **H56** (H3) **The harness fix then uncovered a live clinical defect that had been sitting there
+  since the vocabulary conversion.** With the 404s gone, ten `health_emar` tests still errored on
+  `KeyError: 'route'` — `health.medication.order.route` became `route_id`, and
+  `ACTIVATE_REQUIRED_FIELDS` was missed. **Activating any medication order on the live database
+  raised KeyError.** Same silence as H40, one layer up: XML data files were hidden by
+  `noupdate="1"`, this was hidden by tests that had not been run since the conversion. Fixed (a
+  Many2one is falsy when unset, so the check means what it always meant) and proven by the ten
+  tests. **The lesson is about coverage, not about this bug**: a rename that a sweep of DATA files
+  cannot see, and that only a test run can, needs the test run — and this phase is the first thing
+  to have run health_emar's suite since the conversion shipped.
+- **H57** (H3) **The never-list is not achievable as drafted: `health_learn` and
+  `health_cms_coverage` both hard-depend on `health_web_leads`.** So the golden template HAS the
+  lead funnel — one customer's marketing-site integration — because Odoo pulls a declared dependency
+  in whatever the never-list says. `health_migration` and `health_catchment_backfill` were excluded
+  cleanly. **H4 has to either break those two dependencies or accept the funnel in every tenant**,
+  and the same trap applies to anything else added to the list later: a never-list is a statement
+  about the dependency GRAPH, not about a set of names. The wider module diff is also not the
+  never-list: the master carries 24 modules the template does not (`stock`, `purchase`,
+  `sale_management`, `base_automation`, **`l10n_vn`**, `theme_default` …) because they are stock
+  apps nothing in the product's own set depends on, and 6 the template has that the master lacks.
+  **The definitive tenant module set is H4's to fix**, and `l10n_vn` belongs to the same decision as
+  the chart of accounts (H52).

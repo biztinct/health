@@ -194,7 +194,15 @@ cd addons && scp -qr health_base VietUcUAT:/tmp/
 ssh VietUcUAT 'carejiox-deploy -d -m health_base'            # copy, upgrade, restart
 ssh VietUcUAT 'carejiox-deploy -s'                           # just restart
 ssh VietUcUAT 'carejiox-deploy -D carejiox_template -m health_base'   # the template
+ssh VietUcUAT 'carejiox-deploy -m health_base -t /health_base'        # with tests
 ```
+
+**Tests must name the database, and the wrapper now does it for you.** Routing
+is by hostname, and a browser-style test calls `127.0.0.1` — which the
+application reads as a database called `127`, so every request comes back 404
+from somewhere that never reached the app. It looks exactly like a broken
+feature. If you ever run `odoo-bin` by hand with `--test-enable`, pass
+`--db-filter=^<database>$` with it.
 
 **The addons folder is shared by every database on this machine.** Copying files
 changes the code under all of them at once; `-m`/`-i` only *migrates* the one
