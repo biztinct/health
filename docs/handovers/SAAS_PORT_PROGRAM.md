@@ -1,7 +1,7 @@
 # SAAS PORT program — the tenant platform and the Access home, as generic `biz_*` cores in health19
 
-Status: **H0 DONE, H1 DONE, H2a DONE 2026-09-04 (live). H2b REHEARSED on a clone
-2026-09-04 — awaiting the owner's go for the live uninstall.** Spec that started it:
+Status: **H0 DONE, H1 DONE, H2a DONE, H2b DONE 2026-09-04 (live — the previous
+access application is retired). H3 next.** Spec that started it:
 `docs/handovers/PORT_FROM_PAYOBOOK_TENANCY_AND_ACCESS.md` (read it; its §1–§3 are the
 inventory of what exists on Payobook and why it cannot be copied verbatim). Payobook's own
 programme docs sit in `docs/handovers/from_payobook/` — FLEET_PROGRAM.md (rails R1–R8, ledger
@@ -49,7 +49,7 @@ customer database or a genuine scope decision.
 | **H0 Verify** | §5 checklist of the spec against the live servers | DONE — facts below |
 | **H1 Kit + Access core** | `biz_kit` (tokens, primitives, Lucide `ic()`, back chip, soft registry keys) + `biz_access` (roles-as-bundles, 4 lenses, builder, "See it as…", hand-overs) as product-neutral modules with a **rail provider** seam instead of the `pb.sidebar.item` inherit; installed and Chrome-validated on a scratch clone `vietuat_h1`; NOT on the live DB | **DONE** — `SAAS_H1_KIT_ACCESS_CORE.md`; 158 tests green, clone dropped |
 | **H2a `health_access` overlay (additive, live)** | cms.sidebar rail provider (bundle lane BESIDE the legacy lane, read as an OR), clinic ability→group catalogue + the 9 roles as bundles with xml-ids, native top-bar hiding + debug block (Rail A), People lens gains "Add a person" and the four person actions, rail item under ADMIN. Nothing uninstalled, nothing removed | **DONE 2026-09-04** — `SAAS_H2A_HEALTH_ACCESS_OVERLAY.md`; 233 tests green, per-user diff **0 lost** on the clone AND on live, deployed to `vietuat` |
-| **H2b retire `access_roles` + `health_user_admin`** | re-point every code reference, one gate on the left menu, the JOB as its own field, the clinic-administrator group re-homed, the left menu given the screens only the app bar reached, both apps uninstalled. H16 answered by the owner: **the bar above the screen is the platform administrator's alone** | **rehearsed, awaiting go** — `SAAS_H2B_RETIRE_ACCESS_ROLES.md` |
+| **H2b retire `access_roles` + `health_user_admin`** | re-point every code reference, one gate on the left menu, the JOB as its own field, the clinic-administrator group re-homed, the left menu given the screens only the app bar reached, both apps uninstalled. H16 answered by the owner: **the bar above the screen is the platform administrator's alone** | **DONE 2026-09-04** — `SAAS_H2B_RETIRE_ACCESS_ROLES.md`; both apps uninstalled live, 27 tables dropped, 0 roles lost, 0 job flags changed across 73 colleagues |
 | **H3 Server plumbing** | `dbfilter = ^%d$`, carejiox.com apex + wildcard, nginx blocks (`/web/database` 404, `/status`), per-host HTTP-01 certs, golden template DB, scripts + sudoers, backups dir, stale-DB and shadowed-module cleanup, resize runbook | |
 | **H4 `biz_tenancy` + `biz_tenants` + `health_tenancy`** | the tenant agent + the cockpit, parameterised (brand, domain, prefix, never-list, xmlids, meter registry, plan seeds, feature catalogue, status components); pilot tenant `hhh` | may split 4a/4b |
 | **H5 Validation** | every FLEET live check re-run on the pilot, Chrome-driven | |
@@ -393,6 +393,29 @@ in new surfaces. Chrome validation mandatory before a phase reports done.
   clone passes `--db-filter=^<clone>$`.** And the only way to know which failures are yours is a
   BASELINE run of the same tags on an untouched clone — 25 failed / 10 errors of 810 here, before a
   line of this phase was applied.
+- **H33** (H2b live, 2026-09-04) **The rehearsal predicted the live run exactly, to the row.** Same
+  migration counts (2 abilities, 3 roles classified, 68 jobs, 9 administrators moved, 4 roles given
+  "build reports" and `dhanoi` the permission behind it, 10 entries gated, 11 switched off), same
+  uninstall measurements (1110→1083 tables, 260 external ids to zero, four orphan settings rows,
+  zero orphaned views/crons/menus), and the same two people in the before/after diff. **That is what
+  a rehearsal on a full clone of the real database buys**, and it is why the clone is dumped from
+  the live database rather than from a template: the numbers that mattered here — 68, 9, 1, 46 —
+  are all facts about this clinic's data, and not one of them could have been predicted from code.
+- **H34** (H2b live) **`vietuat-deploy` gained `-x <script>`, because the recipe for the one thing
+  it could not do was "call `service odoo-server` by hand".** Uninstalling a module rewrites the
+  registry underneath every worker, so it has to run with the service down — and every runbook that
+  said so was teaching people to reach past the wrapper. `-x` runs a python file in `odoo-bin shell`
+  inside the wrapper's own lock, with the service stopped and started by the wrapper, after any
+  `-m`/`-i` upgrade in the same call and SKIPPED if that upgrade failed. Its stdout is shown rather
+  than swallowed. **A rule that has to be broken "just this once" is a rule that will be broken
+  twice**; the fix is to give the wrapper the missing verb.
+- **H35** (H2b live) **Two facts about this box that a live check has to plan around.** The public
+  host was unreachable from the operator's machine while being perfectly healthy from the server
+  (`curl` from inside: 200 over HTTPS through nginx; from outside: connection timed out) — so the
+  Chrome validation ran over an SSH tunnel to 8069, which is the same live database and the same
+  registry, and the report says so rather than claiming a check it did not make. And `dbfilter =
+  ^vietuat$` means a tunnel to 8069 resolves to the live database with no extra argument, which is
+  convenient here and is the same fact that made H32 dangerous on a clone.
 - **H21** (H2a) **The top-bar override costs nothing measurable.** Measured on the clone over six
   real users: `_visible_menu_ids` 12–57 ms with the rule and 14–60 ms without (the difference is
   inside the noise), `load_menus` 25–57 ms end to end. The `ormcache` on the permission set plus the
