@@ -20,17 +20,26 @@
 #   vietuat-deploy -i biz_kit,biz_access -d   # install modules not on the DB yet
 #   vietuat-deploy -i health_access -m health_cms_sidebar -d
 #   vietuat-deploy -s                         # just restart, no upgrade
+#   vietuat-deploy -x /tmp/uninstall.py       # run a shell script with the
+#                                             # service down, then bring it back
 #
 # OPTIONS
 #   -m  comma-separated module list to upgrade (-u)
 #   -i  comma-separated module list to INSTALL (-i) — for a module the database
 #       does not have yet. May be given with or without -m; one of the two is
-#       required unless -s.
+#       required unless -s or -x.
 #   -t  --test-tags value; implies --test-enable
 #   -d  copy modules from /tmp/<module> into the addons dir first — every module
 #       named on -m AND -i, because a first install has to be copied too and
 #       forgetting one of the two lists is a run that installs yesterday's code
 #   -s  skip the upgrade, only stop/start
+#   -x  a python file to run in `odoo-bin shell`, WITH THE SERVICE STOPPED and
+#       started again afterwards, inside this same lock. It exists so that the
+#       one thing this wrapper could not do — uninstalling a module, which
+#       rewrites the registry underneath every worker — stops being a reason to
+#       reach past it and call `service odoo-server` by hand. Its stdout is
+#       shown rather than swallowed: a script run this way is a script somebody
+#       is watching. Runs AFTER any -m/-i upgrade in the same invocation.
 #   -w  lock wait in seconds (default 3600)
 #
 # EXIT CODE is odoo-bin's, so `|| echo FAILED` works. The service is restarted
@@ -39,26 +48,39 @@
 set -uo pipefail
 
 MODULES=""; INSTALL=""; TESTTAGS=""; DO_DEPLOY=0; SKIP_UPGRADE=0; LOCK_WAIT=3600
+SHELLFILE=""
 ADDONS=/odoo/odoo-server/addons
 CONF=/etc/odoo-server.conf
 DB=vietuat
 LOCK=/tmp/vietuat-deploy.lock
 
-while getopts "m:i:t:w:ds" opt; do
+while getopts "m:i:t:w:x:ds" opt; do
   case "$opt" in
     m) MODULES="$OPTARG" ;;
     i) INSTALL="$OPTARG" ;;
     t) TESTTAGS="$OPTARG" ;;
     w) LOCK_WAIT="$OPTARG" ;;
+    x) SHELLFILE="$OPTARG" ;;
     d) DO_DEPLOY=1 ;;
     s) SKIP_UPGRADE=1 ;;
     *) echo "see the header of $0 for usage" >&2; exit 2 ;;
   esac
 done
 
-if [ "$SKIP_UPGRADE" -eq 0 ] && [ -z "$MODULES" ] && [ -z "$INSTALL" ]; then
-  echo "vietuat-deploy: -m <modules> or -i <modules> is required (or -s to just restart)" >&2
+if [ -n "$SHELLFILE" ] && [ ! -r "$SHELLFILE" ]; then
+  echo "vietuat-deploy: cannot read $SHELLFILE" >&2
   exit 2
+fi
+
+if [ "$SKIP_UPGRADE" -eq 0 ] && [ -z "$MODULES" ] && [ -z "$INSTALL" ] \
+   && [ -z "$SHELLFILE" ]; then
+  echo "vietuat-deploy: -m <modules>, -i <modules> or -x <script> is required (or -s to just restart)" >&2
+  exit 2
+fi
+
+# -x on its own is not an upgrade; do not build odoo-bin upgrade args for it.
+if [ -n "$SHELLFILE" ] && [ -z "$MODULES" ] && [ -z "$INSTALL" ]; then
+  SKIP_UPGRADE=1
 fi
 
 run() {
@@ -110,6 +132,22 @@ run() {
     echo "==> odoo-bin exit=$rc"
   fi
 
+  # THE SERVICE IS STILL DOWN HERE, WHICH IS THE POINT. A script that rewrites
+  # the registry — an uninstall, above all — must not run against a database
+  # two live workers are serving from a registry that is about to stop being
+  # true. Its output is NOT swallowed: this is the one thing the wrapper runs
+  # that somebody is reading line by line.
+  if [ -n "$SHELLFILE" ] && [ "$rc" -eq 0 ]; then
+    echo "==> running $SHELLFILE in an odoo shell (service down)"
+    sudo su - odoo -s /bin/bash -c \
+      "/odoo/odoo-server/odoo-bin shell -c $CONF -d $DB --no-http \
+        --logfile=/var/log/odoo/odoo-shell.log < $SHELLFILE"
+    rc=$?
+    echo "==> shell exit=$rc"
+  elif [ -n "$SHELLFILE" ]; then
+    echo "==> SKIPPING $SHELLFILE — the upgrade before it failed (exit=$rc)"
+  fi
+
   echo "==> starting odoo"
   sudo service odoo-server start >/dev/null 2>&1
   sleep 14
@@ -128,7 +166,7 @@ run() {
 echo "==> waiting for the deploy lock (up to ${LOCK_WAIT}s)"
 flock -w "$LOCK_WAIT" "$LOCK" bash -c "$(declare -f run); MODULES='$MODULES' INSTALL='$INSTALL' \
   TESTTAGS='$TESTTAGS' DO_DEPLOY=$DO_DEPLOY SKIP_UPGRADE=$SKIP_UPGRADE ADDONS='$ADDONS' \
-  CONF='$CONF' DB='$DB' run"
+  CONF='$CONF' DB='$DB' SHELLFILE='$SHELLFILE' run"
 RC=$?
 [ $RC -eq 1 ] && echo "==> NOTE: exit 1 with tests enabled usually means a test failed."
 exit $RC
