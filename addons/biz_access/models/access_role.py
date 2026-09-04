@@ -119,6 +119,15 @@ class BizAccessRole(models.Model):
              'whole top bar, whatever their other roles hide — holding more '
              'never shows less.')
 
+    #: WHETHER THE LIST ABOVE IS BEING READ AT ALL. Where a product has put the
+    #: top bar in administrator-only mode, every role's list is inert — the bar
+    #: shows nobody but the platform administrator anything to hide. A tab full
+    #: of rows that decide nothing, with no word about it, is a screen telling
+    #: somebody a lie by omission, so the form says so in one line.
+    topbar_inert = fields.Boolean(
+        string='The top-bar list is not being used',
+        compute='_compute_topbar_inert')
+
     #: Not stored, and deliberately so: a count of holders that is written down
     #: is a count that is wrong the moment somebody is granted the group by any
     #: other route, and there are several other routes.
@@ -132,6 +141,13 @@ class BizAccessRole(models.Model):
         'rather than adding a second name for the same thing.')
 
     # ---------------------------------------------------------------- computes
+    def _compute_topbar_inert(self):
+        """Read once per call, never per row: it is one setting for the whole
+        database and reading it nine times would be nine identical queries."""
+        inert = self.env['ir.ui.menu']._biz_access_topbar_mode() == 'admin_only'
+        for rec in self:
+            rec.topbar_inert = inert
+
     @api.depends('ability_ids', 'ability_ids.group_ids')
     def _compute_group_ids(self):
         """What the ticked abilities add up to — stored, so it can be searched

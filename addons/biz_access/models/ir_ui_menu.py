@@ -49,6 +49,19 @@ the box out of Settings on the strength of it would be absurd. And a menu that
 arrives with a module installed tomorrow is visible by default, because a role
 can only name what existed when somebody wrote it down.
 
+THE SECOND MODE, AND WHY A PRODUCT WOULD WANT IT. Everything above describes a
+bar that is CURATED role by role. A product whose own left menu is the whole of
+its navigation does not want a curated second bar; it wants no second bar at
+all. `biz_access.topbar_mode = admin_only` says exactly that: the framework's
+bar belongs to the platform administrator, and everybody else keeps the one
+home entry the product names and nothing else above their left menu.
+
+That is subtraction, and subtraction has a floor. NOBODY IS EVER LEFT WITH AN
+EMPTY BAR — if the setting names nothing, or names nothing this person could
+see anyway, the rule keeps the first entry they could see and says so in the
+log. A tidy shell is worth having; a colleague signing in to a blank screen
+never is.
+
 SECURITY, STATED PLAINLY. Hiding a menu is not a permission. Everything behind
 the menu is still governed by `ir.model.access` and the record rules, exactly as
 before. This makes a product's shell coherent; it does not make it safe, and
@@ -59,7 +72,12 @@ import logging
 
 from odoo import api, models, tools
 
+from .access_common import DEFAULTS, param, param_raw
+
 _logger = logging.getLogger(__name__)
+
+#: The mode in which the whole bar belongs to the platform administrator.
+TOPBAR_ADMIN_ONLY = 'admin_only'
 
 
 class IrUiMenu(models.Model):
@@ -67,12 +85,12 @@ class IrUiMenu(models.Model):
 
     @api.model
     def _visible_menu_ids(self, debug=False):
-        """The framework's answer, minus what every role this person holds
-        hides.
+        """The framework's answer, minus what this product's rule takes off it.
 
         `super()` first and always: this subtracts, it never adds. A menu that
         the framework has already decided this person cannot see does not come
-        back because a role forgot to mention it.
+        back because a role forgot to mention it — or because a setting named
+        it as the home.
         """
         visible = super()._visible_menu_ids(debug=debug)
         # THE ONE WAY TO ASK WHAT THIS RULE IS DOING. A before-and-after report
@@ -83,10 +101,95 @@ class IrUiMenu(models.Model):
         # ever sets this; it is read only from a report and from a test.
         if self.env.context.get('biz_access_no_menu_rule'):
             return visible
+        if self._biz_access_topbar_mode() == TOPBAR_ADMIN_ONLY:
+            return self._biz_access_home_only(visible)
         hidden = self._biz_access_hidden_menu_ids()
         if not hidden:
             return visible
         return visible - set(hidden)
+
+    # -------------------------------------------------- administrator-only
+    @api.model
+    def _biz_access_topbar_mode(self):
+        """`by_role` or `admin_only`. Anything unrecognised means `by_role`.
+
+        An unreadable setting must not be able to take the bar away: the mode
+        that removes things is opted INTO by name and never arrived at by a
+        typo.
+        """
+        mode = (param(self.env, 'biz_access.topbar_mode') or '').strip().lower()
+        return TOPBAR_ADMIN_ONLY if mode == TOPBAR_ADMIN_ONLY else 'by_role'
+
+    @api.model
+    def _biz_access_home_only(self, visible):
+        """Everything the framework would draw, cut down to the home entries.
+
+        THE ADMINISTRATOR IS NEVER CUT. Same rule as the role lists above and
+        for the same reason: this is a tidying rule for a product's shell, not
+        a security boundary, and locking the person who owns the box out of
+        Settings on the strength of it would be absurd.
+
+        ROOTS ONLY, DELIBERATELY. The children of the home entry are not added
+        back: the product draws its own navigation underneath, and a bar that
+        re-listed it would be the second answer to "where do I go" that this
+        mode exists to remove.
+        """
+        user = self.env.user
+        if not user or self._biz_access_is_untouchable(user):
+            return visible
+        home = self._biz_access_home_menu_ids() & set(visible)
+        if home:
+            return frozenset(home)
+        # NOBODY IS LEFT WITH NOTHING. Either the setting named no entry, or it
+        # named entries this person cannot see anyway; keeping the first one
+        # they could see is the only answer that is both honest and openable.
+        fallback = self._biz_access_first_root(visible)
+        _logger.warning(
+            'biz_access: the top bar is in administrator-only mode and '
+            '`biz_access.topbar_home_xmlids` names no entry %s can open, so '
+            'they keep "%s" and nothing else. Set that parameter to the menu '
+            'this product calls home.',
+            user.login or user.id,
+            self.sudo().browse(sorted(fallback)[:1]).name if fallback else '—')
+        return frozenset(fallback)
+
+    @api.model
+    def _biz_access_home_menu_ids(self):
+        """The menu ids named by `biz_access.topbar_home_xmlids`.
+
+        Read through `param_raw` (F24) so that a value somebody has CLEARED on
+        purpose reads as empty rather than as the shipped default — the two
+        mean different things here, and only one of them means "work one out".
+        """
+        raw = param_raw(self.env, 'biz_access.topbar_home_xmlids')
+        if raw is None:
+            raw = DEFAULTS.get('biz_access.topbar_home_xmlids', '')
+        ids = set()
+        for xmlid in [x.strip() for x in (raw or '').split(',') if x.strip()]:
+            menu = self.env.ref(xmlid, raise_if_not_found=False)
+            if menu and menu._name == 'ir.ui.menu':
+                ids.add(menu.id)
+            else:
+                _logger.warning(
+                    'biz_access: `biz_access.topbar_home_xmlids` names "%s", '
+                    'which is not a menu on this database — ignored.', xmlid)
+        return ids
+
+    @api.model
+    def _biz_access_first_root(self, visible):
+        """One entry: the first ROOT of what this person could see anyway.
+
+        Sorted the way the bar itself is sorted (`sequence, id`), so "the
+        first one" means the same thing here as it does on the screen.
+        """
+        if not visible:
+            return set()
+        roots = self.sudo().with_context({}).search(
+            [('id', 'in', list(visible)), ('parent_id', '=', False)],
+            order='sequence, id', limit=1)
+        if roots:
+            return {roots.id}
+        return {sorted(visible)[0]}
 
     # ------------------------------------------------------------------ the rule
     @api.model

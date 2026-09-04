@@ -177,7 +177,29 @@ DEFAULTS = {
     #: the framework's own behaviour back; anything else, including this row
     #: being absent, means the block is on. See `models/ir_http.py`.
     'biz_access.debug_block': 'on',
+    #: HOW THE TOP BAR IS DECIDED.
+    #:
+    #: `by_role` — the default and the general case: every role names the
+    #: applications the people who hold it do not see, and the lists are
+    #: reconciled by intersection (`models/ir_ui_menu.py`).
+    #:
+    #: `admin_only` — the whole bar belongs to the platform administrator and
+    #: nobody else sees anything on it but the home named below. A product
+    #: whose own left menu IS the navigation chooses this: two menus over one
+    #: screen is two answers to "where do I go", and the second one was never
+    #: curated by anybody.
+    'biz_access.topbar_mode': 'by_role',
+    #: In `admin_only`, the top-level entries everybody keeps — comma-separated
+    #: menu xml-ids. ROOTS ONLY: what is inside them is the product's own
+    #: navigation to draw, not this bar's. Empty means "work one out", never
+    #: "show nobody anything" — see `_biz_access_home_menu_ids`.
+    'biz_access.topbar_home_xmlids': '',
 }
+
+#: The settings above that the menu rule reads. Writing one of them has to
+#: clear the cached answer, or the bar goes on showing yesterday's decision
+#: until something else happens to clear it.
+TOPBAR_PARAM_KEYS = ('biz_access.topbar_mode', 'biz_access.topbar_home_xmlids')
 
 
 def param(env, key, default=None, defaults=None):
@@ -186,6 +208,21 @@ def param(env, key, default=None, defaults=None):
     if raw in (None, False, ''):
         raw = (DEFAULTS if defaults is None else defaults).get(key, default)
     return raw
+
+
+def param_raw(env, key):
+    """The row's own value, `None` when there is no row — F24.
+
+    `get_param` cannot tell "not set" from "deliberately empty": it answers
+    `False` for a missing key and its body ends in `or default`, so a value
+    somebody has cleared on purpose comes back as the default they cleared it
+    from. Any setting where EMPTY is a real answer has to read the row.
+    """
+    row = env['ir.config_parameter'].sudo().search(
+        [('key', '=', key)], limit=1)
+    if not row:
+        return None
+    return row.value or ''
 
 
 def param_int(env, key, default=0, defaults=None):

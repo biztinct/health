@@ -158,7 +158,14 @@
                     <notebook>
                         <page string="Top-bar screens it does not see"
                               name="hidden_menus">
-                            <p class="text-muted">
+                            <field name="topbar_inert" invisible="1"/>
+                            <div class="alert alert-info" role="status"
+                                 invisible="not topbar_inert">
+                                The bar above the screen is shown to the
+                                platform administrator only, so this list is
+                                not being used.
+                            </div>
+                            <p class="text-muted" invisible="topbar_inert">
                                 Name an application and everything inside it
                                 goes with it. Somebody who holds two roles keeps
                                 every screen either role leaves them — holding
