@@ -276,3 +276,44 @@ def log_lines_of_interest(lines, dbname, since, ignore=()):
         else:
             out['errors'].append(line)
     return out
+
+
+def log_lines_by_database(lines, dbnames, since, ignore=()):
+    """The same question, asked of MANY systems in ONE pass over the tail.
+
+    ⚠ THE SWEEP MUST READ THE LOG ONCE, NOT ONCE PER CUSTOMER (ledger F39).
+    `log_lines_of_interest` reads a twenty-megabyte tail to answer about ONE
+    system, which is right for a rollout's health gate — one system, once, at
+    the moment it matters. The alert sweep asks about every live customer plus
+    the platform's own system every quarter of an hour, and doing that one
+    database at a time is twenty megabytes of reading per customer per sweep on
+    a machine with two gigabytes of memory.
+
+    Same shape, same rule, same ignore list. Returns
+    `{dbname: {'errors': [...], 'ignored': [...]}}` with an entry for every
+    name asked about, so a system with nothing wrong answers an empty pair
+    rather than being missing.
+    """
+    wanted = set(dbnames or ())
+    out = {db: {'errors': [], 'ignored': []} for db in wanted}
+    if not wanted:
+        return out
+    since = str(since or '')[:19]
+    ignore = [i for i in (ignore or ()) if i]
+    for raw in lines or ():
+        line = raw.rstrip('\n')
+        parts = line.split(' ', 5)
+        if len(parts) < 6:
+            continue
+        stamp = ('%s %s' % (parts[0], parts[1]))[:19]
+        level, db = parts[3], parts[4]
+        if level not in ('ERROR', 'CRITICAL'):
+            continue
+        if db not in wanted:
+            continue
+        if since and stamp < since:
+            continue
+        low = line.lower()
+        key = 'ignored' if any(n in low for n in ignore) else 'errors'
+        out[db][key].append(line)
+    return out
