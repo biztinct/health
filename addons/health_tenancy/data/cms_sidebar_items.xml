@@ -52,4 +52,31 @@
         <field name="active" eval="False"/>
     </record>
 
+    <!-- ==================================================================
+         AN ENTRY NOBODY EVER SEES, AND IT EARNS ITS ROW.
+
+         When somebody follows an old link to a screen belonging to a part of
+         the product this clinic has not got, the server hands them a page
+         saying so instead. That page is a client action — and the CMS shell
+         only keeps its left menu for screens it RECOGNISES, out of the match
+         list this file feeds. Without a row naming it, the honest "not
+         switched on" page appeared with no navigation at all, which reads as a
+         broken system rather than as an answer.
+
+         So the tag is declared here on a row that is switched OFF and stays
+         off: the match list deliberately includes inactive entries (it answers
+         "is this screen part of the shell?", not "is this on the menu?"), and
+         an inactive row highlights nothing, which is right — the page belongs
+         to no menu entry.
+         ================================================================== -->
+    <record id="item_feature_off_shell" model="cms.sidebar.item">
+        <field name="name">Not switched on</field>
+        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <field name="sequence">99</field>
+        <field name="icon">fa fa-lock</field>
+        <field name="action_tag">biz_tenancy_feature_off</field>
+        <field name="match_action_tags">biz_tenancy_feature_off</field>
+        <field name="active" eval="False"/>
+    </record>
+
 </odoo>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<!-- ======================================================================
+     The page for a part of the product that is not switched on here.
+
+     Comments ruled with `=`, never a doubled hyphen: a double hyphen inside
+     an XML comment is not well-formed and takes the whole file with it, which
+     on a deploy is a module that refuses to install (ledger H67).
+
+     Every sentence is one expression. Nothing on this page names the
+     framework: the product's name comes from the brand setting, and a system
+     with no brand set reads "this system" (rail R12).
+     ====================================================================== -->
+<t t-name="biz_tenancy.FeatureOff">
+  <div class="bzk bzk-page bztn-off">
+
+    <div class="bztn-off-head">
+      <HubBackChip back="back"/>
+    </div>
+
+    <div class="bzk-panel bztn-off-card">
+      <div class="bztn-off-ic"><t t-out="ic('lock', 30)"/></div>
+
+      <div class="bztn-off-t" t-esc="headline"/>
+
+      <!-- ==================================================================
+           THE ONE CASE WHERE THIS PAGE IS A FAULT AND NOT AN ANSWER.
+           The settings the platform sent could not be read, so this system
+           closed every door rather than guessing which ones were paid for.
+           Saying "you have not bought this" here would be a confident wrong
+           answer, so it says what actually happened instead.
+           ================================================================== -->
+      <div class="bztn-off-s" t-if="unreadable">
+        This system could not read which parts of the product it has, so it has
+        closed them all until it is told again. Nothing has been lost. Please
+        tell whoever looks after this system.
+      </div>
+
+      <t t-else="">
+        <div class="bztn-off-s" t-if="blurb" t-esc="blurb"/>
+        <div class="bztn-off-s" t-else="">
+          This part of the product is not included here, so its screens are
+          closed. Nothing you have recorded has been removed.
+        </div>
+      </t>
+
+      <div class="bztn-off-ask">
+        <t t-if="supportEmail">
+          To ask about it, write to
+          <a t-att-href="mailto" t-esc="supportEmail"/>.
+        </t>
+        <t t-else="">
+          To ask about it, speak to whoever looks after this system.
+        </t>
+      </div>
+
+      <!-- ZERO DEAD ENDS. Somebody arriving here from a bookmark has no
+           breadcrumb to go back to, so there is always a way home. -->
+      <div class="bztn-off-acts">
+        <button class="bzk-btn bzk-btn--primary" t-on-click="goHome">
+          <t t-out="ic('home', 15)"/><span>Go to the main screen</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</t>
+
+</templates>

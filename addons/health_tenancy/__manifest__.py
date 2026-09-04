@@ -37,7 +37,7 @@ EVERYTHING HERE IS INERT WHERE THE COCKPIT IS ABSENT. The registrations are
 wrapped so that a customer's system — which has this module and not the cockpit —
 loads it, registers what it can, and carries on.
 """,
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Administration',
     'license': 'LGPL-3',
     'author': 'Biztinct',
@@ -50,6 +50,14 @@ loads it, registers what it can, and carries on.
     'data': [
         'data/cms_sidebar_items.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            # One line of glue: the platform link says "which parts of the
+            # product are switched on has changed", and this product's own
+            # left menu is asked to draw itself again (ledger F48).
+            'health_tenancy/static/src/js/tenancy_rail_bridge.js',
+        ],
+    },
     # Gates the two entries to the right roles and switches off any whose
     # action is not on this system. A hook rather than a `ref=` in the data
     # file, because the roles are created by another module's own hook and a

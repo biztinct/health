@@ -47,7 +47,31 @@ const EMPTY = {
     brand: "", release: "", release_notes: "", release_at: "",
     releases: [], notice: null, pushed_at: "",
     platform_url: "", support_email: "", is_platform: false,
+    // ⚠ A SIGNATURE, NOT A MAP (ledger F47). `apply()` replaces this object on
+    // every read, so a component watching a MAP of switches would see a new
+    // object once a minute and repaint the whole left menu for ever. One
+    // string that only changes when the answer changes is what is watched.
+    features_sig: "",
+    support_allowed: true,
+    support: null,
 };
+
+/**
+ * Fired when which parts of the product are switched on has CHANGED.
+ *
+ * ⚠ A BROWSER-SIDE REACTIVE CANNOT UPDATE A MENU THE SERVER DREW (ledger F48).
+ * The left menu is fetched once per page load, so no amount of watching state
+ * in here redraws it — something has to ask the menu to fetch itself again.
+ *
+ * THE NAME IS THIS MODULE'S OWN, and that is rail R11 rather than fussiness:
+ * this module is meant to be lifted into the next product, and the event a
+ * left menu listens for belongs to whoever wrote the left menu. The product's
+ * overlay listens for this and re-fires whatever its own menu answers to.
+ *
+ * NOT fired on the first read, deliberately — that answer is the one the page
+ * was already painted from.
+ */
+export const FEATURES_CHANGED = "BIZ_TENANCY:FEATURES_CHANGED";
 
 /** localStorage, but a private window is not an error. */
 function lsGet(key) {
@@ -81,10 +105,28 @@ export const tenancyService = {
         });
 
         let lastFetch = Date.now();
+        // Seeded from the page's own answer, so the first POLL cannot look
+        // like a change. Firing the reload on the first read would redraw the
+        // menu a minute after every sign-in, for nothing.
+        let lastFeatures = state.features_sig || "";
 
         function apply(data) {
             if (!data) { return; }
             Object.assign(state, EMPTY, data);
+            const sig = state.features_sig || "";
+            if (sig !== lastFeatures) {
+                const was = lastFeatures;
+                lastFeatures = sig;
+                // ⚠ THE SERVER DREW THE MENU, SO THE SERVER HAS TO DRAW IT
+                // AGAIN (ledger F48). This is the one line that makes a switch
+                // moved on the platform show up on a screen somebody is
+                // already looking at, without a page reload.
+                env.bus.trigger(FEATURES_CHANGED, { was, now: sig });
+                console.debug(
+                    "biz_tenancy: which parts of the product are switched on "
+                    + `changed ("${was}" -> "${sig}"); asked the menu to `
+                    + "redraw itself.");
+            }
         }
 
         async function refresh() {

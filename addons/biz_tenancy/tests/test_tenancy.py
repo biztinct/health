@@ -11,7 +11,8 @@ from odoo.tests import HttpCase, TransactionCase, tagged
 
 from odoo.addons.biz_tenancy.models.tenancy import (
     P_BRAND, P_FEATURES, P_NOTICE, P_NOTICE_FROM, P_NOTICE_KIND, P_NOTICE_TO,
-    P_RELEASE, P_RELEASES, P_SLUG, notice_phase, read_features, read_notice,
+    P_RELEASE, P_RELEASES, P_SLUG, P_SUPPORT_ALLOWED, features_signature,
+    notice_phase, read_feature_details, read_features, read_notice,
     read_releases,
 )
 
@@ -112,18 +113,60 @@ class TestReleaseRules(TransactionCase):
 
 @tagged('post_install', '-at_install')
 class TestFeatureSeam(TransactionCase):
-    """§3.7 — the seam the next phase reads. FAIL OPEN on absence, and on
-    damage fail open WITH THE REASON IN THE LOG (F53's lesson)."""
+    """SAAS H4c §3.4 — the two directions this fails in, and they differ.
+
+    ⚠ THE DAMAGED CASE CHANGED IN H4c, AND ON PURPOSE. H4a built the seam
+    failing OPEN on damage, which is the right instinct for a guard and the
+    wrong answer for this question: a settings value that is not readable means
+    "I do not know which parts this customer has bought", and answering "all of
+    them" hands out a product nobody may have paid for, silently, for as long
+    as the damage lasts. Absent still fails open — nobody has said anything
+    yet, and that is not damage. Both say which in the log (F53).
+    """
 
     def test_nothing_said_means_everything_is_switched_on(self):
         self.assertEqual(read_features(''), {})
+        self.assertEqual(read_feature_details('')['_state'], 'open')
 
-    def test_damage_means_everything_is_switched_on(self):
-        self.assertEqual(read_features('{{{'), {})
+    def test_damage_means_everything_is_switched_OFF(self):
+        got = read_features('{{{')
+        self.assertNotEqual(got, {},
+                            'an unreadable value must not read as "nothing '
+                            'is switched off"')
+        self.assertFalse(all(got.values()))
+        self.assertEqual(read_feature_details('{{{')['_state'], 'closed')
+
+    def test_the_wrong_shape_also_fails_closed(self):
+        self.assertEqual(read_feature_details('[1, 2]')['_state'], 'closed')
+        self.assertEqual(read_feature_details('"hello"')['_state'], 'closed')
 
     def test_the_short_form_and_the_long_form_are_both_accepted(self):
         got = read_features(json.dumps({'a': False, 'b': {'on': True}}))
         self.assertEqual(got, {'a': False, 'b': True})
+
+    def test_the_long_form_carries_the_words_the_customer_reads(self):
+        detail = read_feature_details(json.dumps(
+            {'telehealth': {'on': False, 'name': 'Telehealth',
+                            'blurb': 'Video visits.'}}))
+        self.assertEqual(detail['telehealth']['name'], 'Telehealth')
+        self.assertEqual(detail['telehealth']['blurb'], 'Video visits.')
+
+    def test_the_signature_moves_only_when_the_answer_moves(self):
+        """⚠ Ledger F47. The browser watches this string, not the map — a map
+        rebuilt on every poll is a new object every minute and would repaint
+        the whole left menu once a minute for ever."""
+        a = features_signature(read_feature_details(
+            json.dumps({'x': {'on': True}, 'y': {'on': False}})))
+        b = features_signature(read_feature_details(
+            json.dumps({'y': {'on': False}, 'x': {'on': True}})))
+        self.assertEqual(a, b, 'the same answer written differently')
+        c = features_signature(read_feature_details(
+            json.dumps({'x': {'on': False}, 'y': {'on': False}})))
+        self.assertNotEqual(a, c)
+
+    def test_the_signature_says_when_it_could_not_tell(self):
+        self.assertTrue(
+            features_signature(read_feature_details('{{{')).startswith('closed'))
 
 
 # =========================================================================
