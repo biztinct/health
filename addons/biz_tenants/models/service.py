@@ -51,7 +51,9 @@ from odoo.exceptions import AccessError, UserError
 from odoo.modules.registry import Registry
 from odoo.service import db as db_service
 
+from . import module_set as mset
 from . import tenants_common as common
+from .module_set import customer_module_set, module_set_rows
 from .provision_rules import (
     PROVISION_STEPS, STEP_KEYS, backup_verdict, check_slug, free_memory_mb,
     generated_password, human_bytes, memory_verdict, next_step, step_label,
@@ -733,6 +735,14 @@ class BizTenants(models.AbstractModel):
             for key, value in self._tenancy_values().items():
                 icp.set_param(key, value or '')
 
+            # WHICH PARTS OF THE PRODUCT THEY HAVE, from their first minute
+            # too. Written here rather than left to the absent-means-on rule,
+            # so that the switched-off page can say the part's NAME the very
+            # first time somebody meets it rather than a key nobody recognises.
+            icp.set_param(common.T_FEATURES,
+                          self._feature_settings_value(tenant))
+            say('Told them which parts of the product they have.')
+
             company = env['res.company'].browse(1)
             if company.exists():
                 vals = {'name': tenant.name}
@@ -1160,6 +1170,64 @@ class BizTenants(models.AbstractModel):
         return {'ok': True,
                 'final_backup': final.path if final else '',
                 'final_size': self._human(final.size) if final else ''}
+
+    @api.model
+    def reopen(self, tenant_id, confirm_slug):
+        """Build a closed customer's system again, on their own record.
+
+        ⚠ THE GAP THIS CLOSES, AND IT IS A DEAD END OF EXACTLY THE KIND H73
+        FORBIDS. Closing a customer down leaves their record holding their
+        short name — which the new-customer screen then refuses, because a
+        short name in use is a short name in use. So a customer whose system
+        had to be rebuilt (a bad restore, a corrected blank system, a move to
+        another machine) could be closed and never re-created, and the only
+        way forward was to go and edit the database.
+
+        THE SAME RECORD, NOT A NEW ONE, and that is the important half. Their
+        copies — including the final one taken when they were closed — hang off
+        this record, and so does every line of their log. A second record with
+        the same short name would put a customer's history in two places and
+        their address in one.
+
+        It refuses while anything with that name still exists on the machine,
+        because that is the one state where "build it again" would mean
+        "overwrite what is there".
+        """
+        self._require_platform_admin()
+        tenant = self._tenants().browse(int(tenant_id)).exists()
+        if not tenant:
+            raise UserError(self.env._("That customer is not on the list."))
+        if tenant.state != 'decommissioned':
+            raise UserError(self.env._(
+                '"%(name)s" has not been closed down (%(state)s), so there is '
+                'nothing to build again.',
+                name=tenant.name, state=tenant.state))
+        if (confirm_slug or '').strip().lower() != tenant.slug:
+            raise UserError(self.env._('Type "%s" to confirm.', tenant.slug))
+        if self._db_exists(tenant.slug):
+            raise UserError(self.env._(
+                'Something on this machine is still called "%s". Nothing was '
+                'changed — a system with that name has to be gone before '
+                'another can take it.', tenant.slug))
+        kept = tenant.backup_ids.filtered(lambda b: b.kind == 'final')[:1]
+        tenant.log('Being set up again from the blank system. The system they '
+                   'had was closed down%s.'
+                   % (' and its final copy is kept at %s' % kept.path
+                      if kept else ''), 'warn')
+        tenant.write({
+            'state': 'draft', 'provision_step': '', 'last_error': '',
+            'health_state': 'unknown', 'health_detail': '', 'http_status': 0,
+            'ping_ms': -1, 'cert_state': 'none', 'cert_expires_on': False,
+            'release_id': False, 'release_state': 'unknown',
+            'behind_count': 0, 'stale_count': 0, 'skipped_count': -1,
+            'db_size': 0, 'filestore_size': 0, 'module_count': 0,
+            'user_count': 0,
+        })
+        return {'ok': True, 'tenant': self._brief(tenant),
+                'kept_backup': kept.path if kept else '',
+                'message': ("%s is back at the start. Nothing has been copied "
+                            "yet — press Create and watch the six steps."
+                            % tenant.name)}
 
     # =====================================================================
     #  3. ONE CUSTOMER — the detail screen and its health reading
@@ -1628,6 +1696,73 @@ class BizTenants(models.AbstractModel):
         return ({n: d['have'] for n, d in master.items()},
                 self.env['biz.release'].sudo().browse())
 
+    # ---------------------------------------------------------------------
+    #  WHAT A CUSTOMER IS MADE OF
+    #
+    #  Computed from the product's own dependencies, never listed by hand
+    #  (`module_set.py` holds the rule). Read here, judged there.
+    # ---------------------------------------------------------------------
+    def _manifests(self):
+        """Every module this database has heard of, and what it declares.
+
+        READ FROM `ir.module.module`, NOT FROM DISK, and the reason is the one
+        thing that would otherwise be lost: the framework stores `auto_install`
+        as a plain boolean on the module and marks WHICH dependencies are the
+        triggers on the dependency row (`auto_install_required`). A module whose
+        manifest says `auto_install = ['sale_management', 'project_account']`
+        therefore survives the round trip exactly, which reading the boolean
+        alone would not.
+        """
+        out = {}
+        Dep = self.env['ir.module.module.dependency'].sudo()
+        deps = {}
+        for d in Dep.search([]):
+            deps.setdefault(d.module_id.id, []).append(
+                (d.name, bool(d.auto_install_required)))
+        for m in self.env['ir.module.module'].sudo().search([]):
+            rows = deps.get(m.id, [])
+            triggers = [n for n, req in rows if req]
+            out[m.name] = {
+                'depends': [n for n, _r in rows],
+                'auto_install': (triggers or True) if m.auto_install else False,
+            }
+        return out
+
+    def _module_set(self, master=None):
+        """The answer, computed. No screen vocabulary, no guards."""
+        master = master if master is not None else self._master_modules()
+        return customer_module_set(sorted(master), self._manifests())
+
+    @api.model
+    def module_set_report(self):
+        """What a customer's system is made of, and what is held back.
+
+        The "In step with master" screen's own first question, answered from
+        the product's dependencies rather than from anybody's memory. Every
+        held-back row carries its plain reason, which is what makes this a
+        screen somebody can argue with rather than a number to take on trust.
+        """
+        self._require_platform_admin()
+        master = self._master_modules()
+        answer = self._module_set(master)
+        labels = self._labels(master)
+        return {
+            'total': len(answer['modules']),
+            'master_total': len(master),
+            'seeds': len(answer['seeds']),
+            'prefixes': list(mset.product_prefixes()),
+            'extras': [{'module': n, 'label': labels.get(n, n)}
+                       for n in sorted(mset.extras())],
+            'followers': [
+                {'module': n, 'label': labels.get(n, n),
+                 'because': ', '.join(sorted(t))}
+                for n, t in sorted(answer['followers'].items())],
+            'held_back': module_set_rows(answer, labels),
+            'conflicts': [
+                {**c, 'label': labels.get(c['module'], c['module'])}
+                for c in answer['conflicts']],
+        }
+
     @api.model
     def sync_report(self):
         """Where everybody stands against the master. READ ONLY, everywhere."""
@@ -1665,6 +1800,11 @@ class BizTenants(models.AbstractModel):
             'never': [{'module': n, 'label': master.get(n, {}).get('label', n),
                        'reason': r}
                       for n, r in sorted(common.never_list().items())],
+            # WHAT A CUSTOMER IS MADE OF, on the same screen as what they are
+            # missing — because the second question is meaningless without the
+            # first. Computed here rather than fetched separately so the two
+            # halves of the screen can never disagree about the same master.
+            'module_set': self.module_set_report(),
             'rows': rows,
             # SAID ON THE SCREEN, in these words, so nobody has to read a
             # comment to know it: nothing installs on a schedule, ever.

@@ -3,6 +3,7 @@
 # overlay registers into them at ITS import time. Reading a registry at CALL
 # time rather than at import time is what makes the order stop mattering.
 from . import tenants_common
+from . import module_set
 from . import sync_rules
 from . import provision_rules
 from . import rollout_rules
@@ -11,6 +12,7 @@ from . import release
 from . import tenant
 from . import rollout
 from . import alert
+from . import feature
 from . import service
 # ⚠ THE TWO HALVES OF THE FACADE COME AFTER `service`, because they inherit the
 # model it declares. They are separate files rather than three thousand more
@@ -19,3 +21,5 @@ from . import service
 # there breaks a button two phases old (ledger F52).
 from . import rollout_service
 from . import alert_service
+from . import feature_service
+from . import support_service
