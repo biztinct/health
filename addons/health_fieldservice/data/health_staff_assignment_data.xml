@@ -22,21 +22,21 @@
     <!-- Medical Skills -->
     <record id="skill_general_medicine" model="health.staff.skill">
         <field name="name">General Medicine</field>
-        <field name="skill_category">medical</field>
+        <field name="skill_category_id" model="health.lookup.value" search="[('category_code', '=', 'staff_skill_category'), ('code', '=', 'medical')]"/>
         <field name="description">General medical examination and consultation</field>
         <field name="required_certification" eval="True"/>
     </record>
 
     <record id="skill_pediatrics" model="health.staff.skill">
         <field name="name">Pediatrics</field>
-        <field name="skill_category">medical</field>
+        <field name="skill_category_id" model="health.lookup.value" search="[('category_code', '=', 'staff_skill_category'), ('code', '=', 'medical')]"/>
         <field name="description">Specialized care for children and infants</field>
         <field name="required_certification" eval="True"/>
     </record>
 
     <record id="skill_cardiology" model="health.staff.skill">
         <field name="name">Cardiology</field>
-        <field name="skill_category">medical</field>
+        <field name="skill_category_id" model="health.lookup.value" search="[('category_code', '=', 'staff_skill_category'), ('code', '=', 'medical')]"/>
         <field name="description">Heart and cardiovascular system expertise</field>
         <field name="required_certification" eval="True"/>
     </record>
@@ -44,21 +44,21 @@
     <!-- Nursing Skills -->
     <record id="skill_wound_care" model="health.staff.skill">
         <field name="name">Wound Care</field>
-        <field name="skill_category">nursing</field>
+        <field name="skill_category_id" model="health.lookup.value" search="[('category_code', '=', 'staff_skill_category'), ('code', '=', 'nursing')]"/>
         <field name="description">Professional wound assessment and treatment</field>
         <field name="required_certification" eval="False"/>
     </record>
 
     <record id="skill_injection_administration" model="health.staff.skill">
         <field name="name">Injection Administration</field>
-        <field name="skill_category">nursing</field>
+        <field name="skill_category_id" model="health.lookup.value" search="[('category_code', '=', 'staff_skill_category'), ('code', '=', 'nursing')]"/>
         <field name="description">Safe administration of injections and vaccines</field>
         <field name="required_certification" eval="True"/>
     </record>
 
     <record id="skill_vital_signs" model="health.staff.skill">
         <field name="name">Vital Signs Monitoring</field>
-        <field name="skill_category">nursing</field>
+        <field name="skill_category_id" model="health.lookup.value" search="[('category_code', '=', 'staff_skill_category'), ('code', '=', 'nursing')]"/>
         <field name="description">Blood pressure, temperature, pulse monitoring</field>
         <field name="required_certification" eval="False"/>
     </record>
@@ -66,14 +66,14 @@
     <!-- Technical Skills -->
     <record id="skill_ecg" model="health.staff.skill">
         <field name="name">ECG/EKG</field>
-        <field name="skill_category">technical</field>
+        <field name="skill_category_id" model="health.lookup.value" search="[('category_code', '=', 'staff_skill_category'), ('code', '=', 'technical')]"/>
         <field name="description">Electrocardiogram operation and basic interpretation</field>
         <field name="required_certification" eval="True"/>
     </record>
 
     <record id="skill_ultrasound" model="health.staff.skill">
         <field name="name">Ultrasound</field>
-        <field name="skill_category">technical</field>
+        <field name="skill_category_id" model="health.lookup.value" search="[('category_code', '=', 'staff_skill_category'), ('code', '=', 'technical')]"/>
         <field name="description">Ultrasound examination and imaging</field>
         <field name="required_certification" eval="True"/>
     </record>
@@ -81,14 +81,14 @@
     <!-- Language Skills -->
     <record id="skill_vietnamese" model="health.staff.skill">
         <field name="name">Vietnamese (Native)</field>
-        <field name="skill_category">administrative</field>
+        <field name="skill_category_id" model="health.lookup.value" search="[('category_code', '=', 'staff_skill_category'), ('code', '=', 'administrative')]"/>
         <field name="description">Native Vietnamese language skills</field>
         <field name="required_certification" eval="False"/>
     </record>
 
     <record id="skill_english" model="health.staff.skill">
         <field name="name">English (Professional)</field>
-        <field name="skill_category">administrative</field>
+        <field name="skill_category_id" model="health.lookup.value" search="[('category_code', '=', 'staff_skill_category'), ('code', '=', 'administrative')]"/>
         <field name="description">Professional level English communication</field>
         <field name="required_certification" eval="False"/>
     </record>
@@ -96,14 +96,14 @@
     <!-- Soft Skills -->
     <record id="skill_elderly_care" model="health.staff.skill">
         <field name="name">Elderly Care</field>
-        <field name="skill_category">administrative</field>
+        <field name="skill_category_id" model="health.lookup.value" search="[('category_code', '=', 'staff_skill_category'), ('code', '=', 'administrative')]"/>
         <field name="description">Specialized approach for elderly patients</field>
         <field name="required_certification" eval="False"/>
     </record>
 
     <record id="skill_patient_communication" model="health.staff.skill">
         <field name="name">Patient Communication</field>
-        <field name="skill_category">administrative</field>
+        <field name="skill_category_id" model="health.lookup.value" search="[('category_code', '=', 'staff_skill_category'), ('code', '=', 'administrative')]"/>
         <field name="description">Excellent patient communication and empathy</field>
         <field name="required_certification" eval="False"/>
     </record>

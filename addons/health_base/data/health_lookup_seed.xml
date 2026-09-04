@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+      Seed the client-editable dropdown vocabularies BEFORE any data file that
+      names one of their values.
+
+      health_base's post_init_hook also calls this, and that is enough for
+      every module above it: by the time health_crm or health_forms load their
+      own data, health_base is fully installed. It is NOT enough for
+      health_base's OWN data files, which load before its post_init hook runs —
+      and those files resolve values like `symptom_category / respiratory`
+      with a search. Without this, a fresh install writes those pointers empty.
+
+      seed_lookup_values() is idempotent and never overwrites a client's edits,
+      so running it twice on an install costs one query per vocabulary and
+      changes nothing the second time. demo/health_demo_data.xml already calls
+      the same method for the same reason — this is the non-demo half of it,
+      which nobody needed until a database was built with demo data off.
+
+      MUST STAY FIRST in the manifest's `data` list.
+    -->
+    <function model="health.lookup.value" name="_seed_from_registry"/>
+</odoo>

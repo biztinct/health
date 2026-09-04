@@ -7,8 +7,8 @@
     <record id="lead_reason_preventive_care" model="health.lead.reason">
         <field name="name">Preventive Healthcare</field>
         <field name="code">PREV</field>
-        <field name="category">service_interest</field>
-        <field name="lead_type">both</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_category'), ('code', '=', 'service_interest')]"/>
+        <field name="lead_type_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_applies_to'), ('code', '=', 'both')]"/>
         <field name="sequence">10</field>
         <field name="description">Interest in preventive healthcare services</field>
         <field name="name_vietnamese">Chăm sóc sức khỏe dự phòng</field>
@@ -17,8 +17,8 @@
     <record id="lead_reason_chronic_care" model="health.lead.reason">
         <field name="name">Chronic Disease Management</field>
         <field name="code">CHRONIC</field>
-        <field name="category">service_interest</field>
-        <field name="lead_type">both</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_category'), ('code', '=', 'service_interest')]"/>
+        <field name="lead_type_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_applies_to'), ('code', '=', 'both')]"/>
         <field name="sequence">20</field>
         <field name="description">Need for chronic disease management services</field>
         <field name="name_vietnamese">Quản lý bệnh mãn tính</field>
@@ -27,8 +27,8 @@
     <record id="lead_reason_elderly_care" model="health.lead.reason">
         <field name="name">Elderly Care Services</field>
         <field name="code">ELDERLY</field>
-        <field name="category">service_interest</field>
-        <field name="lead_type">both</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_category'), ('code', '=', 'service_interest')]"/>
+        <field name="lead_type_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_applies_to'), ('code', '=', 'both')]"/>
         <field name="sequence">30</field>
         <field name="description">Interest in elderly care and support services</field>
         <field name="name_vietnamese">Chăm sóc người cao tuổi</field>
@@ -37,8 +37,8 @@
     <record id="lead_reason_rehabilitation" model="health.lead.reason">
         <field name="name">Rehabilitation Services</field>
         <field name="code">REHAB</field>
-        <field name="category">service_interest</field>
-        <field name="lead_type">both</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_category'), ('code', '=', 'service_interest')]"/>
+        <field name="lead_type_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_applies_to'), ('code', '=', 'both')]"/>
         <field name="sequence">40</field>
         <field name="description">Need for rehabilitation and recovery services</field>
         <field name="name_vietnamese">Dịch vụ phục hồi chức năng</field>
@@ -48,8 +48,8 @@
     <record id="lead_reason_doctor_referral" model="health.lead.reason">
         <field name="name">Doctor Referral</field>
         <field name="code">DOC_REF</field>
-        <field name="category">referral</field>
-        <field name="lead_type">both</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_category'), ('code', '=', 'referral')]"/>
+        <field name="lead_type_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_applies_to'), ('code', '=', 'both')]"/>
         <field name="sequence">50</field>
         <field name="description">Referred by a doctor or healthcare professional</field>
         <field name="name_vietnamese">Giới thiệu từ bác sĩ</field>
@@ -58,8 +58,8 @@
     <record id="lead_reason_patient_referral" model="health.lead.reason">
         <field name="name">Client Referral</field>
         <field name="code">PAT_REF</field>
-        <field name="category">referral</field>
-        <field name="lead_type">both</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_category'), ('code', '=', 'referral')]"/>
+        <field name="lead_type_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_applies_to'), ('code', '=', 'both')]"/>
         <field name="sequence">60</field>
         <field name="description">Referred by an existing client</field>
         <field name="name_vietnamese">Giới thiệu từ bệnh nhân</field>
@@ -68,8 +68,8 @@
     <record id="lead_reason_family_referral" model="health.lead.reason">
         <field name="name">Family/Friend Referral</field>
         <field name="code">FAM_REF</field>
-        <field name="category">referral</field>
-        <field name="lead_type">both</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_category'), ('code', '=', 'referral')]"/>
+        <field name="lead_type_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_applies_to'), ('code', '=', 'both')]"/>
         <field name="sequence">70</field>
         <field name="description">Referred by family member or friend</field>
         <field name="name_vietnamese">Giới thiệu từ gia đình/bạn bè</field>
@@ -79,8 +79,8 @@
     <record id="lead_reason_facebook_ad" model="health.lead.reason">
         <field name="name">Facebook Advertisement</field>
         <field name="code">FB_AD</field>
-        <field name="category">marketing</field>
-        <field name="lead_type">lead</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_category'), ('code', '=', 'marketing')]"/>
+        <field name="lead_type_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_applies_to'), ('code', '=', 'lead')]"/>
         <field name="sequence">80</field>
         <field name="description">Lead generated from Facebook advertising campaign</field>
         <field name="name_vietnamese">Quảng cáo Facebook</field>
@@ -89,8 +89,8 @@
     <record id="lead_reason_zalo_marketing" model="health.lead.reason">
         <field name="name">Zalo Marketing</field>
         <field name="code">ZALO</field>
-        <field name="category">marketing</field>
-        <field name="lead_type">lead</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_category'), ('code', '=', 'marketing')]"/>
+        <field name="lead_type_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_applies_to'), ('code', '=', 'lead')]"/>
         <field name="sequence">90</field>
         <field name="description">Lead generated from Zalo marketing activities</field>
         <field name="name_vietnamese">Marketing Zalo</field>
@@ -99,8 +99,8 @@
     <record id="lead_reason_health_fair" model="health.lead.reason">
         <field name="name">Health Fair/Event</field>
         <field name="code">FAIR</field>
-        <field name="category">event</field>
-        <field name="lead_type">lead</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_category'), ('code', '=', 'event')]"/>
+        <field name="lead_type_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_applies_to'), ('code', '=', 'lead')]"/>
         <field name="sequence">100</field>
         <field name="description">Lead generated from health fair or community event</field>
         <field name="name_vietnamese">Hội chợ sức khỏe</field>
@@ -110,8 +110,8 @@
     <record id="lead_reason_website_form" model="health.lead.reason">
         <field name="name">Website Contact Form</field>
         <field name="code">WEB_FORM</field>
-        <field name="category">website</field>
-        <field name="lead_type">lead</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_category'), ('code', '=', 'website')]"/>
+        <field name="lead_type_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_applies_to'), ('code', '=', 'lead')]"/>
         <field name="sequence">110</field>
         <field name="description">Lead submitted through website contact form</field>
         <field name="name_vietnamese">Form liên hệ website</field>
@@ -120,8 +120,8 @@
     <record id="lead_reason_online_booking" model="health.lead.reason">
         <field name="name">Online Booking Request</field>
         <field name="code">ONLINE</field>
-        <field name="category">website</field>
-        <field name="lead_type">opportunity</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_category'), ('code', '=', 'website')]"/>
+        <field name="lead_type_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_applies_to'), ('code', '=', 'opportunity')]"/>
         <field name="sequence">120</field>
         <field name="description">Booking request made through online platform</field>
         <field name="name_vietnamese">Đặt lịch trực tuyến</field>
@@ -131,8 +131,8 @@
     <record id="lead_reason_social_media" model="health.lead.reason">
         <field name="name">Social Media Inquiry</field>
         <field name="code">SOCIAL</field>
-        <field name="category">social_media</field>
-        <field name="lead_type">lead</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_category'), ('code', '=', 'social_media')]"/>
+        <field name="lead_type_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_applies_to'), ('code', '=', 'lead')]"/>
         <field name="sequence">130</field>
         <field name="description">Inquiry received through social media channels</field>
         <field name="name_vietnamese">Liên hệ mạng xã hội</field>
@@ -142,8 +142,8 @@
     <record id="lead_reason_urgent_need" model="health.lead.reason">
         <field name="name">Urgent Healthcare Need</field>
         <field name="code">URGENT</field>
-        <field name="category">emergency</field>
-        <field name="lead_type">opportunity</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_category'), ('code', '=', 'emergency')]"/>
+        <field name="lead_type_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_applies_to'), ('code', '=', 'opportunity')]"/>
         <field name="sequence">140</field>
         <field name="description">Urgent healthcare need requiring immediate service</field>
         <field name="name_vietnamese">Nhu cầu cấp thiết</field>
@@ -153,8 +153,8 @@
     <record id="lead_reason_follow_up_service" model="health.lead.reason">
         <field name="name">Follow-up Service Opportunity</field>
         <field name="code">FOLLOW_OP</field>
-        <field name="category">follow_up</field>
-        <field name="lead_type">opportunity</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_category'), ('code', '=', 'follow_up')]"/>
+        <field name="lead_type_id" model="health.lookup.value" search="[('category_code', '=', 'lead_reason_applies_to'), ('code', '=', 'opportunity')]"/>
         <field name="sequence">150</field>
         <field name="description">Follow-up service opportunity from existing client relationship</field>
         <field name="name_vietnamese">Cơ hội dịch vụ theo dõi</field>

@@ -9,7 +9,7 @@
         <field name="name_vi">Đánh giá dinh dưỡng (MNA-SF)</field>
         <field name="code">MNA_SF</field>
         <field name="version">1</field>
-        <field name="category">assessment</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'form_template_category'), ('code', '=', 'assessment')]"/>
         <field name="scoring_method">sum</field>
         <field name="score_vitals_type_id" ref="vitals_type_mna_sf_total"/>
         <field name="scoring_bands_json" eval="[

@@ -7,7 +7,7 @@
     <record id="contact_reason_general_inquiry" model="health.contact.reason">
         <field name="name">General Healthcare Inquiry</field>
         <field name="code">GEN</field>
-        <field name="category">sales</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'contact_reason_category'), ('code', '=', 'sales')]"/>
         <field name="sequence">10</field>
         <field name="description">General inquiry about healthcare services</field>
         <field name="name_vietnamese">Yêu cầu thông tin chăm sóc sức khỏe</field>
@@ -16,7 +16,7 @@
     <record id="contact_reason_service_pricing" model="health.contact.reason">
         <field name="name">Service Pricing Inquiry</field>
         <field name="code">PRICE</field>
-        <field name="category">sales</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'contact_reason_category'), ('code', '=', 'sales')]"/>
         <field name="sequence">20</field>
         <field name="description">Inquiry about pricing for specific healthcare services</field>
         <field name="name_vietnamese">Hỏi giá dịch vụ</field>
@@ -25,7 +25,7 @@
     <record id="contact_reason_home_visit" model="health.contact.reason">
         <field name="name">Home Visit Request</field>
         <field name="code">HOME</field>
-        <field name="category">sales</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'contact_reason_category'), ('code', '=', 'sales')]"/>
         <field name="sequence">30</field>
         <field name="description">Request for home visit healthcare services</field>
         <field name="name_vietnamese">Yêu cầu khám tại nhà</field>
@@ -34,7 +34,7 @@
     <record id="contact_reason_clinic_appointment" model="health.contact.reason">
         <field name="name">Clinic Appointment Request</field>
         <field name="code">CLINIC</field>
-        <field name="category">sales</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'contact_reason_category'), ('code', '=', 'sales')]"/>
         <field name="sequence">40</field>
         <field name="description">Request to schedule clinic appointment</field>
         <field name="name_vietnamese">Đặt lịch khám tại phòng khám</field>
@@ -44,7 +44,7 @@
     <record id="contact_reason_appointment_change" model="health.contact.reason">
         <field name="name">Appointment Change Request</field>
         <field name="code">CHANGE</field>
-        <field name="category">om</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'contact_reason_category'), ('code', '=', 'om')]"/>
         <field name="sequence">50</field>
         <field name="description">Request to change existing appointment</field>
         <field name="name_vietnamese">Thay đổi lịch hẹn</field>
@@ -53,7 +53,7 @@
     <record id="contact_reason_cancellation" model="health.contact.reason">
         <field name="name">Service Cancellation</field>
         <field name="code">CANCEL</field>
-        <field name="category">om</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'contact_reason_category'), ('code', '=', 'om')]"/>
         <field name="sequence">60</field>
         <field name="description">Request to cancel service or appointment</field>
         <field name="name_vietnamese">Hủy dịch vụ</field>
@@ -62,7 +62,7 @@
     <record id="contact_reason_follow_up" model="health.contact.reason">
         <field name="name">Follow-up Consultation</field>
         <field name="code">FOLLOW</field>
-        <field name="category">om</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'contact_reason_category'), ('code', '=', 'om')]"/>
         <field name="sequence">70</field>
         <field name="description">Follow-up after previous healthcare service</field>
         <field name="name_vietnamese">Tái khám</field>
@@ -72,7 +72,7 @@
     <record id="contact_reason_complaint" model="health.contact.reason">
         <field name="name">Service Complaint</field>
         <field name="code">COMPLAINT</field>
-        <field name="category">support</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'contact_reason_category'), ('code', '=', 'support')]"/>
         <field name="sequence">80</field>
         <field name="description">Complaint about healthcare service received</field>
         <field name="name_vietnamese">Khiếu nại dịch vụ</field>
@@ -81,7 +81,7 @@
     <record id="contact_reason_payment_issue" model="health.contact.reason">
         <field name="name">Payment Issue</field>
         <field name="code">PAYMENT</field>
-        <field name="category">support</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'contact_reason_category'), ('code', '=', 'support')]"/>
         <field name="sequence">90</field>
         <field name="description">Issues related to billing or payment</field>
         <field name="name_vietnamese">Vấn đề thanh toán</field>
@@ -90,7 +90,7 @@
     <record id="contact_reason_medical_record" model="health.contact.reason">
         <field name="name">Medical Record Request</field>
         <field name="code">RECORD</field>
-        <field name="category">support</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'contact_reason_category'), ('code', '=', 'support')]"/>
         <field name="sequence">100</field>
         <field name="description">Request for medical records or reports</field>
         <field name="name_vietnamese">Yêu cầu hồ sơ bệnh án</field>
@@ -100,7 +100,7 @@
     <record id="contact_reason_urgent_care" model="health.contact.reason">
         <field name="name">Urgent Care Request</field>
         <field name="code">URGENT</field>
-        <field name="category">emergency</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'contact_reason_category'), ('code', '=', 'emergency')]"/>
         <field name="sequence">110</field>
         <field name="description">Urgent healthcare need requiring immediate attention</field>
         <field name="name_vietnamese">Chăm sóc khẩn cấp</field>
@@ -109,7 +109,7 @@
     <record id="contact_reason_emergency" model="health.contact.reason">
         <field name="name">Medical Emergency</field>
         <field name="code">EMERGENCY</field>
-        <field name="category">emergency</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'contact_reason_category'), ('code', '=', 'emergency')]"/>
         <field name="sequence">120</field>
         <field name="description">Medical emergency requiring immediate response</field>
         <field name="name_vietnamese">Cấp cứu y tế</field>

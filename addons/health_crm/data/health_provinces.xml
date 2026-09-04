@@ -8,7 +8,7 @@
         <field name="name">Ho Chi Minh City</field>
         <field name="name_vietnamese">Thành phố Hồ Chí Minh</field>
         <field name="code">HCM</field>
-        <field name="region">south</field>
+        <field name="region_id" model="health.lookup.value" search="[('category_code', '=', 'vn_region'), ('code', '=', 'south')]"/>
         <field name="sequence">10</field>
     </record>
 
@@ -16,7 +16,7 @@
         <field name="name">Hanoi</field>
         <field name="name_vietnamese">Hà Nội</field>
         <field name="code">HN</field>
-        <field name="region">north</field>
+        <field name="region_id" model="health.lookup.value" search="[('category_code', '=', 'vn_region'), ('code', '=', 'north')]"/>
         <field name="sequence">20</field>
     </record>
 
@@ -24,7 +24,7 @@
         <field name="name">Da Nang</field>
         <field name="name_vietnamese">Đà Nẵng</field>
         <field name="code">DN</field>
-        <field name="region">central</field>
+        <field name="region_id" model="health.lookup.value" search="[('category_code', '=', 'vn_region'), ('code', '=', 'central')]"/>
         <field name="sequence">30</field>
     </record>
 
@@ -32,7 +32,7 @@
         <field name="name">Hai Phong</field>
         <field name="name_vietnamese">Hải Phòng</field>
         <field name="code">HP</field>
-        <field name="region">north</field>
+        <field name="region_id" model="health.lookup.value" search="[('category_code', '=', 'vn_region'), ('code', '=', 'north')]"/>
         <field name="sequence">40</field>
     </record>
 
@@ -40,7 +40,7 @@
         <field name="name">Can Tho</field>
         <field name="name_vietnamese">Cần Thơ</field>
         <field name="code">CT</field>
-        <field name="region">south</field>
+        <field name="region_id" model="health.lookup.value" search="[('category_code', '=', 'vn_region'), ('code', '=', 'south')]"/>
         <field name="sequence">50</field>
     </record>
 
@@ -49,7 +49,7 @@
         <field name="name">Binh Duong</field>
         <field name="name_vietnamese">Bình Dương</field>
         <field name="code">BD</field>
-        <field name="region">south</field>
+        <field name="region_id" model="health.lookup.value" search="[('category_code', '=', 'vn_region'), ('code', '=', 'south')]"/>
         <field name="sequence">60</field>
     </record>
 
@@ -57,7 +57,7 @@
         <field name="name">Dong Nai</field>
         <field name="name_vietnamese">Đồng Nai</field>
         <field name="code">DNI</field>
-        <field name="region">south</field>
+        <field name="region_id" model="health.lookup.value" search="[('category_code', '=', 'vn_region'), ('code', '=', 'south')]"/>
         <field name="sequence">70</field>
     </record>
 
@@ -65,7 +65,7 @@
         <field name="name">Ba Ria - Vung Tau</field>
         <field name="name_vietnamese">Bà Rịa - Vũng Tàu</field>
         <field name="code">BRVT</field>
-        <field name="region">south</field>
+        <field name="region_id" model="health.lookup.value" search="[('category_code', '=', 'vn_region'), ('code', '=', 'south')]"/>
         <field name="sequence">80</field>
     </record>
 
@@ -73,7 +73,7 @@
         <field name="name">Long An</field>
         <field name="name_vietnamese">Long An</field>
         <field name="code">LA</field>
-        <field name="region">south</field>
+        <field name="region_id" model="health.lookup.value" search="[('category_code', '=', 'vn_region'), ('code', '=', 'south')]"/>
         <field name="sequence">90</field>
     </record>
 
@@ -81,7 +81,7 @@
         <field name="name">Tay Ninh</field>
         <field name="name_vietnamese">Tây Ninh</field>
         <field name="code">TN</field>
-        <field name="region">south</field>
+        <field name="region_id" model="health.lookup.value" search="[('category_code', '=', 'vn_region'), ('code', '=', 'south')]"/>
         <field name="sequence">100</field>
     </record>
 
@@ -90,7 +90,7 @@
         <field name="name">Thua Thien Hue</field>
         <field name="name_vietnamese">Thừa Thiên Huế</field>
         <field name="code">HUE</field>
-        <field name="region">central</field>
+        <field name="region_id" model="health.lookup.value" search="[('category_code', '=', 'vn_region'), ('code', '=', 'central')]"/>
         <field name="sequence">110</field>
     </record>
 
@@ -98,7 +98,7 @@
         <field name="name">Quang Nam</field>
         <field name="name_vietnamese">Quảng Nam</field>
         <field name="code">QN</field>
-        <field name="region">central</field>
+        <field name="region_id" model="health.lookup.value" search="[('category_code', '=', 'vn_region'), ('code', '=', 'central')]"/>
         <field name="sequence">120</field>
     </record>
 
@@ -106,7 +106,7 @@
         <field name="name">Binh Thuan</field>
         <field name="name_vietnamese">Bình Thuận</field>
         <field name="code">BT</field>
-        <field name="region">central</field>
+        <field name="region_id" model="health.lookup.value" search="[('category_code', '=', 'vn_region'), ('code', '=', 'central')]"/>
         <field name="sequence">130</field>
     </record>
 
@@ -114,7 +114,7 @@
         <field name="name">Khanh Hoa</field>
         <field name="name_vietnamese">Khánh Hòa</field>
         <field name="code">KH</field>
-        <field name="region">central</field>
+        <field name="region_id" model="health.lookup.value" search="[('category_code', '=', 'vn_region'), ('code', '=', 'central')]"/>
         <field name="sequence">140</field>
     </record>
 
@@ -123,7 +123,7 @@
         <field name="name">Quang Ninh</field>
         <field name="name_vietnamese">Quảng Ninh</field>
         <field name="code">QNH</field>
-        <field name="region">north</field>
+        <field name="region_id" model="health.lookup.value" search="[('category_code', '=', 'vn_region'), ('code', '=', 'north')]"/>
         <field name="sequence">150</field>
     </record>
 
@@ -131,7 +131,7 @@
         <field name="name">Thai Nguyen</field>
         <field name="name_vietnamese">Thái Nguyên</field>
         <field name="code">TNY</field>
-        <field name="region">north</field>
+        <field name="region_id" model="health.lookup.value" search="[('category_code', '=', 'vn_region'), ('code', '=', 'north')]"/>
         <field name="sequence">160</field>
     </record>
 
@@ -139,7 +139,7 @@
         <field name="name">Hai Duong</field>
         <field name="name_vietnamese">Hải Dương</field>
         <field name="code">HD</field>
-        <field name="region">north</field>
+        <field name="region_id" model="health.lookup.value" search="[('category_code', '=', 'vn_region'), ('code', '=', 'north')]"/>
         <field name="sequence">170</field>
     </record>
 
@@ -147,7 +147,7 @@
         <field name="name">Bac Ninh</field>
         <field name="name_vietnamese">Bắc Ninh</field>
         <field name="code">BN</field>
-        <field name="region">north</field>
+        <field name="region_id" model="health.lookup.value" search="[('category_code', '=', 'vn_region'), ('code', '=', 'north')]"/>
         <field name="sequence">180</field>
     </record>
 
@@ -155,7 +155,7 @@
         <field name="name">Vinh Phuc</field>
         <field name="name_vietnamese">Vĩnh Phúc</field>
         <field name="code">VP</field>
-        <field name="region">north</field>
+        <field name="region_id" model="health.lookup.value" search="[('category_code', '=', 'vn_region'), ('code', '=', 'north')]"/>
         <field name="sequence">190</field>
     </record>
 
@@ -164,7 +164,7 @@
         <field name="name">An Giang</field>
         <field name="name_vietnamese">An Giang</field>
         <field name="code">AG</field>
-        <field name="region">south</field>
+        <field name="region_id" model="health.lookup.value" search="[('category_code', '=', 'vn_region'), ('code', '=', 'south')]"/>
         <field name="sequence">200</field>
     </record>
 
@@ -172,7 +172,7 @@
         <field name="name">Dong Thap</field>
         <field name="name_vietnamese">Đồng Tháp</field>
         <field name="code">DT</field>
-        <field name="region">south</field>
+        <field name="region_id" model="health.lookup.value" search="[('category_code', '=', 'vn_region'), ('code', '=', 'south')]"/>
         <field name="sequence">210</field>
     </record>
 
@@ -180,7 +180,7 @@
         <field name="name">Tien Giang</field>
         <field name="name_vietnamese">Tiền Giang</field>
         <field name="code">TG</field>
-        <field name="region">south</field>
+        <field name="region_id" model="health.lookup.value" search="[('category_code', '=', 'vn_region'), ('code', '=', 'south')]"/>
         <field name="sequence">220</field>
     </record>
 

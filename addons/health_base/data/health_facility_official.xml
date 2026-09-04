@@ -11,7 +11,7 @@
     <record id="facility_hn_pk_pkgdvu" model="health.facility">
         <field name="name">HN_PK_PKGDVU</field>
         <field name="code">01_01_00</field>
-        <field name="facility_type">main_clinic</field>
+        <field name="facility_type_id" model="health.lookup.value" search="[('category_code', '=', 'facility_type'), ('code', '=', 'main_clinic')]"/>
         <field name="facility_status">operational</field>
         <field name="street">-</field>
         <field name="city">Hà Nội</field>
@@ -21,7 +21,7 @@
     <record id="facility_hn_ns_minh_khai" model="health.facility">
         <field name="name">HN_NS_Minh_Khai</field>
         <field name="code">01_01_01</field>
-        <field name="facility_type">branch_clinic</field>
+        <field name="facility_type_id" model="health.lookup.value" search="[('category_code', '=', 'facility_type'), ('code', '=', 'branch_clinic')]"/>
         <field name="facility_status">operational</field>
         <field name="street">-</field>
         <field name="city">Hà Nội</field>
@@ -31,7 +31,7 @@
     <record id="facility_hn_ns_ha_dong" model="health.facility">
         <field name="name">HN_NS_Ha_Dong</field>
         <field name="code">01_01_02</field>
-        <field name="facility_type">branch_clinic</field>
+        <field name="facility_type_id" model="health.lookup.value" search="[('category_code', '=', 'facility_type'), ('code', '=', 'branch_clinic')]"/>
         <field name="facility_status">operational</field>
         <field name="street">-</field>
         <field name="city">Hà Nội</field>
@@ -41,7 +41,7 @@
     <record id="facility_tphcm_pk_cstnvu" model="health.facility">
         <field name="name">TPHCM_PK_CSTNVU</field>
         <field name="code">02_01_00</field>
-        <field name="facility_type">main_clinic</field>
+        <field name="facility_type_id" model="health.lookup.value" search="[('category_code', '=', 'facility_type'), ('code', '=', 'main_clinic')]"/>
         <field name="facility_status">operational</field>
         <field name="street">-</field>
         <field name="city">Hồ Chí Minh</field>
@@ -51,7 +51,7 @@
     <record id="facility_tphcm_ns_thu_duc" model="health.facility">
         <field name="name">TPHCM_NS_Thu_Duc</field>
         <field name="code">02_01_01</field>
-        <field name="facility_type">branch_clinic</field>
+        <field name="facility_type_id" model="health.lookup.value" search="[('category_code', '=', 'facility_type'), ('code', '=', 'branch_clinic')]"/>
         <field name="facility_status">operational</field>
         <field name="street">-</field>
         <field name="city">Hồ Chí Minh</field>
@@ -61,7 +61,7 @@
     <record id="facility_tphcm_ns_tan_thuan" model="health.facility">
         <field name="name">TPHCM_NS_Tan_Thuan</field>
         <field name="code">02_01_02</field>
-        <field name="facility_type">branch_clinic</field>
+        <field name="facility_type_id" model="health.lookup.value" search="[('category_code', '=', 'facility_type'), ('code', '=', 'branch_clinic')]"/>
         <field name="facility_status">operational</field>
         <field name="street">-</field>
         <field name="city">Hồ Chí Minh</field>

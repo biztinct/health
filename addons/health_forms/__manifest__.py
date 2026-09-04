@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Healthcare Clinical Forms',
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.1.1',
     'category': 'Healthcare/Clinical',
     'summary': 'Configurable clinical forms & scored assessments rendered in '
                'backend (OWL) and PWA from one JSON schema '

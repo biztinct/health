@@ -10,55 +10,55 @@
 
     <record id="cancel_reason_no_doctor_lt" model="health.booking.cancellation.reason">
         <field name="name">No doctor available &lt; 2.5 hours</field>
-        <field name="reason_type">provider</field>
+        <field name="reason_type_id" model="health.lookup.value" search="[('category_code', '=', 'cancellation_reason_type'), ('code', '=', 'provider')]"/>
         <field name="sequence">10</field>
     </record>
 
     <record id="cancel_reason_no_doctor_gt" model="health.booking.cancellation.reason">
         <field name="name">No doctor available &gt; 2.5 hours</field>
-        <field name="reason_type">provider</field>
+        <field name="reason_type_id" model="health.lookup.value" search="[('category_code', '=', 'cancellation_reason_type'), ('code', '=', 'provider')]"/>
         <field name="sequence">20</field>
     </record>
 
     <record id="cancel_reason_no_nurse_lt" model="health.booking.cancellation.reason">
         <field name="name">No nurse available &lt; 2.5 hours</field>
-        <field name="reason_type">provider</field>
+        <field name="reason_type_id" model="health.lookup.value" search="[('category_code', '=', 'cancellation_reason_type'), ('code', '=', 'provider')]"/>
         <field name="sequence">30</field>
     </record>
 
     <record id="cancel_reason_no_nurse_gt" model="health.booking.cancellation.reason">
         <field name="name">No nurse available &gt; 2.5 hours</field>
-        <field name="reason_type">provider</field>
+        <field name="reason_type_id" model="health.lookup.value" search="[('category_code', '=', 'cancellation_reason_type'), ('code', '=', 'provider')]"/>
         <field name="sequence">40</field>
     </record>
 
     <record id="cancel_reason_preferred_nurse" model="health.booking.cancellation.reason">
         <field name="name">Preferred nurse not available</field>
-        <field name="reason_type">provider</field>
+        <field name="reason_type_id" model="health.lookup.value" search="[('category_code', '=', 'cancellation_reason_type'), ('code', '=', 'provider')]"/>
         <field name="sequence">50</field>
     </record>
 
     <record id="cancel_reason_hospitalized" model="health.booking.cancellation.reason">
         <field name="name">Hospitalized</field>
-        <field name="reason_type">patient</field>
+        <field name="reason_type_id" model="health.lookup.value" search="[('category_code', '=', 'cancellation_reason_type'), ('code', '=', 'patient')]"/>
         <field name="sequence">60</field>
     </record>
 
     <record id="cancel_reason_deceased" model="health.booking.cancellation.reason">
         <field name="name">Deceased</field>
-        <field name="reason_type">patient</field>
+        <field name="reason_type_id" model="health.lookup.value" search="[('category_code', '=', 'cancellation_reason_type'), ('code', '=', 'patient')]"/>
         <field name="sequence">70</field>
     </record>
 
     <record id="cancel_reason_prescription_expired" model="health.booking.cancellation.reason">
         <field name="name">Prescription completed/expired</field>
-        <field name="reason_type">patient</field>
+        <field name="reason_type_id" model="health.lookup.value" search="[('category_code', '=', 'cancellation_reason_type'), ('code', '=', 'patient')]"/>
         <field name="sequence">80</field>
     </record>
 
     <record id="cancel_reason_other" model="health.booking.cancellation.reason">
         <field name="name">Other</field>
-        <field name="reason_type">patient</field>
+        <field name="reason_type_id" model="health.lookup.value" search="[('category_code', '=', 'cancellation_reason_type'), ('code', '=', 'patient')]"/>
         <field name="sequence">90</field>
     </record>
 

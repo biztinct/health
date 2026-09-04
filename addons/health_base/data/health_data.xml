@@ -192,103 +192,6 @@
         <field name="description">Professional nursing care</field>
     </record>
     
-    <!-- Common Symptoms -->
-    <record id="symptom_fever" model="health.symptom">
-        <field name="name">Fever</field>
-        <field name="code">FEVER</field>
-        <field name="category">general</field>
-        <field name="urgency_level">medium</field>
-        <field name="description">Elevated body temperature</field>
-    </record>
-    
-    <record id="symptom_cough" model="health.symptom">
-        <field name="name">Cough</field>
-        <field name="code">COUGH</field>
-        <field name="category">respiratory</field>
-        <field name="urgency_level">low</field>
-        <field name="description">Persistent coughing</field>
-    </record>
-    
-    <record id="symptom_chest_pain" model="health.symptom">
-        <field name="name">Chest Pain</field>
-        <field name="code">CHEST</field>
-        <field name="category">cardiovascular</field>
-        <field name="urgency_level">high</field>
-        <field name="description">Pain or discomfort in chest area</field>
-    </record>
-    
-    <record id="symptom_shortness_breath" model="health.symptom">
-        <field name="name">Shortness of Breath</field>
-        <field name="code">SOB</field>
-        <field name="category">respiratory</field>
-        <field name="urgency_level">high</field>
-        <field name="description">Difficulty breathing or breathlessness</field>
-    </record>
-    
-    <record id="symptom_headache" model="health.symptom">
-        <field name="name">Headache</field>
-        <field name="code">HEAD</field>
-        <field name="category">neurological</field>
-        <field name="urgency_level">low</field>
-        <field name="description">Head pain or discomfort</field>
-    </record>
-    
-    <!-- Referral Sources -->
-    <record id="referral_facebook" model="health.referral.source">
-        <field name="name">Facebook Ads</field>
-        <field name="source_type">facebook</field>
-        <field name="description">Facebook advertising campaigns</field>
-        <field name="is_paid_source">True</field>
-        <field name="cost_per_lead">50000</field>
-    </record>
-    
-    <record id="referral_zalo" model="health.referral.source">
-        <field name="name">Zalo Official Account</field>
-        <field name="source_type">zalo</field>
-        <field name="description">Zalo messaging platform</field>
-        <field name="is_paid_source">False</field>
-    </record>
-    
-    <record id="referral_website" model="health.referral.source">
-        <field name="name">VAFHS Website</field>
-        <field name="source_type">website</field>
-        <field name="description">Company website contact form</field>
-        <field name="is_paid_source">False</field>
-    </record>
-    
-    <record id="referral_google_ads" model="health.referral.source">
-        <field name="name">Google Ads</field>
-        <field name="source_type">google</field>
-        <field name="description">Google advertising campaigns</field>
-        <field name="is_paid_source">True</field>
-        <field name="cost_per_lead">75000</field>
-    </record>
-    
-    <!-- Insurance Providers -->
-    <record id="insurance_vietnam_social" model="health.insurance.provider">
-        <field name="name">Vietnam Social Insurance</field>
-        <field name="code">VSI</field>
-        <field name="coverage_percentage">80.0</field>
-        <field name="deductible_amount">0</field>
-        <field name="max_coverage_annual">50000000</field>
-        <field name="covers_home_visits">True</field>
-        <field name="covers_clinic_visits">True</field>
-        <field name="covers_telemedicine">False</field>
-        <field name="covers_emergency">True</field>
-    </record>
-    
-    <record id="insurance_bao_viet" model="health.insurance.provider">
-        <field name="name">Bao Viet Insurance</field>
-        <field name="code">BVI</field>
-        <field name="coverage_percentage">70.0</field>
-        <field name="deductible_amount">500000</field>
-        <field name="max_coverage_annual">100000000</field>
-        <field name="covers_home_visits">True</field>
-        <field name="covers_clinic_visits">True</field>
-        <field name="covers_telemedicine">True</field>
-        <field name="covers_emergency">True</field>
-    </record>
-    
     <!-- Urgency Levels -->
     <record id="urgency_emergency" model="health.urgency.level">
         <field name="name">Emergency</field>
@@ -337,4 +240,102 @@
         <field name="send_alerts">False</field>
         <field name="requires_approval">False</field>
     </record>
+
+    <!-- Common Symptoms -->
+    <record id="symptom_fever" model="health.symptom">
+        <field name="name">Fever</field>
+        <field name="code">FEVER</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'symptom_category'), ('code', '=', 'general')]"/>
+        <field name="urgency_level_id" ref="urgency_medium"/>
+        <field name="description">Elevated body temperature</field>
+    </record>
+    
+    <record id="symptom_cough" model="health.symptom">
+        <field name="name">Cough</field>
+        <field name="code">COUGH</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'symptom_category'), ('code', '=', 'respiratory')]"/>
+        <field name="urgency_level_id" ref="urgency_low"/>
+        <field name="description">Persistent coughing</field>
+    </record>
+    
+    <record id="symptom_chest_pain" model="health.symptom">
+        <field name="name">Chest Pain</field>
+        <field name="code">CHEST</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'symptom_category'), ('code', '=', 'cardiovascular')]"/>
+        <field name="urgency_level_id" ref="urgency_high"/>
+        <field name="description">Pain or discomfort in chest area</field>
+    </record>
+    
+    <record id="symptom_shortness_breath" model="health.symptom">
+        <field name="name">Shortness of Breath</field>
+        <field name="code">SOB</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'symptom_category'), ('code', '=', 'respiratory')]"/>
+        <field name="urgency_level_id" ref="urgency_high"/>
+        <field name="description">Difficulty breathing or breathlessness</field>
+    </record>
+    
+    <record id="symptom_headache" model="health.symptom">
+        <field name="name">Headache</field>
+        <field name="code">HEAD</field>
+        <field name="category_id" model="health.lookup.value" search="[('category_code', '=', 'symptom_category'), ('code', '=', 'neurological')]"/>
+        <field name="urgency_level_id" ref="urgency_low"/>
+        <field name="description">Head pain or discomfort</field>
+    </record>
+    
+    <!-- Referral Sources -->
+    <record id="referral_facebook" model="health.referral.source">
+        <field name="name">Facebook Ads</field>
+        <field name="source_type_id" model="health.lookup.value" search="[('category_code', '=', 'referral_source_type'), ('code', '=', 'facebook')]"/>
+        <field name="description">Facebook advertising campaigns</field>
+        <field name="is_paid_source">True</field>
+        <field name="cost_per_lead">50000</field>
+    </record>
+    
+    <record id="referral_zalo" model="health.referral.source">
+        <field name="name">Zalo Official Account</field>
+        <field name="source_type_id" model="health.lookup.value" search="[('category_code', '=', 'referral_source_type'), ('code', '=', 'zalo')]"/>
+        <field name="description">Zalo messaging platform</field>
+        <field name="is_paid_source">False</field>
+    </record>
+    
+    <record id="referral_website" model="health.referral.source">
+        <field name="name">VAFHS Website</field>
+        <field name="source_type_id" model="health.lookup.value" search="[('category_code', '=', 'referral_source_type'), ('code', '=', 'website')]"/>
+        <field name="description">Company website contact form</field>
+        <field name="is_paid_source">False</field>
+    </record>
+    
+    <record id="referral_google_ads" model="health.referral.source">
+        <field name="name">Google Ads</field>
+        <field name="source_type_id" model="health.lookup.value" search="[('category_code', '=', 'referral_source_type'), ('code', '=', 'google')]"/>
+        <field name="description">Google advertising campaigns</field>
+        <field name="is_paid_source">True</field>
+        <field name="cost_per_lead">75000</field>
+    </record>
+    
+    <!-- Insurance Providers -->
+    <record id="insurance_vietnam_social" model="health.insurance.provider">
+        <field name="name">Vietnam Social Insurance</field>
+        <field name="code">VSI</field>
+        <field name="coverage_percentage">80.0</field>
+        <field name="deductible_amount">0</field>
+        <field name="max_coverage_annual">50000000</field>
+        <field name="covers_home_visits">True</field>
+        <field name="covers_clinic_visits">True</field>
+        <field name="covers_telemedicine">False</field>
+        <field name="covers_emergency">True</field>
+    </record>
+    
+    <record id="insurance_bao_viet" model="health.insurance.provider">
+        <field name="name">Bao Viet Insurance</field>
+        <field name="code">BVI</field>
+        <field name="coverage_percentage">70.0</field>
+        <field name="deductible_amount">500000</field>
+        <field name="max_coverage_annual">100000000</field>
+        <field name="covers_home_visits">True</field>
+        <field name="covers_clinic_visits">True</field>
+        <field name="covers_telemedicine">True</field>
+        <field name="covers_emergency">True</field>
+    </record>
+    
 </odoo>

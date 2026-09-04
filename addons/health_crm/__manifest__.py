@@ -1,6 +1,6 @@
 {
     'name': 'VAFHS Healthcare CRM Integration',
-    'version': '19.0.1.10.0',
+    'version': '19.0.1.10.1',
     'category': 'Healthcare/CRM',
     'summary': 'Healthcare CRM integration inheriting from standard Odoo CRM',
     'description': """

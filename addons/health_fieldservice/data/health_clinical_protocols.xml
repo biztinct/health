@@ -7,9 +7,9 @@
     <record id="protocol_blood_draw" model="health.clinical.protocol">
         <field name="name">Blood Draw Protocol</field>
         <field name="description">Standard protocol for phlebotomy services in home visits</field>
-        <field name="complexity_level">basic</field>
+        <field name="complexity_level_id" model="health.lookup.value" search="[('category_code', '=', 'protocol_complexity'), ('code', '=', 'basic')]"/>
         <field name="duration_estimate_minutes">15</field>
-        <field name="infection_control_level">standard</field>
+        <field name="infection_control_level_id" model="health.lookup.value" search="[('category_code', '=', 'infection_control_level'), ('code', '=', 'standard')]"/>
         <field name="required_qualifications">Licensed phlebotomist or nurse with phlebotomy certification</field>
         <field name="safety_requirements">Standard precautions, proper sharps disposal, patient identification verification</field>
         <field name="action_steps_template">{"steps": [
@@ -32,9 +32,9 @@
     <record id="protocol_wound_care" model="health.clinical.protocol">
         <field name="name">Wound Care Protocol</field>
         <field name="description">Standard protocol for home wound care services</field>
-        <field name="complexity_level">intermediate</field>
+        <field name="complexity_level_id" model="health.lookup.value" search="[('category_code', '=', 'protocol_complexity'), ('code', '=', 'intermediate')]"/>
         <field name="duration_estimate_minutes">45</field>
-        <field name="infection_control_level">contact</field>
+        <field name="infection_control_level_id" model="health.lookup.value" search="[('category_code', '=', 'infection_control_level'), ('code', '=', 'contact')]"/>
         <field name="required_qualifications">Registered nurse with wound care experience</field>
         <field name="safety_requirements">Contact precautions, sterile technique, infection control measures</field>
         <field name="action_steps_template">{"steps": [
@@ -58,9 +58,9 @@
     <record id="protocol_vital_signs" model="health.clinical.protocol">
         <field name="name">Vital Signs Assessment Protocol</field>
         <field name="description">Standard protocol for comprehensive vital signs assessment</field>
-        <field name="complexity_level">basic</field>
+        <field name="complexity_level_id" model="health.lookup.value" search="[('category_code', '=', 'protocol_complexity'), ('code', '=', 'basic')]"/>
         <field name="duration_estimate_minutes">15</field>
-        <field name="infection_control_level">standard</field>
+        <field name="infection_control_level_id" model="health.lookup.value" search="[('category_code', '=', 'infection_control_level'), ('code', '=', 'standard')]"/>
         <field name="required_qualifications">Healthcare professional with vital signs training</field>
         <field name="safety_requirements">Equipment calibration, proper technique, abnormal value recognition</field>
         <field name="action_steps_template">{"steps": [
@@ -81,9 +81,9 @@
     <record id="protocol_medication" model="health.clinical.protocol">
         <field name="name">Medication Administration Protocol</field>
         <field name="description">Protocol for home medication administration</field>
-        <field name="complexity_level">intermediate</field>
+        <field name="complexity_level_id" model="health.lookup.value" search="[('category_code', '=', 'protocol_complexity'), ('code', '=', 'intermediate')]"/>
         <field name="duration_estimate_minutes">20</field>
-        <field name="infection_control_level">standard</field>
+        <field name="infection_control_level_id" model="health.lookup.value" search="[('category_code', '=', 'infection_control_level'), ('code', '=', 'standard')]"/>
         <field name="required_qualifications">Registered nurse with medication administration certification</field>
         <field name="safety_requirements">Five rights verification, allergy assessment, adverse reaction monitoring</field>
         <field name="action_steps_template">{"steps": [
