@@ -1,0 +1,182 @@
+#!/bin/bash
+# biz-tenant-cert <hostname> <slug>
+#
+# Gives ONE tenant subdomain its own Let's Encrypt certificate, obtained over
+# HTTP-01 through the nginx plugin, and writes that hostname its own nginx
+# server block.
+#
+# WHY THIS EXISTS: a wildcard certificate for *.$APEX_DOMAIN can only be issued
+# over the DNS-01 challenge, and certbot's manual DNS-01 flow leaves a renewal
+# config with no auth hook — `certbot renew` reaches it and blocks waiting for a
+# human to paste a TXT record, so it will never renew unattended. A per-host
+# HTTP-01 certificate renews through the certbot timer like every other
+# certificate on this box, with nothing to remember. That is why this platform
+# has no wildcard certificate and every provisioned tenant gets its own.
+#
+# The wildcard nginx BLOCK stays in place. nginx prefers an exact server_name
+# match over a wildcard one, so this block takes over for its own host while
+# every hostname without a block of its own still falls through to
+# sites-available/biz-wildcard (which serves the apex certificate, and therefore
+# warns until this script has run for that host — which provisioning does before
+# it announces a tenant).
+#
+# Installed at /usr/local/bin/biz-tenant-cert, invoked via sudo by the odoo user
+# (sudoers: /etc/sudoers.d/biz-tenants). Tear-down reuses biz-domain-detach,
+# which is hostname-generic.
+#
+# Managed by the platform.
+set -euo pipefail
+
+# shellcheck source=biz-common.sh
+# BIZ_LIB/BIZ_CONF exist so tools/saas/test_scripts.sh can exercise these
+# scripts from a checkout. They are NOT a hole: sudo runs with env_reset
+# (see `sudo -l -U odoo`), so neither variable survives the sudo call that is
+# the only way the odoo user reaches this file as root.
+. "${BIZ_LIB:-/usr/local/bin}/biz-common.sh"
+biz_load_conf
+
+HOSTNAME_ARG="${1:-}"
+SLUG_ARG="${2:-}"
+
+biz_valid_hostname "$HOSTNAME_ARG" || biz_die "invalid hostname" 2
+biz_valid_slug "$SLUG_ARG"         || biz_die "invalid slug" 2
+
+# A tenant may only ever be issued a certificate for its OWN subdomain of the
+# platform's apex. Without this the caller could request a block for any
+# hostname it liked. This is the counterpart to biz-domain-attach's "refusing to
+# manage a hostname under the apex domain" guard: that script handles
+# client-owned domains, this one handles ours.
+#
+# Exact-match rather than prefix-match, because `dbfilter = ^%d$` routes on the
+# FIRST label of the hostname: "first label == slug, rest == apex" is precisely
+# the invariant that makes this hostname reach this tenant's database.
+if [[ "$HOSTNAME_ARG" != "${SLUG_ARG}.${APEX_DOMAIN}" ]]; then
+    biz_die "hostname must be the slug's own subdomain of ${APEX_DOMAIN} (expected ${SLUG_ARG}.${APEX_DOMAIN})" 2
+fi
+
+CERT_NAME="${BLOCK_PREFIX}${HOSTNAME_ARG}"
+CONF="/etc/nginx/sites-available/${CERT_NAME}.conf"
+LINK="/etc/nginx/sites-enabled/${CERT_NAME}.conf"
+LIVE="/etc/letsencrypt/live/${CERT_NAME}"
+
+# Guards fire before certbot: --check-only lets the test suite prove the
+# refusals without ever asking Let's Encrypt for anything.
+if [[ "${3:-}" == "--check-only" ]]; then
+    echo "OK (check-only) ${HOSTNAME_ARG} -> ${SLUG_ARG}"
+    exit 0
+fi
+
+# STEP 1 — obtain the certificate, and NOTHING else.
+#
+# `certonly` is load-bearing. Running the nginx INSTALLER here (plain
+# `certbot --nginx`) ranks *.$APEX_DOMAIN as the best server block for this
+# hostname and rewrites sites-available/biz-wildcard to point at this one
+# tenant's certificate — which then gets served to EVERY other tenant. That
+# happened once on the platform this was ported from; do not reintroduce it.
+# certonly authenticates over HTTP-01 using a temporary block certbot reverts
+# itself, and never touches our config.
+#
+# --keep-until-expiring makes a re-run a no-op instead of a needless issuance,
+# which matters against Let's Encrypt's 50-certs-per-week-per-domain limit.
+# --deploy-hook reloads nginx on RENEWAL, when nothing else would.
+certbot certonly --nginx --non-interactive --agree-tos \
+    --register-unsafely-without-email \
+    --cert-name "$CERT_NAME" -d "$HOSTNAME_ARG" \
+    --keep-until-expiring \
+    --deploy-hook "systemctl reload nginx"
+
+# Refuse to write a block referencing a certificate that is not there: nginx
+# would fail to start, taking every other tenant down with it.
+if [[ ! -s "${LIVE}/fullchain.pem" ]]; then
+    biz_die "certificate missing at ${LIVE} after certbot run" 1
+fi
+
+# STEP 2 — now that the cert exists, write the block ourselves.
+#
+# Mirrors sites-available/biz-wildcard. Routing is by dbfilter (^%d$) on the
+# hostname's first label, exactly as the wildcard block does — no pinning header.
+# KEEP THE /web/database GUARD IN STEP WITH biz-wildcard: without it this block
+# would expose the database manager on the tenant's own hostname.
+cat > "$CONF" <<EOF
+# Managed by the platform — tenant subdomain ${HOSTNAME_ARG} (${SLUG_ARG})
+# Exists so this host has its own auto-renewing certificate; behaviour is
+# otherwise identical to sites-available/biz-wildcard. Keep the two in step.
+# nginx prefers this exact server_name over the wildcard block, so this wins for
+# this host while every other hostname still falls through to biz-wildcard.
+server {
+    # nginx on this box is 1.18: http2 is a flag on `listen`, not its own
+    # directive (`http2 on;` is 1.25+ and fails nginx -t here).
+    listen 443 ssl http2;
+    server_name ${HOSTNAME_ARG};
+
+    ssl_certificate ${LIVE}/fullchain.pem;
+    ssl_certificate_key ${LIVE}/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # Host is load-bearing: the application maps the first label of the real
+    # hostname to the database.
+    proxy_set_header Host \$host;
+    proxy_set_header X-Forwarded-Host \$host;
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto \$scheme;
+    proxy_set_header X-Real-IP \$remote_addr;
+    add_header X-Frame-Options "SAMEORIGIN";
+
+    access_log /var/log/nginx/tenants-access.log;
+    error_log  /var/log/nginx/tenants-error.log;
+
+    proxy_buffers 16 64k;
+    proxy_buffer_size 128k;
+    proxy_read_timeout 900s;
+    proxy_connect_timeout 900s;
+    proxy_send_timeout 900s;
+    client_max_body_size 128M;
+
+    gzip on;
+    gzip_min_length 1100;
+    gzip_types text/css text/plain text/xml application/xml application/json application/javascript;
+
+    # No database manager on any hostname this platform serves.
+    location ^~ /web/database/ { return 404; }
+
+    location /websocket {
+        proxy_pass http://127.0.0.1:8072;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection \$connection_upgrade;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Forwarded-Host \$host;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_set_header X-Real-IP \$remote_addr;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:8069;
+        proxy_redirect off;
+    }
+
+    location ~ /[a-zA-Z0-9_-]*/static/ {
+        proxy_cache_valid 200 302 60m;
+        proxy_buffering on;
+        expires 864000;
+        proxy_pass http://127.0.0.1:8069;
+    }
+}
+server {
+    listen 80;
+    server_name ${HOSTNAME_ARG};
+    return 301 https://\$host\$request_uri;
+}
+EOF
+
+ln -sf "$CONF" "$LINK"
+# If this block is bad, back it out rather than leaving nginx unreloadable.
+if ! nginx -t; then
+    rm -f "$LINK" "$CONF"
+    nginx -t
+    biz_die "generated block failed nginx -t; rolled back" 1
+fi
+systemctl reload nginx
+echo "OK ${HOSTNAME_ARG} -> ${SLUG_ARG}"

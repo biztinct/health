@@ -1,0 +1,139 @@
+#!/bin/bash
+# biz-domain-attach <hostname> <slug>
+#
+# Attaches a CLIENT-OWNED custom domain (clinic.example.com) to a tenant:
+# writes an nginx server block pinned to that tenant's database, obtains a
+# Let's Encrypt certificate (HTTP-01 via the nginx plugin), reloads nginx.
+#
+# ⚠ READ THIS BEFORE ENABLING IT.
+#
+# Routing on this platform is `dbfilter = ^%d$`: the application takes the FIRST
+# LABEL of the Host header and uses it as the database name. That works for
+# <slug>.<apex> and cannot work for a client-owned domain — the first label of
+# `clinic.example.com` is `clinic`, which is not the tenant's database unless
+# the slug happens to be spelled the same. The database therefore has to be
+# PINNED by the proxy, per request.
+#
+# The platform this was ported from pins it with an `X-Odoo-dbfilter` request
+# header, which its (newer) Odoo build reads in `db_filter()`. THIS BUILD DOES
+# NOT: `/odoo/odoo-server/odoo/http.py: db_filter()` reads only
+# `config['dbfilter']` and the Host header, and the one header it does look at
+# (`X-Odoo-Database`, http.py:1780) is itself checked THROUGH `db_filter()` and
+# forces a stateless session, so it cannot pin a custom domain either.
+# Verified 2026-09-04 against Odoo 19 commit ac6d4f02.
+#
+# So this script REFUSES while `CUSTOM_DOMAIN_PINNING=0` in /etc/biz-tenants.conf.
+# Shipping a block that pins nothing would give a paying client a domain that
+# lands on the wrong database or on none — a silent failure is worse than an
+# honest refusal. Flip the setting the day the build honours the header, and
+# not before.
+#
+# Installed at /usr/local/bin/biz-domain-attach, invoked via sudo by the odoo
+# user (sudoers: /etc/sudoers.d/biz-tenants).
+#
+# Managed by the platform.
+set -euo pipefail
+
+# shellcheck source=biz-common.sh
+# BIZ_LIB/BIZ_CONF exist so tools/saas/test_scripts.sh can exercise these
+# scripts from a checkout. They are NOT a hole: sudo runs with env_reset
+# (see `sudo -l -U odoo`), so neither variable survives the sudo call that is
+# the only way the odoo user reaches this file as root.
+. "${BIZ_LIB:-/usr/local/bin}/biz-common.sh"
+biz_load_conf
+
+HOSTNAME_ARG="${1:-}"
+SLUG_ARG="${2:-}"
+
+biz_valid_hostname "$HOSTNAME_ARG" || biz_die "invalid hostname" 2
+biz_valid_slug "$SLUG_ARG"         || biz_die "invalid slug" 2
+
+# Hostnames under our own apex are biz-tenant-cert's job, not this one's: they
+# route by dbfilter and must never be given a pinning block.
+if [[ "$HOSTNAME_ARG" == "$APEX_DOMAIN" || "$HOSTNAME_ARG" == *".${APEX_DOMAIN}" ]]; then
+    biz_die "refusing to manage a hostname under the apex domain (${APEX_DOMAIN}); use biz-tenant-cert" 2
+fi
+
+# Guards first, always: --check-only proves the refusals above without asking
+# Let's Encrypt for anything.
+if [[ "${3:-}" == "--check-only" ]]; then
+    echo "OK (check-only) ${HOSTNAME_ARG} -> ${SLUG_ARG}"
+    exit 0
+fi
+
+if [[ "$CUSTOM_DOMAIN_PINNING" != "1" ]]; then
+    cat >&2 <<MSG
+refusing to attach ${HOSTNAME_ARG}: this build cannot pin a database per request.
+
+  Routing here is dbfilter = ^%d\$ (first label of the Host header). A custom
+  domain needs the proxy to name the database instead, and this Odoo build's
+  db_filter() does not read a pinning header. A block written now would send
+  ${HOSTNAME_ARG} to database "${HOSTNAME_ARG%%.*}", not to "${SLUG_ARG}".
+
+  Until then, give the client ${SLUG_ARG}.${APEX_DOMAIN} (biz-tenant-cert), or
+  have them CNAME/redirect their domain to it.
+
+  To enable once the build supports it: set CUSTOM_DOMAIN_PINNING=1 in
+  ${BIZ_CONF} and confirm PIN_HEADER is the header that build reads.
+MSG
+    exit 3
+fi
+
+CERT_NAME="${BLOCK_PREFIX}${HOSTNAME_ARG}"
+CONF="/etc/nginx/sites-available/${CERT_NAME}.conf"
+LINK="/etc/nginx/sites-enabled/${CERT_NAME}.conf"
+
+cat > "$CONF" <<EOF
+# Managed by the platform — custom domain ${HOSTNAME_ARG} -> tenant ${SLUG_ARG}
+# The database is pinned by header: the hostname's first label is NOT the
+# database name here, so ${PIN_HEADER} is the only thing routing this block.
+server {
+    listen 80;
+    server_name ${HOSTNAME_ARG};
+
+    proxy_read_timeout 720s;
+    proxy_connect_timeout 720s;
+    proxy_send_timeout 720s;
+    client_max_body_size 128M;
+
+    proxy_set_header X-Forwarded-Host \$host;
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto \$scheme;
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_set_header ${PIN_HEADER} ^${SLUG_ARG}\$;
+
+    location ^~ /web/database/ { return 404; }
+
+    location /websocket {
+        proxy_pass http://127.0.0.1:8072;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection \$connection_upgrade;
+        proxy_set_header X-Forwarded-Host \$host;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_set_header ${PIN_HEADER} ^${SLUG_ARG}\$;
+    }
+    location / {
+        proxy_pass http://127.0.0.1:8069;
+        proxy_redirect off;
+    }
+}
+EOF
+
+ln -sf "$CONF" "$LINK"
+if ! nginx -t; then
+    rm -f "$LINK" "$CONF"
+    nginx -t
+    biz_die "generated block failed nginx -t; rolled back" 1
+fi
+systemctl reload nginx
+
+# certbot rewrites the block for 443 + redirect and installs auto-renewal
+certbot --nginx --non-interactive --agree-tos --register-unsafely-without-email \
+    --cert-name "$CERT_NAME" -d "$HOSTNAME_ARG" --redirect \
+    --deploy-hook "systemctl reload nginx"
+
+nginx -t
+systemctl reload nginx
+echo "OK ${HOSTNAME_ARG} -> ${SLUG_ARG}"

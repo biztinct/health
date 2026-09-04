@@ -1,0 +1,41 @@
+#!/bin/bash
+# biz-domain-detach <hostname>
+#
+# Removes one platform-generated nginx block and its certificate. Hostname-
+# generic on purpose: it tears down both a custom domain (biz-domain-attach) and
+# a tenant subdomain (biz-tenant-cert), because both write the same
+# ${BLOCK_PREFIX}<hostname>.conf pair under the same certificate name.
+#
+# It only ever removes files whose name it generated itself from a validated
+# hostname, so it cannot be pointed at sites-available/_ or at the apex block.
+#
+# Installed at /usr/local/bin/biz-domain-detach, invoked via sudo by the odoo
+# user (sudoers: /etc/sudoers.d/biz-tenants).
+#
+# Managed by the platform.
+set -euo pipefail
+
+# shellcheck source=biz-common.sh
+# BIZ_LIB/BIZ_CONF exist so tools/saas/test_scripts.sh can exercise these
+# scripts from a checkout. They are NOT a hole: sudo runs with env_reset
+# (see `sudo -l -U odoo`), so neither variable survives the sudo call that is
+# the only way the odoo user reaches this file as root.
+. "${BIZ_LIB:-/usr/local/bin}/biz-common.sh"
+biz_load_conf
+
+HOSTNAME_ARG="${1:-}"
+biz_valid_hostname "$HOSTNAME_ARG" || biz_die "invalid hostname" 2
+
+CERT_NAME="${BLOCK_PREFIX}${HOSTNAME_ARG}"
+
+if [[ "${2:-}" == "--check-only" ]]; then
+    echo "OK (check-only) ${HOSTNAME_ARG}"
+    exit 0
+fi
+
+rm -f "/etc/nginx/sites-enabled/${CERT_NAME}.conf" \
+      "/etc/nginx/sites-available/${CERT_NAME}.conf"
+certbot delete --non-interactive --cert-name "$CERT_NAME" || true
+nginx -t
+systemctl reload nginx
+echo "OK detached ${HOSTNAME_ARG}"
