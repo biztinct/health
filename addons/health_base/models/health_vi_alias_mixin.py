@@ -48,9 +48,34 @@ class HealthViAliasMixin(models.AbstractModel):
     # The translatable field the alias mirrors.
     _vi_alias_source = 'name'
 
+    def _vi_lang_installed(self):
+        """Is vi_VN actually a language on THIS database?
+
+        Reading or writing a translated field in a language the database does
+        not have raises `KeyError: '<model>.<field>'` out of the ORM's cache —
+        it does not fall back to English. That is never the case here (this
+        clinic added Vietnamese years ago) and ALWAYS the case on a brand-new
+        database, so both halves of this mixin have to ask first. Without it a
+        fresh install of any of the seven models dies while loading its own
+        seed data, which is exactly what building the golden template found
+        (SAAS H3).
+
+        `get_installed()` reads through an ormcache, so this costs nothing per
+        record.
+        """
+        return any(code == VI_LANG
+                   for code, _name in self.env['res.lang'].get_installed())
+
     @api.depends(lambda self: [self._vi_alias_source])
     def _compute_vi_alias(self):
         alias, source = self._vi_alias_field, self._vi_alias_source
+        if not self._vi_lang_installed():
+            # Not "unknown" — there IS no Vietnamese name on a database with no
+            # Vietnamese. Assigning False keeps the field computed rather than
+            # leaving it unset, which would raise on read.
+            for record in self:
+                record[alias] = False
+            return
         # One extra read in the vi_VN context for the whole recordset, not one
         # per record: `with_context` on the set keeps this to a single query.
         vi_records = self.with_context(lang=VI_LANG)
@@ -59,6 +84,13 @@ class HealthViAliasMixin(models.AbstractModel):
 
     def _inverse_vi_alias(self):
         alias, source = self._vi_alias_field, self._vi_alias_source
+        if not self._vi_lang_installed():
+            # Dropping the value rather than raising. The alternative — storing
+            # it somewhere until the language arrives — would be a second place
+            # the Vietnamese name lives, which is the exact drift this mixin
+            # exists to remove. Adding the language later and re-running the
+            # module's data load puts the labels in.
+            return
         for record in self:
             value = record[alias]
             if not value:
