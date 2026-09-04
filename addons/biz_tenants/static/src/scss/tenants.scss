@@ -1,0 +1,500 @@
+// =============================================================================
+// The cockpit's own styles.
+//
+// ⚠ THIS FILE HAS EXACTLY ONE ROOT BLOCK AND IT IS `.bzk.bzt` (ledger F35).
+//
+// ⚠ AND THE ROOT IS A COMPOUND SELECTOR, WITH NO SPACE IN IT. The screen's
+// own element carries BOTH classes — `class="bzk bzk-page bzt"` — so
+// `.bzk .bzt`, with a space, is a DESCENDANT selector that matches nothing at
+// all: the page renders with every kit primitive styled and not one rule of
+// its own, and there is no error anywhere. Same family as F37, pointing the
+// other way.
+// Everything the cockpit draws lives inside the kit's page wrapper, so there is
+// nowhere else for a rule to belong — and a rule appended "at the end of the
+// file, before the closing brace" therefore cannot land in the wrong block,
+// which is the mistake that once shipped a control nought pixels tall with no
+// error anywhere. If a second root block is ever needed here, NAME IT in this
+// comment before writing it.
+//
+// NO `min()` MIXING UNITS (ledger F36). Bootstrap's Sass intercepts the
+// function, the WHOLE asset bundle fails to compile, and every screen in the
+// product renders unstyled under a red banner. Use one unit, or a custom
+// property, which Sass passes through untouched.
+//
+// EVERY STATE COLOUR ON A KIT CONTROL CARRIES `.bzk` IN FRONT OF IT
+// (ledger F37): the kit styles its buttons with three classes, so a rule
+// written with two loses — silently, leaving a control the wrong colour beside
+// a sentence that says otherwise.
+//
+// Mono colours only, no gradients (owner rule). Every colour is a kit token.
+// =============================================================================
+.bzk.bzt {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+
+    // --------------------------------------------------------- the top bar
+    .bzt-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+    .bzt-top-l { display: flex; align-items: flex-start; gap: 12px; }
+    .bzt-top-r { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .bzt-title { display: flex; flex-direction: column; gap: 2px; }
+
+    // ------------------------------------------------------------- the fleet
+    .bzt-kpis {
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    }
+
+    .bzt-strip {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        font-size: 12.5px;
+        color: var(--bzk-muted);
+        background: var(--bzk-surface);
+        border: 1px solid var(--bzk-line);
+        border-radius: var(--bzk-r);
+        padding: 9px 14px;
+        b { color: var(--bzk-ink); }
+    }
+    .bzt-strip-i { display: inline-flex; color: var(--bzk-primary); }
+    .bzt-strip-sep { opacity: .4; }
+
+    .bzt-searchrow {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+    .bzt-search {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--bzk-surface);
+        border: 1px solid var(--bzk-line);
+        border-radius: var(--bzk-pill);
+        padding: 7px 14px;
+        color: var(--bzk-muted);
+        min-width: 260px;
+        input {
+            border: 0;
+            outline: 0;
+            background: transparent;
+            font: inherit;
+            font-size: 13px;
+            color: var(--bzk-ink);
+            width: 100%;
+        }
+    }
+    .bzt-count { font-size: 12px; color: var(--bzk-muted); }
+
+    .bzt-table {
+        .bzt-nm { font-weight: 700; color: var(--bzk-ink); }
+        .bzt-sub { font-size: 11.5px; color: var(--bzk-muted); }
+        a { color: var(--bzk-primary); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    }
+    .bzt-rowact {
+        white-space: nowrap;
+        display: flex;
+        gap: 6px;
+        justify-content: flex-end;
+    }
+    .bzt-never { color: var(--bzk-muted); font-style: italic; }
+    .bzt-fleetfoot { display: flex; gap: 8px; }
+
+    // ----------------------------------------------------------- empty state
+    .bzt-empty .bzk-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 34px 20px;
+    }
+    .bzt-empty-ic { color: var(--bzk-primary); }
+    .bzt-empty-t { font-size: 17px; font-weight: 800; color: var(--bzk-ink); }
+    .bzt-empty-s { max-width: 460px; line-height: 1.55; }
+    .bzt-empty .bzk-btn { margin-top: 10px; }
+
+    // ------------------------------------------------- notes and their tones
+    .bzk-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        line-height: 1.55;
+        code {
+            display: block;
+            margin-top: 6px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 11.5px;
+            background: rgba(0, 0, 0, .05);
+            padding: 6px 8px;
+            border-radius: 6px;
+            word-break: break-all;
+        }
+    }
+    .bzk-note.bzt-warn { background: var(--bzk-amber-soft); color: #92400E; }
+    .bzk-note.bzt-bad  { background: var(--bzk-rose-soft);  color: var(--bzk-rose); }
+    .bzk-note.bzt-notice {
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    // The kit capitalises every word in a badge, which is right for a
+    // one-word state and wrong for the short SENTENCES this screen puts in
+    // them — "Nothing Written", "You Are On This One". The words here are
+    // already written the way they should read.
+    .bzk-badge { text-transform: none; }
+
+    // ------------------------------------------------------------ the form
+    .bzt-fields {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 16px;
+    }
+    .bzt-wide { grid-column: 1 / -1; }
+    .bzt-field {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        input, textarea, select {
+            border: 1px solid var(--bzk-line);
+            border-radius: var(--bzk-r-sm);
+            padding: 9px 12px;
+            font: inherit;
+            font-size: 13.5px;
+            color: var(--bzk-ink);
+            background: #fff;
+            outline: 0;
+            &:focus { border-color: var(--bzk-primary); box-shadow: 0 0 0 3px var(--bzk-ring); }
+        }
+        textarea { resize: vertical; line-height: 1.5; }
+    }
+    .bzt-lab {
+        font-size: 11.5px;
+        font-weight: 800;
+        letter-spacing: .03em;
+        text-transform: uppercase;
+        color: var(--bzk-muted);
+    }
+    .bzt-hint {
+        display: flex;
+        align-items: flex-start;
+        gap: 5px;
+        font-size: 12px;
+        color: var(--bzk-muted);
+        line-height: 1.45;
+    }
+    .bzt-good { color: var(--bzk-green); font-weight: 700; }
+    .bzt-bad  { color: var(--bzk-rose);  font-weight: 700; }
+
+    // The address, assembled in front of somebody as they type it. The fixed
+    // half is inert and looks it, so the editable half is unmistakable.
+    .bzt-slugrow {
+        display: flex;
+        align-items: stretch;
+        border: 1px solid var(--bzk-line);
+        border-radius: var(--bzk-r-sm);
+        overflow: hidden;
+        background: #fff;
+        &:focus-within { border-color: var(--bzk-primary); box-shadow: 0 0 0 3px var(--bzk-ring); }
+        .bzt-slug { border: 0; border-radius: 0; flex: 1; min-width: 0; }
+        .bzt-slug:focus { box-shadow: none; }
+    }
+    .bzt-apex {
+        display: flex;
+        align-items: center;
+        padding: 0 12px;
+        background: var(--bzk-bg);
+        border-left: 1px solid var(--bzk-line);
+        font-size: 13px;
+        color: var(--bzk-muted);
+        white-space: nowrap;
+    }
+
+    .bzt-formfoot {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 16px;
+    }
+
+    // --------------------------------------------------------- the dry run
+    .bzt-plan {
+        list-style: none;
+        margin: 4px 0 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        li { display: flex; align-items: flex-start; gap: 12px; }
+    }
+    .bzt-plan-n {
+        flex: 0 0 auto;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--bzk-soft);
+        color: var(--bzk-primary-strong);
+        display: grid;
+        place-items: center;
+        font-size: 12px;
+        font-weight: 800;
+    }
+    .bzt-plan-w { font-size: 13.5px; line-height: 1.55; color: var(--bzk-text); }
+
+    // ----------------------------------------------------- the stepper rail
+    .bzt-rail {
+        margin: 6px 0 18px;
+        gap: 0;
+        .bzk-rail-lab { line-height: 1.3; }
+    }
+    .bzt-step.failed .bzk-rail-dot {
+        background: var(--bzk-rose);
+        border-color: var(--bzk-rose);
+        color: #fff;
+    }
+    .bzt-step.failed .bzk-rail-lab { color: var(--bzk-rose); }
+    // Motion with purpose: the running dot breathes, so a step that is taking
+    // its time reads as working rather than as stuck.
+    .bzt-step.running .bzk-rail-dot { animation: bzt-breathe 1.6s ease-in-out infinite; }
+    .bzt-ms {
+        font-size: 10.5px;
+        color: var(--bzk-muted);
+        font-variant-numeric: tabular-nums;
+        font-weight: 600;
+    }
+
+    // -------------------------------------------------------- the live log
+    .bzt-log {
+        background: #0F172A;
+        border-radius: 10px;
+        padding: 12px 14px;
+        max-height: 320px;
+        overflow: auto;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12px;
+        line-height: 1.7;
+    }
+    .bzt-logline {
+        display: flex;
+        gap: 10px;
+        color: #CBD5E1;
+        // Each line arrives rather than appearing: on a screen whose whole
+        // point is that you WATCH it happen, the movement is the information.
+        animation: bzt-slide .22s ease-out;
+    }
+    .bzt-logstep {
+        flex: 0 0 74px;
+        color: #64748B;
+        text-transform: uppercase;
+        font-size: 10.5px;
+        letter-spacing: .04em;
+        padding-top: 2px;
+    }
+    .bzt-logline.bzt-warn  { color: #FCD34D; }
+    .bzt-logline.bzt-error { color: #FCA5A5; }
+
+    // --------------------------------------------------------- the end card
+    .bzt-handover { border-left: 4px solid var(--bzk-green); }
+    .bzt-handover-h { display: flex; align-items: flex-start; gap: 14px; }
+    .bzt-handover-ic { color: var(--bzk-green); flex: none; }
+    .bzt-creds {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin: 16px 0 4px;
+    }
+    .bzt-cred {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: var(--bzk-bg);
+        border: 1px solid var(--bzk-line);
+        border-radius: 10px;
+        padding: 10px 14px;
+    }
+    .bzt-cred-l {
+        flex: 0 0 190px;
+        font-size: 11.5px;
+        font-weight: 800;
+        letter-spacing: .03em;
+        text-transform: uppercase;
+        color: var(--bzk-muted);
+    }
+    .bzt-cred-v {
+        flex: 1;
+        min-width: 0;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--bzk-ink);
+        word-break: break-all;
+    }
+    .bzt-cred-v.mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        letter-spacing: .04em;
+    }
+    // The password is the one thing on this page somebody has to read out
+    // loud, so it gets the weight of the page.
+    .bzt-cred-pw {
+        border-color: var(--bzk-primary);
+        background: var(--bzk-soft);
+        .bzt-cred-v { font-size: 18px; color: var(--bzk-primary-strong); }
+    }
+    .bzt-failed { border-left: 4px solid var(--bzk-rose); }
+    .bzt-resume { border-left: 4px solid var(--bzk-amber); }
+
+    // ------------------------------------------------------ one customer
+    .bzt-hero .bzk-hero-id a { color: var(--bzk-primary); text-decoration: none; }
+    .bzt-hero .bzk-hero-id a:hover { text-decoration: underline; }
+    .bzt-tabs { margin-top: 2px; }
+    .bzt-when { font-size: 11.5px; color: var(--bzk-muted); }
+
+    .bzt-hrows { display: flex; flex-direction: column; }
+    .bzt-hrow {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 9px 0;
+        border-bottom: 1px solid var(--bzk-line);
+        font-size: 13.5px;
+        &:last-child { border-bottom: 0; }
+    }
+    .bzt-hrow-l { color: var(--bzk-muted); }
+    .bzt-hrow-v { font-weight: 700; color: var(--bzk-ink); text-align: right; }
+    .bzt-hrow-v.bzt-ok    { color: var(--bzk-green); }
+    .bzt-hrow-v.bzt-warn  { color: var(--bzk-amber); }
+    .bzt-hrow-v.bzt-err   { color: var(--bzk-rose); }
+    .bzt-hrow-v.bzt-muted { color: var(--bzk-muted); font-weight: 600; }
+
+    .bzt-errors, .bzt-history, .bzt-address { margin-top: 20px; }
+    .bzt-pre {
+        margin: 8px 0 0;
+        background: var(--bzk-bg);
+        border: 1px solid var(--bzk-line);
+        border-radius: 10px;
+        padding: 11px 13px;
+        max-height: 260px;
+        overflow: auto;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 11.5px;
+        line-height: 1.65;
+        color: #475569;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+    .bzt-domlist { display: flex; flex-direction: column; gap: 6px; margin: 8px 0 10px; }
+    .bzt-dom {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--bzk-primary);
+        a { color: inherit; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    }
+
+    .bzt-danger { border-left: 4px solid var(--bzk-rose); }
+
+    // ------------------------------------------------------------- in step
+    .bzt-relacts { display: flex; gap: 8px; flex-wrap: wrap; }
+    .bzt-planlists {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 18px;
+        margin: 14px 0;
+    }
+    .bzt-mod {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        padding: 6px 0;
+        border-bottom: 1px solid var(--bzk-line);
+        font-size: 13px;
+        &:last-child { border-bottom: 0; }
+    }
+    .bzt-neverrow {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 14px;
+        padding: 9px 0;
+        border-bottom: 1px solid var(--bzk-line);
+        font-size: 13px;
+        &:last-child { border-bottom: 0; }
+    }
+    .bzt-never-n { font-weight: 700; color: var(--bzk-ink); }
+    .bzt-never-r { color: var(--bzk-muted); line-height: 1.5; }
+
+    .bzt-relrow {
+        padding: 12px 0;
+        border-bottom: 1px solid var(--bzk-line);
+        &:last-child { border-bottom: 0; }
+    }
+    .bzt-relrow-h { display: flex; align-items: center; gap: 10px; }
+    .bzt-relrow-n {
+        font-weight: 800;
+        color: var(--bzk-ink);
+        font-variant-numeric: tabular-nums;
+    }
+    .bzt-relrow-d { margin-left: auto; font-size: 12px; color: var(--bzk-muted); }
+    .bzt-relrow-b {
+        margin-top: 5px;
+        font-size: 13px;
+        color: var(--bzk-text);
+        line-height: 1.55;
+        white-space: pre-wrap;
+    }
+
+    // ------------------------------------------------------------ overlays
+    // ⚠ The scrim class is `bzk-modal-scrim`, ONE hyphen (ledger F57) — and
+    // `.bzk-modal__body` carries no padding of its own, so every dialog
+    // supplies it or its content runs flush to both edges.
+    .bzt-modalbody {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        padding: 18px 20px;
+    }
+    .bzt-window {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    // ------------------------------------------------------- the busy strip
+    .bzt-busy {
+        position: sticky;
+        bottom: 0;
+        align-self: flex-start;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--bzk-ink);
+        color: #fff;
+        border-radius: var(--bzk-pill);
+        padding: 8px 16px;
+        font-size: 12.5px;
+        font-weight: 700;
+        box-shadow: var(--bzk-sh-lg);
+        z-index: 5;
+        .bzk-spin { border-top-color: #fff; }
+    }
+}
+
+@keyframes bzt-breathe {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.12); }
+}
+
+@keyframes bzt-slide {
+    from { opacity: 0; transform: translateY(-3px); }
+    to   { opacity: 1; transform: translateY(0); }
+}

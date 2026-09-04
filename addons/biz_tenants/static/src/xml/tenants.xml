@@ -1,0 +1,1175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<!-- =====================================================================
+     NOTES THAT APPLY TO EVERY TEMPLATE IN THIS FILE.
+
+     * No loop variable is ever called `lt`, `gt`, `amp` or `quot`: the
+       compiler rewrites such a name into a literal `<` and the whole
+       component dies with a blank screen and no useful error (ledger F15).
+     * No JavaScript built-in is called from an expression — a template is
+       compiled against the COMPONENT, so `String(x)` becomes `ctx.String(x)`
+       and throws the first time that branch renders (ledger F16). Everything
+       is computed in the component.
+     * `t-att-*` is never bound to a bare boolean: it renders the attribute
+       with an EMPTY value, so `[aria-pressed="true"]` never matches
+       (ledger F58). The string is bound instead.
+     * The kit's dialog scrim is `bzk-modal-scrim`, ONE hyphen — written the
+       other way it matches no rule at all and the dialog renders inline, in
+       the flow of the page, with no error anywhere (ledger F57). And
+       `.bzk-modal__body` carries no padding of its own.
+     ===================================================================== -->
+
+<t t-name="biz_tenants.Cockpit">
+  <div class="bzk bzk-page bzt">
+
+    <!-- ================================================== the top bar -->
+    <div class="bzt-top">
+      <div class="bzt-top-l">
+        <HubBackChip back="back" t-if="state.view === 'fleet'"/>
+        <button t-else="" class="bzk-btn ghost bzk-btn-sm" t-on-click="goFleet">
+          <t t-out="ic('back', 13)"/> <span>All customers</span>
+        </button>
+        <div class="bzt-title">
+          <div class="bzk-h1" t-esc="headline"/>
+          <div class="bzk-sub" t-esc="subhead"/>
+        </div>
+      </div>
+      <div class="bzt-top-r">
+        <button class="bzk-btn ghost bzk-btn-sm" t-on-click="refresh"
+                title="Read everything again (r)">
+          <t t-out="ic('refresh', 14)"/> <span>Refresh</span>
+        </button>
+        <button class="bzk-btn ghost bzk-btn-sm" t-on-click="openSync"
+                t-if="state.view !== 'sync'">
+          <t t-out="ic('gitMerge', 14)"/> <span>In step with master</span>
+        </button>
+        <button class="bzk-btn primary bzk-btn-sm" t-on-click="openWizard"
+                t-if="state.view !== 'wizard'" title="New customer (n)">
+          <t t-out="ic('plus', 14)"/> <span>New customer</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- The one honest sentence a cockpit nobody has configured can say. -->
+    <div class="bzk-note bzt-warn" t-if="!state.loading and !configured">
+      <t t-out="ic('alert', 15)"/>
+      <span>
+        Nobody has told this machine what product it is running or where new
+        customers should live, so no customer can be created yet. That is set
+        once, by whoever installed it.
+      </span>
+    </div>
+
+    <div class="bzk-busy" t-if="state.loading">
+      <div class="bzk-spin"/>
+      <div>Reading what is on this machine…</div>
+    </div>
+
+    <t t-else="">
+      <t t-if="state.view === 'fleet'"><t t-call="biz_tenants.Fleet"/></t>
+      <t t-elif="state.view === 'wizard'"><t t-call="biz_tenants.Wizard"/></t>
+      <t t-elif="state.view === 'detail'"><t t-call="biz_tenants.Detail"/></t>
+      <!-- The null guard is deliberate and is not paranoia: this screen reads
+           its data on its first line, so rendering it a moment early throws
+           inside the component's lifecycle and puts a stack trace in front of
+           somebody. `openSync` also fetches before it switches. -->
+      <t t-elif="state.view === 'sync'">
+        <t t-if="state.sync"><t t-call="biz_tenants.Sync"/></t>
+        <div t-else="" class="bzk-busy">
+          <div class="bzk-spin"/>
+          <div>Reading every system on this machine…</div>
+        </div>
+      </t>
+    </t>
+
+    <!-- Overlays. All three are the kit's own dialog, so they scrim, centre
+         and scroll inside themselves like every other dialog in the product. -->
+    <t t-if="state.composer"><t t-call="biz_tenants.Composer"/></t>
+    <t t-if="state.confirm"><t t-call="biz_tenants.Confirm"/></t>
+    <t t-if="state.cutting"><t t-call="biz_tenants.CutRelease"/></t>
+
+    <!-- The one place the screen says it is working. A control that goes quiet
+         for forty seconds is a control somebody presses twice. -->
+    <div class="bzt-busy" t-if="state.busy">
+      <div class="bzk-spin"/> <span t-esc="state.busy"/>
+    </div>
+
+  </div>
+</t>
+
+
+<!-- ======================================================== the fleet -->
+<t t-name="biz_tenants.Fleet">
+  <div class="bzt-fleet">
+
+    <div class="bzk-stats bzt-kpis">
+      <div class="bzk-stat">
+        <div class="bzk-stat-ic green"><t t-out="ic('users', 21)"/></div>
+        <div class="bzk-stat-tx">
+          <span class="n" t-esc="state.fleet.counts.live"/>
+          <span class="l">Live customers</span>
+        </div>
+      </div>
+      <div class="bzk-stat">
+        <div class="bzk-stat-ic blue"><t t-out="ic('loader', 21)"/></div>
+        <div class="bzk-stat-tx">
+          <span class="n" t-esc="state.fleet.counts.setting_up"/>
+          <span class="l">Being set up</span>
+        </div>
+      </div>
+      <div t-attf-class="bzk-stat {{ state.fleet.counts.attention ? 'err' : '' }}">
+        <div t-attf-class="bzk-stat-ic {{ state.fleet.counts.attention ? 'rose' : 'green' }}">
+          <t t-out="ic('activity', 21)"/>
+        </div>
+        <div class="bzk-stat-tx">
+          <span class="n" t-esc="state.fleet.counts.attention"/>
+          <span class="l">Need attention</span>
+        </div>
+      </div>
+      <div class="bzk-stat">
+        <div class="bzk-stat-ic amber"><t t-out="ic('archive', 21)"/></div>
+        <div class="bzk-stat-tx">
+          <span class="n" t-esc="state.fleet.backups.stale"/>
+          <span class="l">Without a recent copy</span>
+        </div>
+      </div>
+      <div class="bzk-stat">
+        <div class="bzk-stat-ic teal"><t t-out="ic('database', 21)"/></div>
+        <div class="bzk-stat-tx">
+          <span class="n" t-esc="state.fleet.machine.storage"/>
+          <span class="l">Held for customers</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bzt-strip">
+      <span class="bzt-strip-i"><t t-out="ic('server', 14)"/></span>
+      <span t-esc="memorySentence"/>
+      <span class="bzt-strip-sep">·</span>
+      <span t-if="state.fleet.release">
+        Release <b t-esc="state.fleet.release.name"/> —
+        <t t-esc="state.fleet.release.on"/> of
+        <t t-esc="state.fleet.release.total"/> customers are on it.
+      </span>
+      <span t-else="">No release has been cut yet.</span>
+      <span class="bzt-strip-sep" t-if="state.fleet.drift.parts">·</span>
+      <span t-if="state.fleet.drift.parts">
+        <t t-esc="state.fleet.drift.tenants"/> behind, by
+        <t t-esc="state.fleet.drift.parts"/> parts in total.
+      </span>
+    </div>
+
+    <!-- ZERO DEAD ENDS: the empty state is a door, not a shrug. -->
+    <div class="bzk-panel bzt-empty" t-if="!hasTenants">
+      <div class="bzk-empty">
+        <div class="bzt-empty-ic"><t t-out="ic('users', 30)"/></div>
+        <div class="bzt-empty-t">No customers yet.</div>
+        <div class="bzt-empty-s">
+          Creating one takes about a minute. A blank copy of the product
+          becomes their own system, at their own address, with their own
+          administrator — and you watch every step of it happen.
+        </div>
+        <button class="bzk-btn primary" t-on-click="openWizard">
+          <t t-out="ic('plus', 15)"/> <span>Create the first customer</span>
+        </button>
+      </div>
+    </div>
+
+    <t t-else="">
+      <div class="bzt-searchrow">
+        <label class="bzt-search">
+          <t t-out="ic('search', 14)"/>
+          <input type="text" placeholder="Find a customer"
+                 t-att-value="state.search"
+                 t-on-input="(ev) => this.state.search = ev.target.value"/>
+        </label>
+        <span class="bzt-count">
+          <t t-esc="tenants.length"/> shown
+        </span>
+      </div>
+
+      <div class="bzk-tablewrap">
+        <table class="bzk-table bzt-table">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Address</th>
+              <th>State</th>
+              <th>Health</th>
+              <th>Release</th>
+              <th>Size</th>
+              <th>People</th>
+              <th>Last copy</th>
+              <th/>
+            </tr>
+          </thead>
+          <tbody>
+            <tr t-foreach="tenants" t-as="row" t-key="row.id" class="click"
+                t-on-click="() => this.openTenant(row.id)">
+              <td>
+                <div class="bzt-nm" t-esc="row.name"/>
+                <div class="bzt-sub" t-esc="row.contact_email"/>
+              </td>
+              <td class="mono">
+                <a t-att-href="row.url" target="_blank" rel="noreferrer"
+                   t-on-click.stop="() => {}" t-esc="row.host"/>
+              </td>
+              <td>
+                <span t-attf-class="bzk-badge {{ stateWord(row.state).tone }}">
+                  <span class="d"/> <t t-esc="stateWord(row.state).label"/>
+                </span>
+              </td>
+              <td>
+                <span t-attf-class="bzk-badge {{ healthWord(row.health).tone }}">
+                  <span class="d"/> <t t-esc="healthWord(row.health).label"/>
+                </span>
+              </td>
+              <td>
+                <div t-if="row.release" class="bzt-nm" t-esc="row.release"/>
+                <span t-attf-class="bzk-badge {{ releaseWord(row.release_state).tone }}">
+                  <t t-esc="releaseWord(row.release_state).label"/>
+                </span>
+              </td>
+              <td class="mono" t-esc="row.size"/>
+              <td class="mono" t-esc="row.users"/>
+              <td class="mono">
+                <t t-if="row.last_backup" t-esc="row.last_backup"/>
+                <span t-else="" class="bzt-never">Never</span>
+              </td>
+              <td class="bzt-rowact">
+                <!-- ZERO DEAD ENDS ACROSS A RELOAD: a customer somebody
+                     started and did not finish is picked back up from the
+                     step it reached, rather than left with its short name
+                     taken and no way in. -->
+                <button class="bzk-btn outline bzk-btn-sm"
+                        t-if="unfinished(row)"
+                        t-on-click.stop="() => this.resume(row.id)"
+                        title="Carry on setting this customer up">
+                  <t t-out="ic('play', 13)"/> <span>Continue</span>
+                </button>
+                <button class="bzk-btn ghost bzk-btn-sm"
+                        t-on-click.stop="() => this.openComposer([row.id])"
+                        title="Put a message at the top of their pages">
+                  <t t-out="ic('mail', 13)"/>
+                </button>
+                <button class="bzk-btn ghost bzk-btn-sm"
+                        t-on-click.stop="() => this.openUrl(row.url)"
+                        title="Open their address">
+                  <t t-out="ic('external', 13)"/>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="bzt-fleetfoot">
+        <button class="bzk-btn ghost bzk-btn-sm"
+                t-on-click="() => this.openComposer(liveIds)"
+                t-if="state.fleet.counts.live">
+          <t t-out="ic('mail', 14)"/>
+          <span>Send a message to every live customer</span>
+        </button>
+      </div>
+    </t>
+  </div>
+</t>
+
+
+<!-- ================================================= the wizard (hero) -->
+<t t-name="biz_tenants.Wizard">
+  <div class="bzt-wizard">
+
+    <!-- Before the run: the form and the dry run. -->
+    <t t-if="!state.wizard">
+      <div class="bzk-panel bzt-form">
+        <div class="bzk-panel-h">
+          <div>
+            <div class="bzk-h2">Who is this for?</div>
+            <div class="bzk-sub">
+              Four answers, and then you can see exactly what would happen
+              before anything is created.
+            </div>
+          </div>
+        </div>
+
+        <div class="bzt-fields">
+          <label class="bzt-field">
+            <span class="bzt-lab">The customer's name</span>
+            <input type="text" t-att-value="state.form.name"
+                   t-on-input="onName" placeholder="Green Valley Group"/>
+            <span class="bzt-hint">
+              What their own people see at the top of every page.
+            </span>
+          </label>
+
+          <label class="bzt-field">
+            <span class="bzt-lab">Their short name</span>
+            <div class="bzt-slugrow">
+              <input type="text" t-att-value="state.form.slug"
+                     t-on-input="onSlug" placeholder="greenvalley"
+                     t-ref="slugInput" class="bzt-slug"/>
+              <span class="bzt-apex" t-esc="apexSuffix"/>
+            </div>
+            <span class="bzt-hint bzt-good" t-if="state.slugCheck and state.slugCheck.ok">
+              <t t-out="ic('check', 13)"/>
+              <t t-esc="state.slugCheck.url"/> is free.
+            </span>
+            <span class="bzt-hint bzt-bad" t-elif="state.slugCheck">
+              <t t-out="ic('alert', 13)"/> <t t-esc="state.slugCheck.reason"/>
+            </span>
+            <span class="bzt-hint" t-else="">
+              This becomes their web address AND the name of their system on
+              this machine. Small letters and digits, starting with a letter.
+            </span>
+          </label>
+
+          <label class="bzt-field">
+            <span class="bzt-lab">Their administrator's name</span>
+            <input type="text" t-att-value="state.form.contact_name"
+                   t-on-input="(ev) => this.onField('contact_name', ev)"
+                   placeholder="Nguyen Thi Mai"/>
+            <span class="bzt-hint">Optional — the customer's name is used
+              otherwise.</span>
+          </label>
+
+          <label class="bzt-field">
+            <span class="bzt-lab">Their administrator's email</span>
+            <input type="email" t-att-value="state.form.contact_email"
+                   t-on-input="(ev) => this.onField('contact_email', ev)"
+                   placeholder="owner@greenvalley.example"/>
+            <span class="bzt-hint">
+              This becomes their sign-in name. Nothing is emailed to it — this
+              platform has no outgoing mail account yet, so you hand over the
+              password yourself.
+            </span>
+          </label>
+
+          <label class="bzt-field bzt-wide">
+            <span class="bzt-lab">Anything worth writing down</span>
+            <textarea rows="2" t-att-value="state.form.note"
+                      t-on-input="(ev) => this.onField('note', ev)"
+                      placeholder="Who asked for this, and when."/>
+          </label>
+        </div>
+
+        <div class="bzt-formfoot">
+          <button class="bzk-btn outline" t-on-click="doPreview"
+                  t-att-disabled="canPreview ? undefined : 'disabled'">
+            <t t-out="ic('scan', 15)"/>
+            <span>Show me what would happen</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- THE DRY RUN. It writes nothing, anywhere, and says so. -->
+      <div class="bzk-panel bzt-preview" t-if="state.preview">
+        <div class="bzk-panel-h">
+          <div class="bzk-h2">Six steps, and nothing has happened yet</div>
+          <span class="bzk-badge info"><span class="d"/> Nothing written</span>
+        </div>
+
+        <div class="bzk-note bzt-bad" t-if="state.preview.problems.length">
+          <div t-foreach="state.preview.problems" t-as="problem"
+               t-key="problem_index" t-esc="problem"/>
+        </div>
+        <div class="bzk-note bzt-warn" t-if="state.preview.warnings.length">
+          <div t-foreach="state.preview.warnings" t-as="warning"
+               t-key="warning_index" t-esc="warning"/>
+        </div>
+
+        <ol class="bzt-plan">
+          <li t-foreach="state.preview.plan" t-as="line" t-key="line.key">
+            <span class="bzt-plan-n" t-esc="line_index + 1"/>
+            <span class="bzt-plan-w" t-esc="line.what"/>
+          </li>
+        </ol>
+
+        <div class="bzt-formfoot">
+          <button class="bzk-btn primary" t-on-click="() => this.runAll(false)"
+                  t-att-disabled="state.preview.ok ? undefined : 'disabled'">
+            <t t-out="ic('play', 15)"/>
+            <span>Create <t t-esc="state.form.name"/></span>
+          </button>
+          <button class="bzk-btn ghost" t-on-click="() => this.runAll(true)"
+                  t-att-disabled="state.preview.ok ? undefined : 'disabled'">
+            <t t-out="ic('scan', 15)"/>
+            <span>Run it as a rehearsal first</span>
+          </button>
+        </div>
+      </div>
+    </t>
+
+    <!-- During and after the run: the stepper and the live log. -->
+    <t t-else="">
+      <div class="bzk-panel bzt-run">
+        <div class="bzk-panel-h">
+          <div>
+            <div class="bzk-h2">
+              <t t-if="state.wizard.preview">Rehearsing </t>
+              <t t-esc="state.form.name"/>
+            </div>
+            <div class="bzk-sub">
+              <t t-if="state.wizard.preview">
+                Nothing is being written. This is what the real run would do.
+              </t>
+              <t t-else="">
+                <t t-esc="wizardStepsDone"/> of
+                <t t-esc="state.wizard.steps.length"/> steps done.
+              </t>
+            </div>
+          </div>
+        </div>
+
+        <div class="bzk-rail bzt-rail">
+          <t t-foreach="state.wizard.steps" t-as="step" t-key="step.key">
+            <div t-attf-class="bzk-rail-step bzt-step {{ step.state }}
+                               {{ step.state === 'done' ? 'done' : '' }}
+                               {{ step.state === 'running' ? 'cur' : '' }}">
+              <div class="bzk-rail-dot">
+                <t t-if="step.state === 'done'" t-out="ic('check', 14)"/>
+                <t t-elif="step.state === 'failed'" t-out="ic('x', 14)"/>
+                <t t-elif="step.state === 'running'" t-out="ic('loader', 14)"/>
+                <t t-else="" t-esc="step_index + 1"/>
+              </div>
+              <div class="bzk-rail-lab">
+                <div t-esc="step.label"/>
+                <div class="bzt-ms" t-if="step.ms">
+                  <t t-esc="step.ms"/> ms
+                </div>
+              </div>
+            </div>
+            <div t-if="!step_last"
+                 t-attf-class="bzk-rail-bar {{ step.state === 'done' ? 'done' : '' }}"/>
+          </t>
+        </div>
+
+        <!-- THE LIVE LOG. Newest at the bottom, the way somebody watching a
+             thing happen expects it — not newest first, which is how a
+             finished record reads. -->
+        <div class="bzt-log">
+          <div t-foreach="state.wizard.log" t-as="line" t-key="line_index"
+               t-attf-class="bzt-logline bzt-{{ line.level }}">
+            <span class="bzt-logstep" t-esc="line.step"/>
+            <span t-esc="line.line"/>
+          </div>
+          <div class="bzt-logline bzt-info" t-if="state.busy">
+            <span class="bzt-logstep">…</span>
+            <span t-esc="state.busy"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- PICKED BACK UP. Somebody started this customer and walked away;
+           the steps above say how far it got. One button, and it says which
+           step it is about to run. -->
+      <div class="bzk-panel bzt-resume" t-if="state.wizard.paused">
+        <div class="bzk-h2">This customer was left part-way through</div>
+        <div class="bzk-sub">
+          Everything ticked above is done and is still there. Carrying on picks
+          up at the next step; undoing removes what was made — and nobody has
+          signed in, so undoing leaves nothing behind.
+        </div>
+        <div class="bzt-formfoot">
+          <button class="bzk-btn primary" t-on-click="resumeRun">
+            <t t-out="ic('play', 15)"/> <span>Carry on from here</span>
+          </button>
+          <button class="bzk-btn danger" t-on-click="undoWizard">
+            <t t-out="ic('trash', 15)"/> <span>Undo the whole thing</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- FAILURE: what failed, what it left behind, and two buttons. -->
+      <div class="bzk-panel bzt-failed" t-if="state.wizard.failed">
+        <div class="bzk-h2">That step did not finish</div>
+        <div class="bzk-note bzt-bad" t-esc="state.wizard.error"/>
+        <div class="bzk-sub">
+          Everything before it is done and is still there. You can put right
+          whatever the message names and carry on from this step, or undo the
+          whole thing — nobody has signed in yet, so undoing leaves nothing
+          behind.
+        </div>
+        <div class="bzt-formfoot">
+          <button class="bzk-btn primary" t-on-click="retryStep">
+            <t t-out="ic('rotate', 15)"/> <span>Try this step again</span>
+          </button>
+          <button class="bzk-btn danger" t-on-click="undoWizard">
+            <t t-out="ic('trash', 15)"/> <span>Undo the whole thing</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- THE END CARD. The one screen this whole phase exists to produce. -->
+      <div class="bzk-panel bzt-handover" t-if="state.wizard.done and !state.wizard.preview">
+        <div class="bzt-handover-h">
+          <span class="bzt-handover-ic"><t t-out="ic('checkCircle', 26)"/></span>
+          <div>
+            <div class="bzk-h2"><t t-esc="state.form.name"/> is live.</div>
+            <div class="bzk-sub">
+              Hand these three things over. The password is shown here once and
+              is stored nowhere — not on this machine, not in the log, and no
+              email was sent, because this platform has no outgoing mail
+              account yet.
+            </div>
+          </div>
+        </div>
+
+        <div class="bzt-creds" t-if="state.wizard.credentials">
+          <div class="bzt-cred">
+            <span class="bzt-cred-l">Their address</span>
+            <span class="bzt-cred-v" t-esc="state.wizard.credentials.url"/>
+            <button class="bzk-btn ghost bzk-btn-sm"
+                    t-on-click="() => this.copyText(state.wizard.credentials.url)">
+              <t t-out="ic('copy', 13)"/> <span>Copy</span>
+            </button>
+          </div>
+          <div class="bzt-cred">
+            <span class="bzt-cred-l">Their sign-in name</span>
+            <span class="bzt-cred-v" t-esc="state.wizard.credentials.login"/>
+            <button class="bzk-btn ghost bzk-btn-sm"
+                    t-on-click="() => this.copyText(state.wizard.credentials.login)">
+              <t t-out="ic('copy', 13)"/> <span>Copy</span>
+            </button>
+          </div>
+          <div class="bzt-cred bzt-cred-pw">
+            <span class="bzt-cred-l">Their one-time password</span>
+            <span class="bzt-cred-v mono" t-esc="state.wizard.credentials.password"/>
+            <button class="bzk-btn primary bzk-btn-sm"
+                    t-on-click="() => this.copyText(state.wizard.credentials.password)">
+              <t t-out="ic('copy', 13)"/> <span>Copy</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="bzk-note bzt-warn" t-if="state.wizard.retry">
+          Their address works, but a browser will warn about the name until a
+          certificate is issued. Run this on the machine and then press the
+          "Secure the address" step again:
+          <code t-esc="state.wizard.retry"/>
+        </div>
+
+        <div class="bzt-formfoot">
+          <button class="bzk-btn primary"
+                  t-on-click="() => this.openUrl(state.wizard.url)">
+            <t t-out="ic('external', 15)"/> <span>Open their address</span>
+          </button>
+          <button class="bzk-btn ghost" t-on-click="goFleet">
+            <t t-out="ic('users', 15)"/> <span>Back to all customers</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="bzk-panel bzt-handover"
+           t-if="state.wizard.done and state.wizard.preview">
+        <div class="bzk-h2">The rehearsal finished. Nothing was written.</div>
+        <div class="bzk-sub">
+          Every step above says what the real run would do. Undo this draft and
+          create it for real when you are ready.
+        </div>
+        <div class="bzt-formfoot">
+          <button class="bzk-btn danger" t-on-click="undoWizard">
+            <t t-out="ic('trash', 15)"/> <span>Clear the rehearsal</span>
+          </button>
+        </div>
+      </div>
+    </t>
+  </div>
+</t>
+
+
+<!-- ================================================== one customer -->
+<t t-name="biz_tenants.Detail">
+  <div class="bzt-detail">
+
+    <div class="bzk-hero bzt-hero">
+      <div class="bzk-hero-av" t-esc="initials"/>
+      <div class="bzk-hero-id">
+        <div class="nm" t-esc="state.tenant.name"/>
+        <div class="mt">
+          <a t-att-href="state.tenant.url" target="_blank" rel="noreferrer"
+             t-esc="state.tenant.host"/>
+          <t t-if="state.tenant.contact_email">
+            · <t t-esc="state.tenant.contact_email"/>
+          </t>
+        </div>
+        <div class="bzk-hero-chips">
+          <span t-attf-class="bzk-badge {{ stateWord(state.tenant.state).tone }}">
+            <span class="d"/> <t t-esc="stateWord(state.tenant.state).label"/>
+          </span>
+          <span t-attf-class="bzk-badge {{ healthWord(state.tenant.health).tone }}">
+            <span class="d"/> <t t-esc="healthWord(state.tenant.health).label"/>
+          </span>
+          <span class="bzk-chip" t-if="state.tenant.release">
+            <t t-out="ic('package', 13)"/> <t t-esc="state.tenant.release"/>
+          </span>
+          <span class="bzk-chip">
+            <t t-out="ic('database', 13)"/> <t t-esc="state.tenant.size"/>
+          </span>
+        </div>
+      </div>
+      <div class="bzk-hero-net">
+        <div class="v" t-esc="state.tenant.users"/>
+        <div class="k">People who can sign in</div>
+      </div>
+    </div>
+
+    <!-- What their people are being shown right now. -->
+    <div class="bzk-note bzt-notice" t-if="state.tenant.notice">
+      <t t-out="ic('mail', 15)"/>
+      <span>
+        Their people are seeing: <b t-esc="state.tenant.notice"/>
+        <t t-if="state.tenant.notice_sent_at">
+          (sent <t t-esc="state.tenant.notice_sent_at"/>)
+        </t>
+      </span>
+      <button class="bzk-btn ghost bzk-btn-sm"
+              t-on-click="() => this.clearNotice(state.tenant.id)">
+        <t t-out="ic('x', 13)"/> <span>Take it down</span>
+      </button>
+    </div>
+
+    <div class="bzk-seg bzt-tabs">
+      <button t-foreach="TABS" t-as="tab" t-key="tab.key"
+              t-attf-class="bzk-segbtn {{ state.tab === tab.key ? 'on' : '' }}"
+              t-att-aria-pressed="state.tab === tab.key ? 'true' : 'false'"
+              t-on-click="() => this.setTab(tab.key)">
+        <t t-out="ic(tab.icon, 14)"/> <span t-esc="tab.label"/>
+      </button>
+    </div>
+
+    <!-- ==== overview -->
+    <div class="bzk-panel" t-if="state.tab === 'overview'">
+      <div class="bzk-panel-h">
+        <div class="bzk-h2">How it is doing</div>
+        <span class="bzt-when" t-if="state.tenant.health_checked_at">
+          read <t t-esc="state.tenant.health_checked_at"/>
+        </span>
+      </div>
+      <div class="bzt-hrows">
+        <div class="bzt-hrow" t-foreach="healthRows" t-as="row" t-key="row.key">
+          <span class="bzt-hrow-l" t-esc="row.label"/>
+          <span t-attf-class="bzt-hrow-v bzt-{{ row.tone }}" t-esc="row.value"/>
+        </div>
+      </div>
+
+      <div class="bzt-errors" t-if="logErrors.length">
+        <div class="bzk-h2">The last few errors from their system</div>
+        <div class="bzk-sub">
+          The name in the middle of each line says which part of the product
+          complained. Lines on the ignore list are counted above and are not
+          shown here.
+        </div>
+        <pre class="bzt-pre"><t t-foreach="logErrors" t-as="line"
+             t-key="line_index"><t t-esc="line"/>
+</t></pre>
+      </div>
+
+      <div class="bzt-formfoot">
+        <button class="bzk-btn ghost bzk-btn-sm"
+                t-on-click="() => this.openComposer([state.tenant.id])">
+          <t t-out="ic('mail', 14)"/> <span>Tell their people something</span>
+        </button>
+        <button class="bzk-btn ghost bzk-btn-sm"
+                t-on-click="() => this.openUrl(state.tenant.url)">
+          <t t-out="ic('external', 14)"/> <span>Open their address</span>
+        </button>
+      </div>
+
+      <div class="bzt-address">
+        <div class="bzk-h2">Their address</div>
+        <div class="bzt-domlist">
+          <div class="bzt-dom" t-foreach="state.tenant.domains" t-as="dom"
+               t-key="dom.id">
+            <t t-out="ic('link', 14)"/>
+            <a t-att-href="dom.url" target="_blank" rel="noreferrer"
+               t-esc="dom.hostname"/>
+          </div>
+        </div>
+        <div class="bzk-note" t-esc="state.tenant.custom_domains_note"/>
+      </div>
+
+      <div class="bzt-history">
+        <div class="bzk-h2">Everything that has happened to their system</div>
+        <pre class="bzt-pre"><t t-foreach="logLines" t-as="line"
+             t-key="line_index"><t t-esc="line"/>
+</t></pre>
+      </div>
+    </div>
+
+    <!-- ==== copies -->
+    <div class="bzk-panel" t-if="state.tab === 'backups'">
+      <div class="bzk-panel-h">
+        <div>
+          <div class="bzk-h2">Copies of their system</div>
+          <div class="bzk-sub">
+            A copy is the data AND the attachments, and both sizes are shown
+            because one without the other cannot be put back. A copy every
+            night is kept for a fortnight; the ones you take by hand are kept
+            for good.
+          </div>
+        </div>
+        <button class="bzk-btn primary bzk-btn-sm" t-on-click="backupNow">
+          <t t-out="ic('save', 14)"/> <span>Take a copy now</span>
+        </button>
+      </div>
+
+      <div class="bzk-empty" t-if="!state.tenant.backups.length">
+        No copy has ever been taken of this customer. Take one now — it is the
+        only thing that makes anything else on this screen reversible.
+      </div>
+
+      <div class="bzk-tablewrap" t-else="">
+        <table class="bzk-table">
+          <thead>
+            <tr>
+              <th>When</th><th>Kind</th><th>Data</th>
+              <th>Attachments</th><th>Files</th><th/>
+            </tr>
+          </thead>
+          <tbody>
+            <tr t-foreach="state.tenant.backups" t-as="copy" t-key="copy.id">
+              <td class="mono" t-esc="copy.taken_at"/>
+              <td>
+                <span t-attf-class="bzk-badge {{ copy.state === 'done' ? 'ok' : 'err' }}">
+                  <t t-esc="copy.kind"/>
+                </span>
+                <div class="bzt-sub" t-if="copy.note" t-esc="copy.note"/>
+              </td>
+              <td class="mono" t-esc="copy.size_h"/>
+              <td class="mono" t-esc="copy.filestore_size_h"/>
+              <td class="mono" t-esc="copy.filestore_files"/>
+              <td>
+                <button class="bzk-btn ghost bzk-btn-sm"
+                        t-if="copy.state === 'done' and !state.tenant.staging_exists"
+                        t-on-click="() => this.restoreStaging(copy.id)">
+                  <t t-out="ic('rotate', 13)"/>
+                  <span>Put it back as a practice system</span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="bzk-note bzt-warn" t-if="state.tenant.staging_exists">
+        <span>
+          There is a practice system called
+          <b t-esc="state.tenant.staging_db"/> on this machine. It sends
+          nothing to anybody, and every extra system costs memory — remove it
+          when you have finished with it.
+        </span>
+        <button class="bzk-btn danger bzk-btn-sm" t-on-click="dropStaging">
+          <t t-out="ic('trash', 13)"/> <span>Remove it</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ==== in step -->
+    <div class="bzk-panel" t-if="state.tab === 'instep'">
+      <div class="bzk-panel-h">
+        <div>
+          <div class="bzk-h2">In step with the master</div>
+          <div class="bzk-sub">
+            Nothing is ever installed on a customer's system by a schedule. A
+            person presses the button.
+          </div>
+        </div>
+        <span t-attf-class="bzk-badge {{ releaseWord(state.tenant.release_state).tone }}">
+          <span class="d"/>
+          <t t-esc="releaseWord(state.tenant.release_state).label"/>
+        </span>
+      </div>
+      <div class="bzt-hrows">
+        <div class="bzt-hrow">
+          <span class="bzt-hrow-l">Parts they do not have yet</span>
+          <span class="bzt-hrow-v" t-esc="state.tenant.behind_count"/>
+        </div>
+        <div class="bzt-hrow">
+          <span class="bzt-hrow-l">Parts at an older version</span>
+          <span class="bzt-hrow-v" t-esc="state.tenant.stale_count"/>
+        </div>
+        <div class="bzt-hrow">
+          <span class="bzt-hrow-l">Last brought in step</span>
+          <span class="bzt-hrow-v">
+            <t t-if="state.tenant.last_sync_at"
+               t-esc="state.tenant.last_sync_at"/>
+            <t t-else="">Never</t>
+          </span>
+        </div>
+      </div>
+      <div class="bzt-formfoot">
+        <button class="bzk-btn outline"
+                t-on-click="() => this.bringInStep(state.tenant.id, true)">
+          <t t-out="ic('scan', 15)"/> <span>Show me what would change</span>
+        </button>
+        <button class="bzk-btn primary"
+                t-on-click="() => this.bringInStep(state.tenant.id, false)">
+          <t t-out="ic('gitMerge', 15)"/> <span>Bring them in step</span>
+        </button>
+      </div>
+      <t t-if="state.plan"><t t-call="biz_tenants.Plan"/></t>
+    </div>
+
+    <!-- ==== danger -->
+    <div class="bzk-panel bzt-danger" t-if="state.tab === 'danger'">
+      <div class="bzk-h2">Closing this customer down</div>
+      <div class="bzk-sub">
+        This removes their system from this machine and takes their address
+        down with it. A final copy is taken FIRST and kept for good, and the
+        whole thing refuses if that copy fails — everything here is reversible
+        with that file and irreversible without it.
+      </div>
+      <div class="bzk-note bzt-warn" t-if="!state.tenant.signed_in">
+        Nobody has ever signed in to this system, so it can also simply be
+        undone: the system is removed, the address comes down, and the record
+        goes back to "not started".
+      </div>
+      <div class="bzt-formfoot">
+        <button class="bzk-btn ghost" t-if="!state.tenant.signed_in"
+                t-on-click="() => this.askConfirm('undo')">
+          <t t-out="ic('rotate', 15)"/> <span>Undo this customer</span>
+        </button>
+        <button class="bzk-btn danger"
+                t-on-click="() => this.askConfirm('close')">
+          <t t-out="ic('powerOff', 15)"/> <span>Close them down</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</t>
+
+
+<!-- ============================================ in step with master -->
+<t t-name="biz_tenants.Sync">
+  <div class="bzt-sync">
+
+    <div class="bzk-note bzt-warn" t-if="state.sync.master_behind_files.length">
+      <t t-out="ic('alert', 15)"/>
+      <span>
+        This machine is holding newer files than the platform's own system has
+        applied — <t t-esc="state.sync.master_behind_files.length"/> parts are
+        waiting. Nothing can be sent out to anybody until the platform runs what
+        it is holding.
+      </span>
+    </div>
+
+    <div class="bzk-panel bzt-relpanel">
+      <div class="bzk-panel-h">
+        <div>
+          <div class="bzk-h2" t-if="state.sync.release">
+            Everybody is aimed at release <t t-esc="state.sync.release.name"/>
+          </div>
+          <div class="bzk-h2" t-else="">No release has been cut</div>
+          <div class="bzk-sub" t-if="state.sync.release">
+            <t t-esc="state.sync.on_release"/> of
+            <t t-esc="state.sync.measured"/> systems are on it.
+            Cut on <t t-esc="state.sync.release.cut_on"/>,
+            <t t-esc="state.sync.release.module_count"/> parts.
+          </div>
+          <div class="bzk-sub" t-else="">
+            Until one is cut, "in step" means "the same as the platform, right
+            now" — which moves every time anything is applied here. A release
+            freezes the answer.
+          </div>
+        </div>
+        <div class="bzt-relacts">
+          <button class="bzk-btn ghost bzk-btn-sm" t-on-click="quietTemplate">
+            <t t-out="ic('powerOff', 14)"/>
+            <span>Quieten the blank system</span>
+          </button>
+          <button class="bzk-btn primary bzk-btn-sm" t-on-click="openCut">
+            <t t-out="ic('stamp', 14)"/> <span>Cut a release</span>
+          </button>
+        </div>
+      </div>
+      <div class="bzk-note" t-esc="state.sync.schedule_note"/>
+    </div>
+
+    <div class="bzk-tablewrap">
+      <table class="bzk-table">
+        <thead>
+          <tr>
+            <th>System</th><th>Parts</th><th>Missing</th>
+            <th>Older</th><th>Standing</th><th/>
+          </tr>
+        </thead>
+        <tbody>
+          <tr t-foreach="state.sync.rows" t-as="row" t-key="row.key">
+            <td>
+              <div class="bzt-nm" t-esc="row.name"/>
+              <div class="bzt-sub mono" t-esc="row.database"/>
+            </td>
+            <td class="mono">
+              <t t-if="row.checked" t-esc="row.installed"/>
+              <span t-else="" class="bzt-never" t-esc="row.error"/>
+            </td>
+            <td class="mono" t-esc="row.behind_count"/>
+            <td class="mono" t-esc="row.stale_count"/>
+            <td>
+              <span t-attf-class="bzk-badge {{ releaseWord(row.release_state).tone }}">
+                <span class="d"/>
+                <t t-esc="releaseWord(row.release_state).label"/>
+              </span>
+            </td>
+            <td class="bzt-rowact" t-if="row.checked">
+              <button class="bzk-btn ghost bzk-btn-sm"
+                      t-on-click="() => this.bringInStep(row.is_template ? 'template' : row.id, true)">
+                <span>Rehearse</span>
+              </button>
+              <button class="bzk-btn outline bzk-btn-sm"
+                      t-if="!row.in_step"
+                      t-on-click="() => this.bringInStep(row.is_template ? 'template' : row.id, false)">
+                <span>Bring in step</span>
+              </button>
+            </td>
+            <td t-else=""/>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <t t-if="state.plan"><t t-call="biz_tenants.Plan"/></t>
+
+    <div class="bzk-panel bzt-never">
+      <div class="bzk-h2">What a customer never receives</div>
+      <div class="bzk-sub">
+        Everything else the platform has, every customer gets. These are the
+        argued exceptions, and the reason is beside each one.
+      </div>
+      <div class="bzt-neverrow" t-foreach="state.sync.never" t-as="held"
+           t-key="held.module">
+        <span class="bzt-never-n mono" t-esc="held.module"/>
+        <span class="bzt-never-r" t-esc="held.reason"/>
+      </div>
+    </div>
+
+    <div class="bzk-panel bzt-rellist" t-if="state.releases.length">
+      <div class="bzk-h2">Every release so far</div>
+      <div class="bzt-relrow" t-foreach="state.releases" t-as="rel"
+           t-key="rel.id">
+        <div class="bzt-relrow-h">
+          <span class="bzt-relrow-n" t-esc="rel.name"/>
+          <span class="bzk-badge ok" t-if="rel.current">
+            <span class="d"/> Current
+          </span>
+          <span class="bzt-relrow-d" t-esc="rel.cut_on"/>
+        </div>
+        <div class="bzt-relrow-b" t-if="rel.notes" t-esc="rel.notes"/>
+        <div class="bzt-relrow-b bzt-never" t-else="">
+          No note was written. Customers moved onto this one see an empty
+          entry on their own About screen.
+        </div>
+      </div>
+    </div>
+  </div>
+</t>
+
+
+<!-- =================================================== a sync plan -->
+<t t-name="biz_tenants.Plan">
+  <div class="bzk-panel bzt-plan-panel">
+    <div class="bzk-panel-h">
+      <div class="bzk-h2" t-esc="state.plan.label"/>
+      <span t-attf-class="bzk-badge {{ state.plan.dry_run ? 'info' : 'ok' }}">
+        <span class="d"/>
+        <t t-if="state.plan.dry_run">Nothing was changed</t>
+        <t t-else="">Done</t>
+      </span>
+    </div>
+    <div class="bzk-note" t-esc="state.plan.message"/>
+
+    <div class="bzt-planlists">
+      <div t-if="state.plan.to_install.length">
+        <div class="bzt-lab">To add</div>
+        <div class="bzt-mod" t-foreach="state.plan.to_install" t-as="mod"
+             t-key="mod.module">
+          <span t-esc="mod.label"/>
+          <span class="mono bzt-sub" t-esc="mod.module"/>
+        </div>
+      </div>
+      <div t-if="state.plan.to_update.length">
+        <div class="bzt-lab">To bring to a newer version</div>
+        <div class="bzt-mod" t-foreach="state.plan.to_update" t-as="mod"
+             t-key="mod.module">
+          <span t-esc="mod.label"/>
+          <span class="mono bzt-sub">
+            <t t-esc="mod.have"/> → <t t-esc="mod.want"/>
+          </span>
+        </div>
+      </div>
+      <div t-if="state.plan.held_back.length">
+        <div class="bzt-lab">Held back on purpose</div>
+        <div class="bzt-mod" t-foreach="state.plan.held_back" t-as="mod"
+             t-key="mod.module">
+          <span t-esc="mod.label"/>
+          <span class="bzt-sub" t-esc="mod.reason"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="bzt-log" t-if="state.plan.log.length">
+      <div t-foreach="state.plan.log" t-as="line" t-key="line_index"
+           t-attf-class="bzt-logline bzt-{{ line.level }}">
+        <span t-esc="line.line"/>
+      </div>
+    </div>
+  </div>
+</t>
+
+
+<!-- ===================================================== overlays -->
+<t t-name="biz_tenants.Composer">
+  <div class="bzk-modal-scrim" t-on-click.self="closeOverlays">
+    <div class="bzk-modal bzt-modal">
+      <div class="bzk-modal__head">
+        <div>
+          <div class="bzk-modal__ttl">Tell their people something</div>
+          <div class="bzk-modal__sub">
+            It appears as a bar at the top of every page, in THEIR clock, and
+            comes down on its own when the window ends.
+          </div>
+        </div>
+        <button class="bzk-modal__x" t-on-click="closeOverlays">
+          <t t-out="ic('x', 16)"/>
+        </button>
+      </div>
+      <div class="bzk-modal__body bzt-modalbody">
+        <div class="bzk-seg">
+          <button t-attf-class="bzk-segbtn {{ state.composer.kind === 'maintenance' ? 'on' : '' }}"
+                  t-att-aria-pressed="state.composer.kind === 'maintenance' ? 'true' : 'false'"
+                  t-on-click="() => this.state.composer.kind = 'maintenance'">
+            <t t-out="ic('wrench', 14)"/> <span>A planned update</span>
+          </button>
+          <button t-attf-class="bzk-segbtn {{ state.composer.kind === 'info' ? 'on' : '' }}"
+                  t-att-aria-pressed="state.composer.kind === 'info' ? 'true' : 'false'"
+                  t-on-click="() => this.state.composer.kind = 'info'">
+            <t t-out="ic('info', 14)"/> <span>Something worth knowing</span>
+          </button>
+        </div>
+
+        <label class="bzt-field">
+          <span class="bzt-lab">The message</span>
+          <textarea rows="3" t-att-value="state.composer.text"
+                    t-on-input="(ev) => this.onComposer('text', ev)"
+                    placeholder="We are updating this evening. You may be signed out for a few minutes."/>
+        </label>
+
+        <div class="bzt-window">
+          <label class="bzt-field">
+            <span class="bzt-lab">From</span>
+            <input type="datetime-local" t-att-value="state.composer.from"
+                   t-on-input="(ev) => this.onComposer('from', ev)"/>
+          </label>
+          <label class="bzt-field">
+            <span class="bzt-lab">Until</span>
+            <input type="datetime-local" t-att-value="state.composer.to"
+                   t-on-input="(ev) => this.onComposer('to', ev)"/>
+          </label>
+        </div>
+        <div class="bzk-note">
+          You are typing in your own clock. It is stored as the platform's and
+          drawn again in each reader's, so nobody's morning is announced as
+          somebody else's evening.
+        </div>
+      </div>
+      <div class="bzk-modal__foot">
+        <span class="bzk-modal__sp"/>
+        <button class="bzk-btn ghost" t-on-click="closeOverlays">Cancel</button>
+        <button class="bzk-btn primary" t-on-click="sendNotice"
+                t-att-disabled="state.composer.text.trim() ? undefined : 'disabled'">
+          <t t-out="ic('send', 15)"/>
+          <span>Send to <t t-esc="state.composer.tenantIds.length"/></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</t>
+
+<t t-name="biz_tenants.Confirm">
+  <div class="bzk-modal-scrim" t-on-click.self="closeOverlays">
+    <div class="bzk-modal bzt-modal">
+      <div class="bzk-modal__head">
+        <div>
+          <div class="bzk-modal__ttl">
+            <t t-if="state.confirm.kind === 'undo'">Undo this customer</t>
+            <t t-else="">Close this customer down</t>
+          </div>
+          <div class="bzk-modal__sub">
+            <t t-if="state.confirm.kind === 'undo'">
+              Their system is removed and their address comes down. Nobody has
+              signed in, so nothing is lost.
+            </t>
+            <t t-else="">
+              A final copy is taken first and kept for good. If that copy fails,
+              nothing is removed.
+            </t>
+          </div>
+        </div>
+        <button class="bzk-modal__x" t-on-click="closeOverlays">
+          <t t-out="ic('x', 16)"/>
+        </button>
+      </div>
+      <div class="bzk-modal__body bzt-modalbody">
+        <label class="bzt-field">
+          <span class="bzt-lab">
+            Type <b t-esc="state.tenant.slug"/> to confirm
+          </span>
+          <input type="text" t-att-value="state.confirm.typed"
+                 t-on-input="onConfirmType" t-att-placeholder="state.tenant.slug"/>
+        </label>
+      </div>
+      <div class="bzk-modal__foot">
+        <span class="bzk-modal__sp"/>
+        <button class="bzk-btn ghost" t-on-click="closeOverlays">Cancel</button>
+        <button class="bzk-btn danger" t-on-click="doConfirm"
+                t-att-disabled="confirmMatches ? undefined : 'disabled'">
+          <t t-if="state.confirm.kind === 'undo'">Undo it</t>
+          <t t-else="">Close them down</t>
+        </button>
+      </div>
+    </div>
+  </div>
+</t>
+
+<t t-name="biz_tenants.CutRelease">
+  <div class="bzk-modal-scrim" t-on-click.self="closeOverlays">
+    <div class="bzk-modal bzt-modal">
+      <div class="bzk-modal__head">
+        <div>
+          <div class="bzk-modal__ttl">Cut a release</div>
+          <div class="bzk-modal__sub">
+            A photograph of what this platform runs right now, with a note
+            saying what changed. EVERY CUSTOMER READS THAT NOTE on their own
+            About screen when they are moved onto it.
+          </div>
+        </div>
+        <button class="bzk-modal__x" t-on-click="closeOverlays">
+          <t t-out="ic('x', 16)"/>
+        </button>
+      </div>
+      <div class="bzk-modal__body bzt-modalbody">
+        <label class="bzt-field">
+          <span class="bzt-lab">What changed</span>
+          <textarea rows="6" t-att-value="state.cutting.notes"
+                    t-on-input="onCutNotes"
+                    placeholder="A blank line starts a new paragraph. A line starting with - is a bullet."/>
+          <span class="bzt-hint">
+            Write it for the person using the product, not for an engineer.
+          </span>
+        </label>
+      </div>
+      <div class="bzk-modal__foot">
+        <span class="bzk-modal__sp"/>
+        <button class="bzk-btn ghost" t-on-click="closeOverlays">Cancel</button>
+        <button class="bzk-btn primary" t-on-click="cutRelease">
+          <t t-out="ic('stamp', 15)"/> <span>Cut it</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</t>
+
+</templates>

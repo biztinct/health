@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ======================================================================
+     THREE SCHEDULED JOBS, AND NOT ONE OF THEM INSTALLS ANYTHING (rail R1).
+
+     Two of them only READ a customer's system and write down what they found
+     on OUR record; the third writes a copy of it to disk. Nothing here
+     installs, upgrades, repairs or configures anybody's system, and nothing
+     ever will: a customer's system does not change while everybody is asleep.
+     That sentence is on the "In step with master" screen as well, so nobody
+     has to read this file to know it.
+
+     `noupdate="1"` so that an operator who moves one of these to a quieter
+     hour keeps their decision through every later release.
+     ====================================================================== -->
+<odoo noupdate="1">
+
+    <!-- Every night, before the drift read, so the morning screen shows a copy
+         that is newer than the reading beside it. -->
+    <record id="cron_nightly_backups" model="ir.cron">
+        <field name="name">Customers: nightly copy of every live customer</field>
+        <field name="model_id" ref="model_biz_tenants"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_nightly_backups()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+        <field name="nextcall"
+               eval="(DateTime.now().replace(hour=19, minute=30, second=0)
+                      + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+    </record>
+
+    <!-- READ ONLY. It measures every customer against the current release so
+         that the number on the morning screen is honest rather than however
+         old the last button-press left it. -->
+    <record id="cron_drift" model="ir.cron">
+        <field name="name">Customers: read how far each one has drifted</field>
+        <field name="model_id" ref="model_biz_tenants"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_drift()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+        <field name="nextcall"
+               eval="(DateTime.now().replace(hour=21, minute=15, second=0)
+                      + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+    </record>
+
+    <!-- Hourly, and cheap: a handful of queries and one request per customer.
+         A health reading taken once a day is a health reading that is wrong for
+         most of it. -->
+    <record id="cron_health" model="ir.cron">
+        <field name="name">Customers: read each one's health</field>
+        <field name="model_id" ref="model_biz_tenants"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_health()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active" eval="True"/>
+    </record>
+
+</odoo>

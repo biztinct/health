@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- An `ir.actions.client` RECORD, never a bare tag: a bare tag reaches the
+         action service with no NAME, and anything returning through a
+         breadcrumb lands on a crumb labelled "Unnamed".
+
+         NO MENU ENTRY OF ITS OWN. Where this belongs in a product's navigation
+         is that product's decision, and a module that put itself on somebody
+         else's menu would be making it for them. The overlay puts it on the
+         left menu, and switches that entry OFF on any system where this module
+         is not installed — an entry that opens nothing is a dead end, and a
+         dead end is worse than an absence. -->
+
+    <record id="action_biz_tenants" model="ir.actions.client">
+        <field name="name">Customers</field>
+        <field name="tag">biz_tenants</field>
+    </record>
+
+</odoo>
