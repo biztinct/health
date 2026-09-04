@@ -9,9 +9,22 @@ handover document in `docs/strategy/handovers/`.
 
 - **Odoo 19 Community Edition** (never treat as Odoo 17 or other versions).
   OWL 2, QWeb, PostgreSQL. Python per server (3.10 on UAT).
-- UAT server SSH alias: **VietUcUAT**. Database: **`vietuat`** (never
-  `vietuc_uat` / `odoo_vietuc`). Addons live at `/odoo/odoo-server/addons/`
-  (never `/odoo/custom/addons/`).
+- Server SSH alias: **VietUcUAT** (the alias kept its name; the machine is now
+  the platform, public IP **54.206.18.111**). Master database: **`carejiox`**
+  — renamed from `vietuat` by SAAS H3 on 2026-09-04, when the product moved to
+  **carejiox.com**. Anything in this repo still saying `vietuat` is history and
+  reads as history; a command you are about to RUN says `carejiox`.
+  Addons live at `/odoo/odoo-server/addons/` — and that is now the **only**
+  addons path (`/odoo/custom/addons` was removed with its one shadowed copy of
+  `advanced_pricing`; never recreate it).
+- **There is more than one database on this box now.** The master `carejiox`,
+  the golden template `carejiox_template`, and later one per tenant. The addons
+  tree is shared by all of them: copying files changes the code under every
+  database at once, while `-u`/`-i` migrates only the one you name. Routing is
+  `dbfilter = ^%d$` — the first label of the hostname IS the database name
+  (`carejiox.com` → `carejiox`, `hhh.carejiox.com` → `hhh`), so a test run
+  against anything other than the master **must** pass
+  `--db-filter='^<thatdb>$'` (ledger H32) and a curl must send the right `Host`.
 - Odoo writes logs to `/var/log/odoo/odoo-server.log` (configured logfile —
   redirecting odoo-bin stdout captures only docutils RST noise; always read
   the server log for install/test results, with `grep -a`, the file is
@@ -22,6 +35,29 @@ handover document in `docs/strategy/handovers/`.
   cryptography chain has taken the server down before.
 
 ## 2. Deploy + test workflow (the only accepted procedure)
+
+**Use the wrapper: `carejiox-deploy`.** It is `/usr/local/bin/carejiox-deploy`,
+source `.agent/workflows/carejiox-deploy.sh`. `vietuat-deploy` still works — it
+is a symlink to the same file, kept for one phase — but new work says
+`carejiox-deploy`. Everything it does runs inside one `flock`, so concurrent
+callers queue instead of colliding.
+
+```bash
+cd addons && scp -qr health_base health_crm VietUcUAT:/tmp/
+ssh VietUcUAT 'carejiox-deploy -d -m health_base,health_crm'   # copy+upgrade+restart
+ssh VietUcUAT 'carejiox-deploy -d -m health_base -t /health_base:TestX'  # with tests
+ssh VietUcUAT 'carejiox-deploy -s'                             # restart only
+ssh VietUcUAT 'carejiox-deploy -x /tmp/script.py'              # odoo shell, service down
+ssh VietUcUAT 'carejiox-deploy -D carejiox_template -m health_theme'  # the template
+```
+
+`-D` names the database (default `carejiox`). **A code change that alters a
+`depends` is a deploy step on EVERY database on this cluster**, not only the
+master — loop `-D` over `carejiox`, `carejiox_template` and every live tenant,
+and re-check the template's scheduled jobs afterwards (they must stay off; see
+`docs/SAAS_RUNBOOK.md`).
+
+The manual sequence below is kept for the rare case the wrapper is unavailable.
 
 ```bash
 # 1. copy (from repo root/addons)
@@ -34,7 +70,7 @@ ssh VietUcUAT 'sudo rm -rf /odoo/odoo-server/addons/<mod> \
 # 2. install/upgrade WITH tests (stop server first)
 ssh VietUcUAT 'sudo service odoo-server stop && sleep 6 && \
   sudo su - odoo -s /bin/bash -c "/odoo/odoo-server/odoo-bin \
-    -c /etc/odoo-server.conf -d vietuat -i <new_mods> -u <changed_mods> \
+    -c /etc/odoo-server.conf -d carejiox -i <new_mods> -u <changed_mods> \
     --test-enable --test-tags /<mod1>,/<mod2> \
     --stop-after-init --workers=0 --http-port=8169 \
     --logfile=/tmp/gb/<mod>.log"; echo EXIT:$?; \
@@ -656,7 +692,7 @@ injects JS into the shell requires bumping `health_pwa`:
     when a worked-vector and the kernel code disagree, fix the code to match the
     documented intent, not the test to match the buggy code. (bhyt-phase1 review.)
 
-## 6. Test fixture requirements (or your tests fail on vietuat)
+## 6. Test fixture requirements (or your tests fail on the master database)
 
 - Patient partners REQUIRE `catchment_province_id` (search existing
   province/facility first, create fallback — see any spine test file).
@@ -695,7 +731,7 @@ Implementation sessions are kicked off with the canonical prompt in
 `docs/strategy/KICKOFF-TEMPLATE.md` — keep that file and this section in
 sync when either changes.
 
-1. All new/changed module tests pass on **vietuat**: the log shows
+1. All new/changed module tests pass on **`carejiox`** (the master): the log shows
    `0 failed, 0 error(s)` for your test tags, AND the earlier-module
    tests you may have touched still pass.
 2. Server healthy after final restart: `/web/login` returns HTTP 200.

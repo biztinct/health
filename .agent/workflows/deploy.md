@@ -10,22 +10,23 @@ description: Deploy modules to VietUc UAT server and restart Odoo
 
 Use this workflow whenever you modify any `health_*` modules. This runs automatically after every change.
 
-## USE `vietuat-deploy` — DO NOT STOP/START ODOO BY HAND
+## USE `carejiox-deploy` — DO NOT STOP/START ODOO BY HAND
 
-The server hosts ONE Odoo, ONE addons directory and ONE `vietuat` database, and
-more than one session works on it. `sudo service odoo-server stop` is global:
+The server hosts ONE Odoo and ONE addons directory, shared by the master
+database `carejiox`, the golden template `carejiox_template` and every tenant —
+and more than one session works on it. `sudo service odoo-server stop` is global:
 run it while somebody else is upgrading and their run dies mid-way. Odoo commits
 per module, so an interrupted upgrade leaves a **half-migrated database** — on
 2026-08-13 that cost four aborted runs, a deadlock and a column of live
 crm.lead data.
 
-`/usr/local/bin/vietuat-deploy` wraps the whole stop → upgrade → start sequence
+`/usr/local/bin/carejiox-deploy` wraps the whole stop → upgrade → start sequence
 in a `flock`, so concurrent callers queue instead of colliding. Source of truth
-is `.agent/workflows/vietuat-deploy.sh` in this repo; reinstall with:
+is `.agent/workflows/carejiox-deploy.sh` in this repo; reinstall with:
 
 ```bash
-scp .agent/workflows/vietuat-deploy.sh VietUcUAT:/tmp/vietuat-deploy
-ssh VietUcUAT "sudo install -m 0755 /tmp/vietuat-deploy /usr/local/bin/vietuat-deploy"
+scp .agent/workflows/carejiox-deploy.sh VietUcUAT:/tmp/carejiox-deploy
+ssh VietUcUAT "sudo install -m 0755 /tmp/carejiox-deploy /usr/local/bin/carejiox-deploy"
 ```
 
 ### The one command you need
@@ -35,13 +36,13 @@ ssh VietUcUAT "sudo install -m 0755 /tmp/vietuat-deploy /usr/local/bin/vietuat-d
 cd addons && scp -qr health_base health_crm VietUcUAT:/tmp/
 
 # 2. install + upgrade + restart, serialized
-ssh VietUcUAT "vietuat-deploy -d -m health_base,health_crm"
+ssh VietUcUAT "carejiox-deploy -d -m health_base,health_crm"
 
 # with tests
-ssh VietUcUAT "vietuat-deploy -d -m health_base -t /health_base:TestLookupValues"
+ssh VietUcUAT "carejiox-deploy -d -m health_base -t /health_base:TestLookupValues"
 
 # restart only
-ssh VietUcUAT "vietuat-deploy -s"
+ssh VietUcUAT "carejiox-deploy -s"
 ```
 
 It prints `odoo-bin exit=N`, the resulting `http=` code, and — on failure — the
@@ -77,7 +78,7 @@ Replace `<module_name>` with the actual module(s) modified, e.g.:
 2. Stop the Odoo service, upgrade modules via command line, then restart:
 // turbo
 ```bash
-ssh VietUcUAT "sudo service odoo-server stop && sudo su - odoo -s /bin/bash -c '/odoo/odoo-server/odoo-bin -c /etc/odoo-server.conf -u <module_name> -d vietuat --stop-after-init' 2>&1 | tail -20 && sudo service odoo-server start"
+ssh VietUcUAT "sudo service odoo-server stop && sudo su - odoo -s /bin/bash -c '/odoo/odoo-server/odoo-bin -c /etc/odoo-server.conf -u <module_name> -d carejiox --stop-after-init' 2>&1 | tail -20 && sudo service odoo-server start"
 ```
 
 Replace `<module_name>` with the comma-separated list of modules, e.g. `health_landing,health_crm`.
@@ -96,7 +97,9 @@ Confirm output shows `Active: active (running)`.
 | Item | Value |
 |------|-------|
 | SSH alias | `VietUcUAT` |
-| Database | `vietuat` |
+| Master database | `carejiox` (was `vietuat` until 2026-09-04) |
+| Golden template | `carejiox_template` |
+| Routing | `dbfilter = ^%d$` — first hostname label IS the database |
 | Odoo bin | `/odoo/odoo-server/odoo-bin` |
 | Config | `/etc/odoo-server.conf` |
 | Addons path | `/odoo/odoo-server/addons` |
@@ -106,7 +109,7 @@ Confirm output shows `Active: active (running)`.
 
 For deploying and upgrading multiple modules in one go:
 ```bash
-cd /Users/adity/Documents/GitHub/health19/addons && ./rd health_crm health_landing && ssh VietUcUAT "sudo service odoo-server stop && sudo su - odoo -s /bin/bash -c '/odoo/odoo-server/odoo-bin -c /etc/odoo-server.conf -u health_landing,health_crm -d vietuat --stop-after-init' 2>&1 | tail -20 && sudo service odoo-server start"
+cd /Users/adity/Documents/GitHub/health19/addons && ./rd health_crm health_landing && ssh VietUcUAT "sudo service odoo-server stop && sudo su - odoo -s /bin/bash -c '/odoo/odoo-server/odoo-bin -c /etc/odoo-server.conf -u health_landing,health_crm -d carejiox --stop-after-init' 2>&1 | tail -20 && sudo service odoo-server start"
 ```
 
 ## Quick Deploy (Python-only changes, no XML)

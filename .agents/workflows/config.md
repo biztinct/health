@@ -12,4 +12,4 @@ description: Project browser and deployment configuration
 ## Deployment
 - UAT Server: VietUcUAT (via SSH)
 - Deploy command: `./rd <module_names>` from `/Users/adity/Documents/GitHub/health19/addons`
-- Upgrade: `ssh VietUcUAT "sudo service odoo-server stop && sudo su - odoo -s /bin/bash -c '/odoo/odoo-server/odoo-bin -c /etc/odoo-server.conf -u <modules> -d vietuat --stop-after-init' 2>&1 | tail -10 && sudo service odoo-server start"`
+- Upgrade: `ssh VietUcUAT "sudo service odoo-server stop && sudo su - odoo -s /bin/bash -c '/odoo/odoo-server/odoo-bin -c /etc/odoo-server.conf -u <modules> -d carejiox --stop-after-init' 2>&1 | tail -10 && sudo service odoo-server start"`

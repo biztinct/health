@@ -17,7 +17,8 @@
 #                       creates or activates one (see
 #                       docs/conformance/deploy-smoke.md).
 #     FHIR_SMOKE_BASE   base URL           (default http://localhost:8069)
-#     FHIR_SMOKE_DB     database for the audit check (default vietuat)
+#     FHIR_SMOKE_DB     database for the audit check (default carejiox,
+#                       the master; name a tenant's database to smoke that one)
 #     FHIR_MIN_RESOURCES  minimum capability resource count (default 22)
 #
 # Exit status: 0 = conformant, non-zero = one line on stderr saying why.
@@ -27,7 +28,7 @@
 set -uo pipefail
 
 BASE="${FHIR_SMOKE_BASE:-http://localhost:8069}"
-DB="${FHIR_SMOKE_DB:-vietuat}"
+DB="${FHIR_SMOKE_DB:-carejiox}"
 MIN_RESOURCES="${FHIR_MIN_RESOURCES:-22}"
 EXPECTED_VERSION="${1:-}"
 

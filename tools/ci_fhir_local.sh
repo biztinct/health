@@ -19,7 +19,8 @@
 #
 #   Everything is overridable by environment; sane defaults below. The
 #   database is DROPPED and recreated on every run — never point this at a
-#   database you care about, and never at `vietuat`.
+#   database you care about, and never at `carejiox` (the master), at
+#   `carejiox_template` (the golden template) or at any tenant database.
 #
 # See docs/conformance/ci-runbook.md for the whole picture.
 
@@ -41,8 +42,14 @@ DB_PASSWORD="${CI_DB_PASSWORD:-odoo}"
 fail() { echo "FHIR-CI FAIL: $*" >&2; exit 1; }
 note() { echo "FHIR-CI: $*"; }
 
+# This box became a multi-tenant platform in SAAS H3: `carejiox` is the master,
+# `carejiox_template` is the golden template every tenant is cloned from, and
+# every other database on the cluster is somebody's live clinic. This script
+# DROPS whatever it is pointed at, so the refuse-list names all of them rather
+# than one. `vietuat` stays listed: it is the master's old name and a stale
+# command line or an old runbook is exactly how this guard earns its keep.
 case "$DB" in
-  vietuat|*prod*|*production*)
+  carejiox|carejiox_template|*_template|vietuat|*prod*|*production*)
     fail "refusing to run against $DB — this script DROPS the database" ;;
 esac
 
