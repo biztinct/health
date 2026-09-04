@@ -53,6 +53,14 @@ Two consequences that bite if you forget them:
   is archived and the only other account has no password), but it was a door
   nobody had decided to open. **Do not remove that rule**, and do not give a
   clinic a name with an underscore in it.
+* **A practice copy is not on the internet either.** Putting a clinic's copy
+  back to check it is good makes a whole second system called
+  `<slug>-staging`, with that clinic's own data and passwords in it. A hyphen
+  is a perfectly legal web address, so `hhh-staging.carejiox.com` resolved and
+  reached it. The wildcard block now drops any address whose first word ends in
+  `-staging`, exactly as it drops one containing an underscore. **Do not remove
+  that rule either**, and do not give a clinic a short name ending in
+  `-staging`.
 * **nginx must pass the real hostname through.** Every block says
   `proxy_set_header Host $host;`. Rewrite that and every address on the box
   lands on the same clinic.
@@ -213,6 +221,14 @@ the system is removed.
 A clinic **nobody has ever signed in to** can instead simply be undone, which
 the same tab offers.
 
+**Building a closed clinic's system again.** Their record stays on the list with
+their short name on it, so the New customer screen will refuse that name — which
+is right, and which is why the same **Closing down** tab offers **Build their
+system again**. It puts them back at the start of the six steps on their own
+record, so their copies (including the final one) and their whole history stay
+in one place, and gives them their address back. It refuses while anything of
+that name is still on the machine.
+
 By hand, only if the screen is unavailable:
 ```bash
 sudo /usr/local/bin/biz-domain-detach <slug>.carejiox.com   # block + certificate
@@ -267,11 +283,27 @@ upgraded — then set `CUSTOM_DOMAIN_PINNING=1` in `/etc/biz-tenants.conf`.
 so two people deploying at once queue instead of colliding — an interrupted
 upgrade leaves a half-migrated database.
 
+> ⚠ **FINISH THE WHOLE LOOP IN ONE SITTING.** There is ONE folder of code on
+> this machine and every system on it runs from that folder — but `-m` only
+> applies the change to the one system named by `-D`. So the moment new code
+> lands, every OTHER system is running new code against its old database. For
+> most changes that is harmless. For a change that adds a new kind of record it
+> is not: on 2026-09-05 the master was upgraded, `hhh` was not, and `hhh`'s site
+> answered an error page for four minutes until it was. **Deploy to the master,
+> then the blank system, then every clinic, back to back — do not stop in the
+> middle to look at something.**
+>
+> If you are only REHEARSING a change, do not copy it into the shared folder at
+> all: give the practice copy its own folder instead. That is
+> `--addons-path=/odoo/<yours>/addons,/odoo/odoo-server/addons` on the practice
+> run's own command, and the live systems never see the new code.
+
 ```bash
 cd addons && scp -qr health_base VietUcUAT:/tmp/
 ssh VietUcUAT 'carejiox-deploy -d -m health_base'            # copy, upgrade, restart
 ssh VietUcUAT 'carejiox-deploy -s'                           # just restart
 ssh VietUcUAT 'carejiox-deploy -D carejiox_template -m health_base'   # the template
+ssh VietUcUAT 'carejiox-deploy -D hhh -m health_base'                # one clinic
 ssh VietUcUAT 'carejiox-deploy -m health_base -t /health_base'        # with tests
 ```
 
@@ -365,9 +397,21 @@ What makes it a template rather than just another database:
   record resolves it and the wildcard server block matched it, and the template
   served its sign-in page publicly until this was found. See §1. If you ever
   rebuild the wildcard block, keep the underscore rule.
+* **It is Vietnamese-ready** (since 2026-09-05). Vietnamese AND English are
+  both switched on, the company is set to Vietnam, and it carries the
+  **Vietnamese chart of accounts** — 275 accounts, 15 taxes, 6 journals —
+  instead of the generic one it had before. A clinic copied from it can be used
+  in Vietnamese from its first minute, and its books are already the right
+  shape. A person still picks their own language on their own preferences
+  screen; English is what a brand-new account opens in.
 * **It does not contain**: the data-migration tools, the one-off catchment
-  backfill, or the website lead funnel — those are one customer's, not the
-  product's. The list is in `docs/handovers/SAAS_PORT_PROGRAM.md`.
+  backfill, the Inventory app, the Sales app, the automatic-rules tool, the
+  website theme, or fifteen other things this machine has and a clinic does not.
+  That list is not written down by hand any more — it is **worked out** from
+  what the product itself says it needs, and you can see it on the
+  **In step with master** screen under "What a customer's system is made of".
+  Today: 175 parts a clinic gets, 33 this machine has that they do not, each
+  with a plain sentence saying why.
 
 Rebuilding it from scratch is rarely needed — a normal deploy upgrades it like
 any other database. If you must, the build command is in the H3 handover.
@@ -533,6 +577,72 @@ release; you have to type their short name), **Carry on**, or **Call it off**.
   **Customers → the clinic → Updates**.
 * Nothing installs on a schedule. A person presses Start; a background job
   then does exactly what was written down and nothing else.
+
+---
+
+## 7d. Switching parts of the product on and off
+
+**Customers → What each customer has.** Every part of the product that can be
+sold separately runs down the side, every clinic runs across the top, and a
+**miniature of that clinic's own left menu** is drawn beside the grid. Click a
+customer's name to draw theirs; click a box to move that switch, and the
+miniature redraws so you can see what they will see before you tell them
+anything.
+
+The ten parts are: Care Command, Telehealth, Family access, Deterioration
+watch, Health-insurance claims, Red invoice, Analytics, Assisted notes and
+coding, Phone system, Training.
+
+Three things worth knowing:
+
+* **Switching a part off removes nothing.** The doors close — the entries leave
+  their left menu, and anybody following an old link to one of those screens
+  gets a page in the product's own words saying that part is not switched on
+  and who to ask. Switch it back on and every screen returns with everything
+  that was ever recorded behind it.
+* **It reaches them in under a minute, with no page reload.** A nurse looking
+  at her screen when you move a switch sees the menu redraw itself. Measured at
+  21 seconds. (A tab nobody is looking at does not update until somebody looks
+  at it — that is deliberate, and it means a background tab is not proof of
+  anything.)
+* **Nothing is decided by default.** A clinic with no answer recorded has every
+  part. The little dark mark under a box means somebody actually decided that
+  one.
+
+The small buttons on a row or a column move everything at once, and ask first.
+**Tell every customer again** re-sends the answers to everybody — that is the
+repair button for a clinic that was unreachable when a switch moved.
+
+---
+
+## 7e. Going into a clinic's system to help
+
+**Customers → open the clinic → Support access → Open as support.**
+
+You type a **reason** and pick **15, 30 or 60 minutes**. You get one link. It
+works **once**, it signs you in as the break-glass account (never as one of
+their people), and it closes itself at the end — sooner if you press **End now**
+or sign out.
+
+While you are in there, **everybody in that clinic sees a rose bar across the
+top of every page** saying who is in, why, and how long is left. It cannot be
+closed.
+
+Afterwards — and this is the point — **the whole thing is written on their
+system, not on ours**: who came in, when, why, for how long, and which screens
+they opened. Their own people read it on **About Viet Uc Care → Support
+access**. So can you, on the same tab you opened the link from.
+
+**A clinic can refuse it.** The same About screen has their own switch. When it
+is off, the platform's door refuses by name, nobody here can turn it back on
+for them — and the attempt is still written on their record, so they can see
+that somebody tried.
+
+Every session and every refusal also raises a line on the **Alerts** screen the
+moment the button is pressed. Nothing is emailed (see §7a).
+
+If a link does not work, the page says why in plain words — used already, ran
+out, or not a link this system knows. It never shows an error page.
 
 ---
 

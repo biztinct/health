@@ -1,6 +1,7 @@
 # SAAS PORT program — the tenant platform and the Access home, as generic `biz_*` cores in health19
 
-Status: **H0 DONE, H1 DONE, H2a DONE, H2b DONE, H3 DONE 2026-09-04 (live — the box is a
+Status: **H0–H4c DONE (H4c 2026-09-05). H4d — plans, trials, seat limits, invoices and the
+paused door — is the last phase.** Earlier: **H3 DONE 2026-09-04 (live — the box is a
 platform: carejiox.com, one database per hostname, self-renewing certificates, a golden
 template). H4 next.** Operational documents for what H3 built:
 `docs/SAAS_RUNBOOK.md` and `docs/SAAS_RESIZE_RUNBOOK.md`. Spec that started it:
@@ -55,7 +56,7 @@ customer database or a genuine scope decision.
 | **H3 Server plumbing** | `dbfilter = ^%d$`, carejiox.com apex + wildcard, nginx blocks (`/web/database` 404, `/status`), per-host HTTP-01 certs, golden template DB, scripts + sudoers, backups dir, stale-DB and shadowed-module cleanup, resize runbook | **DONE 2026-09-04** — `SAAS_H3_SERVER_PLUMBING.md`; master renamed `vietuat`→`carejiox` in **26 s** of downtime, certbot repaired (snap 5.8.0, both certs now renewing to 2026-12-03), `odoo` reduced from the `sudo` group to three commands, 4 stale databases + 3 orphan filestores removed, `carejiox_template` built from scratch on the **11th attempt** — which found **13 packaging faults across 10 modules** that no existing database could ever have shown, and one live exposure (the template was answering on the public internet, H54). Template: 187 modules, 0 skipped, 71 crons recorded + disabled, 108 MB, **13.9 MB of memory per extra database per process**. Ledger H36–H54 |
 | **H4a `biz_tenancy` + `biz_tenants` + `health_tenancy`** | the tenant agent (release stamp, notices in the reader's clock, About screen), the cockpit (six-step provisioning with a dry run, fleet, health, copies + restore-to-practice, in step with master, releases), the product overlay (brand, addresses, never-list, four meters, the customer administrator, the two doors), and the §3.8 top-bar fix in `health_access` | **DONE 2026-09-04** — `SAAS_H4A_TENANT_COCKPIT.md`; pilot customer `hhh.carejiox.com` provisioned from the cockpit end to end. Ledger H61–H76 |
 | **H4b Running the fleet safely** | the rollout (rings, night windows in the customer's clock, the health gate, pause/continue/retry/skip/abort), alerts (13 kinds, the sweep, the screen that IS the channel while there is no mail account), the capacity guard, the public status page | **DONE 2026-09-04** — `SAAS_H4B_ROLLOUTS_ALERTS_CAPACITY_STATUS.md`; ledger H77–H88 |
-| **H4c Selling it** | feature switches, plans + invoices, seat limits, trials, the paused door, support access with a trail | seams built: `biz.tenant.meter` (H4a), the fail-closed-on-parse feature reader (H4a), `biz.alert` kinds are an open list, `biz.rollout.task` carries a per-customer result |
+| **H4c What a clinic is made of, what can be switched off, and getting in honestly** | the customer module set COMPUTED from the product's own dependencies (175 parts, 33 held back), the blank system made Vietnamese (`l10n_vn`, both languages, 275 accounts), `hhh` decommissioned and re-provisioned from it, the `-staging` hostname closed, ten feature switches with the matrix and the live menu preview, the switched-off page, and support access with a reason, a time box, one link and a trail the customer reads | **DONE 2026-09-05** — `SAAS_H4C_MODULE_SET_FEATURES_SUPPORT.md`; 744 tests green, **H83 closed** (a real rollout over `hhh` installed nothing), `hhh` live again in 20 s. Ledger H89–H101 |
 | **H5 Validation** | every FLEET live check re-run on the pilot, Chrome-driven | |
 
 ---
@@ -957,3 +958,117 @@ in new surfaces. Chrome validation mandatory before a phase reports done.
   existed only on an OPEN card, so the moment a validation alert cleared, the only door left was the
   database. And "for 1 minutes". **Every one of them is a sentence rather than a crash, and every
   one was found by pressing the button and reading what came back.**
+- **H89** (H4c, 2026-09-05) ⚠⚠ **DEPLOYING A MODULE THAT GAINS A MODEL BREAKS EVERY
+  OTHER DATABASE ON THE BOX UNTIL EACH ONE IS UPGRADED — AND THE SYMPTOM IS A 500,
+  NOT A WARNING.** The addons tree is shared by the master, the blank system and every
+  customer; `-m` migrates only the database named by `-D`. `biz_tenancy` gained two
+  MODELS this phase, and its `ir.http` hook reads one of them on every request. The
+  moment the files landed and the master was upgraded, `hhh` was running the new code
+  against its old schema: `relation "biz_support_session" does not exist`, which aborts
+  the transaction, so the next query in the same request fails too and the customer's
+  site answers 500. Rail R3's order (master → blank system → customers) is not a
+  sequence of separate decisions — it is **one act that has to be finished in one
+  sitting**, and the gap between its steps is a live outage for everybody but the
+  master. Any phase adding a model to a module that ships to customers must run the
+  `-D` loop immediately, and say so in its own handover.
+- **H90** (H4c) ⚠ **A REHEARSAL CAN BE MADE FREE OF THAT RISK, AND THE TRICK IS ONE
+  ARGUMENT.** `--addons-path=/odoo/h4c/addons,/odoo/odoo-server/addons` on the clone's
+  own `odoo-bin` shadows the three modules being worked on with a private copy and
+  leaves the live tree untouched. The whole rehearsal — upgrade, migration, 744 tests —
+  ran against a full clone of the master with the platform serving customers from the
+  old code the entire time. Previous phases copied the files into the shared tree first
+  and lived with the window; there is no need to.
+- **H91** (H4c) ⚠ **A NEVER-LIST ENTRY THE FRAMEWORK OVERRULES IS NOT A RULE, AND THE
+  COMPUTATION IS WHAT FINDS IT (H57, third sighting).** The design named 20 modules to
+  hold back. Two of them cannot be: the Vietnamese chart of accounts DECLARES
+  `base_iban`, and `base_iban` is the trigger that makes the framework auto-install
+  `account_qr_code_sepa` on its own. So the list is **eighteen**, and the two arrive
+  with the chart. `customer_module_set` finds this by FOLLOWING a blocked dependency
+  rather than skipping it: skipping would have made the answer look clean while the
+  framework installed the module anyway. Only the SEEDS are filtered; anything blocked
+  that the closure reaches comes back as a `conflict`, naming both modules, and a test
+  asserts the list is empty.
+- **H92** (H4c) **THE COMPUTATION IS OPTIMISTIC ABOUT COUNTRY PACKS, AND THAT IS WHY
+  THE CHART IS ASKED FOR BY NAME.** `l10n_vn` declares `auto_install = ['account']`, so
+  the rule says the framework would install it unasked — and on the blank system it did
+  not, because the framework ALSO gates a country pack on the company's country, which
+  no manifest can see. The blank system had no country, so it had no chart of accounts
+  at all. Measured: master 208 modules, computed customer set **175**, held back **33**,
+  and the blank system went 189 → **193** when the chart was installed explicitly.
+- **H93** (H4c) **SWAPPING A CHART OF ACCOUNTS IS CHEAP ON A SYSTEM WITH NO BOOKS, AND
+  THE FRAMEWORK SAYS SO ITSELF.** `account.chart.template._load` deletes the accounts,
+  journals and taxes of the chart it replaces — but only when `_existing_accounting()`
+  is false. The blank system has 0 `account_move` rows by construction, so the cheap
+  route worked: `generic_coa` 50 accounts → `vn` 272 accounts, 15 taxes, 6 journals, in
+  one call. **The rebuild-from-scratch fallback was not needed.** One thing the swap
+  takes with it: the product's own three healthcare accounts are `account.account` rows
+  like any other and were deleted with the old chart. `-m health_invoicing` afterwards
+  re-creates them (`noupdate="1"` stops an UPDATE, never a CREATE) — and it turned out
+  the blank system had never had them at all, so every customer made before today was
+  missing them too.
+- **H94** (H4c) ⚠ **CLOSING A CUSTOMER DOWN LEFT THEM UNABLE TO BE CREATED AGAIN, AND
+  THAT IS H73's DEAD END WEARING A DIFFERENT HAT.** A closed customer keeps their short
+  name on their record, and the new-customer screen refuses a short name in use — quite
+  correctly. So a customer whose system had to be rebuilt (a bad restore, a corrected
+  blank system, a move to another machine) could be closed and never re-created, and the
+  only move left was to edit the database by hand. `reopen()` puts them back at the
+  start **on their own record**, which is the important half: their copies — including
+  the final one taken when they were closed — and every line of their log stay in one
+  place, where a second record with the same name would have split them.
+- **H95** (H4c) ⚠ **A REFUSAL THAT RAISES ROLLS BACK ITS OWN RECORD OF ITSELF — EXCEPT
+  THE HALF WRITTEN THROUGH SOMEBODY ELSE'S CURSOR.** The support door refuses when a
+  customer has switched support access off, and writes the attempt down on BOTH sides
+  before refusing. Live, only the customer's side survived: their record is written
+  through `_tenant_env`, which commits on its own cursor, while the alert and the line
+  in their log on OUR side went back with the `UserError`. So the customer could see an
+  attempt the platform had no record of, which is exactly the wrong way round. This is
+  ledger F64's lesson on the WRITING side rather than the testing side: **whenever the
+  point of a refusal is that it leaves something behind, the something has to be
+  committed before the refusal is thrown.**
+- **H96** (H4c) ⚠ **THE ONE SETTING A CUSTOMER OWNS WAS REFUSED TO THE ONLY PERSON WHO
+  SHOULD BE ABLE TO CHANGE IT.** "Let the platform come in to help" is the customer's
+  switch, on their own screen — and it was gated on `base.group_system`, which the
+  two-ring rule deliberately withholds from a customer's administrator. Their own
+  administrator opened their own About screen and was told only an administrator could
+  change it. `biz.tenancy.may_change_support()` is now a SEAM: the generic default is
+  the framework's tier (right for a product with no other), and the overlay widens it to
+  what this product calls the people who run one of its systems. **Any generic module
+  that asks "may this person change their own system's settings?" has to ask the product,
+  not the framework.**
+- **H97** (H4c) ⚠ **A TRAIL FILTERED BY PATH RECORDS THINGS NOBODY OPENED; THE BROWSER
+  ALREADY KNOWS WHICH IS WHICH (F66, one more turn).** `/website/translations` has no
+  file extension and is on no deny list, so it went onto a customer's own record as a
+  screen somebody opened — it is a fetch the page makes for itself. Naming every such
+  route is a list one release behind for ever. `Sec-Fetch-Dest: document` means "this
+  request IS the page in the address bar"; everything a page fetches for itself says
+  `empty`, `script`, `style` or `image`. It is a rule about the KIND of request rather
+  than about a set of names, so it cannot go stale — and a browser too old to send it
+  falls back to the path rule.
+- **H98** (H4c) **A SUPPORT LINK THAT LANDS ON `/` LANDS ON THE MARKETING WEBSITE.**
+  Every customer here has the website module, so `/` is the public home page: the
+  operator followed their own link, was signed in perfectly correctly, and arrived on a
+  page with a "Sign in" button on it — indistinguishable from a link that had not
+  worked. The link lands on the framework's own backend root now, which this product
+  redirects to its own prefix. Found by following the link, and by nothing else.
+- **H99** (H4c) **MEASURED ON LIVE.** Re-provisioning `hhh` from the corrected blank
+  system: clone 6,037 ms, configure 212 ms, administrator 1,199 ms, certificate 9,851
+  ms, verify 2,471 ms, hand over 266 ms — **20 seconds**, against H74's 28. Closing a
+  customer down (final copy of 12.4 MB of data + 4.8 MB of attachments, database
+  dropped, address taken down): **12 seconds**. The rollout: practice run on a restored
+  copy 61 s (of which ~52 s is the restore), the blank system 2 s, the live customer
+  **0 s and nothing installed**. A switch moved on the platform reached the customer's
+  own left menu in **21 seconds**, with no page reload.
+- **H100** (H4c) ⚠⚠ **H83 IS CLOSED, AND THE PROOF IS A ROLLOUT THAT DID NOTHING.**
+  With the eighteen held back and the Vietnamese chart installed on the blank system and
+  on `hhh`, the "In step with master" screen reads **193 parts, 0 missing, 0 older** for
+  both, the "Bring in step" button is not offered at all, and a real rollout of the
+  current release over the real customer completed with **"HHH Clinic is done (0s)"**.
+  The fleet no longer has a button that would install an Inventory app on a nurse's
+  system.
+- **H101** (H4c) **A PRE-EXISTING WHITE-LABEL LEAK ON EVERY CUSTOMER'S SYSTEM, FOUND
+  WHILE VALIDATING SOMETHING ELSE.** The stock messaging module seeds a welcome message
+  from its own bot that names the framework by name ("… chat helps employees collaborate
+  efficiently …"), and it is sitting in the inbox of every customer created from the
+  blank system. Nothing this phase wrote; nothing this phase changed. It belongs on the
+  debranding programme's list, and it is written down here because it is the kind of
+  thing only somebody signing in as a real customer ever sees.
