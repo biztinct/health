@@ -1,6 +1,7 @@
 # SAAS PORT program — the tenant platform and the Access home, as generic `biz_*` cores in health19
 
-Status: **H0 DONE, H1 DONE, H2a DONE 2026-09-04 (live). H2b next.** Spec that started it:
+Status: **H0 DONE, H1 DONE, H2a DONE 2026-09-04 (live). H2b REHEARSED on a clone
+2026-09-04 — awaiting the owner's go for the live uninstall.** Spec that started it:
 `docs/handovers/PORT_FROM_PAYOBOOK_TENANCY_AND_ACCESS.md` (read it; its §1–§3 are the
 inventory of what exists on Payobook and why it cannot be copied verbatim). Payobook's own
 programme docs sit in `docs/handovers/from_payobook/` — FLEET_PROGRAM.md (rails R1–R8, ledger
@@ -48,7 +49,7 @@ customer database or a genuine scope decision.
 | **H0 Verify** | §5 checklist of the spec against the live servers | DONE — facts below |
 | **H1 Kit + Access core** | `biz_kit` (tokens, primitives, Lucide `ic()`, back chip, soft registry keys) + `biz_access` (roles-as-bundles, 4 lenses, builder, "See it as…", hand-overs) as product-neutral modules with a **rail provider** seam instead of the `pb.sidebar.item` inherit; installed and Chrome-validated on a scratch clone `vietuat_h1`; NOT on the live DB | **DONE** — `SAAS_H1_KIT_ACCESS_CORE.md`; 158 tests green, clone dropped |
 | **H2a `health_access` overlay (additive, live)** | cms.sidebar rail provider (bundle lane BESIDE the legacy lane, read as an OR), clinic ability→group catalogue + the 9 roles as bundles with xml-ids, native top-bar hiding + debug block (Rail A), People lens gains "Add a person" and the four person actions, rail item under ADMIN. Nothing uninstalled, nothing removed | **DONE 2026-09-04** — `SAAS_H2A_HEALTH_ACCESS_OVERLAY.md`; 233 tests green, per-user diff **0 lost** on the clone AND on live, deployed to `vietuat` |
-| **H2b retire `access_roles` + `health_user_admin`** | re-point the 292 code references, drop the legacy lane from the rail and the wizard, uninstall both apps (owner sign-off at deploy). **Blocked on one owner decision** — H16 below: post-retirement, Owner/OM/Branch-Manager accounts get the whole top bar back unless those roles are given lists | next |
+| **H2b retire `access_roles` + `health_user_admin`** | re-point every code reference, one gate on the left menu, the JOB as its own field, the clinic-administrator group re-homed, the left menu given the screens only the app bar reached, both apps uninstalled. H16 answered by the owner: **the bar above the screen is the platform administrator's alone** | **rehearsed, awaiting go** — `SAAS_H2B_RETIRE_ACCESS_ROLES.md` |
 | **H3 Server plumbing** | `dbfilter = ^%d$`, carejiox.com apex + wildcard, nginx blocks (`/web/database` 404, `/status`), per-host HTTP-01 certs, golden template DB, scripts + sudoers, backups dir, stale-DB and shadowed-module cleanup, resize runbook | |
 | **H4 `biz_tenancy` + `biz_tenants` + `health_tenancy`** | the tenant agent + the cockpit, parameterised (brand, domain, prefix, never-list, xmlids, meter registry, plan seeds, feature catalogue, status components); pilot tenant `hhh` | may split 4a/4b |
 | **H5 Validation** | every FLEET live check re-run on the pilot, Chrome-driven | |
@@ -300,6 +301,98 @@ in new surfaces. Chrome validation mandatory before a phase reports done.
   than a pointer — the reference lists are readable only by people who maintain them, and somebody
   whose job is adding colleagues is not one of them. Same constraint still applies to the area and
   facility pickers (pre-existing, unchanged): a person holding ONLY the Admin role cannot use them.
+- **H22** (H2b, 2026-09-04) ⚠ **A FIELD CANNOT MOVE UP THE DEPENDENCY TREE IF ANYTHING BELOW IT
+  NAMES THE FIELD IN AN `@api.depends`.** The plan was to move `is_doctor_role` and its three
+  companions out of `health_base` (which may not depend on the Access home) and into
+  `health_access`, keeping the names so the sixty-odd readers would not notice. The database
+  refused to load at all: `health_fieldservice` names `is_doctor_role` in an `@api.depends`, and a
+  dependency is resolved when THAT module's models are set up — before anything above it has been
+  imported. `ValueError: Dependency field 'is_doctor_role' not found in model hr.employee`, and the
+  whole registry dies. **The shape that works is DECLARE LOW, COMPUTE HIGH**: `health_base` declares
+  the four as plain stored fields with no compute, `health_access` re-declares them with the compute
+  and the `depends`. Both statements merge, everything below can name them, and a database without
+  the overlay simply never computes them. A plain read (`emp.is_doctor_role` in Python) would have
+  been fine; it is the DECLARED dependency that has to exist at setup time.
+- **H23** (H2b) **An XML update writes only the fields it names, so a view that stops being an
+  inherit has to say so out loud.** `health_landing.view_admin_users_list` was an inherit of a view
+  in the module being deleted, and was rewritten as a standalone list. The file simply dropped
+  `inherit_id` — and the loader refused it: the live row still carried the old parent, so Odoo saw
+  an inheriting view whose arch was a whole `<list>`. `<field name="inherit_id" eval="False"/>` is
+  the fix, and it is the same rule the rail's `parent_id eval="False"` already lives by (§5.69b).
+  Anything an update must CLEAR has to be named with an explicit false.
+- **H24** (H2b) **Classification and permission were one field, and separating them is the whole
+  phase.** `res.users.access_role_id` answered both "what may this person open" and "what IS this
+  person" — the roster, the staff pickers and the dashboards all read `is_doctor_role` off it.
+  Bundles cannot answer the second: every Owner holds the Doctor bundle. So the job became its own
+  field (`job_role_id`, label "Job"; "Employed as" on the staff record, where `job_id` already owns
+  the word), the four derived fields KEPT THEIR NAMES and recompute from
+  `job_role_id.clinical_kind`, and the old substring rule (`'doctor' in name`) was applied ONCE by
+  the migration and then never again. Writing the job grants the role — the arrow points one way,
+  and granting a role on the Access home changes nobody's job.
+- **H25** (H2b) **`_visible_menu_ids` in administrator-only mode needs a floor, and the floor is the
+  interesting part.** The rule is `super() ∩ {the named home roots}`, which is trivial; what it
+  costs to get right is every way the intersection can come out empty — the setting cleared, the
+  setting naming a menu this person cannot see, the setting naming something that is not a menu at
+  all. Each of those would sign a colleague in to a blank bar. The rule keeps the first root they
+  could have seen anyway and logs a warning naming the parameter. And the setting is read with F24's
+  `search`-the-row, never `get_param`, because "deliberately empty" and "not set" mean different
+  things here and `get_param` cannot tell them apart.
+- **H26** (H2b) **A permission group disappears with its module, so a tier has to be re-homed before
+  the module goes, not after.** `health_user_admin.group_health_user_admin` had nine holders and was
+  named in twenty-two places across four other modules (ACL rows, `groups=` on buttons, tests).
+  `health_access.group_clinic_admin` is the same tier under a name this programme owns: the
+  migration puts every holder into it and re-points the `user-admin` ABILITY at it, which is the one
+  write that moves nine role bundles at once (`group_ids` is computed from the abilities). Nobody is
+  removed from the old group — it is about to be deleted with its module, and removing people from
+  it first is work with no effect and one more thing to get wrong.
+- **H27** (H2b) **Hiding the application bar is only safe if somebody first counts what it was the
+  only way into.** Nine applications' screens were reachable through the bar and nowhere else:
+  Analytics' eleven technical children, Zalo's three, VoIP's six, two workflow queues, Training's
+  five author screens, Care Command's audit/messages/watchlist, Employee Development and Coaching.
+  They ship as left-menu entries in the module that OWNS them (`biz_bi_cms` for Analytics,
+  `health_access` for the rest, whose `action_xmlid` is a plain string and needs no dependency), and
+  the hook SWITCHES OFF any entry whose action does not resolve on this database. An entry that
+  opens nothing is a dead end, and a dead end is worse than an absence.
+- **H28** (H2b) **The menu's highlight index is last-wins, so giving a screen its own entry means
+  taking it off whatever was standing in for it.** "Channels (setup)" answered for the channel
+  message store and the ops audit while neither had a door of its own. Both have one now, and
+  leaving them declared on the borrower would light up the wrong entry on click. The migration trims
+  them; the same trap is why `health_cms_coverage` never re-homes a match target twice.
+- **H29** (H2b) ⚠ **ADDING AN ABILITY TO A ROLE MAKES THE ROLE BIGGER, AND HOLDING A ROLE MEANS
+  HOLDING ALL OF IT — so a role that grows can drop the people already in it.** "Build reports"
+  joined four bundles; everybody without the reporting permission instantly stopped HOLDING those
+  bundles and lost every left-menu entry they opened. On the clinic that was one doctor who carries
+  the branch-manager permission by accident of history: two entries gone and the role gone with
+  them, found by the per-user diff and by nothing else. The first fix tried to grant the permission
+  to `role.holders()` AFTER adding the ability — which is empty of exactly the people who needed
+  it. The shape that works computes the audience from the role WITHOUT the new ability, which also
+  makes the step self-repairing on a database where the ability was added and the grant was not.
+  **Any phase that widens a bundle has to grant the new part to whoever held the old one first.**
+- **H30** (H2b) **A door on a menu is not the same as permission to walk through it, and the only
+  honest way to know is to ask the permissions table.** Putting the screens the application bar used
+  to be the only way into onto the left menu produced **34 dead ends** on the first pass: entries
+  gated to roles that would be shown them and then refused the data (Zalo's three, VoIP's six,
+  three reporting-configuration screens, and one PRE-EXISTING mis-gate — Voice Notes was offered to
+  a branch manager who cannot read `health.scribe.job`, and had been since it shipped). The gate is
+  now NARROWED to the roles that can read the model behind the action, and an entry no role can open
+  is switched OFF, both re-decided on every run so a later permission grant puts the door back. A
+  dead end is worse than an absence, and 34 of them would have shipped on eyeballing alone.
+- **H31** (H2b) **A record rule attached to a GROUP is ORed with every other group rule, so a rule
+  that hides something can be silently defeated by a broader rule on a group the same people hold.**
+  The retired application's "a clinic administrator does not see the platform administrator" rule
+  has been inert on this database since the catchment work: the tier implies
+  `health_base.group_healthcare_admin`, which carries `[(1,'=',1)]` on `res.users`. The rule was
+  carried across unchanged (it is right, and it will work the day the catchment rule is narrowed),
+  and the test asserts the rule's PRESENCE rather than an effect that was never there. Pre-existing;
+  worth a ticket, not a phase.
+- **H32** (H2b) **A test suite run without `--db-filter` on this box tests the LIVE database.**
+  `dbfilter = ^vietuat$` in the conf means every HttpCase request from a run on a clone resolves to
+  `vietuat`, whose schema does not have the clone's new columns: 76 failures that were all one
+  routing mistake, and a registry for the live database loaded inside the test process. Nothing was
+  written and the live tree was never touched, but the lesson is a rail: **every test run against a
+  clone passes `--db-filter=^<clone>$`.** And the only way to know which failures are yours is a
+  BASELINE run of the same tags on an untouched clone — 25 failed / 10 errors of 810 here, before a
+  line of this phase was applied.
 - **H21** (H2a) **The top-bar override costs nothing measurable.** Measured on the clone over six
   real users: `_visible_menu_ids` 12–57 ms with the rule and 14–60 ms without (the difference is
   inside the noise), `load_menus` 25–57 ms end to end. The `ormcache` on the permission set plus the
