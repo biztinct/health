@@ -282,6 +282,29 @@ from somewhere that never reached the app. It looks exactly like a broken
 feature. If you ever run `odoo-bin` by hand with `--test-enable`, pass
 `--db-filter=^<database>$` with it.
 
+> ⚠ **NEVER RUN `-t` AGAINST A PRACTICE COPY. IT TAKES THE WHOLE PLATFORM
+> DOWN.** `carejiox-deploy -t` stops the service for the length of the test
+> run, whatever `-D` says — and a test run cannot use `--no-http`, so if it
+> hangs (it did, on 2026-09-04, when an internet scanner hit the test server)
+> the platform stays down until somebody notices. It cost 27 minutes.
+> Test a practice copy like this instead — spare ports, its own log, and the
+> live service left running:
+> ```bash
+> sudo systemd-run --unit=mytests --uid=odoo --gid=odoo --setenv=HOME=/odoo \
+>   /odoo/odoo-server/odoo-bin -c /etc/odoo-server.conf -d <clone> \
+>   --stop-after-init -u <modules> --test-enable --test-tags '/<module>' \
+>   --workers=0 --http-port=8199 --gevent-port=8299 \
+>   --db-filter='^<clone>$' --logfile=/var/log/odoo/mytests.log
+> # then: grep -a 'odoo.tests.result' /var/log/odoo/mytests.log
+> ```
+> And **switch the practice copy's scheduled jobs off again straight after any
+> upgrade of it** — an upgrade creates a new release's jobs switched ON, and
+> every database on this machine is a job target, so a practice copy will
+> happily rewrite the real public page from made-up data:
+> ```bash
+> sudo -u postgres psql -d <clone> -c 'UPDATE ir_cron SET active = false'
+> ```
+
 **The addons folder is shared by every database on this machine.** Copying files
 changes the code under all of them at once; `-m`/`-i` only *migrates* the one
 named by `-D`. So the ritual for a release is:
@@ -418,7 +441,118 @@ the whole point: it is readable on the day the application is not.
   sudo mkdir -p /var/www/carejiox-status && sudo chown odoo:odoo /var/www/carejiox-status
   ```
 
-Today it is a fixed placeholder. Nothing writes it yet.
+**Since 2026-09-04 (H4b) the platform writes it.** Every five minutes, at the
+end of every alert check, and after every message sent to or cleared from a
+clinic. The setting that says where is `biz_tenants.status_dir`; the clock it
+speaks in is `biz_tenants.status_tz` (empty means the platform company's own
+zone), and **the zone is printed on the page** — a file on disk has no reader
+to ask what time it is.
+
+**It names no clinic, ever.** One function inside the application decides what
+the world may read, and it copies only kinds, levels and durations across that
+line; a test feeds it a state full of clinic names and asserts none come out.
+A resolved urgent alert appears there as an incident **for seven days**, which
+is why an alert raised while somebody is testing must be **Removed** and not
+closed with "It is over".
+
+If the page is stale or missing, press **Rewrite the public page** on the
+Alerts screen. The platform also tells you itself: the Alerts screen's
+"The platform itself" card has a row for it.
+
+---
+
+## 7a. Alerts — and the fact that nothing is emailed
+
+**There is no outgoing mail account on this platform, so nothing is emailed to
+anybody.** Everything the platform would have sent is written down on the
+**Alerts** screen instead, and every alert says so on its own card ("Nobody was
+emailed"). Nothing is lost; it simply has to be looked at rather than arriving.
+
+* The platform looks at everything **every fifteen minutes**: each clinic's
+  address, their copies, their certificates, the errors their system logged,
+  and this machine's own memory, disk and room for another clinic.
+* Every alert carries a plain sentence AND what to do next.
+* **Since you were last here** at the top of the screen is how you find out
+  anything happened — it counts what is new since you last opened it.
+* A red line across the top of every Customers screen means something urgent is
+  open.
+* Three buttons on each card: **I know** (stops it reminding, leaves it open),
+  **It is over** (closes it; an urgent one then shows on the public page as an
+  incident for seven days), and **Remove** (takes it away altogether — this is
+  the one to use for anything raised while testing).
+* **Send a test email** is on the screen and answers honestly. Today it says
+  there is no outgoing mail account and what to do about it. Connect one under
+  Settings → Technical → Email → Outgoing Mail Servers, set a sender address,
+  and press it again — from that day alerts arrive by email as well.
+
+---
+
+## 7b. Sending a release out to every clinic
+
+**Customers → Rollout.** A release reaches the fleet in rings, and the order is
+the whole safety argument:
+
+1. **Practice run** — on a throwaway copy of a real clinic's system, restored
+   from their last backup. Nobody sees it and the copy is deleted afterwards
+   whatever happens. **A release never reaches a real clinic without this**, and
+   the screen refuses to start without a backup to practise on.
+2. **The blank system** — so a clinic that signs up tomorrow starts on the new
+   version.
+3. **First clinic** — one, on its own, with a **24-hour watch period**
+   afterwards during which its address is checked again.
+4. **Early group** — 48 hours of watching.
+5. **Everyone else.**
+
+Each real clinic is updated inside **their own quiet window** (22:00 for three
+hours by default, on *their* clock — the screen names the zone). Their own
+people see a bar the evening before and while it is happening, and it comes
+down afterwards whatever the outcome.
+
+**It stops at the first thing that goes wrong** and says why, on the card that
+stopped it. From there: **Try again**, **Leave behind** (they stay on the old
+release; you have to type their short name), **Carry on**, or **Call it off**.
+
+> ⚠ **READ THIS BEFORE YOU PRESS START, TODAY (2026-09-04).**
+> "In step with master" means *every module the master has*. The master is also
+> the clinic that runs today, and it has picked up **22 stock apps the product
+> does not need** — Inventory (`stock`), Sales, Purchase, Timesheets, Projects,
+> the Vietnamese localisation, a website theme. A rollout would install all of
+> them on the blank system and on every clinic, so a nurse's system would grow
+> an Inventory app and a Sales app overnight.
+>
+> **No rollout has been run on this platform yet, for that reason.** Somebody
+> has to decide one of three things first: put those apps on the never-list, or
+> take them off the master, or accept that every clinic gets them. Until then,
+> use the per-clinic **Bring in step** button on "In step with master", which
+> shows exactly what it would add before it adds anything.
+
+* Only **one rollout at a time** — the practice copy has one name, and two
+  rollouts destroy each other's. A stopped rollout that is not going to
+  continue must be **called off**, not left lying about.
+* Set which ring a clinic is in, and when their night is, on their own page:
+  **Customers → the clinic → Updates**.
+* Nothing installs on a schedule. A person presses Start; a background job
+  then does exactly what was written down and nothing else.
+
+---
+
+## 7c. Room for another clinic
+
+The fleet screen carries a gauge: **how many more clinics this machine holds**.
+It is `(free memory − what is kept back) ÷ what one clinic is allowed`, and
+provisioning refuses at nought, by name, pointing at
+`docs/SAAS_RESIZE_RUNBOOK.md`.
+
+⚠ **The "what one clinic is allowed" figure is a POLICY, not a measurement.**
+It is the setting `biz_tenants.tenant_cost_mb`, **60 MB** by default. The
+MEASUREMENT is about **11 MB** — that is what this machine's memory went up by
+the first time a real clinic's system was opened, across the three processes
+that serve it. That is the system sitting still. Sessions, screens already
+drawn and a clinic actually working are the rest, and none of them can be
+measured while nobody is using it, so the setting is the measurement plus a
+deliberate allowance. Re-weigh it as clinics arrive: it is on **Alerts →
+Settings**, with that sentence beside it. `biz_tenants.capacity_reserve_mb`
+(400 MB) is what must stay free for the database and the operating system.
 
 ---
 

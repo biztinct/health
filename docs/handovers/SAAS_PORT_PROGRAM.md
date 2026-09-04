@@ -54,7 +54,8 @@ customer database or a genuine scope decision.
 | **H2b retire `access_roles` + `health_user_admin`** | re-point every code reference, one gate on the left menu, the JOB as its own field, the clinic-administrator group re-homed, the left menu given the screens only the app bar reached, both apps uninstalled. H16 answered by the owner: **the bar above the screen is the platform administrator's alone** | **DONE 2026-09-04** — `SAAS_H2B_RETIRE_ACCESS_ROLES.md`; both apps uninstalled live, 27 tables dropped, 0 roles lost, 0 job flags changed across 73 colleagues |
 | **H3 Server plumbing** | `dbfilter = ^%d$`, carejiox.com apex + wildcard, nginx blocks (`/web/database` 404, `/status`), per-host HTTP-01 certs, golden template DB, scripts + sudoers, backups dir, stale-DB and shadowed-module cleanup, resize runbook | **DONE 2026-09-04** — `SAAS_H3_SERVER_PLUMBING.md`; master renamed `vietuat`→`carejiox` in **26 s** of downtime, certbot repaired (snap 5.8.0, both certs now renewing to 2026-12-03), `odoo` reduced from the `sudo` group to three commands, 4 stale databases + 3 orphan filestores removed, `carejiox_template` built from scratch on the **11th attempt** — which found **13 packaging faults across 10 modules** that no existing database could ever have shown, and one live exposure (the template was answering on the public internet, H54). Template: 187 modules, 0 skipped, 71 crons recorded + disabled, 108 MB, **13.9 MB of memory per extra database per process**. Ledger H36–H54 |
 | **H4a `biz_tenancy` + `biz_tenants` + `health_tenancy`** | the tenant agent (release stamp, notices in the reader's clock, About screen), the cockpit (six-step provisioning with a dry run, fleet, health, copies + restore-to-practice, in step with master, releases), the product overlay (brand, addresses, never-list, four meters, the customer administrator, the two doors), and the §3.8 top-bar fix in `health_access` | **DONE 2026-09-04** — `SAAS_H4A_TENANT_COCKPIT.md`; pilot customer `hhh.carejiox.com` provisioned from the cockpit end to end. Ledger H61–H76 |
-| **H4b Running the fleet** | rollout waves, alerts, the capacity guard, the public status page, feature switches, plans + invoices, support access with a trail | seams built in H4a (§3.7): `biz.tenant.meter`, the fail-open feature reader, `biz_tenants.status_dir` |
+| **H4b Running the fleet safely** | the rollout (rings, night windows in the customer's clock, the health gate, pause/continue/retry/skip/abort), alerts (13 kinds, the sweep, the screen that IS the channel while there is no mail account), the capacity guard, the public status page | **DONE 2026-09-04** — `SAAS_H4B_ROLLOUTS_ALERTS_CAPACITY_STATUS.md`; ledger H77–H88 |
+| **H4c Selling it** | feature switches, plans + invoices, seat limits, trials, the paused door, support access with a trail | seams built: `biz.tenant.meter` (H4a), the fail-closed-on-parse feature reader (H4a), `biz.alert` kinds are an open list, `biz.rollout.task` carries a per-customer result |
 | **H5 Validation** | every FLEET live check re-run on the pilot, Chrome-driven | |
 
 ---
@@ -840,3 +841,119 @@ in new surfaces. Chrome validation mandatory before a phase reports done.
   them against the master and says otherwise. **The definitive customer module set is still an open
   decision** (H52's chart of accounts and H50's languages belong to it); until it is made, "Behind"
   on a new customer is a number to read and not a thing to fix.
+- **H77** (H4b, 2026-09-04) ⚠⚠ **`carejiox-deploy -t` STOPS THE LIVE SERVICE FOR THE WHOLE TEST RUN,
+  AND A TEST RUN THAT HANGS IS A LIVE OUTAGE. IT COST 27 MINUTES.** The wrapper's test mode was
+  built for the MASTER, where "stop, upgrade, test, start" is one act. Pointed at a scratch clone
+  with `-D`, it still stops the service — so the live platform is down for as long as somebody
+  else's suite takes. And a test run cannot use `--no-http` (HttpCase needs a port), so the process
+  stayed alive after the tests finished: at 14:21:41 an internet scanner hit the test server on
+  8069, the run answered 500 with `psycopg2.pool.PoolError: This connection does not belong to the
+  pool`, and `--stop-after-init` never returned. `carejiox.com` and `hhh.carejiox.com` answered
+  nothing for 27 minutes. **THE RULE FROM NOW ON: a test run against a CLONE never goes through the
+  wrapper.** It goes through `sudo systemd-run --unit=… --uid=odoo --setenv=HOME=/odoo …odoo-bin …
+  --workers=0 --http-port=8199 --gevent-port=8299 --db-filter='^<clone>$'
+  --logfile=/var/log/odoo/<phase>.log` — a spare port, its own log, and the live service left
+  running. That is what HANDOVER-CONVENTIONS §2 has always said; the wrapper made it easy to
+  forget. Two more facts from the recovery, both costly: **the wrapper's `flock` can be killed
+  while its `odoo-bin` lives on**, so killing the lock does not bring the service back — the
+  odoo-bin has to go first and the service be started by hand; and **`nohup … &` over ssh is not
+  detachment** — the process died with the session, which is exactly what H13's `systemd-run` form
+  exists for.
+- **H78** (H4b) ⚠ **AN UPGRADE ON A SCRATCH CLONE CREATES THE PHASE'S NEW SCHEDULED JOBS *ACTIVE*,
+  AND ON THIS BOX EVERY DATABASE IS A CRON TARGET.** `noupdate="1"` stops an upgrade REWRITING a
+  record; it does not stop it CREATING one that never existed, so the six new jobs this phase ships
+  arrived switched on inside the clone. Since H3 removed `db_name` the single cron worker
+  enumerates `pg_database` (H36), so within fifteen minutes the CLONE's alert sweep would have
+  rewritten `/var/www/carejiox-status/index.html` — the platform's real public page — from a
+  fabricated fleet. That is F44's failure arriving through a door F44 does not cover: the
+  `test_enable` guard is off in a normal upgrade. Caught four minutes later by asking the clone
+  `SELECT count(*) FROM ir_cron WHERE active` (6) and checking the page's mtime (unchanged).
+  **Every upgrade of a scratch clone must be followed, in the same breath, by `UPDATE ir_cron SET
+  active = false` on it** — and any phase shipping a job that writes something OUTSIDE its own
+  database has to say so in its handover.
+- **H79** (H4b) **A SENTENCE WITH NO PLACEHOLDER IN IT, WITH A VALUE APPLIED TO IT ANYWAY.** The
+  `backup_small` alert's text carried no `%s` and ended `% name`, so raising it died with
+  `TypeError: not all arguments converted during string formatting` — on the one kind that had
+  never been raised in anger. The eye reads the sentence, not the operator at the end of it. It was
+  found by the WHITE-LABEL test, which is the only one that walks EVERY kind and asks each for its
+  words. **A test that enumerates a registry finds the member nobody exercised**, which is a better
+  reason to write one than the property it is nominally asserting.
+- **H80** (H4b) ⚠ **A PRIVACY TEST THAT CRIES WOLF IS A PRIVACY TEST SOMEBODY TURNS OFF — H68, a
+  third time.** The proof that the public page names no customer fed it the slug `ann` and asserted
+  `'ann' not in page`. The page said "A short update is pl**ann**ed". Three tests failed on a page
+  that leaks nothing. What "the page names no customer" MEANS is a whole word, so that is what is
+  asserted now (`\bann\b`) — and a companion test asserts the matcher would still catch a real
+  leak, because a privacy test that can only ever pass is not a test. Same family as H9, H12 and
+  H68: **the needle has to name the thing it actually forbids.**
+- **H81** (H4b) **AN ESCAPING TEST THAT COULD NEVER HAVE PASSED.** "Nothing that came in as text
+  goes out as markup" was written as `assertNotIn('<script>', page)` — and the page carries a
+  script of its own, the six lines that let it notice it has gone stale. The assertion was about
+  the page rather than about the input. It now asserts both halves of the real property: the input
+  does NOT appear as markup, and it DOES appear escaped. **An assertion phrased "this string is
+  absent" is nearly always weaker than the one phrased "this string is present, in the form it
+  should have taken".**
+- **H82** (H4b) **THE RULES SPEAK `title`/`text`; THE RECORD'S FIELDS ARE `subject`/`body_text`.**
+  Four tests read the pure functions' output using the RECORD's names and died on `KeyError`. Both
+  names are right — the handover fixed the field names and the ported judgement functions kept the
+  shape their callers expect — but the seam between them is one line inside the sweep and is
+  therefore invisible. It is stated in `reconcile`'s docstring now, which is the one place the two
+  vocabularies meet.
+- **H83** (H4b) ⚠⚠ **THE ROLLOUT'S "BRING EVERY CUSTOMER IN STEP WITH THE MASTER" RULE IS WRONG FOR
+  THIS FLEET, AND THE PRACTICE RUN IS WHAT WOULD HAVE FOUND IT.** `hhh` and the blank system are
+  each **25 modules behind the master**; three are on the never-list, so a rollout would install
+  **22** — and they are `stock`, `purchase`, `sale_management`, `sale_timesheet`, `project_stock`,
+  `l10n_vn`, `base_automation`, `theme_default` and their satellites. A home-care clinic would wake
+  up with an Inventory app and a Sales app. They are on the MASTER because the master is also the
+  clinic that runs today and has accumulated them; they are not part of the product. H57 said "the
+  definitive tenant module set is H4's to fix" and H76 said "Behind is a number to read, not a
+  thing to fix" — this is the phase where those two notes collide with a button that would act on
+  them. **NO LIVE ROLLOUT WAS RUN.** The plan dialog was walked (it names the rings, the systems and
+  each window in the customer's own clock), the state machine is proved by 377 tests, and the
+  decision is handed back: either the stock apps join the never-list, or they come off the master,
+  or the owner accepts that every clinic gets them. Until one of those, **starting a rollout on this
+  fleet installs an Inventory app on a nurse's system.**
+- **H84** (H4b) **THE PLATFORM CHECKLIST F5 AND F42 TALK ABOUT DOES NOT EXIST IN THIS PRODUCT.**
+  Both are Payobook's; H4a never built one here. Rather than port a screen nobody asked for, the
+  three rows that matter — can anybody be told, is the public page really being served, is there
+  room for another customer — live as a **"The platform itself"** card on the Alerts screen, and it
+  is always visible. F42's lesson is kept exactly: the card carries "Send a test email", and that
+  button is wanted on a good day too, because a good day is when nobody finds out the channel is
+  broken.
+- **H85** (H4b) ⚠ **THE PRACTICE COPY IS REACHABLE ON THE PUBLIC INTERNET WHILE IT EXISTS, AND H54's
+  LOCK DOES NOT COVER IT.** H54 closed `carejiox_template` by refusing any hostname containing an
+  UNDERSCORE. `hhh-staging` contains a HYPHEN, which is a legal hostname label, so
+  `hhh-staging.carejiox.com` resolves through the wildcard, matches the wildcard server block, and
+  `dbfilter = ^%d$` routes it to a full copy of a customer's data with that customer's own
+  passwords. It has no certificate of its own, so a browser warns — and warns is not refuses. The
+  copy exists for the couple of minutes a practice run takes and H4a's restore-to-practice button
+  leaves one until somebody removes it. **H4c should refuse any hostname ending `-staging` in the
+  same place H54's underscore rule lives** — one line of nginx, and it costs nothing.
+- **H86** (H4b) **A SETTING WRITTEN WITH RAW SQL IS INVISIBLE TO THE RUNNING APPLICATION.**
+  `biz_tenants.status_dir` was set with `psql` because the cockpit has no field for it, and the
+  running workers went on answering "nobody has said where the public page should be written" —
+  `ir.config_parameter` is cached in the registry and nothing invalidated it. `carejiox-deploy -s`
+  fixed it in twenty seconds. Rail R5 says cross-database writes go through the data layer; this is
+  the same rule pointing at the platform's OWN database, and it is easier to forget there because
+  `psql` is right at hand.
+- **H87** (H4b) **MINTING A BROWSER SESSION BY HAND: THREE TRAPS, AND ONLY THE THIRD IS OBVIOUS.**
+  Validation needs an authenticated browser and there is no password. (a) The session id must be
+  EXACTLY 84 characters of `[A-Za-z0-9_-]` — `FilesystemSessionStore.is_valid_key` matches nothing
+  else, and a session one character too long is not REFUSED, it is not SEEN: the browser lands on
+  the sign-in page with nothing in the log. (b) The token is an HMAC over a tuple of column names
+  and values from a query that INSTALLED MODULES EXTEND — `auth_passkey` appends an aggregated
+  column with a LEFT JOIN — so reproducing it by hand is one module away from silently wrong. Do it
+  through `user._compute_session_token(sid)` in an `odoo-bin shell`, which is read-only and does not
+  stop the service. (c) H46's cookie trap, confirmed again: the session cookie is `HttpOnly`, so a
+  browser context that has ALREADY touched the application holds one, and `document.cookie` then
+  writes a shadowed duplicate that reads back correctly and is never sent. A FRESH context, opened
+  first on `/status` (which nginx serves, and whose favicon is a `data:` URI so nothing reaches the
+  app), is the only one where planting works.
+- **H88** (H4b) **FOUR THINGS A LIVE SCREEN SAID THAT NO TEST COULD HAVE.** A quiet window that was
+  already open printed "tonight 22:06–01:06" for a band that runs 22:00–01:00, because the close
+  was "span hours from now" rather than the band's own close. The public page advertised
+  "A scheduled copy did not complete" as an incident while its own service list said everything was
+  working — the incident loop read the public PHRASE and never the component, so a kind deliberately
+  given no component still got a line. F41 could not be followed from the screen at all: Remove
+  existed only on an OPEN card, so the moment a validation alert cleared, the only door left was the
+  database. And "for 1 minutes". **Every one of them is a sentence rather than a crash, and every
+  one was found by pressing the button and reading what came back.**
