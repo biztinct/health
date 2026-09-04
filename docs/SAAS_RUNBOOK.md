@@ -19,7 +19,9 @@ the machine bigger). Engineering background: `docs/handovers/SAAS_PORT_PROGRAM.m
 | Machine | AWS EC2 `i-0fb43cd9281f12945`, `t3.small`, Sydney (`ap-southeast-2a`) |
 | Address | `54.206.18.111` — an **Elastic IP**, it survives a restart and a resize |
 | SSH | `ssh VietUcUAT` (the alias kept its old name) |
-| Master database | `carejiox` — the clinic that runs today. Renamed from `vietuat` on 2026-09-04 |
+| Master database | `carejiox` — the clinic that runs today, and the platform. Renamed from `vietuat` on 2026-09-04 |
+| Customer systems | one database per clinic. Today: `hhh` (HHH Clinic), created 2026-09-04 |
+| Where clinics are made | **Customers**, at the bottom of the left menu under ADMIN, on https://carejiox.com |
 | Golden template | `carejiox_template` — a clean, empty copy of the product, cloned to make a new clinic |
 | Deploy command | `carejiox-deploy` (`vietuat-deploy` still works — it is a symlink to it) |
 | Application config | `/etc/odoo-server.conf` (pre-platform copy kept at `/etc/odoo-server.conf.pre-saas`) |
@@ -121,53 +123,97 @@ gives every visitor a browser warning about seventy days later.
 
 ## 3. Making a new clinic
 
-> The buttons for this arrive with the tenants cockpit (H4). Until then it is
-> this, by hand, in this order.
+**This is now a screen, not a runbook.** Sign in to https://carejiox.com, open
+**Customers** at the bottom of the left menu (under ADMIN — only the Owner role
+sees it), and press **New customer**.
 
-1. **Point the address at us.** `<slug>.carejiox.com` already resolves —
-   `*.carejiox.com` is a wildcard record at the registrar. Confirm:
-   `dig +short @8.8.8.8 <slug>.carejiox.com` → `54.206.18.111`.
-2. **Clone the template:**
-   ```bash
-   ssh VietUcUAT
-   sudo -u postgres psql -d postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='carejiox_template';"
-   sudo -u postgres createdb -T carejiox_template -O odoo <slug>
-   sudo cp -a /odoo/.local/share/Odoo/filestore/carejiox_template \
-              /odoo/.local/share/Odoo/filestore/<slug>
-   sudo chown -R odoo:odoo /odoo/.local/share/Odoo/filestore/<slug>
-   ```
-   **`-O odoo` is not optional.** The application lists only the databases owned
-   by the user it connects as, and it connects as `odoo`. A database created
-   without it belongs to `postgres`, and the new address answers with a redirect
-   to a database chooser instead of a sign-in page — while looking, from the
-   outside, exactly like a routing problem. If you hit that:
-   `sudo -u postgres psql -d postgres -c 'ALTER DATABASE <slug> OWNER TO odoo;'`
-3. **Turn its scheduled jobs back on.** The template's jobs are all switched
-   off on purpose (§5). The list of the ones that were on when it was built is
-   stored in the template itself, under the setting key
-   `biz_tenants.template_active_crons`:
-   ```bash
-   sudo -u postgres psql -d <slug> -c \
-     "UPDATE ir_cron SET active = true WHERE id::text = ANY(string_to_array(
-        (SELECT value FROM ir_config_parameter WHERE key='biz_tenants.template_active_crons'), ','));"
-   ```
-4. **Set the clinic's own address:**
-   ```bash
-   sudo -u postgres psql -d <slug> -c \
-     "UPDATE ir_config_parameter SET value='https://<slug>.carejiox.com' WHERE key='web.base.url';"
-   ```
-   (If the row is missing, insert it, along with `web.base.url.freeze` = `True`.)
-5. **Give it its own certificate — before you tell anybody the address:**
-   ```bash
-   sudo /usr/local/bin/biz-tenant-cert <slug>.carejiox.com <slug>
-   ```
-   Until this runs, the address works but the browser shows a name-mismatch
-   warning, because the wildcard block serves the platform's certificate.
-6. **Check it:** open `https://<slug>.carejiox.com` — sign-in page, no warning,
-   and `https://<slug>.carejiox.com/web/database/manager` gives `404`.
+### What you type, and what happens
+
+You give four things: the clinic's name, their short name, their
+administrator's name and their administrator's email address. The short name is
+the important one — **it becomes both their web address and the name of their
+system on this machine**, so it is small letters and digits only, starting with
+a letter, no underscores. The screen checks it while you type and says why if
+it cannot be used.
+
+Then press **Show me what would happen**. Nothing has been written yet: you get
+the six steps in plain words, the size of what is about to be copied, and a
+refusal with a reason if anything is wrong — a name in use, no email, or not
+enough memory on the machine.
+
+Then press **Create**, and watch. The six steps are:
+
+| Step | What it does |
+|---|---|
+| Copy the blank system | Copies `carejiox_template`, database and attachments together, as the account the application runs as |
+| Set its address and its settings | `https://<short name>.carejiox.com`, locked; their name; the top-bar rule; and their scheduled jobs switched back on |
+| Create the administrator | A **new** account — never the blank system's own — with the Owner role, the clinic-administrator tier, and a one-time password |
+| Secure the address | Runs `biz-tenant-cert` so a browser trusts the name |
+| Check everything answers | The address returns a sign-in page, nothing was skipped, they have every part of the product, and their access home has its roles |
+| Hand it over | Marks them live and shows you the address, the sign-in name and the password |
+
+It takes about a minute. **The password is shown once and stored nowhere** —
+not on this machine, not in the log — and **no email is sent**, because this
+platform still has no outgoing mail account. Copy the three lines off the end
+card and hand them over yourself.
+
+### If a step fails
+
+The screen says what failed, what it left behind, and offers two buttons: **try
+this step again** (everything before it is done and still there), or **undo the
+whole thing** (the system is removed and the address comes down; nothing is
+left behind, because nobody has signed in yet). There is no state it can reach
+where the answer is "go and look at the machine".
+
+**Securing the address is the one step that is never fatal.** If the
+certificate cannot be issued the clinic still goes live — their address works
+and a browser warns about the name — and the end card gives you the exact
+command to run by hand:
+`sudo /usr/local/bin/biz-tenant-cert <slug>.carejiox.com <slug>`. Press that
+step again afterwards.
+
+### Doing it by hand
+
+Only if the screen itself is unavailable. The order matters and step 2's `-O
+odoo` is **not** optional: the application lists only the databases owned by the
+account it connects as, so a system owned by anybody else answers a redirect to
+a database chooser instead of a sign-in page — and looks, from outside, exactly
+like a routing fault.
+
+```bash
+ssh VietUcUAT
+dig +short @8.8.8.8 <slug>.carejiox.com            # must be 54.206.18.111
+sudo -u postgres psql -d postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='carejiox_template';"
+sudo -u postgres createdb -T carejiox_template -O odoo <slug>
+sudo cp -a /odoo/.local/share/Odoo/filestore/carejiox_template \
+           /odoo/.local/share/Odoo/filestore/<slug>
+sudo chown -R odoo:odoo /odoo/.local/share/Odoo/filestore/<slug>
+# their scheduled jobs — the list lives in the TEMPLATE's own settings, and
+# came across with the copy
+sudo -u postgres psql -d <slug> -c \
+  "UPDATE ir_cron SET active = true WHERE id::text = ANY(string_to_array(
+     (SELECT value FROM ir_config_parameter WHERE key='biz_tenants.template_active_crons'), ','));"
+sudo -u postgres psql -d <slug> -c \
+  "UPDATE ir_config_parameter SET value='https://<slug>.carejiox.com' WHERE key='web.base.url';"
+sudo /usr/local/bin/biz-tenant-cert <slug>.carejiox.com <slug>
+```
+If you hit the wrong-owner symptom:
+`sudo -u postgres psql -d postgres -c 'ALTER DATABASE <slug> OWNER TO odoo;'`
+
+Then check: `https://<slug>.carejiox.com` gives a sign-in page with no warning,
+and `https://<slug>.carejiox.com/web/database/manager` gives `404`.
 
 ### Removing a clinic
 
+**Also a screen.** Open the clinic on the Customers screen, go to **Closing
+down**, and type their short name to confirm. It takes a final copy FIRST and
+refuses to remove anything if that copy fails; then the address comes down and
+the system is removed.
+
+A clinic **nobody has ever signed in to** can instead simply be undone, which
+the same tab offers.
+
+By hand, only if the screen is unavailable:
 ```bash
 sudo /usr/local/bin/biz-domain-detach <slug>.carejiox.com   # block + certificate
 sudo -u postgres pg_dump -Fc -Z1 <slug> -f /odoo/backups/tenants/<slug>/final_$(date -u +%Y%m%dT%H%M%SZ).dump
@@ -175,6 +221,32 @@ sudo -u postgres dropdb <slug>
 sudo mv /odoo/.local/share/Odoo/filestore/<slug> /odoo/backups/tenants/<slug>/filestore
 ```
 **Take the final backup before dropping, and keep it.**
+
+### Telling a clinic something
+
+On the Customers screen, the envelope on a row (or **Tell their people
+something** on a clinic's Overview) puts a bar at the top of every page in that
+clinic. It has a window, **you type it in your own clock**, and it is drawn
+again in each reader's — so nobody's morning is announced as somebody else's
+evening. The bar comes down on its own when the window ends; nobody has to
+remember to clear it.
+
+### Keeping clinics in step
+
+**In step with master** at the top of the Customers screen shows every system —
+the blank one included — against what the platform runs. **Nothing is ever
+installed on a clinic by a schedule.** The nightly job only reads, so the
+morning screen is honest; a person presses the button, and there is a rehearsal
+button beside it that changes nothing.
+
+**Cut a release** freezes what the platform runs today and gives it a dated
+name, with a note you write. That note is what every clinic reads on their own
+**About Viet Uc Care** screen when they are moved onto it — so write it for the
+person using the product, not for an engineer.
+
+After any upgrade of the blank system, press **Quieten the blank system**: an
+upgrade switches its scheduled jobs back on, and a blank system with live jobs
+is a hot registry sitting there for a clinic that does not exist.
 
 ### A clinic on its own domain (e.g. `booking.someclinic.com`)
 
@@ -281,25 +353,49 @@ any other database. If you must, the build command is in the H3 handover.
 
 ## 6. Backups
 
-**Nothing writes automatic backups yet.** The folder and the rule exist; the
-nightly job arrives with the tenants cockpit (H4). Until then a backup is
-something a person takes, and the one that matters is the final backup before
-you drop a clinic.
+**A copy of every live clinic is taken every night, at 19:30.** Fourteen
+nightly copies are kept per clinic; the ones somebody takes by hand, and the
+final one before a clinic is closed, are kept for good.
+
+**A copy is two files, and one without the other cannot be put back.**
+
+| | |
+|---|---|
+| The data | `/odoo/backups/tenants/<slug>/<slug>_<kind>_<when>.dump` |
+| The attachments | `…_<when>.filestore.tar.gz` beside it |
+
+Both sizes and the number of attachment files are recorded, and **a copy whose
+attachments come out suspiciously small FAILS and is thrown away** rather than
+being written down as good. That is not caution for its own sake: a copy taken
+from a shell with the wrong home folder reads a different, empty attachments
+folder and reports success, and the day you find out is the day you need it.
 
 | What | Where | Kept |
 |---|---|---|
-| Per-clinic | `/odoo/backups/tenants/<slug>/` | intended: last 14 nightly, manual and final forever. **Empty today.** |
+| Per-clinic | `/odoo/backups/tenants/<slug>/` | 14 nightly; by hand and final, for good |
 | Before the platform change | `/var/backups/saas_h3/` | the master's pre-rename dump, the old nginx and certificate folders, the old application config |
 | Deleted stale databases | `/var/backups/stale_dbs/` | **delete after 2026-10-04** — see the README in that folder |
 
-A dump on its own is not a restore. A restore is the dump **plus** the
-attachments folder (`/odoo/.local/share/Odoo/filestore/<db>`), and both have to
-come from the same moment.
+### Proving a copy is good
 
+On a clinic's **Copies** tab, **Put it back as a practice system** restores it
+into `<slug>-staging`, with its scheduled jobs switched off so it sends nothing
+to anybody. **Remove it when you are done** — every extra system on this
+machine costs memory, and the same tab has the button.
+
+It refuses if a practice copy already exists, because two people rehearsing on
+one name destroy each other's work. And if a restore fails half-way, the
+half-built copy is removed rather than left sitting on a machine with 2 GB of
+memory.
+
+By hand, if the screen is unavailable:
 ```bash
-# restore a clinic into a scratch database to check a backup is good
-sudo -u postgres createdb <slug>_staging
-sudo -u postgres pg_restore -d <slug>_staging /odoo/backups/tenants/<slug>/<file>.dump
+sudo -u postgres createdb -O odoo <slug>-staging
+sudo -u postgres pg_restore --no-owner -d <slug>-staging /odoo/backups/tenants/<slug>/<file>.dump
+sudo tar xzf /odoo/backups/tenants/<slug>/<file>.filestore.tar.gz -C /tmp
+sudo mv /tmp/filestore /odoo/.local/share/Odoo/filestore/<slug>-staging
+sudo chown -R odoo:odoo /odoo/.local/share/Odoo/filestore/<slug>-staging
+sudo -u postgres psql -d <slug>-staging -c "UPDATE ir_cron SET active = false;"
 # then DROP IT when you are done — every database on this machine costs memory
 ```
 
@@ -322,7 +418,7 @@ the whole point: it is readable on the day the application is not.
   sudo mkdir -p /var/www/carejiox-status && sudo chown odoo:odoo /var/www/carejiox-status
   ```
 
-Today it is a fixed placeholder. The platform starts writing it in H4.
+Today it is a fixed placeholder. Nothing writes it yet.
 
 ---
 

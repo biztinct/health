@@ -53,7 +53,8 @@ customer database or a genuine scope decision.
 | **H2a `health_access` overlay (additive, live)** | cms.sidebar rail provider (bundle lane BESIDE the legacy lane, read as an OR), clinic ability→group catalogue + the 9 roles as bundles with xml-ids, native top-bar hiding + debug block (Rail A), People lens gains "Add a person" and the four person actions, rail item under ADMIN. Nothing uninstalled, nothing removed | **DONE 2026-09-04** — `SAAS_H2A_HEALTH_ACCESS_OVERLAY.md`; 233 tests green, per-user diff **0 lost** on the clone AND on live, deployed to `vietuat` |
 | **H2b retire `access_roles` + `health_user_admin`** | re-point every code reference, one gate on the left menu, the JOB as its own field, the clinic-administrator group re-homed, the left menu given the screens only the app bar reached, both apps uninstalled. H16 answered by the owner: **the bar above the screen is the platform administrator's alone** | **DONE 2026-09-04** — `SAAS_H2B_RETIRE_ACCESS_ROLES.md`; both apps uninstalled live, 27 tables dropped, 0 roles lost, 0 job flags changed across 73 colleagues |
 | **H3 Server plumbing** | `dbfilter = ^%d$`, carejiox.com apex + wildcard, nginx blocks (`/web/database` 404, `/status`), per-host HTTP-01 certs, golden template DB, scripts + sudoers, backups dir, stale-DB and shadowed-module cleanup, resize runbook | **DONE 2026-09-04** — `SAAS_H3_SERVER_PLUMBING.md`; master renamed `vietuat`→`carejiox` in **26 s** of downtime, certbot repaired (snap 5.8.0, both certs now renewing to 2026-12-03), `odoo` reduced from the `sudo` group to three commands, 4 stale databases + 3 orphan filestores removed, `carejiox_template` built from scratch on the **11th attempt** — which found **13 packaging faults across 10 modules** that no existing database could ever have shown, and one live exposure (the template was answering on the public internet, H54). Template: 187 modules, 0 skipped, 71 crons recorded + disabled, 108 MB, **13.9 MB of memory per extra database per process**. Ledger H36–H54 |
-| **H4 `biz_tenancy` + `biz_tenants` + `health_tenancy`** | the tenant agent + the cockpit, parameterised (brand, domain, prefix, never-list, xmlids, meter registry, plan seeds, feature catalogue, status components); pilot tenant `hhh` | may split 4a/4b |
+| **H4a `biz_tenancy` + `biz_tenants` + `health_tenancy`** | the tenant agent (release stamp, notices in the reader's clock, About screen), the cockpit (six-step provisioning with a dry run, fleet, health, copies + restore-to-practice, in step with master, releases), the product overlay (brand, addresses, never-list, four meters, the customer administrator, the two doors), and the §3.8 top-bar fix in `health_access` | **DONE 2026-09-04** — `SAAS_H4A_TENANT_COCKPIT.md`; pilot customer `hhh.carejiox.com` provisioned from the cockpit end to end. Ledger H61–H76 |
+| **H4b Running the fleet** | rollout waves, alerts, the capacity guard, the public status page, feature switches, plans + invoices, support access with a trail | seams built in H4a (§3.7): `biz.tenant.meter`, the fail-open feature reader, `biz_tenants.status_dir` |
 | **H5 Validation** | every FLEET live check re-run on the pilot, Chrome-driven | |
 
 ---
@@ -693,3 +694,149 @@ in new surfaces. Chrome validation mandatory before a phase reports done.
   redeploy a script the moment you fix it (`BIZ_BIN=/usr/local/bin bash tools/saas/test_scripts.sh`
   tests what is actually installed), and a certificate script is only proven by issuing a
   certificate.
+- **H61** (H4a, 2026-09-04) **§3.8's PREMISE WAS ALREADY FALSE, AND THE ONLY WAY TO KNOW WAS TO
+  ASK THE TEMPLATE.** The handover opens on "the golden template does NOT carry
+  `biz_access.topbar_mode = admin_only`, so a customer cloned today would show every nurse the
+  whole top bar". One query says otherwise: `carejiox_template` carries **both** settings, and so
+  does `carejiox`. `health_access/data/config.xml` writes them and it is loaded on install, which
+  is what the template's own build did. **The gap that remains is real and is the other half of
+  the same A2 family**: the file is `noupdate="1"` on purpose, so on an UPGRADE of a database that
+  predates it nothing is written, and a `post_init_hook` does not fire on an upgrade either. So
+  the fix shipped is an idempotent `ensure_topbar_settings(env)` reachable from BOTH the hook and
+  a new migration (`19.0.1.2.1`), writing only a row that is ABSENT — a value somebody has
+  deliberately changed is never overwritten, which is the whole reason the data file is
+  `noupdate="1"`. **A handover's premise is a claim, not a fact**, and the cost of checking it was
+  one query.
+- **H62** (H4a) ⚠ **THE FRAMEWORK'S OWN `exp_duplicate_database` DOES ALL FOUR OF THE RUNBOOK'S
+  CLONE STEPS, IN THE RIGHT ORDER, BY CONSTRUCTION — AND SHELLING OUT COULD NOT HAVE WORKED
+  ANYWAY.** The handover's §3.3 spells the clone as `pg_terminate_backend` on the template, then
+  `createdb -O odoo -T carejiox_template <slug>`, then a filestore copy. The application account
+  cannot run any of that: H3 reduced its `sudo` to exactly three scripts and `createdb` is not one
+  of them. `odoo/service/db.py:185` does the same work from inside the process — it closes and
+  terminates every connection to the template (`_drop_conn`), issues `CREATE DATABASE … TEMPLATE …`
+  **as the account the application connects as**, so the copy is owned by `odoo` and H58's
+  invisible-database trap cannot happen; it forces a new `database.uuid`; and it copies the
+  filestore with `shutil.copytree` from a process whose `HOME` is already `/odoo`, which is F59
+  obtained by construction rather than by remembering. Wrapped in the `list_db` lift (`_direct`)
+  because the management gate is closed here on purpose. **When a runbook step and a framework
+  routine describe the same act, prefer the routine and write down why** — the runbook's version
+  is four things to forget.
+- **H63** (H4a) ⚠ **`_sql_constraints` AS A LIST IS INERT ON THIS BUILD, AND THE FAILURE IS
+  SILENT.** Three models shipped `_sql_constraints = [('slug_unique', 'unique(slug)', '…')]` in the
+  shape every older module in this repo uses. `pg_constraint` on the new table came back with the
+  primary key and two foreign keys and **nothing else** — no unique constraint at all, no error, no
+  warning. Two customer records could therefore have been given the same short name, which means
+  two records pointing at ONE database. Odoo 19 wants `_slug_unique = models.Constraint('UNIQUE
+  (slug)', "…")` (`odoo/addons/base/models/res_users.py:274` is the pattern), applied through
+  `_table_objects` / `_add_sql_constraints`. **Found by a test that tried to create the duplicate**,
+  not by reading the model — and the test now asserts the row in `pg_constraint` as well as the
+  refusal, because a refusal can come from somewhere else and look identical. The memory note
+  (`reference_odoo19_field_conversion`) already said "`_sql_constraints` inert"; this is what that
+  costs when it is not remembered.
+- **H64** (H4a) **A REGISTRY DEFAULT THAT LOOKS OBVIOUSLY RIGHT SILENTLY REFUSES THE PRODUCT'S OWN
+  ANSWER.** `register_platform` writes a key only while it is still empty — that is what makes the
+  FIRST registration win and stops two modules of one product fighting over an address. The
+  registry was seeded with `'backend_prefix': '/odoo'` because that is the framework's default, so
+  the overlay's `/bizapp` was thrown away without a word and the cockpit would have linked every
+  customer to the wrong address. **In a first-wins registry every slot starts EMPTY, including the
+  ones with an obvious default**; the fallback belongs in the reader, where it cannot block a
+  registration. Caught by a test that asserted what the product registered rather than what the
+  registry answered.
+- **H65** (H4a) **THE SERVER LOG LINE IS SIX FIELDS, NOT FIVE, AND GETTING IT WRONG REPORTS A
+  HEALTHY NOUGHT.** `2026-09-04 10:00:00,001 2994560 ERROR hhh odoo.modules: what happened` — the
+  DATE and the TIME are two whitespace-separated fields. Splitting on four spaces puts the process
+  id where the level should be, every line fails the `ERROR`/`CRITICAL` test, and the health reader
+  answers "no errors" for a system that is on fire. F27 gave the regex and the tail size and this
+  implementation re-derived the split by eye. **A parser for a log format needs a test with a real
+  line in it**; three of them here, and they are what found this.
+- **H66** (H4a) ⚠ **THE VISITS METER READ 0 FOR THE MONTH, AND THE COLUMN WAS NOT THE REASON.** The
+  handover flagged `actual_end_datetime` giving 0 for the current month against 975 completed
+  visits and asked for a better column. Measured on the master: `booking_date` 975/975,
+  `scheduled_date` 971/975, `actual_end_datetime` 870/975, `actual_start_datetime` 63/975 — and
+  **every one of them gives 0 for September 2026, because the clinic has no completed visits since
+  July** (2 in July, 8 in June, 917 in April). The number was right and the month was empty.
+  `scheduled_date` is nonetheless the column used: `booking_date` is the fullest and answers the
+  WRONG question (a visit booked in March and carried out in April would bill in March),
+  `actual_end_datetime` is the truest and loses one visit in nine, and `scheduled_date` is the day
+  the visit was FOR, is a plain DATE so a month boundary needs no clock, and is filled on 99.6%.
+  **Before changing a measurement because it reads zero, check whether zero is the answer.**
+- **H67** (H4a) **AN XML COMMENT MAY NOT CONTAIN A DOUBLE HYPHEN, AND THE HOUSE STYLE IS FULL OF
+  THEM.** `<!-- ---------- overview -->` is not well-formed XML. Four section rules written that
+  way made the cockpit's whole template file unparseable, which on a deploy is a module that
+  refuses to install. Caught by a local `ElementTree.parse` sweep over every new file before
+  anything was copied to the server — twenty lines, and it turned a failed 6-minute install into a
+  ten-second fix. **Run the parser over your own files before the box does.**
+- **H68** (H4a) **A NEUTRALITY NEEDLE CAN COLLIDE WITH A LEGITIMATE NAME, AND THE TEST IS THEN
+  WRONG RATHER THAN THE CODE.** `health_` on the banned list of a generic module is meant to catch
+  a reference to a product module; it also catches `health_state`, `health_detail` and
+  `health_ignore`, which are the right names for "how healthy is this customer's system". The scan
+  now bans the product's IMPORT PATHS (`odoo.addons.health`, `pb_import_kit`, `pb.sidebar`, …)
+  rather than a bare prefix, and a separate test asserts that not one source file reaches for a
+  product module. Same family as H9 and H12: **the neutrality test has to name the thing it
+  actually forbids.**
+- **H69** (H4a) **F29 AGAIN, AND IT COST THE SAME HOUR: A TEST CURSOR'S COMMIT REFUSAL IS BOLTED TO
+  THE INSTANCE.** The one test that proves `_tenant_env` calls `signal_changes()` after its commit
+  (F56 — non-negotiable on this two-worker box) patched `type(self.env.cr).commit` and the
+  framework raised "Cannot commit or rollback a cursor from inside a test" anyway.
+  `patch.object(self.env.cr, 'commit', …)` — the OBJECT — is what works. Written down a second time
+  because the first write-up is in another product's ledger and this is the repo that keeps
+  tripping over it.
+- **H70** (H4a) **A THRESHOLD TAKEN FROM AN INCIDENT HAS TO EXCLUDE THE INCIDENT'S OWN NUMBER.**
+  F59's bad backup was a 9 MB archive with **five** files in it. The guard shipped as
+  `files < 5`, which passes exactly that archive. Twenty is the number now — comfortably above the
+  wreckage and far below anything real, since a blank system's attachments run to hundreds of files
+  before anybody signs in. The test asserts the incident's own figures rather than a made-up pair.
+- **H71** (H4a) ⚠ **`.bzk .bzt` IS A DESCENDANT SELECTOR AND THE ELEMENT CARRIES BOTH CLASSES, SO IT
+  MATCHED NOTHING AT ALL.** The cockpit's page element is `class="bzk bzk-page bzt"`; the stylesheet
+  was rooted at `.bzk .bzt`, with a space. The screen rendered with every KIT primitive styled —
+  cards, buttons, badges, stat tiles, all correct — and not one rule of its own: the stat row stacked
+  full-width, the header buttons fell under the title, the machine strip had no card around it. **No
+  error anywhere, and it looks like a layout you got wrong rather than a stylesheet that is not
+  there.** Same family as F37 pointing the other way, and the same detector: a browser. `.bzk.bzt`,
+  compound, and a gate now asserts the compound form against the class list the template actually
+  writes.
+- **H72** (H4a) ⚠ **SWITCHING THE VIEW BEFORE THE READ FINISHES PUTS A STACK TRACE IN FRONT OF
+  SOMEBODY.** `openSync()` set `state.view = 'sync'` and then awaited the report; the Sync screen
+  reads its data on its very first line, so the render in between threw inside the component's
+  lifecycle and the owner got the framework's red "Something went wrong" box with a full trace in
+  it. It then RECOVERED a second later when the answer landed, which is exactly why it read as a
+  flicker rather than a fault and why only a screenshot caught it. The fix is the answer first and
+  the view second, plus a null guard in the template — belt and braces, because the next caller will
+  not have read the comment. **Any screen whose first line reads its data must not be shown before
+  the data is there**, and the cheap general form is: fetch, then switch.
+- **H73** (H4a) **"ZERO DEAD ENDS" HAS TO SURVIVE A PAGE RELOAD, AND THE FIRST VERSION DID NOT.**
+  A failed run offered "try this step again" and "undo the whole thing" — right up until somebody
+  closed the tab. After that the customer sat on the fleet as "Being set up" with their short name
+  taken, their system half-built, and no way back into the six steps: the only remaining move was to
+  go and look at the machine, which is the one outcome the screen exists to make impossible. Found
+  by WALKING it rather than by reading it — the next attempt was refused with "something on this
+  machine already has that name", which is the correct refusal and a dead end. Every unfinished
+  customer now carries a **Continue** button that resumes from the step it reached, out of the log
+  and the step it already has on the record.
+- **H74** (H4a) **MEASURED ON LIVE: A REAL CUSTOMER COSTS ABOUT 11 MB, NOT THE 42 MB THAT WAS
+  FORECAST — and the six steps take twenty-eight seconds.** H3 measured 13.9 MB per database per
+  process and multiplied by three. In practice a customer's registry is only loaded in a worker that
+  has actually served them: with the master alone the four processes held 759 MB; two requests to
+  `hhh.carejiox.com` took it to 767 MB (+8), and twenty-four more requests, spread across the
+  workers, to 770 MB (**+11 MB in total**). Provisioning `hhh` end to end: clone 5,952 ms, configure
+  353 ms, administrator 1,652 ms, certificate 17,606 ms, verify 1,865 ms, hand over 15 ms — **28
+  seconds, of which the certificate is 63%**. The certificate is the only step worth optimising and
+  it is somebody else's server.
+- **H75** (H4a) **THE MEMORY FLOOR FIRED FOR REAL, TWICE, DURING THE REHEARSAL — AND THAT IS THE
+  TEST.** Rehearsing on a full clone of the master means three registries on a 2 GB box, and free
+  memory sat at 389–394 MB against a 400 MB floor. Provisioning was refused at the door, in a
+  dialog, with the reason and the way out ("free some memory — drop any practice copies — or make
+  the machine bigger"). Nothing was patched to make it pass: `carejiox-deploy -s` released the
+  cached registries and took it back over 800 MB. **A guard proved by the situation it was written
+  for is worth more than a guard proved by a patched `/proc/meminfo`** — the unit test does that
+  too, but this is the one that showed the sentence is actionable.
+- **H76** (H4a) ⚠ **A BRAND-NEW CUSTOMER READS "BEHIND" ON THE DAY IT IS CREATED, BY 22 PARTS, AND
+  THAT IS H57 UNCHANGED.** The blank system carries 189 modules and the master 208 — the difference
+  is the stock apps nothing in the product's own set depends on (`stock`, `purchase`,
+  `sale_management`, `l10n_vn`, `theme_default` …) plus the cockpit itself, which is held back on
+  purpose. So `hhh` is "Behind" by 22 the minute it goes live, while being a perfectly complete
+  clinic. The `done` step stamps them with the current release anyway, which is right — a customer
+  created from today's blank system IS on today's release — and the nightly drift read then measures
+  them against the master and says otherwise. **The definitive customer module set is still an open
+  decision** (H52's chart of accounts and H50's languages belong to it); until it is made, "Behind"
+  on a new customer is a number to read and not a thing to fix.
