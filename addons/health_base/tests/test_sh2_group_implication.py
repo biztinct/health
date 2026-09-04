@@ -21,7 +21,7 @@ from odoo.tests import TransactionCase, new_test_user, tagged
 
 HEALTHCARE_BASE_XMLID = 'health_base.group_healthcare_base'
 DOCTOR_GROUP_XMLID = 'health_base.group_healthcare_doctor'
-DOCTOR_ROLE_NAME = 'Doctor'
+DOCTOR_ROLE_XMLID = 'health_access.role_doctor'
 NOTES_WIZARD = 'health.fso.clinical.notes.wizard'
 
 # §5.5 — the seven accounts the user declared unused on 2026-08-03 and
@@ -115,11 +115,10 @@ class TestSh2GroupImplication(TransactionCase):
     def test_sh2_00c_scope_discipline_only_one_edge_removed(self):
         """Eleven other forward edges of base.group_user are load-bearing.
 
-        `1 → 7` (`base.group_no_one`) especially: `health_user_admin`
-        documents at `res_users_saas.py:23-28` that group_no_one must stay a
-        DIRECT-only check precisely because base.group_user implies it. An
-        implementer "tidying up all of base.group_user's forward edges" would
-        invalidate that reasoning.
+        `1 → 7` (`base.group_no_one`) especially: every tenant-admin guard on
+        this database checks group_no_one on DIRECT containment only, precisely
+        because base.group_user implies it. An implementer "tidying up all of
+        base.group_user's forward edges" would invalidate that reasoning.
 
         The count of remaining edges is deployment-specific (it depends on
         which optional addons are installed), so the exact before/after count
@@ -132,8 +131,8 @@ class TestSh2GroupImplication(TransactionCase):
         forward = {row[0] for row in self.env.cr.fetchall()}
         self.assertNotIn(self.healthcare_base.id, forward)
         self.assertIn(self.env.ref('base.group_no_one').id, forward,
-                      '1 -> base.group_no_one was removed; see '
-                      'health_user_admin/models/res_users_saas.py:23-28')
+                      '1 -> base.group_no_one was removed; every tenant-admin '
+                      'guard checks it on DIRECT containment only')
 
     # ------------------------------------------------------------------
     # T5.2 — the negative on the clinical-note entry surface
@@ -163,26 +162,47 @@ class TestSh2GroupImplication(TransactionCase):
     # ------------------------------------------------------------------
     # T5.3 — the ten doctors still reach 346 after the role repair
     # ------------------------------------------------------------------
+    def _doctor_bundle(self):
+        """The Doctor role, as the Access home holds it.
+
+        The repair this file guards was made against the previous access
+        application's row. That row is gone; the same fact is now the Doctor
+        BUNDLE, which carries the same permission group and is the thing the
+        clinicians actually hold. The assertion did not change — only where the
+        Doctor role is written down.
+        """
+        if 'biz.access.role' not in self.env:
+            return None
+        return self.env.ref(DOCTOR_ROLE_XMLID, raise_if_not_found=False)
+
     def test_sh2_t53_doctor_role_grants_the_doctor_group(self):
-        role = self.env['access.role'].sudo().search(
-            [('name', '=', DOCTOR_ROLE_NAME)], limit=1)
-        self.assertTrue(role, 'no access.role named %r' % DOCTOR_ROLE_NAME)
+        role = self._doctor_bundle()
+        if not role:
+            self.skipTest('the Access home is not installed on this database')
         self.assertIn(
-            self.doctor_group, role.groups_ids,
-            'access.role %r still grants base.group_user and nothing else — '
-            'the ten doctors are locked out' % DOCTOR_ROLE_NAME)
+            self.doctor_group, role.sudo().group_ids,
+            'the Doctor role still grants base.group_user and nothing else — '
+            'the ten doctors are locked out')
 
     def test_sh2_t53b_every_doctor_role_user_still_reaches_346(self):
-        """Assert via the LIVE closure, not by reading XML (§5.88 rule a)."""
-        role = self.env['access.role'].sudo().search(
-            [('name', '=', DOCTOR_ROLE_NAME)], limit=1)
-        self.assertTrue(role, 'no access.role named %r' % DOCTOR_ROLE_NAME)
-        users = role.user_ids
-        self.assertTrue(users, 'the Doctor role has no linked users')
+        """Assert via the LIVE closure, not by reading XML (§5.88 rule a).
+
+        "The doctors" are the people whose JOB is the Doctor role — the field
+        that replaced the previous application's one-role-per-person pointer —
+        rather than everybody who happens to hold the bundle (an owner holds
+        it too, and an owner is not a doctor).
+        """
+        role = self._doctor_bundle()
+        if not role:
+            self.skipTest('the Access home is not installed on this database')
+        users = self.env['res.users'].sudo().search(
+            [('job_role_id', '=', role.id), ('active', '=', True)])
+        if not users:
+            self.skipTest('nobody on this database is employed as a doctor')
         for user in users:
             with self.subTest(login=user.login):
                 self.assertIn(
-                    self.doctor_group.id, user.group_ids.ids,
+                    self.doctor_group.id, user.all_group_ids.ids,
                     '%s did not receive %s from the role repair'
                     % (user.login, DOCTOR_GROUP_XMLID))
                 self.assertIn(

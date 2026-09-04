@@ -12,12 +12,8 @@
                 <field name="icon" optional="hide"/>
                 <field name="action_xmlid" optional="hide"/>
                 <field name="action_tag" optional="hide"/>
-                <field name="role_ids" widget="many2many_tags" options="{'no_create': True, 'no_quick_create': True}"/>
-                <!-- What actually gates the row: own roles + everything
-                     inherited from the section and any parent item. Empty
-                     means visible to everyone. -->
-                <field name="effective_role_ids" widget="many2many_tags" readonly="1"
-                       string="Effective (incl. inherited)" optional="show"/>
+                <!-- Who opens the row is added here by health_access, which
+                     is the module that knows what a role is. -->
                 <field name="active"/>
             </list>
         </field>
@@ -42,20 +38,10 @@
                             <field name="action_tag"/>
                         </group>
                     </group>
-                    <group string="Access Control">
+                    <group string="Access Control" name="access_control">
                         <field name="parent_id"/>
-                        <field name="role_ids" widget="many2many_tags">
-                            <list>
-                                <field name="name"/>
-                            </list>
-                        </field>
-                        <field name="effective_role_ids" widget="many2many_tags"
-                               readonly="1" string="Effective (incl. inherited)"/>
-                        <div colspan="2" class="text-muted">
-                            Effective = this item's roles + the roles on its
-                            section + the roles on any parent item. Empty means
-                            no gate at all.
-                        </div>
+                        <!-- The roles that open this entry are added here by
+                             health_access. -->
                     </group>
                     <group string="Active Page Matching">
                         <field name="match_action_tags"/>

@@ -107,7 +107,7 @@ class HealthStaffAssignment(models.Model):
                 'can no longer be rescheduled by dragging.'))
 
         # sudo the employee records: reading any hr.employee field as a non-HR
-        # ops user trips the public-profile prefetch guard (access_role_id etc.).
+        # ops user trips the public-profile prefetch guard (job_role_id etc.).
         old_staff = a.staff_id.sudo()
         new_staff = (self.env['hr.employee'].sudo().browse(new_staff_id).exists()
                      if new_staff_id else old_staff)

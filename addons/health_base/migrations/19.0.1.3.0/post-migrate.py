@@ -4,7 +4,22 @@ _logger = logging.getLogger(__name__)
 
 
 def migrate(cr, version):
-    """Migrate healthcare_role data to access_role flags + boolean qualifiers."""
+    """Migrate healthcare_role data to access_role flags + boolean qualifiers.
+
+    HISTORY, GUARDED. This ran once, in 2025, on the databases that had the
+    previous access application. That application has since been retired and
+    its table is gone, so on a fresh database — and on any database restored
+    from a backup taken after the retirement — every statement below would
+    fail on a table that is not there. It never re-runs on a database that has
+    already passed this version; the guard is here so the file is HONEST about
+    what it needs rather than merely lucky about when it is called.
+    """
+    cr.execute("SELECT to_regclass('public.access_role')")
+    if not (cr.fetchone() or [None])[0]:
+        _logger.info(
+            "health_base 19.0.1.3.0: the previous access application is not "
+            "on this database, so there is nothing to migrate from it")
+        return
     _logger.info("Starting healthcare_role → access_role migration")
 
     # Add new columns if they don't exist yet (ORM may not have run yet)

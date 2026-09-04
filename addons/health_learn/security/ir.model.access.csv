@@ -18,7 +18,7 @@ access_learn_quiz_author,learn.quiz author,model_learn_quiz,group_learn_author,1
 access_learn_quiz_option_user,learn.quiz.option user,model_learn_quiz_option,base.group_user,1,0,0,0
 access_learn_quiz_option_author,learn.quiz.option author,model_learn_quiz_option,group_learn_author,1,1,1,1
 access_learn_override_user,learn.tenant.override user,model_learn_tenant_override,base.group_user,1,0,0,0
-access_learn_override_admin,learn.tenant.override tenant admin,model_learn_tenant_override,health_user_admin.group_health_user_admin,1,1,1,1
+access_learn_override_admin,learn.tenant.override tenant admin,model_learn_tenant_override,health_access.group_clinic_admin,1,1,1,1
 access_learn_override_author,learn.tenant.override author,model_learn_tenant_override,group_learn_author,1,1,1,1
 access_learn_progress_user,learn.progress own,model_learn_progress,base.group_user,1,1,1,0
 access_learn_event_user,learn.event own,model_learn_event,base.group_user,1,0,1,0

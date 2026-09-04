@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Healthcare CMS — Shipped-Feature Sidebar Coverage',
-    'version': '19.0.1.3.1',
+    'version': '19.0.1.4.0',
     'category': 'Healthcare',
     'summary': 'Puts nineteen already-shipped features into the /bizapp sidebar '
                '(CRM, Operations, Clinical, Finance). Data glue plus a role-'
@@ -95,11 +95,15 @@ answered "You are not allowed to access 'BHYT Insurance Claim'". See
         # depends on this module, so there is no loop.
         'health_cms_clinical',
         'health_web_leads',
+        # The role bundles the nineteen leaves are gated to. Already transitive
+        # through health_web_leads; named explicitly because this module now
+        # writes `biz_role_ids` and resolves `health_access.role_*` by name.
+        'health_access',
     ],
     'data': [
         'data/cms_sidebar_items_features.xml',
     ],
-    # `access.role` rows carry no xml-id on this deployment, so role_ids cannot
+    # The entries are `noupdate` rows an upgrade does not re-assert, so the gate cannot
     # be seeded with ref() — the gating is written by the hook, exactly as the
     # 34 pre-existing gated leaves were. Also re-applied by the 19.0.1.1.0
     # migration so an upgrade converges with a fresh install.

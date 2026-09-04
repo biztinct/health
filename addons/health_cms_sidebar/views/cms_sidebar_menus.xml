@@ -17,11 +17,11 @@
          The duplication is accepted and understood — see the caveat below.
 
          CAVEAT for whoever restricts a role next: the two surfaces read
-         DIFFERENT gates. The classic tree honours ir.ui.menu.groups_id plus
-         access_roles "Hide Menu"; the CMS sidebar honours only
-         cms.sidebar.item.role_ids. Hiding CRM Center from a role in Role
-         Management does NOT hide the 13 CRM sidebar leaves, and vice versa.
-         Restricting a duplicated area is always TWO edits. -->
+         DIFFERENT gates. The bar above the screen honours ir.ui.menu.groups_id
+         and, where a product turns it on, the per-role top-bar rule in
+         biz_access; this left menu honours cms.sidebar.item.biz_role_ids alone.
+         Hiding CRM Center from the bar does NOT hide the 13 CRM leaves here,
+         and vice versa. Restricting a duplicated area is always TWO edits. -->
     <record id="health_crm.menu_crm_center_root" model="ir.ui.menu">
         <field name="active" eval="True"/>
     </record>

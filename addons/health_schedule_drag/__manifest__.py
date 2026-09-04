@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Health Schedule Reschedule-by-Drag',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Healthcare',
     'summary': 'Dragging an assignment on the staff schedule actually '
                'reschedules the booking — validated, ops-gated, matrix-'

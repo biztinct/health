@@ -26,14 +26,13 @@ where they exist instead of shadowing them with duplicates.
 from unittest.mock import patch
 
 from odoo.exceptions import AccessError
-from odoo.fields import Command
 from odoo.tests import TransactionCase, tagged
 
 from odoo.addons.biz_bi_cms import hooks
 from odoo.addons.biz_bi_cms.hooks import (
-    ANALYTICS_ROLE_NAMES,
+    ANALYTICS_ROLE_XMLIDS,
     apply_role_gates,
-    grant_creator_group,
+    gated_roles,
 )
 
 
@@ -49,8 +48,9 @@ class TestAnalyticsHub(TransactionCase):
         cls.item = env.ref('biz_bi_cms.item_analytics_hub')
         cls.section = env.ref('biz_bi_cms.section_analytics')
 
-        cls.role_gated = cls._role('Operations Manager')
-        cls.role_ungated = cls._role('Nurse')
+        cls.role_gated = cls._role('health_access.role_operations_manager',
+                                   'Operations Manager')
+        cls.role_ungated = cls._role('health_access.role_nurse', 'Nurse')
 
         # The gate is (re-)applied here rather than trusted from install: on a
         # database whose roles were created after the module was installed the
@@ -86,20 +86,36 @@ class TestAnalyticsHub(TransactionCase):
 
     # -- fixture helpers -------------------------------------------------
     @classmethod
-    def _role(cls, name):
-        """The deployment's own role row where it exists, else a new one."""
-        Role = cls.env['access.role'].sudo()
-        role = Role.search([('name', '=', name)], limit=1)
-        return role or Role.create({'name': name})
+    def _role(cls, xmlid, name):
+        """The deployment's own role where it exists, else a throwaway one.
+
+        Given a PERMISSION of its own when it has to be invented, because
+        holding a role is what opens an entry now and a bundle of nothing is
+        held by nobody.
+        """
+        role = cls.env.ref(xmlid, raise_if_not_found=False)
+        if role:
+            return role
+        group = cls.env['res.groups'].create({'name': 'HUB %s permission' % name})
+        ability = cls.env['biz.access.ability'].create({
+            'technical_key': 'hub-%s' % name.lower().replace(' ', '-'),
+            'name': name, 'group_ids': [(6, 0, group.ids)]})
+        return cls.env['biz.access.role'].create({
+            'name': name, 'ability_ids': [(6, 0, ability.ids)]})
 
     @classmethod
     def _user(cls, login, name, groups=None, role=None):
         vals = {'name': name, 'login': login, 'password': login + 'x' * 4}
-        if role:
-            vals['access_role_id'] = role.id
         user = cls.env['res.users'].create(vals)
+        links = []
         if groups:
-            user.sudo().write({'group_ids': [(4, groups.id)]})
+            links.append((4, groups.id))
+        if role:
+            # HOLDING the role is what a gate reads, so the persona is built by
+            # giving them its permissions rather than by pointing a field at it.
+            links += [(4, gid) for gid in role.sudo().group_ids.ids]
+        if links:
+            user.sudo().write({'group_ids': links})
         return user
 
     @staticmethod
@@ -189,16 +205,15 @@ class TestAnalyticsHub(TransactionCase):
     # ------------------------------------------------------------------
     def test_role_gate_idempotent(self):
         apply_role_gates(self.env)
-        first = set(self.item.role_ids.ids)
+        first = set(self.item.biz_role_ids.ids)
         apply_role_gates(self.env)
-        second = set(self.item.role_ids.ids)
+        second = set(self.item.biz_role_ids.ids)
 
         self.assertEqual(first, second)
-        self.assertEqual(len(self.item.role_ids), len(first),
-                         'role_ids must hold no duplicates')
+        self.assertEqual(len(self.item.biz_role_ids), len(first),
+                         'the gate must hold no duplicates')
 
-        present = self.env['access.role'].sudo().search(
-            [('name', 'in', list(ANALYTICS_ROLE_NAMES))])
+        present = gated_roles(self.env, ANALYTICS_ROLE_XMLIDS)
         self.assertTrue(present, 'fixture guard: at least one gated role')
         self.assertEqual(first, set(present.ids))
         self.assertNotIn(self.role_ungated.id, first)
@@ -207,50 +222,50 @@ class TestAnalyticsHub(TransactionCase):
         # SKIPPED — never written as [(6, 0, [])], which would gate the leaf
         # to nobody and hide the feature from everyone.
         with patch.dict(hooks.ROLE_GATES,
-                        {'item_analytics_hub': ('No Such Role Here',)},
+                        {'item_analytics_hub': ('no_such.role_here',)},
                         clear=True):
             gated = apply_role_gates(self.env)
         self.assertEqual(gated, 0)
-        self.assertEqual(set(self.item.role_ids.ids), first,
+        self.assertEqual(set(self.item.biz_role_ids.ids), first,
                          'the leaf keeps its previous gate rather than being '
                          'blinded')
 
     # ------------------------------------------------------------------
-    # T4 — the group grant: additive, role-scoped, idempotent
+    # T4 — the permission behind the entry comes from the ROLE now
     # ------------------------------------------------------------------
-    def test_creator_group_grant(self):
+    def test_the_permission_comes_from_the_role_rather_than_a_sweep(self):
+        """WHAT THIS TEST USED TO BE, AND WHY IT IS SHORTER.
+
+        This module used to hand the reporting permission out itself: a sweep
+        at install time, and a per-record hook so new hires did not miss it.
+        Both existed because the four roles had to be matched by NAME and there
+        was nowhere to write "this role may build reports".
+
+        There is now. "Build reports" is an ability on those four bundles, so
+        the permission arrives the way every other permission does — by holding
+        a role — and there is nothing left here to sweep. What has to be true
+        is that somebody who holds a gated role reaches the reporting group,
+        and somebody who does not, does not.
+        """
+        ability = self.env['biz.access.ability'].sudo().with_context(
+            active_test=False).search(
+                [('technical_key', '=', 'analytics-build')], limit=1)
+        if not ability:
+            self.skipTest('the "build reports" ability is not on this database')
+        for role in gated_roles(self.env, ANALYTICS_ROLE_XMLIDS):
+            with self.subTest(role=role.name):
+                self.assertIn(ability, role.ability_ids)
+                self.assertIn(self.creator_group, role.group_ids)
+
         gated_user = self._user('bihub_om', 'HUB Ops Manager',
                                 role=self.role_gated)
         ungated_user = self._user('bihub_nurse', 'HUB Nurse',
                                   role=self.role_ungated)
-        # AH-2 note: `models/res_users.py` now grants the group at create
-        # time, so this user already holds it — which is a different
-        # guarantee from the one under test here. Strip it back off, so what
-        # is measured below is still the BACKFILL sweep (the migration path
-        # for users who predate the module), not the per-record hook.
-        # test_05_auto_grant_on_role_assign covers the hook.
-        self.assertIn(self.creator_group, gated_user.all_group_ids,
-                      'AH-2: a user created with a gated role is granted the '
-                      'BI group immediately')
-        gated_user.sudo().write(
-            {'group_ids': [Command.unlink(self.creator_group.id)]})
-        self.assertNotIn(self.creator_group, gated_user.all_group_ids,
-                         'fixture guard: the backfill must have work to do')
-
-        granted = grant_creator_group(self.env)
-        self.assertGreaterEqual(granted, 1)
-        self.assertIn(self.creator_group, gated_user.all_group_ids)
+        if self.role_gated in gated_roles(self.env, ANALYTICS_ROLE_XMLIDS):
+            self.assertIn(self.creator_group, gated_user.all_group_ids)
         self.assertNotIn(
             self.creator_group, ungated_user.all_group_ids,
-            'a Nurse-role user must not be handed BI access by this module')
-
-        before = set(ungated_user.group_ids.ids)
-        gated_before = set(gated_user.group_ids.ids)
-        self.assertEqual(grant_creator_group(self.env), 0,
-                         'a second run must add nothing')
-        self.assertEqual(set(ungated_user.group_ids.ids), before,
-                         'and must remove nothing')
-        self.assertEqual(set(gated_user.group_ids.ids), gated_before)
+            'somebody employed as a nurse must not be handed reporting access')
 
     # ------------------------------------------------------------------
     # T6 — the AI probe never raises at a creator

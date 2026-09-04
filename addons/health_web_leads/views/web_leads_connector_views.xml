@@ -41,12 +41,12 @@
                             string="Disconnect"
                             invisible="state in ('draft', 'disconnected')"
                             confirm="The website will no longer be able to submit leads. The OAuth client is archived, not deleted. Continue?"
-                            groups="base.group_system,health_crm.group_health_crm_manager,health_user_admin.group_health_user_admin"/>
+                            groups="base.group_system,health_crm.group_health_crm_manager,health_access.group_clinic_admin"/>
                     <button name="action_reconnect" type="object"
                             string="Reconnect"
                             invisible="state != 'disconnected'"
                             help="Un-archives the OAuth client. Rotate the secret afterwards unless the website still holds the previous one."
-                            groups="base.group_system,health_crm.group_health_crm_manager,health_user_admin.group_health_user_admin"/>
+                            groups="base.group_system,health_crm.group_health_crm_manager,health_access.group_clinic_admin"/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,credentials_issued,live"/>
                 </header>

@@ -1493,26 +1493,38 @@ class HealthStaffAssignment(models.Model):
     def migrate_booking_staff_roles(self, dry_run=False, limit=None):
         """Data migration — wired into migrations/19.0.2.3.7/post-migrate.py.
 
-        For every staff member assigned in real bookings, ensure they hold the right
-        ACCESS ROLE (Nurse / Doctor) — derived from the deprecated `healthcare_role`
-        — creating an internal user (no invitation email) when the staff has none,
-        then clearing `healthcare_role`. Idempotent.
+        For every staff member assigned in real bookings, make sure their JOB
+        says what they are (Nurse / Doctor) — derived from the deprecated
+        `healthcare_role` — creating an internal user (no invitation email)
+        when the staff has none, then clearing `healthcare_role`. Idempotent.
 
         Classification by healthcare_role:
-          - doctor / duty_doctor  -> Doctor access role
-          - nurse / head_nurse    -> Nurse access role
+          - doctor / duty_doctor  -> the Doctor role
+          - nurse / head_nurse    -> the Nurse role
           - anything else (admin, support, technician, none, ...) -> SKIPPED.
+
+        WHAT CHANGED WHEN THE PREVIOUS ACCESS APPLICATION WAS RETIRED: the two
+        roles are bundles with fixed names of their own, found by pointing at
+        them rather than by matching the words "nurse" and "doctor" against a
+        table. And writing the JOB is what grants the role — the login's own
+        `write` does it, through the Access home, with an audit row — so this
+        no longer maintains any denormalised list of its own.
 
         Returns a summary dict; `created_user_ids` lets the run be reversed.
         Pass dry_run=True to report without writing, limit=N to process a subset.
         """
         Emp = self.env['hr.employee'].sudo()
         Users = self.env['res.users'].sudo()
-        Role = self.env['access.role'].sudo()
-        nurse_role = Role.search([('name', '=ilike', 'nurse')], limit=1)
-        doctor_role = Role.search([('name', '=ilike', 'doctor')], limit=1)
+        if 'job_role_id' not in Users._fields:
+            return {'error': 'the Access overlay is not installed, so there '
+                             'is no job to write'}
+        nurse_role = self.env.ref('health_access.role_nurse',
+                                  raise_if_not_found=False)
+        doctor_role = self.env.ref('health_access.role_doctor',
+                                   raise_if_not_found=False)
         if not nurse_role or not doctor_role:
-            return {'error': 'Nurse and/or Doctor access.role not found'}
+            return {'error': 'the Nurse and/or Doctor role is not on this '
+                             'database'}
 
         DOCTOR_HC = ('doctor', 'duty_doctor')
         NURSE_HC = ('nurse', 'head_nurse')
@@ -1542,17 +1554,18 @@ class HealthStaffAssignment(models.Model):
                 continue
 
             user = emp.user_id
-            # NEVER overwrite an existing access role. If the user already has ANY
-            # role, leave it untouched (matches "only assign if they have no role").
-            if user and user.access_role_id:
-                if user.access_role_id.id == target.id:
+            # NEVER overwrite a job somebody already has. If the login already
+            # says what they are, leave it untouched (matches "only assign if
+            # they have no role").
+            if user and user.job_role_id:
+                if user.job_role_id.id == target.id:
                     summary['already_ok'] += 1
                     if not dry_run and emp.healthcare_role:
                         emp.healthcare_role = False  # correct role already; drop the dup tag
                         summary['cleaned'] += 1
                 else:
                     summary['kept_other_role'] += 1
-                    other_role.append('%s -> %s' % (emp.name, user.access_role_id.name))
+                    other_role.append('%s -> %s' % (emp.name, user.job_role_id.name))
                 continue
 
             # No role yet: assign target (creating an internal user if needed).
@@ -1578,7 +1591,10 @@ class HealthStaffAssignment(models.Model):
                         'login': login,
                         'company_id': company.id,
                         'company_ids': [(6, 0, [company.id])],
-                        'access_role_id': target.id,
+                        # Writing the job is what grants the role, through the
+                        # Access home's own `grant`, with an audit row saying
+                        # when and why.
+                        'job_role_id': target.id,
                     })
                 except Exception as e:
                     _logger.warning(
@@ -1589,10 +1605,7 @@ class HealthStaffAssignment(models.Model):
                 summary['users_created'] += 1
                 emp.user_id = user.id
             else:
-                user.write({'access_role_id': target.id})
-            # keep the role.user_ids denormalisation consistent (onchange does this in the UI)
-            if user.id not in target.user_ids.ids:
-                target.write({'user_ids': [(4, user.id)]})
+                user.write({'job_role_id': target.id})
 
             if emp.healthcare_role:
                 emp.healthcare_role = False

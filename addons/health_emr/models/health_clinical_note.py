@@ -214,10 +214,17 @@ class HealthClinicalNote(models.Model):
         return False
 
     def _role_name_of(self, user):
-        """Resolve a display role for `user`, mirroring _compute_author_role."""
+        """Resolve a display role for `user`, mirroring _compute_author_role.
+
+        THE STRING IS PART OF A SEALED HASH, so this had to keep resolving to
+        the same words when the job stopped being a pointer at the previous
+        access application's row and became a role bundle. It does: the bundles
+        were created with the same names, and the fallback through the staff
+        record and then to "Staff" is unchanged.
+        """
         role = ''
-        if user.access_role_id:
-            role = user.access_role_id.name
+        if user.job_role_id:
+            role = user.job_role_id.name
         if not role:
             employee = self.env['hr.employee'].sudo().search(
                 [('user_id', '=', user.id)], limit=1)

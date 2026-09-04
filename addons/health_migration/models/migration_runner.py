@@ -1605,7 +1605,7 @@ class MigrationRunner(models.Model):
             self.archive_baseline(report, run_tag)
         # Give the freshly-imported nurses/doctors their access role + login.
         # The importer only sets `healthcare_role` on the staff stubs; this turns
-        # that tag into a Nurse/Doctor access.role (creating an internal, no-invite
+        # that tag into the Nurse/Doctor job (creating an internal, no-invite
         # user when needed) and clears the tag. Idempotent — only touches staff
         # that don't already hold a role, so it's safe on every run.
         if booking_path:

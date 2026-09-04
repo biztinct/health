@@ -544,7 +544,7 @@ class HealthFieldServiceOrderUnified(models.Model):
     def _compute_assigned_staff(self):
         """Compute assigned staff from assignment records"""
         for record in self:
-            # sudo the role read: is_doctor_role derives from access_role_id, a
+            # sudo the role read: is_doctor_role derives from job_role_id, a
             # private employee field non-HR users (e.g. nurses) cannot read, which
             # would otherwise break this compute whenever they load bookings.
             staff_ids = record.assignment_ids.filtered(
@@ -3887,7 +3887,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         # Staff roster: read with sudo so non-HR dashboard users (e.g. CRM /
         # Operations roles that are not HR officers) can see role/duty flags.
         # Odoo otherwise serves them the employee *public* profile, which hides
-        # access_role_id/is_om_role/is_head_nurse/is_duty_doctor -> AccessError.
+        # job_role_id/is_om_role/is_head_nurse/is_duty_doctor -> AccessError.
         Employee = self.env['hr.employee'].sudo()
         staff_domain = [('is_healthcare_staff', '=', True), ('employment_status', '=', 'active')]
         if facility_id:

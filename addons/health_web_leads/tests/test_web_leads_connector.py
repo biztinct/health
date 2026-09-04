@@ -553,12 +553,12 @@ class TestWebLeadsConnector(ConnectorCaseMixin, TransactionCase):
         connector = self._connector()
         granted = self.env.ref('base.group_system') \
             | self.env.ref('health_crm.group_health_crm_manager') \
-            | self.env.ref('health_user_admin.group_health_user_admin')
+            | self.env.ref('health_access.group_clinic_admin')
 
         for suffix, group_xmlid in (
                 ('sys', 'base.group_system'),
                 ('crm', 'health_crm.group_health_crm_manager'),
-                ('uadm', 'health_user_admin.group_health_user_admin')):
+                ('uadm', 'health_access.group_clinic_admin')):
             with self.subTest(persona=suffix):
                 user = new_test_user(
                     self.env, login='wl_w25_ok_%s' % suffix,

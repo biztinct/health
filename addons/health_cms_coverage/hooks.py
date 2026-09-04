@@ -1,18 +1,21 @@
 # -*- coding: utf-8 -*-
 """Role gating for the nineteen leaves — applied in python, not XML.
 
-`access.role` records on this deployment are **database rows with no xml-id**
-(measured: Owner, Operations Manager, Branch Manager, Banker, Nurse, Doctor,
-Accountant, Admin, CRM — none of them appear in `ir_model_data`), so
-`role_ids` cannot be seeded with `ref()`. The 34 gated items that shipped
-before this module were gated the same way: by writing the relation, which is
-why `grep role_ids data/*.xml` finds almost nothing and the live catalogue is
-nonetheless role-aware.
+WHY PYTHON RATHER THAN A `ref()` IN THE DATA FILE. The entries are
+``noupdate="1"``: once a row is on a live database, what somebody has since
+done to it is the truth and an upgrade re-asserting this file would undo their
+work. So the gate has to be WRITTEN, from the install hook and from the
+migration, which is the same reason ``consolidate_sidebar`` below is python.
+
+(It used to be python for a second reason as well: the roles were database rows
+with no fixed name, so nothing could point at them. They have fixed names now —
+``health_access.role_*`` — which is why the map below reads like a list of names
+rather than a list of words to match.)
 
 Why gate at all — the defect this closes, found by driving the shell as the
-real `crm` user after the first install: with no `role_ids`, all nineteen
-leaves were served to every role. A receptionist was shown an entire FINANCE
-section (which their sidebar has never had) and got
+real `crm` user after the first install: with no gate, all nineteen leaves were
+served to every role. A receptionist was shown an entire FINANCE section (which
+their sidebar has never had) and got
 "You are not allowed to access 'BHYT Insurance Claim'" on click. The gate
 below reproduces each section's own established convention:
 
@@ -21,67 +24,83 @@ below reproduces each section's own established convention:
     FINANCE   → Owner + Accountant               (as every FINANCE leaf)
     CLINICAL  → ungated                          (as all 24 existing CLINICAL items)
 
-with ONE measured exception: `health.scribe.job` is readable only by Owner /
-Operations Manager / Branch Manager, so **Voice Notes** is gated rather than
-left as a leaf that refuses the clinical roles it would be drawn for. Every
+with ONE measured exception: `health.scribe.job` is readable only by Owner and
+Operations Manager, so **Voice Notes** is gated rather than left as a leaf that
+refuses the clinical roles it would be drawn for. (Branch Manager was on that
+list until H2b asked the permissions table rather than trusting the note, and
+found it could not open the screen either.) Every
 other CLINICAL model here (condition, clinical note, careplan task, AI
 suggestion, portal access, consent check log) is readable by the ungated
 audience, verified per role before this file was written.
 
-Runs from ``post_init_hook`` AND from the 19.0.1.1.0 migration, so a fresh
-install and an upgrade of an already-installed copy converge on the same state.
+Runs from ``post_init_hook`` AND from a migration, so a fresh install and an
+upgrade of an already-installed copy converge on the same state.
 """
 import logging
 
 _logger = logging.getLogger(__name__)
 
-# leaf xml-id -> role NAMES that may see it. Absent from this map ⇒ ungated.
+# Fixed names for the roles, so nothing here matches a word against a row.
+OWNER = 'health_access.role_owner'
+CRM = 'health_access.role_crm'
+OPS_MANAGER = 'health_access.role_operations_manager'
+ACCOUNTANT = 'health_access.role_accountant'
+
+# leaf xml-id -> the roles that may see it. Absent from this map ⇒ ungated.
 ROLE_GATES = {
     # CRM
-    'item_crm_channels_setup': ('Owner', 'CRM'),
-    'item_crm_reply_templates': ('Owner', 'CRM'),
-    'item_crm_followup_calendar': ('Owner', 'CRM'),
-    'item_crm_relationships': ('Owner', 'CRM'),
+    'item_crm_channels_setup': (OWNER, CRM),
+    'item_crm_reply_templates': (OWNER, CRM),
+    'item_crm_followup_calendar': (OWNER, CRM),
+    'item_crm_relationships': (OWNER, CRM),
     # OPERATIONS MANAGER
-    'item_ops_telehealth': ('Owner', 'Operations Manager'),
-    'item_ops_selfbooking': ('Owner', 'Operations Manager'),
-    'item_ops_family_links': ('Owner', 'Operations Manager'),
-    'item_ops_family_messages': ('Owner', 'Operations Manager'),
-    'item_ops_route_feasibility': ('Owner', 'Operations Manager'),
-    # CLINICAL — the one exception (see module docstring)
-    'item_clin_voice_notes': ('Owner', 'Operations Manager', 'Branch Manager'),
+    'item_ops_telehealth': (OWNER, OPS_MANAGER),
+    'item_ops_selfbooking': (OWNER, OPS_MANAGER),
+    'item_ops_family_links': (OWNER, OPS_MANAGER),
+    'item_ops_family_messages': (OWNER, OPS_MANAGER),
+    'item_ops_route_feasibility': (OWNER, OPS_MANAGER),
+    # CLINICAL — the one exception (see module docstring). BRANCH MANAGER WAS
+    # ON THIS LIST AND COULD NOT OPEN IT: `health.scribe.job` is readable by
+    # the healthcare administrator, manager and owner permissions, and a branch
+    # manager carries none of them. Measured by asking the permissions table
+    # role by role, which is what H2b's door check does for every entry.
+    'item_clin_voice_notes': (OWNER, OPS_MANAGER),
     # FINANCE
-    'item_fin_bhyt_claims': ('Owner', 'Accountant'),
-    'item_fin_service_packages': ('Owner', 'Accountant'),
-    'item_fin_red_invoice_log': ('Owner', 'Accountant'),
+    'item_fin_bhyt_claims': (OWNER, ACCOUNTANT),
+    'item_fin_service_packages': (OWNER, ACCOUNTANT),
+    'item_fin_red_invoice_log': (OWNER, ACCOUNTANT),
 }
 
 
 def apply_role_gates(env):
-    """Write ``role_ids`` on the gated leaves. Idempotent, and never blinding.
+    """Write the gate on the gated leaves. Idempotent, and never blinding.
 
-    A role name this deployment does not have is skipped rather than written as
-    an empty set: ``[(6, 0, [])]`` would gate the leaf to NOBODY, which is a
-    worse outcome than leaving it visible (the model ACL still refuses the
-    data). If NONE of a leaf's roles exist, the leaf is left ungated and the
-    fact is logged — silence there would hide a feature completely.
+    A role this deployment does not have is skipped rather than written as an
+    empty set: ``[(6, 0, [])]`` would gate the leaf to NOBODY, which is a worse
+    outcome than leaving it visible (the model's own permissions still refuse
+    the data). If NONE of a leaf's roles exist, the leaf is left ungated and
+    the fact is logged — silence there would hide a feature completely.
     """
-    by_name = {r.name: r.id for r in env['access.role'].sudo().search([])}
     gated = skipped = 0
-    for xmlid, names in ROLE_GATES.items():
+    for xmlid, role_xmlids in ROLE_GATES.items():
         item = env.ref('health_cms_coverage.%s' % xmlid,
                        raise_if_not_found=False)
         if not item:
             continue
-        role_ids = [by_name[name] for name in names if name in by_name]
-        if not role_ids:
+        roles = env['biz.access.role'].sudo().browse()
+        for role_xmlid in role_xmlids:
+            role = env.ref(role_xmlid, raise_if_not_found=False)
+            if role:
+                roles |= role
+        if not roles:
             skipped += 1
             _logger.warning(
                 'health_cms_coverage: none of the roles %s exist on this '
                 'database — leaving %s visible to every role rather than '
-                'hiding it from everyone', list(names), xmlid)
+                'hiding it from everyone', list(role_xmlids), xmlid)
             continue
-        item.sudo().write({'role_ids': [(6, 0, role_ids)]})
+        if set(item.biz_role_ids.ids) != set(roles.ids):
+            item.sudo().write({'biz_role_ids': [(6, 0, roles.ids)]})
         gated += 1
     _logger.info('health_cms_coverage: role-gated %s sidebar leaves '
                  '(%s left ungated for want of a role)', gated, skipped)

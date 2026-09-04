@@ -41,7 +41,7 @@ def ensure_group(user_rec, group_xmlid):
     """Add user to group if not already member."""
     try:
         group = env.ref(group_xmlid)
-        # Odoo 19 with access_roles: try SQL insert directly
+        # Odoo 19: write the membership row directly
         env.cr.execute("""
             INSERT INTO res_groups_users_rel (gid, uid)
             VALUES (%s, %s)

@@ -7,12 +7,15 @@ import { user } from "@web/core/user";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
 import { onWillStart } from "@odoo/owl";
+// The one list that says who may change who-can-do-what. Read, never restated:
+// a second copy of a gate is a copy that goes out of date, and the copy that is
+// wrong is the one that offers somebody a tab they will be refused on.
+import { ACCESS_MANAGE_GATE } from "@biz_access/js/access_palette";
 
-// Tabs that open the access_roles configuration models. Ring 0 (platform
-// admin) only: for everyone else — including tenant admins, who manage USERS
-// but never role/permission design — the tabs are hidden here and the
-// underlying models are read-only/denied by ACL anyway.
-const RING0_TAB_IDS = new Set(["roles", "role_mgmt"]);
+// Tabs that open the Access home. Not everybody's: giving out roles is the
+// clinic administrators' work and the platform administrator's, which is
+// exactly what ACCESS_MANAGE_GATE names.
+const ACCESS_TAB_IDS = new Set(["access"]);
 
 // Extension seam. Modules that sit ABOVE health_landing in the dependency
 // graph (health_cms_clinical, say) contribute lookup tabs without this file
@@ -131,10 +134,11 @@ const TAB_GROUPS = [
         tabs: [
             { id: "users", label: _t("Users"), icon: "fa-users",
               model: "res.users", action: "health_landing.action_admin_users" },
-            { id: "roles", label: _t("Access Roles"), icon: "fa-key",
-              model: "access.role", action: "health_landing.action_admin_roles" },
-            { id: "role_mgmt", label: _t("Role Management"), icon: "fa-shield",
-              model: "role.management", action: "health_landing.action_admin_role_mgmt" },
+            // NOT a list of rows: it opens the Access home, which is a screen
+            // rather than a table. The tab strip is where somebody looking
+            // after people already is, so this is where the door belongs.
+            { id: "access", label: _t("Access & roles"), icon: "fa-key",
+              model: false, action: "biz_access.action_biz_access_home" },
         ],
     },
     {
@@ -214,10 +218,12 @@ export class AdminModelNavigatorController extends ListController {
         this.actionService = useService("action");
         this.groups = buildGroups();
         this.tabConfig = this._resolveTabConfig();
-        this.isRoleAdmin = false;
+        this.canManageAccess = false;
         onWillStart(async () => {
-            this.isRoleAdmin = await user.hasGroup(
-                "access_roles.access_role_group_administrator");
+            const held = await Promise.all(
+                ACCESS_MANAGE_GATE.map((group) => user.hasGroup(group)));
+            this.canManageAccess =
+                held.some(Boolean) || (await user.hasGroup("base.group_system"));
         });
     }
 
@@ -257,7 +263,9 @@ export class AdminModelNavigatorController extends ListController {
     }
 
     _visibleTabs(tabs) {
-        return this.isRoleAdmin ? tabs : tabs.filter((t) => !RING0_TAB_IDS.has(t.id));
+        return this.canManageAccess
+            ? tabs
+            : tabs.filter((t) => !ACCESS_TAB_IDS.has(t.id));
     }
 
     // Sections that still have at least one visible tab, in declaration order.

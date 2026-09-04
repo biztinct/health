@@ -1,6 +1,6 @@
 {
     'name': 'Healthcare Catchment Backfill',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Healthcare/Security',
     'summary': "One-time backfill of Doctor-role users' catchment province from their facility",
     'description': """
@@ -15,7 +15,7 @@ own field is empty (ledger §5.117). After phase SH-2 gave the Doctor role its
 healthcare group, eight of the ten doctors held the permission but saw nothing.
 
 This module's ``post_init_hook`` sets ``catchment_province_id`` for every
-``access.role`` "Doctor" user that has none, deriving it from the catchment
+user whose JOB is Doctor and who has none, deriving it from the catchment
 province of the user's healthcare facility (``hr.employee.healthcare_facility_id
 .catchment_province_id``). The rule is self-validating: the two doctors who
 already carry a catchment (Hanoi, HCMC) match their facility's province exactly.
@@ -28,7 +28,9 @@ only NULL-catchment rows are touched.
     'author': 'VAFHS Development Team',
     'website': 'https://www.vafhs.com',
     'license': 'LGPL-3',
-    'depends': ['health_base'],
+    # The job field, which is what says who is a doctor. Guarded in the hook
+    # so this module still installs where the Access overlay is absent.
+    'depends': ['health_base', 'health_access'],
     'data': [],
     'post_init_hook': 'post_init_hook',
     'installable': True,

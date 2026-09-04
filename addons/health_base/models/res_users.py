@@ -65,19 +65,14 @@ class ResUsers(models.Model):
 
     is_duty_doctor = fields.Boolean('Is Duty Doctor', default=False)
     is_head_nurse = fields.Boolean('Is Head Nurse', default=False)
-    is_doctor_role = fields.Boolean(
-        compute='_compute_user_role_flags', store=True, readonly=True,
-    )
-    is_nurse_role = fields.Boolean(
-        compute='_compute_user_role_flags', store=True, readonly=True,
-    )
 
-    @api.depends('access_role_id', 'access_role_id.name')
-    def _compute_user_role_flags(self):
-        for user in self:
-            role_name = (user.access_role_id.name or '').lower() if user.access_role_id else ''
-            user.is_doctor_role = 'doctor' in role_name
-            user.is_nurse_role = 'nurse' in role_name
+    # Declared here, decided by the Access home above — see the long note on
+    # `hr.employee`. `job_role_id` itself lives up there, because it points at
+    # a role bundle and this module is the root of the tree; these two are the
+    # answers read off it, and they stay here so that a module below can name
+    # one in an `@api.depends` without the registry refusing to load.
+    is_doctor_role = fields.Boolean(store=True, readonly=True)
+    is_nurse_role = fields.Boolean(store=True, readonly=True)
 
     def get_employee_record(self):
         """Get linked employee record if exists"""

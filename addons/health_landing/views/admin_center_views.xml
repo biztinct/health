@@ -5,15 +5,38 @@
     <!--  ADMIN CENTER — People (Users, Roles, Role Mgmt)-->
     <!-- =============================================== -->
 
+    <!-- A LIST OF ITS OWN, NOT AN INHERIT.
+         This used to extend a list belonging to another module, which meant
+         that removing that module took this screen with it — a view cascade
+         deletes what inherits from what it deletes. The columns are the same
+         ones; they simply live here now, where the screen does. The "Job"
+         column is added by health_access, because that is the module that
+         knows what a job is. -->
     <record id="view_admin_users_list" model="ir.ui.view">
         <field name="name">admin.users.list</field>
         <field name="model">res.users</field>
-        <field name="inherit_id" ref="health_user_admin.view_health_users_list"/>
+        <!-- WRITTEN OUT EXPLICITLY, and it has to be. This row already exists
+             on every live database as an INHERIT of a view belonging to the
+             retired module, and an XML update writes only the fields it names:
+             leaving `inherit_id` unmentioned leaves the old value in place and
+             the loader then refuses an inheriting view whose arch is a whole
+             list (ledger §5.69b, hit here). -->
+        <field name="inherit_id" eval="False"/>
         <field name="mode">primary</field>
+        <field name="priority">20</field>
         <field name="arch" type="xml">
-            <xpath expr="//list" position="attributes">
-                <attribute name="js_class">admin_model_navigator_view</attribute>
-            </xpath>
+            <list string="Users"
+                  js_class="admin_model_navigator_view"
+                  decoration-muted="active==False"
+                  create="true" delete="false"
+                  default_order="name">
+                <field name="name" string="Name"/>
+                <field name="login" string="Email"/>
+                <field name="phone" optional="show"/>
+                <field name="catchment_province_id" string="Catchment Area" optional="show"/>
+                <field name="company_id" string="Company" groups="base.group_multi_company"/>
+                <field name="active" string="Status" widget="boolean_toggle"/>
+            </list>
         </field>
     </record>
 
@@ -24,21 +47,7 @@
         <field name="domain">[('share', '=', False)]</field>
         <field name="context">{'active_test': False, 'open_create_wizard': True}</field>
         <field name="view_ids" eval="[(5, 0, 0),
-            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_users_list')}),
-            (0, 0, {'view_mode': 'form', 'view_id': ref('health_user_admin.view_health_users_form')})]"/>
-        <field name="search_view_id" ref="health_user_admin.view_health_users_search"/>
-    </record>
-
-    <record id="action_admin_roles" model="ir.actions.act_window">
-        <field name="name">Access Roles</field>
-        <field name="res_model">access.role</field>
-        <field name="view_mode">list,form</field>
-    </record>
-
-    <record id="action_admin_role_mgmt" model="ir.actions.act_window">
-        <field name="name">Role Management</field>
-        <field name="res_model">role.management</field>
-        <field name="view_mode">list,form</field>
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_users_list')})]"/>
     </record>
 
     <!-- =============================================== -->

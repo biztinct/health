@@ -95,7 +95,7 @@
          and the restore action are gated on this group. Deliberately NOT
          implied by admin/manager: tenant admins assign the duty explicitly
          (the Healthcare privilege is tenant-admin-assignable, see
-         health_user_admin ALLOWED_PRIVILEGE_NAMES). -->
+         the tenant-admin privilege allow-list). -->
     <record id="group_healthcare_custodian" model="res.groups">
         <field name="name">Healthcare: Record Custodian</field>
         <field name="privilege_id" ref="res_groups_privilege_healthcare"/>
@@ -149,7 +149,8 @@
         The id is baked at XML load because the ir.rule eval context is only
         {user, company_ids, company_id} — `ref()` is not available at rule
         evaluation time, and a hard-coded 2 is database-specific.
-        (SH-1 §6; precedent: health_user_admin/security/ir_rules.xml:23.)
+        (SH-1 §6; precedent: the rule that keeps the platform administrator off the
+        clinic's people list, now health_access/security/health_access_security.xml.)
     -->
     <record id="rule_internal_read_root_partner" model="ir.rule">
         <field name="name">Internal users: read the root (OdooBot) partner</field>

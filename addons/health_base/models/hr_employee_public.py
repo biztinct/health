@@ -37,7 +37,15 @@ class HrEmployeePublic(models.Model):
     )
 
     def _compute_healthcare_flags(self):
-        employees = {emp.id: emp for emp in self.env['hr.employee'].sudo().browse(self.ids)}
+        """The public profile's copy of what the staff record says.
+
+        The three job fields are DECLARED on `hr.employee` by this module and
+        COMPUTED by the Access home above it, so they are always here to read;
+        on a database without that overlay they are simply empty, which is the
+        honest answer for a system with no roles in it.
+        """
+        employees = {emp.id: emp
+                     for emp in self.env['hr.employee'].sudo().browse(self.ids)}
         for public_rec in self:
             emp = employees.get(public_rec.id)
             public_rec.is_healthcare_staff = bool(emp and emp.is_healthcare_staff)

@@ -15,15 +15,18 @@ class TestCatchmentBackfill(TransactionCase):
         cls.province = cls.facility.catchment_province_id
         cls.other_province = cls.env['health.catchment.province'].search(
             [('id', '!=', cls.province.id)], limit=1)
-        cls.doctor_role = cls.env['access.role'].search(
-            [('name', 'ilike', 'doctor')], limit=1)
-        cls.nurse_role = cls.env['access.role'].search(
-            [('name', 'ilike', 'nurse')], limit=1)
+        # THE JOB, not a word in a name. "Whose job is doctor" is a different
+        # question from "whose role is called something with 'doctor' in it",
+        # and only the first one is what a catchment backfill is about.
+        cls.doctor_role = cls.env.ref('health_access.role_doctor',
+                                      raise_if_not_found=False)
+        cls.nurse_role = cls.env.ref('health_access.role_nurse',
+                                     raise_if_not_found=False)
 
     def _make_user(self, login, role, facility=True, catchment=False):
         user = new_test_user(self.env, login=login, groups='base.group_user')
         if role:
-            user.access_role_id = role.id
+            user.sudo().job_role_id = role.id
         user.catchment_province_id = catchment and catchment.id or False
         if facility:
             self.env['hr.employee'].create({

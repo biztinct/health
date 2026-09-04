@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Healthcare Landing Dashboard',
-    'version': '19.0.1.3.0',
+    'version': '19.0.1.4.0',
     'category': 'Healthcare',
     'summary': 'Modern landing dashboard with icon-driven navigation for VAFHS Healthcare System',
     'description': """
@@ -42,7 +42,13 @@ Design inspired by modern SaaS applications with emphasis on usability and visua
         'health_crm',
         'health_fieldservice',
         'health_invoicing',
-        'health_user_admin',
+        # The Access home. This module's Admin tab strip opens it and its
+        # Settings tile gates on the same permission the home does, so the
+        # gate is IMPORTED from there rather than restated — two copies of a
+        # gate is one copy that goes out of date, and the wrong copy is the one
+        # that shows somebody a tile they will be refused on. No loop:
+        # `biz_access` depends only on `base`, `mail` and `biz_kit`.
+        'biz_access',
         'advanced_pricing',
         'health_field_requirements',
     ],

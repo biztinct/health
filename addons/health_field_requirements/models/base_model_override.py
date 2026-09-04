@@ -53,7 +53,7 @@ class BaseModelRequiredFields(models.AbstractModel):
         # models that should never have requirement rules
         SKIP_PREFIXES = ('ir.', 'base.', 'bus.', 'mail.', 'res.config.')
         SKIP_MODELS = (
-            'field.requirement.rule', 'access.role',
+            'field.requirement.rule', 'biz.access.role', 'biz.access.ability',
             'res.users', 'res.groups',
         )
         if (

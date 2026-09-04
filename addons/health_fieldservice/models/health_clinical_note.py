@@ -72,8 +72,12 @@ class HealthClinicalNote(models.Model):
             role = ''
             if rec.author_id:
                 user = rec.author_id
-                if user.access_role_id:
-                    role = user.access_role_id.name
+                # THE SAME WORDS AS BEFORE, off a different field. The job used
+                # to be a pointer at the previous access application's row and
+                # is now a role bundle; the NAME it resolves to is the same, so
+                # every note already sealed still verifies against it.
+                if user.job_role_id:
+                    role = user.job_role_id.name
                 if not role:
                     employee = self.env['hr.employee'].search(
                         [('user_id', '=', user.id)], limit=1

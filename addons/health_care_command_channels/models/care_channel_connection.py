@@ -150,7 +150,7 @@ USER_CREATABLE = {'channel', 'company_id', 'active', 'account_label'}
 CENTER_GROUPS = (
     'base.group_system',
     'health_crm.group_health_crm_manager',
-    'health_user_admin.group_health_user_admin',
+    'health_access.group_clinic_admin',
 )
 
 # Advisory-lock class key for refresh serialisation (CC-D review). Any stable
@@ -1118,7 +1118,7 @@ class CareChannelConnection(models.Model):
         fanned out to every manager is a notification storm, and the record it
         hangs on is shared anyway. Which manager gets it is stable (lowest id).
 
-        health_user_admin is NOT a dependency in CC-A (handover §4.2 deferral),
+        the Access overlay was NOT a dependency in CC-A (handover §4.2 deferral),
         so the tenant-admin group is not addressable yet; the crm manager group
         is the same desk in practice. CC-F polishes admin notification routing.
         """

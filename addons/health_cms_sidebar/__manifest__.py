@@ -1,6 +1,6 @@
 {
     'name': 'Health CMS Sidebar',
-    'version': '19.0.1.6.0',
+    'version': '19.0.1.7.0',
     'category': 'Healthcare',
     'summary': 'Unified sidebar for all healthcare centers (CRM, Operations, Finance, Admin)',
     'author': 'Biztinct',
@@ -10,7 +10,6 @@
         'health_invoicing',
         'health_landing',
         'health_flow',
-        'access_roles',
         # Clinical spine + interop modules surfaced in the CLINICAL and
         # INTEROP & COMPLIANCE sidebar sections (their actions are referenced
         # by cms.sidebar.item.action_xmlid).

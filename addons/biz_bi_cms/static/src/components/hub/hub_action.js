@@ -100,7 +100,7 @@ export class BiHubAction extends Component {
                 this.state.isAdmin = !!data.is_admin;
                 this.state.aiAvailable = !!data.ai_available;
             } catch (error) {
-                // An access_roles administrator is served every sidebar item
+                // The platform administrator is served every sidebar entry
                 // but may hold no BI group at all, so the very first read
                 // raises. That is a configuration state, not a crash: show a
                 // friendly explanation instead of an error dialog. Anything

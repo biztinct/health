@@ -122,9 +122,17 @@ class TestTelemonitoring(TransactionCase):
         # Facility manager with a linked user (activity target).
         employee = cls.env.user.employee_id
         if not employee:
+            # `is_om_role` is computed from the JOB now, so it is set by
+            # saying what this person is employed as rather than by writing
+            # the flag — which is the whole point of the change: an owner who
+            # holds the Operations Manager bundle is not an operations
+            # manager, and only the job says who is.
+            job = cls.env.ref('health_access.role_operations_manager',
+                              raise_if_not_found=False)
+            if job:
+                cls.env.user.sudo().job_role_id = job
             employee = cls.env['hr.employee'].create({
-                'name': 'TM Manager', 'user_id': cls.env.user.id,
-                'is_om_role': True})
+                'name': 'TM Manager', 'user_id': cls.env.user.id})
             cls.env.user.invalidate_recordset()
         cls.facility.facility_manager_id = employee
         # Clinical users for the lifecycle / ACL tests.

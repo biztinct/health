@@ -212,9 +212,14 @@ class HealthFlowWizard(models.TransientModel):
             'invoicing-ar-log': ('health_invoicing.action_healthcare_ar_transaction_log', _('AR Transactions Log')),
 
             # Admin Panel (Configuration)
-            'admin-user-list': ('health_user_admin.action_healthcare_users', _('Users')),
-            'admin-access-roles': ('health_user_admin.action_healthcare_access_roles', _('Access Roles')),
-            'admin-role-management': ('health_user_admin.action_healthcare_role_management', _('Role Management')),
+            'admin-user-list': ('health_landing.action_admin_users', _('Users')),
+            # ONE STEP WHERE THERE WERE TWO. "Access roles" and "role
+            # management" were two tables belonging to an application that has
+            # been retired; who can do what is one screen now, so both keys
+            # land on it rather than one of them becoming a dead end for
+            # anybody following an older tour.
+            'admin-access-roles': ('biz_access.action_biz_access_home', _('Access & roles')),
+            'admin-role-management': ('biz_access.action_biz_access_home', _('Access & roles')),
             'admin-package-products': ('health_invoicing.action_healthcare_package_products', _('Package Products')),
             'admin-pricing-rules': ('advanced_pricing.action_pricing_rules_with_visual', _('Pricing Rules')),
             'admin-portable-equipment': ('health_fieldservice.action_health_portable_equipment', _('Portable Equipment')),

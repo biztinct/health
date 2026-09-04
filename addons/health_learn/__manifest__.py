@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Health Learn — CareJioX in-app learning',
-    'version': '19.0.5.0.0',
+    'version': '19.0.5.1.0',
     'category': 'Healthcare',
     'summary': 'Guided Journey, bilingual lesson spine and anchor registry for the CRM desk',
     'author': 'Biztinct',
@@ -21,7 +21,7 @@ it, never hand-edited here).
     'depends': [
         'ai_egress',
         # The sidebar leaf the Journey hangs off, and the menu inventory the
-        # content teaches. Pulls health_crm / access_roles transitively.
+        # content teaches. Pulls health_crm transitively.
         'health_cms_sidebar',
         # The two flagship screens. Phase 1 registers anchors in their
         # templates; Phase 2's Coach grounds its answers on them.
@@ -37,7 +37,10 @@ it, never hand-edited here).
         # The tenant-administrator group. Editing this clinic's override slots
         # is a tenant-admin job, and that group already means exactly that here
         # — declaring a second one would be a role model that drifts.
-        'health_user_admin',
+        # The Access home: this module's author screens and its tenant-override
+        # ACL are gated on the clinic administrator permission, which lives
+        # there now.
+        'health_access',
     ],
     'data': [
         'security/learn_security.xml',

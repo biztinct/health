@@ -562,7 +562,7 @@ const FIN = {
      23 · health_web_leads.item_lead_analysis          data/cms_sidebar_items_web_leads.xml
      50 · health_cms_sidebar.item_crm_activities       data/cms_sidebar_items_crm.xml
 
-   `roles` is the DB role gate (access.role rows have no xml-id — see
+   `roles` is the DB role gate (role bundles, `health_access.role_*` — see
    health_cms_coverage/hooks.py). Contract id: `crm-role-gate`.
    ========================================================================== */
 const MENU = [

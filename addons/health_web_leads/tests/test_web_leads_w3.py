@@ -547,7 +547,7 @@ class TestWebLeadsW3(TransactionCase):
         # fails HERE with a readable message instead of as a mystery miss.
         granted = self.env['res.groups'].browse()
         for xmlid in ('base.group_system',
-                      'health_user_admin.group_health_user_admin',
+                      'health_access.group_clinic_admin',
                       'health_crm.group_health_crm_manager',
                       'sales_team.group_sale_manager'):
             granted |= self.env.ref(xmlid)

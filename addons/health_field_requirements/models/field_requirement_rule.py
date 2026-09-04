@@ -61,10 +61,23 @@ class FieldRequirementRule(models.Model):
         help='If checked, this rule applies to ALL users. '
              'If unchecked, only applies to users with the selected roles.',
     )
+    # WHOSE JOB THIS RULE IS ABOUT — and "job" is the load-bearing word.
+    #
+    # It points at a role bundle now rather than at the previous access
+    # application's row, and the question it asks has been made exact in the
+    # process: a rule for nurses applies to somebody whose JOB is Nurse, not to
+    # everybody who happens to HOLD the Nurse bundle. An owner holds it; an
+    # owner is not a nurse, and a form that demanded a nursing field of them
+    # would be demanding it for the wrong reason.
+    #
+    # The relation table is named explicitly rather than left to the ORM: the
+    # name it would derive changed with the model, and a table name that moves
+    # on its own is a table nobody can find afterwards.
     role_ids = fields.Many2many(
-        'access.role',
+        'biz.access.role', 'health_field_req_rule_biz_role_rel',
+        'rule_id', 'role_id',
         string='Roles',
-        help='Roles this rule applies to (only when Global is unchecked)',
+        help='The jobs this rule applies to (only when Global is unchecked)',
     )
 
     # --- Scope: Always vs Per-State ---
@@ -150,7 +163,11 @@ class FieldRequirementRule(models.Model):
 
         # Filter by role
         user = user or self.env.user
-        role = getattr(user, 'access_role_id', None)
+        # `job_role_id` is put on the login by the Access overlay, which this
+        # module does not depend on — it sits below it in the tree. Asked for
+        # rather than assumed, so a database without that overlay applies the
+        # global rules and nothing else, which is the honest answer.
+        role = getattr(user, 'job_role_id', None)
         applicable = rules.filtered(
             lambda r: r.is_global or (role and role in r.role_ids)
         )
@@ -181,7 +198,7 @@ class FieldRequirementRule(models.Model):
         rules = self.sudo().search(domain)
 
         user = user or self.env.user
-        role = getattr(user, 'access_role_id', None)
+        role = getattr(user, 'job_role_id', None)     # see get_required_fields
         applicable = rules.filtered(
             lambda r: r.is_global or (role and role in r.role_ids)
         )
@@ -417,7 +434,8 @@ class FieldRequirementRule(models.Model):
         rule_map = {r.field_name: r for r in rules}
 
         # ── Step 4: Available roles ──
-        roles = self.env['access.role'].sudo().search([])
+        roles = self.env['biz.access.role'].sudo().search(
+            [('active', '=', True)], order='sequence, name')
         available_roles = [{'id': r.id, 'name': r.name} for r in roles]
 
         # ── Step 5: Build result ──

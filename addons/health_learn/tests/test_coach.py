@@ -129,7 +129,7 @@ class TestCoach(TransactionCase):
         self.assertEqual(self.env(user=boss)['learn.intent']._capability(None), 'manager')
 
         # VISIBILITY WINS, and the ordering is deliberate. Neither of these
-        # users has an access.role, so the Care Command leaf is not in their
+        # users holds a role bundle, so the Care Command leaf is not in their
         # sidebar — and the honest answer to "can I take a conversation off a
         # colleague" is then "you cannot even see that screen", not a lecture
         # about a permission they also do not have. Holding the CRM Manager

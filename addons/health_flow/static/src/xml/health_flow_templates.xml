@@ -304,22 +304,17 @@
                                     <div style="font-size: 12px; font-weight: 400; color: #a0aec0; margin-top: 2px;" t-esc="this.t('Add, edit, and manage user accounts')"/>
                                 </div>
                             </div>
+                            <!-- ONE DOOR WHERE THERE WERE TWO. "Access roles"
+                                 and "Role management" were two tables in an
+                                 application that has been retired; who can do
+                                 what is one screen now. -->
                             <div role="button"
                                  style="display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 10px; background: #f7fafc; border: 1px solid #e2e8f0; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.15s; color: #2d3748;"
                                  t-on-click="() =&gt; this.onUserMgmtSelect('admin-access-roles')">
                                 <i class="fa fa-key fa-lg" style="color: #9f7aea; width: 24px; text-align: center;"></i>
                                 <div>
-                                    <span t-esc="this.t('Access Roles')"/>
-                                    <div style="font-size: 12px; font-weight: 400; color: #a0aec0; margin-top: 2px;" t-esc="this.t('Define permission bundles for user groups')"/>
-                                </div>
-                            </div>
-                            <div role="button"
-                                 style="display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 10px; background: #f7fafc; border: 1px solid #e2e8f0; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.15s; color: #2d3748;"
-                                 t-on-click="() =&gt; this.onUserMgmtSelect('admin-role-management')">
-                                <i class="fa fa-shield fa-lg" style="color: #9f7aea; width: 24px; text-align: center;"></i>
-                                <div>
-                                    <span t-esc="this.t('Role Management')"/>
-                                    <div style="font-size: 12px; font-weight: 400; color: #a0aec0; margin-top: 2px;" t-esc="this.t('Configure restrictions, hidden menus, and field access')"/>
+                                    <span t-esc="this.t('Access &amp; roles')"/>
+                                    <div style="font-size: 12px; font-weight: 400; color: #a0aec0; margin-top: 2px;" t-esc="this.t('Who can do what, and who holds which role')"/>
                                 </div>
                             </div>
                         </div>

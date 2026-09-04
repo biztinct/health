@@ -23,8 +23,18 @@ def backfill_doctor_catchment(env):
     only; nurses are excluded by design (a separate visibility decision).
     """
     Users = env['res.users'].with_context(active_test=False)
+    if 'job_role_id' not in Users._fields:
+        # The job lives on the Access overlay, which this module does not
+        # depend on. Without it there is no way to tell who is a doctor, and
+        # guessing from a name is exactly what this stopped doing.
+        _logger.info("T-012: the Access overlay is not on this database, so "
+                     "no doctor can be identified — nothing backfilled")
+        return
     doctors = Users.search([
-        ('access_role_id.name', 'ilike', 'doctor'),
+        # WHOSE JOB IS DOCTOR, not whose role name contains the word. An owner
+        # holds the Doctor bundle and is not a doctor; a role called "Doctor's
+        # assistant" matched the word and was not one either.
+        ('job_role_id.clinical_kind', '=', 'doctor'),
         ('catchment_province_id', '=', False),
     ])
     if not doctors:

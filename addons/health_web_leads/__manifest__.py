@@ -62,7 +62,7 @@ Design: docs/strategy/website-crm-integration.md
 Handovers: docs/strategy/handovers/web-leads-phaseW1.md, …-phaseW2.md,
 …-phaseW2_5.md, …-phaseW3.md
 """,
-    'version': '19.0.4.1.0',
+    'version': '19.0.4.2.0',
     'category': 'Healthcare',
     'author': 'Biztinct',
     'website': 'https://carejiox.com',
@@ -84,12 +84,13 @@ Handovers: docs/strategy/handovers/web-leads-phaseW1.md, …-phaseW2.md,
         # touchpoint list needs a `cms.sidebar.item` seed (ledger §5.69).
         'health_cms_sidebar',
         # W2.5: the connector's ACL rows and its header-button `groups=`
-        # reference `health_user_admin.group_health_user_admin`. Already a
-        # TRANSITIVE dependency (health_landing → health_user_admin), so this
-        # edge closes no loop (§5.71 walked: health_user_admin depends on
-        # health_base / health_fieldservice / access_roles / hr, and nothing
-        # in the tree depends on health_web_leads).
-        'health_user_admin',
+        # reference `health_access.group_clinic_admin` — the clinic's own
+        # administrator tier, which moved into the Access overlay when the
+        # application that used to own it was retired. No loop (§5.71 walked:
+        # health_access depends on biz_access / health_base /
+        # health_fieldservice / health_cms_sidebar / health_landing / hr, and
+        # nothing in that tree depends on health_web_leads).
+        'health_access',
         # W3: the consent bridge extends `health.consent` in-place
         # (`_inherit`, no edit to health_consent — binding non-goal). Already
         # a TRANSITIVE dependency via health_cms_sidebar, so this edge closes

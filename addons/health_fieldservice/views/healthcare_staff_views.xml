@@ -14,7 +14,7 @@
                 
                 <field name="name"/>
                 <field name="job_id"/>
-                <field name="access_role_display" string="Role"/>
+                <!-- The "Job" column is added here by health_access. -->
                 <field name="work_email"/>
                 <field name="work_phone"/>
                 <field name="employment_status"/>
@@ -58,16 +58,14 @@
                                 context="{'default_employee_ids': [(6, 0, [id])]}"/>
                     </div>
                     <group>
-                        <group string="Healthcare Role and Status">
+                        <group string="Healthcare Role and Status" name="healthcare_role_status">
                             <field name="is_healthcare_staff"/>
                             <field name="user_id" invisible="1"/>
-                            <field name="access_role_id" string="Access Role"
-                                   readonly="not user_id" options="{'no_create': True}"
-                                   help="Editable once a login is created for this staff. Setting a role (e.g. Nurse) syncs the user's permissions and includes the staff in the booking staff pickers."/>
-                            <field name="is_doctor_role" invisible="1"/>
-                            <field name="is_nurse_role" invisible="1"/>
-                            <field name="is_duty_doctor" invisible="not is_doctor_role"/>
-                            <field name="is_head_nurse" invisible="not is_nurse_role"/>
+                            <!-- The JOB, and the two qualifiers that depend on
+                                 it, are added here by health_access: they name
+                                 a role bundle, which is a model this module
+                                 sits below and cannot know about. Anchored on
+                                 the field above. -->
                             <field name="employment_status" required="is_healthcare_staff"/>
                             <field name="employment_type_id" required="is_healthcare_staff"
                                    help="Full-time staff can create invoices; Part-time/Casual require Operations invoicing"/>

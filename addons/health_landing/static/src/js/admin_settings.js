@@ -4,25 +4,30 @@ import { Component, onWillStart, useState } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { user } from "@web/core/user";
 import { useService } from "@web/core/utils/hooks";
+// The one list that says who may change who-can-do-what. Read, never restated:
+// two copies of a gate is one copy that will be out of date, and the copy that
+// is wrong is the one that shows somebody a tile they will be refused on.
+import { ACCESS_MANAGE_GATE } from "@biz_access/js/access_palette";
 
 export class AdminSettings extends Component {
     static template = "health_landing.AdminSettings";
 
     setup() {
         this.actionService = useService("action");
-        // Ring 0 only: role/permission design is platform-admin work.
-        // Tenant admins assign predefined roles from Users — they never see
-        // the Access Roles tile (and the ACL denies the action regardless).
-        // Odoo's own General Settings is ring-0 too: tenant admins/owners must
-        // never reach system-wide configuration. base.group_system is the
-        // platform-admin marker (see the two-ring model).
-        this.state = useState({ isRoleAdmin: false, isSystemAdmin: false });
+        // TWO DIFFERENT QUESTIONS, AND THEY ARE NOT THE SAME PERSON.
+        //
+        // "Who can do what" is the clinic's own administrators' work, and the
+        // tile that opens it is theirs. The settings for the box itself —
+        // Odoo's General Settings — belong to the platform administrator
+        // alone, which is the two-ring model: `base.group_system` never leaves
+        // the one account that owns the machine.
+        this.state = useState({ canManageAccess: false, isSystemAdmin: false });
         onWillStart(async () => {
-            const [isRoleAdmin, isSystemAdmin] = await Promise.all([
-                user.hasGroup("access_roles.access_role_group_administrator"),
+            const [manage, isSystemAdmin] = await Promise.all([
+                Promise.all(ACCESS_MANAGE_GATE.map((g) => user.hasGroup(g))),
                 user.hasGroup("base.group_system"),
             ]);
-            this.state.isRoleAdmin = isRoleAdmin;
+            this.state.canManageAccess = manage.some(Boolean) || isSystemAdmin;
             this.state.isSystemAdmin = isSystemAdmin;
         });
     }
@@ -53,8 +58,8 @@ export class AdminSettings extends Component {
         });
     }
 
-    openUserDefaults() {
-        this.actionService.doAction("health_landing.action_admin_roles", {
+    openAccessHome() {
+        this.actionService.doAction("biz_access.action_biz_access_home", {
             clearBreadcrumbs: true,
         });
     }

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import api, models, fields
+from odoo import models, fields
 
 
 class HrEmployee(models.Model):
@@ -27,46 +27,34 @@ class HrEmployee(models.Model):
         ('accountant', 'Accountant'),
     ], string='Healthcare Role (Deprecated)', tracking=True)
 
-    access_role_id = fields.Many2one(
-        'access.role', string='Access Role',
-        compute='_compute_access_role', inverse='_inverse_access_role',
-        store=True, readonly=False,
-    )
     is_duty_doctor = fields.Boolean('Is Duty Doctor', default=False, tracking=True)
     is_head_nurse = fields.Boolean('Is Head Nurse', default=False, tracking=True)
 
-    is_doctor_role = fields.Boolean(
-        compute='_compute_role_flags', store=True,
-    )
-    is_nurse_role = fields.Boolean(
-        compute='_compute_role_flags', store=True,
-    )
-    is_om_role = fields.Boolean(
-        compute='_compute_role_flags', store=True,
-    )
-    access_role_display = fields.Char(
-        string='Role', compute='_compute_role_flags', store=True,
-    )
-
-    @api.depends('user_id', 'user_id.access_role_id')
-    def _compute_access_role(self):
-        for emp in self:
-            emp.access_role_id = emp.user_id.access_role_id if emp.user_id else False
-
-    def _inverse_access_role(self):
-        """Allow editing Access Role on the staff form once a login exists.
-        Writes back to the linked user, whose own write() syncs the security
-        groups for the chosen role (see access_roles/models/res_users.py).
-        Staff without a user account can't have a role and stay read-only."""
-        for emp in self:
-            if emp.user_id and emp.user_id.access_role_id != emp.access_role_id:
-                emp.user_id.access_role_id = emp.access_role_id
-
-    @api.depends('access_role_id', 'access_role_id.name')
-    def _compute_role_flags(self):
-        for emp in self:
-            role_name = (emp.access_role_id.name or '').lower()
-            emp.is_doctor_role = 'doctor' in role_name
-            emp.is_nurse_role = 'nurse' in role_name
-            emp.is_om_role = 'operations manager' in role_name
-            emp.access_role_display = emp.access_role_id.name or ''
+    # ===================================================================
+    # WHAT SOMEBODY'S JOB MAKES THEM — DECLARED HERE, DECIDED ABOVE.
+    #
+    # These four are read in sixty-odd places across a dozen modules: the staff
+    # pickers, the roster, the booking form, the schedule, the offline app, the
+    # author line on a clinical note. What they MEAN is now a job somebody was
+    # given — a role bundle — and that is a model this module cannot know
+    # about: `health_base` is the root of the tree and the Access home sits
+    # well above it. So the ANSWER is computed up there
+    # (`health_access/models/hr_employee.py`) and only the QUESTION is asked
+    # here.
+    #
+    # THEY ARE DECLARED HERE AND NOT MOVED, AND THAT IS NOT TIDINESS. Moving
+    # them broke the registry outright: `health_fieldservice` names
+    # `is_doctor_role` in an `@api.depends`, and a dependency is resolved when
+    # THAT module's models are set up — before anything above it has been
+    # loaded. A field that only exists higher in the graph does not exist yet
+    # at that moment, and the whole database refuses to load. Declaring the
+    # field here and overriding it above is what lets both be true.
+    #
+    # On a database without the Access home they are simply never computed:
+    # nobody is a doctor, nobody is a nurse, and the label is empty — which is
+    # the honest answer for a system with no roles in it.
+    # ===================================================================
+    is_doctor_role = fields.Boolean(store=True)
+    is_nurse_role = fields.Boolean(store=True)
+    is_om_role = fields.Boolean(store=True)
+    access_role_display = fields.Char(string='Role', store=True)

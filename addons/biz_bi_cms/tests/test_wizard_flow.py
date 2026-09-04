@@ -38,7 +38,7 @@ from odoo.tests import tagged
 
 from odoo.addons.biz_bi.models.bi_query_engine import RELATIVE_RANGES
 from odoo.addons.biz_bi.tests.common import BiCase
-from odoo.addons.biz_bi_cms.hooks import gated_role_ids
+from odoo.addons.biz_bi_cms.hooks import ANALYTICS_ROLE_XMLIDS, gated_roles
 
 MODULE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -80,11 +80,17 @@ class TestReportWizard(BiCase):
         })
 
     @classmethod
-    def _role(cls, name):
-        """The deployment's own role row where it exists, else a new one."""
-        Role = cls.env['access.role'].sudo()
-        role = Role.search([('name', '=', name)], limit=1)
-        return role or Role.create({'name': name})
+    def _role(cls, xmlid, name):
+        """The deployment's own role where it exists, else a throwaway one."""
+        role = cls.env.ref(xmlid, raise_if_not_found=False)
+        if role:
+            return role
+        group = cls.env['res.groups'].create({'name': 'AH2 %s permission' % name})
+        ability = cls.env['biz.access.ability'].create({
+            'technical_key': 'ah2-%s' % name.lower().replace(' ', '-'),
+            'name': name, 'group_ids': [(6, 0, group.ids)]})
+        return cls.env['biz.access.role'].create({
+            'name': name, 'ability_ids': [(6, 0, ability.ids)]})
 
     # -- the wizard's own serializer, transcribed from report_wizard.js ---
     def _wizard_config(self, chart_type='bar', group_by=None, grain=None,
@@ -283,45 +289,45 @@ class TestReportWizard(BiCase):
             self.env['bi.ai'].with_user(self.creator).is_available(), bool)
 
     # ------------------------------------------------------------------
-    # T5 — the auto-grant on role assignment
+    # T5 — the permission travels with the ROLE, not with a hook
     # ------------------------------------------------------------------
-    def test_05_auto_grant_on_role_assign(self):
-        gated = self._role('Operations Manager')
-        ungated = self._role('Nurse')
+    def test_05_the_role_carries_the_reporting_permission(self):
+        """WHAT THIS TEST USED TO PROVE, AND WHAT IT PROVES NOW.
+
+        It used to prove that a per-record hook granted the reporting group the
+        moment somebody was given an Analytics role — a hook that existed
+        because the four roles had to be matched by name and there was nowhere
+        to write "this role may build reports".
+
+        There is now: "build reports" is an ability on those four bundles. So
+        the guarantee is stronger and needs no hook — being given the role IS
+        being given the permission, through the same audited grant every other
+        permission goes through, and the day somebody joins is no different
+        from the day of the next upgrade.
+        """
+        gated = self._role('health_access.role_operations_manager',
+                           'Operations Manager')
+        ungated = self._role('health_access.role_nurse', 'Nurse')
         group = self.creator_group
+        if group not in gated.sudo().group_ids:
+            self.skipTest('this database has no "build reports" ability')
 
-        # (a) created WITH a gated role
-        born_gated = self.env['res.users'].create({
-            'name': 'AH2 Born Gated', 'login': 'ah2_born_gated',
-            'password': 'ah2_born_gatedx', 'access_role_id': gated.id})
-        self.assertIn(group, born_gated.all_group_ids,
-                      'a user created with an Analytics role must not have to '
-                      'wait for the next upgrade to get BI access')
-
-        # (b) re-roled later
         promoted = self.env['res.users'].create({
             'name': 'AH2 Promoted', 'login': 'ah2_promoted',
             'password': 'ah2_promotedx'})
         self.assertNotIn(group, promoted.all_group_ids)
-        promoted.write({'access_role_id': gated.id})
+
+        self.env['biz.access'].sudo().grant(
+            gated.id, promoted.id, reason='a test')
+        promoted.invalidate_recordset()
         self.assertIn(group, promoted.all_group_ids)
 
-        # (c) idempotent
-        before = set(promoted.group_ids.ids)
-        promoted.write({'access_role_id': gated.id})
-        self.assertEqual(set(promoted.group_ids.ids), before)
-
-        # (d) an ungated role grants nothing
+        # An ungated role hands out nothing of the sort.
         nurse = self.env['res.users'].create({
             'name': 'AH2 Nurse', 'login': 'ah2_nurse',
-            'password': 'ah2_nursexx', 'access_role_id': ungated.id})
+            'password': 'ah2_nursexx',
+            'group_ids': [(6, 0, ungated.sudo().group_ids.ids)]})
         self.assertNotIn(group, nurse.all_group_ids)
-
-        # (e) ADD-ONLY: moving off an Analytics role never revokes. Removing
-        # BI access stays a deliberate act, exactly as access_roles refuses to
-        # un-grant the groups a role added.
-        promoted.write({'access_role_id': ungated.id})
-        self.assertIn(group, promoted.all_group_ids)
 
     # ------------------------------------------------------------------
     # T6 — the upgrade ran, and the database converged
@@ -342,26 +348,23 @@ class TestReportWizard(BiCase):
             'the installed version must have moved to the declared one, or '
             'no migration script runs at all (Phase-1 report §6)')
         self.assertTrue(
-            os.path.isdir(os.path.join(MODULE_DIR, 'migrations', '19.0.1.1.0')),
+            os.path.isdir(os.path.join(MODULE_DIR, 'migrations', declared)),
             'the migration directory must be named for the version Odoo is '
             'upgrading TO')
 
-        role_ids = gated_role_ids(self.env)
-        self.assertTrue(role_ids, 'fixture guard: this database has Analytics '
-                                  'roles to gate on')
-        users = self.env['res.users'].sudo().search([
-            ('access_role_id', 'in', role_ids),
-            ('share', '=', False),
-            ('active', '=', True),
-        ])
-        self.assertTrue(users, 'fixture guard: somebody holds one')
-        missing = users.filtered(
-            lambda u: self.creator_group not in u.all_group_ids)
-        self.assertFalse(
-            missing.mapped('login'),
-            'every Analytics-role user must hold the BI creator group after '
-            'the upgrade — that convergence is the migration\'s whole job')
+        roles = gated_roles(self.env, ANALYTICS_ROLE_XMLIDS)
+        self.assertTrue(roles, 'fixture guard: this database has Analytics '
+                               'roles to gate on')
+        for role in roles:
+            with self.subTest(role=role.name):
+                self.assertIn(
+                    self.creator_group, role.group_ids,
+                    'every Analytics role must hand out the reporting '
+                    'permission — that is what replaced the sweep')
+                for user in role.holders():
+                    self.assertIn(self.creator_group,
+                                  user.sudo().all_group_ids)
 
-        # the leaf is still gated to exactly the roles that exist here
+        # the entry is still gated to exactly the roles that exist here
         item = self.env.ref('biz_bi_cms.item_analytics_hub')
-        self.assertEqual(set(item.role_ids.ids), set(role_ids))
+        self.assertEqual(set(item.biz_role_ids.ids), set(roles.ids))

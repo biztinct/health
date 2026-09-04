@@ -11,10 +11,11 @@
      health_cms_sidebar/data/, health_care_command/data/ and
      health_cms_coverage/data/ — every one of them paid for by a live failure:
 
-       * NO noupdate: the section and the leaf stay updatable on upgrade
-         (ledger noupdate-seed-cutover). `role_ids` is deliberately NOT set
-         here — access.role rows carry no xml-id on this platform, so the gate
-         is written by hooks.py.
+       * NO noupdate: the section and the leaves stay updatable on upgrade
+         (ledger noupdate-seed-cutover). The gate is deliberately NOT set here:
+         a `ref()` can only point at a row that exists when this file is read,
+         and on a brand-new database the roles are created afterwards. It is
+         written by hooks.py, which also runs from the migration.
        * A ROOT leaf, `parent_id` explicitly FALSE. Explicit because an XML
          data update writes only the fields it names: dropping `parent_id`
          from a record leaves an earlier value in place (§5.69b, hit live).
@@ -53,7 +54,139 @@
              dashboard and opening the advanced Explore builder are both
              navigations away from the hub's own tag, and without these the
              user is dropped into the bare Odoo backend mid-task. -->
-        <field name="match_action_tags">biz_bi.hub,biz_bi.dashboard,biz_bi.explore</field>
+        <field name="match_action_tags">biz_bi.hub,biz_bi.dashboard</field>
+    </record>
+
+    <!-- ==================================================================
+         THE SCREENS THE APP SWITCHER USED TO BE THE ONLY WAY INTO.
+
+         The bar above the screen is the platform administrator's now, so
+         everything the four Analytics roles could reach through it has a door
+         here. Two headings rather than eleven flat rows: "Explore" and the
+         dashboards are the daily work and stay at the top level; everything
+         that is about WHERE THE NUMBERS COME FROM, and the two settings
+         screens, sit under a heading each.
+
+         An item WITH children is a non-navigating expander (§5.69a), which is
+         exactly right for a heading.
+         ================================================================== -->
+    <record id="item_analytics_explore" model="cms.sidebar.item">
+        <field name="name">Explore</field>
+        <field name="section_id" ref="section_analytics"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">20</field>
+        <field name="icon">fa fa-search</field>
+        <field name="action_xmlid">biz_bi.action_bi_explore</field>
+        <field name="action_tag">biz_bi.explore</field>
+        <field name="match_action_tags">biz_bi.explore</field>
+    </record>
+
+    <record id="item_analytics_dashboards" model="cms.sidebar.item">
+        <field name="name">Dashboards &amp; schedules</field>
+        <field name="section_id" ref="section_analytics"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">30</field>
+        <field name="icon">fa fa-th-large</field>
+        <field name="action_xmlid">biz_bi.action_bi_dashboard_backend</field>
+    </record>
+
+    <record id="item_analytics_data" model="cms.sidebar.item">
+        <field name="name">Where the numbers come from</field>
+        <field name="section_id" ref="section_analytics"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">40</field>
+        <field name="icon">fa fa-database</field>
+    </record>
+
+    <record id="item_analytics_sources" model="cms.sidebar.item">
+        <field name="name">Sources</field>
+        <field name="section_id" ref="section_analytics"/>
+        <field name="parent_id" ref="item_analytics_data"/>
+        <field name="sequence">10</field>
+        <field name="icon">fa fa-plug</field>
+        <field name="action_xmlid">biz_bi.action_bi_source</field>
+    </record>
+
+    <record id="item_analytics_datasets" model="cms.sidebar.item">
+        <field name="name">Datasets</field>
+        <field name="section_id" ref="section_analytics"/>
+        <field name="parent_id" ref="item_analytics_data"/>
+        <field name="sequence">20</field>
+        <field name="icon">fa fa-table</field>
+        <field name="action_xmlid">biz_bi.action_bi_dataset</field>
+    </record>
+
+    <record id="item_analytics_import" model="cms.sidebar.item">
+        <field name="name">Import data</field>
+        <field name="section_id" ref="section_analytics"/>
+        <field name="parent_id" ref="item_analytics_data"/>
+        <field name="sequence">30</field>
+        <field name="icon">fa fa-upload</field>
+        <field name="action_xmlid">biz_bi.action_bi_csv_import</field>
+    </record>
+
+    <record id="item_analytics_refresh" model="cms.sidebar.item">
+        <field name="name">Refresh jobs</field>
+        <field name="section_id" ref="section_analytics"/>
+        <field name="parent_id" ref="item_analytics_data"/>
+        <field name="sequence">40</field>
+        <field name="icon">fa fa-refresh</field>
+        <field name="action_xmlid">biz_bi.action_bi_refresh_job</field>
+    </record>
+
+    <record id="item_analytics_pipelines" model="cms.sidebar.item">
+        <field name="name">Pipelines</field>
+        <field name="section_id" ref="section_analytics"/>
+        <field name="parent_id" ref="item_analytics_data"/>
+        <field name="sequence">50</field>
+        <field name="icon">fa fa-sitemap</field>
+        <field name="action_xmlid">biz_bi.action_bi_pipeline_editor</field>
+        <field name="action_tag">biz_bi.pipeline</field>
+    </record>
+
+    <record id="item_analytics_model" model="cms.sidebar.item">
+        <field name="name">Semantic model</field>
+        <field name="section_id" ref="section_analytics"/>
+        <field name="parent_id" ref="item_analytics_data"/>
+        <field name="sequence">60</field>
+        <field name="icon">fa fa-cubes</field>
+        <field name="action_xmlid">biz_bi.action_bi_modeler</field>
+        <field name="action_tag">biz_bi.modeler</field>
+    </record>
+
+    <record id="item_analytics_glossary" model="cms.sidebar.item">
+        <field name="name">Glossary</field>
+        <field name="section_id" ref="section_analytics"/>
+        <field name="parent_id" ref="item_analytics_data"/>
+        <field name="sequence">70</field>
+        <field name="icon">fa fa-book</field>
+        <field name="action_xmlid">biz_bi.action_bi_glossary</field>
+    </record>
+
+    <record id="item_analytics_settings" model="cms.sidebar.item">
+        <field name="name">Reporting settings</field>
+        <field name="section_id" ref="section_analytics"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">50</field>
+        <field name="icon">fa fa-sliders</field>
+    </record>
+
+    <record id="item_analytics_access_rules" model="cms.sidebar.item">
+        <field name="name">Who sees which numbers</field>
+        <field name="section_id" ref="section_analytics"/>
+        <field name="parent_id" ref="item_analytics_settings"/>
+        <field name="sequence">10</field>
+        <field name="icon">fa fa-shield</field>
+        <field name="action_xmlid">biz_bi.action_bi_access_rule</field>
+    </record>
+
+    <record id="item_analytics_ai" model="cms.sidebar.item">
+        <field name="name">AI providers</field>
+        <field name="section_id" ref="section_analytics"/>
+        <field name="parent_id" ref="item_analytics_settings"/>
+        <field name="sequence">20</field>
+        <field name="icon">fa fa-magic</field>
+        <field name="action_xmlid">biz_bi.action_bi_ai_provider</field>
     </record>
 
 </odoo>

@@ -132,10 +132,18 @@ class Facility(models.Model):
     next_inspection_date = fields.Date('Next Inspection Date')
     
     # Manager and Staff
+    # THE PICKER'S NARROWING LIVES IN A VIEW, NOT HERE.
+    #
+    # It used to read `is_om_role`, which is put on `hr.employee` by the Access
+    # overlay — a module above this one, and one this database may not have.
+    # A domain on the field would be evaluated on every form that shows it,
+    # including on a database without that module, and would fail there. The
+    # same narrowing is applied by `health_access` through a view inherit, so
+    # the picker behaves identically where the overlay is installed and simply
+    # lists every member of staff where it is not.
     facility_manager_id = fields.Many2one(
         'hr.employee',
         string='Operations Manager',
-        domain="[('is_om_role', '=', True)]",
         tracking=True
     )
     head_nurse_id = fields.Many2one('res.users', string='Head Nurse')

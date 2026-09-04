@@ -10,13 +10,14 @@
         <field name="arch" type="xml">
             <!-- Add catchment_province_id after the title section -->
             <xpath expr="//div[hasclass('oe_title')]" position="after">
-                <group>
-                    <group string="Healthcare Settings">
+                <!-- The job and the two qualifiers that depend on it are added
+                     here by `health_access` (view inherit). They name fields
+                     that module puts on `res.users`, and a view in THIS module
+                     naming them would refuse to load on a database that does
+                     not have it — this module is the root of the tree. -->
+                <group name="healthcare_settings_wrap">
+                    <group string="Healthcare Settings" name="healthcare_settings">
                         <field name="is_healthcare_staff"/>
-                        <field name="is_doctor_role" invisible="1"/>
-                        <field name="is_nurse_role" invisible="1"/>
-                        <field name="is_duty_doctor" invisible="not is_doctor_role"/>
-                        <field name="is_head_nurse" invisible="not is_nurse_role"/>
                         <field name="catchment_province_id" options="{'no_create': True}"/>
                     </group>
                 </group>

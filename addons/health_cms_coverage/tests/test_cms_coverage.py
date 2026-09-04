@@ -18,12 +18,15 @@ from odoo.addons.health_cms_coverage.hooks import ROLE_GATES
 # leaf xml-id -> (section xml-id, action xml-id, every action it must match)
 EXPECTED = {
     # --- CRM -----------------------------------------------------------
+    # THE TWO IT USED TO ANSWER FOR HAVE THEIR OWN DOORS NOW. While neither
+    # the channel message store nor the ops audit had an entry of its own, this
+    # leaf stood in for both. Each has one since the application bar was put
+    # away, and the highlight index is last-wins — so leaving them declared
+    # here would light up the wrong entry on click.
     'item_crm_channels_setup': (
         'section_crm',
         'health_care_command_channels.action_care_channel_connection',
-        ('health_care_command_channels.action_care_channel_connection',
-         'health_care_command_channels.action_care_channel_message',
-         'health_care_command_channels.action_care_channel_audit')),
+        ('health_care_command_channels.action_care_channel_connection',)),
     'item_crm_reply_templates': (
         'section_crm',
         'health_care_command.action_care_reply_template',
@@ -235,8 +238,14 @@ class TestCmsCoverage(TransactionCase):
             mine = in_section.filtered(
                 lambda i: i.id in ours and i.id not in retired
                 and i.id != restored_relationship)
+            # "Theirs" means the leaves that were in the section BEFORE this
+            # module appended to it. Modules that append AFTER it — the Access
+            # overlay put the screens the application bar used to be the only
+            # way into on this menu — are appending too, at higher sequences,
+            # which is the same discipline rather than a breach of it.
+            later = self._appended_later_ids()
             theirs = in_section.filtered(
-                lambda i: i.id not in ours and i.active)
+                lambda i: i.id not in ours and i.id not in later and i.active)
             if not mine:
                 # Every leaf this module put in the section was retired or
                 # relocated — nothing left to interleave.
@@ -247,6 +256,13 @@ class TestCmsCoverage(TransactionCase):
             self.assertGreater(
                 min(mine.mapped('sequence')), max(theirs.mapped('sequence')),
                 '%s: our sequences must append, never interleave' % section_key)
+
+    def _appended_later_ids(self):
+        """Entries put on this menu by a module that loads after this one."""
+        rows = self.env['ir.model.data'].sudo().search([
+            ('module', 'in', ('health_access', 'biz_bi_cms')),
+            ('model', '=', 'cms.sidebar.item')])
+        return {r.res_id for r in rows}
 
     # ------------------------------------------------------------------
     # T4 — the shell will actually keep the CMS chrome on these screens
@@ -289,8 +305,9 @@ class TestCmsCoverage(TransactionCase):
     # ------------------------------------------------------------------
     def test_05_ungated_clinical_leaves_are_served(self):
         """Six CLINICAL leaves carry no `role_ids`, like all 24 of their
-        siblings, so a user with no `access.role` must still be served them —
-        that is the branch `get_sidebar_data` takes for a role-less user."""
+        siblings, so a colleague holding no role at all must still be served
+        them — that is the branch `get_sidebar_data` takes for an ungated
+        entry."""
         # Returns a LIST of section dicts (not a dict with a 'sections' key).
         data = self.env['cms.sidebar.item'].get_sidebar_data()
         self.assertIsInstance(data, list)
@@ -307,27 +324,31 @@ class TestCmsCoverage(TransactionCase):
     # T6 — the gating this module writes in python actually landed
     # ------------------------------------------------------------------
     def test_06_role_gates_applied(self):
-        """`role_ids` is written by the hook (roles have no xml-id here).
+        """The gate is written by the hook — these rows are `noupdate`, so an
+        upgrade re-asserts nothing this module ships in XML.
 
         Asserted against the roles this database really has: a deployment
         missing 'Accountant' must not fail the suite, but where the role exists
         the relation must be exactly the documented set. A gated leaf must also
         never end up gated to NOBODY — that hides a feature from everyone.
         """
-        Role = self.env['access.role'].sudo()
-        for key, names in ROLE_GATES.items():
+        for key, role_xmlids in ROLE_GATES.items():
             item = self._item(key)
             if not item.active:
                 # Retired leaves are not served by get_sidebar_data(), so
                 # retaining a role gate on them has no security or UX effect.
                 continue
-            present = Role.search([('name', 'in', list(names))])
+            present = self.env['biz.access.role'].sudo().browse()
+            for role_xmlid in role_xmlids:
+                role = self.env.ref(role_xmlid, raise_if_not_found=False)
+                if role:
+                    present |= role
             if not present:
                 continue                      # nothing to assert on this DB
             self.assertEqual(
-                set(item.role_ids.ids), set(present.ids),
-                '%s: expected roles %s' % (key, list(names)))
-            self.assertTrue(item.role_ids,
+                set(item.biz_role_ids.ids), set(present.ids),
+                '%s: expected roles %s' % (key, list(role_xmlids)))
+            self.assertTrue(item.biz_role_ids,
                             '%s must never be gated to no role at all' % key)
 
         # The six CLINICAL leaves outside the map stay ungated, as their
@@ -338,7 +359,7 @@ class TestCmsCoverage(TransactionCase):
             item = self._item(key)
             if not item.active:
                 continue
-            self.assertFalse(item.role_ids,
+            self.assertFalse(item.biz_role_ids,
                              '%s must stay ungated like every existing '
                              'CLINICAL item' % key)
 
@@ -355,13 +376,16 @@ class TestCmsCoverage(TransactionCase):
         `bhyt.claim`, `redinvoice.request` or `health.scribe.job`, and can read
         every other model behind these leaves.
         """
-        crm_role = self.env['access.role'].sudo().search(
-            [('name', '=', 'CRM')], limit=1)
-        if not crm_role:
-            self.skipTest('this database has no CRM access.role')
+        crm_role = self.env.ref('health_access.role_crm',
+                                raise_if_not_found=False)
+        if not crm_role or not crm_role.group_ids:
+            self.skipTest('this database has no CRM role')
+        # HOLDING the role is what opens an entry — the gate is a bundle now,
+        # so the persona is built by granting it rather than by pointing a
+        # field at a row.
         user = self.env['res.users'].create({
             'name': 'cov crm persona', 'login': 'cov_crm_persona',
-            'access_role_id': crm_role.id,
+            'group_ids': [(6, 0, crm_role.group_ids.ids)],
         })
         names = self._names(
             self.env['cms.sidebar.item'].with_user(user).get_sidebar_data())
@@ -418,8 +442,10 @@ class TestRelationshipSidebarOwnership(TransactionCase):
             })
         self.assertEqual(owners, relationship)
 
-        expected_roles = self.env['access.role'].search([
-            ('name', 'in', ['Owner', 'CRM']),
-        ])
+        expected_roles = self.env['biz.access.role'].sudo().browse()
+        for xmlid in ('health_access.role_owner', 'health_access.role_crm'):
+            role = self.env.ref(xmlid, raise_if_not_found=False)
+            if role:
+                expected_roles |= role
         if expected_roles:
-            self.assertEqual(relationship.role_ids, expected_roles)
+            self.assertEqual(relationship.biz_role_ids, expected_roles)

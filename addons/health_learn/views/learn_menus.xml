@@ -21,7 +21,7 @@
               name="Training wording"
               parent="menu_learn_config"
               action="action_learn_override"
-              groups="health_user_admin.group_health_user_admin,health_learn.group_learn_author"
+              groups="health_access.group_clinic_admin,health_learn.group_learn_author"
               sequence="10"/>
 
     <!-- Author-only: the spine and the measurement surfaces. -->

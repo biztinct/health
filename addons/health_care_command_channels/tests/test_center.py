@@ -46,7 +46,7 @@ class TestChannelCenter(ChannelSpineCase):
 
     def _tenant_admin(self):
         return self._mk_user(
-            'chub_tenant_admin', ['health_user_admin.group_health_user_admin'])
+            'chub_tenant_admin', ['health_access.group_clinic_admin'])
 
     # ==================================================================
     # T96 — Amendment F1: a testing connection is not locked out (§5.66)
@@ -568,7 +568,7 @@ class TestChannelCenter(ChannelSpineCase):
     def test_107_cross_company_id_passing(self):
         conn = self._tg_conn()   # company 1, ready
         intruder = self._mk_user(
-            'chub_admin_b', ['health_user_admin.group_health_user_admin'],
+            'chub_admin_b', ['health_access.group_clinic_admin'],
             company=self.company2)
         Conn = self.Conn.with_user(intruder)
 

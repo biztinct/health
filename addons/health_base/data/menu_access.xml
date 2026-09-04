@@ -20,7 +20,7 @@
 
         What actually removes the row is
         `health_base/migrations/19.0.1.3.8/post-migrate.py` (phase SH-2),
-        which also repairs the `access.role` "Doctor" mapping that had been
+        which also repaired the "Doctor" role mapping that had been
         riding on the defect. Any database still carrying the row converges
         when it upgrades past 19.0.1.3.8. Precedent for hand-deleting a
         DB-only implication row: commit a201b3d1 (356 → 4, so Healthcare:

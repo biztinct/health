@@ -273,7 +273,11 @@ class LearnIntent(models.Model):
         product asks.
         """
         user = self.env.user
-        if user.has_group('access_roles.access_role_group_administrator'):
+        # WHO COUNTS AS AN OWNER FOR THE COACH. The person who owns the box,
+        # and the people who may give out roles — which is the same list the
+        # Access home uses, read rather than restated.
+        if user.has_group('base.group_system') or self.env[
+                'biz.access'].can_manage():
             return 'owner'
         if screen_key:
             screen = self.env['learn.screen'].sudo().search(

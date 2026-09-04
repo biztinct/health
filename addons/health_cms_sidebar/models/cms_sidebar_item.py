@@ -32,14 +32,18 @@ class CmsSidebarItem(models.Model):
         string='Client Action Tag',
         help='Tag for OWL client actions, e.g. crm_dashboard',
     )
-    role_ids = fields.Many2many('access.role', string='Allowed Roles')
-    effective_role_ids = fields.Many2many(
-        'access.role', string='Effective Roles',
-        compute='_compute_effective_role_ids', compute_sudo=True,
-        help='What actually gates this item: its own roles PLUS everything '
-             'inherited from its section and its parent items. Empty means '
-             'the item is visible to everyone.',
-    )
+    # WHO OPENS AN ENTRY IS NOT ASKED HERE ANY MORE.
+    #
+    # This module owns the menu — the sections, the entries, the icons, the
+    # order, which action each one opens. WHO sees an entry is a different
+    # question, and answering it needs a model of roles, which this module does
+    # not have and should not: it was answered here only because the previous
+    # access application happened to be a dependency.
+    #
+    # `health_access` puts the gate on (`biz_role_ids` /
+    # `effective_biz_role_ids`) and narrows `_sidebar_visible_items` below. On
+    # a database without it every entry is drawn, which is the honest answer
+    # for a menu with nothing to gate on.
     active = fields.Boolean(default=True)
     match_action_tags = fields.Char(
         string='Match Action Tags',
@@ -53,42 +57,6 @@ class CmsSidebarItem(models.Model):
         string='Match Models',
         help='Comma-separated model names that highlight this item',
     )
-
-    # Deliberately depends on the parent's RAW roles, not on its computed
-    # effective_role_ids: a field that depends on itself through parent_id
-    # needs `recursive=True` and the ORM's cycle machinery, and the loop below
-    # already walks the whole chain. The field is not stored, so it is
-    # recomputed each request anyway.
-    @api.depends('role_ids', 'section_id.role_ids',
-                 'parent_id.role_ids', 'parent_id.section_id.role_ids')
-    def _compute_effective_role_ids(self):
-        """Roles gating this item once inheritance is applied.
-
-        Assigning roles at the SECTION level is the coarse control: it flows to
-        every item underneath, so locking "ADMIN" to Owner+Admin does not mean
-        revisiting fourteen leaves. An item that carries its own roles is
-        visible to those roles IN ADDITION to the inherited ones — the union,
-        never an override — so a leaf can widen access for one extra role
-        without being cut off from the people who own the section.
-
-        Parent ITEMS pass their effective roles down the same way, which is why
-        this depends on the parent's computed value rather than its raw
-        `role_ids`: a grandchild inherits the section through the parent.
-
-        An empty result means "no gate at all" — visible to everyone. That is
-        only reached when the section, the parent chain AND the item are all
-        unrestricted.
-        """
-        # Parents before children so a child reads a settled parent value.
-        for item in self.sorted(lambda i: bool(i.parent_id)):
-            roles = item.role_ids | item.section_id.role_ids
-            parent = item.parent_id
-            seen = set()
-            while parent and parent.id not in seen:
-                seen.add(parent.id)
-                roles |= parent.role_ids | parent.section_id.role_ids
-                parent = parent.parent_id
-            item.effective_role_ids = roles
 
     @api.model
     def get_match_keys(self):
@@ -177,34 +145,19 @@ class CmsSidebarItem(models.Model):
     def _sidebar_visible_items(self, all_items):
         """Which of these entries the person asking may see.
 
-        THE ONE PLACE THE QUESTION IS ANSWERED. `get_sidebar_data` draws the
-        menu and this decides who gets which row, and they are two methods
-        rather than one so that a module which adds a SECOND way of gating an
-        entry has exactly one thing to override. Two copies of a visibility rule
-        is how a screen comes to promise somebody a page they cannot open.
+        THE ONE PLACE THE QUESTION IS ANSWERED, AND THE SEAM SOMEBODY ELSE
+        ANSWERS IT IN. `get_sidebar_data` draws the menu and this decides who
+        gets which row, and they are two methods rather than one so that a
+        module which knows about roles has exactly one thing to override. Two
+        copies of a visibility rule is how a screen comes to promise somebody a
+        page they cannot open.
 
-        `effective_role_ids`, not `role_ids`: roles set on the SECTION (and on a
-        parent item) flow down to every item underneath, and an item's own roles
-        are added to — never replace — what it inherits. See
-        _compute_effective_role_ids.
+        This module has no roles of its own, so on its own it gates nothing.
+        `health_access` narrows what comes back here. Keeping the method rather
+        than deleting it is what makes that possible without this file ever
+        naming a model it does not depend on.
         """
-        user = self.env.user
-        user_role = user.access_role_id
-        # Users with the "Access Role: Administrator" privilege always see the full
-        # sidebar, without needing a business access.role assigned. (That privilege
-        # is separate from the access.role the items are gated by, and includes the
-        # superuser + base admin via the group's user_ids.) Note: base.group_system
-        # is intentionally NOT used here — many staff users carry it in this DB, so
-        # it would defeat per-role filtering.
-        is_admin = user.has_group('access_roles.access_role_group_administrator')
-
-        if is_admin:
-            return all_items
-        if user_role:
-            return all_items.filtered(
-                lambda i: not i.effective_role_ids or user_role in i.effective_role_ids
-            )
-        return all_items.filtered(lambda i: not i.effective_role_ids)
+        return all_items
 
     @api.model
     def get_sidebar_data(self):

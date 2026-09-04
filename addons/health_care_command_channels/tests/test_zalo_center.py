@@ -511,7 +511,7 @@ class TestZaloCenter(ChannelSpineCase):
         conn = self._zalo_conn(state='configuring',
                                resource_external_id=ZALO_OA_ID)
         intruder = self._mk_user(
-            'chub_admin_zalo_b', ['health_user_admin.group_health_user_admin'],
+            'chub_admin_zalo_b', ['health_access.group_clinic_admin'],
             company=self.company2)
         Conn = self.Conn.with_user(intruder)
 

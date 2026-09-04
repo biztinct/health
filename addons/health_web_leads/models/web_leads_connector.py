@@ -71,7 +71,7 @@ RECONCILE_PATH = '/api/v1/web/leads/reconcile'
 OPERATOR_GROUPS = (
     'base.group_system',
     'health_crm.group_health_crm_manager',
-    'health_user_admin.group_health_user_admin',
+    'health_access.group_clinic_admin',
 )
 
 # The logical city keys `web.lead.service._derive_city` understands. Anything

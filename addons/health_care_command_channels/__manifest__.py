@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Care Command — Channel Connection Framework',
-    'version': '19.0.11.1.0',
+    'version': '19.0.11.2.0',
     'category': 'Healthcare/CRM',
     'summary': 'Provider-neutral channel connections + the WhatsApp / Messenger / '
                'Telegram / Web chat message spine',
@@ -74,7 +74,7 @@ channels and a four-step stepper, plus the server endpoints behind it.
 - Readiness stays DERIVED. Amendment F1 closes the lockout in which the first
   proving inbound demoted a ``testing`` connection to ``action_required`` —
   which is not ingestable — and stranded the channel mid-setup.
-- Tenant administrators (``health_user_admin.group_health_user_admin``) get
+- Tenant administrators (``health_access.group_clinic_admin``) get
   connection read/write/create (never unlink), read on readiness/audit/
   identity/message, and NOTHING on ``channel.platform.app``: the platform
   plane stays with the platform operator.
@@ -394,9 +394,9 @@ arrives with a checklist before it has a flow.
         # (health_crm depends on utm), declared because the reference is hard.
         'utm',
         # CC-C: the Center's audience. The tenant-admin ACL rows and the
-        # Center menu both reference health_user_admin.group_health_user_admin,
+        # Center menu both reference health_access.group_clinic_admin,
         # so the dependency is hard from this phase on (CC-A deferred it).
-        'health_user_admin',
+        'health_access',
         # CC-C: the CMS shell is where these users actually are, and the
         # backend menuitem alone is unreachable from it (see the sidebar seed).
         'health_cms_sidebar',

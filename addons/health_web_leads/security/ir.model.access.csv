@@ -17,5 +17,5 @@ access_utm_source_web_leads_service,utm.source web service,utm.model_utm_source,
 access_utm_medium_web_leads_service,utm.medium web service,utm.model_utm_medium,group_web_leads_service,1,0,1,0
 access_utm_campaign_web_leads_service,utm.campaign web service,utm.model_utm_campaign,group_web_leads_service,1,0,0,0
 access_web_leads_connector_system,web.leads.connector system,model_web_leads_connector,base.group_system,1,1,1,1
-access_web_leads_connector_user_admin,web.leads.connector user admin,model_web_leads_connector,health_user_admin.group_health_user_admin,1,1,1,0
+access_web_leads_connector_user_admin,web.leads.connector user admin,model_web_leads_connector,health_access.group_clinic_admin,1,1,1,0
 access_web_leads_connector_crm_manager,web.leads.connector crm manager,model_web_leads_connector,health_crm.group_health_crm_manager,1,1,1,0

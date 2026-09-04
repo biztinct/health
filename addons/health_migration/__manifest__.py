@@ -1,6 +1,6 @@
 {
     'name': 'Health Migration',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'summary': 'Idempotent, reversible legacy-data migration toolkit',
     'description': """
 Reusable ORM-based migration framework for importing legacy exports

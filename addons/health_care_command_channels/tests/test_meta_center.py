@@ -905,7 +905,7 @@ class TestMetaCenter(ChannelSpineCase):
                           resource_external_id=WA_PHONE_ID,
                           resource_secondary_id=WA_WABA_ID)
         intruder = self._mk_user(
-            'chub_admin_meta_b', ['health_user_admin.group_health_user_admin'],
+            'chub_admin_meta_b', ['health_access.group_clinic_admin'],
             company=self.company2)
         Conn = self.Conn.with_user(intruder)
 
@@ -952,7 +952,7 @@ class TestMetaCenter(ChannelSpineCase):
         # The secret columns stay invisible to a Center persona (CC-A §7.2):
         # they are not even in the field list, so nothing can export them.
         admin = self._mk_user(
-            'chub_admin_meta_a', ['health_user_admin.group_health_user_admin'])
+            'chub_admin_meta_a', ['health_access.group_clinic_admin'])
         visible = conn.with_user(admin).fields_get()
         for column in ('access_token_enc', 'refresh_token_enc',
                        'provider_secret_enc', 'webhook_path_secret'):

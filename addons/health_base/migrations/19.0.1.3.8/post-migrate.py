@@ -37,17 +37,18 @@ group onto a user does NOT expand implications into `res_groups_users_rel`.
 Granting group 350 adds exactly one relation row per user and 346 arrives
 transitively — which is precisely why the ten doctors survive the edge
 deletion, and why no doctor picks up `base.group_no_one` as a DIRECT group
-(`health_user_admin` checks that one on direct containment only —
-`res_users_saas.py:23-28`).
+(the tenant-admin guard checked that one on direct containment only, for
+exactly this reason).
 
 SCOPE DISCIPLINE
 ----------------
 Exactly ONE row is removed: `(gid=1, hid=346)`. The other eleven forward edges
 of `base.group_user` are the legitimate Odoo settings-toggle mechanism, and
-`1 → 7` (`base.group_no_one`) in particular is load-bearing for the rationale
-documented in `health_user_admin/models/res_users_saas.py:23-28` and
-`access_role_saas.py:32-38`. Re-inserting the single deleted row restores the
-previous state exactly — that is the rollback plan.
+`1 → 7` (`base.group_no_one`) in particular is load-bearing: every tenant-admin
+guard that has ever been written on this database checks it on DIRECT
+containment only, precisely because base.group_user implies it. Re-inserting the
+single deleted row restores the previous state exactly — that is the rollback
+plan.
 """
 import logging
 
@@ -227,6 +228,20 @@ def migrate(cr, version):
 
     env = api.Environment(cr, SUPERUSER_ID, {})
     _logger.info("SH-2: starting T-001 group-implication repair")
+    # THE ROLE REPAIR IS ABOUT AN APPLICATION THAT HAS SINCE BEEN RETIRED.
+    # On a database that never had it, or has had it removed, the repair has
+    # nothing to repair and the edge deletion is the whole job. It never
+    # re-runs on a database that has already passed this version; the guard is
+    # here so the file is honest about what it needs.
+    if 'access.role' not in env:
+        _logger.info(
+            "SH-2: the previous access application is not on this database — "
+            "the Doctor role repair does not apply, and the implication is "
+            "removed on its own")
+        _delete_inverted_implication(env)
+        _archive_unused_accounts(env)
+        _logger.info("SH-2: T-001 repair complete")
+        return
     # Order is load-bearing: repair the role BEFORE deleting the edge, so the
     # ten doctors never pass through a state with no healthcare access. The
     # archive runs last (§5.5a) so the access change is complete first.

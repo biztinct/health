@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Analytics Hub (CMS)',
-    'version': '19.0.1.4.0',
+    'version': '19.0.1.5.0',
     'category': 'Analytics',
     'summary': 'Puts the BI platform into the /bizapp sidebar and lands CMS '
                'users on a friendly Analytics hub.',
@@ -19,11 +19,11 @@ This glue module closes it:
 
 * a new **ANALYTICS** section and a single **Analytics** leaf in the CMS
   sidebar, role-gated to Owner / Operations Manager / Branch Manager /
-  Accountant — written in python, because ``access.role`` rows carry no
-  xml-id on this platform;
-* the same roles' users are granted ``biz_bi.group_bi_creator``: a sidebar
-  item is *visibility*, never permission, and every BI record rule is keyed
-  on the BI group ladder;
+  Accountant, plus the eleven screens that used to be reachable only through
+  the application bar above the shell;
+* the permission behind it is the **Build reports** ability on those same
+  four roles: a sidebar item is *visibility*, never permission, and every BI
+  record rule is keyed on the reporting group ladder;
 * an **Analytics Hub** client action (``biz_bi.hub``) — one RPC, a search
   box, a recents strip and a workspace grid listing **every** dashboard the
   user may see;
@@ -64,6 +64,10 @@ fortieth dashboard read "No dashboards yet", and a ``window.prompt()``.
     'depends': [
         'biz_bi',
         'health_cms_sidebar',
+        # The roles the Analytics entries are gated to, and the ability that
+        # hands out the reporting permission behind them. No loop: nothing in
+        # the Access overlay's tree depends on this module.
+        'health_access',
     ],
     'data': [
         'views/bi_hub_actions.xml',
@@ -76,10 +80,9 @@ fortieth dashboard read "No dashboards yet", and a ``window.prompt()``.
             'biz_bi_cms/static/src/**/*.xml',
         ],
     },
-    # `access.role` rows have no xml-id here, so `role_ids` cannot be seeded
-    # with ref() — the gating and the BI group grant are written by the hook,
-    # exactly as health_cms_coverage does it, and re-applied by the migration
-    # script so an upgrade converges with a fresh install.
+    # The entries are `noupdate`-safe rows an upgrade does not re-assert, so
+    # the gate is WRITTEN by the hook and re-applied by the migration script —
+    # a fresh install and an upgrade converge on the same menu.
     'post_init_hook': 'post_init_hook',
     'installable': True,
     'application': False,
