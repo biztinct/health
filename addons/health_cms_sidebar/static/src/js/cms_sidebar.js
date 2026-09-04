@@ -43,6 +43,19 @@ export class CmsSidebar extends Component {
 
         useBus(this.env.bus, "ACTION_MANAGER:UI-UPDATED", () => this._resolveActiveItem());
 
+        // RE-READ WHEN SOMEBODY CHANGES WHO SEES WHAT.
+        //
+        // The sidebar is read ONCE, on mount. That is right for a menu whose
+        // gates only ever change in a settings screen somebody navigates away
+        // from — and wrong the moment a screen elsewhere in the same page can
+        // change them, because the rail two hundred pixels away would go on
+        // showing the answer that screen has just changed.
+        //
+        // A BUS EVENT AND NOT AN IMPORT. Whatever edits a gate triggers this
+        // name; this module knows nothing about it, has no dependency on it,
+        // and behaves identically on a database where nothing ever fires it.
+        useBus(this.env.bus, "CMS_SIDEBAR:RELOAD", () => this._loadSidebarData());
+
         onMounted(async () => {
             await this._loadSidebarData();
             this._resolveActiveItem();

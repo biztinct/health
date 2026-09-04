@@ -17,12 +17,19 @@
 #   vietuat-deploy -m health_base,health_crm
 #   vietuat-deploy -m health_base -t /health_base:TestLookupValues
 #   vietuat-deploy -m health_base -d          # deploy files from /tmp only
+#   vietuat-deploy -i biz_kit,biz_access -d   # install modules not on the DB yet
+#   vietuat-deploy -i health_access -m health_cms_sidebar -d
 #   vietuat-deploy -s                         # just restart, no upgrade
 #
 # OPTIONS
 #   -m  comma-separated module list to upgrade (-u)
+#   -i  comma-separated module list to INSTALL (-i) — for a module the database
+#       does not have yet. May be given with or without -m; one of the two is
+#       required unless -s.
 #   -t  --test-tags value; implies --test-enable
-#   -d  copy modules from /tmp/<module> into the addons dir first
+#   -d  copy modules from /tmp/<module> into the addons dir first — every module
+#       named on -m AND -i, because a first install has to be copied too and
+#       forgetting one of the two lists is a run that installs yesterday's code
 #   -s  skip the upgrade, only stop/start
 #   -w  lock wait in seconds (default 3600)
 #
@@ -31,15 +38,16 @@
 # log than with a dead port.
 set -uo pipefail
 
-MODULES=""; TESTTAGS=""; DO_DEPLOY=0; SKIP_UPGRADE=0; LOCK_WAIT=3600
+MODULES=""; INSTALL=""; TESTTAGS=""; DO_DEPLOY=0; SKIP_UPGRADE=0; LOCK_WAIT=3600
 ADDONS=/odoo/odoo-server/addons
 CONF=/etc/odoo-server.conf
 DB=vietuat
 LOCK=/tmp/vietuat-deploy.lock
 
-while getopts "m:t:w:ds" opt; do
+while getopts "m:i:t:w:ds" opt; do
   case "$opt" in
     m) MODULES="$OPTARG" ;;
+    i) INSTALL="$OPTARG" ;;
     t) TESTTAGS="$OPTARG" ;;
     w) LOCK_WAIT="$OPTARG" ;;
     d) DO_DEPLOY=1 ;;
@@ -48,17 +56,22 @@ while getopts "m:t:w:ds" opt; do
   esac
 done
 
-if [ "$SKIP_UPGRADE" -eq 0 ] && [ -z "$MODULES" ]; then
-  echo "vietuat-deploy: -m <modules> is required (or -s to just restart)" >&2
+if [ "$SKIP_UPGRADE" -eq 0 ] && [ -z "$MODULES" ] && [ -z "$INSTALL" ]; then
+  echo "vietuat-deploy: -m <modules> or -i <modules> is required (or -s to just restart)" >&2
   exit 2
 fi
 
 run() {
   local rc=0
 
+  # EVERY module named on EITHER list. A first install copied from nowhere is
+  # a first install of whatever happened to be on the box already.
+  local to_copy
+  to_copy=$(echo "$MODULES,$INSTALL" | tr ',' ' ')
+
   if [ "$DO_DEPLOY" -eq 1 ]; then
-    echo "==> deploying $(echo "$MODULES" | tr ',' ' ') from /tmp"
-    for m in $(echo "$MODULES" | tr ',' ' '); do
+    echo "==> deploying $to_copy from /tmp"
+    for m in $to_copy; do
       if [ ! -d "/tmp/$m" ]; then
         echo "    MISSING /tmp/$m — scp it first" >&2
         return 2
@@ -80,15 +93,17 @@ run() {
   done
 
   if [ "$SKIP_UPGRADE" -eq 0 ]; then
-    local args="-c $CONF -d $DB -u $MODULES --stop-after-init"
+    local args="-c $CONF -d $DB --stop-after-init"
+    [ -n "$MODULES" ] && args="$args -u $MODULES"
+    [ -n "$INSTALL" ] && args="$args -i $INSTALL"
     if [ -n "$TESTTAGS" ]; then
       # HttpCase needs a real http server AND workers=0; --no-http is only
       # safe when we are not running tests.
       args="$args --test-enable --test-tags $TESTTAGS --workers=0"
-      echo "==> upgrading + testing: $MODULES  [$TESTTAGS]"
+      echo "==> upgrading ${MODULES:-none} / installing ${INSTALL:-none}  [$TESTTAGS]"
     else
       args="$args --no-http"
-      echo "==> upgrading: $MODULES"
+      echo "==> upgrading ${MODULES:-none} / installing ${INSTALL:-none}"
     fi
     sudo su - odoo -s /bin/bash -c "/odoo/odoo-server/odoo-bin $args" >/dev/null 2>&1
     rc=$?
@@ -111,8 +126,9 @@ run() {
 }
 
 echo "==> waiting for the deploy lock (up to ${LOCK_WAIT}s)"
-flock -w "$LOCK_WAIT" "$LOCK" bash -c "$(declare -f run); MODULES='$MODULES' TESTTAGS='$TESTTAGS' \
-  DO_DEPLOY=$DO_DEPLOY SKIP_UPGRADE=$SKIP_UPGRADE ADDONS='$ADDONS' CONF='$CONF' DB='$DB' run"
+flock -w "$LOCK_WAIT" "$LOCK" bash -c "$(declare -f run); MODULES='$MODULES' INSTALL='$INSTALL' \
+  TESTTAGS='$TESTTAGS' DO_DEPLOY=$DO_DEPLOY SKIP_UPGRADE=$SKIP_UPGRADE ADDONS='$ADDONS' \
+  CONF='$CONF' DB='$DB' run"
 RC=$?
 [ $RC -eq 1 ] && echo "==> NOTE: exit 1 with tests enabled usually means a test failed."
 exit $RC

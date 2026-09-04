@@ -174,10 +174,20 @@ class CmsSidebarItem(models.Model):
         return result
 
     @api.model
-    def get_sidebar_data(self):
-        # One shared dict for the whole call, so the ~95 leaves resolve each
-        # distinct action exactly once.
-        self = self.with_context(__catchment_action_cache={})
+    def _sidebar_visible_items(self, all_items):
+        """Which of these entries the person asking may see.
+
+        THE ONE PLACE THE QUESTION IS ANSWERED. `get_sidebar_data` draws the
+        menu and this decides who gets which row, and they are two methods
+        rather than one so that a module which adds a SECOND way of gating an
+        entry has exactly one thing to override. Two copies of a visibility rule
+        is how a screen comes to promise somebody a page they cannot open.
+
+        `effective_role_ids`, not `role_ids`: roles set on the SECTION (and on a
+        parent item) flow down to every item underneath, and an item's own roles
+        are added to — never replace — what it inherits. See
+        _compute_effective_role_ids.
+        """
         user = self.env.user
         user_role = user.access_role_id
         # Users with the "Access Role: Administrator" privilege always see the full
@@ -188,6 +198,20 @@ class CmsSidebarItem(models.Model):
         # it would defeat per-role filtering.
         is_admin = user.has_group('access_roles.access_role_group_administrator')
 
+        if is_admin:
+            return all_items
+        if user_role:
+            return all_items.filtered(
+                lambda i: not i.effective_role_ids or user_role in i.effective_role_ids
+            )
+        return all_items.filtered(lambda i: not i.effective_role_ids)
+
+    @api.model
+    def get_sidebar_data(self):
+        # One shared dict for the whole call, so the ~95 leaves resolve each
+        # distinct action exactly once.
+        self = self.with_context(__catchment_action_cache={})
+
         sections = self.env['cms.sidebar.section'].search(
             [('active', '=', True)], order='sequence, id',
         )
@@ -195,18 +219,7 @@ class CmsSidebarItem(models.Model):
             [('active', '=', True)], order='section_id, sequence, id',
         )
 
-        # `effective_role_ids`, not `role_ids`: roles set on the SECTION (and on
-        # a parent item) flow down to every item underneath, and an item's own
-        # roles are added to — never replace — what it inherits. See
-        # _compute_effective_role_ids.
-        if is_admin:
-            visible_items = all_items
-        elif user_role:
-            visible_items = all_items.filtered(
-                lambda i: not i.effective_role_ids or user_role in i.effective_role_ids
-            )
-        else:
-            visible_items = all_items.filtered(lambda i: not i.effective_role_ids)
+        visible_items = self._sidebar_visible_items(all_items)
 
         def _split(val):
             return [v.strip() for v in (val or '').split(',') if v.strip()]
