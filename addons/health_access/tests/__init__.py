@@ -7,3 +7,4 @@ from . import test_job_field
 from . import test_topbar_mode
 from . import test_rings
 from . import test_retirement
+from . import test_topbar_settings

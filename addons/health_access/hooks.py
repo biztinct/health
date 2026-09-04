@@ -1322,6 +1322,57 @@ def _our_new_item_ids(env):
     return [r.res_id for r in rows]
 
 
+# =============================================================================
+# THE TOP-BAR DECISION HAS TO REACH BOTH KINDS OF DATABASE.
+#
+# ⚠ THE FAULT THIS CLOSES, AND IT IS THE **A2 FAMILY**: a `post_init_hook` does
+# not fire on an upgrade, and a migration does not fire on an install. So a
+# decision written in only ONE of those places reaches only half the databases
+# this product runs on — and the half it misses is invisible, because both
+# settings are read with a default behind them and a missing row simply reads
+# as "by_role", which is the OPPOSITE of what the owner decided.
+#
+# `data/config.xml` sets both, and it is `noupdate="1"` ON PURPOSE (a clinic
+# that changes its mind keeps its decision through every later release). That
+# is right for an install and does nothing at all on an upgrade of a database
+# that predates the file.
+#
+# So the same idempotent write is reachable from BOTH paths — the hook below and
+# `migrations/19.0.1.2.1/post-migrate.py` — and it only ever writes a row that
+# is ABSENT. A value somebody has deliberately changed is never overwritten,
+# which is the whole reason the data file is `noupdate="1"` in the first place.
+# =============================================================================
+#: The two settings and what they have to say on a database that has never been
+#: told. Kept here rather than read out of the data file, because the point is
+#: to be correct on a database the data file has never been applied to.
+TOPBAR_SETTINGS = {
+    'biz_access.topbar_mode': 'admin_only',
+    'biz_access.topbar_home_xmlids': 'health_cms_sidebar.menu_cms_root',
+}
+
+
+def ensure_topbar_settings(env):
+    """Write either setting that is MISSING. Never overwrites one that is set.
+
+    Uses `search` on the row rather than `get_param` (ledger F24): `get_param`
+    answers `False` both for a key that is not there and for one somebody has
+    deliberately cleared, and those are different facts here — clearing
+    `topbar_home_xmlids` is a real decision with its own defined behaviour, and
+    filling it back in would undo it.
+    """
+    Param = env['ir.config_parameter'].sudo()
+    written = []
+    for key, value in TOPBAR_SETTINGS.items():
+        if Param.search_count([('key', '=', key)]):
+            continue
+        Param.create({'key': key, 'value': value})
+        written.append(key)
+    if written:
+        _logger.info('health_access: wrote the missing top-bar settings %s',
+                     ', '.join(written))
+    return written
+
+
 def post_init_hook(env):
     """Everything, in order, the day this module lands."""
     if not isinstance(env, api.Environment):            # pragma: no cover
@@ -1332,6 +1383,10 @@ def post_init_hook(env):
     _gate_admin_item(env)
     _gate_new_items(env)
     _release_borrowed_matches(env)
+    # Belt and braces beside `data/config.xml`, which has already written both
+    # on a fresh install. This is what makes the pair reachable from the hook
+    # path as well as the migration one — see the note above.
+    ensure_topbar_settings(env)
 
 
 def _release_borrowed_matches(env):

@@ -45,7 +45,7 @@ home checks again before it writes. Adding a colleague goes through the same
 refusals: an administrator of this clinic can give somebody a job, and cannot
 give anybody the keys to the box.
 """,
-    'version': '19.0.1.2.0',
+    'version': '19.0.1.2.1',
     'category': 'Administration',
     'license': 'LGPL-3',
     'author': 'Biztinct',
