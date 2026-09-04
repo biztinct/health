@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="biz_tenancy.About">
+  <div class="bzk bzk-page bztn-about">
+
+    <div class="bztn-about-head">
+      <HubBackChip back="back"/>
+      <div class="bzk-h1" t-esc="title"/>
+      <div class="bzk-sub" t-esc="lede"/>
+    </div>
+
+    <!-- THE ONE ANSWER SOMEBODY CAME FOR, at the top and in the largest type
+         on the page: which release am I running. -->
+    <div class="bzk-hero bztn-hero" t-if="currentName">
+      <div class="bzk-hero-av"><t t-out="ic('package', 24)"/></div>
+      <div class="bzk-hero-id">
+        <div class="nm" t-esc="currentName"/>
+        <div class="mt" t-if="currentDate">
+          Released <t t-esc="currentDate"/>
+        </div>
+      </div>
+      <div class="bzk-hero-net" t-if="state.pushed_at">
+        <div class="k">Last heard from the platform</div>
+        <div class="mt" t-esc="state.pushed_at"/>
+      </div>
+    </div>
+
+    <!-- ZERO DEAD ENDS: a system that has never been told about a release
+         explains what will appear here rather than showing a blank page. -->
+    <div class="bzk-panel bztn-empty" t-if="!currentName">
+      <div class="bzk-empty">
+        <div class="bztn-empty-ic"><t t-out="ic('package', 28)"/></div>
+        <div class="bztn-empty-t">No update has been recorded here yet.</div>
+        <div class="bztn-empty-s">
+          The next time this system is updated, the release and a note saying
+          what changed will appear on this page.
+        </div>
+      </div>
+    </div>
+
+    <!-- THE HISTORY. `rel` and never `lt`/`gt`/`amp`: those names compile to a
+         literal `&lt;` and take the whole component down (ledger F15). -->
+    <div class="bztn-rel-list" t-if="releases.length">
+      <div t-foreach="releases" t-as="rel" t-key="rel.name"
+           t-attf-class="bzk-panel bztn-rel {{ rel.current ? 'is-now' : '' }}">
+        <div class="bztn-rel-h">
+          <span class="bztn-rel-n" t-esc="rel.name"/>
+          <span class="bzk-badge ok" t-if="rel.current">
+            <span class="d"/> You are on this one
+          </span>
+          <span class="bztn-rel-d" t-if="rel.date" t-esc="rel.date"/>
+        </div>
+        <div class="bztn-rel-b" t-if="rel.hasNotes">
+          <t t-foreach="rel.blocks" t-as="blk" t-key="blk_index">
+            <p t-if="blk.kind === 'p'" t-esc="blk.text"/>
+            <ul t-else="">
+              <li t-foreach="blk.items" t-as="bullet" t-key="bullet_index"
+                  t-esc="bullet"/>
+            </ul>
+          </t>
+        </div>
+        <div class="bztn-rel-b bztn-rel-none" t-else="">
+          No note was written for this update.
+        </div>
+      </div>
+    </div>
+
+    <!-- WHO TO ASK. Drawn only when there is somebody: an empty contact card
+         is a dead end wearing the clothes of a door. -->
+    <div class="bzk-panel bztn-contact" t-if="hasContact">
+      <div class="bzk-panel-h">
+        <div class="bzk-h2">Need a hand?</div>
+      </div>
+      <div class="bztn-contact-rows">
+        <a t-if="mailto" class="bzk-btn outline" t-att-href="mailto">
+          <t t-out="ic('mail', 15)"/>
+          <span t-esc="state.support_email"/>
+        </a>
+        <a t-if="state.platform_url" class="bzk-btn ghost"
+           t-att-href="state.platform_url" target="_blank" rel="noreferrer">
+          <t t-out="ic('external', 15)"/>
+          <span>Open the platform</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</t>
+
+</templates>

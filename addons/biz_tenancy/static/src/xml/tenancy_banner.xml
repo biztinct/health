@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<!-- Loop variables are NEVER called `lt`, `gt` or `amp` anywhere in this
+     module: the template compiler rewrites such a name into a literal `<` and
+     the whole component dies with a blank screen and no useful error
+     (ledger F15). And no JavaScript built-in is called from a template
+     expression — an expression is compiled against the component, so
+     `String(x)` becomes `ctx.String(x)` and throws (ledger F16). -->
+
+<t t-name="biz_tenancy.Banner">
+    <BizTenancyBar t-if="notice" notice="notice" onDismiss.bind="dismiss"/>
+</t>
+
+<t t-name="biz_tenancy.Bar">
+    <div t-attf-class="bztn-bar bztn-{{ kind }} {{ props.preview ? 'bztn-preview' : '' }}"
+         role="status" aria-live="polite">
+        <span class="bztn-bar-ic"><t t-out="ic(icon, 17)"/></span>
+        <span class="bztn-bar-kind" t-esc="label"/>
+        <span class="bztn-bar-tx" t-esc="props.notice.text"/>
+        <span t-if="range" class="bztn-bar-when">
+            <t t-out="ic('clock', 13)"/> <t t-esc="range"/>
+        </span>
+        <!-- An update in progress swaps the close button for a live dot: it
+             cannot be hidden, and the dot says why it is still there. -->
+        <span t-if="props.notice.live" class="bztn-bar-live"
+              title="This is happening right now"/>
+        <button t-elif="dismissable" class="bztn-bar-x"
+                t-on-click="props.onDismiss" title="Hide this message">
+            <t t-out="ic('x', 14)"/>
+        </button>
+    </div>
+</t>
+
+</templates>

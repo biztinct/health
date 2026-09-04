@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- The platform's bar sits directly under the top bar, above everything a
+         screen draws for itself.
+
+         AFTER //NavBar, NOT around //ActionContainer. On this build one module
+         already REPLACES the action container with a wrapper of its own
+         (`health_fieldservice`) and another anchors on the main components
+         container (`health_learn`); a third module replacing either would be a
+         race between whichever loaded last. Inserting after the navigation bar
+         touches nothing anybody owns (ledger F18).
+
+         The bar therefore inherits the navigation bar's own
+         `t-if="!state.fullscreen"`, which is the behaviour we want: a
+         full-screen surface is a surface with no chrome, and a platform notice
+         is chrome. -->
+    <t t-name="web.WebClient" t-inherit="web.WebClient" t-inherit-mode="extension">
+        <xpath expr="//NavBar" position="after">
+            <BizTenancyBanner/>
+        </xpath>
+    </t>
+
+</templates>

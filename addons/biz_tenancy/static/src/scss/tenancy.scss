@@ -1,0 +1,166 @@
+// =============================================================================
+// The platform link's own styles.
+//
+// THIS FILE HAS TWO ROOT BLOCKS AND THEY ARE NAMED HERE ON PURPOSE (ledger
+// F35). A rule appended "at the end of the file, before the closing brace"
+// lands inside whichever block happens to be last and compiles to a selector
+// that matches nothing — with no error anywhere. The two roots are:
+//
+//   1. `.bztn-bar`  — the notice bar. It is mounted in the web client's own
+//      chrome, OUTSIDE any `.bzk` page wrapper, so it cannot be nested under
+//      one and has to carry its own tokens.
+//   2. `.bzk.bztn-about` — the About screen. COMPOUND, no space: the page's
+//      own element carries both classes, so `.bzk .bztn-about` would be a
+//      descendant selector matching nothing at all, silently.
+//
+// NO `min()` MIXING UNITS ANYWHERE (ledger F36): Bootstrap's Sass intercepts
+// it, the WHOLE asset bundle fails to compile, and every screen in the product
+// renders unstyled under a red banner. A state colour on a kit control always
+// carries `.bzk` in front of it (ledger F37) — the kit out-specifies a bare
+// class and the rule silently loses.
+//
+// Mono colours only, no gradients (owner rule). Every colour is a kit token.
+// =============================================================================
+
+// ------------------------------------------------------------ 1. the bar ----
+.bztn-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 8px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--bzk-line, #E3E8EF);
+    background: var(--bzk-soft, #EEF2FF);
+    color: var(--bzk-primary-strong, #303F9F);
+
+    &.bztn-maintenance {
+        background: var(--bzk-amber-soft, #FEF3C7);
+        color: #92400E;
+        border-bottom-color: #FDE68A;
+    }
+
+    .bztn-bar-ic { display: inline-flex; flex: none; }
+
+    .bztn-bar-kind {
+        font-size: 10.5px;
+        font-weight: 800;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        opacity: .85;
+        flex: none;
+    }
+
+    .bztn-bar-tx { font-weight: 600; min-width: 0; }
+
+    .bztn-bar-when {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        opacity: .9;
+    }
+
+    // "Happening now" — a pulse rather than a spinner, because a spinner reads
+    // as "your page is loading" and this page is not.
+    .bztn-bar-live {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: currentColor;
+        margin-left: auto;
+        flex: none;
+        animation: bztn-pulse 1.8s ease-in-out infinite;
+    }
+
+    .bztn-bar-x {
+        margin-left: auto;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        cursor: pointer;
+        opacity: .6;
+        display: inline-flex;
+        padding: 3px;
+        border-radius: 6px;
+        &:hover { opacity: 1; background: rgba(0, 0, 0, .06); }
+    }
+
+    &.bztn-preview {
+        border-radius: 10px;
+        border: 1px solid var(--bzk-line, #E3E8EF);
+    }
+}
+
+// Motion with purpose: the dot says the work is still running.
+@keyframes bztn-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: .35; transform: scale(.82); }
+}
+
+// -------------------------------------------------- 2. the About screen ----
+.bzk.bztn-about {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 940px;
+
+    .bztn-about-head { display: flex; flex-direction: column; gap: 6px; }
+
+    .bztn-hero .bzk-hero-net .mt {
+        font-size: 12.5px;
+        color: var(--bzk-muted, #667085);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .bztn-empty-ic { color: var(--bzk-primary, #1565C0); margin-bottom: 8px; }
+    .bztn-empty-t { font-size: 15px; font-weight: 800; color: var(--bzk-ink, #0F172A); }
+    .bztn-empty-s { margin-top: 4px; }
+
+    .bztn-rel-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .bztn-rel {
+        padding: 15px 18px;
+        // A left edge rather than a fill: the badge already says which one is
+        // current, and a filled card would out-shout the words in it.
+        border-left: 3px solid transparent;
+        &.is-now { border-left-color: var(--bzk-green, #2E7D4F); }
+    }
+
+    .bztn-rel-h {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .bztn-rel-n {
+        font-size: 15px;
+        font-weight: 800;
+        color: var(--bzk-ink, #0F172A);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .bztn-rel-d {
+        margin-left: auto;
+        font-size: 12px;
+        color: var(--bzk-muted, #667085);
+    }
+
+    .bztn-rel-b {
+        margin-top: 8px;
+        font-size: 13.5px;
+        color: var(--bzk-text, #334155);
+        line-height: 1.55;
+        p  { margin: 0 0 7px; }
+        ul { margin: 0 0 7px; padding-left: 20px; }
+        li { margin: 2px 0; }
+        > :last-child { margin-bottom: 0; }
+    }
+
+    .bztn-rel-none { color: var(--bzk-muted, #667085); font-style: italic; }
+
+    .bztn-contact-rows { display: flex; flex-wrap: wrap; gap: 10px; }
+    .bztn-contact-rows a { text-decoration: none; }
+}

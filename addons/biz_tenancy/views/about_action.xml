@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- An `ir.actions.client` RECORD, never a bare tag: a bare tag reaches the
+         action service with no NAME, and anything returning through a
+         breadcrumb then lands on a crumb labelled "Unnamed".
+
+         NO MENU AND NO LEFT-MENU ENTRY, deliberately. This module ships a door
+         and nothing that opens it: a product decides where "About" belongs in
+         its own navigation, and a generic module that put itself on somebody
+         else's menu would be deciding that for them. The overlay puts it on the
+         rail (see `health_tenancy`).
+
+         The NAME is deliberately not the product's — the brand is a setting and
+         the screen reads it at run time, so the title inside says
+         "About <brand>" while the action itself stays neutral. -->
+
+    <record id="action_biz_tenancy_about" model="ir.actions.client">
+        <field name="name">About this system</field>
+        <field name="tag">biz_tenancy_about</field>
+    </record>
+
+</odoo>
