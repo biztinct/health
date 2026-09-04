@@ -104,8 +104,12 @@ cat > "$CONF" <<EOF
 # nginx prefers this exact server_name over the wildcard block, so this wins for
 # this host while every other hostname still falls through to biz-wildcard.
 server {
-    # nginx on this box is 1.18: http2 is a flag on `listen`, not its own
-    # directive (`http2 on;` is 1.25+ and fails nginx -t here).
+    # nginx on this box is 1.18, where http2 is a FLAG on the listen line;
+    # the standalone directive is 1.25+ and fails nginx -t here.
+    # (No backticks anywhere in this heredoc: it is unquoted so that the
+    # hostname expands, which means a backtick would run a command as root and
+    # substitute its output into a config file. Two of them did exactly that
+    # before this comment was rewritten.)
     listen 443 ssl http2;
     server_name ${HOSTNAME_ARG};
 
