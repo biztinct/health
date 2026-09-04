@@ -158,6 +158,22 @@ export const IC = {
     cake:         '<path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 1 4 1 2.5-1 4-1 2.5 1 4 1 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v1M12 7v2M17 8v1"/>',
     // a needle against a dial: how much of something is gone
     gauge:        '<path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/>',
+    // stopping something that is under way, and the one thing that is NOT a
+    // stop: `powerOff` ends it, `pause` holds it where it is.
+    pause:        '<rect x="14" y="4" width="4" height="16" rx="1"/><rect x="6" y="4" width="4" height="16" rx="1"/>',
+    // a step deliberately jumped over, rather than one that failed
+    skipForward:  '<polygon points="5 4 15 12 5 20 5 4"/><line x1="19" x2="19" y1="5" y2="19"/>',
+    // being told, and NOT being told. The second is the honest picture for a
+    // platform that has noticed something and has no way to say so.
+    bell:         '<path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>',
+    bellOff:      '<path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/><path d="M18.6 13c.2 2.2 1.4 3.2 2.4 4H5s3-2 3-9a5.99 5.99 0 0 1 8-5.6"/><path d="m2 2 20 20"/>',
+    // the disk, as distinct from `database` (what is stored) and `server`
+    // (the machine): this one is the space running out.
+    hardDrive:    '<line x1="22" x2="2" y1="12" y2="12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/><path d="M6 16h.01M10 16h.01"/>',
+    // anybody at all, anywhere: the public page and nothing else
+    globe:        '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>',
+    // a release going out. Used once, on the button that starts one.
+    rocket:       '<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>',
 };
 
 /**

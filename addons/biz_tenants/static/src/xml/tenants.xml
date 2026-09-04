@@ -40,6 +40,21 @@
                 title="Read everything again (r)">
           <t t-out="ic('refresh', 14)"/> <span>Refresh</span>
         </button>
+        <!-- THE ALERTS DOOR, AND IT IS FIRST FOR A REASON. With no outgoing
+             mail account on this platform, this button is the only way a
+             problem reaches a person at all — so it carries the count, and it
+             turns red the moment anything urgent is open. -->
+        <button t-attf-class="bzk-btn bzk-btn-sm {{ banner.level === 'critical' ? 'danger' : 'ghost' }}"
+                t-on-click="openAlerts" t-if="state.view !== 'alerts'"
+                title="Alerts (a)">
+          <t t-out="ic(banner.level === 'critical' ? 'bellOff' : 'bell', 14)"/>
+          <span>Alerts</span>
+          <span class="bzt-count" t-if="banner.open" t-esc="banner.open"/>
+        </button>
+        <button class="bzk-btn ghost bzk-btn-sm" t-on-click="openRollout"
+                t-if="state.view !== 'rollout'">
+          <t t-out="ic('rocket', 14)"/> <span>Rollout</span>
+        </button>
         <button class="bzk-btn ghost bzk-btn-sm" t-on-click="openSync"
                 t-if="state.view !== 'sync'">
           <t t-out="ic('gitMerge', 14)"/> <span>In step with master</span>
@@ -49,6 +64,24 @@
           <t t-out="ic('plus', 14)"/> <span>New customer</span>
         </button>
       </div>
+    </div>
+
+    <!-- ⚠ A CRITICAL ANYWHERE PAINTS A LINE ACROSS EVERY SCREEN IN HERE.
+         Generalised from the one alert that could never email itself: with no
+         mail account at all, every alert is in that position, so the banner is
+         about all of them. It says plainly that nothing was sent, because a
+         reader who assumes they were emailed will stop looking at this screen. -->
+    <div class="bzt-banner" t-if="banner.level === 'critical'">
+      <t t-out="ic('alert', 16)"/>
+      <span class="bzt-banner-t" t-esc="banner.text"/>
+      <span class="bzt-banner-s" t-if="banner.dark">
+        Nothing was emailed about this — there is no outgoing mail account on
+        this platform yet.
+      </span>
+      <span class="bzk-modal__sp"/>
+      <button class="bzk-btn bzk-btn-sm ghost" t-on-click="openAlerts">
+        <span>Open the alerts</span> <t t-out="ic('chevron', 13)"/>
+      </button>
     </div>
 
     <!-- The one honest sentence a cockpit nobody has configured can say. -->
@@ -81,13 +114,31 @@
           <div>Reading every system on this machine…</div>
         </div>
       </t>
+      <t t-elif="state.view === 'rollout'">
+        <t t-if="state.rollout"><t t-call="biz_tenants.Rollout"/></t>
+        <div t-else="" class="bzk-busy">
+          <div class="bzk-spin"/>
+          <div>Reading the rollout…</div>
+        </div>
+      </t>
+      <t t-elif="state.view === 'alerts'">
+        <t t-if="state.alerts"><t t-call="biz_tenants.Alerts"/></t>
+        <div t-else="" class="bzk-busy">
+          <div class="bzk-spin"/>
+          <div>Reading what has been noticed…</div>
+        </div>
+      </t>
     </t>
 
-    <!-- Overlays. All three are the kit's own dialog, so they scrim, centre
-         and scroll inside themselves like every other dialog in the product. -->
+    <!-- Overlays. Every one is the kit's own dialog, so they scrim, centre and
+         scroll inside themselves like every other dialog in the product. -->
     <t t-if="state.composer"><t t-call="biz_tenants.Composer"/></t>
     <t t-if="state.confirm"><t t-call="biz_tenants.Confirm"/></t>
     <t t-if="state.cutting"><t t-call="biz_tenants.CutRelease"/></t>
+    <t t-if="state.rolloutPlan"><t t-call="biz_tenants.RolloutPlan"/></t>
+    <t t-if="state.taskConfirm"><t t-call="biz_tenants.SkipConfirm"/></t>
+    <t t-if="state.aborting"><t t-call="biz_tenants.AbortConfirm"/></t>
+    <t t-if="state.settings"><t t-call="biz_tenants.AlertSettings"/></t>
 
     <!-- The one place the screen says it is working. A control that goes quiet
          for forty seconds is a control somebody presses twice. -->
@@ -139,6 +190,36 @@
         <div class="bzk-stat-tx">
           <span class="n" t-esc="state.fleet.machine.storage"/>
           <span class="l">Held for customers</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================ the capacity gauge
+         HOW MANY MORE FIT, not how much memory is free — because "541 MB
+         free" is a number nobody can act on and "room for two more" is a
+         decision. The sentence underneath carries the arithmetic and names
+         both halves of it, and the same numbers are what refuse a new
+         customer at the door. -->
+    <div t-attf-class="bzk-panel bzt-cap {{ capacity.level }}">
+      <div class="bzt-cap-l">
+        <div class="bzt-cap-ic"><t t-out="ic('gauge', 22)"/></div>
+        <div class="bzt-cap-tx">
+          <div class="bzt-cap-n">
+            <t t-if="capacity.level === 'full'">No room for another customer</t>
+            <t t-elif="capacity.headroom === 1">Room for one more customer</t>
+            <t t-else="">Room for <t t-esc="capacity.headroom"/> more customers</t>
+          </div>
+          <div class="bzt-cap-s" t-esc="capacitySentence"/>
+        </div>
+      </div>
+      <div class="bzt-cap-r">
+        <div class="bzt-cap-bar">
+          <span t-attf-style="width:{{ capacityPercent }}%"/>
+        </div>
+        <div class="bzt-cap-k">
+          <t t-esc="capacity.live_tenants"/> live ·
+          <t t-esc="capacity.mem_available_mb"/> MB free ·
+          <t t-esc="capacity.reserve_mb"/> MB held back
         </div>
       </div>
     </div>
@@ -766,6 +847,106 @@
       </div>
     </div>
 
+    <!-- ==== updates: which ring they are in, and when their night is -->
+    <div t-if="state.tab === 'updates'">
+      <div class="bzk-busy" t-if="!state.updates">
+        <div class="bzk-spin"/> <div>Reading…</div>
+      </div>
+      <t t-else="">
+        <div class="bzk-panel">
+          <div class="bzk-panel-h">
+            <div class="bzk-h2">When this customer gets a new release</div>
+          </div>
+          <div class="bzk-sub bzt-pad">
+            A release reaches them inside their own quiet window, on
+            <b>their</b> clock. Nothing is ever installed on a schedule: a
+            person starts a rollout, and this says when their turn comes.
+          </div>
+
+          <div class="bzt-ringpick">
+            <button t-foreach="state.updates.rings" t-as="r" t-key="r.key"
+                    t-attf-class="bzt-ringcard {{ state.updates.ring === r.key ? 'on' : '' }}"
+                    t-on-click="() => this.setRing(r.key)">
+              <div class="bzt-ringcard-h">
+                <span class="bzt-ringdot"/>
+                <span class="bzt-ringcard-t" t-esc="r.label"/>
+              </div>
+              <div class="bzt-ringcard-m" t-esc="r.meaning"/>
+            </button>
+          </div>
+
+          <div class="bzt-winrow">
+            <label class="bzt-field">
+              <span class="bzt-lab">Their window opens at</span>
+              <select t-on-change="onWindowHour">
+                <option t-foreach="hourChoices"
+                        t-as="h" t-key="h" t-att-value="h"
+                        t-att-selected="state.updates.maintenance_start === h ? 'selected' : undefined">
+                  <t t-esc="h"/>:00
+                </option>
+              </select>
+            </label>
+            <label class="bzt-field">
+              <span class="bzt-lab">and stays open for</span>
+              <select t-on-change="onWindowLength">
+                <option t-foreach="lengthChoices" t-as="n" t-key="n"
+                        t-att-value="n"
+                        t-att-selected="state.updates.maintenance_hours === n ? 'selected' : undefined">
+                  <t t-esc="n"/> hours
+                </option>
+              </select>
+            </label>
+            <div class="bzt-winsay">
+              <!-- ⚠ THE ZONE IS NAMED (ledger F32). A correctly-converted
+                   window printed without its zone beside it reads exactly like
+                   one that was never converted at all. -->
+              <div class="bzt-winsay-k">Next window</div>
+              <div class="bzt-winsay-v" t-esc="state.updates.next_window"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="bzk-note bzt-warn" t-if="!state.updates.linked">
+          <t t-out="ic('alert', 15)"/>
+          <span>
+            This customer has no platform link yet, so they cannot be told
+            anything and a rollout will refuse to start while they are on the
+            list. Bring them in step once by hand, which puts it on.
+          </span>
+        </div>
+
+        <div class="bzk-panel" t-if="state.updates.history.length">
+          <div class="bzk-panel-h"><div class="bzk-h2">Every update they have had</div></div>
+          <table class="bzk-table">
+            <thead>
+              <tr><th>Release</th><th>What happened</th><th>Took</th>
+                  <th>Finished</th></tr>
+            </thead>
+            <tbody>
+              <tr t-foreach="state.updates.history" t-as="h" t-key="h.id">
+                <td><b t-esc="h.release"/></td>
+                <td>
+                  <span t-attf-class="bzk-badge {{ taskWord(h.state).tone }}">
+                    <span class="d"/> <t t-esc="taskWord(h.state).label"/>
+                  </span>
+                  <div class="bzt-dim" t-if="h.error" t-esc="h.error"/>
+                </td>
+                <td><t t-esc="h.duration_s"/>s</td>
+                <td t-esc="h.finished_at or '—'"/>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="bzk-empty" t-else="">
+          <div class="bzt-empty-t">They have not been through a rollout yet.</div>
+          <div class="bzt-empty-s">
+            Their first one will be listed here, with what it did and how long
+            it took.
+          </div>
+        </div>
+      </t>
+    </div>
+
     <!-- ==== in step -->
     <div class="bzk-panel" t-if="state.tab === 'instep'">
       <div class="bzk-panel-h">
@@ -1166,6 +1347,773 @@
         <button class="bzk-btn ghost" t-on-click="closeOverlays">Cancel</button>
         <button class="bzk-btn primary" t-on-click="cutRelease">
           <t t-out="ic('stamp', 15)"/> <span>Cut it</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</t>
+
+
+<!-- =====================================================================
+     THE ROLLOUT SCREEN — THIS PHASE'S HERO.
+
+     A release walking the fleet as a living diagram: ring by ring, each
+     system a card that fills as its window opens, its update runs and its
+     health check passes. Pause, Continue now, Try again, Leave behind and
+     Call it off are always one press away, and every one of them says what
+     it will do BEFORE it is pressed rather than afterwards.
+
+     ZERO DEAD ENDS. A ring that stopped says why, on the card that stopped
+     it, with the two buttons that get past it. A customer waiting for their
+     night says WHEN, in their own clock, with the zone named.
+     ===================================================================== -->
+<t t-name="biz_tenants.Rollout">
+  <div class="bzt-roll">
+
+    <!-- ==================================================== nothing yet -->
+    <t t-if="!current">
+      <div class="bzk-panel bzt-empty">
+        <div class="bzk-empty">
+          <div class="bzt-empty-ic"><t t-out="ic('rocket', 30)"/></div>
+          <div class="bzt-empty-t">No release is going out.</div>
+          <div class="bzt-empty-s">
+            A rollout takes one release to every system in rings: a practice
+            run on a throwaway copy first, then the blank system new customers
+            are made from, then one customer on their own with a day of
+            watching, then everybody. Each real customer is updated inside
+            their own quiet window, and the whole thing stops at the first
+            thing that goes wrong.
+          </div>
+          <div class="bzt-relnow" t-if="state.rollout.release">
+            <span class="bzk-chip">
+              <t t-out="ic('package', 13)"/>
+              <t t-esc="state.rollout.release.name"/>
+            </span>
+            <span class="bzt-dim">cut <t t-esc="state.rollout.release.cut_on"/></span>
+          </div>
+          <button class="bzk-btn primary" t-on-click="openRolloutPlan"
+                  t-if="state.rollout.release">
+            <t t-out="ic('rocket', 15)"/> <span>Plan a rollout</span>
+          </button>
+          <div class="bzt-dim" t-else="">
+            There is no release to send out yet. Cut one on
+            "In step with master" first.
+          </div>
+        </div>
+      </div>
+
+      <!-- Said BEFORE the button is pressed, not after. Rail R4's blocker is
+           in here, and it names the customer and the button that fixes it. -->
+      <div class="bzk-note bzt-warn" t-if="state.rollout.blockers.length">
+        <t t-out="ic('alert', 15)"/>
+        <div>
+          <b>This could not be started right now:</b>
+          <ul class="bzt-blockers">
+            <li t-foreach="state.rollout.blockers" t-as="b" t-key="b_index"
+                t-esc="b"/>
+          </ul>
+        </div>
+      </div>
+    </t>
+
+    <!-- ================================================ a live rollout -->
+    <t t-else="">
+      <div t-attf-class="bzk-panel bzt-rollhead {{ current.state }}">
+        <div class="bzt-rollhead-l">
+          <div class="bzt-rollhead-t">
+            <span class="bzk-h1">Release <t t-esc="current.release"/></span>
+            <span t-attf-class="bzk-badge {{ rolloutWord(current.state).tone }}">
+              <span class="d"/> <t t-esc="rolloutWord(current.state).label"/>
+            </span>
+          </div>
+          <div class="bzt-rollhead-s" t-esc="rolloutSentence"/>
+          <div class="bzt-rollbar">
+            <span t-attf-style="width:{{ rolloutPercent }}%"/>
+          </div>
+          <div class="bzt-rollmeta">
+            <span><t t-esc="current.done_count"/> of
+                  <t t-esc="current.task_count"/> systems done</span>
+            <span class="bzt-strip-sep">·</span>
+            <span><t t-esc="current.minutes"/> minutes so far</span>
+            <span class="bzt-strip-sep" t-if="current.started_by">·</span>
+            <span t-if="current.started_by">
+              started by <t t-esc="current.started_by"/>
+            </span>
+            <span class="bzt-strip-sep" t-if="current.next_at">·</span>
+            <span t-if="current.next_at">
+              next window opens <t t-esc="current.next_at"/> UTC
+            </span>
+          </div>
+        </div>
+
+        <!-- Every control says what it will do. A button whose effect has to
+             be guessed is a button nobody presses when it matters. -->
+        <div class="bzt-rollacts">
+          <button class="bzk-btn ghost bzk-btn-sm" t-on-click="pauseRollout"
+                  t-if="rolloutIsMoving"
+                  title="Nothing more starts. Anything already running finishes.">
+            <t t-out="ic('pause', 14)"/> <span>Pause</span>
+          </button>
+          <button class="bzk-btn primary bzk-btn-sm" t-on-click="resumeRollout"
+                  t-if="current.state === 'paused'"
+                  title="Carry on from where it stopped. Any failed step has to be dealt with first.">
+            <t t-out="ic('play', 14)"/> <span>Carry on</span>
+          </button>
+          <button class="bzk-btn primary bzk-btn-sm" t-on-click="continueNow"
+                  t-if="current.state === 'waiting' and current.watch_hours"
+                  title="End the watch period on this ring now and open the next one.">
+            <t t-out="ic('skipForward', 14)"/> <span>Continue now</span>
+          </button>
+          <button class="bzk-btn danger bzk-btn-sm" t-on-click="askAbort"
+                  t-if="!rolloutIsOver"
+                  title="Everything not yet done is left behind on the old release.">
+            <t t-out="ic('x', 14)"/> <span>Call it off</span>
+          </button>
+          <button class="bzk-btn ghost bzk-btn-sm" t-on-click="openRolloutPlan"
+                  t-if="rolloutIsOver">
+            <t t-out="ic('rocket', 14)"/> <span>Plan another</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- WHY IT STOPPED, in words somebody can act on, never a trace. -->
+      <div class="bzk-note bzt-err" t-if="current.state === 'paused' and current.note">
+        <t t-out="ic('alert', 15)"/>
+        <span><b>It stopped:</b> <t t-esc="current.note"/></span>
+      </div>
+
+      <div class="bzk-note bzt-info"
+           t-if="current.state === 'waiting' and current.watch_until">
+        <t t-out="ic('clock', 15)"/>
+        <span>
+          <b><t t-esc="current.ring_label"/> is being watched.</b>
+          Nothing moves to the next ring until
+          <t t-esc="current.watch_until"/> UTC — about
+          <t t-esc="current.watch_left_h"/> hours. Their site is checked again
+          while this runs, and one bad answer stops the rollout where it is.
+        </span>
+      </div>
+
+      <!-- ================================= the rings, as a living diagram -->
+      <div class="bzt-lanes">
+        <div t-foreach="current.rings" t-as="ring" t-key="ring.ring"
+             t-attf-class="bzt-lane {{ ring.active ? 'on' : '' }} {{ ring.passed ? 'past' : '' }}">
+          <div class="bzt-lane-h">
+            <span class="bzt-lane-dot"/>
+            <div class="bzt-lane-tx">
+              <div class="bzt-lane-t" t-esc="ring.label"/>
+              <div class="bzt-lane-m" t-esc="ring.meaning"/>
+            </div>
+            <span class="bzk-chip" t-if="ring.active">Here now</span>
+          </div>
+
+          <div class="bzt-cards">
+            <div t-foreach="ring.tasks" t-as="task" t-key="task.id"
+                 t-attf-class="bzt-card {{ task.state }}">
+              <div class="bzt-card-h">
+                <span class="bzt-card-av" t-esc="task.initial"/>
+                <div class="bzt-card-id">
+                  <div class="bzt-card-n" t-esc="task.label"/>
+                  <div class="bzt-card-db" t-esc="task.target_db"/>
+                </div>
+                <span t-attf-class="bzk-badge {{ taskWord(task.state).tone }}">
+                  <span class="d"/> <t t-esc="taskWord(task.state).label"/>
+                </span>
+              </div>
+
+              <!-- The fill. A card that is being updated has a bar that
+                   moves; a card that is done is filled; one still waiting is
+                   empty and says when. -->
+              <div class="bzt-card-fill">
+                <span t-attf-class="f {{ task.state }}"/>
+              </div>
+
+              <div class="bzt-card-b">
+                <div class="bzt-card-when" t-if="task.when">
+                  <t t-out="ic('clock', 12)"/> <span t-esc="task.when"/>
+                </div>
+                <div class="bzt-card-when" t-if="task.state === 'done'">
+                  <t t-out="ic('check', 12)"/>
+                  <span>
+                    <t t-esc="task.added"/> added,
+                    <t t-esc="task.updated"/> brought up to date, in
+                    <t t-esc="task.duration_s"/>s
+                  </span>
+                </div>
+                <div class="bzt-card-err" t-if="task.error">
+                  <t t-out="ic('alert', 12)"/> <span t-esc="task.error"/>
+                </div>
+                <!-- ⚠ RECORDED, NEVER DROPPED (ledger F25). A gate that hides
+                     what it decided to ignore cannot be checked by anybody. -->
+                <div class="bzt-card-dim" t-if="task.ignored_count">
+                  <t t-esc="task.ignored_count"/> log lines were on the ignore
+                  list and did not stop it. They are kept on this step.
+                </div>
+                <div class="bzt-card-dim"
+                     t-if="task.notified_at and taskIsQueued(task)">
+                  Their people have been told it is coming.
+                </div>
+              </div>
+
+              <div class="bzt-card-f">
+                <button class="bzk-btn ghost bzk-btn-sm"
+                        t-if="taskIsQueued(task) and ring.active"
+                        t-on-click="() => this.runTaskNow(task.id)"
+                        title="Do not wait for their quiet window. Recorded against your name.">
+                  <t t-out="ic('play', 13)"/> <span>Run now</span>
+                </button>
+                <button class="bzk-btn primary bzk-btn-sm"
+                        t-if="task.state === 'failed'"
+                        t-on-click="() => this.retryTask(task.id)"
+                        title="Put it back in the queue and try the same update again.">
+                  <t t-out="ic('rotate', 13)"/> <span>Try again</span>
+                </button>
+                <button class="bzk-btn ghost bzk-btn-sm"
+                        t-if="taskCanBeLeft(task)"
+                        t-on-click="() => this.askSkip(task)"
+                        title="They stay on the old release until somebody brings them in step on their own.">
+                  <t t-out="ic('skipForward', 13)"/> <span>Leave behind</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- THE TRAIL. Newest at the bottom, the way somebody watching reads it. -->
+      <div class="bzk-panel" t-if="current.log.length">
+        <div class="bzk-panel-h"><div class="bzk-h2">What has happened</div></div>
+        <div class="bzt-log">
+          <div t-foreach="current.log" t-as="line" t-key="line_index"
+               t-attf-class="bzt-logline {{ line.level }}">
+            <span class="bzt-logts" t-esc="line.ts"/>
+            <span t-esc="line.line"/>
+          </div>
+        </div>
+      </div>
+    </t>
+
+    <!-- Rollouts before this one. -->
+    <div class="bzk-panel" t-if="state.rollout.past.length">
+      <div class="bzk-panel-h"><div class="bzk-h2">Earlier rollouts</div></div>
+      <table class="bzk-table">
+        <thead>
+          <tr><th>Release</th><th>How it ended</th><th>Systems</th>
+              <th>Took</th><th>When</th></tr>
+        </thead>
+        <tbody>
+          <tr t-foreach="state.rollout.past" t-as="p" t-key="p.id">
+            <td><b t-esc="p.release"/></td>
+            <td>
+              <span t-attf-class="bzk-badge {{ rolloutWord(p.state).tone }}">
+                <span class="d"/> <t t-esc="rolloutWord(p.state).label"/>
+              </span>
+            </td>
+            <td><t t-esc="p.done"/> of <t t-esc="p.total"/></td>
+            <td><t t-esc="p.minutes"/> min</td>
+            <td t-esc="p.when"/>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</t>
+
+
+<!-- =====================================================================
+     THE ALERTS SCREEN — the second hero, and the one that earns its keep
+     today: with no outgoing mail account, this is the ONLY place a problem
+     can be seen at all. So it opens on what is new SINCE YOU WERE LAST HERE,
+     it says out loud that nothing was emailed, and every card carries the
+     plain sentence and the next step rather than a number.
+     ===================================================================== -->
+<t t-name="biz_tenants.Alerts">
+  <div class="bzt-alerts">
+
+    <!-- ================================ since you were last here -->
+    <div t-attf-class="bzk-panel bzt-since {{ state.alerts.critical_count ? 'bad' : '' }}">
+      <div class="bzt-since-l">
+        <div class="bzt-since-ic">
+          <t t-out="ic(state.alerts.critical_count ? 'bellOff' : 'bell', 22)"/>
+        </div>
+        <div>
+          <div class="bzt-since-t" t-esc="state.alerts.digest.heading"/>
+          <div class="bzt-since-s" t-esc="state.alerts.digest.intro"/>
+          <div class="bzt-since-n" t-if="state.alerts.new_count">
+            <b><t t-esc="state.alerts.new_count"/> new since you were last
+            here</b>
+            <t t-if="state.alerts.seen_at">
+              (<t t-esc="state.alerts.seen_at"/>)
+            </t>
+          </div>
+        </div>
+      </div>
+      <div class="bzt-since-r">
+        <button class="bzk-btn ghost bzk-btn-sm" t-on-click="refresh">
+          <t t-out="ic('refresh', 14)"/> <span>Look again now</span>
+        </button>
+        <button class="bzk-btn ghost bzk-btn-sm" t-on-click="openSettings">
+          <t t-out="ic('settings', 14)"/> <span>Settings</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ============================== the channel, and it is honestly dark -->
+    <div t-attf-class="bzk-note {{ state.alerts.channel.can_send ? 'bzt-info' : 'bzt-warn' }}">
+      <t t-out="ic(state.alerts.channel.can_send ? 'bell' : 'bellOff', 15)"/>
+      <div>
+        <t t-if="!state.alerts.channel.can_send">
+          <b>Nothing is emailed from this platform yet.</b>
+          <t t-esc="state.alerts.channel.reason"/>
+          Everything that would have been sent is on this screen instead, and
+          none of it is lost. Connect an outgoing mail account and this screen
+          becomes the second place a problem appears rather than the only one.
+        </t>
+        <t t-else="">
+          <b>Alerts are emailed</b> to
+          <t t-esc="recipientLine"/>.
+          This screen shows the same things, whether or not the message
+          arrived.
+        </t>
+      </div>
+      <button class="bzk-btn ghost bzk-btn-sm" t-on-click="sendTestEmail">
+        <t t-out="ic('send', 13)"/> <span>Send a test email</span>
+      </button>
+    </div>
+
+    <!-- ============================================ the platform checks
+         ⚠ THIS CARD DOES NOT HIDE ITSELF WHEN EVERY ROW IS GREEN (ledger
+         F42). The version that went away the moment its checks passed took
+         the "Send a test email" button with it — and that button is wanted on
+         a good day too, because a good day is exactly when nobody finds out
+         the channel is broken. -->
+    <div class="bzk-panel">
+      <div class="bzk-panel-h">
+        <div class="bzk-h2">The platform itself</div>
+        <button class="bzk-btn ghost bzk-btn-sm" t-on-click="refreshStatusPage">
+          <t t-out="ic('globe', 13)"/> <span>Rewrite the public page</span>
+        </button>
+      </div>
+      <div class="bzt-checks">
+        <div t-foreach="state.alerts.checks" t-as="c" t-key="c.key"
+             t-attf-class="bzt-check {{ c.ok ? 'ok' : 'bad' }}">
+          <span class="bzt-check-ic">
+            <t t-out="ic(c.ok ? 'checkCircle' : 'alert', 16)"/>
+          </span>
+          <div class="bzt-check-tx">
+            <div class="bzt-check-t" t-esc="c.label"/>
+            <div class="bzt-check-s" t-esc="c.hint"/>
+          </div>
+          <a class="bzk-btn ghost bzk-btn-sm" t-if="c.link" t-att-href="c.link"
+             target="_blank" rel="noreferrer">
+            <t t-out="ic('external', 13)"/> <span t-esc="c.link_label"/>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================== nothing wrong -->
+    <div class="bzk-panel bzt-empty" t-if="nothingWrong">
+      <div class="bzk-empty">
+        <div class="bzt-empty-ic ok"><t t-out="ic('checkCircle', 30)"/></div>
+        <div class="bzt-empty-t">Nothing is wrong.</div>
+        <div class="bzt-empty-s">
+          Everything is looked at again every fifteen minutes: every customer's
+          address, their copies, their certificates, their errors, and this
+          machine's own memory and disk. Anything that goes wrong appears here
+          within a quarter of an hour, with what to do about it.
+          <t t-if="state.alerts.checked_at">
+            Last looked at <t t-esc="state.alerts.checked_at"/> UTC.
+          </t>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================================================== the problems -->
+    <div t-foreach="alertGroups" t-as="group" t-key="group.key"
+         class="bzt-agroup">
+      <div class="bzt-agroup-h">
+        <span t-attf-class="bzt-agroup-dot {{ group.tone }}"/>
+        <span class="bzk-h2" t-esc="group.label"/>
+        <span class="bzt-count" t-esc="group.rows.length"/>
+      </div>
+      <div class="bzt-acards">
+        <div t-foreach="group.rows" t-as="a" t-key="a.id"
+             t-attf-class="bzt-acard {{ a.severity }} {{ a.is_new ? 'new' : '' }}">
+          <div class="bzt-acard-ic"><t t-out="ic(a.icon, 18)"/></div>
+          <div class="bzt-acard-b">
+            <div class="bzt-acard-t">
+              <span t-esc="a.subject"/>
+              <span class="bzt-new" t-if="a.is_new">New</span>
+            </div>
+            <div class="bzt-acard-x" t-esc="a.text"/>
+            <div class="bzt-acard-m">
+              <span t-if="a.tenant">
+                <t t-out="ic('users', 12)"/> <t t-esc="a.tenant"/>
+              </span>
+              <span><t t-out="ic('clock', 12)"/> started <t t-esc="a.since"/>,
+                    <t t-esc="a.age"/> ago</span>
+              <span t-if="a.count > 1">
+                <t t-out="ic('history', 12)"/> seen <t t-esc="a.count"/> times
+              </span>
+              <!-- ⚠ THE STAMP IS ONLY EVER WRITTEN WHEN A MESSAGE ACTUALLY
+                   LEFT (ledger F40). While there is no mail account it stays
+                   empty, and the card says so rather than staying silent. -->
+              <span class="bzt-dark" t-if="a.channel_state === 'dark'">
+                <t t-out="ic('bellOff', 12)"/> Nobody was emailed
+              </span>
+              <span t-elif="a.spoken">
+                <t t-out="ic('send', 12)"/> emailed <t t-esc="a.spoken"/>
+              </span>
+            </div>
+          </div>
+          <div class="bzt-acard-f">
+            <button class="bzk-btn ghost bzk-btn-sm" t-if="a.state === 'open'"
+                    t-on-click="() => this.ackAlert(a.id)"
+                    title="It stops reminding you. It stays open until it clears.">
+              <t t-out="ic('check', 13)"/> <span>I know</span>
+            </button>
+            <button class="bzk-btn ghost bzk-btn-sm"
+                    t-on-click="() => this.resolveAlert(a.id)"
+                    title="Close it. An urgent one that is closed shows on the public page as an incident for seven days.">
+              <t t-out="ic('checkCircle', 13)"/> <span>It is over</span>
+            </button>
+            <!-- ⚠ A DIFFERENT BUTTON FROM "IT IS OVER" (ledger F41). One
+                 raised while somebody was testing the alarm must be REMOVED,
+                 or the platform advertises an incident that never happened. -->
+            <button class="bzk-btn ghost bzk-btn-sm"
+                    t-on-click="() => this.deleteAlert(a.id)"
+                    title="Remove it altogether. Use this for one raised while testing — it never reaches the public page.">
+              <t t-out="ic('trash', 13)"/> <span>Remove</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================= history -->
+    <div class="bzk-panel" t-if="state.alerts.history.length">
+      <div class="bzk-panel-h">
+        <div class="bzk-h2">Things that have cleared</div>
+        <button class="bzk-btn ghost bzk-btn-sm" t-on-click="toggleAlertHistory">
+          <t t-out="ic(state.alertHistory ? 'chevronDown' : 'chevron', 13)"/>
+          <span>
+            <t t-if="state.alertHistory">Hide</t>
+            <t t-else="">Show <t t-esc="state.alerts.history.length"/></t>
+          </span>
+        </button>
+      </div>
+      <table class="bzk-table" t-if="state.alertHistory">
+        <thead>
+          <tr><th>What</th><th>Customer</th><th>Lasted</th><th>Ended</th></tr>
+        </thead>
+        <tbody>
+          <tr t-foreach="state.alerts.history" t-as="h" t-key="h.id">
+            <td>
+              <span t-attf-class="bzk-badge {{ sevWord(h.severity).tone }}">
+                <span class="d"/> <t t-esc="h.subject"/>
+              </span>
+            </td>
+            <td t-esc="h.tenant or '—'"/>
+            <td t-esc="h.age"/>
+            <td t-esc="h.ended"/>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</t>
+
+
+<!-- ============================================ the rollout plan dialog -->
+<t t-name="biz_tenants.RolloutPlan">
+  <div class="bzk-modal-scrim" t-on-click.self="closeOverlays">
+    <div class="bzk-modal bzt-modal wide">
+      <div class="bzk-modal__head">
+        <div>
+          <div class="bzk-modal__ttl">
+            Send release <t t-esc="state.rolloutPlan.release.name"/> out
+          </div>
+          <div class="bzk-modal__sub">
+            Exactly this, in exactly this order, and it stops at the first
+            thing that goes wrong. Nothing here has happened yet.
+          </div>
+        </div>
+        <button class="bzk-modal__x" t-on-click="closeOverlays">
+          <t t-out="ic('x', 16)"/>
+        </button>
+      </div>
+      <div class="bzk-modal__body bzt-modalbody">
+
+        <div class="bzk-note bzt-err" t-if="state.rolloutPlan.blockers.length">
+          <t t-out="ic('alert', 15)"/>
+          <div>
+            <b>This cannot start yet:</b>
+            <ul class="bzt-blockers">
+              <li t-foreach="state.rolloutPlan.blockers" t-as="b"
+                  t-key="b_index" t-esc="b"/>
+            </ul>
+          </div>
+        </div>
+
+        <div class="bzk-note bzt-warn" t-foreach="state.rolloutPlan.warnings"
+             t-as="w" t-key="w_index">
+          <t t-out="ic('alert', 15)"/> <span t-esc="w"/>
+        </div>
+
+        <table class="bzk-table bzt-plantable">
+          <thead>
+            <tr><th>Ring</th><th>System</th><th>When</th></tr>
+          </thead>
+          <tbody>
+            <tr t-foreach="state.rolloutPlan.tasks" t-as="t" t-key="t_index">
+              <td><b t-esc="t.ring_label"/></td>
+              <td>
+                <t t-esc="t.label"/>
+                <div class="bzt-dim" t-esc="t.target_db"/>
+              </td>
+              <td t-esc="t.when"/>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="bzk-panel bzt-excl" t-if="state.rolloutPlan.excluded.length">
+          <div class="bzk-h2">Left out, and why</div>
+          <div t-foreach="state.rolloutPlan.excluded" t-as="e" t-key="e_index"
+               class="bzt-exclrow">
+            <b t-esc="e.name"/> — <span t-esc="e.reason"/>
+          </div>
+        </div>
+
+        <div class="bzk-sub bzt-pad">
+          The practice run happens as soon as you press the button and takes a
+          minute or two, so you see whether the update works before anybody
+          else does. Everything after it waits for its own window.
+        </div>
+      </div>
+      <div class="bzk-modal__foot">
+        <span class="bzk-modal__sp"/>
+        <button class="bzk-btn ghost" t-on-click="closeOverlays">Cancel</button>
+        <button class="bzk-btn primary" t-on-click="startRollout"
+                t-att-disabled="state.rolloutPlan.blockers.length ? 'disabled' : undefined">
+          <t t-out="ic('rocket', 15)"/> <span>Start with the practice run</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</t>
+
+
+<t t-name="biz_tenants.SkipConfirm">
+  <div class="bzk-modal-scrim" t-on-click.self="closeOverlays">
+    <div class="bzk-modal bzt-modal">
+      <div class="bzk-modal__head">
+        <div>
+          <div class="bzk-modal__ttl">
+            Leave <t t-esc="state.taskConfirm.task.label"/> behind
+          </div>
+          <div class="bzk-modal__sub">
+            They stay on the old release. The rollout carries on to everybody
+            else. Somebody has to bring them in step on their own later.
+          </div>
+        </div>
+        <button class="bzk-modal__x" t-on-click="closeOverlays">
+          <t t-out="ic('x', 16)"/>
+        </button>
+      </div>
+      <div class="bzk-modal__body bzt-modalbody"
+           t-if="state.taskConfirm.task.slug">
+        <label class="bzt-field">
+          <span class="bzt-lab">
+            Type <b t-esc="state.taskConfirm.task.slug"/> to confirm
+          </span>
+          <input type="text" t-att-value="state.taskConfirm.typed"
+                 t-on-input="onSkipType"
+                 t-att-placeholder="state.taskConfirm.task.slug"/>
+        </label>
+      </div>
+      <div class="bzk-modal__foot">
+        <span class="bzk-modal__sp"/>
+        <button class="bzk-btn ghost" t-on-click="closeOverlays">Cancel</button>
+        <button class="bzk-btn danger" t-on-click="doSkip"
+                t-att-disabled="skipMatches ? undefined : 'disabled'">
+          <t t-out="ic('skipForward', 15)"/> <span>Leave them behind</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</t>
+
+
+<t t-name="biz_tenants.AbortConfirm">
+  <div class="bzk-modal-scrim" t-on-click.self="closeOverlays">
+    <div class="bzk-modal bzt-modal">
+      <div class="bzk-modal__head">
+        <div>
+          <div class="bzk-modal__ttl">Call this rollout off</div>
+          <div class="bzk-modal__sub">
+            Every system that has not been updated yet is left on the old
+            release. What has already gone out stays out. This is also the
+            right thing to do with one that is stopped and not going to
+            continue — a rollout left lying about holds the one practice copy
+            everybody else needs.
+          </div>
+        </div>
+        <button class="bzk-modal__x" t-on-click="closeOverlays">
+          <t t-out="ic('x', 16)"/>
+        </button>
+      </div>
+      <div class="bzk-modal__body bzt-modalbody">
+        <label class="bzt-field">
+          <span class="bzt-lab">
+            Type <b t-esc="current.release"/> to confirm
+          </span>
+          <input type="text" t-att-value="state.aborting.typed"
+                 t-on-input="onAbortType" t-att-placeholder="current.release"/>
+        </label>
+      </div>
+      <div class="bzk-modal__foot">
+        <span class="bzk-modal__sp"/>
+        <button class="bzk-btn ghost" t-on-click="closeOverlays">Cancel</button>
+        <button class="bzk-btn danger" t-on-click="doAbort"
+                t-att-disabled="abortMatches ? undefined : 'disabled'">
+          <t t-out="ic('x', 15)"/> <span>Call it off</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</t>
+
+
+<t t-name="biz_tenants.AlertSettings">
+  <div class="bzk-modal-scrim" t-on-click.self="closeSettings">
+    <div class="bzk-modal bzt-modal wide">
+      <div class="bzk-modal__head">
+        <div>
+          <div class="bzk-modal__ttl">Alert settings</div>
+          <div class="bzk-modal__sub">
+            When the platform says something, to whom, and how much room it
+            keeps for another customer.
+          </div>
+        </div>
+        <button class="bzk-modal__x" t-on-click="closeSettings">
+          <t t-out="ic('x', 16)"/>
+        </button>
+      </div>
+      <div class="bzk-modal__body bzt-modalbody">
+
+        <label class="bzt-field">
+          <span class="bzt-lab">Who would be told</span>
+          <input type="text" t-att-value="state.settings.alert_to"
+                 t-on-input="(ev) => this.onSetting('alert_to', ev)"
+                 placeholder="Leave empty for every platform administrator"/>
+          <span class="bzt-hint">
+            Empty means every platform administrator with an email address:
+            <t t-esc="defaultRecipientLine"/>.
+            Nothing is sent today — there is no outgoing mail account.
+          </span>
+        </label>
+
+        <div class="bzt-two">
+          <label class="bzt-field">
+            <span class="bzt-lab">Remind about an urgent problem every</span>
+            <input type="number" min="0" max="168"
+                   t-att-value="state.settings.interval_critical"
+                   t-on-input="(ev) => this.onSetting('interval_critical', ev)"/>
+            <span class="bzt-hint">hours. 0 means never remind.</span>
+          </label>
+          <label class="bzt-field">
+            <span class="bzt-lab">Remind about a smaller one every</span>
+            <input type="number" min="0" max="168"
+                   t-att-value="state.settings.interval_warning"
+                   t-on-input="(ev) => this.onSetting('interval_warning', ev)"/>
+            <span class="bzt-hint">hours.</span>
+          </label>
+        </div>
+
+        <div class="bzk-h2 bzt-pad">Room for another customer</div>
+        <div class="bzt-two">
+          <label class="bzt-field">
+            <span class="bzt-lab">Memory one customer is allowed (MB)</span>
+            <input type="number" min="1" max="4096"
+                   t-att-value="state.settings.tenant_cost_mb"
+                   t-on-input="(ev) => this.onSetting('tenant_cost_mb', ev)"/>
+          </label>
+          <label class="bzt-field">
+            <span class="bzt-lab">Memory kept back for the machine (MB)</span>
+            <input type="number" min="0" max="8192"
+                   t-att-value="state.settings.reserve_mb"
+                   t-on-input="(ev) => this.onSetting('reserve_mb', ev)"/>
+          </label>
+        </div>
+        <!-- SAID ON THE SCREEN, because somebody will otherwise read a policy
+             as a measurement (ledger F34). -->
+        <div class="bzk-note bzt-info">
+          <t t-out="ic('info', 15)"/>
+          <span t-esc="state.settings.cost_note"/>
+        </div>
+        <div class="bzk-sub bzt-pad" t-esc="state.settings.capacity.reason"/>
+
+        <div class="bzk-h2 bzt-pad">When to say something</div>
+        <div class="bzt-two">
+          <label class="bzt-field">
+            <span class="bzt-lab">Disk free falls below (%)</span>
+            <input type="number"
+                   t-att-value="state.settings.thresholds.disk_free_pct"
+                   t-on-input="(ev) => this.onThreshold('disk_free_pct', ev)"/>
+          </label>
+          <label class="bzt-field">
+            <span class="bzt-lab">Memory free falls below (MB)</span>
+            <input type="number"
+                   t-att-value="state.settings.thresholds.mem_available_mb"
+                   t-on-input="(ev) => this.onThreshold('mem_available_mb', ev)"/>
+          </label>
+          <label class="bzt-field">
+            <span class="bzt-lab">A copy is older than (hours)</span>
+            <input type="number"
+                   t-att-value="state.settings.thresholds.backup_stale_hours"
+                   t-on-input="(ev) => this.onThreshold('backup_stale_hours', ev)"/>
+          </label>
+          <label class="bzt-field">
+            <span class="bzt-lab">A certificate has fewer than (days) left</span>
+            <input type="number"
+                   t-att-value="state.settings.thresholds.cert_days"
+                   t-on-input="(ev) => this.onThreshold('cert_days', ev)"/>
+          </label>
+          <label class="bzt-field">
+            <span class="bzt-lab">Errors from one system in 15 minutes</span>
+            <input type="number"
+                   t-att-value="state.settings.thresholds.error_lines"
+                   t-on-input="(ev) => this.onThreshold('error_lines', ev)"/>
+          </label>
+          <label class="bzt-field">
+            <span class="bzt-lab">The public page speaks this clock</span>
+            <input type="text" t-att-value="state.settings.status_tz"
+                   t-on-input="(ev) => this.onSetting('status_tz', ev)"/>
+            <span class="bzt-hint">
+              A page on disk has no reader to ask what time it is, so the zone
+              is printed on it.
+            </span>
+          </label>
+        </div>
+
+        <label class="bzt-field">
+          <span class="bzt-lab">Log lines that are always there</span>
+          <textarea rows="4" t-att-value="state.settings.health_ignore"
+                    t-on-input="(ev) => this.onSetting('health_ignore', ev)"
+                    placeholder="One piece of text per line. Empty means ignore nothing."/>
+          <span class="bzt-hint">
+            A line matching one of these does not stop a rollout — but it is
+            still counted and still kept, so it can be checked. Leave this
+            empty while chasing something.
+          </span>
+        </label>
+      </div>
+      <div class="bzk-modal__foot">
+        <span class="bzk-modal__sp"/>
+        <button class="bzk-btn ghost" t-on-click="closeSettings">Close</button>
+        <button class="bzk-btn primary" t-on-click="saveSettings">
+          <t t-out="ic('save', 15)"/> <span>Save</span>
         </button>
       </div>
     </div>

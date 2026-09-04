@@ -61,13 +61,47 @@ const RELEASE_WORDS = {
     unknown: { label: _t("Not checked"), tone: "muted" },
 };
 
-/** The four tabs on one customer. */
+/** The five tabs on one customer. */
 const TABS = [
     { key: "overview", label: _t("Overview"), icon: "gauge" },
     { key: "backups", label: _t("Copies"), icon: "archive" },
+    { key: "updates", label: _t("Updates"), icon: "rocket" },
     { key: "instep", label: _t("In step"), icon: "gitMerge" },
     { key: "danger", label: _t("Closing down"), icon: "alert" },
 ];
+
+/** How one step of a rollout reads, and the tone it wears. */
+const TASK_WORDS = {
+    waiting: { label: _t("Waiting for their window"), tone: "muted" },
+    due: { label: _t("Their window is open"), tone: "info" },
+    running: { label: _t("Being updated"), tone: "info" },
+    done: { label: _t("Done"), tone: "ok" },
+    failed: { label: _t("Failed"), tone: "err" },
+    skipped: { label: _t("Left behind"), tone: "warn" },
+};
+
+const ROLLOUT_WORDS = {
+    draft: { label: _t("Not started"), tone: "muted" },
+    rehearsing: { label: _t("Practising on a copy"), tone: "info" },
+    running: { label: _t("Running"), tone: "info" },
+    waiting: { label: _t("Waiting"), tone: "warn" },
+    paused: { label: _t("Stopped"), tone: "err" },
+    done: { label: _t("Finished"), tone: "ok" },
+    aborted: { label: _t("Called off"), tone: "muted" },
+};
+
+/** The three words, and the floor under them: an `info` is never announced
+ *  as something that needs attention (ledger F68). */
+const SEVERITY_WORDS = {
+    critical: { label: _t("Needs attention now"), tone: "err" },
+    warning: { label: _t("Worth a look"), tone: "warn" },
+    info: { label: _t("For information"), tone: "info" },
+};
+
+/** How often the rollout screen asks again while something is moving. Only
+ *  while the tab is in front (ledger F14): a background tab does not update,
+ *  and pretending otherwise makes a screenshot lie. */
+const ROLLOUT_POLL_MS = 15000;
 
 /**
  * A local wall-clock moment as the platform's own stored spelling.
@@ -133,9 +167,30 @@ export class BizTenants extends Component {
             // screen was first painted.
             plan: null,
             slugTouched: false,
+            // the rollout screen and the alerts screen
+            rollout: null,
+            rolloutPlan: null,
+            alerts: null,
+            settings: null,
+            taskConfirm: null,
+            aborting: null,
+            updates: null,
+            alertHistory: false,
         });
 
         onWillStart(() => this.loadFleet());
+
+        // ⚠ THE POLL RUNS ONLY WHILE THE TAB IS IN FRONT (ledger F14). A
+        // background tab that quietly stopped asking is a screen that says a
+        // rollout is still on its first ring twenty minutes after it finished.
+        this._poll = setInterval(() => {
+            if (document.hidden) { return; }
+            if (this.state.view !== "rollout") { return; }
+            if (this.state.busy) { return; }
+            if (!this.rolloutIsMoving) { return; }
+            this.pollRollout();
+        }, ROLLOUT_POLL_MS);
+        onWillUnmount(() => clearInterval(this._poll));
 
         // ⚠ `document` WITH `{capture: true}`, NEVER `window` (ledger F10).
         // Something in the shared client listens for keydown on the body and
@@ -162,6 +217,8 @@ export class BizTenants extends Component {
     get headline() {
         if (this.state.view === "wizard") { return _t("A new customer"); }
         if (this.state.view === "sync") { return _t("In step with master"); }
+        if (this.state.view === "rollout") { return _t("Sending a release out"); }
+        if (this.state.view === "alerts") { return _t("Alerts"); }
         if (this.state.view === "detail" && this.state.tenant) {
             return this.state.tenant.name;
         }
@@ -175,6 +232,14 @@ export class BizTenants extends Component {
         }
         if (this.state.view === "sync") {
             return _t("What each system has, against what this platform runs.");
+        }
+        if (this.state.view === "rollout") {
+            return _t("A practice run, then the blank system, then one " +
+                      "customer, then the rest — each inside their own night.");
+        }
+        if (this.state.view === "alerts") {
+            return _t("Everything this platform has noticed. Nothing is " +
+                      "emailed yet, so this screen is where it all appears.");
         }
         if (this.state.view === "detail" && this.state.tenant) {
             return _t("Set up %(when)s.",
@@ -205,6 +270,9 @@ export class BizTenants extends Component {
     stateWord(key) { return STATE_WORDS[key] || STATE_WORDS.draft; }
     healthWord(key) { return HEALTH_WORDS[key] || HEALTH_WORDS.unknown; }
     releaseWord(key) { return RELEASE_WORDS[key] || RELEASE_WORDS.unknown; }
+    taskWord(key) { return TASK_WORDS[key] || TASK_WORDS.waiting; }
+    rolloutWord(key) { return ROLLOUT_WORDS[key] || ROLLOUT_WORDS.draft; }
+    sevWord(key) { return SEVERITY_WORDS[key] || SEVERITY_WORDS.warning; }
 
     /** Every call the cockpit makes goes through here, so "busy" and "the
      *  reason it failed" are decided in exactly one place. */
@@ -235,7 +303,7 @@ export class BizTenants extends Component {
         if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT"
             || (el && el.isContentEditable)) { return; }
         if (document.querySelector(".o_dialog, .modal.show")) { return; }
-        if (this.state.composer || this.state.confirm || this.state.cutting) {
+        if (this.anyOverlay) {
             if (ev.key === "Escape") { this.closeOverlays(); ev.preventDefault(); }
             return;
         }
@@ -248,6 +316,9 @@ export class BizTenants extends Component {
         } else if (ev.key === "n" && !ev.metaKey && !ev.ctrlKey) {
             this.openWizard();
             ev.preventDefault();
+        } else if (ev.key === "a" && !ev.metaKey && !ev.ctrlKey) {
+            this.openAlerts();
+            ev.preventDefault();
         }
     }
 
@@ -255,6 +326,16 @@ export class BizTenants extends Component {
         this.state.composer = null;
         this.state.confirm = null;
         this.state.cutting = null;
+        this.state.rolloutPlan = null;
+        this.state.settings = null;
+        this.state.taskConfirm = null;
+        this.state.aborting = null;
+    }
+
+    get anyOverlay() {
+        const s = this.state;
+        return !!(s.composer || s.confirm || s.cutting || s.rolloutPlan
+                  || s.settings || s.taskConfirm || s.aborting);
     }
 
     // ---------------------------------------------------------- the fleet
@@ -311,6 +392,12 @@ export class BizTenants extends Component {
         } else if (this.state.view === "sync") {
             this.state.sync = await this.call("sync_report", [],
                                               _t("Reading every system…"));
+        } else if (this.state.view === "rollout") {
+            this.state.rollout = await this.call("rollout_state", [],
+                                                 _t("Reading the rollout…"));
+        } else if (this.state.view === "alerts") {
+            this.state.alerts = await this.call(
+                "alert_check_now", [], _t("Looking at everything again…"));
         } else {
             await this.loadFleet();
         }
@@ -552,7 +639,12 @@ export class BizTenants extends Component {
         this.state.view = "detail";
     }
 
-    setTab(key) { this.state.tab = key; }
+    async setTab(key) {
+        // The answer first, the tab second (H72) — the Updates tab reads its
+        // own data and would otherwise render against nothing.
+        if (key === "updates") { await this.openUpdates(); }
+        this.state.tab = key;
+    }
 
     get logLines() {
         const t = this.state.tenant;
@@ -748,6 +840,383 @@ export class BizTenants extends Component {
             _t("%(n)s scheduled jobs switched off on the blank system.",
                { n: res.disabled }),
             { type: "success" });
+    }
+
+    // =====================================================================
+    //  THE ROLLOUT SCREEN — the hero. A release walking the fleet, ring by
+    //  ring, with Pause / Continue / Retry / Leave behind / Call it off always
+    //  one press away and every one of them saying what it will do.
+    // =====================================================================
+    /**
+     * ⚠ THE ANSWER FIRST, THE VIEW SECOND (ledger H72). This screen reads its
+     * data on its very first line, so switching to it before the read lands
+     * renders it against `null`, throws inside the component's lifecycle, and
+     * puts a stack trace in front of somebody — which then recovers a second
+     * later, so it reads as a flicker rather than as a fault.
+     */
+    async openRollout() {
+        const data = await this.call("rollout_state", [],
+                                     _t("Reading the rollout…"));
+        this.state.rollout = data;
+        this.state.view = "rollout";
+    }
+
+    /** Quietly, for the poll: no spinner, and a failure is not a dialog. */
+    async pollRollout() {
+        try {
+            this.state.rollout = await this.orm.call("biz.tenants",
+                                                     "rollout_state", []);
+        } catch {
+            // A poll that fails is a poll. The next one will say so if it is
+            // not a blip, and a red box every fifteen seconds is not help.
+        }
+    }
+
+    get current() {
+        return (this.state.rollout && this.state.rollout.current) || null;
+    }
+
+    /**
+     * ⚠ A STRING, NOT THE OBJECT (ledger F47, second half). Watching the
+     * rollout object itself would repaint on every poll for ever, because the
+     * poll replaces it with a fresh one whether or not anything moved. This
+     * changes only when the answer changes.
+     */
+    get rolloutSignature() {
+        const c = this.current;
+        if (!c) { return "none"; }
+        return [c.id, c.state, c.ring, c.done_count, c.failed_count,
+                c.queued_count].join("|");
+    }
+
+    /* Every one of these is a list membership computed HERE rather than in the
+     * template. A template is compiled against the component and has no
+     * built-ins of its own (ledger F16), and a list written inline is also a
+     * list nothing can test. */
+    get rolloutIsMoving() {
+        const c = this.current;
+        return !!(c && ["rehearsing", "running", "waiting"].includes(c.state));
+    }
+
+    get rolloutIsOver() {
+        const c = this.current;
+        return !!(c && ["done", "aborted"].includes(c.state));
+    }
+
+    /** Waiting for a window, or in one and not yet started. */
+    taskIsQueued(task) {
+        return !!task && ["waiting", "due"].includes(task.state);
+    }
+
+    /** Anything not already done can still be left behind. */
+    taskCanBeLeft(task) {
+        return !!task && ["waiting", "due", "failed"].includes(task.state);
+    }
+
+    /** The one line under the title: where this release has got to. */
+    get rolloutSentence() {
+        const c = this.current;
+        if (!c) { return _t("No release is going out."); }
+        if (c.state === "done") {
+            return _t("Release %(name)s is out. %(n)s of %(total)s customers " +
+                      "have it, and it took %(mins)s minutes.",
+                      { name: c.release, n: c.customer_done,
+                        total: c.customer_total, mins: c.minutes });
+        }
+        if (c.state === "aborted") {
+            return _t("Release %(name)s was called off.", { name: c.release });
+        }
+        if (c.state === "paused") {
+            return _t("Stopped on %(ring)s. Nothing goes any further until " +
+                      "somebody decides what to do.", { ring: c.ring_label });
+        }
+        if (c.state === "waiting" && c.watch_until) {
+            return _t("Watching %(ring)s for another %(h)s hours before the " +
+                      "next ring opens.",
+                      { ring: c.ring_label, h: c.watch_left_h });
+        }
+        if (c.state === "waiting") {
+            return _t("Waiting for the next customer's quiet window to open.");
+        }
+        return _t("On %(ring)s. %(done)s of %(total)s systems done.",
+                  { ring: c.ring_label, done: c.done_count,
+                    total: c.task_count });
+    }
+
+    /** 0–100, for the bar across the top of the ring diagram. */
+    get rolloutPercent() {
+        const c = this.current;
+        if (!c || !c.task_count) { return 0; }
+        return Math.round((c.done_count * 100) / c.task_count);
+    }
+
+    ringMeaning(ring) {
+        const r = this.state.rollout;
+        return (r && r.ring_meaning && r.ring_meaning[ring]) || "";
+    }
+
+    async openRolloutPlan() {
+        const plan = await this.call("rollout_plan", [],
+                                     _t("Working out what would happen…"));
+        this.state.rolloutPlan = plan;
+    }
+
+    async startRollout() {
+        const plan = this.state.rolloutPlan;
+        this.state.rolloutPlan = null;
+        this.state.rollout = await this.call(
+            "rollout_start",
+            [plan.release.id, plan.watch_canary, plan.watch_early],
+            _t("Practising on a throwaway copy — this takes a minute or two…"));
+        this.state.view = "rollout";
+        this.notification.add(
+            _t("Started. The practice run has just happened; everything after " +
+               "it waits for its own window."),
+            { type: "success", sticky: true });
+    }
+
+    async rolloutAct(method, args, what) {
+        this.state.rollout = await this.call(method, args, what);
+        await this.loadFleet();
+    }
+
+    pauseRollout() {
+        return this.rolloutAct("rollout_pause", [this.current.id, ""],
+                               _t("Stopping it…"));
+    }
+
+    resumeRollout() {
+        return this.rolloutAct("rollout_resume", [this.current.id],
+                               _t("Carrying on…"));
+    }
+
+    continueNow() {
+        return this.rolloutAct("rollout_continue_now", [this.current.id],
+                               _t("Ending the watch period…"));
+    }
+
+    retryTask(id) {
+        return this.rolloutAct("task_retry", [id], _t("Trying it again…"));
+    }
+
+    runTaskNow(id) {
+        return this.rolloutAct("task_run_now", [id], _t("Updating them now…"));
+    }
+
+    /** Leaving a customer behind needs their short name typed. */
+    askSkip(task) {
+        this.state.taskConfirm = { task, typed: "" };
+    }
+
+    onSkipType(ev) { this.state.taskConfirm.typed = ev.target.value; }
+
+    get skipMatches() {
+        const c = this.state.taskConfirm;
+        if (!c) { return false; }
+        if (!c.task.slug) { return true; }
+        return c.typed.trim().toLowerCase() === c.task.slug;
+    }
+
+    async doSkip() {
+        const c = this.state.taskConfirm;
+        this.state.taskConfirm = null;
+        await this.rolloutAct("task_skip", [c.task.id, c.typed],
+                              _t("Leaving them behind…"));
+    }
+
+    askAbort() { this.state.aborting = { typed: "" }; }
+
+    onAbortType(ev) { this.state.aborting.typed = ev.target.value; }
+
+    get abortMatches() {
+        const a = this.state.aborting;
+        return !!(a && this.current
+                  && a.typed.trim() === this.current.release);
+    }
+
+    async doAbort() {
+        const typed = this.state.aborting.typed;
+        this.state.aborting = null;
+        await this.rolloutAct("rollout_abort", [this.current.id, typed],
+                              _t("Calling it off…"));
+    }
+
+    // ---------------------------------------------- one customer's updates
+    async openUpdates() {
+        this.state.updates = await this.call(
+            "tenant_updates", [this.state.tenant.id], _t("Reading…"));
+    }
+
+    /**
+     * The hours and the lengths, as lists on the COMPONENT. A template is
+     * compiled against the component and has no built-ins of its own (F16), so
+     * anything it loops over is computed here rather than written inline.
+     */
+    get hourChoices() {
+        return Array.from({ length: 24 }, (_v, i) => i);
+    }
+
+    get lengthChoices() { return [1, 2, 3, 4, 5, 6, 8, 10, 12]; }
+
+    async setWindow(field, value) {
+        const u = this.state.updates;
+        const args = [u.id, null, null, null];
+        const at = { ring: 1, start_hour: 2, hours: 3 }[field];
+        args[at] = field === "ring" ? value : parseInt(value, 10);
+        this.state.updates = await this.call("tenant_set_window", args,
+                                             _t("Saving…"));
+        this.notification.add(_t("Saved."), { type: "success" });
+    }
+
+    setRing(key) { return this.setWindow("ring", key); }
+    onWindowHour(ev) { return this.setWindow("start_hour", ev.target.value); }
+    onWindowLength(ev) { return this.setWindow("hours", ev.target.value); }
+
+    // =====================================================================
+    //  THE ALERTS SCREEN — the second hero, and today the ONLY channel.
+    //  With nothing being emailed, this screen is the whole of how a problem
+    //  reaches a person, which is why it opens on "since you were last here".
+    // =====================================================================
+    async openAlerts() {
+        const data = await this.call("alerts_data", [],
+                                     _t("Reading what has been noticed…"));
+        this.state.alerts = data;
+        this.state.view = "alerts";
+    }
+
+    get alertGroups() {
+        const a = this.state.alerts;
+        if (!a) { return []; }
+        return [
+            { key: "critical", label: _t("Needs attention now"),
+              tone: "err", rows: a.critical },
+            { key: "warning", label: _t("Worth a look"),
+              tone: "warn", rows: a.warning },
+            { key: "info", label: _t("For information"),
+              tone: "info", rows: a.info },
+            { key: "acknowledged", label: _t("You said you know about these"),
+              tone: "muted", rows: a.acknowledged },
+        ].filter((g) => g.rows && g.rows.length);
+    }
+
+    /** Who would be told, as one readable line. Joined HERE, not in the
+     *  template (F16), and honest when the answer is "nobody". */
+    get recipientLine() {
+        const a = this.state.alerts;
+        const rows = (a && a.channel && a.channel.recipients) || [];
+        return rows.length ? rows.join(", ") : _t("nobody has an address");
+    }
+
+    get defaultRecipientLine() {
+        const s = this.state.settings;
+        const rows = (s && s.default_recipients) || [];
+        return rows.length ? rows.join(", ") : _t("nobody has one");
+    }
+
+    get nothingWrong() {
+        const a = this.state.alerts;
+        return !!(a && !a.open_count);
+    }
+
+    async alertAct(method, args, what) {
+        this.state.alerts = await this.call(method, args, what);
+        await this.loadFleet();
+    }
+
+    ackAlert(id) {
+        return this.alertAct("alert_ack", [id], _t("Noted…"));
+    }
+
+    resolveAlert(id) {
+        return this.alertAct("alert_resolve", [id, ""], _t("Closing it…"));
+    }
+
+    /**
+     * ⚠ NOT THE SAME BUTTON AS "IT IS OVER" (ledger F41). A RESOLVED urgent
+     * alert shows on the PUBLIC page as an incident for seven days, which is
+     * right for something that really happened and wrong for one raised while
+     * somebody was testing the alarm. The wording on the button says so.
+     */
+    deleteAlert(id) {
+        return this.alertAct("alert_delete", [id], _t("Removing it…"));
+    }
+
+    toggleAlertHistory() {
+        this.state.alertHistory = !this.state.alertHistory;
+    }
+
+    async sendTestEmail() {
+        const res = await this.call("mail_test", [], _t("Trying…"));
+        this.notification.add(res.message,
+                              { type: res.ok ? "success" : "warning",
+                                sticky: true });
+        this.state.alerts = await this.call("alerts_data", [false]);
+    }
+
+    async openSettings() {
+        this.state.settings = await this.call("alert_settings", [],
+                                              _t("Reading the settings…"));
+    }
+
+    onSetting(field, ev) {
+        this.state.settings[field] = ev.target.value;
+    }
+
+    onThreshold(field, ev) {
+        this.state.settings.thresholds[field] = ev.target.value;
+    }
+
+    async saveSettings() {
+        const s = this.state.settings;
+        const saved = await this.call("alert_settings_save", [{
+            alert_to: s.alert_to,
+            interval_critical: s.interval_critical,
+            interval_warning: s.interval_warning,
+            tenant_cost_mb: s.tenant_cost_mb,
+            reserve_mb: s.reserve_mb,
+            status_tz: s.status_tz,
+            health_ignore: s.health_ignore,
+            thresholds: s.thresholds,
+        }], _t("Saving…"));
+        this.state.settings = saved;
+        this.notification.add(_t("Saved."), { type: "success" });
+        await this.loadFleet();
+    }
+
+    closeSettings() { this.state.settings = null; }
+
+    async refreshStatusPage() {
+        const res = await this.call("status_page_refresh", [],
+                                    _t("Rewriting the public page…"));
+        this.notification.add(
+            res.ok
+                ? _t("Rewritten. Anybody visiting the public address sees it now.")
+                : _t("It could not be written: %(why)s", { why: res.reason }),
+            { type: res.ok ? "success" : "warning", sticky: !res.ok });
+        this.state.alerts = await this.call("alerts_data", [false]);
+    }
+
+    // ------------------------------------------------------ the capacity gauge
+    get capacity() {
+        return (this.state.fleet && this.state.fleet.capacity) || {};
+    }
+
+    /** How full the bar reads. Room for six or more paints a full bar: past
+     *  that the number is the answer and the bar is decoration. */
+    get capacityPercent() {
+        const c = this.capacity;
+        const room = c.headroom || 0;
+        return Math.max(4, Math.min(100, Math.round((room / 6) * 100)));
+    }
+
+    get capacitySentence() {
+        const c = this.capacity;
+        if (!c.reason) { return ""; }
+        return c.reason;
+    }
+
+    get banner() {
+        return (this.state.fleet && this.state.fleet.alert) || {};
     }
 
     // ------------------------------------------------------------- danger

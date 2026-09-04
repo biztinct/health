@@ -58,4 +58,83 @@
         <field name="active" eval="True"/>
     </record>
 
+    <!-- ==================================================================
+         AND FIVE MORE, AND STILL NOT ONE OF THEM INSTALLS ANYTHING.
+
+         The rollout worker is the only one that changes a customer's system
+         at all, and it changes it ONLY by doing what a person already wrote
+         down when they pressed Start. With nobody having pressed it, the
+         worker looks for a rollout, finds none, and stops — which is what it
+         does on nearly every run it will ever make.
+         ================================================================== -->
+
+    <!-- Every fifteen minutes: look at everything, compare it with what was
+         already known, and write down what changed. With no outgoing mail
+         account this job speaks to nobody — everything it would have sent is
+         written on the Alerts screen instead, and it says so there. -->
+    <record id="cron_alerts" model="ir.cron">
+        <field name="name">Platform: look for anything wrong</field>
+        <field name="model_id" ref="model_biz_tenants"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_alerts()</field>
+        <field name="interval_number">15</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- One short summary a day. THE EMPTY ONE IS THE POINT: a channel that
+         only ever speaks when something is broken cannot be told apart from a
+         channel that is broken. -->
+    <record id="cron_alert_digest" model="ir.cron">
+        <field name="name">Platform: the morning summary</field>
+        <field name="model_id" ref="model_biz_tenants"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_alert_digest()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+        <field name="nextcall"
+               eval="(DateTime.now().replace(hour=1, minute=0, second=0)
+                      + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+    </record>
+
+    <!-- The public page, rewritten every five minutes. It also rewrites itself
+         at the end of every check and after every message sent or cleared;
+         this job is what makes the timestamp on it move on a quiet day, which
+         is what stops the page silently going stale. -->
+    <record id="cron_status_page" model="ir.cron">
+        <field name="name">Platform: rewrite the public page</field>
+        <field name="model_id" ref="model_biz_tenants"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_status_page()</field>
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- One step of whatever a PERSON started, every five minutes. It never
+         starts anything and it never opens a new ring around a failure. -->
+    <record id="cron_rollout_worker" model="ir.cron">
+        <field name="name">Releases: carry on with a rollout somebody started</field>
+        <field name="model_id" ref="model_biz_tenants"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_rollout_worker()</field>
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- Hourly: warn the customers whose quiet window opens within a day, on
+         their own screens, in their own clock. It only ever speaks to a
+         customer already on somebody's list. -->
+    <record id="cron_rollout_notices" model="ir.cron">
+        <field name="name">Releases: warn tomorrow's customers</field>
+        <field name="model_id" ref="model_biz_tenants"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_rollout_notices()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active" eval="True"/>
+    </record>
+
 </odoo>

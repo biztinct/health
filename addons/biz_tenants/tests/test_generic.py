@@ -23,6 +23,12 @@ def _src(*parts):
 _PY = (('models', 'tenants_common.py'), ('models', 'sync_rules.py'),
        ('models', 'provision_rules.py'), ('models', 'tenant.py'),
        ('models', 'release.py'), ('models', 'service.py'),
+       # H4b. Listed rather than globbed, for the reason in the comment
+       # below: a file added and not named here is a file this audit
+       # quietly stops covering.
+       ('models', 'rollout_rules.py'), ('models', 'rollout.py'),
+       ('models', 'rollout_service.py'), ('models', 'alert_rules.py'),
+       ('models', 'alert.py'), ('models', 'alert_service.py'),
        ('models', '__init__.py'), ('__init__.py',))
 _JS = ('tenants.js',)
 _XML = ('tenants.xml',)
@@ -283,6 +289,56 @@ class TestSourceGates(TransactionCase):
                               'button_immediate_upgrade', 'sync_bring_in_step'):
                 self.assertNotIn(forbidden, body,
                                  '%s can install something' % name)
+
+    def test_the_alert_sweep_installs_nothing_and_speaks_to_no_customer(self):
+        """Rail R1 for H4b's own jobs. The sweep READS: cached fields, one
+        request per customer, read-only queries, the machine's log. It must not
+        be able to install anything anywhere, and it must not write onto a
+        customer's system either."""
+        src = _src('models', 'alert_service.py')
+        for name in ('_cron_alerts', '_gather_readings'):
+            body = src.split('def %s' % name, 1)[1].split('\n    @api.model')[0]
+            for forbidden in ('button_immediate_install',
+                              'button_immediate_upgrade', 'sync_bring_in_step',
+                              '_tenant_env', 'push_settings'):
+                self.assertNotIn(forbidden, body,
+                                 '%s reaches into a customer system' % name)
+
+    def test_the_status_page_writer_stands_down_under_a_test_run(self):
+        """⚠ A FILE WRITTEN BY A MODEL IS NOT ROLLED BACK BY A TEST (F44), and
+        the guard belongs AT THE WRITER rather than in each test, because the
+        next caller will be written by somebody who has not read the comment.
+        Asserted on the source as well as by behaviour: the behavioural test
+        can only prove the guard that is there, not that it stayed there."""
+        src = _src('models', 'alert_service.py')
+        body = src.split('def _write_status_page', 1)[1]
+        head = body.split('\n    def ', 1)[0]
+        self.assertIn("config['test_enable']", head,
+                      'the public page writer no longer stands down in a test')
+        # And it must return BEFORE anything is rendered or written.
+        before = head.split("config['test_enable']")[1].split('return')[0]
+        self.assertNotIn('open(', before)
+
+    def test_the_send_path_stands_down_under_a_test_run(self):
+        """Ledger F67. The suite's own attempts to send wrote error lines into
+        the very log the rollout's health gate reads, so a test run could fail
+        the next rollout."""
+        src = _src('models', 'alert_service.py')
+        body = src.split('def _send_alert_mail', 1)[1].split('\n    @', 1)[0]
+        self.assertIn("config['test_enable']", body)
+
+    def test_the_rollout_start_takes_the_lock_before_it_does_anything(self):
+        """Ledger F50. Two presses inside ninety seconds are two rollouts that
+        destroy each other's practice copy, and the whole practice run happens
+        before the first one commits — so the guard has to be a lock held to the
+        end of the transaction, taken on the FIRST line."""
+        src = _src('models', 'rollout_service.py')
+        body = src.split('def rollout_start', 1)[1].split('\n    def ', 1)[0]
+        self.assertIn('pg_advisory_xact_lock', body)
+        lock_at = body.index('pg_advisory_xact_lock')
+        for later in ('_plan_for', 'create(', '_rollout_tick'):
+            self.assertGreater(body.index(later), lock_at,
+                               '%s happens before the lock is taken' % later)
 
 
     def test_the_stylesheet_s_root_matches_the_element_it_is_written_for(self):

@@ -35,6 +35,22 @@ WHAT IS ON IT
   * **Releases.** A named photograph of what the master runs, so that "in step"
     stops being a moving target — and, for every customer moved onto one, the
     note somebody wrote when they cut it, on their own About screen.
+  * **Sending a release out, in rings.** A practice run on a throwaway copy
+    first — always, and the copy is deleted whatever happens — then the blank
+    system, then ONE customer on their own with a watch period, then the rest,
+    each inside their own quiet window said in their own clock. It stops at
+    the first thing that goes wrong, and Pause, Continue now, Try again, Leave
+    behind and Call it off are always one press away.
+  * **Alerts.** Everything the platform notices, every quarter of an hour,
+    each one with a plain sentence and what to do next. Messages are built and
+    are honest when there is no account to send them with: they say so on the
+    screen rather than pretending, and nothing is lost.
+  * **Room for another customer.** How many more this machine holds, said as a
+    number rather than as free memory — and the same number refuses a new
+    customer at the door, naming the setting and the resize guide.
+  * **A public page.** Written by the platform, handed out by the web server
+    off disk so it stays up when the application does not. It names no
+    customer, ever, and it admits it when it has gone stale.
 
 WHAT IT KNOWS ABOUT THE PRODUCT: NOTHING. The brand, the addresses, the
 never-list, the numbers a customer is measured in, which role their
