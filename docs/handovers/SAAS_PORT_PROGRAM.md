@@ -1,6 +1,6 @@
 # SAAS PORT program — the tenant platform and the Access home, as generic `biz_*` cores in health19
 
-Status: **H0 DONE, H1 DONE 2026-09-04. H2 next.** Spec that started it:
+Status: **H0 DONE, H1 DONE, H2a DONE 2026-09-04 (live). H2b next.** Spec that started it:
 `docs/handovers/PORT_FROM_PAYOBOOK_TENANCY_AND_ACCESS.md` (read it; its §1–§3 are the
 inventory of what exists on Payobook and why it cannot be copied verbatim). Payobook's own
 programme docs sit in `docs/handovers/from_payobook/` — FLEET_PROGRAM.md (rails R1–R8, ledger
@@ -47,7 +47,8 @@ customer database or a genuine scope decision.
 |---|---|---|
 | **H0 Verify** | §5 checklist of the spec against the live servers | DONE — facts below |
 | **H1 Kit + Access core** | `biz_kit` (tokens, primitives, Lucide `ic()`, back chip, soft registry keys) + `biz_access` (roles-as-bundles, 4 lenses, builder, "See it as…", hand-overs) as product-neutral modules with a **rail provider** seam instead of the `pb.sidebar.item` inherit; installed and Chrome-validated on a scratch clone `vietuat_h1`; NOT on the live DB | **DONE** — `SAAS_H1_KIT_ACCESS_CORE.md`; 158 tests green, clone dropped |
-| **H2 `health_access` + retire `access_roles`** | cms.sidebar rail provider (bundle lane beside the legacy lane), clinic ability→group catalogue + the 9 roles migrated to bundles, native menu-hide + debug block (Rail A), People lens absorbs `health_user_admin`, uninstall `access_roles` on the live DB (owner sign-off at deploy) | next |
+| **H2a `health_access` overlay (additive, live)** | cms.sidebar rail provider (bundle lane BESIDE the legacy lane, read as an OR), clinic ability→group catalogue + the 9 roles as bundles with xml-ids, native top-bar hiding + debug block (Rail A), People lens gains "Add a person" and the four person actions, rail item under ADMIN. Nothing uninstalled, nothing removed | **DONE 2026-09-04** — `SAAS_H2A_HEALTH_ACCESS_OVERLAY.md`; 233 tests green, per-user diff **0 lost** on the clone AND on live, deployed to `vietuat` |
+| **H2b retire `access_roles` + `health_user_admin`** | re-point the 292 code references, drop the legacy lane from the rail and the wizard, uninstall both apps (owner sign-off at deploy). **Blocked on one owner decision** — H16 below: post-retirement, Owner/OM/Branch-Manager accounts get the whole top bar back unless those roles are given lists | next |
 | **H3 Server plumbing** | `dbfilter = ^%d$`, carejiox.com apex + wildcard, nginx blocks (`/web/database` 404, `/status`), per-host HTTP-01 certs, golden template DB, scripts + sudoers, backups dir, stale-DB and shadowed-module cleanup, resize runbook | |
 | **H4 `biz_tenancy` + `biz_tenants` + `health_tenancy`** | the tenant agent + the cockpit, parameterised (brand, domain, prefix, never-list, xmlids, meter registry, plan seeds, feature catalogue, status components); pilot tenant `hhh` | may split 4a/4b |
 | **H5 Validation** | every FLEET live check re-run on the pilot, Chrome-driven | |
@@ -247,3 +248,59 @@ in new surfaces. Chrome validation mandatory before a phase reports done.
   The working form on this box is `sudo systemd-run --unit=… --uid=odoo --setenv=HOME=/odoo …`.
   Worth writing down because the failure looks like a permissions problem with the unit rather than
   with who is asking for it.
+- **H14** (H2a, 2026-09-04) **"A role with an empty top-bar list has no opinion" is the wrong
+  reading, and only real data says so.** The rule reconciles two roles by INTERSECTION so that
+  holding more never shows less; the first version left a role with an empty list OUT of that
+  intersection, on the argument that "was never asked" is not "hides nothing". On the clinic's own
+  74 people that took **489 top-bar screens off one doctor**: their own job hides nothing, they
+  happen to carry the single permission that makes them a branch manager, and the reading that
+  ignored the first let the second decide. An absent profile in the OLD app is a POSITIVE fact —
+  doctors here see the whole bar — so carrying it as "no opinion" loses it. Now an empty list is
+  read as "hides nothing" and takes the intersection with it: the promise becomes exact, and the
+  only cost is in the safe direction. **Neither reading was findable without the per-user diff on
+  real data** — the synthetic tests passed both.
+- **H15** (H2a) **Emptying `request.session.debug` does not close the sign-in page.** Payobook's E1b
+  said there was a second seam; this build's is exact: `web_login` builds its template values from a
+  QUERY-STRING whitelist (`SIGN_UP_REQUEST_PARAMS`, which contains `debug`), so the
+  "Log in as superuser" button renders from the address bar and never reads the session at all. The
+  session was correctly cleared and the button came back anyway. Closed in
+  `ir.qweb._prepare_environment`, which uses `setdefault` — which is exactly why the controller's
+  copy wins — by forcing the template's `debug` back into step with the session. One rule, two
+  seams. Found by running it; no amount of reading `_handle_debug` would have shown it.
+- **H16** (H2a) ⚠ **OWNER DECISION, BLOCKING H2b.** With the old app retired, the top bar is decided
+  by held roles alone — and every Owner, Operations Manager and Branch Manager holds the Doctor and
+  Admin jobs, which hide nothing. The forecast in `saas_h2_shots/migration_diff_live.md` says they
+  would go from a tidy 68–202 screens to **564–624**, i.e. the whole technical menu (Settings →
+  Technical, Apps, every app root). Nurses/Accountant/CRM are unaffected. Two ways out, and only the
+  owner can choose: (a) give the Owner, Operations Manager, Doctor and Admin roles their own
+  top-bar lists before H2b, or (b) accept that senior staff see the whole bar. Nothing about this
+  is live today — both engines run, so the old app still hides their menus.
+- **H17** (H2a) **A test fixture may borrow a process-wide registration; it may never decide what
+  was in it.** `FakeRailMixin` cleaned up with `register_rail(None)` — correct on a database where
+  `biz_access` is the only thing installed, and silently wrong the moment a product registers a real
+  provider at import time. The first fake-rail test in the run took the clinic's menu away for the
+  rest of the process, and the symptom was a dozen failures in a DIFFERENT module ("no left menu is
+  registered"). It now restores the previous provider. Same class of bug as H9: a fixture that was
+  right about the world it was written in.
+- **H18** (H2a) **The Access home counts who HOLDS a role, not who was ASSIGNED it, and the two
+  numbers differ a lot.** H0's table (Owner 6, Nurse 44, Doctor 10) counts `access_role_id`
+  assignments; the board counts people who hold every permission in the bundle, transitively —
+  Owner 8, Nurse 54, Doctor 20 on live. Both are right. Any later phase quoting a holder count must
+  say which question it asked, and a test asserting one of them on real data is a test that will
+  break (H9 again).
+- **H19** (H2a) **The clinic's left menu gates nothing to Nurse, Doctor or Banker.** All 79 gated
+  entries name Owner (50), Admin (41), Operations Manager (18), Accountant (15), CRM (9) or Branch
+  Manager (2). So the Nurse card's "opens on the left menu" column is honestly empty, and the 44
+  nurses see the 13 ungated entries and nothing else. Not a defect — the data has always said this —
+  but it is why the rail lens looks emptier for clinical roles than anybody expects.
+- **H20** (H2a) **The older "Create User" wizard is already broken on this database.**
+  `health_user_admin`'s wizard writes `hr.employee.employment_type`, a Selection that was replaced by
+  the `employment_type_id` lookup pointer; the field no longer exists, so the form fails on both
+  render and save. H2a's replacement reads the lookup list with `sudo()` and stores the CODE rather
+  than a pointer — the reference lists are readable only by people who maintain them, and somebody
+  whose job is adding colleagues is not one of them. Same constraint still applies to the area and
+  facility pickers (pre-existing, unchanged): a person holding ONLY the Admin role cannot use them.
+- **H21** (H2a) **The top-bar override costs nothing measurable.** Measured on the clone over six
+  real users: `_visible_menu_ids` 12–57 ms with the rule and 14–60 ms without (the difference is
+  inside the noise), `load_menus` 25–57 ms end to end. The `ormcache` on the permission set plus the
+  framework's own `load_menus` cache is enough; no extra caching was added, and none is warranted.
