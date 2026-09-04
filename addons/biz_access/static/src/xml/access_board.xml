@@ -354,6 +354,20 @@
 
                       <p t-if="dt.opens.length and dt.everyone.length"
                          class="bza-col-note" t-esc="everyoneLine(dt)"/>
+
+                      <!-- THE OTHER MENU, IN ONE LINE.
+                           A role can also take applications off the bar above
+                           the shell. That is a different question from "what
+                           does it open", so it is a quiet line under the
+                           column rather than a second list competing with it —
+                           and the applications themselves are on hover, where
+                           somebody who wants the detail can find it without
+                           everybody else having to read it. -->
+                      <p t-if="dt.hidden_menu_note" class="bza-col-note bza-col-note--hidden"
+                         t-att-title="hiddenMenuTitle(dt)">
+                        <t t-out="ic('eyeOff',12)"/>
+                        <t t-esc="dt.hidden_menu_note"/>
+                      </p>
                     </div>
 
                     <!-- ========================= what it lets them do ================== -->
@@ -462,6 +476,21 @@
                      placeholder="Search a name"/>
             </label>
 
+            <!-- THE DOORS THE PRODUCT PUT HERE.
+                 "Who is on this system" is one press away from "somebody new
+                 is starting on Monday", and sending that person to a different
+                 screen to do it is the join nobody makes. Empty on a system
+                 whose product has added none, and an empty list draws nothing
+                 at all rather than an empty bar. -->
+            <div t-if="peopleActions.length" class="bza-plist-doors">
+              <button t-foreach="peopleActions" t-as="pa" t-key="pa.id"
+                      class="bzk-btn primary bza-plist-door"
+                      t-on-click="() => this.openPeopleAction(pa)">
+                <t t-out="ic(pa.icon || 'plus',14)"/>
+                <t t-esc="pa.label"/>
+              </button>
+            </div>
+
             <div t-if="state.peopleBusy and !peopleRows.length" class="bzk-busy">
               <div class="bzk-spin"/><span>Reading the list…</span>
             </div>
@@ -533,6 +562,20 @@
                   <p class="bza-pass-sees" t-esc="seesLine(ph)"/>
                 </div>
                 <div class="bza-pass-actions">
+                  <!-- WHAT THE PRODUCT LETS SOMEBODY DO ABOUT THIS PERSON.
+                       Drawn before the two doors this module owns, because
+                       "open their staff record" and "switch them off" are the
+                       reasons somebody came looking for a colleague, and
+                       "give a role" is the reason they stayed. Anything
+                       destructive carries `danger` and asks first, in the
+                       server's own words. -->
+                  <button t-foreach="personActions" t-as="pa" t-key="pa.id"
+                          t-attf-class="bzk-btn {{ pa.danger ? 'danger' : 'ghost' }}"
+                          t-att-disabled="state.busy ? 'disabled' : undefined"
+                          t-on-click="() => this.runPersonAction(pa)">
+                    <t t-out="ic(pa.icon || 'circle',14)"/>
+                    <t t-esc="pa.label"/>
+                  </button>
                   <button class="bzk-btn ghost"
                           t-on-click="() => this.openPersonHistory(ph)">
                     <t t-out="ic('history',14)"/> Their history
@@ -899,6 +942,19 @@
                 <p t-if="legacyLine(dt)" class="bza-scrnote">
                   <t t-out="ic('info',14)"/>
                   <span t-esc="legacyLine(dt)"/>
+                </p>
+
+                <!-- A SECOND GATE THIS LENS DOES NOT EDIT.
+                     Only ever drawn while a product is part-way through moving
+                     its menu from one kind of gate to another. The sentence is
+                     the product's own — it names the roles on the older gate,
+                     in the same plain words as the chips above — because a lens
+                     that showed only the half it can change would be telling
+                     somebody an entry is narrower than it is. Empty the moment
+                     the two agree, which is the day after the move. -->
+                <p t-if="dt.legacy_note" class="bza-scrnote bza-scrnote--older">
+                  <t t-out="ic('history',14)"/>
+                  <span t-esc="dt.legacy_note"/>
                 </p>
 
                 <!-- ========================= add a role ========================= -->

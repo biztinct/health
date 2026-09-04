@@ -23,6 +23,7 @@ exist inside a rolled-back transaction.
 """
 
 from odoo.addons.biz_access.models.access_common import (RailProvider,
+                                                         rail_provider,
                                                          rail_state,
                                                          register_areas,
                                                          register_rail)
@@ -181,17 +182,27 @@ def _ids(value):
 
 
 class FakeRailMixin:
-    """`setUp` registers a fake menu; the cleanup takes it away again.
+    """`setUp` registers a fake menu; the cleanup PUTS BACK WHATEVER WAS THERE.
 
     The registry is process-wide and the transaction is not, so a provider left
-    behind would answer the NEXT test class's questions about rows that have
-    been rolled back out of existence.
+    behind would answer the NEXT test class's questions about rows that have been
+    rolled back out of existence.
+
+    AND THE CLEANUP RESTORES RATHER THAN CLEARS — which it did not, and that cost
+    a whole product's suite. Clearing is right on a database where this module is
+    the only thing installed, and silently wrong the moment a PRODUCT has
+    registered a real menu at import time: the first test in this file to run
+    took that product's menu away for the rest of the process, and every later
+    test that asked about it was told there was no left menu on the system. The
+    symptom was a dozen unrelated failures in another module. A test fixture may
+    borrow a process-wide registration; it may never decide what was in it.
     """
 
     def use_fake_rail(self):
+        previous = rail_provider()
         rail = FakeRail()
         register_rail(rail)
-        self.addCleanup(register_rail, None)
+        self.addCleanup(register_rail, previous)
         return rail
 
     def menu_states(self, user):

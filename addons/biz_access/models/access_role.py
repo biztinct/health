@@ -95,6 +95,30 @@ class BizAccessRole(models.Model):
              'profile. Set it and only people in that group do — for the '
              'roles that are nobody else\'s business.')
 
+    #: THE TOP BAR, AND WHY IT IS A LIST OF WHAT IS *NOT* SEEN.
+    #:
+    #: The left menu is written the other way round — an entry names the roles
+    #: that OPEN it — and that is right there, because a rail is curated row by
+    #: row and most rows are open to everybody. The bar of applications above it
+    #: is not curated at all: it is whatever every installed module put there,
+    #: it grows every time something is installed, and a role that had to list
+    #: what it DOES see would be silently wrong the day after the next install.
+    #: So a role names the handful it does not, and anything new is visible by
+    #: default — which is exactly how the bar behaves today.
+    #:
+    #: An EMPTY list means this role hides NOTHING, and it says so loudly:
+    #: somebody who holds it keeps the whole top bar, whatever their other roles
+    #: hide. That is the direction that can only ever open a door, and reading
+    #: it the other way round cost one doctor 489 screens — the story is in
+    #: `biz_access/models/ir_ui_menu.py`.
+    hidden_menu_ids = fields.Many2many(
+        'ir.ui.menu', 'biz_access_role_hidden_menu_rel', 'role_id', 'menu_id',
+        string='Top-bar screens this role does not see',
+        help='Name the top-most one and the whole branch under it goes with '
+             'it. Leave the list empty and people who hold this role keep the '
+             'whole top bar, whatever their other roles hide — holding more '
+             'never shows less.')
+
     #: Not stored, and deliberately so: a count of holders that is written down
     #: is a count that is wrong the moment somebody is granted the group by any
     #: other route, and there are several other routes.
@@ -229,6 +253,33 @@ class BizAccessRole(models.Model):
                     "it cannot be put on a profile. An administrator changes "
                     "it on the user record itself, deliberately.",
                     rec.group_id.display_name or rec.group_id.name or ''))
+
+    # ------------------------------------------------- keeping the bar honest
+    #
+    # The top-bar rule is cached on the permissions somebody holds, and the
+    # framework clears that cache when a MENU or a USER changes. It cannot know
+    # about the third input: which menus a ROLE hides, and which permissions a
+    # role is made of. Both are changed here, so both are forgotten here — a
+    # cached answer that outlives the fact it was computed from is the one bug
+    # nobody can reproduce.
+    _CACHED_INPUTS = ('hidden_menu_ids', 'ability_ids', 'active')
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        self.env['ir.ui.menu']._biz_access_forget()
+        return records
+
+    def write(self, vals):
+        res = super().write(vals)
+        if any(name in vals for name in self._CACHED_INPUTS):
+            self.env['ir.ui.menu']._biz_access_forget()
+        return res
+
+    def unlink(self):
+        res = super().unlink()
+        self.env['ir.ui.menu']._biz_access_forget()
+        return res
 
     # ------------------------------------------------------------------ lookup
     @api.model

@@ -114,6 +114,10 @@ class BizAccess(models.AbstractModel):
             'delegations': self._delegations(),
             'kpis': self._kpis(profiles),
             'headline': self._headline(profiles),
+            # The doors a product puts on the People lens ("Add a person"), read
+            # here rather than on the lens's own call so the header has them
+            # before the first list arrives and never draws itself twice.
+            'people_actions': self.people_actions(),
         }
 
     def _profiles(self, area=None, search=None):
@@ -815,11 +819,18 @@ class BizAccess(models.AbstractModel):
         lent = self._lent_until(profile)
         holders = profile.holders(cap=HOLDER_CAP)
         total = profile.holder_count
+        hidden = self._hidden_menus(profile)
         return {
             'id': profile.id,
             'opens': self._opens_for(profile.group_ids),
             'everyone': self._everyone_items(),
             'any_gated': self._any_gated(),
+            # The OTHER menu. What this role opens on the left-hand rail is
+            # worked out above; what it takes OFF the bar of applications above
+            # the shell is written down on the role, and the card says so in one
+            # line rather than leaving somebody to find the tab.
+            'hidden_menus': hidden['roots'],
+            'hidden_menu_note': hidden['note'],
             'abilities': [{'id': a.id, 'name': a.name or '',
                            'description': a.description or ''}
                           for a in profile.ability_ids],
@@ -834,6 +845,60 @@ class BizAccess(models.AbstractModel):
             'holder_count': total,
             'more': max(0, total - len(holders)),
         }
+
+    def _hidden_menus(self, profile):
+        """The top-bar screens this role does not see, grouped by application.
+
+        The list on the role holds the TOP-MOST rows — naming an application
+        stands for everything under it — so the grouping here is honest without
+        expanding anything: a row that IS a root is the whole application, and a
+        row underneath one names a screen inside it.
+
+        No count of expanded descendants is offered anywhere. "Does not see 611
+        screens" is a number about the shape of a menu tree; "does not see 8
+        applications" is a sentence about somebody's day.
+        """
+        empty = {'roots': [], 'note': ''}
+        menus = safe(lambda: profile.sudo().hidden_menu_ids.filtered('active'),
+                     None, 'the top-bar screens a role does not see')
+        if not menus:
+            return empty
+
+        roots, order = {}, []
+        for menu in menus:
+            root = menu
+            guard = 0
+            while root.parent_id and guard < 32:
+                root = root.parent_id
+                guard += 1
+            key = root.id
+            if key not in roots:
+                roots[key] = {'root': root.name or '', 'whole': False,
+                              'names': []}
+                order.append(key)
+            if menu.id == root.id:
+                # The application itself, so whatever else was named inside it
+                # is already covered and would only make the list longer.
+                roots[key]['whole'] = True
+                roots[key]['names'] = []
+            elif not roots[key]['whole']:
+                roots[key]['names'].append(menu.name or '')
+
+        rows = [roots[key] for key in order]
+        rows.sort(key=lambda r: fold(r['root']))
+        whole = len([r for r in rows if r['whole']])
+        partly = len(rows) - whole
+        if whole and partly:
+            note = _("Does not see %(w)s, or parts of %(p)s more.",
+                     w=counted(whole, _("1 top-bar app"), _("%s top-bar apps")),
+                     p=partly)
+        elif whole:
+            note = _("Does not see %s.",
+                     counted(whole, _("1 top-bar app"), _("%s top-bar apps")))
+        else:
+            note = _("Does not see parts of %s.",
+                     counted(partly, _("1 top-bar app"), _("%s top-bar apps")))
+        return {'roots': rows, 'note': note}
 
     def _lent_until(self, profile):
         """Who is only holding this because somebody lent it, and until when.
@@ -1398,7 +1463,117 @@ class BizAccess(models.AbstractModel):
             'roles': roles,
             'any_gated': self._any_gated(),
             'can_manage': self.can_manage(),
+            # What the product lets somebody DO about this person, beside the
+            # picture of what they can see. Empty on a database with no overlay.
+            'actions': (self._person_actions(user) if self.can_manage()
+                        else []),
         }
+
+    # ================================================== doors a product adds
+    #
+    # WHY SLOTS ON THE SERVER AND NOT A REGISTRY IN THE BROWSER.
+    #
+    # The People lens answers "what does this person have", and the moment it
+    # does, the next four things somebody wants are about the PERSON and not
+    # about access at all: add a colleague, switch one off, send a password
+    # reset, open their staff record. Every one of those is the product's, not
+    # this module's — there is no such thing as a generic "staff record" — and
+    # every one of them has to be refused for the same people, in the same
+    # words, whoever asks.
+    #
+    # So they are METHOD slots, overridden by the product's own overlay, rather
+    # than a registry the browser fills in. A browser registry can offer a
+    # button; it cannot refuse one. `run_person_action` re-checks who is asking
+    # on every single dispatch — which is what makes the refusal true even when
+    # the button was never drawn.
+    #
+    # Both slots answer EMPTY by default, and an empty list draws nothing. A
+    # database with only this module on it has a People lens with no product
+    # doors on it, which is the honest screen.
+
+    @api.model
+    def people_actions(self):
+        """Buttons for the People lens header — `[{id, label, icon,
+        action_xmlid, context?}]`.
+
+        These OPEN something (a form, a wizard). They are not dispatched here:
+        the browser opens the action and re-reads the list when it closes.
+        """
+        self._require()
+        if not self.can_manage():
+            # A door that adds a colleague is the access team's, and drawing it
+            # for somebody who would be refused on the other side is a screen
+            # setting a person up to fail.
+            return []
+        return safe(lambda: list(self._people_actions() or []), [],
+                    'the doors on the people lens')
+
+    def _people_actions(self):
+        """The product's own overlay overrides this. Empty here on purpose."""
+        return []
+
+    @api.model
+    def person_actions(self, user_id=None):
+        """Buttons on ONE person's passport — `[{id, label, icon, kind,
+        confirm?, danger?}]`.
+
+        `kind` is `run` (dispatched through `run_person_action`, which refuses
+        again) or `open` (dispatched the same way, but the answer carries an
+        action for the browser to open).
+        """
+        self._require()
+        user = self._person(user_id)
+        if not self.can_manage():
+            return []
+        return safe(lambda: list(self._person_actions(user) or []), [],
+                    'the doors on somebody\'s passport')
+
+    def _person_actions(self, user):
+        """The product's own overlay overrides this. Empty here on purpose."""
+        return []
+
+    @api.model
+    def run_person_action(self, action_id, user_id):
+        """Do one of them, having asked again whether it is allowed.
+
+        THE GATE IS RE-CHECKED HERE AND IN THE HANDLER, and that is not
+        duplication. This one asks whether the person at the keyboard may act on
+        somebody else at all; the handler asks whether THIS act, on THIS person,
+        is one anybody may do — switching off the system administrator, or
+        yourself, is refused for everybody including the access team.
+        """
+        self._require_manage()
+        user = self._internal_user(user_id)
+        key = self._person_action_key(action_id)
+        handler = getattr(self, '_person_action_%s' % key, None) if key else None
+        if handler is None or not callable(handler):
+            raise UserError(_(
+                "That is not something this screen can do. It may have been "
+                "part of an older version of the page — reload it and try "
+                "again."))
+        offered = {row.get('id') for row in (self._person_actions(user) or [])}
+        if action_id not in offered:
+            # The list is worked out per person, so an action that is not on
+            # THEIR passport is not one to run against them however it arrived.
+            raise UserError(_(
+                "That is not something that can be done to %s.",
+                user.sudo().name or ''))
+        res = handler(user) or {}
+        res.setdefault('ok', True)
+        return res
+
+    def _person_action_key(self, action_id):
+        """A method name out of an id that came from a browser.
+
+        Whitelisted to the characters a handler name can contain, so the id can
+        never reach `getattr` as anything but a plain word — a dispatcher that
+        interpolated whatever it was sent is a dispatcher that eventually calls
+        something nobody meant it to.
+        """
+        raw = (action_id or '').strip().lower().replace('-', '_')
+        if not raw or not raw.replace('_', '').isalnum():
+            return ''
+        return raw
 
     @api.model
     def as_user(self, user_id=None):
@@ -1540,6 +1715,17 @@ class BizAccess(models.AbstractModel):
             'everyone': not gated,
             'gates': chips,
             'legacy': legacy,
+            # A SECOND, OLDER GATE THE PRODUCT STILL READS.
+            #
+            # `legacy` above is about permission GROUPS written on an entry —
+            # this module's own reading of the row. This one is a sentence the
+            # PROVIDER hands over, for a product that is part-way through moving
+            # from one way of gating its menu to another: while both are live,
+            # an entry can be opened by a gate this lens does not edit, and a
+            # lens that showed only the half it can change would be describing
+            # the entry wrongly. Empty on any product with one lane, and empty
+            # again the moment the two agree.
+            'legacy_note': entry.get('legacy_note') or '',
             'state': ('off' if raw == 'hidden' else raw) if active else 'off',
             # NOBODY CAN GET IN. Two different kinds of nobody, and they need
             # different sentences: a gate whose roles are all archived is a

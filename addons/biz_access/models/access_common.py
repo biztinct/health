@@ -173,6 +173,10 @@ DEFAULTS = {
     'biz_access.delegation_mail': '1',
     #: How long a hand-over runs for when nobody says otherwise.
     'biz_access.default_window_days': '14',
+    #: Is developer mode kept for the system administrator alone? `off` puts
+    #: the framework's own behaviour back; anything else, including this row
+    #: being absent, means the block is on. See `models/ir_http.py`.
+    'biz_access.debug_block': 'on',
 }
 
 
@@ -362,7 +366,14 @@ class RailProvider:
     def sections(self, env, include_inactive=False):
         """The blocks of the menu, in their own order.
 
-        `[{'id', 'name', 'sequence', 'active'}]`.
+        `[{'id', 'name', 'sequence', 'active'}]`, and two OPTIONAL keys a
+        product may add: `'key'` (its own short name for the block) and
+        `'role_ids'` — the roles written on the BLOCK, for a menu where a gate
+        on a block flows down to everything inside it. Nothing in this module
+        decides anything from `role_ids` on a section: `visibility_for` is the
+        product's own answer and has already taken it into account. It is here
+        so a lens can SAY that a whole block is gated, rather than repeating the
+        same chip on fourteen rows.
         """
         return []
 
@@ -382,6 +393,13 @@ class RailProvider:
         `icon` is whatever the product stores. A key this kit's icon set knows
         is drawn as that glyph; anything else that starts with `fa ` is drawn as
         the font class it is; anything else is a plain dot.
+
+        One OPTIONAL key: `'legacy_note'`, a plain sentence for a product that
+        is part-way through moving its menu from one kind of gate to another.
+        While both are live an entry can be opened by a gate this lens does not
+        edit, and a lens that showed only the half it can change would be
+        describing the entry wrongly. Empty on a product with one lane — which
+        is every product that never had two.
         """
         return []
 

@@ -85,7 +85,7 @@ WHAT IT DELIBERATELY IS NOT. No new permission system, no approval chain on a
 hand-over (notifications are the requirement and they are enough), and no
 opinion whatsoever about what an application's roles should be.
 """,
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Administration',
     'license': 'LGPL-3',
     'author': 'Biztinct',

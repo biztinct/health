@@ -646,6 +646,21 @@ $bza-states: (
         margin: 8px 0 0;
     }
 
+    // The OTHER menu: what a role takes off the bar above the shell. A quiet
+    // line under the column that says what it opens, never a second list
+    // competing with it — this is the footnote to that answer, not a rival.
+    .bza-col-note--hidden {
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+        margin-top: 10px;
+        padding-top: 9px;
+        border-top: 1px dashed var(--bzk-line, #E6E8F0);
+        cursor: help;
+
+        svg { flex: 0 0 auto; margin-top: 2px; opacity: .8; }
+    }
+
     .bza-scrchips {
         display: flex;
         flex-wrap: wrap;
@@ -1232,6 +1247,16 @@ $bza-states: (
         font-size: 12px;
         line-height: 1.55;
         color: var(--bzk-muted, #64748B);
+    }
+
+    // The older gate, while a product still has two. Warmer than the note above
+    // it and set apart by a rule, because it is a fact about the PAST of this
+    // entry rather than about the row somebody is editing.
+    .bza-scrnote--older {
+        background: var(--bzk-amber-soft, #FEF3C7);
+        color: var(--bzk-ink, #1F2430);
+
+        svg { flex: 0 0 auto; opacity: .75; }
     }
 
     .bza-gaterow {
@@ -1998,6 +2023,21 @@ $bza-areas: (
     .bza-plist-search {
         max-width: none;
         margin-bottom: 10px;
+    }
+
+    // The doors the product added to this lens. Full width, above the list, so
+    // "somebody new is starting" is the same press wherever the search box has
+    // got to — and gone entirely on a system whose product added none.
+    .bza-plist-doors {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 12px;
+    }
+
+    .bza-plist-door {
+        justify-content: center;
+        width: 100%;
     }
 
     .bza-prows {

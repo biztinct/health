@@ -483,6 +483,17 @@ export class BizAccessHome extends Component {
         return _t("%s roles", head.role_count);
     }
 
+    /** The applications a role takes off the top bar, as a hover list.
+     *  One line per application, and the screens named inside it where the
+     *  role hides part of one rather than the whole thing. */
+    hiddenMenuTitle(detail) {
+        return ((detail && detail.hidden_menus) || []).map((row) => (
+            row.whole || !row.names.length
+                ? row.root
+                : `${row.root}: ${row.names.join(", ")}`
+        )).join("\n");
+    }
+
     personNote(row) {
         if (!row.role_count && !row.lent_count) { return _t("No roles"); }
         const roles = row.role_count === 1
@@ -541,6 +552,78 @@ export class BizAccessHome extends Component {
             { id: row.profile_id, name: row.name, description: row.description },
             { id: this.state.passport.header.id,
               name: this.state.passport.header.name });
+    }
+
+    // ------------------------------------------------ the doors a product adds
+    /**
+     * WHAT THE PRODUCT LETS SOMEBODY DO ABOUT A PERSON, beside the picture of
+     * what that person can see.
+     *
+     * Two lists, both worked out on the SERVER and both empty by default. This
+     * module knows nothing about staff records or joining dates; the product's
+     * own overlay fills them in, and a database without one draws no extra
+     * buttons rather than buttons that do nothing.
+     *
+     * THE LISTS ARE NOT THE PERMISSION. Every one of these is re-checked on
+     * dispatch, against the person it names — so a button that should not have
+     * been drawn is still refused, in words, if it ever is.
+     */
+    get peopleActions() { return this.board.people_actions || []; }
+
+    get personActions() {
+        return (this.state.passport && this.state.passport.actions) || [];
+    }
+
+    /** A header door: it OPENS something, and the list re-reads itself when
+     *  whatever it opened is closed. A new colleague who did not appear in the
+     *  list they were just added to would be the screen contradicting itself. */
+    async openPeopleAction(row) {
+        if (!row || !row.action_xmlid) { return; }
+        try {
+            await this.action.doAction(row.action_xmlid, {
+                additionalContext: row.context || {},
+                onClose: () => this.reload(),
+            });
+        } catch (e) {
+            this.notif.add(
+                this._msg(e, _t("That could not be opened.")),
+                { type: "danger" });
+        }
+    }
+
+    /**
+     * A passport door: it DOES something to this person.
+     *
+     * Anything with a `confirm` sentence asks first, and the sentence is the
+     * server's — written where the refusals are written, so the warning and the
+     * rule cannot come to disagree. Anything that comes back with an action is
+     * a door rather than a deed, and the browser opens it.
+     */
+    async runPersonAction(row) {
+        if (!row || this.state.busy) { return; }
+        const person = this.state.passport && this.state.passport.header;
+        if (!person) { return; }
+        if (row.confirm && !window.confirm(row.confirm)) { return; }
+        this.state.busy = true;
+        try {
+            const res = await this.orm.call(
+                "biz.access", "run_person_action", [row.id, person.id]);
+            if (res && res.message) {
+                this.notif.add(res.message, { type: "success" });
+            }
+            if (res && res.action) {
+                await this.action.doAction(res.action, {
+                    onClose: () => this.reload(),
+                });
+            } else {
+                await this.reload();
+            }
+        } catch (e) {
+            this.notif.add(this._msg(e, _t("That could not be done.")),
+                           { type: "danger" });
+        } finally {
+            this.state.busy = false;
+        }
     }
 
     // -------------------------------------------------------- the screens lens

@@ -33,7 +33,7 @@ IT SEEDS NOTHING AND NAMES NOBODY. There is no data file, no model and no
 menu here. A product supplies its own words, its own palette and its own
 home; this module supplies the shape they all take.
 """,
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Technical',
     'license': 'LGPL-3',
     'author': 'Biztinct',

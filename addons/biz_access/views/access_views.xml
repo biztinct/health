@@ -145,6 +145,34 @@
                                widget="many2many_tags" readonly="1"/>
                         <field name="group_id" readonly="1"/>
                     </group>
+                    <!-- THE TOP BAR, WRITTEN THE OTHER WAY ROUND.
+                         Everywhere else on this screen a role says what it
+                         OPENS. Here it says what it does not see, because the
+                         bar of applications above the shell is not a curated
+                         list: it grows every time something is installed, and a
+                         role that had to name what it DOES see would be wrong
+                         the day after the next one. Naming the top-most row
+                         takes the whole branch with it, and an EMPTY list means
+                         this role says nothing about the bar at all — which is
+                         not the same as saying it hides nothing. -->
+                    <notebook>
+                        <page string="Top-bar screens it does not see"
+                              name="hidden_menus">
+                            <p class="text-muted">
+                                Name an application and everything inside it
+                                goes with it. Somebody who holds two roles keeps
+                                every screen either role leaves them — holding
+                                more never shows less. Leave this empty and the
+                                role says nothing about the top bar.
+                            </p>
+                            <field name="hidden_menu_ids" nolabel="1"
+                                   options="{'no_create': True, 'no_quick_create': True}">
+                                <list string="Top-bar screens" create="false">
+                                    <field name="complete_name"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
