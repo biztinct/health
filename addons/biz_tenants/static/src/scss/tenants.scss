@@ -1328,6 +1328,13 @@
         .k { color: var(--bzk-muted); font-size: 12px; }
     }
 
+
+    .bzt-mset-split { margin-top: 10px; }
+    // A red edge on the ones held back ON PURPOSE, nothing on the rest: two
+    // different facts, told apart at a glance.
+    .bzt-neverrow.is-refused { border-left: 3px solid var(--bzk-rose, #E11D48); padding-left: 9px; }
+    .bzt-neverrow.is-not_needed { border-left: 3px solid var(--bzk-line); padding-left: 9px; }
+
 }
 
 @keyframes bzt-breathe {

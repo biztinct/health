@@ -212,16 +212,44 @@ def customer_module_set(master_installed, manifests, never=None,
     }
 
 
-def module_set_rows(answer, labels=None):
+#: What a module is held back FOR, when nobody has written a reason.
+#:
+#: ⚠ THE GENERIC NEVER-LIST SENTENCE IS THE WRONG ONE HERE, AND IT WAS ON A
+#: LIVE SCREEN. `never_reason` answers "Reserved for the platform. Parts of the
+#: product that run this machine are never installed on a customer's system." —
+#: true of the cockpit, and a lie about the twelve modules that are simply
+#: OUTSIDE the product: a badge engine, a spreadsheet library, an org-chart
+#: widget. They are not reserved for anything. They are on this machine because
+#: the clinic that runs here picked them up over four years, and a customer's
+#: system is built from what the product asks for.
+#:
+#: Two different facts deserve two different sentences, and a screen that gives
+#: the same one to both is a screen somebody stops believing.
+NOT_NEEDED = ("Nothing in the product asks for it. It is on this machine "
+              "because the system that runs here picked it up over the years; "
+              "a customer's system is built from what the product needs.")
+
+
+def module_set_rows(answer, labels=None, never=None):
     """The held-back half, with a plain reason each, for the screen.
 
     Same shape as `sync_rules.held_back_rows`, deliberately: the "In step with
     master" screen already draws that shape and this is the same question asked
-    of a different list.
+    of a different list. `kind` says WHICH of the two reasons it is, so the
+    screen can group them.
     """
     labels = labels or {}
-    return [{'module': n, 'label': labels.get(n, n), 'reason': never_reason(n)}
-            for n in sorted((answer or {}).get('held_back') or ())]
+    blocked = _never_test(never)
+    out = []
+    for n in sorted((answer or {}).get('held_back') or ()):
+        deliberate = blocked(n)
+        out.append({
+            'module': n,
+            'label': labels.get(n, n),
+            'kind': 'refused' if deliberate else 'not_needed',
+            'reason': never_reason(n) if deliberate else NOT_NEEDED,
+        })
+    return out
 
 
 def dependency_conflicts(answer):

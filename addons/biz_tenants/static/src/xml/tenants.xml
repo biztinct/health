@@ -1505,6 +1505,13 @@
              t-key="xtr.module"><span class="mono" t-esc="xtr.module"/><t t-if="!xtr_last">, </t></t>.
         </span>
       </div>
+      <div class="bzk-sub bzt-mset-split" t-if="state.sync.module_set.held_back.length">
+        Of the <t t-esc="state.sync.module_set.held_back.length"/> this machine
+        has and a customer does not,
+        <b><t t-esc="state.sync.module_set.refused"/></b> are held back on
+        purpose and the rest are simply not part of the product. Every one says
+        which, below.
+      </div>
       <div class="bzk-note bzt-warn" t-if="state.sync.module_set.conflicts.length">
         <t t-out="ic('alert', 15)"/>
         <span>
@@ -1519,10 +1526,12 @@
     <div class="bzk-panel bzt-never">
       <div class="bzk-h2">What a customer never receives</div>
       <div class="bzk-sub">
-        Everything else the platform has, every customer gets. These are the
-        argued exceptions, and the reason is beside each one.
+        Everything this machine has that a customer's system does not, with the
+        reason beside each one. A red edge marks the ones held back on purpose;
+        the rest are simply things nothing in the product asks for.
       </div>
-      <div class="bzt-neverrow" t-foreach="state.sync.never" t-as="held"
+      <div t-attf-class="bzt-neverrow is-{{held.kind}}"
+           t-foreach="state.sync.module_set.held_back" t-as="held"
            t-key="held.module">
         <span class="bzt-never-n mono" t-esc="held.module"/>
         <span class="bzt-never-r" t-esc="held.reason"/>

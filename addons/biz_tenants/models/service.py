@@ -1758,6 +1758,8 @@ class BizTenants(models.AbstractModel):
                  'because': ', '.join(sorted(t))}
                 for n, t in sorted(answer['followers'].items())],
             'held_back': module_set_rows(answer, labels),
+            'refused': len([r for r in module_set_rows(answer, labels)
+                            if r['kind'] == 'refused']),
             'conflicts': [
                 {**c, 'label': labels.get(c['module'], c['module'])}
                 for c in answer['conflicts']],
