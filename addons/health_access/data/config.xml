@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ======================================================================
+     THE BAR ABOVE THE SCREEN BELONGS TO THE PLATFORM ADMINISTRATOR.
+
+     THE DECISION, IN ONE SENTENCE. This product's navigation is the menu down
+     the side of the screen; the framework's bar of applications above it is a
+     second, unwritten menu that nobody curated and that grows every time
+     something is installed. Two answers to "where do I go" is one too many, so
+     for everybody but the one account that owns the box there is now one.
+
+     WHAT IT COSTS AND WHO PAID IT. Senior staff could reach a handful of
+     technical applications through that bar. Everything anybody's job actually
+     needs from them is now on the left menu — measured application by
+     application, and shipped in `data/cms_sidebar_items_topbar.xml` — before
+     this was switched on. Nobody is left with a blank screen: the rule keeps
+     the home entry named below, and if that entry is ever missing it keeps the
+     first one the person could open anyway and says so in the log.
+
+     `noupdate="1"`, so a clinic that decides otherwise and changes the setting
+     keeps its decision through every later release.
+     ====================================================================== -->
+<odoo noupdate="1">
+
+    <record id="param_topbar_mode" model="ir.config_parameter">
+        <field name="key">biz_access.topbar_mode</field>
+        <field name="value">admin_only</field>
+    </record>
+
+    <!-- The one entry everybody keeps. It opens the operations command centre,
+         which is where this product's own navigation begins. -->
+    <record id="param_topbar_home" model="ir.config_parameter">
+        <field name="key">biz_access.topbar_home_xmlids</field>
+        <field name="value">health_cms_sidebar.menu_cms_root</field>
+    </record>
+
+</odoo>

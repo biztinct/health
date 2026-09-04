@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ======================================================================
+     THE PEOPLE LIST, UNDER ADMIN.
+
+     Somebody who manages colleagues has two screens: this one, which is a
+     list of people with the ordinary details on it, and the Access home,
+     which answers "who can do what". They are deliberately different screens
+     — a list of eighty names is the wrong place to reason about permissions,
+     and a permissions board is the wrong place to fix a phone number.
+
+     WHY THESE VIEWS LIVE HERE. They name the JOB, which is a role bundle, and
+     `health_landing` does not know what one is. The list itself is over there,
+     where the tab strip is; the job column and this form are added from up
+     here, where the model gained the field.
+     ====================================================================== -->
+<odoo>
+
+    <record id="view_admin_users_list_job" model="ir.ui.view">
+        <field name="name">admin.users.list.job</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="health_landing.view_admin_users_list"/>
+        <field name="arch" type="xml">
+            <field name="phone" position="after">
+                <field name="job_role_id" string="Job"
+                       options="{'no_create': True, 'no_open': True}"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_admin_users_form" model="ir.ui.view">
+        <field name="name">admin.users.form</field>
+        <field name="model">res.users</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <form string="Colleague">
+                <header>
+                    <button name="action_health_reset_password_link"
+                            type="object" string="Send a password link"
+                            class="btn-primary"
+                            groups="health_access.group_clinic_admin"/>
+                    <button name="action_health_deactivate" type="object"
+                            string="Switch off" class="btn-secondary"
+                            invisible="active == False"
+                            groups="health_access.group_clinic_admin"
+                            confirm="Switch this person off? They will not be able to sign in, and nothing they have done is removed."/>
+                    <button name="action_health_activate" type="object"
+                            string="Switch back on" class="btn-success"
+                            invisible="active == True"
+                            groups="health_access.group_clinic_admin"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_health_open_staff" type="object"
+                                class="oe_stat_button" icon="fa-user-md">
+                            <span>Staff record</span>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Switched off"
+                            bg_color="text-bg-danger" invisible="active == True"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Nguyễn Thị Mai"
+                                   required="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="How they sign in">
+                            <field name="login" string="Email" required="1"
+                                   placeholder="e.g. mai@vietuccare.com"/>
+                            <field name="phone" string="Phone"/>
+                            <field name="company_id" string="Company"
+                                   groups="base.group_multi_company"
+                                   options="{'no_create': True}"/>
+                            <field name="lang" string="Language"/>
+                            <field name="tz" string="Timezone"/>
+                        </group>
+                        <group string="What they do">
+                            <!-- THE JOB, NOT THE PERMISSIONS. What somebody can
+                                 open is the roles they hold, on the Access home;
+                                 this says what they are employed as, which is
+                                 what the schedule and the reports call them.
+                                 Setting it also gives them that role. -->
+                            <field name="job_role_id" string="Job"
+                                   options="{'no_create': True, 'no_open': True}"/>
+                            <field name="catchment_province_id"
+                                   string="Area they work in"
+                                   options="{'no_create': True}"/>
+                            <field name="active" string="Can sign in"
+                                   widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <div class="text-muted">
+                        Who can do what is on the Access home, under
+                        Administration.
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_admin_users_search" model="ir.ui.view">
+        <field name="name">admin.users.search</field>
+        <field name="model">res.users</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <search string="Find a colleague">
+                <field name="name"/>
+                <field name="login"/>
+                <field name="job_role_id" string="Job"/>
+                <field name="catchment_province_id" string="Catchment Area"/>
+                <filter name="active_users" string="Can sign in"
+                        domain="[('active', '=', True)]"/>
+                <filter name="inactive_users" string="Switched off"
+                        domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter name="group_job" string="Job"
+                        context="{'group_by': 'job_role_id'}"/>
+                <filter name="group_catchment" string="Catchment Area"
+                        context="{'group_by': 'catchment_province_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- The Admin tab strip's Users action, now pointing at the form and the
+         search above. Written from here because both name the job. -->
+    <record id="health_landing.action_admin_users" model="ir.actions.act_window">
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('health_landing.view_admin_users_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('health_access.view_admin_users_form')})]"/>
+        <field name="search_view_id" ref="health_access.view_admin_users_search"/>
+    </record>
+
+</odoo>

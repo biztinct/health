@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ======================================================================
+     THE SCREENS THAT ONLY THE BAR USED TO REACH.
+
+     WHY THESE EXIST AT ALL. The bar of applications above the screen is now
+     the platform administrator's alone: for everybody else the left menu is
+     the navigation, all of it. That is a better screen — one place to look
+     instead of two — but only if everything somebody's job needs is ON it.
+     These are the entries that were not, measured application by application
+     before anything was hidden.
+
+     NOTHING NEW IS BUILT HERE. Every one of these opens a screen that already
+     existed and that the people gated to it could already reach; it simply had
+     no door on this menu. Where a screen was already here it is NOT added
+     again — "Channels (setup)" already answers for platform applications, so
+     it keeps that job and only the two screens it merely borrowed move onto
+     doors of their own.
+
+     UNGATED IN XML, GATED BY THE HOOK. A `ref()` can only point at a row that
+     exists when this file is read, and on a brand-new database the roles are
+     created afterwards. So the gate is written in `hooks._gate_new_items`,
+     which also SWITCHES OFF any entry whose screen is not on this database —
+     an entry that opens nothing is a dead end, and this phase's whole promise
+     is that there are none.
+
+     `noupdate="1"` like every other row on this rail: once it is live, what
+     somebody has since done to it is the truth.
+     ====================================================================== -->
+<odoo noupdate="1">
+
+    <!-- ================================================== CRM: Care Command -->
+    <record id="item_crm_channel_audit" model="cms.sidebar.item">
+        <field name="name">Channel audit</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">200</field>
+        <field name="icon">fa fa-history</field>
+        <field name="action_xmlid">health_care_command_channels.action_care_channel_audit</field>
+    </record>
+
+    <record id="item_crm_channel_messages" model="cms.sidebar.item">
+        <field name="name">Channel messages</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">201</field>
+        <field name="icon">fa fa-comments-o</field>
+        <field name="action_xmlid">health_care_command_channels.action_care_channel_message</field>
+    </record>
+
+    <record id="item_crm_watch_phrases" model="cms.sidebar.item">
+        <field name="name">Watchlist phrases</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">202</field>
+        <field name="icon">fa fa-exclamation-triangle</field>
+        <field name="action_xmlid">health_care_command.action_care_watch_phrase</field>
+    </record>
+
+    <!-- ========================================================= CRM: Zalo -->
+    <record id="item_crm_zalo" model="cms.sidebar.item">
+        <field name="name">Zalo</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">210</field>
+        <field name="icon">fa fa-commenting-o</field>
+    </record>
+
+    <record id="item_crm_zalo_conversations" model="cms.sidebar.item">
+        <field name="name">Conversations</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="parent_id" ref="item_crm_zalo"/>
+        <field name="sequence">10</field>
+        <field name="icon">fa fa-comments</field>
+        <field name="action_xmlid">health_zalo.zalo_conversation_action</field>
+    </record>
+
+    <record id="item_crm_zalo_messages" model="cms.sidebar.item">
+        <field name="name">Messages</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="parent_id" ref="item_crm_zalo"/>
+        <field name="sequence">20</field>
+        <field name="icon">fa fa-envelope-o</field>
+        <field name="action_xmlid">health_zalo.zalo_message_action</field>
+    </record>
+
+    <record id="item_crm_zalo_settings" model="cms.sidebar.item">
+        <field name="name">Zalo settings</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="parent_id" ref="item_crm_zalo"/>
+        <field name="sequence">30</field>
+        <field name="icon">fa fa-sliders</field>
+        <field name="action_xmlid">health_zalo.zalo_config_action</field>
+    </record>
+
+    <!-- ======================================================== OPS: Voice -->
+    <record id="item_ops_voice" model="cms.sidebar.item">
+        <field name="name">Voice</field>
+        <field name="section_id" ref="health_cms_sidebar.section_ops"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">200</field>
+        <field name="icon">fa fa-phone</field>
+    </record>
+
+    <record id="item_ops_voice_calls" model="cms.sidebar.item">
+        <field name="name">All calls</field>
+        <field name="section_id" ref="health_cms_sidebar.section_ops"/>
+        <field name="parent_id" ref="item_ops_voice"/>
+        <field name="sequence">10</field>
+        <field name="icon">fa fa-list</field>
+        <field name="action_xmlid">health_voip24h.action_voip_call_log</field>
+    </record>
+
+    <record id="item_ops_voice_missed" model="cms.sidebar.item">
+        <field name="name">Missed calls</field>
+        <field name="section_id" ref="health_cms_sidebar.section_ops"/>
+        <field name="parent_id" ref="item_ops_voice"/>
+        <field name="sequence">20</field>
+        <field name="icon">fa fa-phone-square</field>
+        <field name="action_xmlid">health_voip24h.action_voip_call_log_missed</field>
+    </record>
+
+    <record id="item_ops_voice_recordings" model="cms.sidebar.item">
+        <field name="name">Recordings</field>
+        <field name="section_id" ref="health_cms_sidebar.section_ops"/>
+        <field name="parent_id" ref="item_ops_voice"/>
+        <field name="sequence">30</field>
+        <field name="icon">fa fa-microphone</field>
+        <field name="action_xmlid">health_voip24h.action_voip_call_recording</field>
+    </record>
+
+    <record id="item_ops_voice_extensions" model="cms.sidebar.item">
+        <field name="name">Extensions</field>
+        <field name="section_id" ref="health_cms_sidebar.section_ops"/>
+        <field name="parent_id" ref="item_ops_voice"/>
+        <field name="sequence">40</field>
+        <field name="icon">fa fa-address-book-o</field>
+        <field name="action_xmlid">health_voip24h.action_voip_extension</field>
+    </record>
+
+    <record id="item_ops_voice_sync" model="cms.sidebar.item">
+        <field name="name">Sync call history</field>
+        <field name="section_id" ref="health_cms_sidebar.section_ops"/>
+        <field name="parent_id" ref="item_ops_voice"/>
+        <field name="sequence">50</field>
+        <field name="icon">fa fa-refresh</field>
+        <field name="action_xmlid">health_voip24h.action_voip_sync_wizard</field>
+    </record>
+
+    <record id="item_ops_voice_config" model="cms.sidebar.item">
+        <field name="name">Voice settings</field>
+        <field name="section_id" ref="health_cms_sidebar.section_ops"/>
+        <field name="parent_id" ref="item_ops_voice"/>
+        <field name="sequence">60</field>
+        <field name="icon">fa fa-sliders</field>
+        <field name="action_xmlid">health_voip24h.action_voip_config</field>
+    </record>
+
+    <!-- ============================================ OPS: what runs by itself -->
+    <record id="item_ops_visit_offers" model="cms.sidebar.item">
+        <field name="name">First-visit offers</field>
+        <field name="section_id" ref="health_cms_sidebar.section_ops"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">210</field>
+        <field name="icon">fa fa-gift</field>
+        <field name="action_xmlid">health_workflow_auto.action_visit_offer</field>
+    </record>
+
+    <record id="item_ops_timecard_mismatches" model="cms.sidebar.item">
+        <field name="name">Timecard mismatches</field>
+        <field name="section_id" ref="health_cms_sidebar.section_ops"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">211</field>
+        <field name="icon">fa fa-clock-o</field>
+        <field name="action_xmlid">health_workflow_auto.action_timecard_mismatch</field>
+    </record>
+
+    <!-- ================================================ OPS: growing people -->
+    <record id="item_ops_employee_development" model="cms.sidebar.item">
+        <field name="name">Employee development</field>
+        <field name="section_id" ref="health_cms_sidebar.section_ops"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">220</field>
+        <field name="icon">fa fa-graduation-cap</field>
+        <field name="action_xmlid">hr_development_ai.action_hr_development_dashboard</field>
+        <field name="action_tag">hr_development_dashboard</field>
+    </record>
+
+    <record id="item_ops_coaching" model="cms.sidebar.item">
+        <field name="name">Coaching</field>
+        <field name="section_id" ref="health_cms_sidebar.section_ops"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">221</field>
+        <field name="icon">fa fa-comments</field>
+        <field name="action_xmlid">hr_development_ai.action_bfsi_coaching_workspace</field>
+        <field name="action_tag">bfsi_coaching_workspace</field>
+    </record>
+
+    <!-- ================================================== ADMIN: the training -->
+    <record id="item_admin_training" model="cms.sidebar.item">
+        <field name="name">Training</field>
+        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">200</field>
+        <field name="icon">fa fa-book</field>
+    </record>
+
+    <record id="item_admin_training_lessons" model="cms.sidebar.item">
+        <field name="name">Lessons</field>
+        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <field name="parent_id" ref="item_admin_training"/>
+        <field name="sequence">10</field>
+        <field name="icon">fa fa-file-text-o</field>
+        <field name="action_xmlid">health_learn.action_learn_lesson</field>
+    </record>
+
+    <record id="item_admin_training_stations" model="cms.sidebar.item">
+        <field name="name">Stations</field>
+        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <field name="parent_id" ref="item_admin_training"/>
+        <field name="sequence">20</field>
+        <field name="icon">fa fa-map-signs</field>
+        <field name="action_xmlid">health_learn.action_learn_station</field>
+    </record>
+
+    <record id="item_admin_training_progress" model="cms.sidebar.item">
+        <field name="name">Learner progress</field>
+        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <field name="parent_id" ref="item_admin_training"/>
+        <field name="sequence">30</field>
+        <field name="icon">fa fa-line-chart</field>
+        <field name="action_xmlid">health_learn.action_learn_progress</field>
+    </record>
+
+    <record id="item_admin_training_events" model="cms.sidebar.item">
+        <field name="name">Learning events</field>
+        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <field name="parent_id" ref="item_admin_training"/>
+        <field name="sequence">40</field>
+        <field name="icon">fa fa-bell-o</field>
+        <field name="action_xmlid">health_learn.action_learn_event</field>
+    </record>
+
+    <record id="item_admin_training_wording" model="cms.sidebar.item">
+        <field name="name">Training wording</field>
+        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <field name="parent_id" ref="item_admin_training"/>
+        <field name="sequence">50</field>
+        <field name="icon">fa fa-language</field>
+        <field name="action_xmlid">health_learn.action_learn_override</field>
+    </record>
+
+</odoo>

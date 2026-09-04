@@ -264,6 +264,14 @@ class HealthAccessNewPerson(models.TransientModel):
             # exactly the role's and the history records that it happened.
             facade.sudo().grant(role.id, user.id, reason=_(
                 "Given when %s was added.", self.name or ''))
+            # AND THE SAME ROLE AS THEIR JOB, because that is what the form
+            # asked: "what they will do". The role decides what they can open;
+            # the job decides what the roster, the pickers and the reports call
+            # them, and somebody added as a nurse has to be a nurse on both.
+            # Written after the grant, not before: writing the job also grants,
+            # and the second attempt is quietly a no-op rather than a duplicate
+            # row in the history.
+            user.sudo().write({'job_role_id': role.id})
             self._also_write_the_older_lane(user, role)
 
         employee_vals = {

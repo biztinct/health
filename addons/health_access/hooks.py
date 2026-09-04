@@ -36,6 +36,13 @@ have created and leaves it alone. It runs on a fresh install, on a database
 somebody restored from a backup taken half-way through, and on any evening
 somebody types the re-run door. A stamp saying "already done" is a stamp that is
 wrong exactly once, on the database where it matters.
+
+THE ONE EXCEPTION, AND WHY IT IS NOT THAT KIND OF STAMP. `_set_clinical_kinds`
+reads a role's NAME once and never again, and it records WHICH ROLES it has
+read. That is not "this migration ran"; it is the fact the step is about. Every
+role starts on the same default, so "nobody has looked at this yet" and
+"somebody looked and said no" are the same value in the field — and without the
+list, a re-run would quietly overrule the second.
 """
 
 import logging
@@ -227,7 +234,25 @@ ABILITIES = [
     ('user-admin', 'admin', 280, 'Add people and give out roles',
      'Add a colleague, switch one off and say which role each of them holds. '
      'It never includes the system administrator permission for the box.',
-     ('health_user_admin.group_health_user_admin',)),
+     ('health_access.group_clinic_admin',)),
+
+    # ANALYTICS. Two abilities rather than one, because the two questions are
+    # genuinely different: reading a dashboard somebody else built is not the
+    # same job as building one, and every reporting rule in this system is
+    # keyed on that ladder. They were missing while the four roles that get
+    # Analytics were named in python, in two different modules, by matching the
+    # word "Owner" against a row. Now the roles have fixed names and the
+    # permission is written down where every other permission is.
+    ('analytics-view', 'operations', 290, 'Read the reports',
+     'Open the dashboards and reports somebody has already built, and filter '
+     'them. It does not include building a new one.',
+     ('biz_bi.group_bi_viewer',)),
+
+    ('analytics-build', 'operations', 300, 'Build reports',
+     'Everything reading reports involves, plus building new charts, lists '
+     'and dashboards from the data this clinic already has. It changes no '
+     'record it reports on.',
+     ('biz_bi.group_bi_creator',)),
 ]
 
 # =============================================================================
@@ -324,15 +349,15 @@ FRESH_ROLE_ABILITIES = {
               'crm-work', 'crm-manage', 'invoicing-work', 'invoicing-manage',
               'insurance-claims', 'misa-sync', 'tax-compliance', 'red-invoice',
               'accounting-invoices', 'staff-records', 'sales-all-leads',
-              'user-admin'),
+              'user-admin', 'analytics-build'),
     'Operations Manager': (
         'sign-in', 'care-base', 'reception', 'nursing', 'head-nursing',
         'doctoring', 'sales', 'ops-manage', 'finance-work', 'care-manage',
         'care-admin', 'ownership', 'patient-portal', 'crm-work', 'crm-manage',
         'invoicing-work', 'invoicing-manage', 'insurance-claims', 'misa-sync',
         'tax-compliance', 'red-invoice', 'accounting-invoices',
-        'staff-records', 'sales-manage'),
-    'Branch Manager': ('sign-in', 'coaching-branch'),
+        'staff-records', 'sales-manage', 'analytics-build'),
+    'Branch Manager': ('sign-in', 'coaching-branch', 'analytics-build'),
     'Banker': ('sign-in',),
     'Nurse': ('sign-in', 'care-base', 'nursing', 'patient-portal',
               'invoicing-work', 'invoicing-manage', 'misa-sync',
@@ -341,20 +366,35 @@ FRESH_ROLE_ABILITIES = {
     'Accountant': ('sign-in', 'care-base', 'finance-work', 'ops-manage',
                    'invoicing-work', 'invoicing-manage', 'insurance-claims',
                    'misa-sync', 'tax-compliance', 'red-invoice',
-                   'accounting-invoices', 'sales-manage'),
+                   'accounting-invoices', 'sales-manage', 'analytics-build'),
     'Admin': ('sign-in', 'user-admin'),
     'CRM': ('sign-in', 'care-base', 'ops-manage', 'sales', 'crm-work',
             'crm-manage', 'sales-manage'),
 }
 
-#: The top-bar branch that belongs to the application being retired. It goes
-#: with it, so carrying its rows across would be writing down a fact with a
-#: known expiry date. The old application still hides it in the meantime.
+#: The top-bar branch that belonged to the application being retired. It went
+#: with it, so carrying its rows across would have been writing down a fact
+#: with a known expiry date.
 LEGACY_MENU_XMLID = 'access_roles.access_role_menu_root'
 
 #: The reason written on every grant this carry-over makes. It is what somebody
 #: reads in the history months later when they ask why a person holds a role.
 CARRY_REASON = 'carried over from the previous access app'
+
+#: THIS CLINIC'S OWN ADMINISTRATOR TIER, and the one it replaces.
+#:
+#: The people, the privilege and the words on the screen are unchanged; only
+#: the module that owns the row moved, because the one that owned it before is
+#: being uninstalled and a permission group disappears with its module.
+CLINIC_ADMIN_GROUP = 'health_access.group_clinic_admin'
+LEGACY_ADMIN_GROUP = 'health_user_admin.group_health_user_admin'
+
+#: Which roles get to build reports. Written down here, once, instead of being
+#: matched by name in two different modules' python — which is what happened
+#: while roles had no fixed names to point at.
+ANALYTICS_ROLES = ('Owner', 'Operations Manager', 'Branch Manager',
+                   'Accountant')
+ANALYTICS_ABILITY = 'analytics-build'
 
 
 # =============================================================================
@@ -366,7 +406,11 @@ register_areas(AREAS, default=DEFAULT_AREA)
 # and it is the tier that has always added colleagues; the Access home is the
 # screen it does that on now. `base.group_system` stays with the platform, held
 # by one account, and is not added to anything (the two-ring rule).
-register_manager_groups('health_user_admin.group_health_user_admin')
+#
+# The group is this module's own (`security/health_access_security.xml`). It
+# used to belong to the application being retired; the people in it, the
+# privilege it carries and the name on their screen are unchanged.
+register_manager_groups(CLINIC_ADMIN_GROUP)
 
 
 def _seed(env):
@@ -664,6 +708,10 @@ def _carry_rail_gates(env):
     Section = env['cms.sidebar.section'].sudo().with_context(active_test=False)
     if 'biz_role_ids' not in Item._fields:             # pragma: no cover
         return 0
+    if 'role_ids' not in Item._fields:
+        # The older column has gone with the application that owned it. There
+        # is nothing left to copy FROM, and this step is done.
+        return 0
 
     written = 0
     for section in Section.search([]):
@@ -782,6 +830,38 @@ def _branch_heads(menus):
 ADMIN_ITEM_XMLID = 'health_access.item_admin_access'
 ADMIN_ITEM_ROLES = ('Owner', 'Admin')
 
+#: THE DOORS ADDED WHEN THE BAR ABOVE THE SCREEN WAS PUT AWAY.
+#:
+#: Entry → the roles it opens for. Written here rather than in the data file
+#: for the same reason the entry above is: a `ref()` in XML can only point at a
+#: row that exists when the file is read, and on a new database the roles are
+#: created afterwards.
+#:
+#: A PARENT'S GATE FLOWS DOWN, so only the parent is named: gating six voice
+#: screens one by one would be six chances to disagree with each other.
+NEW_ITEM_ROLES = {
+    'health_access.item_crm_channel_audit': ('Owner', 'CRM'),
+    'health_access.item_crm_channel_messages': ('Owner', 'CRM'),
+    'health_access.item_crm_watch_phrases': ('Owner', 'CRM'),
+    'health_access.item_crm_zalo': ('Owner', 'CRM', 'Operations Manager'),
+    'health_access.item_ops_voice': ('Owner', 'Operations Manager'),
+    'health_access.item_ops_visit_offers': ('Owner', 'Operations Manager'),
+    'health_access.item_ops_timecard_mismatches': (
+        'Owner', 'Operations Manager'),
+    'health_access.item_ops_employee_development': ('Owner', 'Branch Manager'),
+    'health_access.item_ops_coaching': ('Owner', 'Branch Manager'),
+    'health_access.item_admin_training': ('Owner', 'Admin'),
+}
+
+#: The two screens "Channels (setup)" merely BORROWED before either had a door
+#: of its own. The menu's highlight index is last-wins, so leaving them on the
+#: borrower would light up the wrong entry now that each has its own.
+BORROWED_MATCHES = (
+    'health_care_command_channels.action_care_channel_message',
+    'health_care_command_channels.action_care_channel_audit',
+)
+BORROWER_XMLID = 'health_cms_coverage.item_crm_channels_setup'
+
 
 def _gate_admin_item(env):
     """Only the people who run the clinic see the Access home on the rail."""
@@ -793,18 +873,453 @@ def _gate_admin_item(env):
         roles |= role_by_name(env, name)
     if roles:
         item.sudo().write({'biz_role_ids': [(6, 0, roles.ids)]})
-    # And the same gate on the older lane, while the older lane is still read —
-    # so the entry behaves identically for somebody whose role has been carried
-    # over and somebody whose has not.
-    if 'access.role' in env and 'role_ids' in item._fields:
-        old = env['access.role'].sudo().with_context(active_test=False).search(
-            [('name', 'in', list(ADMIN_ITEM_ROLES))])
-        if old:
-            item.sudo().write({'role_ids': [(6, 0, old.ids)]})
     _logger.info(
         'health_access: the Access home entry on the left menu is open to %s',
         ', '.join(roles.mapped('name')) or 'nobody yet')
     return True
+
+
+# =============================================================================
+# 4. THE RETIREMENT
+#
+# The carry-over above put everything the previous application held into the
+# new shape and left the old rows where they were, so that both could be read
+# and neither could take anything away. This is the other end of that: the
+# facts that were still only in the old shape, moved before the application
+# holding them is removed.
+#
+# EVERY STEP RUNS WHILE THE OLD APPLICATION IS STILL INSTALLED, and every step
+# also runs correctly on a database where it never was. That is not belt and
+# braces — it is the difference between a migration and a one-off script: this
+# same code is what a brand-new clinic runs on the day it is created.
+# =============================================================================
+def retire_legacy(env):
+    """Everything that has to be true before the old application is removed."""
+    kinds = _set_clinical_kinds(env)
+    jobs = _carry_jobs(env)
+    swapped = _swap_admin_group(env)
+    analytics = _carry_analytics(env)
+    return {'kinds': kinds, 'jobs': jobs, 'admins': swapped,
+            'analytics': analytics}
+
+
+#: WHICH ROLES HAVE ALREADY BEEN READ. Not a "this migration ran" stamp — the
+#: kind this file's own docstring warns against — but a list of the individual
+#: roles whose name has been read ONCE. It is what makes "once" mean once.
+KINDS_READ_PARAM = 'health_access.clinical_kinds_read'
+
+
+def _set_clinical_kinds(env):
+    """What each role COUNTS AS, read once off the name it already had.
+
+    The product used to ask "is there the word 'doctor' in this role's name"
+    every time it wanted to know whether somebody was a doctor. That is right
+    for the nine roles this clinic has and wrong for the tenth, so the answer
+    is written down as a field instead — and it is written down by applying
+    exactly the old rule ONCE, so that nothing changes on the day it ships and
+    nothing changes again afterwards.
+
+    ONCE HAS TO BE RECORDED, BECAUSE THE FIELD CANNOT SAY IT. Every role starts
+    on `other`, so "still on the default" and "somebody looked at this and said
+    it is not a doctor" are the same value. Reading the name again would
+    overrule the second — quietly, months later, the next time anybody pressed
+    the re-run door. So the roles whose name has been read are written down,
+    and a role on that list is never read again.
+    """
+    Role = env['biz.access.role'].sudo().with_context(active_test=False)
+    if 'clinical_kind' not in Role._fields:                # pragma: no cover
+        return 0
+    from .models.access_role import kind_from_name        # noqa: PLC0415
+
+    Param = env['ir.config_parameter'].sudo()
+    raw = Param.get_param(KINDS_READ_PARAM) or ''
+    already = {int(x) for x in raw.split(',') if x.strip().isdigit()}
+
+    written, read = [], set()
+    for role in Role.search([]):
+        if role.id in already:
+            continue
+        read.add(role.id)
+        kind = kind_from_name(role.name)
+        if kind == 'other' or role.clinical_kind == kind:
+            continue
+        role.write({'clinical_kind': kind})
+        written.append('%s → %s' % (role.name, kind))
+    if read:
+        Param.set_param(KINDS_READ_PARAM,
+                        ','.join(str(i) for i in sorted(already | read)))
+    _logger.info(
+        'health_access: retirement — %s role(s) now say what they count as: %s '
+        '(%s role name(s) read for the first time)',
+        len(written), '; '.join(written) or 'none', len(read))
+    return len(written)
+
+
+def _carry_jobs(env):
+    """Everybody's JOB, from the one role the old application gave them.
+
+    READ BY SQL AND WRITTEN BY SQL, and both halves of that are deliberate.
+
+      * READ, because this has to keep working on a database where the old
+        MODEL is already gone — a re-run, a restore, the day after the
+        uninstall. `to_regclass` asks the database rather than the registry.
+      * WRITTEN, because writing the job through the ORM GRANTS the role, and
+        every one of these people already holds it: the carry-over gave it to
+        them, with an audit row saying so. A second grant would either refuse
+        or write a second row claiming this was the moment they got it, and
+        neither is true.
+
+    The stored fields that read the job are recomputed explicitly afterwards,
+    because a column written behind the ORM's back is a column the ORM has no
+    reason to think has changed.
+    """
+    Users = env['res.users'].sudo()
+    if 'job_role_id' not in Users._fields:                 # pragma: no cover
+        return 0
+
+    env.cr.execute("SELECT to_regclass('public.access_role')")
+    if not (env.cr.fetchone() or [None])[0]:
+        _logger.info(
+            'health_access: retirement — no previous access application on '
+            'this database, so nobody has a job to carry over from one')
+        return 0
+    env.cr.execute("""
+        SELECT column_name FROM information_schema.columns
+         WHERE table_name = 'res_users' AND column_name = 'access_role_id'
+    """)
+    if not env.cr.fetchone():
+        return 0
+
+    env.cr.execute("SELECT id, name FROM access_role")
+    by_old_id = {}
+    unmapped = []
+    for old_id, name in env.cr.fetchall():
+        bundle = role_by_name(env, name or '')
+        if bundle:
+            by_old_id[old_id] = bundle.id
+        else:
+            unmapped.append(name or old_id)
+    if unmapped:
+        # Never silent. A role with no bundle means somebody's job cannot be
+        # written, and the person it belongs to would quietly become "no job".
+        _logger.warning(
+            'health_access: retirement — %s previous role(s) have no bundle of '
+            'the same name, so nobody employed as one gets a job: %s',
+            len(unmapped), ', '.join(str(n) for n in unmapped))
+
+    env.cr.execute("""
+        SELECT id, access_role_id FROM res_users
+         WHERE access_role_id IS NOT NULL AND job_role_id IS NULL
+    """)
+    touched = []
+    for uid, old_id in env.cr.fetchall():
+        new_id = by_old_id.get(old_id)
+        if not new_id:
+            continue
+        env.cr.execute(
+            "UPDATE res_users SET job_role_id = %s WHERE id = %s",
+            (new_id, uid))
+        touched.append(uid)
+
+    if touched:
+        _recompute_job_readers(env, touched)
+    _logger.info(
+        'health_access: retirement — %s colleague(s) now have their job '
+        'written on their record', len(touched))
+    return len(touched)
+
+
+def _recompute_job_readers(env, user_ids):
+    """Put the ORM back in step with a column written underneath it.
+
+    Four stored fields on the staff record and two on the login are computed
+    from the job. They are recomputed by name rather than by hoping `modified`
+    walks far enough, because "the roster still calls them a nurse" is exactly
+    the failure this whole change exists to avoid.
+    """
+    env.invalidate_all()
+    Users = env['res.users'].sudo()
+    users = Users.browse(list(user_ids)).exists()
+    for name in ('is_doctor_role', 'is_nurse_role'):
+        if name in Users._fields:
+            env.add_to_compute(Users._fields[name], users)
+    env.flush_all()
+
+    Employee = env['hr.employee'].sudo().with_context(active_test=False)
+    employees = Employee.search([])
+    if 'job_role_id' in Employee._fields:
+        env.add_to_compute(Employee._fields['job_role_id'], employees)
+        env.flush_all()
+    for name in ('is_doctor_role', 'is_nurse_role', 'is_om_role',
+                 'access_role_display'):
+        if name in Employee._fields:
+            env.add_to_compute(Employee._fields[name], employees)
+    env.flush_all()
+
+
+def _swap_admin_group(env):
+    """The clinic's administrators keep being administrators.
+
+    Their permission group belonged to the application being removed, and a
+    permission group disappears with its module. This one is the same tier
+    under a name this module owns: everybody who held the old one joins the
+    new one, and the ability that hands it out points at the new one, so every
+    bundle carrying "add people and give out roles" recomputes onto it.
+
+    NOBODY IS TAKEN OUT OF THE OLD GROUP. It is about to be deleted along with
+    its module; removing people from it first would be work with no effect and
+    one more thing to get wrong.
+    """
+    new_group = env.ref(CLINIC_ADMIN_GROUP, raise_if_not_found=False)
+    if not new_group:                                      # pragma: no cover
+        _logger.error(
+            'health_access: retirement — %s does not exist, so the clinic has '
+            'no administrator tier to move its people into', CLINIC_ADMIN_GROUP)
+        return 0
+    old_group = env.ref(LEGACY_ADMIN_GROUP, raise_if_not_found=False)
+
+    moved = []
+    if old_group:
+        for user in old_group.sudo().all_user_ids:
+            if new_group in user.sudo().all_group_ids:
+                continue
+            user.sudo().write({'group_ids': [(4, new_group.id)]})
+            moved.append(user.login or str(user.id))
+
+    # The ability points at the new group, and every bundle holding it
+    # recomputes — `biz.access.role.group_ids` is stored and computed from the
+    # abilities, so this is the one write that moves nine roles at once.
+    ability = env['biz.access.ability'].sudo().with_context(
+        active_test=False).search([('technical_key', '=', 'user-admin')],
+                                  limit=1)
+    if ability and ability.group_ids != new_group:
+        ability.write({'group_ids': [(6, 0, new_group.ids)]})
+        _logger.info(
+            'health_access: retirement — "add people and give out roles" now '
+            'hands out the clinic administrator permission this module owns')
+
+    _logger.info(
+        'health_access: retirement — %s clinic administrator(s) moved onto the '
+        'new permission: %s', len(moved), ', '.join(moved) or 'none needed')
+    return len(moved)
+
+
+def _carry_analytics(env):
+    """Who may build a report, said once, where every other permission is said.
+
+    Two modules used to answer this in python by matching the words "Owner",
+    "Operations Manager", "Branch Manager" and "Accountant" against a row — one
+    to draw the Analytics entry on the left menu, the other to hand out the
+    permission behind it. They had to, because roles had no fixed names to
+    point at. They do now, so the answer becomes an ability on four bundles,
+    and the two copies of the list go away with the modules that held them.
+
+    THE ORDER HERE IS THE WHOLE PROBLEM, AND A REAL DOCTOR FOUND IT. Adding an
+    ability to a role makes the role BIGGER, and holding a role means holding
+    all of it — so the moment "build reports" joined the Branch Manager bundle,
+    anybody who did not already have the reporting permission STOPPED HOLDING
+    that bundle, and lost every left-menu entry it opened. On this clinic that
+    was one doctor who carries the branch-manager permission by accident of
+    history: two entries gone, and the role gone with them.
+
+    So the people to give the permission to are worked out from the role
+    WITHOUT it — everybody who holds every OTHER permission in the bundle —
+    rather than from the role as it now stands. That is also what makes this
+    idempotent and self-repairing: run it on a database where the ability was
+    added without the grant and it finds exactly the people who were dropped.
+
+    ADDITIVE, NEVER SUBTRACTIVE. A role that already carries it is left alone,
+    and nobody is taken out of the permission — losing a role has never removed
+    a permission on this system and this is not the place to start.
+    """
+    ability = env['biz.access.ability'].sudo().with_context(
+        active_test=False).search([('technical_key', '=', ANALYTICS_ABILITY)],
+                                  limit=1)
+    if not ability:
+        _logger.warning(
+            'health_access: retirement — the "%s" ability is not on this '
+            'database (the reporting module may not be installed), so no role '
+            'was given it', ANALYTICS_ABILITY)
+        return 0
+    reporting = ability.group_ids
+
+    added, granted = [], []
+    for name in ANALYTICS_ROLES:
+        role = role_by_name(env, name)
+        if not role:
+            continue
+        # THE HOLDERS OF THE ROLE WITHOUT THE REPORTING PERMISSION. Worked out
+        # before anything is written, and re-worked out on every run, so this
+        # says the same thing whether the ability was added a second ago or a
+        # release ago.
+        needed = set((role.group_ids - reporting).ids)
+        candidates = env['res.users'].sudo().search(
+            [('active', '=', True), ('share', '=', False)])
+        due = [u for u in candidates
+               if needed and needed <= set(u.all_group_ids.ids)]
+
+        if ability not in role.ability_ids:
+            role.write({'ability_ids': [(4, ability.id)]})
+            added.append(role.name)
+
+        for user in due:
+            missing = reporting.filtered(
+                lambda g: g.id not in set(user.all_group_ids.ids))
+            if not missing:
+                continue
+            user.write({'group_ids': [(4, g.id) for g in missing]})
+            user.invalidate_recordset(['group_ids'])
+            granted.append(user.login or str(user.id))
+
+    _logger.info(
+        'health_access: retirement — %s role(s) gained "build reports" (%s); '
+        '%s person(s) needed the permission itself so as not to stop holding '
+        'their role: %s',
+        len(added), ', '.join(added) or 'none', len(set(granted)),
+        ', '.join(sorted(set(granted))) or 'none')
+    return len(added)
+
+
+def model_behind(env, item):
+    """The model an entry's screen opens, or `''` when it opens no records."""
+    if not item.action_xmlid:
+        return ''
+    action = env.ref(item.action_xmlid, raise_if_not_found=False)
+    if not action:
+        return ''
+    return getattr(action.sudo(), 'res_model', '') or ''
+
+
+def role_can_read(env, role, model_name):
+    """Could somebody holding this role open that screen at all?
+
+    ASKED OF THE PERMISSIONS TABLE, not by making a person and trying. A door
+    on a menu that answers "you are not allowed to access this" is a dead end,
+    and the whole promise of putting these entries here was that everything a
+    role needs is on the menu — not that everything is on the menu.
+
+    A permission row with no group on it is open to everybody with a login, so
+    it settles the question on its own. Otherwise the role opens the screen
+    when any row's group is one it carries, over the whole implication closure
+    — a role that carries a manager tier reaches what the officer tier opens.
+    """
+    if not model_name or model_name not in env:
+        return True                     # opens no records; nothing to refuse
+    acls = env['ir.model.access'].sudo().search(
+        [('model_id.model', '=', model_name), ('perm_read', '=', True)])
+    if not acls:
+        return True                     # ungoverned; the framework lets it by
+    if any(not acl.group_id for acl in acls):
+        return True
+    closure = role.group_ids | role.group_ids.all_implied_ids
+    return any(acl.group_id in closure for acl in acls)
+
+
+def _gate_new_items(env):
+    """Who opens each new door — and whether the door leads anywhere.
+
+    THREE JOBS, AND THE SECOND AND THIRD ARE THE INTERESTING ONES.
+
+    Writing the gate is ordinary. Switching an entry OFF when the screen behind
+    it is not on this database is the part that matters: these entries name
+    screens belonging to nine different applications, and a clinic that has not
+    bought the voice system would otherwise get a "Voice" heading with six
+    entries under it that each answer "that screen does not exist".
+
+    And NARROWING THE GATE TO THE ROLES THAT CAN ACTUALLY OPEN IT. A screen
+    reached only through the application bar was reached by whoever the screen
+    itself lets in; putting it on the left menu does not change who that is. A
+    role that would be shown the entry and then refused the data is a role
+    being set up to fail, so it is not shown the entry. Where NO role can open
+    it, the entry is switched off entirely and the fact is logged — the screen
+    is still there for the platform administrator, who keeps the bar.
+
+    All three are re-decided on every run, so the day somebody gives a role the
+    permission behind one of these screens, the next run puts the door back.
+    """
+    Item = env['cms.sidebar.item'].sudo().with_context(active_test=False)
+    gated = switched_off = narrowed = 0
+    no_audience = []
+    for xmlid, names in NEW_ITEM_ROLES.items():
+        item = env.ref(xmlid, raise_if_not_found=False)
+        if not item:
+            continue
+        roles = env['biz.access.role'].sudo().browse()
+        for name in names:
+            roles |= role_by_name(env, name)
+        if not roles:
+            # NEVER GATE TO NOBODY BY ACCIDENT. An entry limited to a role that
+            # does not exist is hidden from everybody, which is a worse answer
+            # than showing it to somebody whose permissions will politely
+            # refuse — and this branch is about a MISSING ROLE, not about a
+            # screen nobody may open.
+            _logger.warning(
+                'health_access: none of the roles %s exist, so "%s" is left '
+                'open to everybody rather than hidden from everybody',
+                list(names), xmlid)
+            continue
+
+        # Where an entry is a heading, the screens are its children's; the
+        # heading itself is judged by whether anything under it survives.
+        model = model_behind(env, item)
+        if model:
+            able = roles.filtered(lambda r: role_can_read(env, r, model))
+        else:
+            able = roles
+        if able != roles:
+            narrowed += 1
+            _logger.info(
+                'health_access: "%s" is not offered to %s — they cannot open '
+                '%s', item.name,
+                ', '.join((roles - able).mapped('name')), model)
+        if not able:
+            no_audience.append('%s (%s)' % (item.name, model))
+        if set(item.biz_role_ids.ids) != set(able.ids):
+            item.write({'biz_role_ids': [(6, 0, able.ids)]})
+            gated += 1
+
+    # Every entry this module ships, its children included. CHILDREN FIRST,
+    # because a heading is alive exactly when something under it is, and a
+    # heading judged before its children would be judged on yesterday's answer.
+    ours = Item.search([('id', 'in', _our_new_item_ids(env))])
+    leaves = ours.filtered(lambda i: i.action_xmlid)
+    headings = ours - leaves
+    for item in leaves:
+        model = model_behind(env, item)
+        opens = bool(env.ref(item.action_xmlid, raise_if_not_found=False))
+        if opens and model:
+            # SOMEBODY has to be able to open it. The audience is whatever the
+            # entry inherits — its own roles, its heading's, its block's.
+            audience = item.effective_biz_role_ids.filtered('active')
+            if audience:
+                opens = any(role_can_read(env, r, model) for r in audience)
+                if not opens:
+                    no_audience.append('%s (%s)' % (item.name, model))
+        if item.active != opens:
+            item.write({'active': opens})
+            switched_off += 0 if opens else 1
+    for item in headings:
+        alive = bool(Item.search_count(
+            [('parent_id', '=', item.id), ('active', '=', True)]))
+        if item.active != alive:
+            item.write({'active': alive})
+            switched_off += 0 if alive else 1
+    _logger.info(
+        'health_access: %s new left-menu entry(ies) gated, %s narrowed to the '
+        'roles that can open them, %s switched off because nothing on this '
+        'database can open them%s',
+        gated, narrowed, switched_off,
+        (' — ' + '; '.join(no_audience)) if no_audience else '')
+    return gated
+
+
+def _our_new_item_ids(env):
+    """The ids of every entry `data/cms_sidebar_items_topbar.xml` created."""
+    rows = env['ir.model.data'].sudo().search([
+        ('module', '=', 'health_access'),
+        ('model', '=', 'cms.sidebar.item'),
+    ])
+    return [r.res_id for r in rows]
 
 
 def post_init_hook(env):
@@ -813,4 +1328,30 @@ def post_init_hook(env):
         env = api.Environment(env, SUPERUSER_ID, {})
     ensure_catalogue(env)
     migrate_legacy(env)
+    retire_legacy(env)
     _gate_admin_item(env)
+    _gate_new_items(env)
+    _release_borrowed_matches(env)
+
+
+def _release_borrowed_matches(env):
+    """Hand two screens back now that each has a door of its own.
+
+    "Channels (setup)" answered for the message store and the ops audit while
+    neither had an entry on this menu. Both do now, and the highlight index is
+    last-wins, so leaving them declared on the borrower would light up the
+    wrong entry when somebody opens one.
+    """
+    host = env.ref(BORROWER_XMLID, raise_if_not_found=False)
+    if not host or 'match_action_xmlids' not in host._fields:
+        return 0
+    declared = [v.strip() for v in (host.match_action_xmlids or '').split(',')
+                if v.strip()]
+    kept = [v for v in declared if v not in BORROWED_MATCHES]
+    if kept == declared:
+        return 0
+    host.sudo().write({'match_action_xmlids': ','.join(kept)})
+    _logger.info(
+        'health_access: "%s" no longer answers for %s — each has its own '
+        'entry now', host.name, ', '.join(set(declared) - set(kept)))
+    return len(declared) - len(kept)

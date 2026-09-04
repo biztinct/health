@@ -173,33 +173,22 @@ class TestTheWrites(ProviderCase):
 
 
 @tagged('post_install', '-at_install')
-class TestTheOlderGateIsShownAsContext(ProviderCase):
+class TestTheProtocolStillCarriesTheNote(ProviderCase):
+    """There is one gate on this menu now, so there is nothing to note.
 
-    def setUp(self):
-        super().setUp()
-        if 'access.role' not in self.env:
-            self.skipTest('the previous access application is not installed')
+    While the clinic had two, every entry the older gate opened wider carried a
+    quiet sentence saying so. The older gate has gone with the application that
+    owned it, so the sentence is always empty — but the KEY stays on every row,
+    because the Screens lens reads it and a provider that dropped it would work
+    by accident rather than by agreement.
+    """
 
-    def test_a_gate_only_the_older_lane_names_is_reported_quietly(self):
-        old = self.env['access.role'].create({
-            'name': 'PR older role',
-            'groups_ids': [(6, 0, self.env.ref('base.group_user').ids)]})
-        item = self.Item.create({
-            'name': 'PR one-lane row', 'section_id': self.section.id,
-            'role_ids': [(6, 0, old.ids)]})
-        row = next(r for r in self.rail.entries() if r['id'] == item.id)
-        self.assertIn('PR older role', row['legacy_note'])
-
-    def test_when_the_two_agree_there_is_nothing_to_say(self):
-        old = self.env['access.role'].create({
-            'name': 'PR bundle',            # the same name as the bundle
-            'groups_ids': [(6, 0, self.env.ref('base.group_user').ids)]})
-        item = self.Item.create({
-            'name': 'PR two-lane row', 'section_id': self.section.id,
-            'role_ids': [(6, 0, old.ids)],
-            'biz_role_ids': [(6, 0, self.bundle.ids)]})
-        row = next(r for r in self.rail.entries() if r['id'] == item.id)
-        self.assertEqual(row['legacy_note'], '')
+    def test_every_entry_carries_the_key_and_it_is_empty(self):
+        rows = self.rail.entries()
+        self.assertTrue(rows, 'the menu has no entries at all')
+        for row in rows:
+            self.assertIn('legacy_note', row)
+            self.assertEqual(row['legacy_note'], '')
 
 
 @tagged('post_install', '-at_install')

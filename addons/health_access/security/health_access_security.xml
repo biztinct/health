@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ======================================================================
+     THE CLINIC'S OWN ADMINISTRATOR TIER.
+
+     Somebody has to be able to add a colleague, switch one off and say what
+     each of them does — without being handed the keys to the box. That tier
+     has existed on this clinic since the beginning; it simply belonged to the
+     application being retired, so it moves here unchanged: the same privilege
+     it always carried, the same people, the same name on their screen.
+
+     THE TWO RINGS, RESTATED. This group is the TENANT's administrator. The
+     PLATFORM's administrator is `base.group_system`, held by one account, and
+     nothing here implies it, reaches it, or can be made to. The roles board
+     refuses to build a bundle that gets there, over the whole implication
+     closure, and the models refuse it again on write.
+     ====================================================================== -->
+<odoo>
+
+    <record id="group_clinic_admin" model="res.groups">
+        <field name="name">Healthcare: Clinic administrator</field>
+        <field name="privilege_id"
+               ref="health_base.res_groups_privilege_healthcare"/>
+        <field name="implied_ids"
+               eval="[(4, ref('health_base.group_healthcare_admin'))]"/>
+        <field name="comment">Adds colleagues, switches them off and says which
+role each of them holds, and keeps the clinic's own reference lists right.
+It never opens the settings for the box itself, never installs anything, and
+can never hand out the system administrator permission.</field>
+    </record>
+
+    <!-- WHY A RULE AND NOT SIMPLY A HIDDEN COLUMN. Somebody who manages
+         colleagues has no business editing the one account that owns the box,
+         and a list that showed it would invite exactly that. Carried across
+         from the retired application unchanged, including its permissions:
+         read and write, never create or delete, because creating a colleague
+         goes through the form that checks what it is handing out. -->
+    <record id="rule_hide_system_admins" model="ir.rule">
+        <field name="name">Healthcare: the platform administrator is not on the clinic's people list</field>
+        <field name="model_id" ref="base.model_res_users"/>
+        <field name="groups"
+               eval="[(4, ref('health_access.group_clinic_admin'))]"/>
+        <field name="domain_force"
+               eval="'[(\'group_ids\', \'not in\', [' + str(ref('base.group_system')) + '])]'"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">0</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+</odoo>

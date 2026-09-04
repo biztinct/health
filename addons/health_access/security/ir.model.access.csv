@@ -1,2 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_health_access_new_person,health.access.new.person — anybody with a login may open the form; only the access team may submit it,model_health_access_new_person,base.group_user,1,1,1,1
+access_res_users_clinic_admin,res.users — the clinic administrator manages colleagues (never deletes one),base.model_res_users,health_access.group_clinic_admin,1,1,1,0
+access_res_groups_clinic_admin,res.groups — read only; permissions are given out as roles,base.model_res_groups,health_access.group_clinic_admin,1,0,0,0
+access_hr_employee_clinic_admin,hr.employee — the clinic administrator keeps the staff records right,hr.model_hr_employee,health_access.group_clinic_admin,1,1,1,0

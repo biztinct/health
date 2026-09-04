@@ -45,26 +45,38 @@ home checks again before it writes. Adding a colleague goes through the same
 refusals: an administrator of this clinic can give somebody a job, and cannot
 give anybody the keys to the box.
 """,
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.2.0',
     'category': 'Administration',
     'license': 'LGPL-3',
     'author': 'Biztinct',
     'website': 'https://www.biztinct.com',
-    # NOT `access_roles`, and NOT `health_user_admin`. Every read of either is
-    # guarded (`'access.role' in env`, `'access_role_id' in fields`), so this
-    # module still installs, upgrades and runs on the day they are gone.
+    # NOT `access_roles`, and NOT `health_user_admin`: both are gone, and every
+    # read of either was guarded from the day this module was written, which is
+    # what made the day they went an ordinary one.
+    #
+    # `health_fieldservice` is named explicitly even though `health_cms_sidebar`
+    # already pulls it in, because this module now owns view fragments on ITS
+    # staff form: a dependency that is only transitive is a dependency somebody
+    # can remove by accident three modules away.
     'depends': [
         'biz_access',
         'health_base',
+        'health_fieldservice',
         'health_cms_sidebar',
         'health_landing',
         'hr',
     ],
     'data': [
+        'security/health_access_security.xml',
         'security/ir.model.access.csv',
         'views/cms_sidebar_views.xml',
         'views/new_person_views.xml',
+        'views/set_job_views.xml',
+        'views/job_field_views.xml',
+        'views/admin_users_views.xml',
         'data/cms_sidebar_items.xml',
+        'data/cms_sidebar_items_topbar.xml',
+        'data/config.xml',
     ],
     'assets': {
         'web.assets_backend': [

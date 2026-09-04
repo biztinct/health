@@ -100,15 +100,40 @@ class TestTheRoles(CatalogueCase):
             self.assertEqual(role.name, name)
 
     def test_the_bundle_carries_exactly_what_the_old_role_carried(self):
-        """EXACT, permission for permission. The whole carry-over is this."""
+        """EXACT, permission for permission — with TWO deliberate differences,
+        and naming them is the point of the test.
+
+        ONE SWAP. The clinic's own administrator tier used to be a permission
+        belonging to the application being retired, and a permission
+        disappears with its module. It has been re-homed under a name this
+        programme owns; the ability that hands it out points at the new one, so
+        every bundle carrying it recomputed onto the new permission.
+
+        ONE ADDITION. Four roles gained "build reports". They ALREADY had the
+        reporting permission — a module was handing it out by matching their
+        names in python — and it is now written down where every other
+        permission is, as an ability on the role. Nothing anybody holds
+        changed; where the fact is recorded did.
+        """
         if not self.has_old:
             self.skipTest('the previous access application is not installed')
+        gone = self.env.ref(hooks.LEGACY_ADMIN_GROUP, raise_if_not_found=False)
+        arrived = self.env.ref(hooks.CLINIC_ADMIN_GROUP,
+                               raise_if_not_found=False)
+        reporting = self.Ability.search(
+            [('technical_key', '=', hooks.ANALYTICS_ABILITY)], limit=1)
         for old in self.env['access.role'].with_context(
                 active_test=False).search([]):
             role = hooks.role_by_name(self.env, old.name or '')
             self.assertTrue(role, 'no bundle for "%s"' % old.name)
+            expected = set(old.groups_ids.ids)
+            if gone and arrived and gone.id in expected:
+                expected.discard(gone.id)
+                expected.add(arrived.id)
+            if reporting and old.name in hooks.ANALYTICS_ROLES:
+                expected |= set(reporting.group_ids.ids)
             self.assertEqual(
-                set(role.group_ids.ids), set(old.groups_ids.ids),
+                set(role.group_ids.ids), expected,
                 'the "%s" bundle is not what the old role carried' % old.name)
 
     def test_the_role_of_nothing_but_signing_in_is_put_away(self):

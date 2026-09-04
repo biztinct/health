@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================================================================
+         WHAT SOMEBODY IS EMPLOYED AS.
+
+         One field, its own sentence read back underneath it, and one line
+         saying what pressing the button will do — because it does two things
+         (it changes what the roster calls them AND gives them the role) and a
+         button that does two things has to say so.
+         ================================================================== -->
+    <record id="view_health_access_set_job_form" model="ir.ui.view">
+        <field name="name">health.access.set.job.form</field>
+        <field name="model">health.access.set.job</field>
+        <field name="arch" type="xml">
+            <form string="Change their job">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="user_name" readonly="1" nolabel="1"/></h1>
+                    </div>
+                    <field name="user_id" invisible="1"/>
+                    <group>
+                        <field name="current_job_id"
+                               options="{'no_open': True}"/>
+                        <field name="job_role_id"
+                               options="{'no_create': True, 'no_open': True}"/>
+                        <field name="counts_as"
+                               invisible="not job_role_id"/>
+                        <field name="job_description" readonly="1" nolabel="1"
+                               colspan="2" invisible="not job_role_id"/>
+                    </group>
+                    <div class="text-muted">
+                        Saving this changes what the schedule, the staff
+                        pickers and the reports call them — and gives them that
+                        role. The one it replaces is taken back, keeping
+                        anything another role of theirs still needs.
+                    </div>
+                </sheet>
+                <footer>
+                    <button name="action_apply" type="object" string="Save"
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_health_access_set_job" model="ir.actions.act_window">
+        <field name="name">Change their job</field>
+        <field name="res_model">health.access.set.job</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_health_access_set_job_form"/>
+    </record>
+
+</odoo>

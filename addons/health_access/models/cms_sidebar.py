@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
-"""The clinic's left menu, taught a second gate and shown to the Access home.
+"""The clinic's left menu, gated by role and shown to the Access home.
 
 TWO THINGS LIVE IN THIS FILE, and they are two halves of one idea.
 
-  **A second lane on the menu itself.** Every entry and every block already
-  names the roles that open it, in the previous access application's own model.
-  This adds a second list — the same question, asked of a `biz.access.role` — and
-  the menu reads the two as an OR. Not a replacement: an OR, so that on the day
-  it lands nobody loses a screen they had the day before, whatever state the
-  carry-over is in. The old lane goes away in its own step, once the two have
-  been proven to agree person by person.
+  **The gate on the menu itself.** Every entry and every block names the roles
+  that open it. This is now the ONLY gate: there used to be a second one,
+  belonging to the previous access application, and for one phase the two were
+  read as an OR so that nobody could lose a screen while the first was being
+  carried into the second. That has been done, proven person by person, and the
+  older lane has gone with the application that owned it.
 
   **An adapter, so the Access home can read and write it.** `biz_access` owns no
   menu and cannot: it is generic, and every product's menu is a different model.
@@ -25,10 +24,9 @@ exists to answer.
 
 INHERITANCE IS THE MENU'S, NOT THE HOME'S. A gate on a block flows down to
 everything in it, and a gate on a parent entry flows down to its children — the
-union, never an override. That was already true of the old lane and it is true
-of the new one in exactly the same way, in a compute written to mirror it line
-for line, because two inheritance rules on one menu is a menu nobody can reason
-about.
+union, never an override. That was true of the older lane and it is true of this
+one in exactly the same way, because two inheritance rules on one menu is a menu
+nobody can reason about.
 """
 
 import logging
@@ -50,12 +48,15 @@ RELOAD_EVENT = 'CMS_SIDEBAR:RELOAD'
 #: The plain table of menu rows, for the administrator who needs the row itself.
 ADVANCED_ACTION = 'health_cms_sidebar.action_cms_sidebar_item'
 
-#: Who sees every entry whatever the gates say. `base.group_system` is the
-#: platform's own administrator; the second is the previous application's admin
-#: privilege, read only while that application is still installed, so that the
-#: seven people who have it do not lose the whole menu on the day this lands.
-ADMIN_GROUPS = ('base.group_system',
-                'access_roles.access_role_group_administrator')
+#: Who sees every entry whatever the gates say: the platform's own
+#: administrator, and nobody else.
+#:
+#: There was a second name on this list — the previous access application's
+#: admin privilege — while that application was installed. Seven people held it,
+#: two of whom were not owners; they now see the menu their own roles open,
+#: which is what everybody else has always seen. That is the point of retiring
+#: it: one rule, and no privilege that quietly opens the whole menu.
+ADMIN_GROUPS = ('base.group_system',)
 
 
 class CmsSidebarSection(models.Model):
@@ -85,24 +86,31 @@ class CmsSidebarItem(models.Model):
         compute='_compute_effective_biz_role_ids', compute_sudo=True,
         help='What actually gates this entry: its own roles PLUS everything '
              'inherited from its block and from the entries above it. Empty '
-             'means no gate on this lane at all.')
+             'means no gate at all — everybody with a login opens it.')
 
-    # Mirrors `_compute_effective_role_ids` line for line, and depends on the
-    # parent's RAW roles for the same reason: a field that depended on its own
-    # value through `parent_id` would need the ORM's cycle machinery, and the
-    # loop below already walks the whole chain.
+    # Depends on the parent's RAW roles rather than on its computed effective
+    # ones: a field that depended on its own value through `parent_id` would
+    # need the ORM's cycle machinery, and the loop below already walks the
+    # whole chain.
     @api.depends('biz_role_ids', 'section_id.biz_role_ids',
                  'parent_id.biz_role_ids', 'parent_id.section_id.biz_role_ids')
     def _compute_effective_biz_role_ids(self):
-        """The same inheritance the older lane has, on the newer one.
+        """A gate on a block, or on an entry above, flows down.
 
-        Written as a copy of the older compute on purpose. Two lanes with two
-        different inheritance rules would make an entry's audience depend on
-        WHICH lane somebody had happened to gate it on, and nobody looking at
-        the two lists side by side would be able to tell.
+        The union, never an override: a leaf can widen who opens it by naming
+        a role of its own without being cut off from the people who own the
+        block it sits in.
         """
+        # ARCHIVED ROLES STAY ON THE GATE, and that is the whole reason for
+        # the context. A relational read drops inactive records by default, so
+        # an entry gated only on a role somebody has since put away would come
+        # back with NO gate — and "no gate" means open to everybody. Putting a
+        # role away would hand its screens to the whole clinic. The archived
+        # role opens nothing (it is absent from the map the rule builds); the
+        # entry stays GATED, which is what hides it.
+        records = self.with_context(active_test=False)
         # Parents before children so a child reads a settled parent value.
-        for item in self.sorted(lambda i: bool(i.parent_id)):
+        for item in records.sorted(lambda i: bool(i.parent_id)):
             roles = item.biz_role_ids | item.section_id.biz_role_ids
             parent = item.parent_id
             seen = set()
@@ -115,23 +123,15 @@ class CmsSidebarItem(models.Model):
     # ================================================================ the rule
     @api.model
     def _sidebar_visible_items(self, all_items):
-        """The two lanes, read as an OR.
+        """One lane, asked once.
 
-        Visible when ANY of these is true, and they are tried in this order
+        An entry is drawn when ANY of these is true, tried in this order
         because each is cheaper than the next:
 
-          * this person is an administrator;
-          * the entry has no gate on EITHER lane;
-          * the older lane lets them through — the previous application's rule,
-            unchanged, still running, still authoritative for anybody whose
-            carry-over has not happened;
-          * they hold, IN FULL, one of the roles on the newer lane.
-
-        AN OR AND NOT A REPLACEMENT. This method can only ever return MORE than
-        the one it overrides. That is the whole safety argument of this phase:
-        whatever state the carry-over is in, and whatever anybody has since
-        edited on one lane and not the other, nobody loses a screen they had
-        yesterday.
+          * this person is the platform administrator;
+          * the entry has no gate at all, its block has none, and nothing above
+            it in the menu has one;
+          * they hold, IN FULL, one of the roles that opens it.
 
         HOLDING A ROLE MEANS HOLDING ALL OF IT (`rail_state`, the one written
         rule). A bundle is a job, not a shopping list: somebody with three of a
@@ -140,19 +140,22 @@ class CmsSidebarItem(models.Model):
         absent from the map below — while an entry gated only on archived roles
         still counts as GATED, so archiving the last role on an entry hides it
         rather than handing it to the whole company.
+
+        `super()` FIRST, ALWAYS. The menu module draws what there is; this only
+        ever narrows it. Anything a module below has already decided somebody
+        cannot see does not come back because a role happens to name it.
         """
         user = self.env.user
-        legacy_visible = super()._sidebar_visible_items(all_items)
-        # THE ONE WAY TO ASK WHAT THIS LANE IS DOING. A before-and-after report
-        # has to be able to ask for the answer WITHOUT the newer lane, and the
-        # only honest way to get it is to run the real code with the lane
-        # switched off. Nothing in the product ever sets this.
+        candidates = super()._sidebar_visible_items(all_items)
+        # THE ONE WAY TO ASK WHAT THIS RULE IS DOING. A before-and-after report
+        # has to be able to ask for the answer WITHOUT the role gate, and the
+        # only honest way to get it is to run the real code with the gate
+        # switched off. Nothing in the product ever sets this; it is read from
+        # a report and from a test.
         if self.env.context.get('health_access_no_biz_lane'):
-            return legacy_visible
-        if legacy_visible == all_items:
-            return all_items                       # an administrator, already
+            return candidates
         if self._biz_is_admin(user):
-            return all_items
+            return candidates
 
         held = set(user.sudo().all_group_ids.ids)
         role_groups = {
@@ -161,28 +164,30 @@ class CmsSidebarItem(models.Model):
                 [('active', '=', True)])
         }
 
-        extra = all_items.browse()
-        for item in all_items - legacy_visible:
+        # IDS, NOT RECORDSETS, because the gate has to be read with archived
+        # roles included and the answer has to come back in the caller's own
+        # environment. Two recordsets from two contexts do not union.
+        drawn = []
+        for item in candidates.with_context(active_test=False):
             roles = item.effective_biz_role_ids
             if not roles:
-                # No gate on this lane. Whether it is open to everybody was
-                # already decided by the lane above, which said no.
+                drawn.append(item.id)               # no gate anywhere above it
                 continue
             visible, _locked = rail_state(
                 {'group_ids': [], 'restricted': False, 'role_ids': roles.ids},
                 False, held, role_groups)
             if visible:
-                extra |= item
-        return legacy_visible | extra
+                drawn.append(item.id)
+        return candidates.filtered(lambda i: i.id in set(drawn))
 
     @api.model
     def _biz_is_admin(self, user):
         """Who sees the whole menu whatever the gates say.
 
-        The previous application's admin privilege is read through `env.ref`
-        with `raise_if_not_found=False`, so this file keeps working unchanged on
-        the day that application is uninstalled — which is the whole reason this
-        module does not depend on it.
+        Read through `env.ref` with `raise_if_not_found=False` so a name that
+        is not on this database is skipped rather than raising — the list used
+        to carry a second name, belonging to a module that has since been
+        removed, and this is what let that removal be a one-line change.
         """
         for xmlid in ADMIN_GROUPS:
             if not self.env.ref(xmlid, raise_if_not_found=False):
@@ -303,35 +308,20 @@ class HealthCmsRail(RailProvider):
         return rows
 
     def _legacy_note(self, env, item):
-        """The older gate, in the same plain words, when it says something more.
+        """Always empty, and kept rather than deleted.
 
-        Only ever a sentence while this clinic has two lanes. It names the roles
-        the older gate lets in that the newer one does not mention — so an
-        administrator editing a gate can see that the entry is wider than the
-        chips in front of them, rather than discovering it from a colleague.
+        While this clinic had two gates on one menu, this said "also opened by
+        the older gate: Owner, CRM" wherever the two disagreed — so somebody
+        editing a gate could see that an entry was wider than the chips in
+        front of them. There is one gate now, so there is nothing it could
+        honestly say, and the Screens lens draws no note.
 
-        Empty everywhere on the day the carry-over runs, because the carry-over
-        makes the two lanes say the same thing. It exists for the day after,
-        when somebody edits one of them.
+        The method stays because the protocol has the key and the lens reads
+        it: a provider that dropped it would work by accident rather than by
+        agreement, and the next product to write one would have to find out
+        from a traceback that the key is optional.
         """
-        if 'role_ids' not in item._fields:                # pragma: no cover
-            return ''
-        try:
-            old = item.role_ids
-            if not old:
-                return ''
-            covered = {(r.name or '').strip().lower()
-                       for r in item.biz_role_ids}
-            extra = [r.name or '' for r in old
-                     if (r.name or '').strip().lower() not in covered]
-            if not extra:
-                return ''
-            return _("Also opened by the older gate: %s", ', '.join(extra))
-        except Exception:                                 # noqa: BLE001
-            _logger.warning(
-                'health_access: the older gate on left-menu entry %s could not '
-                'be read', item.id, exc_info=True)
-            return ''
+        return ''
 
     def visibility_for(self, env, user):
         items, sections = env['cms.sidebar.item']._biz_visible_map(user)
@@ -346,12 +336,12 @@ class HealthCmsRail(RailProvider):
 
     # ----------------------------------------------------------------- writes
     def set_roles(self, env, entry_id, role_ids):
-        """The NEW lane only. The older one is never written from this screen.
+        """The chips on the screen, and nothing else.
 
-        Taking a role off the older gate would take a door away from people the
-        lens never showed — it draws the new lane's chips — and a screen that
-        can silently change something it does not display is a screen nobody can
-        trust. The older lane is retired in its own step, deliberately.
+        There is one gate on this menu now, so what the lens draws IS what it
+        writes. While there were two, this deliberately wrote only the one it
+        showed: a screen that can silently change something it does not display
+        is a screen nobody can trust.
         """
         self._entry(env, entry_id).write({'biz_role_ids': [(6, 0, role_ids)]})
 

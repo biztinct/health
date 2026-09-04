@@ -27,4 +27,4 @@ import { registerAccessManagerGroups } from "@biz_access/js/access_palette";
 
 registerHome("health_landing.action_admin_dashboard");
 
-registerAccessManagerGroups("health_user_admin.group_health_user_admin");
+registerAccessManagerGroups("health_access.group_clinic_admin");

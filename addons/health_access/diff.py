@@ -222,3 +222,192 @@ def write(env, path):
         handle.write(text)
     _logger.info('health_access: carry-over diff written to %s', path)
     return path
+
+
+# =============================================================================
+# THE RETIREMENT'S OWN PROOF — a snapshot, and the same snapshot again
+#
+# The report above compares two answers the SAME database can give at the same
+# moment, because both rules were installed side by side. The retirement cannot
+# be checked that way: "before" is a database with the old application on it and
+# "after" is a database without, and no single moment holds both.
+#
+# So "before" is written to a file first and read back afterwards. THE SAME
+# FUNCTION PRODUCES BOTH SIDES — one file, run twice — because two functions
+# that were meant to agree are two functions that eventually do not, and the one
+# doing the comparing would be the one deciding what "before" had been.
+#
+# It writes nothing and reads only what a person could read. Safe on a live
+# database and meant to be run on one.
+# =============================================================================
+def _flags_of(record):
+    """The four things the product asks about somebody's job."""
+    out = {}
+    for name in ('is_doctor_role', 'is_nurse_role', 'is_om_role',
+                 'access_role_display'):
+        if name in record._fields:
+            value = record[name]
+            out[name] = value if isinstance(value, bool) else (value or '')
+    return out
+
+
+def _roles_held(env, user):
+    """The names of the bundles this person holds IN FULL, sorted.
+
+    Held, not assigned: the two are different numbers and only one of them is
+    what somebody can actually do.
+    """
+    if 'biz.access.role' not in env:
+        return []
+    held = set(user.sudo().all_group_ids.ids)
+    names = []
+    for role in env['biz.access.role'].sudo().search([('active', '=', True)]):
+        groups = set(role.group_ids.ids)
+        if groups and groups <= held:
+            names.append(role.name or '')
+    return sorted(names)
+
+
+def snapshot(env):
+    """Everything this phase could take away from somebody, per person.
+
+    Keyed by login rather than by id, so the two sides can be compared across a
+    restore, and menus are recorded by their full path rather than their id for
+    the same reason — an id survives an uninstall, and a menu that is deleted
+    and recreated does not.
+    """
+    Menu = env['ir.ui.menu'].sudo()
+    users = env['res.users'].sudo().search(
+        [('active', '=', True), ('share', '=', False)], order='login')
+    rows = {}
+    for user in users:
+        menu_ids = env['ir.ui.menu'].with_user(user).sudo()._visible_menu_ids(
+            debug=False)
+        rail = env['cms.sidebar.item'].with_user(user).sudo().get_sidebar_data()
+        rows[user.login or str(user.id)] = {
+            'name': user.name or '',
+            'rail': sorted(_rail_names(rail)),
+            'menus': sorted(
+                Menu.browse(list(menu_ids)).mapped('complete_name')),
+            'roles_held': _roles_held(env, user),
+            'flags': _flags_of(user),
+        }
+    staff = {}
+    Employee = env['hr.employee'].sudo().with_context(active_test=False)
+    for emp in Employee.search([]):
+        staff['%s|%s' % (emp.id, emp.name or '')] = _flags_of(emp)
+    return {'db': env.cr.dbname, 'people': rows, 'staff': staff}
+
+
+def _rail_names(data):
+    """Left-menu entries by NAME, at both levels, as a flat set."""
+    out = set()
+    for section in data or []:
+        for item in section.get('items') or []:
+            out.add('%s / %s' % (section.get('name') or '', item['name']))
+            for kid in item.get('children') or []:
+                out.add('%s / %s / %s' % (section.get('name') or '',
+                                          item['name'], kid['name']))
+    return out
+
+
+def write_snapshot(env, path):
+    import json                                          # noqa: PLC0415
+    data = snapshot(env)
+    with open(path, 'w', encoding='utf-8') as handle:
+        json.dump(data, handle, indent=1, sort_keys=True)
+    _logger.info('health_access: snapshot of %s people written to %s',
+                 len(data['people']), path)
+    return path
+
+
+def compare_markdown(env, before_path, after=None):
+    """The retirement, person by person: what nobody lost, and what changed."""
+    import json                                          # noqa: PLC0415
+    with open(before_path, encoding='utf-8') as handle:
+        before = json.load(handle)
+    after = after or snapshot(env)
+
+    out = ['# Retiring the previous access application — before and after', '']
+    out.append('Database: `%s` before, `%s` after. %s / %s colleague(s).'
+               % (before.get('db'), after.get('db'),
+                  len(before['people']), len(after['people'])))
+    out.append('')
+
+    lost_rail = lost_roles = flag_changes = 0
+    rows = []
+    for login, was in sorted(before['people'].items()):
+        now = after['people'].get(login)
+        if now is None:
+            rows.append((login, was['name'], 'GONE', '', '', '', ''))
+            continue
+        rail_lost = sorted(set(was['rail']) - set(now['rail']))
+        rail_gained = sorted(set(now['rail']) - set(was['rail']))
+        menu_lost = sorted(set(was['menus']) - set(now['menus']))
+        menu_gained = sorted(set(now['menus']) - set(was['menus']))
+        roles_lost = sorted(set(was['roles_held']) - set(now['roles_held']))
+        flags_same = was['flags'] == now['flags']
+        lost_rail += len(rail_lost)
+        lost_roles += len(roles_lost)
+        flag_changes += 0 if flags_same else 1
+        rows.append((login, was['name'],
+                     '%s → %s' % (len(was['rail']), len(now['rail'])),
+                     '%s → %s' % (len(was['menus']), len(now['menus'])),
+                     _few_names(rail_lost) if rail_lost else '—',
+                     _few_names(menu_lost) if menu_lost else '—',
+                     'same' if flags_same else 'CHANGED'))
+        del rail_gained, menu_gained
+
+    staff_changed = [
+        key for key, flags in before['staff'].items()
+        if key in after['staff'] and after['staff'][key] != flags]
+
+    out.append('## The verdict')
+    out.append('')
+    out.append('| | count |')
+    out.append('|---|---|')
+    out.append('| left-menu entries **lost by anybody** | **%s** |' % lost_rail)
+    out.append('| roles **no longer held by somebody who held them** | **%s** |'
+               % lost_roles)
+    out.append('| people whose job flags changed | **%s** |' % flag_changes)
+    out.append('| staff records whose job flags changed | **%s** |'
+               % len(staff_changed))
+    out.append('')
+    if lost_rail or lost_roles or flag_changes or staff_changed:
+        out.append('> **Something changed that was not meant to.** The rows '
+                   'below name it.')
+    else:
+        out.append('> Nobody lost a left-menu entry, nobody lost a role, and '
+                   'every staff record still says the same job it said before.')
+    out.append('')
+    if staff_changed:
+        out.append('Staff records that changed: %s'
+                   % ', '.join(staff_changed[:20]))
+        out.append('')
+
+    out.append('## Every person')
+    out.append('')
+    out.append('| Sign-in | Name | Left menu | Top bar | Menu entries lost | '
+               'Top-bar screens lost | Job flags |')
+    out.append('|---|---|---|---|---|---|---|')
+    for row in rows:
+        out.append('| `%s` | %s | %s | %s | %s | %s | %s |' % row)
+    out.append('')
+    return '\n'.join(out)
+
+
+def _few_names(names, cap=5):
+    if not names:
+        return '—'
+    shown = list(names[:cap])
+    if len(names) > cap:
+        shown.append('and %s more' % (len(names) - cap))
+    return ', '.join(shown)
+
+
+def write_compare(env, before_path, path):
+    text = compare_markdown(env, before_path)
+    with open(path, 'w', encoding='utf-8') as handle:
+        handle.write(text)
+    _logger.info('health_access: retirement diff written to %s', path)
+    return path

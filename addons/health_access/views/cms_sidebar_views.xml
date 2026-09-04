@@ -10,9 +10,9 @@
          the row itself, for the day something has to be looked at rather than
          used. Read-only nowhere, but deliberately unglamorous.
 
-         Both lists sit BESIDE the older one rather than replacing it, because
-         while both are read, seeing only half of what gates an entry is how
-         somebody concludes it is narrower than it is.
+         These fields are the ONLY gate the left menu has. They used to sit
+         beside an older list belonging to the previous access application;
+         that application is gone and so is its list.
          ================================================================== -->
 
     <record id="view_cms_sidebar_item_form_biz" model="ir.ui.view">
@@ -21,11 +21,11 @@
         <field name="inherit_id"
                ref="health_cms_sidebar.cms_sidebar_item_view_form"/>
         <field name="arch" type="xml">
-            <field name="effective_role_ids" position="after">
+            <field name="parent_id" position="after">
                 <field name="biz_role_ids" widget="many2many_tags"
                        options="{'no_create': True, 'no_quick_create': True}"
                        string="Roles that open this entry"
-                       help="Holding one of these roles in full opens this entry. It is read together with the older list above — either one is enough."/>
+                       help="Holding one of these roles in full opens this entry. Leave it empty and the entry is open to everybody with a login — unless the block it sits in, or the entry above it, is gated."/>
                 <field name="effective_biz_role_ids" widget="many2many_tags"
                        readonly="1"
                        string="Roles that open it, inherited included"
@@ -40,11 +40,44 @@
         <field name="inherit_id"
                ref="health_cms_sidebar.cms_sidebar_section_view_form"/>
         <field name="arch" type="xml">
-            <field name="role_ids" position="after">
+            <xpath expr="//group[@name='access_control']" position="inside">
                 <field name="biz_role_ids" widget="many2many_tags"
                        options="{'no_create': True, 'no_quick_create': True}"
                        string="Roles that see this block"
                        help="Everything in this block is visible to the people who hold one of these roles in full. An entry inside it may name roles of its own — those are added to these, never instead of them."/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- The same two questions on the plain LISTS, because that is where
+         somebody scans forty rows looking for the one that is gated wrongly. -->
+    <record id="view_cms_sidebar_item_tree_biz" model="ir.ui.view">
+        <field name="name">cms.sidebar.item.tree.biz.roles</field>
+        <field name="model">cms.sidebar.item</field>
+        <field name="inherit_id"
+               ref="health_cms_sidebar.cms_sidebar_item_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="active" position="before">
+                <field name="biz_role_ids" widget="many2many_tags"
+                       options="{'no_create': True, 'no_quick_create': True}"
+                       string="Roles that open it"/>
+                <field name="effective_biz_role_ids" widget="many2many_tags"
+                       readonly="1" optional="show"
+                       string="Including what it inherits"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_cms_sidebar_section_tree_biz" model="ir.ui.view">
+        <field name="name">cms.sidebar.section.tree.biz.roles</field>
+        <field name="model">cms.sidebar.section</field>
+        <field name="inherit_id"
+               ref="health_cms_sidebar.cms_sidebar_section_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="active" position="before">
+                <field name="biz_role_ids" widget="many2many_tags"
+                       options="{'no_create': True, 'no_quick_create': True}"
+                       string="Roles that see this block"/>
             </field>
         </field>
     </record>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ======================================================================
+     THE JOB, ON THE SCREENS THAT ASK ABOUT IT.
+
+     WHY THESE FRAGMENTS LIVE HERE AND NOT WHERE THE FORMS DO. They name
+     `job_role_id` and the flags computed from it, and those are put on the
+     models by THIS module. A view in `health_base` or `health_fieldservice`
+     naming them would refuse to load on a database without the Access home,
+     and those two modules are the root of the product's tree — they have to
+     keep working on their own. So the forms stay where they are and the job
+     is added to them from up here.
+     ====================================================================== -->
+<odoo>
+
+    <!-- ============================================== the login's own form -->
+    <record id="view_users_form_job" model="ir.ui.view">
+        <field name="name">res.users.form.job</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="health_base.view_users_form_healthcare"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='healthcare_settings']"
+                   position="inside">
+                <field name="job_role_id"
+                       options="{'no_create': True, 'no_open': True}"/>
+                <field name="is_doctor_role" invisible="1"/>
+                <field name="is_nurse_role" invisible="1"/>
+                <field name="is_duty_doctor" invisible="not is_doctor_role"/>
+                <field name="is_head_nurse" invisible="not is_nurse_role"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ============================================== the staff record ===== -->
+    <record id="view_healthcare_staff_form_job" model="ir.ui.view">
+        <field name="name">healthcare.staff.form.job</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id"
+               ref="health_fieldservice.view_healthcare_staff_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='healthcare_role_status']/field[@name='user_id']"
+                   position="after">
+                <field name="job_role_id" string="Employed as"
+                       readonly="not user_id"
+                       options="{'no_create': True, 'no_open': True}"
+                       help="What this person is employed as. It decides what the schedule, the staff pickers and the reports call them — and it gives them that role. It can be set once they have a login."/>
+                <field name="is_doctor_role" invisible="1"/>
+                <field name="is_nurse_role" invisible="1"/>
+                <field name="is_duty_doctor" invisible="not is_doctor_role"/>
+                <field name="is_head_nurse" invisible="not is_nurse_role"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_healthcare_staff_list_job" model="ir.ui.view">
+        <field name="name">healthcare.staff.list.job</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id"
+               ref="health_fieldservice.view_healthcare_staff_list"/>
+        <field name="arch" type="xml">
+            <field name="job_id" position="after">
+                <field name="access_role_display" string="Employed as"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- ============================ the picker that used to narrow itself === -->
+    <!-- `health.facility.facility_manager_id` carried this domain on the field
+         itself until the flag it reads moved up here with the job. Same
+         narrowing, same screen; it simply cannot be declared in a module that
+         does not know the field exists. -->
+    <record id="view_health_facility_form_manager" model="ir.ui.view">
+        <field name="name">health.facility.form.manager.domain</field>
+        <field name="model">health.facility</field>
+        <field name="inherit_id" ref="health_base.view_health_facility_form"/>
+        <field name="arch" type="xml">
+            <field name="facility_manager_id" position="attributes">
+                <attribute name="domain">[('is_om_role', '=', True)]</attribute>
+            </field>
+        </field>
+    </record>
+
+</odoo>

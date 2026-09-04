@@ -73,6 +73,51 @@ class BizAccess(models.AbstractModel):
             return diff.write(self.env, path)
         return diff.as_markdown(self.env)
 
+    @api.model
+    def retire_legacy_access(self):
+        """Everything that has to be true before the old application goes.
+
+        The job on every record, what each role counts as, the clinic's own
+        administrator tier, and who may build a report. Idempotent, and it runs
+        correctly on a database that never had the old application — which is
+        what makes it a migration rather than a one-off script.
+        """
+        if not self.env.user.has_group('base.group_system'):
+            raise UserError(_(
+                "Retiring the previous access application is something a "
+                "system administrator does."))
+        from ..hooks import retire_legacy        # noqa: PLC0415 - as above
+        return retire_legacy(self.env)
+
+    @api.model
+    def access_snapshot(self, path=None):
+        """What everybody can see right now, written down. Reads only.
+
+        Run once before a change of this size and once after, and compare the
+        two files: it is the only honest way to prove that a retirement took
+        nothing away, because no single moment holds both answers.
+        """
+        if not self.env.user.has_group('base.group_system'):
+            raise UserError(_(
+                "The before-and-after snapshot is something a system "
+                "administrator runs."))
+        from .. import diff                      # noqa: PLC0415 - as above
+        if path:
+            return diff.write_snapshot(self.env, path)
+        return diff.snapshot(self.env)
+
+    @api.model
+    def access_snapshot_diff(self, before_path, path=None):
+        """The snapshot from before this change, against the way things are."""
+        if not self.env.user.has_group('base.group_system'):
+            raise UserError(_(
+                "The before-and-after report is something a system "
+                "administrator runs."))
+        from .. import diff                      # noqa: PLC0415 - as above
+        if path:
+            return diff.write_compare(self.env, before_path, path)
+        return diff.compare_markdown(self.env, before_path)
+
     # ============================================================ the header
     def _people_actions(self):
         """One door: somebody new is starting.
@@ -127,6 +172,12 @@ class BizAccess(models.AbstractModel):
             'kind': 'run',
             'confirm': _("Email %s a link to set a new password?",
                          target.name or ''),
+        })
+        rows.append({
+            'id': 'set_job',
+            'label': _("Change their job"),
+            'icon': 'briefcase',
+            'kind': 'open',
         })
         rows.append({
             'id': 'open_staff',
@@ -199,6 +250,29 @@ class BizAccess(models.AbstractModel):
         return {'message': _(
             "A link to set a new password is on its way to %s.",
             target.email or target.login or '')}
+
+    def _person_action_set_job(self, user):
+        """Open the one-field form that says what somebody is employed as.
+
+        A door, not a deed, for the same reason "add a person" is: choosing a
+        job is a choice, and a button that made it would be a button nobody
+        could use twice. The form re-checks who is asking on the server.
+        """
+        target = user.sudo()
+        return {
+            'message': '',
+            'action': {
+                'type': 'ir.actions.act_window',
+                'name': _("%s — what they are employed as", target.name or ''),
+                'res_model': 'health.access.set.job',
+                'view_mode': 'form',
+                'views': [[self.env.ref(
+                    'health_access.view_health_access_set_job_form').id,
+                    'form']],
+                'target': 'new',
+                'context': {'default_user_id': target.id},
+            },
+        }
 
     def _person_action_open_staff(self, user):
         """Open the staff record, or say plainly that there is not one.
