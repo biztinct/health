@@ -27,7 +27,12 @@ _logger = logging.getLogger(__name__)
 ACTIVATE_REQUIRED_FIELDS = [
     ('dose_quantity', 'Dose Quantity'),
     ('dose_unit', 'Dose Unit'),
-    ('route', 'Route'),
+    # `route_id`, not `route`: the Selection became a lookup pointer in the
+    # dropdown-vocabularies work and this list was missed, so
+    # action_activate() raised KeyError: 'route' on EVERY medication order
+    # — a live defect, not only a test one. A Many2one is falsy when unset,
+    # so the check means exactly what it always meant.
+    ('route_id', 'Route'),
     ('frequency', 'Frequency'),
     ('start_date', 'Start Date'),
 ]

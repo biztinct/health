@@ -157,7 +157,15 @@ run() {
     if [ -n "$TESTTAGS" ]; then
       # HttpCase needs a real http server AND workers=0; --no-http is only
       # safe when we are not running tests.
-      args="$args --test-enable --test-tags $TESTTAGS --workers=0"
+      # --db-filter is not optional since H3 made routing hostname-based.
+      # An HttpCase calls http://127.0.0.1:<port>, and `dbfilter = ^%d$` reads
+      # the first label of that Host — "127" — which is not a database, so
+      # every probe comes back 404 from a request that never reached the app.
+      # It looks exactly like a broken feature and is a broken test harness:
+      # three security tests in health_fieldservice "failed" this way, and the
+      # log gives it away by naming the database `?` instead of the real one.
+      # Pinning it here also protects a run against a clone (ledger H32).
+      args="$args --test-enable --test-tags $TESTTAGS --workers=0 --db-filter=^${DB}\$"
       echo "==> upgrading ${MODULES:-none} / installing ${INSTALL:-none}  [$TESTTAGS]"
     else
       args="$args --no-http"

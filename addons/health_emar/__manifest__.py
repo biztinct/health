@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Healthcare eMAR',
-    'version': '19.0.1.3.1',
+    'version': '19.0.1.3.2',
     'category': 'Healthcare/Clinical',
     'summary': 'Medication orders, administration records, schedules and PWA '
                'med checklist (FHIR MedicationRequest/MedicationAdministration)',
