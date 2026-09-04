@@ -200,3 +200,26 @@ class TestTheOlderGateIsShownAsContext(ProviderCase):
             'biz_role_ids': [(6, 0, self.bundle.ids)]})
         row = next(r for r in self.rail.entries() if r['id'] == item.id)
         self.assertEqual(row['legacy_note'], '')
+
+
+@tagged('post_install', '-at_install')
+class TestTheMenuMethodKeepsItsMarker(ProviderCase):
+    """`get_sidebar_data` is called from the browser and MUST stay `@api.model`.
+
+    A method the web client calls by name on a model rather than on a record is
+    an `@api.model` method, and the decorator is the only thing that says so. It
+    has been lost to a refactor before — on a surface where the failure is not a
+    traceback in a test but an empty left menu for everybody, which is why it is
+    pinned here rather than trusted to review.
+    """
+
+    def test_get_sidebar_data_is_still_a_model_method(self):
+        method = type(self.Item).get_sidebar_data
+        self.assertTrue(getattr(method, '_api', None) == 'model'
+                        or getattr(method, '_api_model', False),
+                        'get_sidebar_data has lost its @api.model marker')
+
+    def test_the_browser_can_still_call_it_without_a_record(self):
+        """The proof that matters, whatever the marker is spelled as."""
+        self.assertIsInstance(
+            self.env['cms.sidebar.item'].get_sidebar_data(), list)

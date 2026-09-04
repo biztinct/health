@@ -179,3 +179,67 @@ class TestItActuallyAddsThem(NewPersonCase):
         user = self.env['res.users'].sudo().search(
             [('login', '=', 'np.third@example.test')], limit=1)
         self.assertEqual(user.access_role_id.name, 'Nurse')
+
+
+@tagged('post_install', '-at_install')
+class TestThePersonActions(NewPersonCase):
+    """The four doors on a passport, and the refusals that are the point.
+
+    Every one of these was already refused on an older screen, in words somebody
+    thought about carefully. They are carried across rather than rewritten,
+    because a refusal that is reworded is a refusal somebody has to re-argue.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.facade = cls.env['biz.access'].with_user(cls.keeper)
+        cls.someone = cls.env['res.users'].create({
+            'name': 'PX someone', 'login': 'px.someone@example.test',
+            'group_ids': [(4, cls.internal.id)]})
+
+    def test_switching_off_the_system_administrator_is_refused(self):
+        admin = self.env.ref('base.user_admin')
+        with self.assertRaises(UserError) as caught:
+            self.facade.run_person_action('deactivate', admin.id)
+        self.assertIn('system administrator', str(caught.exception))
+        self.assertTrue(admin.active, 'the administrator was switched off')
+
+    def test_switching_yourself_off_is_refused(self):
+        with self.assertRaises(UserError) as caught:
+            self.facade.run_person_action('deactivate', self.keeper.id)
+        self.assertIn('your own account', str(caught.exception))
+        self.assertTrue(self.keeper.active)
+
+    def test_switching_somebody_off_and_back_on_again(self):
+        res = self.facade.run_person_action('deactivate', self.someone.id)
+        self.someone.invalidate_recordset()
+        self.assertFalse(self.someone.with_context(active_test=False).active)
+        self.assertIn('switched off', res['message'])
+        self.facade.run_person_action('activate', self.someone.id)
+        self.someone.invalidate_recordset()
+        self.assertTrue(self.someone.with_context(active_test=False).active)
+
+    def test_a_password_reset_says_plainly_when_it_cannot_be_sent(self):
+        """THE HONEST FAILURE IS THE FEATURE. With no outgoing mail account the
+        link is written and never sent, and reporting "sent" would leave
+        somebody waiting by an inbox."""
+        if self.env['ir.mail_server'].sudo().search_count([], limit=1):
+            self.skipTest('this database has an outgoing mail account')
+        self.someone.sudo().write({'email': 'px.someone@example.test'})
+        with self.assertRaises(UserError) as caught:
+            self.facade.run_person_action('reset_password', self.someone.id)
+        said = str(caught.exception)
+        self.assertIn('outgoing mail', said)
+        self.assertNotIn('odoo', said.lower())
+
+    def test_the_staff_record_opens_or_says_there_is_not_one(self):
+        with self.assertRaises(UserError) as caught:
+            self.facade.run_person_action('open_staff', self.someone.id)
+        self.assertIn('no staff record', str(caught.exception))
+
+        self.env['hr.employee'].sudo().create({
+            'name': 'PX someone', 'user_id': self.someone.id})
+        res = self.facade.run_person_action('open_staff', self.someone.id)
+        self.assertEqual(res['action']['res_model'], 'hr.employee')
+        self.assertEqual(res['action']['type'], 'ir.actions.act_window')
