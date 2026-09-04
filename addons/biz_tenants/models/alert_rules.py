@@ -60,6 +60,18 @@ ALERT_KINDS = (
     # inside a live customer's system.
     'support_session',
     'support_refused',          # somebody tried, and the customer said no
+    # ⚠ AND FOUR MORE OF THE SAME FAMILY (SAAS H4d). Not one of these is
+    # something a READING could see: no measurement of a machine can tell that
+    # a trial is nearly over or that an invoice was not paid. They are raised
+    # by the daily billing job and by the buttons a person presses, and they
+    # are closed the same way — which is why every one of them is on
+    # SELF_MANAGED_KINDS below. Leave one off that list and the next
+    # fifteen-minute sweep decides it has cleared and closes it, minutes after
+    # the morning job raised it (ledger F67).
+    'trial_ending',             # a trial is running out, or has run out
+    'invoice_overdue',          # an invoice is past its date
+    'suspend_candidate',        # long enough overdue to consider pausing
+    'tenant_paused',            # somebody's people cannot get in
 )
 
 SEVERITIES = ('critical', 'warning', 'info')
@@ -82,6 +94,10 @@ KIND_LABEL = {
     'mail_not_configured': "Nothing can be emailed from this platform",
     'support_session': "Somebody from this platform went into a customer's system",
     'support_refused': "A customer refused support access",
+    'trial_ending': "A trial is running out",
+    'invoice_overdue': "An invoice has not been paid",
+    'suspend_candidate': "An invoice is overdue enough to consider pausing",
+    'tenant_paused': "A customer's people cannot get in",
 }
 
 #: Which glyph the screen draws. Named from the shared icon set, so a kind
@@ -104,6 +120,10 @@ KIND_ICON = {
     # `lock` and not a crossed-out shield: the shared icon set has no such
     # glyph, and a name it does not know draws nothing at all.
     'support_refused': 'lock',
+    'trial_ending': 'clock',
+    'invoice_overdue': 'receipt',
+    'suspend_candidate': 'alert',
+    'tenant_paused': 'pause',
 }
 
 #: Kinds the sweep NEVER resolves on its own, because no reading can see them.
@@ -117,7 +137,16 @@ KIND_ICON = {
 #: measure them at all, so if they were not on this list the very first sweep
 #: after a session started would decide it had cleared and close it — fifteen
 #: minutes of a thirty-minute session, quietly resolved.
-SELF_MANAGED_KINDS = ('support_session', 'support_refused')
+#: ⚠ AND H4d's FOUR, WHICH ARE THE SAME ARGUMENT ONE MORE TIME. No reading a
+#: machine can take says that an invoice was not paid or that a trial is nearly
+#: over; they are raised by the daily billing job and closed by the buttons a
+#: person presses. Leaving one of them off this list means the next
+#: fifteen-minute sweep decides it has cleared and closes it — minutes after
+#: the morning job raised it. Found by the test that enumerates them, which is
+#: the only thing that could have found it.
+SELF_MANAGED_KINDS = ('support_session', 'support_refused',
+                      'trial_ending', 'invoice_overdue', 'suspend_candidate',
+                      'tenant_paused')
 
 #: Every number this file judges by, in one place, each overridable as a
 #: setting. They are ARGUMENTS and not constants so a test can sit exactly on

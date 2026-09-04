@@ -8,11 +8,14 @@ from . import sync_rules
 from . import provision_rules
 from . import rollout_rules
 from . import alert_rules
+from . import billing_rules
 from . import release
+from . import plan
 from . import tenant
 from . import rollout
 from . import alert
 from . import feature
+from . import billing
 from . import service
 # ⚠ THE TWO HALVES OF THE FACADE COME AFTER `service`, because they inherit the
 # model it declares. They are separate files rather than three thousand more
@@ -23,3 +26,4 @@ from . import rollout_service
 from . import alert_service
 from . import feature_service
 from . import support_service
+from . import billing_service

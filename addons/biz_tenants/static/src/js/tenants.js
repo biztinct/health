@@ -68,6 +68,7 @@ const TABS = [
     { key: "backups", label: _t("Copies"), icon: "archive" },
     { key: "updates", label: _t("Updates"), icon: "rocket" },
     { key: "instep", label: _t("In step"), icon: "gitMerge" },
+    { key: "plan", label: _t("Plan"), icon: "creditCard" },
     { key: "support", label: _t("Support access"), icon: "shield" },
     { key: "danger", label: _t("Closing down"), icon: "alert" },
 ];
@@ -196,6 +197,21 @@ export class BizTenants extends Component {
             support: null,
             supportForm: null,
             supportLink: null,
+            // SAAS H4d: plans, the preview, the invoices and the standings.
+            // Declared here rather than assigned into later — a key that
+            // arrives after the fact is a key nothing was watching when the
+            // screen was first painted (the same reason `plan` was).
+            billing: null,
+            billingTab: "preview",
+            preview: null,
+            previewMonth: "",
+            planEditor: null,
+            planPreview: null,
+            markPaid: null,
+            cancelInvoice: null,
+            billingSettings: null,
+            pausing: null,
+            planTab: null,
         });
 
         onWillStart(() => this.loadFleet());
@@ -242,6 +258,7 @@ export class BizTenants extends Component {
         if (this.state.view === "features") {
             return _t("What each customer has");
         }
+        if (this.state.view === "billing") { return _t("Plans and invoices"); }
         if (this.state.view === "detail" && this.state.tenant) {
             return this.state.tenant.name;
         }
@@ -268,6 +285,10 @@ export class BizTenants extends Component {
             return _t("Every part of the product down the side, every " +
                       "customer across the top. Their own menu is drawn " +
                       "beside it as you click.");
+        }
+        if (this.state.view === "billing") {
+            return _t("Pick a month and see what every customer would be " +
+                      "charged, and why, before anything is created.");
         }
         if (this.state.view === "detail" && this.state.tenant) {
             return _t("Set up %(when)s.",
@@ -358,6 +379,11 @@ export class BizTenants extends Component {
         this.state.settings = null;
         this.state.taskConfirm = null;
         this.state.aborting = null;
+        this.state.planEditor = null;
+        this.state.markPaid = null;
+        this.state.cancelInvoice = null;
+        this.state.billingSettings = null;
+        this.state.pausing = null;
     }
 
     get anyOverlay() {
@@ -426,6 +452,8 @@ export class BizTenants extends Component {
         } else if (this.state.view === "alerts") {
             this.state.alerts = await this.call(
                 "alert_check_now", [], _t("Looking at everything again…"));
+        } else if (this.state.view === "billing") {
+            await this.loadPreview(this.state.previewMonth);
         } else {
             await this.loadFleet();
         }
@@ -674,6 +702,7 @@ export class BizTenants extends Component {
         // somebody before recovering a second later.
         if (key === "updates") { await this.openUpdates(); }
         if (key === "support") { await this.openSupport(); }
+        if (key === "plan") { await this.openPlanTab(); }
         this.state.tab = key;
     }
 
@@ -1523,6 +1552,434 @@ export class BizTenants extends Component {
         }
         await this.loadFleet();
         this.goFleet();
+    }
+
+    // =====================================================================
+    //  SAAS H4d — PLANS, THE PREVIEW, THE INVOICES AND THE STANDINGS
+    //
+    //  THE PREVIEW IS THE HERO OF THIS PHASE, and the property that makes it
+    //  one is that it WRITES NOTHING. The owner picks a month, sees every
+    //  customer with the numbers the platform actually measured, the plan
+    //  applied to them and the arithmetic in words, changes a price, and looks
+    //  again — with nothing having happened. Only `raiseInvoices` writes, and
+    //  it is a button underneath the answer rather than beside the question.
+    // =====================================================================
+    async openBilling(tab = "preview") {
+        // ⚠ THE ANSWER FIRST, THE VIEW SECOND (ledger H72). This screen reads
+        // its data on its first line; switching to it before the read lands
+        // throws inside the component's lifecycle and puts a stack trace in
+        // front of somebody for a second.
+        const billing = await this.call("billing_data", [],
+                                        _t("Reading the plans and invoices…"));
+        this.state.billing = billing;
+        this.state.previewMonth = billing.month;
+        if (!this.state.preview) {
+            await this.loadPreview(billing.month);
+        }
+        this.state.billingTab = tab;
+        this.state.view = "billing";
+    }
+
+    setBillingTab(key) { this.state.billingTab = key; }
+
+    /** The preview. Reads, and writes nothing at all. */
+    async loadPreview(month) {
+        this.state.preview = await this.call(
+            "billing_preview", [month || false],
+            _t("Working out what each customer would be charged…"));
+        this.state.previewMonth = this.state.preview.month;
+    }
+
+    async pickMonth(ev) { await this.loadPreview(ev.target.value); }
+
+    get previewRows() {
+        return (this.state.preview && this.state.preview.rows) || [];
+    }
+
+    get previewBillable() {
+        return this.previewRows.filter((r) => !r.skip);
+    }
+
+    get previewSkipped() {
+        return this.previewRows.filter((r) => !!r.skip);
+    }
+
+    /** Every customer priced in placeholder money, named once at the top. */
+    get previewPlaceholders() {
+        return this.previewBillable.filter((r) => r.placeholder)
+            .map((r) => r.tenant);
+    }
+
+    /**
+     * Raise them. THE ONLY WRITING BUTTON ON THIS SCREEN.
+     *
+     * A month that is not over yet is allowed and is never the default: the
+     * button says "raise it early" in those words and the sentence beside it
+     * says why the numbers would be short.
+     */
+    async raiseInvoices(early = false) {
+        const p = this.state.preview;
+        if (!p || !p.billable) { return; }
+        const res = await this.call(
+            "billing_raise", [p.month, early],
+            _t("Raising %(n)s invoices…", { n: p.billable }));
+        this.state.billing = res.data;
+        await this.loadPreview(p.month);
+        this.state.billingTab = "invoices";
+        this.notification.add(
+            _t("%(n)s invoices raised for %(month)s.",
+               { n: res.created.length, month: res.month_label }),
+            { type: "success" });
+    }
+
+    async takeReading(month) {
+        const res = await this.call("meters_snapshot", [month || false],
+                                    _t("Taking the reading…"));
+        await this.loadPreview(month);
+        this.notification.add(
+            res.noop
+                ? _t("%(month)s already had a reading, so nothing was " +
+                     "changed — the numbers an invoice is worked out from are " +
+                     "never taken twice.", { month: res.month_label })
+                : _t("%(n)s numbers written down for %(month)s.",
+                     { n: res.written, month: res.month_label }),
+            { type: res.noop ? "info" : "success" });
+    }
+
+    async backfill() {
+        const res = await this.call("meters_backfill", [],
+                                    _t("Filling in the months behind us…"));
+        await this.loadPreview(this.state.previewMonth);
+        this.notification.add(
+            _t("%(w)s numbers written, %(k)s months already had one.",
+               { w: res.written, k: res.kept }),
+            { type: "success" });
+    }
+
+    // ------------------------------------------------------------ invoices
+    get invoices() {
+        return (this.state.billing && this.state.billing.invoices) || [];
+    }
+
+    invoiceTone(row) {
+        if (row.state === "paid") { return "ok"; }
+        if (row.state === "cancelled") { return "muted"; }
+        if (row.days_overdue > 0) { return "err"; }
+        return "info";
+    }
+
+    invoiceWords(row) {
+        if (row.state === "issued" && row.days_overdue > 0) {
+            return _t("%(days)s days overdue", { days: row.days_overdue });
+        }
+        return row.state_label;
+    }
+
+    /**
+     * Download the document.
+     *
+     * The bytes come back from the server and are turned into a file here, so
+     * the button works on a platform with no public file route and cannot
+     * depend on a session the download would not carry.
+     */
+    async downloadInvoice(id) {
+        const res = await this.call("invoice_pdf", [id],
+                                    _t("Making the document…"));
+        const bytes = atob(res.data);
+        const buf = new Uint8Array(bytes.length);
+        for (let i = 0; i < bytes.length; i++) { buf[i] = bytes.charCodeAt(i); }
+        const url = URL.createObjectURL(
+            new Blob([buf], { type: "application/pdf" }));
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = res.name;
+        link.click();
+        URL.revokeObjectURL(url);
+    }
+
+    /** Open it in a tab, which is what somebody checking one actually wants. */
+    async viewInvoice(id) {
+        const res = await this.call("invoice_pdf", [id],
+                                    _t("Making the document…"));
+        const bytes = atob(res.data);
+        const buf = new Uint8Array(bytes.length);
+        for (let i = 0; i < bytes.length; i++) { buf[i] = bytes.charCodeAt(i); }
+        const url = URL.createObjectURL(
+            new Blob([buf], { type: "application/pdf" }));
+        window.open(url, "_blank", "noreferrer");
+    }
+
+    /**
+     * Send it. IT IS DARK AND IT SAYS SO (ledger F42).
+     *
+     * A platform with no mail account that HID this button would let its owner
+     * discover the channel was missing on the day it mattered. It is here, it
+     * is pressed, and it says exactly why nothing went and what to do instead.
+     */
+    async sendInvoice(id) {
+        const res = await this.call("invoice_send", [id], _t("Sending…"));
+        this.notification.add(res.message,
+                              { type: res.sent ? "success" : "warning",
+                                sticky: !res.sent });
+    }
+
+    openMarkPaid(row) {
+        this.state.markPaid = { id: row.id, number: row.number,
+                                total: row.total_h, reference: "",
+                                paid_via: "", paid_on: "" };
+    }
+
+    onPaidField(field, ev) { this.state.markPaid[field] = ev.target.value; }
+
+    async confirmMarkPaid() {
+        const m = this.state.markPaid;
+        const res = await this.call(
+            "invoice_mark_paid",
+            [m.id, m.reference, m.paid_via, m.paid_on],
+            _t("Marking it paid…"));
+        this.state.billing = res.data;
+        this.state.markPaid = null;
+        await this.loadPreview(this.state.previewMonth);
+        this.notification.add(_t("Marked paid."), { type: "success" });
+    }
+
+    openCancelInvoice(row) {
+        this.state.cancelInvoice = { id: row.id, number: row.number,
+                                     reason: "" };
+    }
+
+    onCancelReason(ev) { this.state.cancelInvoice.reason = ev.target.value; }
+
+    async confirmCancelInvoice() {
+        const c = this.state.cancelInvoice;
+        const res = await this.call("invoice_cancel", [c.id, c.reason],
+                                    _t("Cancelling…"));
+        this.state.billing = res.data;
+        this.state.cancelInvoice = null;
+        await this.loadPreview(this.state.previewMonth);
+    }
+
+    // --------------------------------------------------------------- plans
+    get plans() {
+        return (this.state.billing && this.state.billing.plans) || [];
+    }
+
+    get meters() {
+        return (this.state.billing && this.state.billing.meters) || [];
+    }
+
+    openPlanEditor(plan) {
+        this.state.planEditor = plan
+            ? { ...plan, tiers: (plan.tiers || []).map((t) => ({ ...t })) }
+            : { id: 0, name: "", code: "", blurb: "", price_kind: "flat",
+                meter_key: "", price: 0, included: 0, minimum: 0,
+                vat_rate: 0, seat_limit: 0, trial_days: 30, sequence: 10,
+                tiers: [], is_placeholder: false, active: true };
+        this.state.planPreview = null;
+        if (plan) { this.refreshPlanPreview(); }
+    }
+
+    onPlanField(field, ev) {
+        const el = ev.target;
+        this.state.planEditor[field] =
+            el.type === "checkbox" ? el.checked : el.value;
+        if (field === "price_kind" || field === "meter_key") {
+            this.state.planPreview = null;
+        }
+    }
+
+    onTierField(index, field, ev) {
+        this.state.planEditor.tiers[index][field] = ev.target.value;
+    }
+
+    addTier() {
+        this.state.planEditor.tiers.push({ up_to: 0, price: 0 });
+    }
+
+    removeTier(index) {
+        this.state.planEditor.tiers.splice(index, 1);
+    }
+
+    /**
+     * ⚠ WHAT THIS PLAN WOULD HAVE CHARGED, ON THE SCREEN WHERE THE PRICE IS
+     * TYPED. The connection between a price and a measurement is the one thing
+     * a pricing screen normally leaves to somebody's imagination.
+     */
+    async refreshPlanPreview() {
+        const p = this.state.planEditor;
+        if (!p || !p.id) { return; }
+        this.state.planPreview = await this.call("plan_preview", [p.id]);
+    }
+
+    get planKindOptions() {
+        return [
+            { key: "flat", label: _t("One price a month, whatever they use") },
+            { key: "per_unit",
+              label: _t("A price for each one, every month") },
+            { key: "flat_tier",
+              label: _t("One price a month, by size band") },
+        ];
+    }
+
+    get planNeedsMeter() {
+        const p = this.state.planEditor;
+        return !!p && (p.price_kind === "per_unit"
+                       || p.price_kind === "flat_tier");
+    }
+
+    async savePlan() {
+        const p = this.state.planEditor;
+        const vals = {
+            name: p.name, code: p.code, blurb: p.blurb,
+            price_kind: p.price_kind, meter_key: p.meter_key,
+            price: p.price, included: p.included, minimum: p.minimum,
+            vat_rate: p.vat_rate, seat_limit: p.seat_limit,
+            trial_days: p.trial_days, sequence: p.sequence,
+            active: p.active,
+            // ⚠ SAVING IS SAYING "I HAVE LOOKED AT THIS". The placeholder mark
+            // comes off here and nowhere else, so an invoice can never be
+            // raised from a figure nobody has read.
+            is_placeholder: false,
+        };
+        if (p.price_kind === "flat_tier") { vals.tiers = p.tiers; }
+        const res = await this.call("plan_save", [p.id || false, vals],
+                                    _t("Saving the plan…"));
+        this.state.billing = { ...this.state.billing, plans: res.plans };
+        this.state.planEditor = null;
+        await this.loadPreview(this.state.previewMonth);
+        this.notification.add(_t("Saved."), { type: "success" });
+    }
+
+    async archivePlan(plan) {
+        const res = await this.call("plan_archive", [plan.id, plan.active],
+                                    _t("Putting it away…"));
+        this.state.billing = { ...this.state.billing, plans: res.plans };
+    }
+
+    // ------------------------------------------------------ the settings
+    async openBillingSettings() {
+        this.state.billingSettings = await this.call(
+            "billing_settings", [], _t("Reading the settings…"));
+    }
+
+    onBillingSetting(key, ev) {
+        const el = ev.target;
+        this.state.billingSettings.values[key] =
+            el.type === "checkbox" ? (el.checked ? "1" : "0") : el.value;
+        if (key === "auto_suspend") {
+            this.state.billingSettings.auto_suspend = el.checked;
+        }
+    }
+
+    /** ⚠ A STRING, NEVER A BOOLEAN (ledger F58). `t-att-` bound to a
+     *  JavaScript `true` renders an EMPTY attribute, so the switch sat grey
+     *  beside a paragraph in red saying it was on — a control that disagrees
+     *  with its own explanation is worse than no control at all. */
+    get autoSuspendPressed() {
+        const s = this.state.billingSettings;
+        return (s && s.auto_suspend) ? "true" : "false";
+    }
+
+    toggleAutoSuspend() {
+        const s = this.state.billingSettings;
+        s.auto_suspend = !s.auto_suspend;
+        s.values.auto_suspend = s.auto_suspend ? "1" : "0";
+    }
+
+    async saveBillingSettings() {
+        const s = this.state.billingSettings;
+        const res = await this.call("billing_settings_save", [s.values],
+                                    _t("Saving…"));
+        this.state.billingSettings = res;
+        this.state.billing = await this.call("billing_data",
+                                             [this.state.previewMonth]);
+        await this.loadPreview(this.state.previewMonth);
+        this.notification.add(_t("Saved."), { type: "success" });
+    }
+
+    // ============================================== one customer's Plan tab
+    async openPlanTab() {
+        this.state.planTab = await this.call(
+            "tenant_billing", [this.state.tenant.id],
+            _t("Reading their plan…"));
+    }
+
+    get planTabRows() {
+        return (this.state.planTab && this.state.planTab.usage) || [];
+    }
+
+    get planTabInvoices() {
+        return (this.state.planTab && this.state.planTab.invoices) || [];
+    }
+
+    async setTenantPlan(ev) {
+        const planId = parseInt(ev.target.value, 10);
+        if (!planId) { return; }
+        const res = await this.call(
+            "tenant_set_plan", [this.state.tenant.id, planId],
+            _t("Putting them on the plan…"));
+        this.state.planTab = res.data;
+        this.notification.add(
+            res.push && res.push.ok
+                ? _t("Saved, and their own screen has been told.")
+                : _t("Saved here. Their system could not be told just now — " +
+                     "it will catch up."),
+            { type: res.push && res.push.ok ? "success" : "warning" });
+    }
+
+    async startTrial() {
+        const t = this.state.planTab;
+        if (!t || !t.plan) { return; }
+        const res = await this.call(
+            "tenant_set_plan", [this.state.tenant.id, t.plan.id, true],
+            _t("Starting the trial…"));
+        this.state.planTab = res.data;
+        await this.loadFleet();
+    }
+
+    async convertTrial() {
+        const res = await this.call("tenant_convert", [this.state.tenant.id],
+                                    _t("Moving them across…"));
+        this.state.planTab = res.data;
+        await this.loadFleet();
+        this.notification.add(_t("They are a paying customer now."),
+                              { type: "success" });
+    }
+
+    openPause() {
+        this.state.pausing = { reason: "", typed: "" };
+    }
+
+    onPauseField(field, ev) { this.state.pausing[field] = ev.target.value; }
+
+    get canPause() {
+        const p = this.state.pausing;
+        const t = this.state.tenant;
+        return !!(p && t && p.reason.trim() && p.typed.trim() === t.slug);
+    }
+
+    async confirmPause() {
+        const p = this.state.pausing;
+        const res = await this.call(
+            "tenant_pause", [this.state.tenant.id, p.reason, p.typed],
+            _t("Shutting their door…"));
+        this.state.planTab = res.data;
+        this.state.pausing = null;
+        await this.loadFleet();
+        this.notification.add(
+            _t("Paused. Nothing has been deleted, and one press lets them " +
+               "back in."), { type: "warning" });
+    }
+
+    /** ONE PRESS, NO TYPING — undoing harm is never made harder than doing it. */
+    async resumeTenant() {
+        const res = await this.call("tenant_resume", [this.state.tenant.id],
+                                    _t("Letting them back in…"));
+        this.state.planTab = res.data;
+        await this.loadFleet();
+        this.notification.add(_t("They are back in. Their own screens will " +
+                                 "clear within a minute."),
+                              { type: "success" });
     }
 }
 

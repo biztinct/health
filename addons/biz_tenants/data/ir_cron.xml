@@ -137,4 +137,49 @@
         <field name="active" eval="True"/>
     </record>
 
+    <!-- ==================================================================
+         AND THE TWO THIS PHASE ADDS. NEITHER OF THEM INVOICES ANYBODY.
+
+         The reading job READS every customer and writes the numbers down on
+         OUR system. The billing job moves OUR invoices along and raises
+         flags on OUR screen. Between them they cannot install anything, they
+         cannot invoice anybody, and the ONE thing they can do to a customer
+         is pause them — only when the owner has deliberately switched the
+         automatic pause on, which ships OFF and stays off until somebody
+         moves it.
+         ================================================================== -->
+
+    <!-- Daily, and the interesting day is the 1st: the method itself works out
+         which month has just ended, so a machine that was switched off on the
+         1st still writes the reading down on the 2nd. A month that already has
+         a reading is never given a second one. -->
+    <record id="cron_meter_snapshot" model="ir.cron">
+        <field name="name">Customers: write down the month's numbers</field>
+        <field name="model_id" ref="model_biz_tenants"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_meter_snapshot()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+        <field name="nextcall"
+               eval="(DateTime.now().replace(hour=2, minute=30, second=0)
+                      + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+    </record>
+
+    <!-- Once a morning: which invoices are past their date, which trials are
+         running out, and which retention clocks have passed. It raises flags
+         and it does not send anything, because there is nothing to send with. -->
+    <record id="cron_billing" model="ir.cron">
+        <field name="name">Customers: chase what is owed and count the trials down</field>
+        <field name="model_id" ref="model_biz_tenants"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_billing()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+        <field name="nextcall"
+               eval="(DateTime.now().replace(hour=7, minute=15, second=0)
+                      + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+    </record>
+
 </odoo>

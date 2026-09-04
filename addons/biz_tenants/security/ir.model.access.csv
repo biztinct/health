@@ -9,3 +9,7 @@ access_biz_rollout_task_system,biz.rollout.task system,model_biz_rollout_task,ba
 access_biz_alert_system,biz.alert system,model_biz_alert,base.group_system,1,1,1,1
 access_biz_feature_system,biz.feature system,model_biz_feature,base.group_system,1,1,1,1
 access_biz_tenant_feature_system,biz.tenant.feature system,model_biz_tenant_feature,base.group_system,1,1,1,1
+access_biz_plan_system,biz.plan system,model_biz_plan,base.group_system,1,1,1,1
+access_biz_plan_tier_system,biz.plan.tier system,model_biz_plan_tier,base.group_system,1,1,1,1
+access_biz_tenant_invoice_system,biz.tenant.invoice system,model_biz_tenant_invoice,base.group_system,1,1,1,1
+access_biz_tenant_invoice_line_system,biz.tenant.invoice.line system,model_biz_tenant_invoice_line,base.group_system,1,1,1,1

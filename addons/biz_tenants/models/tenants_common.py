@@ -471,6 +471,59 @@ def feature_keys():
     return [f['key'] for f in FEATURES]
 
 
+# =============================================================================
+# 8. WHAT A CUSTOMER CAN BE PUT ON, AND WHAT IT COSTS
+#
+# ⚠ THE FIGURES AND THE CURRENCY BELONG TO THE PRODUCT, NOT TO THE COCKPIT
+# (rail R11). A cockpit that shipped three plans priced in one country's money
+# and named after one industry's customers would put the wrong words and the
+# wrong currency in front of the next product on the day it was lifted. So the
+# plans are a REGISTRATION, exactly like the features and the meters, and a
+# machine where no product has registered any starts with an empty catalogue
+# and a screen that says so.
+#
+# EVERY SEEDED PLAN IS A PLACEHOLDER UNTIL SOMEBODY SAYS OTHERWISE. `placeholder`
+# is carried through onto the record and onto the screen, because an invoice
+# raised from a figure nobody has looked at is the one mistake billing can make
+# that reaches a paying customer.
+# =============================================================================
+#: `[{code, name, blurb, price_kind, meter_key, price, included, minimum,
+#:    tiers, currency_xmlid, vat_rate, seat_limit, trial_days, sequence,
+#:    placeholder}]`
+PLANS = []
+
+
+def register_plans(specs):
+    """A product names what it sells and what it costs."""
+    for spec in (specs or ()):
+        spec = dict(spec or {})
+        code = str(spec.get('code') or '').strip()
+        if not code or any(p['code'] == code for p in PLANS):
+            continue
+        PLANS.append({
+            'code': code,
+            'name': spec.get('name') or code,
+            'blurb': spec.get('blurb') or '',
+            'price_kind': spec.get('price_kind') or 'flat',
+            'meter_key': spec.get('meter_key') or '',
+            'price': float(spec.get('price') or 0.0),
+            'included': int(spec.get('included') or 0),
+            'minimum': float(spec.get('minimum') or 0.0),
+            'tiers': [dict(t) for t in (spec.get('tiers') or ())],
+            'currency_xmlid': spec.get('currency_xmlid') or '',
+            'vat_rate': float(spec.get('vat_rate') or 0.0),
+            'seat_limit': int(spec.get('seat_limit') or 0),
+            'trial_days': int(spec.get('trial_days') or 0),
+            'sequence': int(spec.get('sequence') or (len(PLANS) + 1) * 10),
+            'placeholder': bool(spec.get('placeholder', True)),
+        })
+    return list(PLANS)
+
+
+def plans():
+    return [dict(p, tiers=[dict(t) for t in p['tiers']]) for p in PLANS]
+
+
 # -----------------------------------------------------------------------------
 # AND WHAT THE PRODUCT'S OWN MENU LOOKS LIKE, FOR THE PREVIEW BESIDE THE MATRIX.
 #

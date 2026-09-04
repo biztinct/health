@@ -10,3 +10,6 @@ from . import test_alerts
 from . import test_generic
 from . import test_features
 from . import test_support
+# H4d.
+from . import test_billing_rules
+from . import test_billing

@@ -59,7 +59,7 @@ registrations made by an overlay module (`models/tenants_common.py`). With
 nothing registered this still boots, still lists what is on the machine, and
 says honestly on screen that nobody has told it what this product is.
 """,
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.2.0',
     'category': 'Administration',
     'license': 'LGPL-3',
     'author': 'Biztinct',
@@ -73,6 +73,8 @@ says honestly on screen that nobody has told it what this product is.
         'security/ir.model.access.csv',
         'views/biz_tenants_action.xml',
         'data/biz_feature.xml',
+        'data/biz_plan.xml',
+        'report/tenant_invoice.xml',
         'data/ir_cron.xml',
     ],
     'assets': {

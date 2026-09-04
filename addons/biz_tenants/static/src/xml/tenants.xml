@@ -59,6 +59,11 @@
                 t-if="state.view !== 'features'">
           <t t-out="ic('layers', 14)"/> <span>What each customer has</span>
         </button>
+        <button class="bzk-btn ghost bzk-btn-sm"
+                t-on-click="() => this.openBilling('preview')"
+                t-if="state.view !== 'billing'">
+          <t t-out="ic('receipt', 14)"/> <span>Plans and invoices</span>
+        </button>
         <button class="bzk-btn ghost bzk-btn-sm" t-on-click="openSync"
                 t-if="state.view !== 'sync'">
           <t t-out="ic('gitMerge', 14)"/> <span>In step with master</span>
@@ -139,6 +144,13 @@
           <div>Reading what each customer has…</div>
         </div>
       </t>
+      <t t-elif="state.view === 'billing'">
+        <t t-if="state.billing"><t t-call="biz_tenants.Billing"/></t>
+        <div t-else="" class="bzk-busy">
+          <div class="bzk-spin"/>
+          <div>Reading the plans and invoices…</div>
+        </div>
+      </t>
     </t>
 
     <!-- Overlays. Every one is the kit's own dialog, so they scrim, centre and
@@ -152,6 +164,11 @@
     <t t-if="state.settings"><t t-call="biz_tenants.AlertSettings"/></t>
     <t t-if="state.featureBulk"><t t-call="biz_tenants.FeatureBulk"/></t>
     <t t-if="state.supportForm"><t t-call="biz_tenants.SupportDialog"/></t>
+    <t t-if="state.planEditor"><t t-call="biz_tenants.PlanEditor"/></t>
+    <t t-if="state.markPaid"><t t-call="biz_tenants.MarkPaid"/></t>
+    <t t-if="state.cancelInvoice"><t t-call="biz_tenants.CancelInvoice"/></t>
+    <t t-if="state.billingSettings"><t t-call="biz_tenants.BillingSettings"/></t>
+    <t t-if="state.pausing"><t t-call="biz_tenants.PauseDialog"/></t>
 
     <!-- The one place the screen says it is working. A control that goes quiet
          for forty seconds is a control somebody presses twice. -->
@@ -1108,6 +1125,176 @@
           </div>
         </div>
       </t>
+    </div>
+
+
+    <!-- ==== plan (SAAS H4d)
+
+         WHAT THEY PAY, WHERE THEY STAND, AND WHAT THEIR SYSTEM HAS BEEN TOLD.
+         The three dangerous moves on this platform live here — start a trial,
+         shut their door, schedule them for closing — and every one of them is
+         a person pressing something with the consequence written beside it.
+         Nothing on this tab happens on a timer. -->
+    <div t-if="state.tab === 'plan'">
+      <t t-if="state.planTab">
+
+        <div class="bzk-panel bzt-standing">
+          <div class="bzk-panel-h">
+            <div class="bzk-h2">Where they stand</div>
+            <span t-attf-class="bzk-badge {{ stateWord(state.planTab.state).tone }}">
+              <span class="d"/> <t t-esc="stateWord(state.planTab.state).label"/>
+            </span>
+          </div>
+
+          <div class="bzk-note bzt-danger-note"
+               t-if="state.planTab.state === 'paused'">
+            <t t-out="ic('pause', 15)"/>
+            <span>
+              Their people cannot sign in. They are being shown:
+              <b>"<t t-esc="state.planTab.paused_reason"/>"</b>
+              <t t-if="state.planTab.paused_at">, since
+                <t t-esc="state.planTab.paused_at"/></t>.
+              Nothing has been deleted.
+            </span>
+            <button class="bzk-btn primary bzk-btn-sm" t-on-click="resumeTenant">
+              <t t-out="ic('check', 14)"/> <span>Let them back in</span>
+            </button>
+          </div>
+
+          <div class="bzk-note bzt-warn"
+               t-if="state.planTab.state === 'pending_deletion'">
+            <t t-out="ic('clock', 15)"/>
+            <span>
+              Scheduled for closing down. Their data may be removed after
+              <b t-esc="state.planTab.delete_after"/>, and
+              <b>nothing removes it when that day comes</b> — the button on the
+              Closing down tab is still the only thing that does.
+            </span>
+          </div>
+
+          <div class="bzt-plan-pick">
+            <label class="bzk-lbl" for="tplan">Their plan</label>
+            <select class="bzk-in" id="tplan" t-on-change="setTenantPlan">
+              <option value="">No plan yet</option>
+              <option t-foreach="state.planTab.plans" t-as="pl" t-key="pl.id"
+                      t-att-value="pl.id"
+                      t-att-selected="state.planTab.plan and pl.id === state.planTab.plan.id ? 'selected' : false">
+                <t t-esc="pl.name"/> — <t t-esc="pl.headline"/>
+              </option>
+            </select>
+            <div class="bzk-hint" t-if="state.planTab.plan and state.planTab.plan.is_placeholder">
+              This plan's price was seeded as an example and nobody has
+              confirmed it yet. Set the real price on the Plans screen before
+              raising an invoice from it.
+            </div>
+          </div>
+
+          <div class="bzt-plan-trial" t-if="state.planTab.trial.phase !== 'none'">
+            <t t-out="ic('clock', 15)"/>
+            <span t-if="state.planTab.trial_text" t-esc="state.planTab.trial_text"/>
+            <span t-else="">
+              On trial until <t t-esc="state.planTab.trial_ends_on"/> —
+              <t t-esc="state.planTab.trial.days_left"/> days left.
+            </span>
+            <span class="bzt-plan-calm">
+              Nothing happens to their system when it ends. It raises a note on
+              the Alerts screen and waits for you.
+            </span>
+          </div>
+
+          <div class="bzt-plan-acts">
+            <button class="bzk-btn outline bzk-btn-sm"
+                    t-if="state.planTab.plan and state.planTab.state !== 'trial'"
+                    t-on-click="startTrial">
+              <t t-out="ic('clock', 14)"/> <span>Put them on a trial</span>
+            </button>
+            <button class="bzk-btn primary bzk-btn-sm"
+                    t-if="state.planTab.state === 'trial'"
+                    t-on-click="convertTrial">
+              <t t-out="ic('check', 14)"/> <span>They are paying now</span>
+            </button>
+            <button class="bzk-btn danger bzk-btn-sm"
+                    t-if="state.planTab.state === 'live' or state.planTab.state === 'trial'"
+                    t-on-click="openPause">
+              <t t-out="ic('pause', 14)"/> <span>Shut their door</span>
+            </button>
+          </div>
+
+          <div class="bzk-hint" t-if="state.planTab.standing_pushed_at">
+            Their own system was last told where it stands at
+            <t t-esc="state.planTab.standing_pushed_at"/>.
+          </div>
+        </div>
+
+        <!-- WHAT THE PLATFORM MEASURED FOR THEM, as it was measured. -->
+        <div class="bzk-panel">
+          <div class="bzk-panel-h">
+            <div class="bzk-h2">
+              What was measured for <t t-esc="state.planTab.usage_month_label"/>
+            </div>
+          </div>
+          <div class="bzt-hrows">
+            <div class="bzt-hrow" t-foreach="planTabRows" t-as="use"
+                 t-key="use.key">
+              <span class="bzt-hrow-l">
+                <t t-esc="use.label"/>
+                <span class="bzk-badge info" t-if="use.charged">charged on</span>
+              </span>
+              <span class="bzt-hrow-v" t-if="use.known and use.available"
+                    t-esc="use.value"/>
+              <span class="bzt-hrow-v bzt-muted" t-elif="use.known">
+                not measurable on their system
+              </span>
+              <span class="bzt-hrow-v bzt-muted" t-else="">
+                no reading taken
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- THEIR OWN INVOICES. -->
+        <div class="bzk-panel">
+          <div class="bzk-panel-h">
+            <div class="bzk-h2">Their invoices</div>
+          </div>
+          <div class="bzk-empty" t-if="!planTabInvoices.length">
+            <div class="bzt-empty-t">Nothing has been invoiced to them yet.</div>
+            <div class="bzt-empty-s">
+              Invoices are raised from the Plans and invoices screen, a month at
+              a time, after a preview.
+            </div>
+          </div>
+          <table class="bzk-table bzt-inv" t-if="planTabInvoices.length">
+            <tbody>
+              <tr t-foreach="planTabInvoices" t-as="inv" t-key="inv.id">
+                <td><b t-esc="inv.number"/></td>
+                <td t-esc="inv.period_label"/>
+                <td class="r" t-esc="inv.total_h"/>
+                <td>
+                  <span t-attf-class="bzk-badge {{ invoiceTone(inv) }}">
+                    <span class="d"/> <t t-esc="invoiceWords(inv)"/>
+                  </span>
+                </td>
+                <td class="r bzt-inv-acts">
+                  <button class="bzk-btn ghost bzk-btn-sm"
+                          t-on-click="() => this.viewInvoice(inv.id)">
+                    <t t-out="ic('fileText', 13)"/>
+                  </button>
+                  <button class="bzk-btn ghost bzk-btn-sm"
+                          t-if="inv.state === 'issued'"
+                          t-on-click="() => this.openMarkPaid(inv)">
+                    <t t-out="ic('check', 13)"/> <span>Paid</span>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </t>
+      <div t-else="" class="bzk-busy">
+        <div class="bzk-spin"/>
+        <div>Reading their plan…</div>
+      </div>
     </div>
 
     <!-- ==== danger -->
@@ -2549,6 +2736,789 @@
         <button class="bzk-btn ghost" t-on-click="closeSettings">Close</button>
         <button class="bzk-btn primary" t-on-click="saveSettings">
           <t t-out="ic('save', 15)"/> <span>Save</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</t>
+
+
+<!-- ================================================================== -->
+<!--  SAAS H4d — PLANS AND INVOICES                                     -->
+<!--                                                                     -->
+<!--  THE PREVIEW IS THE HERO, AND THE PROPERTY THAT MAKES IT ONE IS     -->
+<!--  THAT IT WRITES NOTHING. Pick a month; see every customer with the  -->
+<!--  numbers the platform actually measured, the plan applied to them,  -->
+<!--  and one line explaining each figure in words. Change a price, look -->
+<!--  again. Nothing exists until the button at the bottom is pressed.   -->
+<!-- ================================================================== -->
+<t t-name="biz_tenants.Billing">
+  <div class="bzt-billing">
+
+    <!-- WHAT IS STILL BLANK, SAID ONCE AND AT THE TOP. An invoice with no
+         bank details on it is a request for money with no way to send it,
+         and the owner should meet that sentence before they raise thirty. -->
+    <div class="bzk-note bzt-warn" t-if="!state.billing.ready">
+      <t t-out="ic('alert', 15)"/>
+      <span>
+        An invoice from this platform is not fit to send yet. It is missing
+        <t t-foreach="state.billing.missing" t-as="miss" t-key="miss_index"
+           ><t t-if="miss_index"><t t-if="miss_index === state.billing.missing.length - 1"> and </t><t t-else="">, </t></t><t t-esc="miss"/></t>.
+        Everything else works — the document is made and can be downloaded —
+        but nobody could pay it.
+      </span>
+      <button class="bzk-btn bzk-btn-sm ghost" t-on-click="openBillingSettings">
+        <span>Fill them in</span> <t t-out="ic('chevron', 13)"/>
+      </button>
+    </div>
+
+    <div class="bzk-seg bzt-billtabs">
+      <button t-attf-class="bzk-segbtn {{ state.billingTab === 'preview' ? 'on' : '' }}"
+              t-att-aria-pressed="state.billingTab === 'preview' ? 'true' : 'false'"
+              t-on-click="() => this.setBillingTab('preview')">
+        <t t-out="ic('calculator', 14)"/> <span>What a month would cost</span>
+      </button>
+      <button t-attf-class="bzk-segbtn {{ state.billingTab === 'invoices' ? 'on' : '' }}"
+              t-att-aria-pressed="state.billingTab === 'invoices' ? 'true' : 'false'"
+              t-on-click="() => this.setBillingTab('invoices')">
+        <t t-out="ic('receipt', 14)"/> <span>Invoices</span>
+        <span class="bzt-count" t-if="state.billing.overdue"
+              t-esc="state.billing.overdue"/>
+      </button>
+      <button t-attf-class="bzk-segbtn {{ state.billingTab === 'plans' ? 'on' : '' }}"
+              t-att-aria-pressed="state.billingTab === 'plans' ? 'true' : 'false'"
+              t-on-click="() => this.setBillingTab('plans')">
+        <t t-out="ic('layers', 14)"/> <span>Plans</span>
+      </button>
+      <span class="bzk-modal__sp"/>
+      <button class="bzk-btn ghost bzk-btn-sm" t-on-click="openBillingSettings">
+        <t t-out="ic('settings', 14)"/> <span>Billing settings</span>
+      </button>
+    </div>
+
+    <!-- ============================================ the preview (the hero) -->
+    <div t-if="state.billingTab === 'preview'">
+      <t t-if="state.preview">
+
+        <div class="bzt-prev-bar">
+          <label class="bzk-lbl" for="prevmonth">Month</label>
+          <select class="bzk-in bzt-prev-month" id="prevmonth"
+                  t-on-change="pickMonth">
+            <option t-foreach="state.preview.months" t-as="mo" t-key="mo.month"
+                    t-att-value="mo.month"
+                    t-att-selected="mo.month === state.preview.month ? 'selected' : false">
+              <t t-esc="mo.label"/><t t-if="!mo.closed"> — not over yet</t>
+            </option>
+          </select>
+          <span class="bzk-modal__sp"/>
+          <button class="bzk-btn ghost bzk-btn-sm"
+                  t-on-click="() => this.takeReading(state.preview.month)">
+            <t t-out="ic('gauge', 14)"/> <span>Take the reading</span>
+          </button>
+          <button class="bzk-btn ghost bzk-btn-sm" t-on-click="backfill">
+            <t t-out="ic('archive', 14)"/> <span>Fill in the months behind us</span>
+          </button>
+        </div>
+
+        <div class="bzk-stats bzt-prev-kpis">
+          <div class="bzk-stat">
+            <div class="bzk-stat-ic blue"><t t-out="ic('receipt', 21)"/></div>
+            <div class="bzk-stat-tx">
+              <span class="n" t-esc="state.preview.billable"/>
+              <span class="l">Invoices this would raise</span>
+            </div>
+          </div>
+          <div class="bzk-stat" t-foreach="state.preview.totals" t-as="tot"
+               t-key="tot.currency">
+            <div class="bzk-stat-ic green"><t t-out="ic('banknote', 21)"/></div>
+            <div class="bzk-stat-tx">
+              <span class="n" t-esc="tot.amount_h"/>
+              <span class="l">Total in <t t-esc="tot.currency"/></span>
+            </div>
+          </div>
+          <div class="bzk-stat">
+            <div class="bzk-stat-ic amber"><t t-out="ic('info', 21)"/></div>
+            <div class="bzk-stat-tx">
+              <span class="n" t-esc="state.preview.skipped"/>
+              <span class="l">Left out, each with a reason</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- THE ONE SENTENCE THAT MATTERS ON THIS SCREEN. -->
+        <div class="bzk-note bzt-prev-safe">
+          <t t-out="ic('shield', 15)"/>
+          <span>
+            Nothing on this screen has been created. This is what
+            <t t-esc="state.preview.month_label"/> would look like if you
+            pressed the button at the bottom.
+          </span>
+        </div>
+
+        <div class="bzk-note bzt-warn" t-if="previewPlaceholders.length">
+          <t t-out="ic('alert', 15)"/>
+          <span>
+            These figures come from a plan whose price was seeded as an example
+            and has not been confirmed: <b t-esc="previewPlaceholders.join(', ')"/>.
+            Open the plan, set the real price and save it — saving is what marks
+            it as read.
+          </span>
+        </div>
+
+        <div class="bzk-note bzt-warn" t-if="!state.preview.closed">
+          <t t-out="ic('clock', 15)"/>
+          <span>
+            <t t-esc="state.preview.month_label"/> is not over yet, so the
+            numbers below are as far as the month has got. Raising it now is
+            allowed and it is deliberate — the button says so.
+          </span>
+        </div>
+
+        <!-- EVERY CUSTOMER THAT WOULD BE CHARGED, WITH THE ARITHMETIC IN
+             WORDS. This is the whole screen: the numbers the platform
+             measured, the plan applied to them, and the money that falls out,
+             each explained in one line somebody can check. -->
+        <div class="bzk-panel bzt-prev-card" t-foreach="previewBillable"
+             t-as="row" t-key="row.tenant_id">
+          <div class="bzt-prev-head">
+            <div class="bzt-prev-who">
+              <div class="nm" t-esc="row.tenant"/>
+              <div class="mt">
+                <t t-esc="row.plan"/>
+                <t t-if="row.plan_headline"> — <t t-esc="row.plan_headline"/></t>
+              </div>
+            </div>
+            <div class="bzt-prev-tot">
+              <div class="v" t-esc="row.total_h"/>
+              <div class="k">for <t t-esc="state.preview.month_label"/></div>
+            </div>
+          </div>
+
+          <!-- WHAT WAS MEASURED, all of it, whether or not it bills. The
+               first question the screen answers is "what did the platform
+               actually measure", and that answer does not depend on a plan. -->
+          <div class="bzt-prev-meters">
+            <span t-foreach="row.readings" t-as="rd" t-key="rd.key"
+                  t-attf-class="bzk-chip {{ rd.charged ? 'on' : '' }}">
+              <t t-esc="rd.label"/>:
+              <b t-if="rd.known and rd.available" t-esc="rd.value"/>
+              <b t-elif="rd.known" class="muted">not measurable there</b>
+              <b t-else="" class="muted">no reading</b>
+            </span>
+          </div>
+
+          <div class="bzt-prev-why">
+            <t t-out="ic('info', 14)"/> <span t-esc="row.explain"/>
+          </div>
+
+          <table class="bzt-prev-lines">
+            <tr t-foreach="row.lines" t-as="line" t-key="line_index">
+              <td class="l">
+                <b t-esc="line.label"/>
+                <span class="d" t-if="line.detail" t-esc="line.detail"/>
+              </td>
+              <td class="q" t-esc="line.qty_h"/>
+              <td class="u" t-esc="line.unit_h"/>
+              <td class="a" t-esc="line.amount_h"/>
+            </tr>
+          </table>
+
+          <div class="bzt-prev-tots">
+            <span>Subtotal <b t-esc="row.subtotal_h"/></span>
+            <span t-if="row.vat_rate">
+              Tax at <t t-esc="row.vat_rate"/>% <b t-esc="row.vat_h"/>
+            </span>
+            <span class="grand">Total <b t-esc="row.total_h"/></span>
+          </div>
+        </div>
+
+        <!-- LEFT OUT, EACH WITH A REASON. A preview that silently drops a row
+             is a preview that hides the very customer somebody is looking for. -->
+        <div class="bzk-panel bzt-prev-skip" t-if="previewSkipped.length">
+          <div class="bzk-panel-h">
+            <div class="bzk-h2">Left out this month</div>
+          </div>
+          <div class="bzt-prev-skiprow" t-foreach="previewSkipped" t-as="row"
+               t-key="row.tenant_id">
+            <span class="nm" t-esc="row.tenant"/>
+            <span class="wy" t-esc="row.skip"/>
+          </div>
+        </div>
+
+        <div class="bzk-empty" t-if="!previewRows.length">
+          <div class="bzt-empty-t">There are no customers to invoice yet.</div>
+          <div class="bzt-empty-s">
+            A customer appears here the moment they exist, with a reason beside
+            them if there is nothing to charge.
+          </div>
+        </div>
+
+        <!-- THE ONLY BUTTON ON THIS SCREEN THAT WRITES ANYTHING. -->
+        <div class="bzt-prev-act" t-if="state.preview.billable">
+          <button class="bzk-btn primary"
+                  t-if="state.preview.closed"
+                  t-on-click="() => this.raiseInvoices(false)">
+            <t t-out="ic('receipt', 15)"/>
+            <span>Raise <t t-esc="state.preview.billable"/> invoices for
+                  <t t-esc="state.preview.month_label"/></span>
+          </button>
+          <button class="bzk-btn outline" t-else=""
+                  t-on-click="() => this.raiseInvoices(true)">
+            <t t-out="ic('receipt', 15)"/>
+            <span>Raise them early, before
+                  <t t-esc="state.preview.month_label"/> is over</span>
+          </button>
+        </div>
+      </t>
+      <div t-else="" class="bzk-busy">
+        <div class="bzk-spin"/>
+        <div>Working out what each customer would be charged…</div>
+      </div>
+    </div>
+
+    <!-- ================================================ the invoice book -->
+    <div t-if="state.billingTab === 'invoices'">
+      <div class="bzk-panel">
+        <div class="bzk-panel-h">
+          <div class="bzk-h2">Every invoice this platform has raised</div>
+          <span class="bzt-when" t-if="state.billing.outstanding">
+            <t t-esc="state.billing.outstanding"/> waiting for payment
+          </span>
+        </div>
+
+        <div class="bzk-empty" t-if="!invoices.length">
+          <div class="bzt-empty-t">No invoice has been raised yet.</div>
+          <div class="bzt-empty-s">
+            Pick a month on the previous tab, read what it would cost, and
+            raise them from there.
+          </div>
+        </div>
+
+        <table class="bzk-table bzt-inv" t-if="invoices.length">
+          <thead>
+            <tr>
+              <th>Number</th><th>Customer</th><th>For</th>
+              <th class="r">Total</th><th>Standing</th><th class="r">Due</th>
+              <th class="r"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr t-foreach="invoices" t-as="inv" t-key="inv.id">
+              <td><b t-esc="inv.number"/></td>
+              <td t-esc="inv.tenant"/>
+              <td t-esc="inv.period_label"/>
+              <td class="r" t-esc="inv.total_h"/>
+              <td>
+                <span t-attf-class="bzk-badge {{ invoiceTone(inv) }}">
+                  <span class="d"/> <t t-esc="invoiceWords(inv)"/>
+                </span>
+              </td>
+              <td class="r" t-esc="inv.due_on"/>
+              <td class="r bzt-inv-acts">
+                <button class="bzk-btn ghost bzk-btn-sm"
+                        t-on-click="() => this.viewInvoice(inv.id)"
+                        title="Open the document">
+                  <t t-out="ic('fileText', 13)"/>
+                </button>
+                <button class="bzk-btn ghost bzk-btn-sm"
+                        t-on-click="() => this.downloadInvoice(inv.id)"
+                        title="Download it">
+                  <t t-out="ic('download', 13)"/>
+                </button>
+                <button class="bzk-btn ghost bzk-btn-sm"
+                        t-on-click="() => this.sendInvoice(inv.id)"
+                        title="Try to email it">
+                  <t t-out="ic('mail', 13)"/>
+                </button>
+                <button class="bzk-btn ghost bzk-btn-sm"
+                        t-if="inv.state === 'issued'"
+                        t-on-click="() => this.openMarkPaid(inv)">
+                  <t t-out="ic('check', 13)"/> <span>Paid</span>
+                </button>
+                <button class="bzk-btn ghost bzk-btn-sm"
+                        t-if="inv.state !== 'paid' and inv.state !== 'cancelled'"
+                        t-on-click="() => this.openCancelInvoice(inv)">
+                  <t t-out="ic('x', 13)"/>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="bzk-hint bzt-dark-note">
+          <t t-out="ic('bellOff', 14)"/>
+          <span>
+            Nothing is emailed from this platform yet — there is no outgoing
+            mail account. The envelope button says so when you press it, and
+            the document is there to download and send by hand.
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================== the plans -->
+    <div t-if="state.billingTab === 'plans'">
+      <div class="bzt-plan-grid">
+        <div class="bzk-panel bzt-plan-card" t-foreach="plans" t-as="pl"
+             t-key="pl.id">
+          <div class="bzt-plan-h">
+            <div class="nm" t-esc="pl.name"/>
+            <span class="bzk-badge warn" t-if="pl.is_placeholder">
+              <span class="d"/> Example price
+            </span>
+            <span class="bzk-badge muted" t-if="!pl.active">
+              <span class="d"/> Put away
+            </span>
+          </div>
+          <div class="bzt-plan-price" t-esc="pl.headline"/>
+          <div class="bzt-plan-blurb" t-esc="pl.blurb"/>
+          <div class="bzt-plan-rows">
+            <div class="r" t-if="pl.meter_label">
+              <span class="k">Charged on</span>
+              <span class="v" t-esc="pl.meter_label"/>
+            </div>
+            <div class="r" t-if="pl.included">
+              <span class="k">Included</span>
+              <span class="v"><t t-esc="pl.included"/> free each month</span>
+            </div>
+            <div class="r" t-if="pl.minimum">
+              <span class="k">Least a month</span>
+              <span class="v" t-esc="pl.minimum_h"/>
+            </div>
+            <div class="r" t-foreach="pl.tiers" t-as="tr" t-key="tr.id">
+              <span class="k">Up to <t t-esc="tr.up_to_h"/></span>
+              <span class="v" t-esc="tr.price_h"/>
+            </div>
+            <div class="r">
+              <span class="k">Tax</span>
+              <span class="v"><t t-esc="pl.vat_rate"/>%</span>
+            </div>
+            <div class="r">
+              <span class="k">Logins</span>
+              <span class="v" t-esc="pl.limit_text"/>
+            </div>
+            <div class="r">
+              <span class="k">Customers on it</span>
+              <span class="v" t-esc="pl.tenants"/>
+            </div>
+          </div>
+          <div class="bzt-plan-acts">
+            <button class="bzk-btn outline bzk-btn-sm"
+                    t-on-click="() => this.openPlanEditor(pl)">
+              <t t-out="ic('pencil', 13)"/> <span>Edit</span>
+            </button>
+            <button class="bzk-btn ghost bzk-btn-sm"
+                    t-on-click="() => this.archivePlan(pl)">
+              <t t-if="pl.active"><span>Put it away</span></t>
+              <t t-else=""><span>Bring it back</span></t>
+            </button>
+          </div>
+        </div>
+
+        <button class="bzk-panel bzt-plan-new"
+                t-on-click="() => this.openPlanEditor(null)">
+          <t t-out="ic('plus', 22)"/>
+          <span>Another plan</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</t>
+
+
+<!-- ================================================== the plan editor -->
+<t t-name="biz_tenants.PlanEditor">
+  <div class="bzk-modal-scrim" t-on-click="() => this.state.planEditor = null">
+    <div class="bzk-modal is-narrow bzt-planform" t-on-click.stop="">
+      <div class="bzk-modal__head">
+        <div class="bzk-h2">
+          <t t-if="state.planEditor.id">Edit <t t-esc="state.planEditor.name"/></t>
+          <t t-else="">A new plan</t>
+        </div>
+      </div>
+      <div class="bzk-modal__body">
+        <label class="bzk-lbl" for="plname">What it is called</label>
+        <input class="bzk-in" id="plname" t-att-value="state.planEditor.name"
+               t-on-input="(ev) => this.onPlanField('name', ev)"/>
+
+        <label class="bzk-lbl" for="plblurb">One line: who it is for</label>
+        <input class="bzk-in" id="plblurb" t-att-value="state.planEditor.blurb"
+               t-on-input="(ev) => this.onPlanField('blurb', ev)"/>
+
+        <label class="bzk-lbl" for="plkind">How it charges</label>
+        <select class="bzk-in" id="plkind"
+                t-on-change="(ev) => this.onPlanField('price_kind', ev)">
+          <option t-foreach="planKindOptions" t-as="ko" t-key="ko.key"
+                  t-att-value="ko.key"
+                  t-att-selected="ko.key === state.planEditor.price_kind ? 'selected' : false"
+                  t-esc="ko.label"/>
+        </select>
+
+        <t t-if="planNeedsMeter">
+          <label class="bzk-lbl" for="plmeter">Which number it charges on</label>
+          <select class="bzk-in" id="plmeter"
+                  t-on-change="(ev) => this.onPlanField('meter_key', ev)">
+            <option value="">Pick one</option>
+            <option t-foreach="meters" t-as="mt" t-key="mt.key"
+                    t-att-value="mt.key"
+                    t-att-selected="mt.key === state.planEditor.meter_key ? 'selected' : false"
+                    t-esc="mt.label"/>
+          </select>
+          <div class="bzk-hint">
+            The platform measures all of these every month for every customer,
+            whatever plan they are on — so a plan can be changed later without
+            losing any history.
+          </div>
+        </t>
+
+        <t t-if="state.planEditor.price_kind !== 'flat_tier'">
+          <label class="bzk-lbl" for="plprice">
+            <t t-if="state.planEditor.price_kind === 'flat'">Price a month</t>
+            <t t-else="">Price for each one</t>
+          </label>
+          <input class="bzk-in" id="plprice" type="number"
+                 t-att-value="state.planEditor.price"
+                 t-on-input="(ev) => this.onPlanField('price', ev)"/>
+        </t>
+
+        <t t-if="state.planEditor.price_kind === 'per_unit'">
+          <label class="bzk-lbl" for="plinc">Included before anything is charged</label>
+          <input class="bzk-in" id="plinc" type="number"
+                 t-att-value="state.planEditor.included"
+                 t-on-input="(ev) => this.onPlanField('included', ev)"/>
+          <label class="bzk-lbl" for="plmin">Least this plan charges in a month</label>
+          <input class="bzk-in" id="plmin" type="number"
+                 t-att-value="state.planEditor.minimum"
+                 t-on-input="(ev) => this.onPlanField('minimum', ev)"/>
+          <div class="bzk-hint">Nought means a quiet month costs nothing.</div>
+        </t>
+
+        <!-- ⚠ THE BANDS ARE EDITED WITH THE PLAN AND SAVED IN THE SAME WRITE
+             (ledger F60). The model refuses a banded plan with no bands,
+             correctly, so they cannot be a second step. -->
+        <t t-if="state.planEditor.price_kind === 'flat_tier'">
+          <label class="bzk-lbl">Size bands</label>
+          <div class="bzt-tier" t-foreach="state.planEditor.tiers" t-as="tier"
+               t-key="tier_index">
+            <span class="bzt-tier-l">Up to</span>
+            <input class="bzk-in" type="number" t-att-value="tier.up_to"
+                   t-on-input="(ev) => this.onTierField(tier_index, 'up_to', ev)"/>
+            <span class="bzt-tier-l">costs</span>
+            <input class="bzk-in" type="number" t-att-value="tier.price"
+                   t-on-input="(ev) => this.onTierField(tier_index, 'price', ev)"/>
+            <button class="bzk-btn ghost bzk-btn-sm"
+                    t-on-click="() => this.removeTier(tier_index)">
+              <t t-out="ic('x', 13)"/>
+            </button>
+          </div>
+          <button class="bzk-btn ghost bzk-btn-sm" t-on-click="addTier">
+            <t t-out="ic('plus', 13)"/> <span>Another band</span>
+          </button>
+          <div class="bzk-hint">
+            The band with the highest number also covers anything above it, so
+            a customer who grows past the top band is still charged rather than
+            silently charged nothing.
+          </div>
+        </t>
+
+        <label class="bzk-lbl" for="plvat">Tax added, as a percentage</label>
+        <input class="bzk-in" id="plvat" type="number"
+               t-att-value="state.planEditor.vat_rate"
+               t-on-input="(ev) => this.onPlanField('vat_rate', ev)"/>
+
+        <label class="bzk-lbl" for="plseat">People with a login this plan allows</label>
+        <input class="bzk-in" id="plseat" type="number"
+               t-att-value="state.planEditor.seat_limit"
+               t-on-input="(ev) => this.onPlanField('seat_limit', ev)"/>
+        <div class="bzk-hint">
+          Nought means no limit, and no limit is the sensible default. A limit
+          refuses a new account on the customer's own system with a sentence
+          naming this plan.
+        </div>
+
+        <label class="bzk-lbl" for="pltrial">A trial on this plan lasts, in days</label>
+        <input class="bzk-in" id="pltrial" type="number"
+               t-att-value="state.planEditor.trial_days"
+               t-on-input="(ev) => this.onPlanField('trial_days', ev)"/>
+
+        <!-- ⚠ THE CONNECTION BETWEEN A PRICE AND A MEASUREMENT, ON THE SCREEN
+             WHERE THE PRICE IS TYPED. -->
+        <div class="bzt-plan-prev" t-if="state.planPreview">
+          <div class="bzk-h2">
+            What this plan would have charged in
+            <t t-esc="state.planPreview.month_label"/>
+          </div>
+          <div class="bzt-plan-prevrow" t-foreach="state.planPreview.rows"
+               t-as="pp" t-key="pp.slug">
+            <span class="nm" t-esc="pp.tenant"/>
+            <span class="wy" t-if="pp.why" t-esc="pp.why"/>
+            <t t-else="">
+              <span class="wy" t-esc="pp.explain"/>
+              <span class="tt" t-esc="pp.total_h"/>
+            </t>
+          </div>
+        </div>
+        <button class="bzk-btn ghost bzk-btn-sm" t-if="state.planEditor.id"
+                t-on-click="refreshPlanPreview">
+          <t t-out="ic('refresh', 13)"/>
+          <span>Work it out again against last month's real numbers</span>
+        </button>
+      </div>
+      <div class="bzk-modal__foot">
+        <button class="bzk-btn ghost"
+                t-on-click="() => this.state.planEditor = null">Cancel</button>
+        <button class="bzk-btn primary" t-on-click="savePlan">
+          <t t-out="ic('check', 15)"/> <span>Save the plan</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</t>
+
+
+<!-- ================================================== marking one paid -->
+<t t-name="biz_tenants.MarkPaid">
+  <div class="bzk-modal-scrim" t-on-click="() => this.state.markPaid = null">
+    <div class="bzk-modal" t-on-click.stop="">
+      <div class="bzk-modal__head">
+        <div class="bzk-h2">Mark <t t-esc="state.markPaid.number"/> paid</div>
+      </div>
+      <div class="bzk-modal__body">
+        <div class="bzk-sub">
+          <t t-esc="state.markPaid.total"/>. Nothing about the money is checked
+          here — this records that you have seen it arrive.
+        </div>
+        <label class="bzk-lbl" for="mpref">Reference on the transfer</label>
+        <input class="bzk-in" id="mpref" t-att-value="state.markPaid.reference"
+               t-on-input="(ev) => this.onPaidField('reference', ev)"
+               placeholder="the number on the bank statement"/>
+        <label class="bzk-lbl" for="mpvia">How it was paid</label>
+        <input class="bzk-in" id="mpvia" t-att-value="state.markPaid.paid_via"
+               t-on-input="(ev) => this.onPaidField('paid_via', ev)"
+               placeholder="bank transfer, cash, …"/>
+        <label class="bzk-lbl" for="mpon">The day it arrived</label>
+        <input class="bzk-in" id="mpon" type="date"
+               t-att-value="state.markPaid.paid_on"
+               t-on-input="(ev) => this.onPaidField('paid_on', ev)"/>
+        <div class="bzk-hint">Leave it blank for today.</div>
+      </div>
+      <div class="bzk-modal__foot">
+        <button class="bzk-btn ghost"
+                t-on-click="() => this.state.markPaid = null">Cancel</button>
+        <button class="bzk-btn primary" t-on-click="confirmMarkPaid">
+          <t t-out="ic('check', 15)"/> <span>It has been paid</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</t>
+
+
+<!-- =============================================== cancelling one -->
+<t t-name="biz_tenants.CancelInvoice">
+  <div class="bzk-modal-scrim" t-on-click="() => this.state.cancelInvoice = null">
+    <div class="bzk-modal" t-on-click.stop="">
+      <div class="bzk-modal__head">
+        <div class="bzk-h2">Cancel <t t-esc="state.cancelInvoice.number"/></div>
+      </div>
+      <div class="bzk-modal__body">
+        <div class="bzk-sub">
+          It stays in the book with the reason on it. An invoice number is
+          never reused and never removed, so the gap always has an explanation.
+        </div>
+        <label class="bzk-lbl" for="civ">Why is it being cancelled?</label>
+        <input class="bzk-in" id="civ" t-att-value="state.cancelInvoice.reason"
+               t-on-input="onCancelReason"
+               placeholder="e.g. raised against the wrong month"/>
+      </div>
+      <div class="bzk-modal__foot">
+        <button class="bzk-btn ghost"
+                t-on-click="() => this.state.cancelInvoice = null">Keep it</button>
+        <button class="bzk-btn danger"
+                t-att-disabled="state.cancelInvoice.reason.trim() ? false : 'disabled'"
+                t-on-click="confirmCancelInvoice">
+          <span>Cancel it</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</t>
+
+
+<!-- ============================================= the billing settings -->
+<t t-name="biz_tenants.BillingSettings">
+  <div class="bzk-modal-scrim" t-on-click="() => this.state.billingSettings = null">
+    <div class="bzk-modal is-narrow bzt-planform" t-on-click.stop="">
+      <div class="bzk-modal__head">
+        <div class="bzk-h2">Billing settings</div>
+      </div>
+      <div class="bzk-modal__body">
+
+        <!-- ⚠ RED, AT THE TOP, AND IT NAMES WHAT IS MISSING. Until these are
+             filled in, every document this platform makes is a request for
+             money with no way to send it. -->
+        <div class="bzk-note bzt-danger-note" t-if="!state.billingSettings.ready">
+          <t t-out="ic('alert', 15)"/>
+          <span>
+            <b>An invoice from here is not fit to send yet.</b>
+            It is missing
+            <t t-foreach="state.billingSettings.missing" t-as="miss"
+               t-key="miss_index"
+               ><t t-if="miss_index"><t t-if="miss_index === state.billingSettings.missing.length - 1"> and </t><t t-else="">, </t></t><t t-esc="miss"/></t>.
+            Nothing has been invented for you: whoever receives the document
+            would have no way to pay it, and no way to know that was an
+            oversight. Fill them in once and the warning goes.
+          </span>
+        </div>
+
+        <label class="bzk-lbl" for="bsco">The company the invoice comes from</label>
+        <input class="bzk-in" id="bsco"
+               t-att-value="state.billingSettings.values.billing_company"
+               t-on-input="(ev) => this.onBillingSetting('billing_company', ev)"/>
+
+        <label class="bzk-lbl" for="bsad">Its address</label>
+        <textarea class="bzk-in bzk-ta" id="bsad" rows="3"
+                  t-on-input="(ev) => this.onBillingSetting('billing_address', ev)"
+                  t-esc="state.billingSettings.values.billing_address"/>
+
+        <label class="bzk-lbl" for="bsvat">Its tax number</label>
+        <input class="bzk-in" id="bsvat"
+               t-att-value="state.billingSettings.values.billing_vat"
+               t-on-input="(ev) => this.onBillingSetting('billing_vat', ev)"/>
+
+        <label class="bzk-lbl" for="bsbank">Bank details, exactly as they should print</label>
+        <textarea class="bzk-in bzk-ta" id="bsbank" rows="4"
+                  t-on-input="(ev) => this.onBillingSetting('bank_details', ev)"
+                  t-esc="state.billingSettings.values.bank_details"/>
+
+        <label class="bzk-lbl" for="bsfoot">A line at the foot of every invoice</label>
+        <input class="bzk-in" id="bsfoot"
+               t-att-value="state.billingSettings.values.invoice_footer"
+               t-on-input="(ev) => this.onBillingSetting('invoice_footer', ev)"/>
+
+        <label class="bzk-lbl" for="bspre">Invoice numbers start with</label>
+        <input class="bzk-in" id="bspre"
+               t-att-value="state.billingSettings.values.invoice_prefix"
+               t-on-input="(ev) => this.onBillingSetting('invoice_prefix', ev)"/>
+
+        <label class="bzk-lbl" for="bsdue">Days to pay</label>
+        <input class="bzk-in" id="bsdue" type="number"
+               t-att-value="state.billingSettings.values.invoice_due_days"
+               t-on-input="(ev) => this.onBillingSetting('invoice_due_days', ev)"/>
+
+        <label class="bzk-lbl" for="bsrem">Remind after this many days overdue</label>
+        <input class="bzk-in" id="bsrem"
+               t-att-value="state.billingSettings.values.invoice_reminder_days"
+               t-on-input="(ev) => this.onBillingSetting('invoice_reminder_days', ev)"/>
+        <div class="bzk-hint">
+          Separate them with commas. Each one is raised once, counted rather
+          than timed, so a machine that was off for a week does not send five.
+        </div>
+
+        <label class="bzk-lbl" for="bsret">Keep a closed customer's data for, in days</label>
+        <input class="bzk-in" id="bsret" type="number"
+               t-att-value="state.billingSettings.values.retention_days"
+               t-on-input="(ev) => this.onBillingSetting('retention_days', ev)"/>
+
+        <!-- ================================================================
+             THE ONE SWITCH ON THIS PLATFORM THAT CAN LOCK A WORKING SYSTEM
+             OUT WITHOUT ANYBODY PRESSING ANYTHING. IT SHIPS OFF.
+
+             ⚠ `aria-pressed` IS BOUND TO A STRING, NEVER TO A BOOLEAN
+             (ledger F58). `t-att-` with a JavaScript `true` renders an EMPTY
+             attribute, so the switch sat grey beside a paragraph in red saying
+             it was on — a control that disagrees with its own explanation is
+             worse than no control at all.
+             ================================================================ -->
+        <div class="bzt-autosus">
+          <div class="bzt-autosus-h">
+            <div class="nm">Pause a customer automatically when they do not pay</div>
+            <button class="bzk-btn bzk-btn-sm"
+                    t-attf-class="bzk-btn bzk-btn-sm {{ state.billingSettings.auto_suspend ? 'danger' : 'outline' }}"
+                    t-att-aria-pressed="autoSuspendPressed"
+                    t-on-click="toggleAutoSuspend">
+              <t t-if="state.billingSettings.auto_suspend"><span>It is ON</span></t>
+              <t t-else=""><span>It is off</span></t>
+            </button>
+          </div>
+          <div t-attf-class="bzt-autosus-why {{ state.billingSettings.auto_suspend ? 'on' : '' }}">
+            <t t-if="state.billingSettings.auto_suspend">
+              <b>This is on.</b> An invoice
+              <t t-esc="state.billingSettings.values.suspend_after_days"/> days
+              past its date will shut every one of that customer's people out of
+              their own system, in the night, with nobody pressing anything.
+              Their data is untouched and one press lets them back in — but the
+              first they will know of it is a locked door on a Monday morning.
+            </t>
+            <t t-else="">
+              <b>This is off, and that is the sensible setting.</b> An overdue
+              invoice raises a flag on the Alerts screen naming the customer and
+              the number of days, and a person decides. Nothing on this platform
+              locks a working system out on a timer.
+            </t>
+          </div>
+          <label class="bzk-lbl" for="bssus">Days overdue before it would</label>
+          <input class="bzk-in" id="bssus" type="number"
+                 t-att-value="state.billingSettings.values.suspend_after_days"
+                 t-on-input="(ev) => this.onBillingSetting('suspend_after_days', ev)"/>
+        </div>
+
+        <div class="bzk-hint bzt-dark-note" t-if="!state.billingSettings.mail_ok">
+          <t t-out="ic('bellOff', 14)"/>
+          <span t-esc="state.billingSettings.mail_reason"/>
+        </div>
+      </div>
+      <div class="bzk-modal__foot">
+        <button class="bzk-btn ghost"
+                t-on-click="() => this.state.billingSettings = null">Close</button>
+        <button class="bzk-btn primary" t-on-click="saveBillingSettings">
+          <t t-out="ic('check', 15)"/> <span>Save</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</t>
+
+
+<!-- ==================================================== pausing one -->
+<t t-name="biz_tenants.PauseDialog">
+  <div class="bzk-modal-scrim" t-on-click="() => this.state.pausing = null">
+    <div class="bzk-modal" t-on-click.stop="">
+      <div class="bzk-modal__head">
+        <div class="bzk-h2">Shut <t t-esc="state.tenant.name"/>'s door</div>
+      </div>
+      <div class="bzk-modal__body">
+        <div class="bzk-note bzt-danger-note">
+          <t t-out="ic('alert', 15)"/>
+          <span>
+            Every one of their people will meet a page instead of their work,
+            within a minute. <b>Nothing is deleted</b> — every record stays
+            exactly where it is — and one press lets them back in.
+          </span>
+        </div>
+        <label class="bzk-lbl" for="pwhy">
+          Why? Their own people read this sentence.
+        </label>
+        <input class="bzk-in" id="pwhy" t-att-value="state.pausing.reason"
+               t-on-input="(ev) => this.onPauseField('reason', ev)"
+               placeholder="e.g. we have not been able to settle the account for June"/>
+        <div class="bzk-hint">
+          Write it for them, not for us. It is the only explanation they get.
+        </div>
+        <label class="bzk-lbl" for="ptyped">
+          Type <b t-esc="state.tenant.slug"/> to confirm
+        </label>
+        <input class="bzk-in" id="ptyped" t-att-value="state.pausing.typed"
+               t-on-input="(ev) => this.onPauseField('typed', ev)"/>
+      </div>
+      <div class="bzk-modal__foot">
+        <button class="bzk-btn ghost"
+                t-on-click="() => this.state.pausing = null">Leave them open</button>
+        <button class="bzk-btn danger"
+                t-att-disabled="canPause ? false : 'disabled'"
+                t-on-click="confirmPause">
+          <t t-out="ic('pause', 15)"/> <span>Pause them</span>
         </button>
       </div>
     </div>

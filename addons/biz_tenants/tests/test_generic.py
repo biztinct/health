@@ -32,11 +32,20 @@ _PY = (('models', 'tenants_common.py'), ('models', 'sync_rules.py'),
        # H4c.
        ('models', 'module_set.py'), ('models', 'feature.py'),
        ('models', 'feature_service.py'), ('models', 'support_service.py'),
+       # H4d.
+       ('models', 'billing_rules.py'), ('models', 'plan.py'),
+       ('models', 'billing.py'), ('models', 'billing_service.py'),
        ('models', '__init__.py'), ('__init__.py',))
 _JS = ('tenants.js',)
 _XML = ('tenants.xml',)
 _MARKUP = (('views', 'biz_tenants_action.xml'), ('data', 'ir_cron.xml'),
-           ('data', 'biz_feature.xml'))
+           ('data', 'biz_feature.xml'), ('data', 'biz_plan.xml'),
+           # ⚠ THE ONE THAT GOES TO A PAYING CUSTOMER. A document with the
+           # framework's name anywhere on it is the white-label rule's worst
+           # case, so the invoice is scanned like every other surface — and
+           # `test_no_user_visible_string_names_the_framework` in
+           # `test_billing.py` scans what is actually RENDERED as well.
+           ('report', 'tenant_invoice.xml'))
 
 
 @tagged('post_install', '-at_install')
