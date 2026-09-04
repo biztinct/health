@@ -659,3 +659,15 @@ in new surfaces. Chrome validation mandatory before a phase reports done.
   apps nothing in the product's own set depends on, and 6 the template has that the master lacks.
   **The definitive tenant module set is H4's to fix**, and `l10n_vn` belongs to the same decision as
   the chart of accounts (H52).
+- **H58** (H3) **A tenant database must be OWNED BY `odoo`, and the failure looks like a routing
+  bug.** `list_dbs` filters on `datdba = current_user` (`odoo/service/db.py:449`), and the
+  application connects as the OS user `odoo` because the config sets no `db_user`. A database made
+  with `sudo -u postgres createdb -T carejiox_template <slug>` belongs to `postgres`, is therefore
+  invisible to the application, and the tenant's address answers **303 to the database chooser**
+  rather than a sign-in page — indistinguishable from a `dbfilter` mistake, and nothing in the log
+  says "wrong owner". `-O odoo` fixes it; `ALTER DATABASE <slug> OWNER TO odoo;` repairs it after
+  the fact. **Found by running the runbook's own tenant-creation procedure end to end on a
+  throwaway clone rather than trusting that it was right** — the clone was made, checked (200, its
+  own sign-in page, `/web/database/manager` 404, 71 crons re-enabled exactly as recorded, 3.9
+  seconds to copy 108 MB) and dropped. The procedure as first written would have failed for the
+  first person who followed it. **Write a runbook step, then do the step.**

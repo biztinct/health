@@ -131,11 +131,17 @@ gives every visitor a browser warning about seventy days later.
    ```bash
    ssh VietUcUAT
    sudo -u postgres psql -d postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='carejiox_template';"
-   sudo -u postgres createdb -T carejiox_template <slug>
+   sudo -u postgres createdb -T carejiox_template -O odoo <slug>
    sudo cp -a /odoo/.local/share/Odoo/filestore/carejiox_template \
               /odoo/.local/share/Odoo/filestore/<slug>
    sudo chown -R odoo:odoo /odoo/.local/share/Odoo/filestore/<slug>
    ```
+   **`-O odoo` is not optional.** The application lists only the databases owned
+   by the user it connects as, and it connects as `odoo`. A database created
+   without it belongs to `postgres`, and the new address answers with a redirect
+   to a database chooser instead of a sign-in page — while looking, from the
+   outside, exactly like a routing problem. If you hit that:
+   `sudo -u postgres psql -d postgres -c 'ALTER DATABASE <slug> OWNER TO odoo;'`
 3. **Turn its scheduled jobs back on.** The template's jobs are all switched
    off on purpose (§5). The list of the ones that were on when it was built is
    stored in the template itself, under the setting key
