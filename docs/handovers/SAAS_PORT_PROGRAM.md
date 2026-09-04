@@ -1,7 +1,8 @@
 # SAAS PORT program — the tenant platform and the Access home, as generic `biz_*` cores in health19
 
-Status: **H0–H4c DONE (H4c 2026-09-05). H4d — plans, trials, seat limits, invoices and the
-paused door — is the last phase.** Earlier: **H3 DONE 2026-09-04 (live — the box is a
+Status: **THE PROGRAMME IS COMPLETE. H0–H4d DONE (H4d 2026-09-05).** The document
+the owner reads is `docs/handovers/SAAS_CLOSEOUT.md`; the document whoever runs
+the machine reads is `docs/SAAS_RUNBOOK.md`. Earlier: **H3 DONE 2026-09-04 (live — the box is a
 platform: carejiox.com, one database per hostname, self-renewing certificates, a golden
 template). H4 next.** Operational documents for what H3 built:
 `docs/SAAS_RUNBOOK.md` and `docs/SAAS_RESIZE_RUNBOOK.md`. Spec that started it:
@@ -57,7 +58,8 @@ customer database or a genuine scope decision.
 | **H4a `biz_tenancy` + `biz_tenants` + `health_tenancy`** | the tenant agent (release stamp, notices in the reader's clock, About screen), the cockpit (six-step provisioning with a dry run, fleet, health, copies + restore-to-practice, in step with master, releases), the product overlay (brand, addresses, never-list, four meters, the customer administrator, the two doors), and the §3.8 top-bar fix in `health_access` | **DONE 2026-09-04** — `SAAS_H4A_TENANT_COCKPIT.md`; pilot customer `hhh.carejiox.com` provisioned from the cockpit end to end. Ledger H61–H76 |
 | **H4b Running the fleet safely** | the rollout (rings, night windows in the customer's clock, the health gate, pause/continue/retry/skip/abort), alerts (13 kinds, the sweep, the screen that IS the channel while there is no mail account), the capacity guard, the public status page | **DONE 2026-09-04** — `SAAS_H4B_ROLLOUTS_ALERTS_CAPACITY_STATUS.md`; ledger H77–H88 |
 | **H4c What a clinic is made of, what can be switched off, and getting in honestly** | the customer module set COMPUTED from the product's own dependencies (175 parts, 33 held back), the blank system made Vietnamese (`l10n_vn`, both languages, 275 accounts), `hhh` decommissioned and re-provisioned from it, the `-staging` hostname closed, ten feature switches with the matrix and the live menu preview, the switched-off page, and support access with a reason, a time box, one link and a trail the customer reads | **DONE 2026-09-05** — `SAAS_H4C_MODULE_SET_FEATURES_SUPPORT.md`; 744 tests green, **H83 closed** (a real rollout over `hhh` installed nothing), `hhh` live again in 20 s. Ledger H89–H101 |
-| **H5 Validation** | every FLEET live check re-run on the pilot, Chrome-driven | |
+| **H4d Plans, invoices, the trial and the paused door** | six ways to price a customer (three structures × the product's own measured numbers), the monthly reading kept as history, the invoice preview that writes nothing, the document, mark-paid, the trial that locks nobody out, the seat limit, and the paused door | **DONE 2026-09-05** — `SAAS_H4D_PLANS_BILLING_PAUSE.md`; 846 tests green, the one act took 1 m 56 s, `hhh` invoiced and marked paid, every destructive state proved on a practice copy that was dropped. Ledger H102–H111 |
+| **H5 Validation** | every FLEET live check re-run on the pilot, Chrome-driven | folded into each phase's own Chrome validation; no separate phase was needed |
 
 ---
 
@@ -1072,3 +1074,108 @@ in new surfaces. Chrome validation mandatory before a phase reports done.
   blank system. Nothing this phase wrote; nothing this phase changed. It belongs on the
   debranding programme's list, and it is written down here because it is the kind of
   thing only somebody signing in as a real customer ever sees.
+- **H102** (H4d, 2026-09-05) ⚠⚠ **A REHEARSAL ON A CLONE OF THE PLATFORM WRITES ONTO
+  THE REAL CUSTOMERS, AND H90's PRIVATE ADDONS PATH DOES NOTHING ABOUT IT.**
+  The clone `h4d` is a copy of the master, so it carries the COCKPIT — and the
+  cockpit's whole job is to reach other databases. `tenant_set_plan` on the
+  clone called `push_settings`, which opened `_tenant_env('hhh')` and wrote
+  eleven settings rows onto the LIVE customer's system: their plan name, their
+  price line, their usage figures. Nothing was lost and nothing was
+  user-visible, but a rehearsal had reached out of its sandbox and touched a
+  paying customer. **H90's `--addons-path` shadowing protects the live TREE; it
+  does not protect the live DATA of any other database on the cluster, because
+  the clone connects to the same PostgreSQL cluster as everybody else.** The
+  rule from now on: **before rehearsing anything that pushes, point the clone's
+  customer records at a throwaway database or none at all** — one `UPDATE
+  biz_tenant SET slug = 'nowhere'` on the clone is the whole fix. Found by
+  reading what had actually been written onto `hhh` rather than by reading the
+  code that intended to write it.
+- **H103** (H4d) ⚠ **THE RECOVERY LOGIN WAS PUSHED EMPTY TO EVERY CUSTOMER, SO
+  THE PAUSED DOOR HAD NO WAY BACK IN.** `biz_tenants.recovery_login` has never
+  been set on this platform — provisioning CREATES the account
+  (`platform.recovery@carejiox.com`) and nobody ever wrote the name down — and
+  the standing push read that setting alone. A paused customer would therefore
+  have had no exempt account at all: the two-ring rule means nobody on a
+  customer's system holds the platform administrator permission either, so the
+  only way back in would have been the platform un-pausing them. The support
+  door had already solved this months ago (`_support_recovery_uid` reads the
+  setting, then falls back to the one active passwordless account a blank
+  system ships with, and SAYS which one it used); billing now asks it rather
+  than re-deriving. **When two doors need the same answer, one of them should
+  ask the other** — and the tell that this was wrong was a settings row on a
+  live customer reading `''`.
+- **H104** (H4d) ⚠ **THE FOUR NEW ALERT KINDS WERE ADDED TO THE CATALOGUE AND
+  NOT TO `SELF_MANAGED_KINDS`, AND THE TEST THAT ENUMERATES THEM IS WHAT FOUND
+  IT.** `trial_ending`, `invoice_overdue`, `suspend_candidate` and
+  `tenant_paused` were given labels, icons and a place in `ALERT_KINDS` — and
+  the one list that actually matters was left at H4c's two entries. Nothing
+  would have looked wrong: the morning job would raise them and the
+  fifteen-minute sweep would close every one within the quarter hour, for ever,
+  and the owner would simply never see an overdue invoice. F79's lesson exactly
+  ("a test that enumerates a registry finds the member nobody exercised"), one
+  registry along.
+- **H105** (H4d) **A GENERIC CORE CANNOT SHIP `per_patient`, AND THAT CHANGED THE
+  SHAPE OF THE PRICING MODEL.** The handover named six price structures —
+  `flat`, `per_patient`, `per_visit`, `per_staff`, `per_invoice`, `flat_tier`.
+  Four of those put ONE INDUSTRY'S VOCABULARY into the module whose entire
+  purpose is to be lifted into the next product, and `biz_tenants`'s own
+  neutrality test enumerates the word `patient` by name (H12/H68). What shipped
+  is three STRUCTURES (`flat`, `per_unit`, `flat_tier`) plus a `meter_key`
+  naming one of the product's own registered numbers — which is the same six
+  ways to price, reads the product's own label on screen, and works unchanged
+  for a product that measures tills or payslips. **When a handover's vocabulary
+  and a rail disagree, the rail wins and the report says so.**
+- **H106** (H4d) ⚠ **`.bzk-lbl`, `.bzk-in`, `.bzk-hint` AND `.bzk-ta` HAVE BEEN
+  WRITTEN IN EVERY COCKPIT DIALOG SINCE H4a AND MATCH NO RULE ANYWHERE.** Not in
+  the kit, not in the cockpit's own stylesheet. Nobody noticed while a dialog
+  had two fields; the plan form has twelve, and it rendered as labels and boxes
+  running into one another across the full width of a 1040px card. The same
+  family as H71 — a class that looks styled and is not — and found the same way,
+  by looking at the screen. Styled in the cockpit rather than in `biz_kit`
+  because a form primitive is a design decision the next product may already
+  have made differently. **A class name is not a style; grep for the rule.**
+- **H107** (H4d) **THE MONTH PICKER COULD NOT OFFER THE MONTH WE ARE IN, SO THE
+  "RAISE IT EARLY" PATH WAS UNREACHABLE FROM THE SCREEN.** The strip was built
+  from `months_back(prev_month(today))` — correct for "invoice a finished
+  month" and wrong for a screen whose own button says raising early is allowed
+  and deliberate. The method underneath accepted any month happily; only the
+  picker could not name one. **A guard rail on a screen and a guard rail in a
+  method are different guard rails**, and the browser is what tells them apart.
+- **H108** (H4d) **`self.env.cr.commit()` IN A LOOP OVER CUSTOMERS IS RIGHT IN
+  PRODUCTION AND MAKES THE WHOLE FILE UNTESTABLE.** The framework's test cursor
+  refuses `commit()` outright, so eleven tests failed on one line that has to be
+  there — without it a fault on the twelfth customer throws away the eleven
+  invoices already raised. The guard goes AT THE COMMIT
+  (`_billing_commit()`, standing down under `config['test_enable']`) rather than
+  in each test, because the next caller will be written by somebody who has not
+  read the comment. Same shape as F44's public-page writer.
+- **H109** (H4d) **A `<function>`-SEEDED CATALOGUE STILL NEEDS THE PRODUCT'S OWN
+  MIGRATION, AND THIS IS THE SECOND TIME (H4c's `ensure_feature_catalogue`, now
+  the plans).** The cockpit's data file runs when the COCKPIT is upgraded and
+  reads a registry the OVERLAY fills at import time — and the overlay does not
+  depend on the cockpit, on purpose, because it also ships to every customer.
+  Measured again on the rehearsal: the cockpit's file ran first, read an empty
+  registry, seeded nothing, and the table stayed empty. `health_tenancy`'s
+  `post_init_hook` and its `19.0.1.2.0` migration seed it too. **Any registry a
+  generic core seeds from must be seeded from BOTH ends.**
+- **H110** (H4d) **THE PRACTICE COPY CANNOT BE DRIVEN THROUGH A BROWSER OVER ITS
+  OWN HOSTNAME ANY MORE — WHICH IS H4c WORKING — SO IT IS DRIVEN OVER A TUNNEL.**
+  H4c closed `*-staging.carejiox.com` with a 444 (ledger H85), which is exactly
+  right and also means a browser cannot reach the practice copy at all. The way
+  through is an ssh tunnel straight to the application port and the hostname
+  `hhh-staging.localhost:<port>`: `dbfilter = ^%d$` reads the first label, nginx
+  is not in the path, and the copy stays off the public internet the whole time.
+  One more trap on top: **`document.cookie` cannot overwrite an HttpOnly cookie
+  the login page has already planted** (H46/H87 again, one turn further) — so on
+  a hostname nginx does not serve there is no `/status` page to plant from, and
+  the honest way in is to set a password on the throwaway copy and sign in
+  through the form. It is dropped minutes later and it was never public.
+- **H111** (H4d) **MEASURED ON LIVE.** The one act — master, template and `hhh`
+  upgraded back to back — took **1 minute 56 seconds** end to end (23:04:28 to
+  23:06:24), of which each database's own upgrade was 35–38 s and the platform
+  answered 200 after every one of them. The monthly reading over four months of
+  history: **16 rows written, 0 kept**, and the re-run wrote 0 and kept 4 and
+  said so. Raising, rendering and storing one invoice: under a second. The
+  document is **165 KB** of PDF. And the numbers that matter to the owner: the
+  clinic that runs today had **236 people in care, 0 completed visits, 73 staff
+  with a login and 1 invoice issued** in August 2026.

@@ -529,6 +529,15 @@ emailed"). Nothing is lost; it simply has to be looked at rather than arriving.
   Settings → Technical → Email → Outgoing Mail Servers, set a sender address,
   and press it again — from that day alerts arrive by email as well.
 
+⚠ **Four kinds of alert are NOT found by the fifteen-minute look, and must not
+be**: a trial running out, an invoice past its date, an invoice overdue enough
+to consider pausing, and a clinic that has been paused. No reading of a machine
+can see any of those — they are raised by the morning billing job and by the
+buttons a person presses, and they are closed the same way. They are on a list
+the sweep never touches; if one ever came off it, the next sweep would decide it
+had cleared and close it within the quarter hour and nobody would ever see an
+unpaid invoice.
+
 ---
 
 ## 7b. Sending a release out to every clinic
@@ -663,6 +672,136 @@ measured while nobody is using it, so the setting is the measurement plus a
 deliberate allowance. Re-weigh it as clinics arrive: it is on **Alerts →
 Settings**, with that sentence beside it. `biz_tenants.capacity_reserve_mb`
 (400 MB) is what must stay free for the database and the operating system.
+
+---
+
+## 7f. What a clinic pays, and what happens when they do not
+
+Everything below lives on **Customers → Plans and invoices**, on
+https://carejiox.com. Nothing here is automatic. **Nobody is ever invoiced by a
+scheduled job, nothing is emailed, and no working clinic is ever locked out on
+a timer.**
+
+### The three plans, and the fact that their prices are examples
+
+The platform ships with three shapes — one of each way of charging — and
+**every figure on them was seeded as an example and has never been agreed with
+anybody.** They carry an amber "Example price" badge until somebody opens the
+plan, types the real price and saves it; saving is what takes the badge off.
+
+| Plan | How it charges | The example figure |
+|---|---|---|
+| Starter | One price a month, whatever the clinic does | 2,000,000 ₫ a month |
+| Growth | A price for each person in care, every month | 30,000 ₫ each, first 50 included |
+| Clinic | One price a month, by how many people are in care | ≤100 → 5,000,000 ₫ · ≤300 → 9,000,000 ₫ · above → 15,000,000 ₫ |
+
+A plan can charge on **any** of the four numbers the platform measures — people
+in care, visits completed, staff with a login, invoices issued — because all
+four are measured for every clinic every month whatever plan they are on. That
+is deliberate: a plan can be changed next year without having lost the history
+to bill from.
+
+⚠ **A plan priced by size band must be created WITH its bands, in one save.**
+The model refuses a banded plan with no bands (correctly), so a two-step write
+fails in between. The screen and the seeder both do it in one; if you ever edit
+one from a script, do the same.
+
+### The monthly reading, and why it is never taken twice
+
+A scheduled job at **02:30 each morning** writes down last month's four numbers
+for every clinic — and, if it is missing, the month before that. **A month that
+already has a reading is never given a second one**, because billing bills from
+what was measured at the time; a re-run writes nothing and says so in those
+words. A row taken after the month had ended is marked as such, because a count
+of people taken in September is today's number wearing an August date.
+
+"Take the reading" and "Fill in the months behind us" do the same thing by hand.
+
+### Raising invoices
+
+1. Pick a month. The current month is offered and marked "not over yet".
+2. Read what it would cost. **Nothing on that screen has been created** —
+   every clinic is listed with the numbers the platform measured, the plan
+   applied to them, and one line explaining the arithmetic in words. A clinic
+   that would be left out says why.
+3. Press the button at the bottom. That is the only thing on the screen that
+   writes anything.
+
+Invoice numbers are sequential inside a year (`INV-2026-0001`) and are read off
+the invoices that exist rather than off a counter, so a run that fails leaves no
+gap. Cancelling one keeps it in the book with the reason on it.
+
+### The document
+
+Each invoice's PDF is rendered **once, when it is raised**, and stored — a
+document that changes after it was sent is not a document. Open it, download it,
+or press the envelope: the envelope is honest, says there is no outgoing mail
+account, and points at the download.
+
+⚠ **An invoice from this platform is not fit to send until four things are
+filled in**: the company name it comes from, its address, its tax number, and
+the bank details to pay into. Until then the document PRINTS A RED NOTE SAYING
+SO on its own face, and the screen says it above every preview. Nothing was
+invented for you. They are on **Plans and invoices → Billing settings**.
+
+### Overdue, and the one switch that can lock somebody out
+
+A job at **07:15 each morning** looks at every issued invoice. Past its date it
+raises a flag on the Alerts screen naming the clinic and the number of days, and
+raises a reminder once per configured step (3 and 10 days by default) — counted
+rather than timed, so a machine that was switched off for a week raises each one
+once rather than five.
+
+⚠ **"Pause a clinic automatically when they do not pay" ships OFF and should
+stay off.** With it on, an invoice 21 days past its date shuts every one of that
+clinic's people out of their own system, in the night, with nobody pressing
+anything — and the first they know of it is a locked door on a Monday morning.
+With it off (the shipped setting) an overdue invoice is a flag and a person
+decides. The switch is at the foot of Billing settings with that paragraph
+beside it.
+
+### Pausing a clinic, and letting them back in
+
+**Customers → the clinic → Plan → Shut their door.** It asks for a reason —
+which their own people read, word for word, on the page they meet — and for
+their short name typed out. Letting them back in is **one press and no typing**:
+undoing harm is never made harder than doing it.
+
+**Nothing is deleted.** Pausing shuts a door and nothing else; every record is
+where it was and comes back within a minute of resuming. Two accounts still get
+in while a clinic is paused: the platform's recovery account
+(`platform.recovery@carejiox.com`) and anybody in an open support session.
+
+### Trials, and the fact that one ending does nothing
+
+**Plan → Put them on a trial** sets a date. When it passes, **nothing happens to
+their system** — it raises a note on the Alerts screen and waits for a person.
+The clinic sees a calm bar for the last ten days that says so in those words.
+**They are paying now** moves them across.
+
+### Scheduling a clinic for closing down
+
+**Plan → Shut their door** is a pause; **Closing down** is the end. Between them
+sits a retention clock (60 days by default): the date their data MAY be removed.
+**Nothing removes it when that date passes.** The clock raises a note and the
+button on the Closing down tab is still the only thing that removes anything,
+and it takes a final copy first.
+
+### The seat limit
+
+A plan may cap how many people can have a login. Nought — the shipped default on
+all three plans — means no limit. With a limit set, a clinic trying to add one
+person too many is refused **on their own system** with a sentence naming the
+limit, the plan and who to ask. The recovery account and an open support session
+are never refused.
+
+### What a clinic sees of all this
+
+One card, **Plan and usage**, on their own "About Viet Uc Care" screen: which
+plan, what the platform measured for them last month, how many people have a
+login, and when the next invoice is expected. Read-only, and every number on it
+is the platform's own measurement rather than a second count that would disagree.
+
 
 ---
 
