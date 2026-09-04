@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Advanced Pricing Engine',
-    'version': '19.0.1.2.0',
+    'version': '19.0.1.2.1',
     'category': 'Sales/Sales',
     'summary': 'Enterprise-grade pricing engine with visual rule builder and holiday pricing for Odoo 19 CE',
     'description': """
@@ -36,6 +36,7 @@ Features:
         'security/ir.model.access.csv',
         'views/pricing_engine_views.xml',
         'views/pricing_rule_bulk_wizard_views.xml',
+        'views/pricing_import_wizard_views.xml',
         'views/pricing_rule_views.xml',
         'views/pricing_rule_reject_wizard_views.xml',
         'views/pricing_configuration_views.xml',
@@ -43,7 +44,6 @@ Features:
         'views/sale_order_views.xml',
         'views/visual_rule_builder_views.xml',
         'views/product_catalog_views.xml',
-        'views/pricing_import_wizard_views.xml',
         'views/health_fieldservice_order_views.xml',
         'report/pricing_report_templates.xml',
         'views/menu_items.xml',

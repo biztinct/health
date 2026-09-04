@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'AI-Enabled Employee Development System',
-    'version': '19.0.5.4.1',
+    'version': '19.0.5.4.2',
     'category': 'Human Resources/Employee Development',
     'summary': 'AI-native employee development with skills intelligence, coaching, learning paths, and knowledge management',
     'description': """

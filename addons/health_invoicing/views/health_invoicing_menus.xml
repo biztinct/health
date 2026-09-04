@@ -177,4 +177,25 @@
               action="action_ops_cash_collections"
               sequence="45"/>
 
+
+    <!--
+      These two lived in health_finance_log_views.xml, which loads BEFORE
+      this file and therefore before menu_health_invoicing_reports exists.
+      A menu's parent has to be created first; nothing noticed while every
+      database already had the menu from an earlier install.
+    -->
+    <menuitem
+        id="menu_health_vat_invoice_log"
+        name="VAT Invoices Log"
+        parent="menu_health_invoicing_reports"
+        action="action_healthcare_vat_invoice_log"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_health_ar_transaction_log"
+        name="AR Transactions Log"
+        parent="menu_health_invoicing_reports"
+        action="action_healthcare_ar_transaction_log"
+        sequence="20"/>
+
 </odoo>

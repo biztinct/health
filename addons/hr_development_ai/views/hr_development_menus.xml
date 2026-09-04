@@ -146,4 +146,16 @@
               action="action_hr_skill_level"
               sequence="30"/>
 
+
+    <!--
+      Moved here from hr_development_dashboard_views.xml, which loads
+      before this file and therefore before menu_hr_development_root
+      exists. A menu's parent has to be created first.
+    -->
+    <menuitem id="menu_hr_development_dashboard"
+              name="Dashboard"
+              parent="hr_development_ai.menu_hr_development_root"
+              action="action_hr_development_dashboard"
+              sequence="1"/>
+
 </odoo>

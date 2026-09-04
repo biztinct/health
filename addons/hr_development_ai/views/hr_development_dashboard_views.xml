@@ -9,10 +9,5 @@
     </record>
 
     <!-- Dashboard Menu Item - Add as first item in Employee Development menu -->
-    <menuitem id="menu_hr_development_dashboard"
-              name="Dashboard"
-              parent="hr_development_ai.menu_hr_development_root"
-              action="action_hr_development_dashboard"
-              sequence="1"/>
 
 </odoo>
