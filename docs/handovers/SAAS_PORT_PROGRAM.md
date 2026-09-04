@@ -52,7 +52,7 @@ customer database or a genuine scope decision.
 | **H1 Kit + Access core** | `biz_kit` (tokens, primitives, Lucide `ic()`, back chip, soft registry keys) + `biz_access` (roles-as-bundles, 4 lenses, builder, "See it as…", hand-overs) as product-neutral modules with a **rail provider** seam instead of the `pb.sidebar.item` inherit; installed and Chrome-validated on a scratch clone `vietuat_h1`; NOT on the live DB | **DONE** — `SAAS_H1_KIT_ACCESS_CORE.md`; 158 tests green, clone dropped |
 | **H2a `health_access` overlay (additive, live)** | cms.sidebar rail provider (bundle lane BESIDE the legacy lane, read as an OR), clinic ability→group catalogue + the 9 roles as bundles with xml-ids, native top-bar hiding + debug block (Rail A), People lens gains "Add a person" and the four person actions, rail item under ADMIN. Nothing uninstalled, nothing removed | **DONE 2026-09-04** — `SAAS_H2A_HEALTH_ACCESS_OVERLAY.md`; 233 tests green, per-user diff **0 lost** on the clone AND on live, deployed to `vietuat` |
 | **H2b retire `access_roles` + `health_user_admin`** | re-point every code reference, one gate on the left menu, the JOB as its own field, the clinic-administrator group re-homed, the left menu given the screens only the app bar reached, both apps uninstalled. H16 answered by the owner: **the bar above the screen is the platform administrator's alone** | **DONE 2026-09-04** — `SAAS_H2B_RETIRE_ACCESS_ROLES.md`; both apps uninstalled live, 27 tables dropped, 0 roles lost, 0 job flags changed across 73 colleagues |
-| **H3 Server plumbing** | `dbfilter = ^%d$`, carejiox.com apex + wildcard, nginx blocks (`/web/database` 404, `/status`), per-host HTTP-01 certs, golden template DB, scripts + sudoers, backups dir, stale-DB and shadowed-module cleanup, resize runbook | **DONE 2026-09-04** — `SAAS_H3_SERVER_PLUMBING.md`; master renamed `vietuat`→`carejiox` in **26 s** of downtime, certbot repaired (snap 5.8.0, both certs now renewing to 2026-12-03), `odoo` reduced from the `sudo` group to three commands, 4 stale databases + 3 orphan filestores removed, `carejiox_template` built from scratch — which found **8 packaging faults across 7 modules** that no existing database could ever have shown (ledger H40–H43) |
+| **H3 Server plumbing** | `dbfilter = ^%d$`, carejiox.com apex + wildcard, nginx blocks (`/web/database` 404, `/status`), per-host HTTP-01 certs, golden template DB, scripts + sudoers, backups dir, stale-DB and shadowed-module cleanup, resize runbook | **DONE 2026-09-04** — `SAAS_H3_SERVER_PLUMBING.md`; master renamed `vietuat`→`carejiox` in **26 s** of downtime, certbot repaired (snap 5.8.0, both certs now renewing to 2026-12-03), `odoo` reduced from the `sudo` group to three commands, 4 stale databases + 3 orphan filestores removed, `carejiox_template` built from scratch on the **11th attempt** — which found **13 packaging faults across 10 modules** that no existing database could ever have shown, and one live exposure (the template was answering on the public internet, H54). Template: 187 modules, 0 skipped, 71 crons recorded + disabled, 108 MB, **13.9 MB of memory per extra database per process**. Ledger H36–H54 |
 | **H4 `biz_tenancy` + `biz_tenants` + `health_tenancy`** | the tenant agent + the cockpit, parameterised (brand, domain, prefix, never-list, xmlids, meter registry, plan seeds, feature catalogue, status components); pilot tenant `hhh` | may split 4a/4b |
 | **H5 Validation** | every FLEET live check re-run on the pilot, Chrome-driven | |
 
@@ -596,3 +596,34 @@ in new surfaces. Chrome validation mandatory before a phase reports done.
   two classes, with a comment saying why, because the next person to tidy the file alphabetically
   would undo it. **Wherever one module extends both a table and a view over that table, the view
   goes last.**
+- **H52** (H3) ⚠ **THE TEMPLATE HAS NO CHART OF ACCOUNTS, AND H4 HAS TO DECIDE THAT TOO.** A fresh
+  install loads none, so `health_invoicing`'s three healthcare accounts were the first thing on this
+  box ever asked to exist without one — and in Odoo 19 `account.account.code` is company-dependent
+  and constrained, so the create failed. **The XML had never set a code on any of the three**, and a
+  query against the LIVE database confirms all three carry no code there either: `noupdate="1"` meant
+  the rows were written once, before the constraint, and never revalidated. So this was a latent
+  fault on the live books as well as a fresh-install one. Codes added. But the bigger fact stands:
+  a clinic cloned from this template starts with **no accounts and no journals**. Payobook hit the
+  same wall (its runbook loads `generic_coa` before the payroll-account module). Which chart a
+  customer gets — `generic_coa`, the Vietnamese `vn`, or none — is a provisioning decision and is
+  H4's, not a server-plumbing phase's to bake in. Alongside H50 (no languages), these are the two
+  things the template is deliberately missing.
+- **H53** (H3) **A fresh install of `health_base` makes outbound geocoding calls.** Six of them,
+  taking about eight seconds, while loading `data/health_facility_official.xml` — the facility model
+  geocodes an address on create. Harmless here and slow-but-fine on a box with internet, but it
+  means **installing the product reaches the network**, which will matter the day one is built
+  somewhere egress-restricted or behind a proxy: the install would stall on a timeout per facility
+  rather than fail cleanly. Worth a switch before that day rather than after it.
+- **H54** (H3) ⚠ **THE GOLDEN TEMPLATE'S "SECOND LOCK" DID NOT EXIST, AND THE TEMPLATE WAS ANSWERING
+  ON THE PUBLIC INTERNET.** The design (and Payobook's, and this handover's §3.8) rests on
+  "`carejiox_template` cannot be a hostname label, which is the second lock". It is not true on this
+  stack: the registrar's `*.carejiox.com` record **resolves `carejiox_template.carejiox.com`**
+  (verified against 8.8.8.8), nginx's `*.carejiox.com` server_name **matches a label containing an
+  underscore**, and `dbfilter = ^%d$` then maps that label straight to the database. The template
+  served `/web/login` — title and all — to anyone who guessed its name, from outside the box.
+  The FIRST lock held (archived administrator, passwordless recovery account), so nobody could sign
+  in; the surface was still open. Closed with `if ($host ~ "_") { return 444; }` in both wildcard
+  server blocks — a database name with an underscore is never a tenant, so a hostname carrying one
+  is never legitimate. **Found by the numbered test that asked the question literally instead of
+  restating the assumption**, which is the whole argument for writing tests that try the thing
+  rather than tests that agree with the design.

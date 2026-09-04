@@ -40,9 +40,17 @@ This is the one idea the whole platform rests on:
 Two consequences that bite if you forget them:
 
 * **A clinic's short name must be a legal web address label** — lowercase
-  letters, digits and hyphens, starting with a letter. No underscores. (This is
-  also the second lock on the golden template: `carejiox_template` has an
-  underscore, so no web address can ever reach it.)
+  letters, digits and hyphens, starting with a letter. No underscores.
+* **The wildcard block drops any hostname containing an underscore** (`444`).
+  This is not tidiness. The golden template is called `carejiox_template`, and
+  the plan was that the underscore made it unreachable — but the registrar's
+  `*.carejiox.com` record resolves `carejiox_template.carejiox.com` to this box,
+  nginx's own `*.carejiox.com` matches it, and the application maps the first
+  word straight to a database. The template was answering its sign-in page on
+  the public internet until 2026-09-04. Nobody could get in (its administrator
+  is archived and the only other account has no password), but it was a door
+  nobody had decided to open. **Do not remove that rule**, and do not give a
+  clinic a name with an underscore in it.
 * **nginx must pass the real hostname through.** Every block says
   `proxy_set_header Host $host;`. Rewrite that and every address on the box
   lands on the same clinic.
@@ -242,8 +250,12 @@ What makes it a template rather than just another database:
 * **Its administrator account is archived**, and there is a passwordless
   break-glass account (`platform.recovery@carejiox.com`) for the day a clinic
   locks itself out.
-* **It cannot be reached from a browser.** Its name has an underscore, which is
-  not legal in a web address, so no hostname can ever route to it.
+* **It cannot be reached from a browser** — but only because the web server is
+  told to refuse it. The original reasoning (an underscore is illegal in a
+  hostname, so no address can reach it) turned out to be false: the wildcard DNS
+  record resolves it and the wildcard server block matched it, and the template
+  served its sign-in page publicly until this was found. See §1. If you ever
+  rebuild the wildcard block, keep the underscore rule.
 * **It does not contain**: the data-migration tools, the one-off catchment
   backfill, or the website lead funnel — those are one customer's, not the
   product's. The list is in `docs/handovers/SAAS_PORT_PROGRAM.md`.
