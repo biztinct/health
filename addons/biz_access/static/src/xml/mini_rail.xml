@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+  <!-- ====================================================================
+       The left menu, drawn small.
+
+       Comments ruled with `=`, never a doubled hyphen (R35/W22). No `t-as`
+       variable is named lt / gt / lte / gte / and / or / not / in (R1): the
+       section loop is `ms`, the entry loop is `mi`, the sub-entry loop is
+       `mk`.
+
+       EVERY ROW IS DRAWN, INCLUDING THE ONES THAT ARE NOT THERE. A miniature
+       that showed only the entries somebody can see would answer "what do
+       they get" and hide "what do they miss", and the second question is the
+       one somebody building a role is actually asking. Hidden rows are drawn
+       faint, with the word for it beside them.
+       ==================================================================== -->
+  <t t-name="biz_access.MiniRail">
+    <div class="bzmr">
+      <div class="bzmr-rail" role="img"
+           aria-label="A miniature of the left menu, showing which entries this opens">
+        <t t-foreach="props.sections" t-as="ms" t-key="ms.key or ms.label">
+          <div t-if="ms.show_label !== false" class="bzmr-sec">
+            <span t-esc="ms.label"/>
+            <!-- A WHOLE SECTION CAN BE A TEASER, not just an entry. It is
+                 drawn where it is true and silent where it is not, so the
+                 miniature never invents a lock nobody set. -->
+            <span t-if="ms.restricted" class="bzmr-sec-lock"
+                  title="This whole group is shown to them locked, with a note about what it is.">
+              <t t-out="ic('lock',10)"/>
+            </span>
+          </div>
+          <t t-foreach="ms.items" t-as="mi" t-key="mi.id">
+            <div t-attf-class="bzmr-it is-{{mi.state}} {{ mi.newly_lit ? 'is-new' : '' }}"
+                 t-att-title="title(mi)">
+              <!-- TWO KINDS OF ICON, because the rail comes across a provider
+                   seam and this module does not get to say what a product
+                   stores on a menu row: a font class the product already loads
+                   is drawn as itself, and everything else goes through the
+                   shared registry, which falls back to a dot. -->
+              <span class="bzmr-it-ic">
+                <i t-if="isFontIcon(mi.icon)" t-att-class="mi.icon"/>
+                <t t-else="" t-out="railIcon(mi.icon, 14)"/>
+              </span>
+              <span class="bzmr-it-n" t-esc="mi.label"/>
+              <span class="bzmr-it-st"><t t-out="stateIcon(mi)"/></span>
+            </div>
+            <div t-foreach="mi.children or []" t-as="mk" t-key="mk.id"
+                 t-attf-class="bzmr-it bzmr-it--sub is-{{mk.state}} {{ mk.newly_lit ? 'is-new' : '' }}"
+                 t-att-title="title(mk)">
+              <span class="bzmr-it-n" t-esc="mk.label"/>
+              <span class="bzmr-it-st"><t t-out="stateIcon(mk)"/></span>
+            </div>
+          </t>
+        </t>
+      </div>
+
+      <div t-if="props.legend" class="bzmr-legend">
+        <span><t t-out="ic('check',12)"/> they see it</span>
+        <span><t t-out="ic('lock',12)"/> locked, with a note</span>
+        <span><t t-out="ic('eyeOff',12)"/> not on their menu</span>
+      </div>
+    </div>
+  </t>
+
+</templates>

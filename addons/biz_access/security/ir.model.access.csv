@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_biz_access_ability_user,biz.access.ability everybody reads the catalogue,model_biz_access_ability,base.group_user,1,0,0,0
+access_biz_access_ability_access_manager,biz.access.ability access team,model_biz_access_ability,group_access_manager,1,1,1,1
+access_biz_access_role_user,biz.access.role everybody reads the catalogue,model_biz_access_role,base.group_user,1,0,0,0
+access_biz_access_role_access_manager,biz.access.role access team,model_biz_access_role,group_access_manager,1,1,1,1
+access_biz_access_delegation_user,biz.access.delegation mine (never unlink),model_biz_access_delegation,base.group_user,1,0,0,0
+access_biz_access_delegation_access_manager,biz.access.delegation access team (never unlink),model_biz_access_delegation,group_access_manager,1,1,1,0
