@@ -1099,6 +1099,235 @@
         z-index: 5;
         .bzk-spin { border-top-color: #fff; }
     }
+
+    // =========================================================================
+    // THE FEATURE MATRIX. Rows are parts of the product, columns are customers,
+    // and the miniature of the customer's own menu sits beside the grid.
+    //
+    // ⚠ EVERY RULE HERE IS INSIDE `.bzk.bzt` (COMPOUND, NO SPACE). The page's
+    // own element carries both classes, so `.bzk .bzt` would be a descendant
+    // selector matching nothing at all, silently, and the screen would render
+    // with every KIT primitive styled and not one rule of its own (ledger H71).
+    // =========================================================================
+    .bzt-fx-body {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 290px;
+        gap: 14px;
+        align-items: start;
+    }
+    @media (max-width: 1180px) {
+        .bzt-fx-body { grid-template-columns: minmax(0, 1fr); }
+    }
+
+    .bzt-fx-grid { overflow-x: auto; }
+
+    .bzt-fx-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 13px;
+
+        th, td { border-bottom: 1px solid var(--bzk-line); }
+
+        .bzt-fx-corner {
+            text-align: left;
+            font-size: 11px;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            color: var(--bzk-muted);
+            padding: 8px 12px 10px 4px;
+            min-width: 230px;
+        }
+
+        .bzt-fx-col {
+            padding: 6px 4px 10px;
+            text-align: center;
+            vertical-align: bottom;
+            min-width: 108px;
+            border-bottom: 2px solid transparent;
+            &.is-focus { border-bottom-color: var(--bzk-primary); }
+        }
+
+        .bzt-fx-colname {
+            background: none;
+            border: 0;
+            cursor: pointer;
+            font: inherit;
+            font-weight: 700;
+            color: var(--bzk-ink);
+            padding: 2px 6px;
+            border-radius: var(--bzk-r-sm);
+            &:hover { background: var(--bzk-soft); }
+        }
+
+        .bzt-fx-colacts, .bzt-fx-rowacts {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            margin-top: 4px;
+            opacity: 0;
+            transition: opacity .12s ease;
+        }
+        th:hover .bzt-fx-colacts, th:hover .bzt-fx-rowacts { opacity: 1; }
+
+        .bzt-fx-mini {
+            background: var(--bzk-soft);
+            border: 1px solid var(--bzk-line);
+            border-radius: var(--bzk-r-sm);
+            cursor: pointer;
+            line-height: 0;
+            padding: 3px 5px;
+            color: var(--bzk-muted);
+            &:hover { color: var(--bzk-ink); border-color: var(--bzk-primary); }
+        }
+
+        .bzt-fx-row {
+            text-align: left;
+            padding: 10px 12px 10px 4px;
+            vertical-align: top;
+        }
+        .bzt-fx-rowname { font-weight: 700; }
+        .bzt-fx-rowblurb {
+            color: var(--bzk-muted);
+            font-size: 11.5px;
+            line-height: 1.4;
+            margin-top: 2px;
+            max-width: 320px;
+        }
+        .bzt-fx-rowacts { justify-content: flex-start; }
+
+        .bzt-fx-cell {
+            text-align: center;
+            padding: 8px 4px;
+            &.is-focus { background: var(--bzk-soft); }
+        }
+    }
+
+    // The switch itself. ONE FLAT COLOUR EACH, never a gradient (owner rule),
+    // and the OFF state is the loud one because it is the exception.
+    .bzt-fx-sw {
+        width: 34px;
+        height: 34px;
+        border-radius: var(--bzk-r-sm);
+        border: 1px solid var(--bzk-line);
+        background: #fff;
+        cursor: pointer;
+        line-height: 0;
+        color: var(--bzk-muted);
+        transition: background .12s ease, color .12s ease, border-color .12s ease;
+        &:hover { border-color: var(--bzk-primary); }
+    }
+    .bzt-fx-cell.is-on .bzt-fx-sw {
+        background: var(--bzk-mint, #ECFDF5);
+        border-color: var(--bzk-green, #10B981);
+        color: var(--bzk-green, #10B981);
+    }
+    .bzt-fx-cell.is-off .bzt-fx-sw {
+        background: var(--bzk-rose-soft, #FEE2E2);
+        border-color: var(--bzk-rose, #E11D48);
+        color: var(--bzk-rose, #E11D48);
+    }
+    // A decision somebody actually took, as opposed to the default. A quiet
+    // mark rather than a colour: the answer is what matters, and who decided
+    // it is the second question.
+    .bzt-fx-cell.is-decided .bzt-fx-sw { box-shadow: inset 0 -3px 0 0 var(--bzk-ink); }
+
+    .bzt-fx-prev {
+        position: sticky;
+        top: 8px;
+        .bzmr { margin-top: 8px; }
+    }
+
+    // =========================================================================
+    // SUPPORT ACCESS. The link, and the trail read off the customer's own
+    // system.
+    // =========================================================================
+    .bzt-suplink {
+        margin: 12px 0 4px;
+        padding: 12px 14px;
+        border: 1px solid var(--bzk-primary);
+        border-radius: var(--bzk-r-md);
+        background: var(--bzk-soft);
+    }
+    .bzt-suplink-t { font-weight: 700; margin-bottom: 8px; }
+    .bzt-suplink-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        .bzk-in { flex: 1; font-family: var(--bzk-mono, monospace); font-size: 12px; }
+    }
+    .bzt-suplink-s { color: var(--bzk-muted); font-size: 12px; margin-top: 6px; }
+
+    .bzt-suphead { margin-top: 20px; }
+    .bzt-supnote { margin-bottom: 10px; }
+
+    .bzt-suprow {
+        border: 1px solid var(--bzk-line);
+        border-radius: var(--bzk-r-md);
+        padding: 10px 12px;
+        margin-bottom: 8px;
+    }
+    .bzt-suprow-h {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .bzt-suprow-who { font-weight: 700; }
+    .bzt-suprow-when, .bzt-suprow-mins {
+        color: var(--bzk-muted);
+        font-size: 12px;
+    }
+    .bzt-suprow-why {
+        margin-top: 6px;
+        font-style: italic;
+        color: var(--bzk-ink);
+    }
+    .bzt-suprow-end { margin-top: 4px; color: var(--bzk-muted); font-size: 12px; }
+
+    .bzt-supscreens { margin-top: 8px; }
+    .bzt-supscreens-t {
+        font-size: 11px;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        color: var(--bzk-muted);
+        margin-bottom: 4px;
+    }
+    .bzt-supscreen {
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+        padding: 2px 0;
+        font-size: 12.5px;
+        .nm { font-weight: 600; }
+        .pt { color: var(--bzk-muted); font-family: var(--bzk-mono, monospace); font-size: 11px; }
+        .ct { color: var(--bzk-muted); font-size: 11px; }
+    }
+    .bzt-supscreens-none {
+        margin-top: 6px;
+        color: var(--bzk-muted);
+        font-size: 12px;
+    }
+    .bzt-supbox { display: inline-flex; }
+
+
+    // ---------------------------------- what a customer's system is made of
+    .bzt-mset-figs {
+        display: flex;
+        gap: 26px;
+        margin: 14px 0 6px;
+        flex-wrap: wrap;
+    }
+    .bzt-mset-fig {
+        .n {
+            font-size: 26px;
+            font-weight: 800;
+            line-height: 1.1;
+            font-variant-numeric: tabular-nums;
+        }
+        .k { color: var(--bzk-muted); font-size: 12px; }
+    }
+
 }
 
 @keyframes bzt-breathe {

@@ -36,6 +36,7 @@ import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { ic } from "@biz_kit/js/kit_icons";
 import { HubBackChip, hubBack } from "@biz_kit/js/kit_nav";
+import { BizMiniRail } from "@biz_access/js/mini_rail";
 import { _t } from "@web/core/l10n/translation";
 
 /** How a state reads on screen, and which badge tone it wears. */
@@ -61,14 +62,24 @@ const RELEASE_WORDS = {
     unknown: { label: _t("Not checked"), tone: "muted" },
 };
 
-/** The five tabs on one customer. */
+/** The six tabs on one customer. */
 const TABS = [
     { key: "overview", label: _t("Overview"), icon: "gauge" },
     { key: "backups", label: _t("Copies"), icon: "archive" },
     { key: "updates", label: _t("Updates"), icon: "rocket" },
     { key: "instep", label: _t("In step"), icon: "gitMerge" },
+    { key: "support", label: _t("Support access"), icon: "shield" },
     { key: "danger", label: _t("Closing down"), icon: "alert" },
 ];
+
+/** How a support session reads on the customer's own record. */
+const SUPPORT_WORDS = {
+    issued: { label: _t("A link was made and not used"), tone: "info" },
+    active: { label: _t("Somebody is in there now"), tone: "warn" },
+    ended: { label: _t("Finished"), tone: "ok" },
+    expired: { label: _t("The time ran out"), tone: "muted" },
+    refused: { label: _t("Refused"), tone: "err" },
+};
 
 /** How one step of a rollout reads, and the tone it wears. */
 const TASK_WORDS = {
@@ -131,7 +142,10 @@ export function toLocalInput(stored) {
 
 export class BizTenants extends Component {
     static template = "biz_tenants.Cockpit";
-    static components = { HubBackChip };
+    // ⚠ THE MINIATURE IS THE ACCESS HOME'S OWN COMPONENT, NOT A SECOND ONE.
+    // It already draws a left menu the way this product's screens draw one,
+    // and a copy here would be a second thing to keep in step with the first.
+    static components = { HubBackChip, BizMiniRail };
     static props = ["*"];
 
     setup() {
@@ -176,6 +190,12 @@ export class BizTenants extends Component {
             aborting: null,
             updates: null,
             alertHistory: false,
+            // the feature matrix and the support door
+            features: null,
+            featureBulk: null,
+            support: null,
+            supportForm: null,
+            supportLink: null,
         });
 
         onWillStart(() => this.loadFleet());
@@ -219,6 +239,9 @@ export class BizTenants extends Component {
         if (this.state.view === "sync") { return _t("In step with master"); }
         if (this.state.view === "rollout") { return _t("Sending a release out"); }
         if (this.state.view === "alerts") { return _t("Alerts"); }
+        if (this.state.view === "features") {
+            return _t("What each customer has");
+        }
         if (this.state.view === "detail" && this.state.tenant) {
             return this.state.tenant.name;
         }
@@ -240,6 +263,11 @@ export class BizTenants extends Component {
         if (this.state.view === "alerts") {
             return _t("Everything this platform has noticed. Nothing is " +
                       "emailed yet, so this screen is where it all appears.");
+        }
+        if (this.state.view === "features") {
+            return _t("Every part of the product down the side, every " +
+                      "customer across the top. Their own menu is drawn " +
+                      "beside it as you click.");
         }
         if (this.state.view === "detail" && this.state.tenant) {
             return _t("Set up %(when)s.",
@@ -640,9 +668,12 @@ export class BizTenants extends Component {
     }
 
     async setTab(key) {
-        // The answer first, the tab second (H72) — the Updates tab reads its
-        // own data and would otherwise render against nothing.
+        // The answer first, the tab second (H72) — these tabs read their own
+        // data and would otherwise render against nothing, which throws inside
+        // the component's lifecycle and puts a stack trace in front of
+        // somebody before recovering a second later.
         if (key === "updates") { await this.openUpdates(); }
+        if (key === "support") { await this.openSupport(); }
         this.state.tab = key;
     }
 
@@ -1073,6 +1104,237 @@ export class BizTenants extends Component {
     onWindowLength(ev) { return this.setWindow("hours", ev.target.value); }
 
     // =====================================================================
+    //  THE FEATURE MATRIX — the hero of this phase.
+    //
+    //  Every part of the product down the side, every customer across the top,
+    //  and a MINIATURE OF THAT CUSTOMER'S OWN LEFT MENU beside it, redrawing as
+    //  the switches move. A grid answers both questions people actually ask —
+    //  "who has Telehealth?" and "what does this one get?" — and the miniature
+    //  turns a promise into a picture: the owner sees what the customer will
+    //  see BEFORE pressing anything.
+    // =====================================================================
+    /** ⚠ THE ANSWER FIRST, THE VIEW SECOND (ledger H72). */
+    async openFeatures(tenantId) {
+        const data = await this.call(
+            "features_data", [tenantId || null],
+            _t("Reading what each customer has…"));
+        this.state.features = data;
+        this.state.view = "features";
+    }
+
+    get featureRows() {
+        return (this.state.features && this.state.features.features) || [];
+    }
+
+    get featureCols() {
+        return (this.state.features && this.state.features.tenants) || [];
+    }
+
+    get featureFocus() {
+        const f = this.state.features;
+        if (!f) { return null; }
+        return f.tenants.find((t) => t.id === f.focus_id) || null;
+    }
+
+    /**
+     * One cell.
+     *
+     * Read out of the answers map the server sent, which is keyed by the
+     * customer's id AS A STRING — a JSON object cannot have a number for a key,
+     * and reading it with a number silently answers `undefined` for every cell
+     * on the grid.
+     */
+    featureCell(tenantId, key) {
+        const f = this.state.features;
+        if (!f) { return { on: true, reason: "", decided: false }; }
+        const row = f.answers[String(tenantId)] || {};
+        return row[key] || { on: true, reason: "", decided: false };
+    }
+
+    featureCellClass(tenantId, key) {
+        const cell = this.featureCell(tenantId, key);
+        const focus = this.state.features
+            && this.state.features.focus_id === tenantId;
+        return "bzt-fx-cell"
+             + (cell.on ? " is-on" : " is-off")
+             + (cell.decided ? " is-decided" : "")
+             + (focus ? " is-focus" : "");
+    }
+
+    featureCellTitle(tenantId, key) {
+        const cell = this.featureCell(tenantId, key);
+        if (cell.on) { return _t("They have this. Click to switch it off."); }
+        return cell.reason
+            ? _t("Off — %(why)s. Click to switch it back on.",
+                 { why: cell.reason })
+            : _t("Off, with no reason written down. Click to switch it on.");
+    }
+
+    /** Clicking a cell picks that column AND moves the switch. */
+    async toggleFeature(tenantId, key) {
+        const cell = this.featureCell(tenantId, key);
+        const res = await this.call(
+            "feature_set", [tenantId, key, !cell.on, ""],
+            cell.on ? _t("Switching it off…") : _t("Switching it on…"));
+        this.state.features.answers[String(tenantId)] = res.answers;
+        this.state.features.focus_id = tenantId;
+        this.state.features.preview = res.preview;
+        const col = this.featureCols.find((t) => t.id === tenantId);
+        if (col) {
+            col.off = Object.keys(res.answers)
+                .filter((k) => !res.answers[k].on).sort();
+        }
+        this.notification.add(res.message, {
+            type: res.pushed && res.pushed.ok ? "success" : "warning",
+        });
+        if (res.pushed && !res.pushed.ok) {
+            this.notification.add(
+                _t("It is recorded here, but their system could not be told: " +
+                   "%(why)s", { why: res.pushed.reason || "" }),
+                { type: "warning", sticky: true });
+        }
+    }
+
+    /** Picking a column redraws the miniature beside the grid. */
+    async focusFeatureColumn(tenantId) {
+        if (!this.state.features
+            || this.state.features.focus_id === tenantId) { return; }
+        const preview = await this.call("feature_preview", [tenantId]);
+        this.state.features.focus_id = tenantId;
+        this.state.features.preview = preview;
+    }
+
+    /** The miniature's sections, in the shape the shared component draws. */
+    get previewSections() {
+        const p = this.state.features && this.state.features.preview;
+        return (p && p.sections) || [];
+    }
+
+    get previewKnown() {
+        const p = this.state.features && this.state.features.preview;
+        return !!(p && p.known);
+    }
+
+    get previewNote() {
+        const p = this.state.features && this.state.features.preview;
+        return (p && p.note) || "";
+    }
+
+    get previewHidden() {
+        const p = this.state.features && this.state.features.preview;
+        return (p && p.hidden) || 0;
+    }
+
+    /** Bulk, in either direction: a whole column or a whole row. */
+    askFeatureBulk(axis, id, on) {
+        const f = this.state.features;
+        const what = axis === "column"
+            ? (f.tenants.find((t) => t.id === id) || {}).name
+            : (f.features.find((r) => r.key === id) || {}).name;
+        this.state.featureBulk = { axis, id, on, what, reason: "" };
+    }
+
+    onFeatureBulkReason(ev) {
+        this.state.featureBulk.reason = ev.target.value;
+    }
+
+    get featureBulkTitle() {
+        const b = this.state.featureBulk;
+        if (!b) { return ""; }
+        if (b.axis === "column") {
+            return b.on
+                ? _t("Switch everything on for %(who)s?", { who: b.what })
+                : _t("Switch everything off for %(who)s?", { who: b.what });
+        }
+        return b.on
+            ? _t("Switch %(what)s on for every live customer?", { what: b.what })
+            : _t("Switch %(what)s off for every live customer?",
+                 { what: b.what });
+    }
+
+    async runFeatureBulk() {
+        const b = this.state.featureBulk;
+        this.state.featureBulk = null;
+        const res = b.axis === "column"
+            ? await this.call("feature_set_column", [b.id, b.on, b.reason],
+                              _t("Moving every switch…"))
+            : await this.call("feature_set_row", [b.id, b.on, b.reason],
+                              _t("Telling every customer…"));
+        this.notification.add(res.message, { type: "success" });
+        await this.openFeatures(b.axis === "column" ? b.id
+                                                    : this.state.features.focus_id);
+    }
+
+    async pushFeaturesAgain() {
+        const res = await this.call("features_push_all", [],
+                                    _t("Telling every customer again…"));
+        this.notification.add(
+            res.skipped
+                ? _t("Told %(sent)s. %(skipped)s could not be reached.",
+                     { sent: res.sent, skipped: res.skipped })
+                : _t("Told all %(sent)s.", { sent: res.sent }),
+            { type: res.skipped ? "warning" : "success" });
+    }
+
+    // =====================================================================
+    //  SUPPORT ACCESS — a reason, a time box, one link, and a trail.
+    // =====================================================================
+    async openSupport() {
+        const t = this.state.tenant;
+        if (!t) { return; }
+        this.state.support = await this.call(
+            "support_data", [t.id], _t("Reading their own record…"));
+    }
+
+    supportWords(state) {
+        return SUPPORT_WORDS[state]
+            || { label: state, tone: "muted" };
+    }
+
+    askSupport() {
+        const s = this.state.support;
+        this.state.supportForm = {
+            reason: "", minutes: 30,
+            boxes: (s && s.time_boxes) || [15, 30, 60],
+        };
+        this.state.supportLink = null;
+    }
+
+    onSupportReason(ev) { this.state.supportForm.reason = ev.target.value; }
+
+    setSupportMinutes(n) { this.state.supportForm.minutes = n; }
+
+    /**
+     * The reason is required and the screen says so before the button is
+     * pressed, not after: a refusal a person could have been warned about is a
+     * refusal that should have been a hint.
+     */
+    get supportReady() {
+        const f = this.state.supportForm;
+        return !!(f && f.reason.trim().length
+                  >= ((this.state.support && this.state.support.min_reason) || 12));
+    }
+
+    async startSupport() {
+        const f = this.state.supportForm;
+        const t = this.state.tenant;
+        const res = await this.call(
+            "support_start", [t.id, f.reason, f.minutes],
+            _t("Making the link…"));
+        this.state.supportForm = null;
+        this.state.supportLink = res;
+        await this.openSupport();
+    }
+
+    async endSupport(sessionId) {
+        const t = this.state.tenant;
+        const res = await this.call("support_end", [t.id, sessionId || null],
+                                    _t("Ending it…"));
+        this.notification.add(res.message, { type: "success" });
+        await this.openSupport();
+    }
+
+    // =====================================================================
     //  THE ALERTS SCREEN — the second hero, and today the ONLY channel.
     //  With nothing being emailed, this screen is the whole of how a problem
     //  reaches a person, which is why it opens on "since you were last here".
@@ -1239,6 +1501,18 @@ export class BizTenants extends Component {
         if (c.kind === "undo") {
             await this.call("provision_undo", [t.id, c.typed], _t("Undoing…"));
             this.notification.add(_t("Undone."), { type: "success" });
+        } else if (c.kind === "reopen") {
+            // ⚠ ZERO DEAD ENDS ACROSS A CLOSURE. A closed customer keeps
+            // their short name, so the new-customer screen refuses it — and
+            // a customer whose system has to be rebuilt would have no way
+            // forward. This walks straight into the six steps, on their own
+            // record, so their copies and their log stay in one place.
+            const res = await this.call("reopen", [t.id, c.typed],
+                                        _t("Putting them back at the start…"));
+            this.notification.add(res.message, { type: "success" });
+            await this.loadFleet();
+            await this.resume(t.id);
+            return;
         } else {
             const res = await this.call("decommission", [t.id, c.typed],
                                         _t("Closing down…"));

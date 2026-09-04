@@ -55,6 +55,10 @@
                 t-if="state.view !== 'rollout'">
           <t t-out="ic('rocket', 14)"/> <span>Rollout</span>
         </button>
+        <button class="bzk-btn ghost bzk-btn-sm" t-on-click="() => this.openFeatures(0)"
+                t-if="state.view !== 'features'">
+          <t t-out="ic('layers', 14)"/> <span>What each customer has</span>
+        </button>
         <button class="bzk-btn ghost bzk-btn-sm" t-on-click="openSync"
                 t-if="state.view !== 'sync'">
           <t t-out="ic('gitMerge', 14)"/> <span>In step with master</span>
@@ -128,6 +132,13 @@
           <div>Reading what has been noticed…</div>
         </div>
       </t>
+      <t t-elif="state.view === 'features'">
+        <t t-if="state.features"><t t-call="biz_tenants.Features"/></t>
+        <div t-else="" class="bzk-busy">
+          <div class="bzk-spin"/>
+          <div>Reading what each customer has…</div>
+        </div>
+      </t>
     </t>
 
     <!-- Overlays. Every one is the kit's own dialog, so they scrim, centre and
@@ -139,6 +150,8 @@
     <t t-if="state.taskConfirm"><t t-call="biz_tenants.SkipConfirm"/></t>
     <t t-if="state.aborting"><t t-call="biz_tenants.AbortConfirm"/></t>
     <t t-if="state.settings"><t t-call="biz_tenants.AlertSettings"/></t>
+    <t t-if="state.featureBulk"><t t-call="biz_tenants.FeatureBulk"/></t>
+    <t t-if="state.supportForm"><t t-call="biz_tenants.SupportDialog"/></t>
 
     <!-- The one place the screen says it is working. A control that goes quiet
          for forty seconds is a control somebody presses twice. -->
@@ -993,6 +1006,110 @@
       <t t-if="state.plan"><t t-call="biz_tenants.Plan"/></t>
     </div>
 
+
+    <!-- ==== support access ============================================
+         A REASON YOU MUST TYPE, A TIME BOX, ONE LINK, AND A TRAIL THE
+         CUSTOMER READS. Everything below the button is read from THEIR
+         database, not ours, and it is said so on the screen: a record kept by
+         the people it is about is not a record.
+         ================================================================ -->
+    <div class="bzk-panel bzt-support" t-if="state.tab === 'support'">
+      <t t-if="!state.support">
+        <div class="bzk-busy"><div class="bzk-spin"/><div>Reading their own record...</div></div>
+      </t>
+      <t t-else="">
+        <div class="bzk-h2">Going into their system</div>
+        <div class="bzk-sub">
+          A link signs you in as the recovery account for a fixed time, and it
+          closes itself. Everything you open is written on
+          <t t-esc="state.support.tenant"/>'s own screen where their people can
+          read it.
+        </div>
+
+        <!-- The customer's own switch, read from their system every time. -->
+        <div class="bzk-note bzt-warn" t-if="!state.support.allowed">
+          <t t-out="ic('lock', 15)"/>
+          <span>
+            <t t-esc="state.support.tenant"/> has switched support access off
+            on their own system, so no link can be made. Only they can switch
+            it back on, from their About screen.
+            <t t-if="state.support.blocked_reason">
+              <t t-esc="state.support.blocked_reason"/>
+            </t>
+          </span>
+        </div>
+
+        <div class="bzt-formfoot" t-if="state.support.allowed">
+          <button class="bzk-btn primary" t-on-click="askSupport">
+            <t t-out="ic('shield', 15)"/> <span>Open as support</span>
+          </button>
+        </div>
+
+        <!-- The link, shown once, with the two things somebody needs to know
+             about it beside it. -->
+        <div class="bzt-suplink" t-if="state.supportLink">
+          <div class="bzt-suplink-t"><t t-esc="state.supportLink.message"/></div>
+          <div class="bzt-suplink-row">
+            <input class="bzk-in" readonly="readonly"
+                   t-att-value="state.supportLink.link"/>
+            <button class="bzk-btn"
+                    t-on-click="() => this.copyText(state.supportLink.link)">
+              <t t-out="ic('copy', 14)"/> <span>Copy</span>
+            </button>
+            <a class="bzk-btn primary" t-att-href="state.supportLink.link"
+               target="_blank" rel="noopener">
+              <t t-out="ic('external', 14)"/> <span>Go in now</span>
+            </a>
+          </div>
+          <div class="bzt-suplink-s" t-esc="state.supportLink.expires_words"/>
+        </div>
+
+        <div class="bzk-h3 bzt-suphead">
+          Every time this platform has been in
+        </div>
+        <div class="bzk-sub bzt-supnote" t-esc="state.support.note"/>
+
+        <div class="bzk-empty" t-if="!state.support.sessions.length">
+          <div>Nobody from this platform has ever been into their system.</div>
+        </div>
+
+        <div class="bzt-suprow" t-foreach="state.support.sessions" t-as="ss"
+             t-key="ss.id">
+          <div class="bzt-suprow-h">
+            <span t-attf-class="bzk-badge {{ supportWords(ss.state).tone }}"
+                  t-esc="supportWords(ss.state).label"/>
+            <span class="bzt-suprow-who" t-esc="ss.who"/>
+            <span class="bzt-suprow-when" t-esc="ss.opened_at or ss.issued_at"/>
+            <span class="bzk-modal__sp"/>
+            <span class="bzt-suprow-mins">
+              <t t-esc="ss.minutes"/> minutes
+            </span>
+            <button class="bzk-btn ghost bzk-btn-sm"
+                    t-if="ss.state === 'active' or ss.state === 'issued'"
+                    t-on-click="() => this.endSupport(ss.id)">
+              <t t-out="ic('x', 13)"/> <span>End it now</span>
+            </button>
+          </div>
+          <div class="bzt-suprow-why">"<t t-esc="ss.reason"/>"</div>
+          <div class="bzt-suprow-end" t-if="ss.end_reason"
+               t-esc="ss.end_reason"/>
+          <div class="bzt-supscreens" t-if="ss.screens and ss.screens.length">
+            <div class="bzt-supscreens-t">Screens opened</div>
+            <div class="bzt-supscreen" t-foreach="ss.screens" t-as="sc"
+                 t-key="sc.path">
+              <span class="nm" t-esc="sc.name or sc.path"/>
+              <span class="pt" t-esc="sc.path"/>
+              <span class="ct" t-if="sc.count > 1">x<t t-esc="sc.count"/></span>
+            </div>
+          </div>
+          <div class="bzt-supscreens-none"
+               t-if="ss.state !== 'refused' and (!ss.screens or !ss.screens.length)">
+            No screens were opened.
+          </div>
+        </div>
+      </t>
+    </div>
+
     <!-- ==== danger -->
     <div class="bzk-panel bzt-danger" t-if="state.tab === 'danger'">
       <div class="bzk-h2">Closing this customer down</div>
@@ -1007,12 +1124,35 @@
         undone: the system is removed, the address comes down, and the record
         goes back to "not started".
       </div>
+      <!-- ==================================================================
+           AND THE WAY BACK, for a customer who has already been closed.
+           Without it their short name is held by a record nobody can use, the
+           new-customer screen refuses it, and the only move left is to go and
+           look at the machine.
+           ================================================================== -->
+      <div class="bzk-note bzt-info" t-if="state.tenant.state === 'decommissioned'">
+        <t t-out="ic('rotate', 15)"/>
+        <span>
+          This customer has been closed down and their system removed. Their
+          copies are still here, including the final one. You can build them a
+          new system from the blank one, on this same record, and give them
+          their address back.
+        </span>
+      </div>
+
       <div class="bzt-formfoot">
-        <button class="bzk-btn ghost" t-if="!state.tenant.signed_in"
+        <button class="bzk-btn primary"
+                t-if="state.tenant.state === 'decommissioned'"
+                t-on-click="() => this.askConfirm('reopen')">
+          <t t-out="ic('rotate', 15)"/> <span>Build their system again</span>
+        </button>
+        <button class="bzk-btn ghost"
+                t-if="!state.tenant.signed_in and state.tenant.state !== 'decommissioned'"
                 t-on-click="() => this.askConfirm('undo')">
           <t t-out="ic('rotate', 15)"/> <span>Undo this customer</span>
         </button>
         <button class="bzk-btn danger"
+                t-if="state.tenant.state !== 'decommissioned'"
                 t-on-click="() => this.askConfirm('close')">
           <t t-out="ic('powerOff', 15)"/> <span>Close them down</span>
         </button>
@@ -1022,6 +1162,221 @@
   </div>
 </t>
 
+
+
+<!-- ======================================================================
+     THE FEATURE MATRIX: the hero of this phase.
+
+     Every part of the product down the side, every customer across the top,
+     and a MINIATURE OF THAT CUSTOMER'S OWN LEFT MENU beside it that redraws as
+     the switches move. The owner sees what the customer will see BEFORE
+     pressing anything, which is the difference between a promise and a
+     picture.
+
+     Comments ruled with `=`, never a doubled hyphen (H67). No `t-as` variable
+     is named lt / gt / amp (F15): the rows are `fr`, the columns are `fc`.
+     Nothing computes in the template (F16).
+     ====================================================================== -->
+<t t-name="biz_tenants.Features">
+  <div class="bzt-fx">
+
+    <div class="bzk-note bzt-info">
+      <t t-out="ic('info', 15)"/>
+      <span t-esc="state.features.note"/>
+    </div>
+
+    <div class="bzk-empty" t-if="!featureRows.length">
+      <div>Nobody has told this machine which parts of the product can be
+      switched off, so there is nothing to draw here yet.</div>
+    </div>
+
+    <div class="bzk-empty" t-elif="!featureCols.length">
+      <div>There are no customers on this machine yet. The switches appear
+      here as soon as the first one is created.</div>
+    </div>
+
+    <div class="bzt-fx-body" t-else="">
+
+      <!-- ================================================== the grid -->
+      <div class="bzk-panel bzt-fx-grid">
+        <table class="bzt-fx-table">
+          <thead>
+            <tr>
+              <th class="bzt-fx-corner">Part of the product</th>
+              <th t-foreach="featureCols" t-as="fc" t-key="fc.id"
+                  t-attf-class="bzt-fx-col {{ state.features.focus_id === fc.id ? 'is-focus' : '' }}">
+                <button class="bzt-fx-colname"
+                        t-on-click="() => this.focusFeatureColumn(fc.id)"
+                        t-att-title="fc.slug">
+                  <span t-esc="fc.name"/>
+                </button>
+                <div class="bzt-fx-colacts">
+                  <button class="bzt-fx-mini" title="Switch everything on for them"
+                          t-on-click="() => this.askFeatureBulk('column', fc.id, true)">
+                    <t t-out="ic('check', 12)"/>
+                  </button>
+                  <button class="bzt-fx-mini" title="Switch everything off for them"
+                          t-on-click="() => this.askFeatureBulk('column', fc.id, false)">
+                    <t t-out="ic('x', 12)"/>
+                  </button>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr t-foreach="featureRows" t-as="fr" t-key="fr.key">
+              <th class="bzt-fx-row">
+                <div class="bzt-fx-rowname" t-esc="fr.name"/>
+                <div class="bzt-fx-rowblurb" t-esc="fr.blurb"/>
+                <div class="bzt-fx-rowacts">
+                  <button class="bzt-fx-mini" title="Switch it on for everybody"
+                          t-on-click="() => this.askFeatureBulk('row', fr.key, true)">
+                    <t t-out="ic('check', 12)"/>
+                  </button>
+                  <button class="bzt-fx-mini" title="Switch it off for everybody"
+                          t-on-click="() => this.askFeatureBulk('row', fr.key, false)">
+                    <t t-out="ic('x', 12)"/>
+                  </button>
+                </div>
+              </th>
+              <td t-foreach="featureCols" t-as="fc" t-key="fc.id"
+                  t-att-class="featureCellClass(fc.id, fr.key)">
+                <button class="bzt-fx-sw"
+                        t-att-title="featureCellTitle(fc.id, fr.key)"
+                        t-att-aria-pressed="featureCell(fc.id, fr.key).on ? 'true' : 'false'"
+                        t-on-click="() => this.toggleFeature(fc.id, fr.key)">
+                  <t t-if="featureCell(fc.id, fr.key).on">
+                    <t t-out="ic('check', 15)"/>
+                  </t>
+                  <t t-else=""><t t-out="ic('x', 15)"/></t>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="bzt-formfoot">
+          <button class="bzk-btn ghost" t-on-click="pushFeaturesAgain">
+            <t t-out="ic('send', 15)"/>
+            <span>Tell every customer again</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ============================== the miniature of their own menu -->
+      <div class="bzk-panel bzt-fx-prev">
+        <div class="bzk-h3">
+          <t t-esc="featureFocus ? featureFocus.name : 'Their menu'"/>
+        </div>
+        <div class="bzk-sub" t-esc="previewNote"/>
+
+        <div class="bzk-note bzt-info" t-if="previewKnown and previewHidden">
+          <t t-out="ic('eyeOff', 14)"/>
+          <span>
+            <t t-esc="previewHidden"/> entries are not on their menu because of
+            the switches on the left.
+          </span>
+        </div>
+
+        <BizMiniRail t-if="previewKnown" sections="previewSections"
+                     legend="false"/>
+        <div class="bzk-empty" t-else="">
+          <div t-esc="previewNote"/>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</t>
+
+
+<!-- ======================================================================
+     Moving a whole column or a whole row at once. It ASKS, and it asks with
+     the sentence spelled out, because "switch everything off for HHH Clinic"
+     is a thing somebody can do by accident from a grid.
+     ====================================================================== -->
+<t t-name="biz_tenants.FeatureBulk">
+  <div class="bzk-modal-scrim" t-on-click="() => this.state.featureBulk = null">
+    <div class="bzk-modal" t-on-click.stop="">
+      <div class="bzk-modal__head">
+        <div class="bzk-h2" t-esc="featureBulkTitle"/>
+      </div>
+      <div class="bzk-modal__body">
+        <div class="bzk-sub">
+          Nothing is removed and nothing is deleted. The doors close, and
+          switching it back on brings every screen back with the records
+          behind it.
+        </div>
+        <label class="bzk-lbl" for="fxbulkreason">
+          Why (optional, and it is shown to whoever reads this in six months)
+        </label>
+        <input class="bzk-in" id="fxbulkreason"
+               t-att-value="state.featureBulk.reason"
+               t-on-input="onFeatureBulkReason"
+               placeholder="e.g. not on their plan"/>
+      </div>
+      <div class="bzk-modal__foot">
+        <button class="bzk-btn ghost"
+                t-on-click="() => this.state.featureBulk = null">Cancel</button>
+        <button t-attf-class="bzk-btn {{ state.featureBulk.on ? 'primary' : 'danger' }}"
+                t-on-click="runFeatureBulk">
+          <span t-if="state.featureBulk.on">Switch them all on</span>
+          <span t-else="">Switch them all off</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</t>
+
+
+<!-- ======================================================================
+     The support door. A REASON YOU MUST TYPE and a TIME BOX, and the button
+     stays disabled until the reason is one somebody could act on.
+     ====================================================================== -->
+<t t-name="biz_tenants.SupportDialog">
+  <div class="bzk-modal-scrim" t-on-click="() => this.state.supportForm = null">
+    <div class="bzk-modal" t-on-click.stop="">
+      <div class="bzk-modal__head">
+        <div class="bzk-h2">Go into <t t-esc="state.tenant.name"/>'s system</div>
+      </div>
+      <div class="bzk-modal__body">
+        <div class="bzk-sub">
+          You will be signed in as the recovery account, not as one of their
+          people. The reason below and every screen you open are written on
+          THEIR own record, where their people can read them.
+        </div>
+
+        <label class="bzk-lbl" for="supreason">Why do you need to go in?</label>
+        <input class="bzk-in" id="supreason" t-att-value="state.supportForm.reason"
+               t-on-input="onSupportReason"
+               placeholder="e.g. check why invoice numbering restarted for Mrs Tran"/>
+        <div class="bzk-hint" t-if="!supportReady">
+          Write a reason somebody could act on in six months. It is required.
+        </div>
+
+        <label class="bzk-lbl">How long do you need?</label>
+        <div class="bzk-seg bzt-supbox">
+          <button t-foreach="state.supportForm.boxes" t-as="sb" t-key="sb"
+                  t-attf-class="bzk-segbtn {{ state.supportForm.minutes === sb ? 'on' : '' }}"
+                  t-on-click="() => this.setSupportMinutes(sb)">
+            <span><t t-esc="sb"/> minutes</span>
+          </button>
+        </div>
+        <div class="bzk-hint">
+          It closes on its own at the end, and signing out closes it sooner.
+        </div>
+      </div>
+      <div class="bzk-modal__foot">
+        <button class="bzk-btn ghost"
+                t-on-click="() => this.state.supportForm = null">Cancel</button>
+        <button class="bzk-btn primary" t-att-disabled="supportReady ? false : 'disabled'"
+                t-on-click="startSupport">
+          <t t-out="ic('shield', 15)"/> <span>Make the link</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</t>
 
 <!-- ============================================ in step with master -->
 <t t-name="biz_tenants.Sync">
@@ -1113,6 +1468,53 @@
     </div>
 
     <t t-if="state.plan"><t t-call="biz_tenants.Plan"/></t>
+
+    <!-- ==================================================================
+         WHAT A CUSTOMER IS MADE OF, COMPUTED.
+
+         Above the exceptions rather than below them, because the exceptions
+         are meaningless without it: this is the answer, and the list under it
+         is what fell outside the answer.
+         ================================================================== -->
+    <div class="bzk-panel bzt-mset" t-if="state.sync.module_set">
+      <div class="bzk-h2">What a customer's system is made of</div>
+      <div class="bzk-sub">
+        Worked out from the product's own dependencies, not from a list
+        somebody keeps up to date. Every part of the product on this machine,
+        plus everything each of them says it needs.
+      </div>
+      <div class="bzt-mset-figs">
+        <div class="bzt-mset-fig">
+          <div class="n" t-esc="state.sync.module_set.total"/>
+          <div class="k">parts a customer gets</div>
+        </div>
+        <div class="bzt-mset-fig">
+          <div class="n" t-esc="state.sync.module_set.seeds"/>
+          <div class="k">of them are the product's own</div>
+        </div>
+        <div class="bzt-mset-fig">
+          <div class="n" t-esc="state.sync.module_set.held_back.length"/>
+          <div class="k">this machine has and they do not</div>
+        </div>
+      </div>
+      <div class="bzk-note bzt-info" t-if="state.sync.module_set.extras.length">
+        <t t-out="ic('plus', 14)"/>
+        <span>
+          Asked for by name because nothing depends on them:
+          <t t-foreach="state.sync.module_set.extras" t-as="xtr"
+             t-key="xtr.module"><span class="mono" t-esc="xtr.module"/><t t-if="!xtr_last">, </t></t>.
+        </span>
+      </div>
+      <div class="bzk-note bzt-warn" t-if="state.sync.module_set.conflicts.length">
+        <t t-out="ic('alert', 15)"/>
+        <span>
+          A part a customer never gets is needed by one they do, so the list
+          below cannot be honoured:
+          <t t-foreach="state.sync.module_set.conflicts" t-as="cfl"
+             t-key="cfl.module"><span class="mono" t-esc="cfl.module"/> (needed by <span class="mono" t-esc="cfl.pulled_by"/>)<t t-if="!cfl_last">, </t></t>.
+        </span>
+      </div>
+    </div>
 
     <div class="bzk-panel bzt-never">
       <div class="bzk-h2">What a customer never receives</div>
@@ -1276,12 +1678,18 @@
         <div>
           <div class="bzk-modal__ttl">
             <t t-if="state.confirm.kind === 'undo'">Undo this customer</t>
+            <t t-elif="state.confirm.kind === 'reopen'">Build their system again</t>
             <t t-else="">Close this customer down</t>
           </div>
           <div class="bzk-modal__sub">
             <t t-if="state.confirm.kind === 'undo'">
               Their system is removed and their address comes down. Nobody has
               signed in, so nothing is lost.
+            </t>
+            <t t-elif="state.confirm.kind === 'reopen'">
+              A new system is copied from the blank one and their address is
+              given back to it. Their copies stay where they are, including the
+              final one taken when they were closed down.
             </t>
             <t t-else="">
               A final copy is taken first and kept for good. If that copy fails,
@@ -1305,9 +1713,11 @@
       <div class="bzk-modal__foot">
         <span class="bzk-modal__sp"/>
         <button class="bzk-btn ghost" t-on-click="closeOverlays">Cancel</button>
-        <button class="bzk-btn danger" t-on-click="doConfirm"
+        <button t-attf-class="bzk-btn {{ state.confirm.kind === 'reopen' ? 'primary' : 'danger' }}"
+                t-on-click="doConfirm"
                 t-att-disabled="confirmMatches ? undefined : 'disabled'">
           <t t-if="state.confirm.kind === 'undo'">Undo it</t>
+          <t t-elif="state.confirm.kind === 'reopen'">Build it again</t>
           <t t-else="">Close them down</t>
         </button>
       </div>

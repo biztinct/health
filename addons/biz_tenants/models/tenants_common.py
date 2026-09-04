@@ -419,3 +419,87 @@ T_PUSHED_AT = 'biz_tenancy.pushed_at'
 T_PLATFORM_URL = 'biz_tenancy.platform_url'
 T_SUPPORT_EMAIL = 'biz_tenancy.support_email'
 T_SLUG = 'biz_tenancy.slug'
+#: Which parts of the product this customer has. One JSON object, written
+#: through the same single door as everything else.
+T_FEATURES = 'biz_tenancy.features'
+#: Whether this customer allows the platform in at all (SAAS H4c §3.5). Read
+#: by the cockpit BEFORE a support link is minted, so the refusal names the
+#: customer's own switch rather than failing at the door.
+T_SUPPORT_ALLOWED = 'biz_tenancy.support_allowed'
+
+
+# =============================================================================
+# 7. WHICH PARTS OF THE PRODUCT CAN BE SWITCHED OFF
+#
+# A FEATURE IS NOT A MODULE, and that is the whole reason this is a registry
+# rather than a list of module names. "Telehealth" is one thing a clinic buys
+# and several parts of the product; "Family" is a portal and a message store.
+# What a customer is SOLD is the product's own vocabulary, so the product says
+# what the switches are and the cockpit only draws them.
+#
+# ⚠ AND SWITCHING ONE OFF IS NOT UNINSTALLING ANYTHING. The parts stay where
+# they are; the doors to them close. Uninstalling a module from a live system
+# takes its data with it, and no sales decision should ever be able to do that.
+# =============================================================================
+#: `[{key, name, blurb, sequence, default_on}]` in registration order.
+#: `blurb` is what a CUSTOMER loses when it is off, written for the customer.
+FEATURES = []
+
+
+def register_features(specs):
+    """A product names the parts of itself that can be sold separately."""
+    for spec in (specs or ()):
+        spec = dict(spec or {})
+        key = str(spec.get('key') or '').strip()
+        if not key or any(f['key'] == key for f in FEATURES):
+            continue
+        FEATURES.append({
+            'key': key,
+            'name': spec.get('name') or key,
+            'blurb': spec.get('blurb') or '',
+            'sequence': int(spec.get('sequence') or (len(FEATURES) + 1) * 10),
+            'default_on': bool(spec.get('default_on', True)),
+        })
+    return list(FEATURES)
+
+
+def features():
+    return [dict(f) for f in FEATURES]
+
+
+def feature_keys():
+    return [f['key'] for f in FEATURES]
+
+
+# -----------------------------------------------------------------------------
+# AND WHAT THE PRODUCT'S OWN MENU LOOKS LIKE, FOR THE PREVIEW BESIDE THE MATRIX.
+#
+# THE SAME SEAM AS THE RAIL PROVIDER (ledger H6), FOR THE SAME REASON. The
+# cockpit must be able to show what a customer's menu will look like with a
+# switch off, and it has no idea what a menu is. So the product hands over ONE
+# function, it TAKES `env` AS AN ARGUMENT because one registration serves every
+# database this process ever loads, and with nothing registered the screen says
+# honestly that nobody has told it what this product's menu is rather than
+# drawing an empty one that looks like a loss.
+# -----------------------------------------------------------------------------
+_MENU_PREVIEW = [None]
+
+
+def register_menu_preview(fn):
+    """A product hands over `fn(env, off_keys) -> [sections]`."""
+    if fn and _MENU_PREVIEW[0] is None:
+        _MENU_PREVIEW[0] = fn
+    return _MENU_PREVIEW[0]
+
+
+def menu_preview(env, off_keys):
+    """The miniature, or `None` where no product has said what a menu is."""
+    fn = _MENU_PREVIEW[0]
+    if not fn:
+        return None
+    try:
+        return fn(env, set(off_keys or ()))
+    except Exception:                                        # noqa: BLE001
+        _logger.exception("biz_tenants: this product's menu preview raised; "
+                          "the matrix is drawn without it.")
+        return None

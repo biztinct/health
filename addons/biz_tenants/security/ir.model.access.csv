@@ -7,3 +7,5 @@ access_biz_release_system,biz.release system,model_biz_release,base.group_system
 access_biz_rollout_system,biz.rollout system,model_biz_rollout,base.group_system,1,1,1,1
 access_biz_rollout_task_system,biz.rollout.task system,model_biz_rollout_task,base.group_system,1,1,1,1
 access_biz_alert_system,biz.alert system,model_biz_alert,base.group_system,1,1,1,1
+access_biz_feature_system,biz.feature system,model_biz_feature,base.group_system,1,1,1,1
+access_biz_tenant_feature_system,biz.tenant.feature system,model_biz_tenant_feature,base.group_system,1,1,1,1

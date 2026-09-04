@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ======================================================================
+     THE SWITCHES ARE NOT WRITTEN HERE, AND THAT IS DELIBERATE.
+
+     Which parts of a product can be sold separately is the PRODUCT's answer,
+     not the cockpit's. So this file carries no records at all: it calls the
+     seeder, which reads whatever the product registered and puts it in the
+     table. On a machine where no product has registered anything, the table
+     stays empty and the screen says so honestly.
+
+     WHY noupdate IS ABSENT (i.e. 0). The call must run on every upgrade, not
+     only on the first install: the product's overlay may be installed after
+     this module, or gain a switch later, and a seeding that ran once would
+     leave the new one missing until somebody noticed.
+
+     ⚠ THE METHOD IT CALLS CARRIES `@api.model`, AND THAT IS LOAD-BEARING
+     (ledger F45). `odoo/tools/convert.py` reads the FIRST argument of a
+     `<function>` as the records to call the method on — `record_ids, *args =
+     args` — unless the method carries the model-level marker. With no
+     arguments and no marker the upgrade dies on "not enough values to unpack
+     (expected at least 1, got 0)", and the traceback names THIS LINE rather
+     than the method it could not reach. That cost a whole upgrade cycle once.
+     ====================================================================== -->
+<odoo>
+
+    <function model="biz.feature" name="ensure_seeded"/>
+
+</odoo>

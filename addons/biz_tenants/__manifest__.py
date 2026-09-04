@@ -59,15 +59,20 @@ registrations made by an overlay module (`models/tenants_common.py`). With
 nothing registered this still boots, still lists what is on the machine, and
 says honestly on screen that nobody has told it what this product is.
 """,
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Administration',
     'license': 'LGPL-3',
     'author': 'Biztinct',
     'website': 'https://www.biztinct.com',
-    'depends': ['web', 'biz_kit', 'biz_tenancy'],
+    # `biz_access` for the left-menu MINIATURE beside the feature matrix. It is
+    # a component that already exists and already draws a rail the way this
+    # product's own screens do; a second copy of it here would be a second
+    # thing to keep in step (SAAS H4c §3.4).
+    'depends': ['web', 'biz_kit', 'biz_tenancy', 'biz_access'],
     'data': [
         'security/ir.model.access.csv',
         'views/biz_tenants_action.xml',
+        'data/biz_feature.xml',
         'data/ir_cron.xml',
     ],
     'assets': {
