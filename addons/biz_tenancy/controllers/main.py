@@ -177,6 +177,44 @@ class BizTenancyController(http.Controller):
         state = request.env['biz.tenancy'].set_support_allowed(bool(allowed))
         return {'ok': True, 'allowed': state}
 
+    # =====================================================================
+    #  THE PAUSED DOOR'S OWN PAGE
+    # =====================================================================
+    #
+    # ⚠ `auth='none'`, AND IT IS ON THE DOOR'S OWN OPEN LIST. This page is
+    # where every refused request is sent, so it must be servable by a request
+    # that has just been turned away — and it must not itself be behind the
+    # door, or the redirect loops for ever.
+    #
+    # `readonly=True`: it reads three settings and renders. It writes nothing,
+    # so nothing on this path can fail on a read-only cursor.
+    @http.route('/biz_tenancy/paused', type='http', auth='none',
+                readonly=True, sitemap=False)
+    def paused_page(self, **kw):
+        """The calm page. It also handles "you are back", on purpose.
+
+        Somebody who was let back in while sitting on this page presses their
+        browser's reload before they press anything else, and the honest answer
+        at that moment is "your access is back" with a way in — not the same
+        locked page one more time.
+        """
+        tenancy = request.env['biz.tenancy'].sudo()
+        state = tenancy.access_state()
+        return request.render('biz_tenancy.paused_page', {
+            'paused': state['access'] == 'paused',
+            'text': state['access_text'],
+            'brand': tenancy.brand(),
+            'support_email': tenancy._text('biz_tenancy.support_email').strip(),
+            'home': BACKEND_ROOT,
+            'lang': request.env.context.get('lang') or 'en_US',
+        })
+
+    @http.route('/biz_tenancy/plan', type='jsonrpc', auth='user',
+                readonly=True)
+    def plan_usage(self, **kw):
+        """The "Plan & usage" card. Read-only, and asked for only when opened."""
+        return request.env['biz.tenancy'].plan_usage()
+
     @http.route('/biz_tenancy/support/trail', type='jsonrpc', auth='user',
                 readonly=True)
     def support_trail(self, **kw):

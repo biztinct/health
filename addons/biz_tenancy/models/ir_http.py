@@ -13,23 +13,62 @@ has been open for an hour when the platform sends something.
 """
 import logging
 
+import werkzeug.exceptions
+
 from odoo import fields, models
+from odoo.exceptions import AccessDenied
 from odoo.http import request
 
 from .support import is_screen_path
 
 _logger = logging.getLogger(__name__)
 
+#: ⚠ WHERE THE PAUSED DOOR IS NOT, AND EVERY LINE OF THIS LIST IS THERE FOR A
+#: REASON SOMEBODY WOULD OTHERWISE MEET AS A LOOP OR A BLANK PAGE.
+#:
+#:   * the paused page itself, or the redirect would loop for ever;
+#:   * the sign-in and sign-out pages, so the recovery account can get in and
+#:     so the person who was redirected can sign out;
+#:   * the assets and images the paused page is DRAWN FROM — a door that is
+#:     served without its own stylesheet is a wall of unstyled text;
+#:   * `/biz_tenancy/state`, which is how a tab that is ALREADY OPEN finds out
+#:     it has been paused and takes itself to the page. Without it a paused
+#:     system's people would carry on working in the tab they had open until
+#:     they happened to navigate.
+#:
+#: Prefix matching, and the list is deliberately short: anything not on it is
+#: shut.
+PAUSED_OPEN_PREFIXES = (
+    '/biz_tenancy/',
+    '/web/login',
+    '/web/session/logout',
+    '/web/session/destroy',
+    '/web/session/authenticate',
+    '/web/reset_password',
+    '/web/assets',
+    '/web/static',
+    '/web/image',
+    '/web/binary',
+    '/web/health',
+    '/websocket',
+    '/longpolling',
+    '/favicon.ico',
+)
+
+#: Where a paused system's people are sent.
+PAUSED_PAGE = '/biz_tenancy/paused'
+
 
 class IrHttp(models.AbstractModel):
     _inherit = 'ir.http'
 
     # =====================================================================
-    #  THE SUPPORT SESSION'S TWO EDGES
+    #  THE SUPPORT SESSION'S TWO EDGES, AND THE PAUSED DOOR
     # =====================================================================
     @classmethod
     def _pre_dispatch(cls, rule, args):
-        """Close a session whose time has run out, and note the screen.
+        """Close a session whose time has run out, note the screen, and — for
+        a paused system — turn everybody but the recovery account away.
 
         ⚠ THIS RE-RAISES `ReadOnlySqlTransaction` DELIBERATELY (ledger F62's
         second half). Most pages in this product are served on a read-only
@@ -40,6 +79,7 @@ class IrHttp(models.AbstractModel):
         for. So nothing is caught but the errors that are genuinely ours.
         """
         super()._pre_dispatch(rule, args)
+        cls._biz_paused_door(rule)
         try:
             cls._biz_support_tick()
         except Exception as e:                               # noqa: BLE001
@@ -47,6 +87,110 @@ class IrHttp(models.AbstractModel):
                 raise
             _logger.warning("biz_tenancy: the support session could not be "
                             "kept up to date on this request", exc_info=True)
+
+    # =====================================================================
+    #  THE PAUSED DOOR
+    # =====================================================================
+    @classmethod
+    def _biz_paused_door(cls, rule):
+        """A paused system's people meet a calm page instead of their work.
+
+        THE DATA IS UNTOUCHED. This is a door, not a deletion: nothing is
+        archived, nothing is dropped, and the moment somebody lets them back in
+        on the platform the very next request goes straight through.
+
+        ⚠ FAIL OPEN, ALWAYS — AND SAY WHY IN THE LOG LINE (ledger F53). A
+        broken settings row, a half-installed module, a system with no platform
+        link yet: none of those may be allowed to shut a working system out of
+        its own records. The only thing that closes this door is the platform
+        saying so. And the reason goes in the MESSAGE rather than only in a
+        traceback, because this is the one place in the product where a silent
+        failure means an OPEN DOOR, and the line is the only thing anybody
+        greps on a live box.
+        """
+        try:
+            cls._biz_paused_decide(rule)
+        except (werkzeug.exceptions.HTTPException, AccessDenied):
+            # The door doing its job. Never swallowed.
+            raise
+        except Exception as exc:                             # noqa: BLE001
+            if type(exc).__name__ == 'ReadOnlySqlTransaction':
+                raise
+            _logger.warning(
+                "biz_tenancy: the paused door could not read this system's "
+                "standing (%r); THE REQUEST WAS LET THROUGH. This is the "
+                "fail-open path and it is deliberate — but if these lines are "
+                "here, a paused system is not actually paused.",
+                exc, exc_info=True)
+
+    @classmethod
+    def _biz_paused_decide(cls, rule):
+        """Who gets through a paused system's door, and who does not.
+
+        ⚠ `request.env.uid` FIRST, AND `request.session.uid` ONLY AS A
+        FALLBACK (ledger F53, and this is the trap that cost the most).
+        A route declared `auth='none'` runs with an environment whose uid is
+        None EVEN WHEN SOMEBODY IS SIGNED IN — so `request.env.user` is an
+        EMPTY RECORDSET and `has_group()` on it raises
+        `ValueError: Expected singleton`. On the platform this was ported from
+        that exception was caught by the fail-open handler above, which let
+        EVERY REQUEST THROUGH, silently, on every page. And `/odoo` on this
+        build is exactly such a route — the redirect to this product's own
+        prefix — so the door was open on the first hop of every navigation.
+        The session still knows who it is, so the user is browsed explicitly.
+
+        THREE THINGS STILL GET IN:
+          * the recovery account, whose login is mirrored onto this system
+            precisely so this check does not need the platform to be reachable;
+          * an active support session, so somebody from the platform can go in
+            and fix whatever caused the pause;
+          * anybody holding the platform's own administrator permission, which
+            on a customer's system is normally nobody at all (the two-ring rule
+            sees to that).
+        """
+        if not request:
+            return
+        uid = request.env.uid or request.session.uid
+        if not uid:
+            # Nobody is signed in. The sign-in page is not behind this door —
+            # somebody has to be able to get in and see the message.
+            return
+        path = request.httprequest.path or ''
+        if path.startswith(PAUSED_OPEN_PREFIXES):
+            return
+        env = request.env
+        if 'biz.tenancy' not in env:
+            return
+        state = env['biz.tenancy'].sudo().access_state()
+        if state['access'] != 'paused':
+            return
+        user = env['res.users'].sudo().browse(uid).exists()
+        if not user:
+            return
+        recovery = env['biz.tenancy'].sudo().recovery_login()
+        if recovery and (user.login or '').strip().lower() == recovery:
+            return
+        try:
+            # ⚠ SEARCHED ON THE uid THIS METHOD ALREADY RESOLVED, NOT THROUGH
+            # `current()` — WHICH IS F53 ONE LAYER DOWN. `current()` reads
+            # `env.uid`, and on an `auth='none'` route that is None even though
+            # somebody is signed in: it would answer "no session" and lock the
+            # operator who came in to fix the problem out of the problem. The
+            # door has already worked out who this is; it asks about them.
+            if env['biz.support.session'].sudo().search_count(
+                    [('state', '=', 'active'), ('user_id', '=', uid)]):
+                return
+        except Exception:                                    # noqa: BLE001
+            _logger.debug("biz_tenancy: could not read the support session at "
+                          "the paused door", exc_info=True)
+        if user.has_group('base.group_system'):
+            return
+        # An `http` request is a PAGE: send them somewhere that explains
+        # itself. Anything else is a call from a page that is already open —
+        # refuse it by name, and that tab's own poll will move it along.
+        if (rule.endpoint.routing.get('type') or 'http') == 'http':
+            werkzeug.exceptions.abort(request.redirect(PAUSED_PAGE))
+        raise AccessDenied(state['access_text'])
 
     @classmethod
     def _biz_support_tick(cls):

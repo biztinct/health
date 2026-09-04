@@ -54,6 +54,18 @@ const EMPTY = {
     features_sig: "",
     support_allowed: true,
     support: null,
+    // WHERE THIS SYSTEM STANDS (SAAS H4d). `access` is "open" or "paused";
+    // `trial` carries the phase and the days left; `seat` carries the count
+    // against the limit. All four are rebuilt on every read, which is why
+    // `standing_sig` — ONE string that changes only when the answer changes
+    // (ledger F47) — is what anything watching them should watch.
+    access: "open",
+    access_text: "",
+    plan_name: "",
+    plan_line: "",
+    trial: null,
+    seat: null,
+    standing_sig: "",
 };
 
 /**
@@ -113,6 +125,18 @@ export const tenancyService = {
         function apply(data) {
             if (!data) { return; }
             Object.assign(state, EMPTY, data);
+            // ⚠ A TAB THAT IS ALREADY OPEN WHEN THE DOOR SHUTS (SAAS H4d).
+            // The paused door turns away REQUESTS; a tab somebody left open
+            // this morning makes none until they navigate, so without this
+            // they carry on working in a system that is paused and meet the
+            // door at the least convenient moment. The poll notices within a
+            // minute and takes the tab to the page that explains itself.
+            if (state.access === "paused") {
+                console.debug("biz_tenancy: this system has been paused; "
+                              + "taking this tab to the page that says so.");
+                window.location.href = "/biz_tenancy/paused";
+                return;
+            }
             const sig = state.features_sig || "";
             if (sig !== lastFeatures) {
                 const was = lastFeatures;

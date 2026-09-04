@@ -37,7 +37,7 @@ EVERYTHING HERE IS INERT WHERE THE COCKPIT IS ABSENT. The registrations are
 wrapped so that a customer's system — which has this module and not the cockpit —
 loads it, registers what it can, and carries on.
 """,
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.2.0',
     'category': 'Administration',
     'license': 'LGPL-3',
     'author': 'Biztinct',

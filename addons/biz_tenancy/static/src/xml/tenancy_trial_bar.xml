@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- The trial countdown. Absent for all but the last few days, and it says
+         plainly that nothing stops working — because on this platform nothing
+         does. -->
+    <t t-name="biz_tenancy.TrialBar">
+        <div t-if="show" class="bzk bzt-trialbar"
+             t-att-class="{ 'bzt-trialbar--urgent': urgent }"
+             role="status">
+            <span class="bzt-trialbar__ic" t-out="ic(ended ? 'alert' : 'clock', 16)"/>
+            <div class="bzt-trialbar__words">
+                <span class="bzt-trialbar__head" t-esc="headline"/>
+                <span class="bzt-trialbar__calm" t-esc="reassurance"/>
+            </div>
+            <button class="bzk-btn bzk-btn--ghost bzk-btn--sm bzt-trialbar__act"
+                    t-on-click="openPlan">
+                <t>See your plan</t>
+            </button>
+        </div>
+    </t>
+
+</templates>

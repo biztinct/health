@@ -1,7 +1,7 @@
 // =============================================================================
 // The platform link's own styles.
 //
-// THIS FILE HAS FOUR ROOT BLOCKS AND THEY ARE NAMED HERE ON PURPOSE (ledger
+// THIS FILE HAS FIVE ROOT BLOCKS AND THEY ARE NAMED HERE ON PURPOSE (ledger
 // F35). A rule appended "at the end of the file, before the closing brace"
 // lands inside whichever block happens to be last and compiles to a selector
 // that matches nothing — with no error anywhere. The four roots are:
@@ -16,6 +16,12 @@
 //      notice bar, and carrying its own tokens for the same reason as (1).
 //   4. `.bzk.bztn-off` — the page for a part of the product that is not
 //      switched on here. Compound, for the same reason as (2).
+//   5. `.bzk.bzt-trialbar` — the trial countdown, mounted in the chrome beside
+//      the notice bar. Compound, for the same reason as (2), and carrying its
+//      own tokens for the same reason as (1).
+//
+// The plan card lives INSIDE root block 2, because it is part of the About
+// screen and is drawn inside that page's own element.
 //
 // NO `min()` MIXING UNITS ANYWHERE (ledger F36): Bootstrap's Sass intercepts
 // it, the WHOLE asset bundle fails to compile, and every screen in the product
@@ -238,6 +244,94 @@
         .ct { color: var(--bzk-muted); font-size: 11px; }
     }
 
+
+    // ---------------------------------------------------- plan and usage ----
+    //
+    // Inside root block 2 on purpose: it is drawn inside the About page's own
+    // element, so it inherits that page's tokens and its width.
+    .bztn-plan {
+        .bztn-plan-hero {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 4px 0 14px;
+            border-bottom: 1px solid var(--bzk-line);
+            margin-bottom: 14px;
+        }
+        .bztn-plan-ic {
+            width: 46px;
+            height: 46px;
+            border-radius: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bzk-primary-soft, #EEF4FC);
+            color: var(--bzk-primary);
+            flex: 0 0 auto;
+        }
+        .bztn-plan-id {
+            flex: 1 1 auto;
+            min-width: 0;
+            .nm { font-size: 18px; font-weight: 800; letter-spacing: -.2px; }
+            .mt { color: var(--bzk-muted); font-size: 13px; margin-top: 2px; }
+        }
+        .bztn-plan-seat {
+            flex: 0 0 auto;
+            text-align: right;
+            min-width: 128px;
+            .k {
+                font-size: 10px;
+                letter-spacing: .1em;
+                text-transform: uppercase;
+                color: var(--bzk-muted);
+                font-weight: 700;
+            }
+            .v { font-size: 17px; font-weight: 700; margin-top: 2px; }
+        }
+        .bztn-plan-meter {
+            height: 5px;
+            border-radius: 3px;
+            background: var(--bzk-surface-2, #F2F4F7);
+            overflow: hidden;
+            margin-top: 6px;
+        }
+        .bztn-plan-fill {
+            display: block;
+            height: 100%;
+            background: var(--bzk-primary);
+            transition: width .3s ease;
+
+            &[data-full="near"] { background: var(--bzk-warn, #F79009); }
+            &[data-full="full"] { background: var(--bzk-err, #D92D20); }
+        }
+        .bztn-plan-use-h {
+            font-size: 10px;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--bzk-muted);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .bztn-plan-use-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 7px 0;
+            border-bottom: 1px solid var(--bzk-line-soft, #F2F4F7);
+
+            &:last-child { border-bottom: 0; }
+            .l { flex: 1 1 auto; }
+            .v { font-weight: 700; font-variant-numeric: tabular-nums; }
+            .v.muted { font-weight: 400; color: var(--bzk-muted); }
+        }
+        .bztn-plan-none, .bztn-plan-next {
+            color: var(--bzk-muted);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .bztn-plan-next { margin-top: 14px; }
+    }
+
 }
 
 // ------------------------------------------------------ 3. the rose bar ----
@@ -342,5 +436,48 @@
         margin-top: 22px;
         display: flex;
         justify-content: center;
+    }
+}
+
+// -------------------------------------------------- 5. the trial countdown --
+//
+// ⚠ THE FIFTH ROOT BLOCK, NAMED IN THE HEADER FOR THE REASON IN LEDGER F35.
+// COMPOUND (`.bzk.bzt-trialbar`, no space): the element carries both classes,
+// so a descendant selector would match nothing at all and the bar would render
+// as a line of unstyled text with no error anywhere (ledger H71).
+//
+// Calm by default and only sharp at the end. This bar says a trial is ending
+// on a platform where NOTHING happens when it does, so it must not look like
+// an alarm until the day it is genuinely worth reading.
+.bzk.bzt-trialbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 9px 16px;
+    font-size: 13px;
+    background: var(--bzk-surface-2, #F2F4F7);
+    color: var(--bzk-text, #101828);
+    border-bottom: 1px solid var(--bzk-line, #E3E8EF);
+
+    .bzt-trialbar__ic { line-height: 0; display: inline-flex; opacity: .8; }
+    .bzt-trialbar__words {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        flex-wrap: wrap;
+        flex: 1 1 auto;
+    }
+    .bzt-trialbar__head { font-weight: 700; }
+    .bzt-trialbar__calm { color: var(--bzk-muted); }
+    .bzt-trialbar__act { flex: 0 0 auto; }
+
+    // The last three days, and after the date. Flat amber, no gradient.
+    &.bzt-trialbar--urgent {
+        background: var(--bzk-warn-soft, #FEF0C7);
+        border-bottom-color: var(--bzk-warn, #F79009);
+        color: #7A2E0E;
+
+        .bzt-trialbar__calm { color: #93531A; }
     }
 }

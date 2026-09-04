@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================================================================
+         THE ONE SCREEN A LOCKED-OUT SYSTEM'S PEOPLE SEE.
+
+         It has to be calm, it has to name the reason, it has to name who to
+         ask, and IT MUST NEVER LOOK LIKE A FAULT. Somebody turned away from
+         their own work at eight in the morning has done nothing wrong, and
+         the difference between "something is broken" and "somebody needs to
+         make a payment" is the whole design of this page.
+
+         ⚠ STANDALONE, NOT THE SHARED LAYOUT. This page renders on a system
+         whose whole web client is behind the door it is standing in front of.
+         It carries no navigation, no assets bundle, no session and above all
+         NO SIGN-IN BOX: somebody turned away from their work must not be shown
+         something that looks like their password stopped working. It is also a
+         whole document rather than a call to the shared front-end layout,
+         which is the marketing website's and dies with KeyError on a system
+         without it — the one page in the product that absolutely must not
+         raise (the same lesson as the refused-link page beside it).
+
+         The doctype is ESCAPED, exactly as the framework's own layout escapes
+         it: a doctype declaration inside element content is not well-formed
+         XML and the file would not load at all.
+
+         NOTHING ON IT NAMES THE FRAMEWORK (rail R12). The product's name is
+         the brand setting; a system with no brand set reads "this system".
+         ================================================================== -->
+  <template id="paused_page" name="Access paused">&lt;!DOCTYPE html&gt;
+    <html t-att-lang="lang and lang.replace('_', '-')">
+      <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <meta name="robots" content="noindex, nofollow"/>
+        <link rel="icon" href="data:,"/>
+        <title t-if="paused">Access paused</title>
+        <title t-else="">Your access is back</title>
+        <style>
+          * { box-sizing: border-box; }
+          body { margin:0; min-height:100vh; display:flex; align-items:center;
+                 justify-content:center; padding:24px;
+                 background:#F7F8FA; color:#101828;
+                 font-family:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; }
+          .bzp-card { width:100%; max-width:520px; background:#FFFFFF;
+                      border:1px solid #E3E8EF; border-radius:18px;
+                      padding:38px 34px 30px;
+                      box-shadow:0 18px 46px rgba(16,24,40,.08);
+                      animation:bzp-in .34s cubic-bezier(.2,.7,.3,1) both; }
+          @keyframes bzp-in { from { opacity:0; transform:translateY(10px); }
+                              to { opacity:1; transform:none; } }
+          @media (prefers-reduced-motion: reduce) { .bzp-card { animation:none; } }
+          .bzp-brand { font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+                       color:#1565C0; font-weight:800; margin-bottom:22px; }
+          .bzp-ic { width:52px; height:52px; border-radius:15px;
+                    display:flex; align-items:center; justify-content:center;
+                    background:#EEF4FC; color:#1565C0; margin-bottom:18px; }
+          .bzp-ic.ok { background:#ECFDF3; color:#027A48; }
+          h1 { font-size:22px; margin:0 0 10px; letter-spacing:-.3px; }
+          p { font-size:15px; line-height:1.6; margin:0 0 12px; color:#344054; }
+          .bzp-quiet { font-size:13px; color:#667085; }
+          .bzp-reason { border-left:3px solid #1565C0; background:#F7F9FC;
+                        padding:11px 14px; border-radius:0 10px 10px 0;
+                        font-size:15px; margin:0 0 18px; }
+          .bzp-safe { border-left:3px solid #027A48; background:#F4FBF7;
+                      padding:11px 14px; border-radius:0 10px 10px 0;
+                      font-size:14px; margin:18px 0 20px; color:#175D3B; }
+          .bzp-acts { display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
+          a.bzp-btn { display:inline-flex; align-items:center; gap:7px;
+                      padding:10px 16px; border-radius:10px; font-size:14px;
+                      font-weight:600; text-decoration:none;
+                      border:1px solid #E3E8EF; color:#344054; background:#FFFFFF; }
+          a.bzp-btn.primary { background:#1565C0; border-color:#1565C0; color:#FFFFFF; }
+        </style>
+      </head>
+      <body>
+        <div class="bzp-card">
+          <div class="bzp-brand" t-esc="brand"/>
+          <t t-if="paused">
+            <div class="bzp-ic">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                   stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+            <h1>Your access is paused</h1>
+            <!-- THE REASON, IN THE WORDS SOMEBODY TYPED FOR THESE READERS.
+                 `t-esc` puts it on the page as TEXT, so nothing anybody types
+                 into the box on the other side can ever become markup here. -->
+            <div class="bzp-reason" t-esc="text"/>
+            <div class="bzp-safe">
+              <b>Nothing has been deleted.</b> Every record is exactly where you
+              left it, and all of it is there the moment access is restored.
+            </div>
+            <p class="bzp-quiet">
+              If you think this is a mistake, ask whoever looks after
+              <t t-esc="brand"/> for your organisation to get in touch
+              <t t-if="support_email">at <t t-esc="support_email"/></t>. It
+              usually takes a few minutes to put right.
+            </p>
+          </t>
+          <t t-else="">
+            <div class="bzp-ic ok">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                   stroke-linejoin="round">
+                <path d="m9 12 2 2 4-4"/>
+                <circle cx="12" cy="12" r="10"/>
+              </svg>
+            </div>
+            <h1>Your access is back</h1>
+            <p>Everything is open again. Carry on where you left off.</p>
+          </t>
+          <div class="bzp-acts">
+            <a t-if="not paused" class="bzp-btn primary" t-att-href="home">Open <t t-esc="brand"/></a>
+            <a class="bzp-btn" href="/web/session/logout">Sign out</a>
+          </div>
+        </div>
+      </body>
+    </html>
+  </template>
+
+</odoo>

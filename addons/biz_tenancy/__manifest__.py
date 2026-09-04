@@ -42,7 +42,7 @@ IT SEEDS NOTHING AND NAMES NOBODY. No roles, no menu entries, no vocabulary of
 its own. A product supplies its own brand name (`biz_debranding.brand_name`) and
 puts the About screen on its own navigation; this module supplies the shape.
 """,
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.2.0',
     'category': 'Technical',
     'license': 'LGPL-3',
     'author': 'Biztinct',
@@ -55,6 +55,7 @@ puts the About screen on its own navigation; this module supplies the shape.
         'security/ir.model.access.csv',
         'views/about_action.xml',
         'views/support_templates.xml',
+        'views/paused.xml',
     ],
     'assets': {
         'web.assets_backend': [
@@ -66,10 +67,12 @@ puts the About screen on its own navigation; this module supplies the shape.
             'biz_tenancy/static/src/js/tenancy_banner.js',
             'biz_tenancy/static/src/js/tenancy_support_bar.js',
             'biz_tenancy/static/src/js/tenancy_feature_off.js',
+            'biz_tenancy/static/src/js/tenancy_trial_bar.js',
             'biz_tenancy/static/src/js/tenancy_about.js',
             'biz_tenancy/static/src/xml/tenancy_banner.xml',
             'biz_tenancy/static/src/xml/tenancy_support_bar.xml',
             'biz_tenancy/static/src/xml/tenancy_feature_off.xml',
+            'biz_tenancy/static/src/xml/tenancy_trial_bar.xml',
             'biz_tenancy/static/src/xml/tenancy_about.xml',
             'biz_tenancy/static/src/xml/webclient_patch.xml',
         ],

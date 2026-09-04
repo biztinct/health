@@ -23,14 +23,22 @@ def _src(*parts):
 
 _PY = (('models', 'tenancy.py'), ('models', 'ir_http.py'),
        ('models', 'support.py'),
+       # H4d.
+       ('models', 'standing.py'),
        ('controllers', 'main.py'), ('__init__.py',))
 _JS = ('tenancy_range.js', 'tenancy_service.js', 'tenancy_banner.js',
        'tenancy_support_bar.js', 'tenancy_feature_off.js',
-       'tenancy_about.js')
+       'tenancy_about.js', 'tenancy_trial_bar.js')
 _XML = ('tenancy_banner.xml', 'tenancy_about.xml', 'tenancy_support_bar.xml',
-        'tenancy_feature_off.xml', 'webclient_patch.xml')
+        'tenancy_feature_off.xml', 'tenancy_trial_bar.xml',
+        'webclient_patch.xml')
 _MARKUP = (('views', 'about_action.xml'),
-           ('views', 'support_templates.xml'))
+           ('views', 'support_templates.xml'),
+           # ⚠ THE ONE SCREEN A LOCKED-OUT SYSTEM'S PEOPLE SEE. Every word on
+           # it is read by somebody who has just been turned away from their
+           # own work, which is the worst possible moment to meet a name they
+           # do not recognise.
+           ('views', 'paused.xml'))
 
 
 @tagged('post_install', '-at_install')

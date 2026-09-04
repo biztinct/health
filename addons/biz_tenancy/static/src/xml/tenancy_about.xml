@@ -39,6 +39,73 @@
       </div>
     </div>
 
+    <!-- ==================================================================
+         PLAN & USAGE, ON THE CUSTOMER'S OWN SCREEN.
+
+         READ-ONLY, AND EVERY NUMBER ON IT WAS MEASURED BY THE PLATFORM. It
+         answers three questions and no more: what am I on, what has been
+         measured this month, and when should I expect the next invoice. A
+         customer who cannot answer those has to ring somebody to find out what
+         they are paying for, which is the whole reason this card exists.
+
+         Absent entirely on a system nobody has put on a plan, rather than a
+         card full of dashes.
+         ================================================================== -->
+    <div class="bzk-panel bztn-plan" t-if="plan.loaded and hasPlanCard">
+      <div class="bzk-panel-h">
+        <div class="bzk-h2">Plan and usage</div>
+        <span t-if="plan.data.access === 'paused'" class="bzk-badge err">
+          <span class="d"/> Access paused
+        </span>
+        <span t-elif="planTrialPhase !== 'none'" class="bzk-badge warn">
+          <span class="d"/> On trial
+        </span>
+      </div>
+
+      <div class="bztn-plan-hero">
+        <div class="bztn-plan-ic"><t t-out="ic('creditCard', 22)"/></div>
+        <div class="bztn-plan-id">
+          <div class="nm" t-esc="plan.data.plan_name"/>
+          <div class="mt" t-if="plan.data.plan_line" t-esc="plan.data.plan_line"/>
+        </div>
+        <div class="bztn-plan-seat" t-if="planSeatShown">
+          <div class="k">People with a login</div>
+          <div class="v">
+            <t t-esc="plan.data.seat.count"/>
+            <t t-if="plan.data.seat.limit"> of <t t-esc="plan.data.seat.limit"/></t>
+          </div>
+          <div class="bztn-plan-meter" t-if="plan.data.seat.limit">
+            <span class="bztn-plan-fill"
+                  t-att-style="planSeatWidth"
+                  t-att-data-full="planSeatTone"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- WHAT THE PLATFORM MEASURED, in its own words, with the one that is
+           charged marked. A number on a bill nobody can find on their own
+           screen is a number nobody can check. -->
+      <div class="bztn-plan-use" t-if="planRows.length">
+        <div class="bztn-plan-use-h">
+          Measured for <t t-esc="plan.data.usage.month_label"/>
+        </div>
+        <div class="bztn-plan-use-row" t-foreach="planRows" t-as="use"
+             t-key="use.key">
+          <span class="l" t-esc="use.label"/>
+          <span class="v" t-if="use.available" t-esc="use.value"/>
+          <span class="v muted" t-else="">not measured here</span>
+          <span class="bzk-badge info" t-if="use.charged">What you are charged on</span>
+        </div>
+      </div>
+      <div class="bztn-plan-none" t-else="">
+        No numbers have been measured for this system yet. They are taken once a
+        month and will appear here after the first reading.
+      </div>
+
+      <div class="bztn-plan-next" t-if="plan.data.next_invoice"
+           t-esc="plan.data.next_invoice"/>
+    </div>
+
     <!-- THE HISTORY. `rel` and never `lt`/`gt`/`amp`: those names compile to a
          literal `&lt;` and take the whole component down (ledger F15). -->
     <div class="bztn-rel-list" t-if="releases.length">

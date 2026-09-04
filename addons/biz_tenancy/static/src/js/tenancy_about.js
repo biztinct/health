@@ -80,7 +80,59 @@ export class BizTenancyAbout extends Component {
         // because it is a whole list and nobody needs it until they come here.
         this.support = useState({ loaded: false, allowed: true,
                                   mayChange: false, sessions: [] });
-        onWillStart(() => this.loadSupport());
+        // PLAN & USAGE: read here rather than carried on every page, for the
+        // same reason. It is a whole card and nobody needs it until they open
+        // this screen.
+        this.plan = useState({ loaded: false, data: null });
+        onWillStart(async () => {
+            // ⚠ THE ANSWER FIRST, THE RENDER SECOND (ledger H72). Both reads
+            // are awaited before anything below them is drawn.
+            await this.loadSupport();
+            await this.loadPlan();
+        });
+    }
+
+    /** The plan card's own read. Never raises onto the page. */
+    async loadPlan() {
+        try {
+            this.plan.data = await rpc("/biz_tenancy/plan", {});
+        } catch (e) {
+            console.debug("biz_tenancy: could not read the plan card", e);
+        } finally {
+            this.plan.loaded = true;
+        }
+    }
+
+    /** Is there a plan to draw at all? An empty card is a dead end. */
+    get hasPlanCard() {
+        return !!(this.plan.data && this.plan.data.plan_name);
+    }
+
+    get planRows() {
+        const data = this.plan.data;
+        return (data && data.usage && data.usage.rows) || [];
+    }
+
+    get planTrialPhase() {
+        const data = this.plan.data;
+        return (data && data.trial && data.trial.phase) || "none";
+    }
+
+    /** The bar is only honest where there is a limit to draw it against. */
+    get planSeatShown() {
+        const data = this.plan.data;
+        return !!(data && data.seat && (data.seat.limit || data.seat.count));
+    }
+
+    get planSeatWidth() {
+        const data = this.plan.data;
+        const pct = (data && data.seat && data.seat.pct) || 0;
+        return `width:${Math.max(2, Math.min(100, pct))}%`;
+    }
+
+    get planSeatTone() {
+        const data = this.plan.data;
+        return ((data && data.seat && data.seat.verdict) || "ok");
     }
 
     /** ⚠ THE ANSWER FIRST. Nothing on the support panel renders until the read

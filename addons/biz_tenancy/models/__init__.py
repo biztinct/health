@@ -4,4 +4,7 @@
 # either of them is set up.
 from . import support
 from . import tenancy
+# `standing` extends the model `tenancy` declares, so it comes after it and
+# before `ir_http`, whose paused door reads it.
+from . import standing
 from . import ir_http

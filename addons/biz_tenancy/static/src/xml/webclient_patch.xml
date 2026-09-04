@@ -21,7 +21,13 @@
                  "somebody is in your system right now" outranks "we are
                  updating on Thursday" on any morning either of them appears. -->
             <BizTenancySupportHost/>
+            <!-- And the trial countdown UNDER the notice bar: "we are updating
+                 on Thursday" is about today, "your trial ends in four days" is
+                 about next week. Absent entirely for all but the last few days
+                 of a trial, and absent for ever on a system that never had
+                 one. -->
             <BizTenancyBanner/>
+            <BizTenancyTrialBar/>
         </xpath>
     </t>
 
