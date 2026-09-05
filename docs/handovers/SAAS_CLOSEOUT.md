@@ -157,9 +157,16 @@ Release **2026.09.04** on all three. **846 tests green** on the last full run.
 7. **The database manager password.** `admin_passwd` in `/etc/odoo-server.conf`
    is still the shipped default. The database manager is 404 on every address, so
    nothing can reach it — but it should be changed anyway.
-8. **A leak that is not ours.** The stock messaging app seeds a welcome message
-   naming the software underneath, and it sits in the inbox of every clinic made
-   from the blank system. It belongs on the debranding list.
+8. ~~**A leak that is not ours.**~~ **FIXED 2026-09-05.** Three of them, in
+   fact, and one would have started SENDING the day you connect a mail account:
+   a periodic digest titled after the software underneath, active on every
+   database and set to daily on the blank system. It is renamed and switched
+   off (Settings → General Settings → Statistics turns it back on if you ever
+   want it). The seeded welcome message, the notification preference label and
+   the assistant's own messages are rebranded in both languages, and the word
+   is now taken out of every email at the moment it is rendered. Nothing on any
+   of the three databases names the software underneath where a person can see
+   it. Nobody's own message was edited.
 9. **Copies live on the same machine as the clinics.** If the machine is lost,
    the copies go with it. **This is the single most dangerous thing about the
    platform** and it has been true since day one.
