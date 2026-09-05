@@ -27,5 +27,6 @@ from . import health_prepaid_service  # DEPRECATED - use FSO package integration
 from . import res_partner
 from . import health_fieldservice_order  # NEW: Package integration fields added
 from . import product_template  # NEW: Healthcare package product support
+from . import product_product  # the same smart button, made valid on a variant
 from . import res_config_settings  # Red Invoice toggle settings
 from . import health_ar_transaction_log  # NEW: AR Transaction Log for MISA validation
