@@ -1,0 +1,110 @@
+// =============================================================================
+// LANGUAGE SWITCHER — the globe in the top bar
+// -----------------------------------------------------------------------------
+// Sits in the systray, on the blue navbar, beside the messaging and activity
+// icons. Colours come from the Theme Engine's own tokens so a published theme
+// re-tints it with everything else; the fallbacks are today's compiled values,
+// so it renders identically when no theme override is active.
+// Flat colours only — no gradients (standing rule).
+// =============================================================================
+
+.o_main_navbar .vu-language-switcher {
+    display: flex;
+    align-items: stretch;
+    color: rgba(255, 255, 255, .92);
+
+    &__toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        height: 100%;
+        min-height: 40px;
+        padding: 0 10px;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        letter-spacing: .02em;
+        cursor: pointer;
+        transition: background-color var(--vu-transition-fast, .15s) ease;
+
+        &:hover,
+        &:focus-visible {
+            background: rgba(255, 255, 255, .12);
+            color: #fff;
+        }
+
+        // The navbar is a dark surface, so the focus ring has to be light to be
+        // visible at all — the theme's own focus colour would disappear here.
+        &:focus-visible {
+            outline: 2px solid rgba(255, 255, 255, .85);
+            outline-offset: -3px;
+        }
+
+        &:disabled {
+            cursor: wait;
+            opacity: .65;
+        }
+    }
+
+    &__code {
+        min-width: 1.8em;
+        font-size: .72rem;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    &__chevron {
+        font-size: .65rem;
+        opacity: .68;
+    }
+}
+
+// The dropdown panel is portalled OUT of the navbar and onto a light surface,
+// so these rules are deliberately NOT nested under `.o_main_navbar` — written
+// there they would match nothing and the panel would render unstyled, which is
+// the kind of failure that is invisible until somebody opens it.
+.vu-language-switcher {
+    &__heading {
+        padding: 8px 12px 6px;
+        color: var(--vu-text-secondary, #424242);
+        font-size: .68rem;
+        font-weight: 700;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+
+    &__name {
+        padding-inline-end: 24px;
+    }
+
+    &__meta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-inline-start: auto;
+        color: var(--vu-brand-primary, #1565C0);
+        font-size: .72rem;
+    }
+
+    &__item--current {
+        color: var(--vu-brand-primary, #1565C0);
+        font-weight: 650;
+    }
+}
+
+// On a phone the code alone carries the meaning; the chevron is the first thing
+// that can go.
+@media (max-width: 575.98px) {
+    .o_main_navbar .vu-language-switcher {
+        &__toggle {
+            gap: 3px;
+            padding: 0 7px;
+        }
+
+        &__chevron {
+            display: none;
+        }
+    }
+}

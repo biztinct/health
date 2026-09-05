@@ -45,7 +45,7 @@
         - Modern pill-shaped badges for healthcare workflows
         - Custom navbar and control panel styling
     ''',
-    'version': '19.0.5.1.2',
+    'version': '19.0.5.2.0',
     'category': 'Themes/Backend',
     'license': 'LGPL-3',
     'author': 'VAFHS Healthcare System - Vietnam-Australia Family Health Service',
@@ -124,6 +124,12 @@
             'health_theme/static/src/webclient/apps_menu_patch.js',
             'health_theme/static/src/webclient/apps_menu.scss',
             'health_theme/static/src/webclient/apps_menu.xml',
+            # Language switcher — the globe in the top bar. The list comes from
+            # the languages the database actually has installed, so switching a
+            # third one on needs no deploy.
+            'health_theme/static/src/webclient/language_switcher.js',
+            'health_theme/static/src/webclient/language_switcher.scss',
+            'health_theme/static/src/webclient/language_switcher.xml',
         ],
     },
     'installable': True,
