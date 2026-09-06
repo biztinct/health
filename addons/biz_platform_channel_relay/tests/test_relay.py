@@ -170,7 +170,7 @@ class TestRelayRouting(RelayCase):
         before = self._audit_count('relay_forwarded')
         payload = fb_payload(PAGE_X)
         with patch.object(relay.requests, 'post', self.fake_post):
-            counts = self.Router._route_meta('fb', b'{}', payload)
+            counts = self.Router._route_meta('fb', payload)
 
         self.assertEqual(counts['forwarded'], 1)
         self.assertEqual(counts['queued'], 0)
@@ -218,7 +218,7 @@ class TestRelayRouting(RelayCase):
         with patch.object(CareChannelMessage, '_dispatch_connection',
                           fake_dispatch), \
                 patch.object(relay.requests, 'post', self.fake_post):
-            counts = self.Router._route_meta('fb', b'{}', payload)
+            counts = self.Router._route_meta('fb', payload)
 
         self.assertEqual(counts['local'], 1)
         self.assertEqual(counts['forwarded'], 1)
@@ -245,8 +245,8 @@ class TestRelayRouting(RelayCase):
         payload = fb_payload(PAGE_UNKNOWN)
         with patch.object(ChannelRelayTenant, '_reconcile', fake_reconcile), \
                 patch.object(relay.requests, 'post', self.fake_post):
-            first = self.Router._route_meta('fb', b'{}', payload)
-            second = self.Router._route_meta('fb', b'{}', payload)
+            first = self.Router._route_meta('fb', payload)
+            second = self.Router._route_meta('fb', payload)
 
         self.assertEqual(first['unknown'], 1)
         self.assertEqual(second['unknown'], 1)
@@ -272,7 +272,7 @@ class TestRelayRouting(RelayCase):
             raise requests.ConnectionError('connection refused')
 
         with patch.object(relay.requests, 'post', boom):
-            counts = self.Router._route_meta('fb', b'{}', fb_payload(PAGE_X))
+            counts = self.Router._route_meta('fb', fb_payload(PAGE_X))
 
         self.assertEqual(counts['queued'], 1)
         self.assertEqual(counts['forwarded'], 0)
@@ -294,7 +294,7 @@ class TestRelayRouting(RelayCase):
     def test_08_forbidden_is_queued(self):
         self.status = 403
         with patch.object(relay.requests, 'post', self.fake_post):
-            counts = self.Router._route_meta('fb', b'{}', fb_payload(PAGE_X))
+            counts = self.Router._route_meta('fb', fb_payload(PAGE_X))
 
         self.assertEqual(counts['queued'], 1)
         row = self.Delivery.sudo().search(
@@ -303,6 +303,67 @@ class TestRelayRouting(RelayCase):
         self.assertIn('403', row.last_error)
         self.assertNotIn('PSID', row.last_error)
         self.assertNotIn(PAGE_X, row.last_error)
+
+    # ==================================================================
+    # T21 — one clinic's share can never be lost by another's failure
+    # ==================================================================
+    def test_21_a_broken_local_ingest_still_forwards(self):
+        """The customers are served FIRST, and each share is isolated.
+
+        The local ingest reaches a long way into this system's own clinical
+        spine. If it raised and took the batch with it, every OTHER clinic's
+        messages in it would be gone — unqueued, with Meta already answered
+        200 and no redelivery coming.
+        """
+        self._conn('fb', state='ready', resource_external_id=PAGE_LOCAL)
+
+        def exploding_dispatch(self_model, connection, payload):
+            raise ValueError('the local ingest fell over')
+
+        payload = fb_payload(PAGE_LOCAL, PAGE_X)
+        with patch.object(CareChannelMessage, '_dispatch_connection',
+                          exploding_dispatch), \
+                patch.object(relay.requests, 'post', self.fake_post):
+            counts = self.Router._route_meta('fb', payload)
+
+        self.assertEqual(counts['forwarded'], 1,
+                         'the customer was served before the platform, and '
+                         'the platform falling over cost them nothing')
+        self.assertEqual(counts['local'], 0)
+        self.assertEqual(len(self.sent), 1)
+        self.assertEqual(
+            [e['id'] for e in json.loads(self.sent[0]['data'])['entry']],
+            [PAGE_X])
+
+    def test_21b_a_broken_capture_still_forwards(self):
+        def exploding_capture(self_model, *args, **kwargs):
+            raise ValueError('the unrouted queue fell over')
+
+        payload = fb_payload(PAGE_UNKNOWN, PAGE_X)
+        with patch.object(type(self.Capture), '_capture', exploding_capture), \
+                patch.object(ChannelRelayTenant, '_maybe_resync',
+                             lambda self_model, reason='': False), \
+                patch.object(relay.requests, 'post', self.fake_post):
+            counts = self.Router._route_meta('fb', payload)
+
+        self.assertEqual(counts['forwarded'], 1)
+        self.assertEqual(counts['unknown'], 0)
+
+    def test_21c_the_route_answers_200_when_the_router_falls_over(self):
+        """Whatever happens inside, Meta is answered 200 after verification.
+
+        A non-2xx makes Meta redeliver the whole batch for every customer in
+        it and, sustained, switches the application's Messenger webhook off for
+        all of them — so the router may never propagate.
+        """
+        def exploding_route(self_model, channel, payload, counts):
+            raise ValueError('everything fell over at once')
+
+        with patch.object(type(self.Router), '_route', exploding_route):
+            counts = self.Router._route_meta('fb', fb_payload(PAGE_X))
+        self.assertEqual(counts,
+                         {'local': 0, 'forwarded': 0, 'queued': 0, 'unknown': 0},
+                         'it returns a counter, it does not raise')
 
 
 @tagged('post_install', '-at_install')
@@ -449,7 +510,15 @@ class TestRelayReconcile(RelayCase):
             self.Relay._reconcile(push_credentials=False)
         self.assertEqual(self.Route._find('fb', PAGE_X), alpha_row)
         self.assertIn('two customers', beta_row.last_error or '')
+        self.assertIn('r1alpha', beta_row.last_error)
+        self.assertNotIn(PAGE_X, beta_row.last_error,
+                         'safety rail 6: the page id is provider material '
+                         'about a real clinic and never goes on a screen or '
+                         'into an audit row')
         self.assertEqual(self._audit_count('relay_failed'), before + 1)
+        row = self.Audit.sudo().search(
+            [('event', '=', 'relay_failed')], limit=1)
+        self.assertNotIn(PAGE_X, row.detail_redacted or '')
 
         # A customer that stops serving stops being relayed for.
         alpha.write({'state': 'paused'})
@@ -459,6 +528,28 @@ class TestRelayReconcile(RelayCase):
             self.Relay._reconcile(push_credentials=False)
         self.assertFalse(alpha_row.active)
         self.assertTrue(beta_row.active)
+
+    def test_12c_the_platform_never_relays_to_itself(self):
+        """A customer row whose short name IS this database is skipped.
+
+        It should never exist, but a mis-typed row in the cockpit is one
+        keystroke — and it would make the relay forward a batch straight back
+        into the route it arrived on and push the platform's own Meta
+        application into the platform.
+        """
+        self.env['biz.tenant'].sudo().create(
+            {'slug': 'r1self', 'name': 'The platform itself', 'state': 'live'})
+        # The database this suite runs on may carry an underscore, which the
+        # short-name shape already refuses — so the guard is pinned by naming
+        # this system, not by hoping the database is called the right thing.
+        with patch.object(ChannelRelayTenant, '_own_slug',
+                          lambda self_model: 'r1self'), \
+                patch.object(type(self.Service), '_pg_cursor',
+                             _pg_cursor_returning({})):
+            counts = self.Relay._reconcile(push_credentials=False)
+        self.assertEqual(counts['customers'], 0)
+        self.assertFalse(self.Relay.sudo().with_context(
+            active_test=False).search_count([('slug', '=', 'r1self')]))
 
     def test_12b_customer_behind_on_releases_is_skipped(self):
         self.env['biz.tenant'].sudo().create(
@@ -476,6 +567,18 @@ class TestRelayReconcile(RelayCase):
     # T13 — the application reaches the customer, encrypted THERE
     # ==================================================================
     def test_13_push_credentials(self):
+        """WHICH HALF THIS PROVES, and which half it cannot (ledger §5.180).
+
+        The stand-in collapses two databases into one environment, so what is
+        under test here is the SHAPE of the push: which fields are written, that
+        the token is a `chs$1$` one, that the redirect parameter lands, that the
+        customer row reads "in step". Encrypting and decrypting in a single
+        environment says nothing about the property the push exists for — that
+        the secret is encrypted with the TARGET database's own key (§5.172).
+        That half is asymmetric and can only be proved live: the platform signs
+        with its secret and the customer accepts the signature with the copy it
+        was pushed. The deploy proof in the phase report is where it lives.
+        """
         self.env['biz.tenant'].sudo().create(
             {'slug': 'r1alpha', 'name': 'Alpha', 'state': 'live'})
         env = self.env

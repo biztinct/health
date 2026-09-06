@@ -49,6 +49,15 @@ msgid "This page or number is already connected by another customer (%s)."
 msgstr "Trang hoặc số điện thoại này đã được một khách hàng khác kết nối (%s)."
 
 #. module: biz_platform_channel_relay
+#: model:ir.model.fields,help:biz_platform_channel_relay.field_channel_relay_tenant__slug
+msgid ""
+"The first word of this customer's web address, and the name of their system "
+"on this machine."
+msgstr ""
+"Từ đầu tiên trong địa chỉ web của khách hàng này, và cũng là tên hệ thống của "
+"họ trên máy chủ."
+
+#. module: biz_platform_channel_relay
 #. odoo-python
 #: code:addons/biz_platform_channel_relay/models/relay_delivery.py:0
 msgid "It will be tried again"

@@ -62,8 +62,7 @@ class RelayMetaWebhookController(MetaWebhookController):
         if not isinstance(payload, dict):
             return self._text('')
         try:
-            counts = env['channel.relay.router']._route_meta(
-                channel, raw_body, payload)
+            counts = env['channel.relay.router']._route_meta(channel, payload)
             _logger.info('channel relay: meta %s webhook %s', channel, counts)
         except Exception:  # noqa: BLE001 — 200 after verification, always
             _logger.exception('channel relay: meta webhook processing failed '

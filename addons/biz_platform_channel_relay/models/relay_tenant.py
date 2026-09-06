@@ -143,6 +143,11 @@ class ChannelRelayTenant(models.Model):
     # The platform's own Meta application
     # ------------------------------------------------------------------
     @api.model
+    def _own_slug(self):
+        """This system's own name. A customer may never be called it."""
+        return (self.env.cr.dbname or '').strip()
+
+    @api.model
     def _master_app(self):
         return self.env['channel.platform.app'].sudo()._get_for_provider('meta')
 
@@ -214,9 +219,19 @@ class ChannelRelayTenant(models.Model):
     def _sync_customers(self):
         """Create/reactivate a row per serving customer, archive the rest."""
         Tenant = self.env['biz.tenant'].sudo()
+        # The platform never relays to itself. A customer row whose short name
+        # is this database would make the relay forward a batch straight back
+        # into the route it arrived on, and push the platform's own Meta
+        # application into the platform. It should never exist — but a
+        # mis-typed row in the cockpit is one keystroke, and this is one line.
+        own = self._own_slug()
         serving = {}
         for tenant in Tenant.search([('state', 'in', list(SERVING_STATES))]):
             slug = (tenant.slug or '').strip()
+            if slug and slug == own:
+                _logger.warning('channel relay: %r is this platform itself — '
+                                'not relayed for', slug)
+                continue
             if slug and SLUG_RE.match(slug):
                 serving[slug] = tenant
         existing = self.sudo().with_context(active_test=False).search([])
@@ -272,8 +287,16 @@ class ChannelRelayTenant(models.Model):
                 if owner and owner != row.slug:
                     # Never let routing become a coin flip: the FIRST customer
                     # seen keeps the Page, the second is told, loudly.
-                    message = ('Page/number %s is connected by two customers: '
-                               '%s, %s' % (resource_id, owner, row.slug))
+                    #
+                    # WITHOUT THE PAGE ID (safety rail 6). It is provider
+                    # material about a real clinic's account and this string
+                    # goes into an audit row and onto an operator's screen; the
+                    # two short names and the channel are what an operator
+                    # needs to go and look, and the id is on both customers'
+                    # own screens.
+                    message = ('A Page or number is connected by two '
+                               'customers: %s, %s (%s)'
+                               % (owner, row.slug, channel))
                     row.write({'last_error': redact(message)})
                     self.env['care.channel.audit']._log(
                         'relay_failed', channel=channel, detail=message)

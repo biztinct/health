@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Channel Relay (platform)',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Healthcare/CRM',
     'summary': 'One Meta application serves every customer: the platform '
                'splits, re-signs and forwards; sign-ins bounce home',
@@ -41,6 +41,20 @@ written into an audit line.
 
 **Where it runs**: the platform's own system, and nowhere else. A customer
 system can never receive it.
+
+19.0.1.1.0 — post-review
+------------------------
+
+* The customers are served **first**, and each of the three shares of a batch
+  (theirs, the platform's own, and the ones nobody owns) runs in its own
+  savepoint. A failure on this system can no longer lose another clinic's
+  messages, which would have gone unqueued with the provider already told the
+  batch was accepted.
+* The sign-in address counts a caller against its limit **before** it looks
+  anything up, once per request however many times the chain asks.
+* A page connected by two customers is reported by the two customers' short
+  names and the channel — never by the page's own identifier.
+* A customer whose short name is this system itself is skipped.
     """,
     'author': 'I Am Dream Catcher Ltd',
     'website': 'https://vafhs.com',

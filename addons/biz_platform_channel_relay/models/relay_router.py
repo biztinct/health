@@ -32,7 +32,7 @@ class ChannelRelayRouter(models.AbstractModel):
     # The one entry point
     # ------------------------------------------------------------------
     @api.model
-    def _route_meta(self, channel, raw_body, payload):
+    def _route_meta(self, channel, payload):
         """Split one verified Meta batch and deliver each share.
 
         Returns ``{'local', 'forwarded', 'queued', 'unknown'}`` for the
@@ -89,11 +89,28 @@ class ChannelRelayRouter(models.AbstractModel):
             channel, payload,
             lambda rid: mapping.get(rid, (relay.UNKNOWN, None, None))[:2])
 
-        self._deliver_local(channel, mapping, buckets.get(relay.LOCAL), counts)
-        self._capture_unknown(channel, mapping, buckets.get(relay.UNKNOWN),
-                              counts)
-        self._forward_tenants(channel, mapping, buckets.get('tenants') or {},
-                              counts)
+        # THE CUSTOMERS FIRST, AND EACH BUCKET IN ITS OWN SAVEPOINT.
+        # These three do very different work and only one of them is the
+        # platform's own business. If the local ingest raised — and it reaches
+        # a long way into this system's clinical spine — every OTHER clinic's
+        # messages in the same batch would be lost, unqueued, with Meta already
+        # answered 200 and no redelivery coming. Worse, a database-level error
+        # poisons the cursor, so the queue write that was meant to save them
+        # would fail too (ledger §5.55). Forwarding is therefore done first,
+        # and each bucket is isolated so one can never take another down.
+        for name, run in (
+                ('forward', lambda: self._forward_tenants(
+                    channel, mapping, buckets.get('tenants') or {}, counts)),
+                ('local', lambda: self._deliver_local(
+                    channel, mapping, buckets.get(relay.LOCAL), counts)),
+                ('unknown', lambda: self._capture_unknown(
+                    channel, mapping, buckets.get(relay.UNKNOWN), counts))):
+            try:
+                with self.env.cr.savepoint():
+                    run()
+            except Exception:  # noqa: BLE001 — one bucket, never the batch
+                _logger.exception('channel relay: the %s share of a %s batch '
+                                  'could not be handled', name, channel)
         return counts
 
     # ------------------------------------------------------------------
