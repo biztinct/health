@@ -2871,3 +2871,129 @@ a no-op.
     line — re-create it against the new `_id` field. Same family as the
     noupdate-seed and access.role-row traps: the code changed, but the
     CONFIGURATION lived in the database.
+
+- **§5.171 — Meta allows exactly ONE webhook address per product per app, and
+    the sign-in return list is exact-match with no wildcard.** (Channel Relay
+    R1, 2026-09-06.) A one-database-per-customer platform therefore cannot
+    point one Meta app at every customer's own `/care_channels/meta/...` —
+    the master receives everything and relays it. Two rules fall out: (a) a
+    relayed batch must be SPLIT per customer and RE-SIGNED with the app
+    secret before it leaves the master — forwarding the whole signed body
+    ships one clinic's messages to another clinic's server; (b) the master
+    answers Meta 200 after signature verification no matter what a customer
+    did, and owns its own retry queue — a non-2xx makes Meta retry the whole
+    batch for every customer, and sustained failures get the app's Messenger
+    webhook DISABLED for everyone. WhatsApp alone has a documented per-WABA
+    `override_callback_uri`; Messenger has nothing.
+
+- **§5.172 — `HEALTH_PHI_KEY` is NOT set on the platform box, so every
+    database encrypts with its own `database.secret`.** A `chs$1$` /
+    `phi$…` token copied from `carejiox` into `hhh` is undecryptable there.
+    Anything the platform pushes into a customer database (a shared app
+    secret, a token) must be encrypted INSIDE that database's environment
+    (`biz.tenants._tenant_env(slug)`), never re-used as a stored token.
+    Sibling of §5.63/§5.74: the key, not just the cursor, is per database.
+
+- **§5.173 — a state/nonce that is "opaque" end to end is the only place a
+    multi-tenant OAuth callback can carry routing.** Meta returns only `code`
+    and `state`; the master's single callback learns which customer to bounce
+    the browser to from a `<slug>~` prefix minted by the customer's own
+    `create_for` (hash stored of the FULL string, so `_consume` is untouched).
+    The prefix is routing, not trust: the redirect target comes from an
+    allowlist table on the master (active relay tenants), never from the
+    string. `~` was chosen because it is outside the urlsafe-base64 alphabet.
+
+- **§5.174 — a Selection converted to a lookup leaves its WRITERS behind, and an
+    exception-guarded writer makes the breakage completely silent.** The
+    dropdown-vocabulary phase converted `care.contact.capture.reason` to
+    `reason_id` (and `health.lead.touchpoint.touchpoint_type` to
+    `touchpoint_type_id`), updated the model, the views and most of the tests —
+    and did not update `_capture`, which still passed `reason=` into `create()`.
+    Odoo answers that with `ValueError: Invalid field 'reason'`, which
+    `_capture`'s own `except Exception:  # capturing must never break ingest`
+    catches and logs. So **every unroutable contact on every database has been
+    dropped since the conversion**: no row, no error, no operator-visible
+    symptom, and a queue whose whole purpose is "nothing vanishes in thin air"
+    quietly vanishing everything. Twelve tests in
+    `health_care_command_channels` were red on it and had been filed as
+    "known failures" rather than read. Rules: (a) §5.168's grep list is not
+    `*.py`, `*.xml`, `*.js` — it is *every write path*, and a `create(dict(...))`
+    or a `vals = {...}` literal is the one a rename tool misses; (b) an
+    exception guard around a side-effect (audit, capture, analytics) converts a
+    schema error into permanent silence, so any such guard MUST be paired with a
+    test that asserts the row EXISTS, never merely that the caller survived;
+    (c) when a conversion phase leaves tests red, the red tests are the
+    conversion's unfinished work, not the next phase's live-data noise.
+    Repaired for `care.contact.capture` in R1 because the relay's unknown-Page
+    path lands there; `care_conversation_ext.py:234`'s `touchpoint_type=` is the
+    same defect, still open, and costs the platform every conversation's
+    marketing attribution. (Channel Relay R1.)
+
+- **§5.175 — `biz_tenant.slug` is unique across the whole table, so a fixture
+    that "creates a customer" collides with the REAL customer the master
+    already has.** R1's `_slug_from_state` test created a `biz.tenant` with
+    slug `hhh` — which is a live clinic on this platform — and errored with
+    `duplicate key value violates unique constraint "biz_tenant_slug_unique"`
+    against perfectly correct code. Two habits for anything that tests the
+    cockpit's tables: reuse-or-create by slug rather than create (everything a
+    test writes rolls back either way, so writing `state` onto the real row is
+    safe and colliding with it is not), and prefix invented slugs (`r1alpha`)
+    so they cannot become a real customer's name later. Sibling of §5.95: the
+    deployment's own rows are a fixture whether you wanted them or not.
+    (Channel Relay R1.)
+
+- **§5.176 — a queue the product FILLS cannot be asserted with an absolute
+    count, and the day you fix the writer is the day the test tells you.**
+    `test_cap_11` asserted `unrouted_count() == 2`. It had been failing `0 != 2`
+    for months because §5.174 meant nothing was ever captured; the moment the
+    writer was repaired it failed `5 != 2`, because the master holds three real
+    unrouted contacts and will hold more every day the relay carries traffic.
+    Both failures look like the same red line and neither is about the number.
+    Rule: a suite that runs on the master asserts DELTAS on every table the
+    product writes to in production — and a repaired writer is exactly the
+    event that turns a masked absolute-count test into a permanent one.
+    (Channel Relay R1; §5.95/§5.124 family.)
+
+- **§5.177 — a non-stored compute can be a column and a row colour, and can
+    never be a search filter.** A `<filter domain="[('in_step','=',False)]"/>`
+    over a field with no `store=True` and no `search=` method is a runtime
+    error the moment somebody clicks it — and nothing in the install, the view
+    validation or the test suite says so, because the domain is only evaluated
+    when the filter is used. Caught in R1's operator screen before deploy while
+    writing exactly that filter for `in_step` and `pending_count`. Either give
+    the field a `search=` method, store it, or say so on the screen: R1 dropped
+    both filters and kept the columns plus `decoration-warning` /
+    `decoration-danger`, which answer the same question at a glance.
+    (Channel Relay R1.)
+
+- **§5.178 — upgrading the golden template switches scheduled jobs back on, and
+    the ones that wake up are not the ones the phase shipped.** After R1's
+    `-D carejiox_template` upgrade the template had **3** active `ir_cron` rows
+    where the runbook demands 0 — and all three were `health_voip24h`'s
+    (`cron_sync_call_history`, `cron_download_recordings`,
+    `cron_create_missed_call_activities`, ledger §5.81), not the relay's, which
+    is not even installed there. The mechanism is ordinary `forcecreate` data
+    reloading with `active` eval True; the surprise is the ATTRIBUTION, and a
+    phase that only greps its own crons concludes it left the template clean.
+    Always run the runbook's `select count(*) from ir_cron where active` on the
+    template after ANY upgrade of it, whatever the phase touched, and
+    `UPDATE ir_cron SET active = false` without trying to work out whose they
+    are. (Channel Relay R1.)
+
+- **§5.179 — you cannot forge a provider-signed webhook from outside the
+    deployment, so prepare the body INSIDE it and fire it from the shell.**
+    Proving a relay hop live needs a request the platform's own
+    `verify_meta` will accept, which needs the app secret — which must never
+    leave the machine or reach a terminal. The recipe that worked, and leaves
+    nothing behind: (1) `carejiox-deploy -x` a script that creates the route
+    row, builds the compact-JSON body, signs it with `app._get_secret()` and
+    writes the body and the `sha256=…` header to two files in `/tmp` (a MAC
+    over a body you already hold is not a credential); (2) once the service is
+    back, `curl --data-binary @body` at `127.0.0.1:8069` with the right `Host:`
+    header, once WITHOUT the signature (expect a bodyless 403) and once with
+    it; (3) read the customer's OWN log line and unrouted queue as the proof
+    that the forward arrived AND that the customer accepted the signature —
+    which is simultaneously the proof that the credential push worked; (4)
+    delete the route, the customer's capture row and both `/tmp` files, and
+    confirm each with a fresh `psql` (§5.34). The files are written by the odoo
+    user, so the `rm` needs `sudo`. (Channel Relay R1.)
