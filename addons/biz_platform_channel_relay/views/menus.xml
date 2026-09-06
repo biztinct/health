@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Beside the Platform Applications menu these two belong to: same
+         parent, same audience, straight after it. -->
+    <menuitem id="menu_channel_relay_tenant"
+              name="Customer relay"
+              parent="health_care_command.menu_care_command_config"
+              action="action_channel_relay_tenant"
+              groups="base.group_system"
+              sequence="60"/>
+
+    <menuitem id="menu_channel_relay_delivery"
+              name="Relay deliveries"
+              parent="health_care_command.menu_care_command_config"
+              action="action_channel_relay_delivery"
+              groups="base.group_system"
+              sequence="70"/>
+
+</odoo>

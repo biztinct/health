@@ -1,0 +1,218 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* biz_platform_channel_relay
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-06 00:00+0000\n"
+"PO-Revision-Date: 2026-09-06 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: biz_platform_channel_relay
+#. odoo-python
+#: code:addons/biz_platform_channel_relay/models/relay_tenant.py:0
+msgid "%(customers)s customers, %(pushed)s updated, %(problems)s problems."
+msgstr "%(customers)s khách hàng, %(pushed)s được cập nhật, %(problems)s vấn đề."
+
+#. module: biz_platform_channel_relay
+#. odoo-python
+#: code:addons/biz_platform_channel_relay/models/relay_tenant.py:0
+msgid ""
+"%(customers)s customers, %(routes)s pages and numbers, %(problems)s problems."
+msgstr ""
+"%(customers)s khách hàng, %(routes)s trang và số điện thoại, %(problems)s vấn đề."
+
+#. module: biz_platform_channel_relay
+#. odoo-python
+#: code:addons/biz_platform_channel_relay/models/relay_tenant.py:0
+msgid "The Meta application was sent"
+msgstr "Đã gửi ứng dụng Meta"
+
+#. module: biz_platform_channel_relay
+#. odoo-python
+#: code:addons/biz_platform_channel_relay/models/relay_tenant.py:0
+msgid "Pages and numbers re-read"
+msgstr "Đã đọc lại các trang và số điện thoại"
+
+#. module: biz_platform_channel_relay
+#. odoo-python
+#: code:addons/biz_platform_channel_relay/models/relay_route.py:0
+msgid "This page or number is already connected by another customer (%s)."
+msgstr "Trang hoặc số điện thoại này đã được một khách hàng khác kết nối (%s)."
+
+#. module: biz_platform_channel_relay
+#. odoo-python
+#: code:addons/biz_platform_channel_relay/models/relay_delivery.py:0
+msgid "It will be tried again"
+msgstr "Sẽ được thử lại"
+
+#. module: biz_platform_channel_relay
+#. odoo-python
+#: code:addons/biz_platform_channel_relay/models/relay_delivery.py:0
+msgid "This delivery is back in the queue."
+msgstr "Tin nhắn này đã được đưa lại vào hàng đợi."
+
+#. module: biz_platform_channel_relay
+#: model:ir.model.fields,field_description:biz_platform_channel_relay.field_channel_relay_tenant__slug
+msgid "Short name"
+msgstr "Tên viết tắt"
+
+#. module: biz_platform_channel_relay
+#: model:ir.model.fields,field_description:biz_platform_channel_relay.field_channel_relay_tenant__name
+#: model:ir.model.fields,field_description:biz_platform_channel_relay.field_channel_relay_route__tenant_id
+#: model:ir.model.fields,field_description:biz_platform_channel_relay.field_channel_relay_delivery__tenant_id
+msgid "Customer"
+msgstr "Khách hàng"
+
+#. module: biz_platform_channel_relay
+#: model:ir.model.fields,field_description:biz_platform_channel_relay.field_channel_relay_tenant__host
+msgid "Address"
+msgstr "Địa chỉ"
+
+#. module: biz_platform_channel_relay
+#: model:ir.model.fields,field_description:biz_platform_channel_relay.field_channel_relay_tenant__credentials_pushed_at
+msgid "Application sent on"
+msgstr "Ngày gửi ứng dụng"
+
+#. module: biz_platform_channel_relay
+#: model:ir.model.fields,field_description:biz_platform_channel_relay.field_channel_relay_tenant__pushed_secret_hint
+msgid "Secret sent"
+msgstr "Mã bí mật đã gửi"
+
+#. module: biz_platform_channel_relay
+#: model:ir.model.fields,field_description:biz_platform_channel_relay.field_channel_relay_tenant__pushed_extra_keys
+msgid "Settings sent"
+msgstr "Cấu hình đã gửi"
+
+#. module: biz_platform_channel_relay
+#: model:ir.model.fields,field_description:biz_platform_channel_relay.field_channel_relay_tenant__in_step
+msgid "In step"
+msgstr "Đồng bộ"
+
+#. module: biz_platform_channel_relay
+#: model:ir.model.fields,help:biz_platform_channel_relay.field_channel_relay_tenant__in_step
+msgid ""
+"This customer holds the same Meta application id and secret as the platform. "
+"When it is empty, press \"Send the Meta application to every customer now\"."
+msgstr ""
+"Khách hàng này đang giữ đúng mã ứng dụng Meta và mã bí mật của nền tảng. Khi ô "
+"này trống, hãy bấm \"Gửi ứng dụng Meta cho mọi khách hàng ngay\"."
+
+#. module: biz_platform_channel_relay
+#: model:ir.model.fields,field_description:biz_platform_channel_relay.field_channel_relay_tenant__route_ids
+#: model:ir.model.fields,field_description:biz_platform_channel_relay.field_channel_relay_tenant__route_count
+msgid "Pages and numbers"
+msgstr "Trang và số điện thoại"
+
+#. module: biz_platform_channel_relay
+#: model:ir.model.fields,field_description:biz_platform_channel_relay.field_channel_relay_tenant__pending_count
+msgid "Waiting to retry"
+msgstr "Đang chờ thử lại"
+
+#. module: biz_platform_channel_relay
+#: model:ir.model.fields,field_description:biz_platform_channel_relay.field_channel_relay_tenant__last_forward_at
+msgid "Last message forwarded"
+msgstr "Tin nhắn chuyển tiếp gần nhất"
+
+#. module: biz_platform_channel_relay
+#: model:ir.model.fields,field_description:biz_platform_channel_relay.field_channel_relay_tenant__last_error
+#: model:ir.model.fields,field_description:biz_platform_channel_relay.field_channel_relay_delivery__last_error
+msgid "Last problem"
+msgstr "Vấn đề gần nhất"
+
+#. module: biz_platform_channel_relay
+#: model:ir.model.fields,field_description:biz_platform_channel_relay.field_channel_relay_route__resource_external_id
+msgid "Page or number"
+msgstr "Trang hoặc số điện thoại"
+
+#. module: biz_platform_channel_relay
+#: model:ir.model.fields,field_description:biz_platform_channel_relay.field_channel_relay_route__seen_at
+msgid "Last read"
+msgstr "Lần đọc gần nhất"
+
+#. module: biz_platform_channel_relay
+#: model:ir.model.fields,field_description:biz_platform_channel_relay.field_channel_relay_delivery__entry_count
+msgid "Entries"
+msgstr "Số sự kiện"
+
+#. module: biz_platform_channel_relay
+#: model:ir.model.fields,field_description:biz_platform_channel_relay.field_channel_relay_delivery__attempts
+msgid "Attempts"
+msgstr "Số lần thử"
+
+#. module: biz_platform_channel_relay
+#: model:ir.model.fields,field_description:biz_platform_channel_relay.field_channel_relay_delivery__next_at
+msgid "Next try"
+msgstr "Lần thử tiếp theo"
+
+#. module: biz_platform_channel_relay
+#: model:ir.model.fields,field_description:biz_platform_channel_relay.field_channel_relay_delivery__delivered_at
+msgid "Delivered on"
+msgstr "Ngày chuyển thành công"
+
+#. module: biz_platform_channel_relay
+#: model:ir.model.fields,field_description:biz_platform_channel_relay.field_channel_relay_delivery__body_enc
+msgid "Message (encrypted)"
+msgstr "Tin nhắn (đã mã hoá)"
+
+#. module: biz_platform_channel_relay
+#: model:ir.model.fields.selection,name:biz_platform_channel_relay.selection__channel_relay_delivery__state__pending
+msgid "Waiting"
+msgstr "Đang chờ"
+
+#. module: biz_platform_channel_relay
+#: model:ir.model.fields.selection,name:biz_platform_channel_relay.selection__channel_relay_delivery__state__delivered
+msgid "Delivered"
+msgstr "Đã chuyển"
+
+#. module: biz_platform_channel_relay
+#: model:ir.model.fields.selection,name:biz_platform_channel_relay.selection__channel_relay_delivery__state__dead
+msgid "Given up"
+msgstr "Đã bỏ cuộc"
+
+#. module: biz_platform_channel_relay
+#: model:ir.actions.act_window,name:biz_platform_channel_relay.action_channel_relay_tenant
+#: model:ir.ui.menu,name:biz_platform_channel_relay.menu_channel_relay_tenant
+msgid "Customer relay"
+msgstr "Chuyển tiếp cho khách hàng"
+
+#. module: biz_platform_channel_relay
+#: model:ir.actions.act_window,name:biz_platform_channel_relay.action_channel_relay_delivery
+#: model:ir.ui.menu,name:biz_platform_channel_relay.menu_channel_relay_delivery
+msgid "Relay deliveries"
+msgstr "Tin nhắn chờ chuyển tiếp"
+
+#. module: biz_platform_channel_relay
+#: model_terms:ir.ui.view,arch_db:biz_platform_channel_relay.view_channel_relay_tenant_list
+#: model_terms:ir.ui.view,arch_db:biz_platform_channel_relay.view_channel_relay_tenant_form
+msgid "Send the Meta application to every customer now"
+msgstr "Gửi ứng dụng Meta cho mọi khách hàng ngay"
+
+#. module: biz_platform_channel_relay
+#: model_terms:ir.ui.view,arch_db:biz_platform_channel_relay.view_channel_relay_tenant_list
+#: model_terms:ir.ui.view,arch_db:biz_platform_channel_relay.view_channel_relay_tenant_form
+msgid "Re-read who owns which Page and number"
+msgstr "Đọc lại xem trang và số nào thuộc về khách hàng nào"
+
+#. module: biz_platform_channel_relay
+#: model_terms:ir.ui.view,arch_db:biz_platform_channel_relay.view_channel_relay_delivery_list
+#: model_terms:ir.ui.view,arch_db:biz_platform_channel_relay.view_channel_relay_delivery_form
+msgid "Retry now"
+msgstr "Thử lại ngay"
+
+#. module: biz_platform_channel_relay
+#: model_terms:ir.ui.view,arch_db:biz_platform_channel_relay.view_channel_relay_delivery_form
+msgid ""
+"The message itself is held encrypted until it is\n"
+"                        delivered, and is never shown on this screen."
+msgstr ""
+"Bản thân tin nhắn được giữ ở dạng mã hoá cho đến khi\n"
+"                        được chuyển đi, và không bao giờ hiển thị trên màn hình này."

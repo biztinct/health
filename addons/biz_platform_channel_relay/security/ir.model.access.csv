@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_channel_relay_tenant_system,channel.relay.tenant.system,model_channel_relay_tenant,base.group_system,1,1,1,1
+access_channel_relay_route_system,channel.relay.route.system,model_channel_relay_route,base.group_system,1,1,1,1
+access_channel_relay_delivery_system,channel.relay.delivery.system,model_channel_relay_delivery,base.group_system,1,1,1,1

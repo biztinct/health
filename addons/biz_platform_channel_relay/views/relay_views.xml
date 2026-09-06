@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==============================================================
+         Customer relay — one row per customer this platform relays for.
+         Plain list and form: this is the operator's screen, not a
+         product surface, and it must never show a message.
+         ============================================================== -->
+    <record id="view_channel_relay_tenant_list" model="ir.ui.view">
+        <field name="name">channel.relay.tenant.list</field>
+        <field name="model">channel.relay.tenant</field>
+        <field name="arch" type="xml">
+            <list string="Customer relay" create="0"
+                  decoration-warning="not in_step"
+                  decoration-danger="pending_count > 0">
+                <header>
+                    <button name="action_push_credentials" type="object"
+                            class="btn-primary"
+                            string="Send the Meta application to every customer now"/>
+                    <button name="action_sync_routes" type="object"
+                            string="Re-read who owns which Page and number"/>
+                </header>
+                <field name="name"/>
+                <field name="slug"/>
+                <field name="host"/>
+                <field name="in_step" widget="boolean_toggle" readonly="1"/>
+                <field name="credentials_pushed_at"/>
+                <field name="route_count"/>
+                <field name="last_forward_at"/>
+                <field name="pending_count"/>
+                <field name="last_error"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_channel_relay_tenant_form" model="ir.ui.view">
+        <field name="name">channel.relay.tenant.form</field>
+        <field name="model">channel.relay.tenant</field>
+        <field name="arch" type="xml">
+            <form string="Customer relay">
+                <header>
+                    <button name="action_push_credentials" type="object"
+                            class="btn-primary"
+                            string="Send the Meta application to every customer now"/>
+                    <button name="action_sync_routes" type="object"
+                            string="Re-read who owns which Page and number"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Customer">
+                            <field name="name" readonly="1"/>
+                            <field name="slug" readonly="1"/>
+                            <field name="host"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group string="Meta application">
+                            <field name="in_step"/>
+                            <field name="credentials_pushed_at"/>
+                            <field name="pushed_secret_hint"/>
+                            <field name="pushed_extra_keys"/>
+                        </group>
+                        <group string="Traffic">
+                            <field name="route_count"/>
+                            <field name="last_forward_at"/>
+                            <field name="pending_count"/>
+                            <field name="last_error"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Pages and numbers" name="routes">
+                            <field name="route_ids" readonly="1">
+                                <list>
+                                    <field name="channel"/>
+                                    <field name="resource_external_id"/>
+                                    <field name="seen_at"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_channel_relay_tenant_search" model="ir.ui.view">
+        <field name="name">channel.relay.tenant.search</field>
+        <field name="model">channel.relay.tenant</field>
+        <field name="arch" type="xml">
+            <search string="Customer relay">
+                <field name="name"/>
+                <field name="slug"/>
+                <!-- "In step" and "Waiting to retry" are worked out as the
+                     screen is drawn, not kept in the table, so they cannot be
+                     filtered on. They are columns, and the row colours say the
+                     same thing at a glance. -->
+                <filter name="filter_never_sent" string="Never sent the application"
+                        domain="[('credentials_pushed_at', '=', False)]"/>
+                <filter name="filter_inactive" string="No longer served"
+                        domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_channel_relay_tenant" model="ir.actions.act_window">
+        <field name="name">Customer relay</field>
+        <field name="res_model">channel.relay.tenant</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No customer is being relayed yet</p>
+            <p>Press "Send the Meta application to every customer now" to read
+               the customer list and give every serving customer the platform's
+               Meta application.</p>
+        </field>
+    </record>
+
+    <!-- ==============================================================
+         Relay deliveries — the forwards that did not land.
+         The message itself is never a column and never a field here.
+         ============================================================== -->
+    <record id="view_channel_relay_delivery_list" model="ir.ui.view">
+        <field name="name">channel.relay.delivery.list</field>
+        <field name="model">channel.relay.delivery</field>
+        <field name="arch" type="xml">
+            <list string="Relay deliveries" create="0"
+                  decoration-danger="state == 'dead'"
+                  decoration-muted="state == 'delivered'">
+                <field name="tenant_id"/>
+                <field name="channel"/>
+                <field name="entry_count"/>
+                <field name="attempts"/>
+                <field name="next_at"/>
+                <field name="state"/>
+                <field name="last_error"/>
+                <button name="action_retry_now" type="object"
+                        string="Retry now" icon="fa-repeat"
+                        invisible="state == 'delivered'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_channel_relay_delivery_form" model="ir.ui.view">
+        <field name="name">channel.relay.delivery.form</field>
+        <field name="model">channel.relay.delivery</field>
+        <field name="arch" type="xml">
+            <form string="Relay delivery">
+                <header>
+                    <button name="action_retry_now" type="object"
+                            class="btn-primary" string="Retry now"
+                            invisible="state == 'delivered'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="tenant_id"/>
+                            <field name="channel"/>
+                            <field name="entry_count"/>
+                        </group>
+                        <group>
+                            <field name="attempts"/>
+                            <field name="next_at"/>
+                            <field name="delivered_at"/>
+                            <field name="last_error"/>
+                        </group>
+                    </group>
+                    <p class="text-muted">
+                        The message itself is held encrypted until it is
+                        delivered, and is never shown on this screen.
+                    </p>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_channel_relay_delivery_search" model="ir.ui.view">
+        <field name="name">channel.relay.delivery.search</field>
+        <field name="model">channel.relay.delivery</field>
+        <field name="arch" type="xml">
+            <search string="Relay deliveries">
+                <field name="tenant_id"/>
+                <filter name="filter_open" string="Still to deliver"
+                        domain="[('state', 'in', ['pending', 'dead'])]"/>
+                <filter name="filter_dead" string="Given up"
+                        domain="[('state', '=', 'dead')]"/>
+                <filter name="group_customer" string="Customer"
+                        context="{'group_by': 'tenant_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_channel_relay_delivery" model="ir.actions.act_window">
+        <field name="name">Relay deliveries</field>
+        <field name="res_model">channel.relay.delivery</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_filter_open': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Everything has been delivered</p>
+            <p>A message that could not be handed to a customer's system waits
+               here until it can be.</p>
+        </field>
+    </record>
+
+</odoo>
