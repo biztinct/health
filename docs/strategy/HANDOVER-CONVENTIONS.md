@@ -2997,3 +2997,22 @@ a no-op.
     delete the route, the customer's capture row and both `/tmp` files, and
     confirm each with a fresh `psql` (§5.34). The files are written by the odoo
     user, so the `rm` needs `sudo`. (Channel Relay R1.)
+
+- **§5.180 — a cross-database test that stands in with THIS environment cannot
+    prove a per-database key, and saying which half it proves is the whole
+    point.** R1's T13 mocks `biz.tenants._tenant_env` to yield the test's own
+    environment, because a second cursor cannot see a test transaction's rows at
+    all (§5.63). That makes it a real test of the *shape* of the push — which
+    fields are written, that a second run writes nothing, that the redirect
+    parameter lands — and **no test at all** of the thing the push exists for:
+    that the secret is encrypted with the TARGET database's key rather than the
+    platform's (§5.172). Encrypting and decrypting in one environment proves
+    only that AES round-trips. The proof has to be live and it has to be
+    *asymmetric*: the platform signs a body with its own secret, the customer
+    verifies it with the copy that was pushed, and the customer's own log line
+    saying it accepted the signature is the only evidence that the two secrets
+    are the same plaintext and that the customer could decrypt its own token.
+    General rule: when a mock collapses two environments into one, name in the
+    test's docstring which half of the property it can still see — and put the
+    other half in the deploy proof, not in the suite. (Channel Relay R1 review,
+    finding 9.)

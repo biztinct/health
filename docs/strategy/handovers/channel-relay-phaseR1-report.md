@@ -2,8 +2,10 @@
 
 **Handover:** `docs/strategy/handovers/channel-relay-phaseR1.md`
 **Implemented:** 2026-09-06, branch `19.0`, master `carejiox` on VietUcUAT.
-**Status:** shipped to all three databases in one sitting; the two things that
-are not proven need Meta's console and are listed in §7.
+**Reviewed:** PASS-with-concerns; the eight mandatory fixes are applied,
+re-tested and redeployed — see **§11 Post-review fixes**.
+**Status:** shipped to all three databases in one sitting, twice; the two things
+that are not proven need Meta's console and are listed in §7.
 
 ---
 
@@ -11,9 +13,9 @@ are not proven need Meta's console and are listed in §7.
 
 | Module | Version | Installed on |
 |---|---|---|
-| `biz_platform_channel_relay` (NEW) | 19.0.1.0.0 | `carejiox` ONLY |
+| `biz_platform_channel_relay` (NEW) | 19.0.1.1.0 | `carejiox` ONLY |
 | `health_channel_relay` (NEW) | 19.0.1.0.0 | `carejiox`, `carejiox_template`, `hhh` |
-| `health_care_command_channels` (EDIT) | 19.0.11.2.0 → **19.0.11.3.0** | all three |
+| `health_care_command_channels` (EDIT) | 19.0.11.2.0 → **19.0.11.4.0** | all three |
 
 ### `biz_platform_channel_relay` — the hub
 
@@ -503,7 +505,7 @@ screen.* All of them are in `i18n/vi.po`.
 
 ## 9. Ledger entries added
 
-`docs/strategy/HANDOVER-CONVENTIONS.md` §5.174–§5.179:
+`docs/strategy/HANDOVER-CONVENTIONS.md` §5.174–§5.180:
 
 * **§5.174** — a converted Selection leaves its WRITERS behind, and an
   exception-guarded writer makes the breakage completely silent.
@@ -517,6 +519,9 @@ screen.* All of them are in `i18n/vi.po`.
   that wake are not the phase's.
 * **§5.179** — you cannot forge a provider-signed webhook from outside the
   deployment: the prepare-inside / fire-from-the-shell recipe, with cleanup.
+* **§5.180** — a cross-database test that stands in with THIS environment cannot
+  prove a per-database key; say which half it proves and put the other half in
+  the deploy proof (review finding 9).
 
 ## 10. One thing to watch
 
@@ -526,3 +531,208 @@ two-worker box the true bound is therefore *at most once per minute per worker*.
 That is still a hard ceiling on how often an unknown Page can make the platform
 re-read the customer list, and the re-read is READ ONLY, so it is a note rather
 than a defect — but it is worth knowing before anyone tunes the interval down.
+
+---
+
+## 11. Post-review fixes
+
+Independent review returned **PASS-with-concerns** with eight mandatory fixes.
+All eight are applied, re-tested on a **fresh practice copy taken AFTER the
+first deploy** (so it carries the real `hhh` relay row — which is the point of
+F1's proof), and redeployed to all three databases in one sitting.
+
+`biz_platform_channel_relay` **19.0.1.0.0 → 19.0.1.1.0**;
+`health_care_command_channels` **19.0.11.3.0 → 19.0.11.4.0**.
+
+### F1 (HIGH) — the HttpCase fixture collided with the real customer ✔
+
+`test_relay_http.py` created `channel.relay.tenant` slug `hhh`. Once R1 went
+live the relay wrote that row itself, and `slug` carries an unconditional
+unique index — so on any clone taken after the deploy all four HttpCases died
+in `setUpClass` (the reviewer reproduced it: 225 tests, 2 errors). The suite now
+uses `SLUG = 'r1relay'` — a short name that can never be a clinic's web address
+— and reuse-or-create exactly as `tests/common.py::_relay_tenant` does; the
+`Host` and `Location` expectations are computed from `SLUG` through
+`biz.tenants._tenant_url` rather than written out.
+
+**Proof:** the post-fix run was made on `carejiox_r2`, a clone of the DEPLOYED
+master whose `channel_relay_tenant` row for `hhh` was deliberately left in place
+(`select slug, active from channel_relay_tenant` → `hhh|t`). `Starting .*Http`
+count **11** (was 10 — `test_16c` is new), and all five methods of
+`TestRelayRoutesHttp` started and passed.
+
+### F2 (MED) — one clinic's failure could lose every other clinic's messages ✔
+
+`_route` called `_deliver_local` → `_capture_unknown` → `_forward_tenants` in
+that order with no isolation, so a failure in the platform's own ingest aborted
+the batch before anybody was forwarded — unqueued, with Meta already answered
+200 and no redelivery coming, and a database-level error would have poisoned the
+cursor so the queue write meant to save them would have failed too (§5.55).
+The customers are now served **first**, and each of the three shares runs inside
+its own `cr.savepoint()` with its own `try/except`.
+
+**Proof:** three new tests. `test_21` forces the local ingest to raise and
+asserts `forwarded == 1`, `local == 0`, and that the customer received their own
+entry; `test_21b` forces the unrouted capture to raise and asserts the forward
+still happened; `test_21c` forces `_route` itself to raise and asserts
+`_route_meta` returns a counter rather than propagating. `test_16c` proves the
+same over real HTTP: with `_route` raising, the route still answers **200 with
+an empty body**.
+
+### F3 (MED) — the rate limiter ran after the database lookup ✔
+
+`self._rate_limited()` is now the first statement of the `provider == 'meta'`
+branch, before `_slug_from_state`, matching the parent
+(`controllers/oauth.py:50`). Because the branch then hands a sign-in it does not
+own to `super()`, which limits again, `_rate_limited` is memoised on the request
+so the platform's own sign-ins still spend exactly one count each.
+
+### F4 (LOW) — the duplicate-claim message named the Page ✔
+
+Now *"A Page or number is connected by two customers: `<a>`, `<b>` (`<channel>`)"* —
+two short names and the channel, no provider identifier, in both the operator's
+`last_error` and the audit row (safety rail 6). T12 asserts both short names are
+present and that the page id is in neither the field nor the audit detail.
+
+### F5 (LOW) — the platform could have been asked to relay to itself ✔
+
+`_sync_customers` skips any `biz.tenant` whose short name is this system's own
+(`_own_slug()`, extracted so the guard can be pinned rather than depending on
+what the test database happens to be called). New `test_12c`.
+
+### F6 (LOW) — the D3 silence cannot return ✔
+
+`care_contact_capture._capture` resolves the lookup BEFORE the `try`, and logs a
+warning naming the missing code when it cannot. Same guard added to the F8 fix.
+
+### F7 (LOW) — `raw_body` was unused ✔
+
+Dropped from `_route_meta(channel, payload)` and from its caller and tests.
+Recorded as **deviation D10**.
+
+### F8 — the sibling defect, now fixed ✔
+
+`care_conversation_ext.py` wrote `touchpoint_type=` while
+`health_web_leads/models/lead_touchpoint.py:115` defines `touchpoint_type_id`
+(conversion row `health_base/lookup_registry.py:520`), and the "attribution must
+never break ingest" guard swallowed the `ValueError` — **every conversation's
+marketing attribution was being lost on every database**. Repaired in the same
+shape as D3: resolve `TOUCHPOINT_TYPES[channel]` through
+`health.lookup.value._default_for('touchpoint_type', code)`, write
+`touchpoint_type_id`, warn and return empty when it cannot be resolved.
+Recorded as **deviation D11**.
+
+**Proof:** `test_at_01`, `test_at_04`, `test_at_05` and `test_at_07` are green;
+all nine `TestChannelAttribution` methods started and passed.
+
+**The sweep the review asked for.** Every old field name in commit
+`19f90706`'s `CONVERSIONS` table was grepped against every write path in
+`health_care_command_channels`, `biz_platform_channel_relay` and
+`health_channel_relay`. **These two were the only writers left behind.** The
+other apparent hits are false positives and were each read: `reason=` is
+`care.channel.connection._transition(reason=…)`'s keyword argument, and
+`outcome` is `care.channel.oauth.session.outcome`, that model's own Selection,
+which was never converted.
+
+### Post-fix test result
+
+Same `systemd-run` form, `--workers=0`, spare ports, own logfile,
+`--db-filter='^carejiox_r2$'`, live service up, new code in a private addons
+folder. `biz_tenant` rows set to `draft` and every `ir_cron` switched off before
+anything ran (H102/H78); the relay's own rows were deliberately kept.
+
+```
+2026-09-06 14:33:51 ERROR carejiox_r2 odoo.tests.result:
+  1 failed, 1 error(s) of 234 tests when loading database 'carejiox_r2'
+executed test methods: 234     HttpCase classes started: 11
+```
+
+| | pre-R1 baseline | after R1 | after the review fixes |
+|---|---|---|---|
+| tests executed | 204 | 229 | **234** |
+| failed | 15 | 5 | **1** |
+| errors | 2 | 1 | **1** |
+
+**All 30 new tests pass** (26 in `biz_platform_channel_relay`, 4 in
+`health_channel_relay`). The two survivors are both pre-existing and both
+outside this phase:
+
+* `TestChannelFramework.test_89_settings_param` — `res.config.settings.execute()`
+  raises `KeyError: 'digest.digest.name'` through
+  `health_care_command_ai/models/res_config_settings.py:39`.
+* `TestEmailCenter.test_148_email_chat_stays_on_mail_message` — the
+  `care.conversation` spine no longer owns the email thread in that fixture.
+
+### Live state after the redeploy
+
+```
+carejiox           biz_platform_channel_relay   19.0.1.1.0    installed
+                   health_channel_relay          19.0.1.0.0    installed
+                   health_care_command_channels 19.0.11.4.0   installed
+carejiox_template  biz_platform_channel_relay   —             uninstalled
+                   health_channel_relay          19.0.1.0.0    installed
+                   health_care_command_channels 19.0.11.4.0   installed
+hhh                biz_platform_channel_relay   —             uninstalled
+                   health_channel_relay          19.0.1.0.0    installed
+                   health_care_command_channels 19.0.11.4.0   installed
+
+template active crons                    → 0
+curl Host: carejiox.com      /web/login  → 200
+curl Host: hhh.carejiox.com  /web/login  → 200
+hhh channel_platform_app  meta | 4376606219260542 | ••••33d9 | Pushed by the platform | secret present
+hhh channel_hub.oauth_redirect_base      → https://carejiox.com
+carejiox channel_relay_tenant            → hhh | active | pushed 14:25:58 | ••••33d9 | verify_token | no problem
+carejiox channel_relay_delivery          → 0
+practice copies / private addons folders → none left
+```
+
+The end-to-end live proof was re-run against the fixed code (the routing order
+changed, so the first proof no longer covered it):
+
+```
+unsigned POST                → 403, 0 bytes
+correctly signed POST        → 200, 0 bytes
+14:37:49 carejiox  channel relay: meta fb webhook {'local': 0, 'forwarded': 1, 'queued': 0, 'unknown': 0}
+14:37:49 hhh       care_channels: meta fb webhook {'ingested': 0, 'status': 0, 'ignored': 0, 'unknown': 1}
+sign-in  state=hhh~…         → 302 https://hhh.carejiox.com/channel_hub/oauth/callback/meta?code=…&state=hhh~…
+sign-in  state=zzz~…         → 200, no Location
+master relay audit           → relay_routed_signin | hhh ;  relay_forwarded | hhh fb 1 entries
+master unrouted queue        → unchanged (3 rows, none for the proof page)
+```
+
+Cleanup verified from a fresh connection: `channel_relay_route` → 0,
+`hhh.care_contact_capture` → 0, both `/tmp` files gone.
+
+### New deviations
+
+**D10** — `_route_meta`'s `raw_body` parameter dropped. The handover's §4.3
+signature carries it; nothing inside the method ever needed it (the signature is
+checked in the controller, and the re-sign is computed over the SPLIT body, not
+the original). Removing it is the honest signature.
+
+**D11** — `care_conversation_ext._record_attribution` repaired (F8). Sanctioned
+by the owner after the review; outside the handover's §6 list.
+
+### Reviewer finding 8 — an R2 note
+
+A customer's own Go-Live screen still shows **that customer's** webhook
+addresses (`https://hhh.carejiox.com/care_channels/meta/…`), because
+`WEBHOOK_PATHS` is rendered against `web.base.url` while only the sign-in return
+address follows the relay's parameter. That is correct in one sense — those
+addresses do work, and the customer's route really does answer on them — and
+dangerous in another: **an operator who pasted one into the Meta application
+would take every other clinic's inbox with it**, since Meta holds exactly one
+webhook address per product. R1 does not change it because §2's binding non-goal
+says what Meta is told must not move, and the customer-facing Go-Live Studio is
+not part of this phase. **R2 should either hide the webhook block on a customer's
+Go-Live screen or replace it with the platform's address and a sentence saying
+"this is the platform's; there is nothing for you to paste."**
+
+### Reviewer finding 9 — recorded as ledger §5.180
+
+T13's stand-in yields the test's own environment, so it proves the SHAPE of the
+credentials push and cannot prove the property the push exists for — that the
+secret is encrypted with the target database's own key. That half is asymmetric
+and only the live proof shows it: the platform signs with its secret, `hhh`
+accepts the signature with the copy it was pushed. T13's docstring now says so,
+and ledger §5.180 generalises it.
