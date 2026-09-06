@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Care Command — Channel Connection Framework',
-    'version': '19.0.11.3.0',
+    'version': '19.0.11.4.0',
     'category': 'Healthcare/CRM',
     'summary': 'Provider-neutral channel connections + the WhatsApp / Messenger / '
                'Telegram / Web chat message spine',
@@ -399,6 +399,26 @@ exactly as it did wherever they are absent:
   nothing changes, and no other provider is affected.
 - Four audit tags: ``relay_forwarded``, ``relay_failed``,
   ``relay_routed_signin``, ``relay_pushed``.
+
+19.0.11.4.0 — two writers the dropdown conversion left behind
+==============================================================
+
+Both were repaired in the same shape, and both had been failing in complete
+silence because the code around them catches everything so that analytics and
+queueing can never cost us a message:
+
+- ``care.contact.capture._capture`` wrote ``reason``, which the
+  dropdown-vocabulary conversion replaced with ``reason_id``. **Every
+  unroutable contact on every database had been dropped since that
+  conversion** — the queue whose entire purpose is "nothing vanishes in thin
+  air" was vanishing everything.
+- ``care.conversation._record_attribution`` wrote ``touchpoint_type``, replaced
+  by ``touchpoint_type_id``. **Every conversation's marketing attribution had
+  been lost on every database** since the same conversion.
+
+Both now resolve the code through ``health.lookup.value._default_for`` and
+**log a warning when it cannot be resolved**, so the silence cannot return.
+Fourteen tests in this module were red on the pair.
     """,
     'author': 'I Am Dream Catcher Ltd',
     'website': 'https://vafhs.com',

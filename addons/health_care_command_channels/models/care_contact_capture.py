@@ -183,20 +183,28 @@ class CareContactCapture(models.Model):
                 [('external_event_id', '=', external_event_id)], limit=1)
             if existing:
                 return existing
+        # R1, FORCED FIX (deviation D3). `reason` became the `reason_id` lookup
+        # in the dropdown-vocabulary conversion and this writer was left behind,
+        # so every create raised `Invalid field 'reason'` — swallowed by the
+        # except below, which is why the queue has been silently empty on every
+        # deployment since. Twelve tests in this module were red on it. The
+        # relay's unknown-Page path lands here, so it had to be repaired for R1
+        # to work at all.
+        #
+        # The warning is the guard against that silence returning (F6): a
+        # `reason_id` of False fails a required field inside the try, and
+        # without this line the only trace would be a stack trace nobody reads.
+        reason_id = self.env['health.lookup.value']._default_for(
+            'unrouted_contact_reason', reason)
+        if not reason_id:
+            _logger.warning(
+                'care.contact.capture: no unrouted_contact_reason lookup value '
+                'for %r — this %s contact cannot be queued', reason, channel)
         try:
             with self.env.cr.savepoint():
                 Care = self.env['care.conversation']
                 vals = {
-                    # R1, FORCED FIX (deviation D3). `reason` became the
-                    # `reason_id` lookup in the dropdown-vocabulary conversion
-                    # and this writer was left behind, so every create raised
-                    # `Invalid field 'reason'` — swallowed by the except below,
-                    # which is why the queue has been silently empty on every
-                    # deployment since. Twelve tests in this module were red on
-                    # it. The relay's unknown-Page path lands here, so it had to
-                    # be repaired for R1 to work at all.
-                    'reason_id': self.env['health.lookup.value']._default_for(
-                        'unrouted_contact_reason', reason),
+                    'reason_id': reason_id,
                     'channel': channel or (connection.channel if connection
                                            else 'unknown'),
                     'connection_id': connection.id if connection else False,

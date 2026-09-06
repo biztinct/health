@@ -226,14 +226,30 @@ class CareConversationChannelExt(models.Model):
             return Touch.browse()
         channel = self.channel_effective or (connection.channel if connection
                                              else '')
+        # R1 post-review (deviation D11), the SIBLING of D3 and the same repair.
+        # `touchpoint_type` became the `touchpoint_type_id` lookup in the
+        # dropdown-vocabulary conversion (health_base/lookup_registry.py:520)
+        # and this writer was left behind, so `create()` raised
+        # `Invalid field 'touchpoint_type'` — swallowed by the guard below,
+        # which is why EVERY conversation's marketing attribution has been lost
+        # on every database since that conversion. The warning is not decoration:
+        # a silent write is exactly how the first one hid (ledger §5.174).
+        type_code = self.TOUCHPOINT_TYPES.get(channel, 'manual')
+        type_id = self.env['health.lookup.value']._default_for(
+            'touchpoint_type', type_code)
+        if not type_id:
+            _logger.warning(
+                'care_channels: no touchpoint_type lookup value for %r — '
+                'attribution for conversation %s cannot be recorded',
+                type_code, self.id)
+            return Touch.browse()
         try:
             with self.env.cr.savepoint():
                 return Touch.create(dict(
                     data,
                     conversation_id=self.id,
                     lead_id=self.lead_id.id or False,
-                    touchpoint_type=self.TOUCHPOINT_TYPES.get(
-                        channel, 'manual'),
+                    touchpoint_type_id=type_id,
                     occurred_at=occurred_at or self.last_inbound_at
                     or fields.Datetime.now(),
                     external_event_id=external_event_id or False,
