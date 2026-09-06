@@ -31,7 +31,8 @@ from odoo.exceptions import UserError, ValidationError
 
 from ..services import channel_crypto
 from ..services.adapters import (
-    CHANNEL_ADAPTERS, META_CALLBACK_PATH, ZALO_CALLBACK_PATH,
+    CHANNEL_ADAPTERS, META_CALLBACK_PATH, OAUTH_REDIRECT_BASE_PARAM,
+    ZALO_CALLBACK_PATH,
     ZALO_WEBHOOK_PATH, ChannelSendError, meta_app_identity,
 )
 from ..services.redact import redact
@@ -243,6 +244,24 @@ class ChannelPlatformApp(models.Model):
         return (self.env['ir.config_parameter'].sudo().get_param('web.base.url')
                 or '').strip().rstrip('/')
 
+    @api.model
+    def _redirect_base(self, provider):
+        """The address a completed sign-in comes back to, for one provider.
+
+        Meta only: on a platform running one system per customer the Meta
+        sign-in returns to the PLATFORM's single address, which then sends the
+        browser home (R1). The parameter is written into a customer system by
+        the platform; where it is unset — the platform itself, and any
+        single-system deployment — this is this system's own address, exactly
+        as before. Every other provider is unaffected.
+        """
+        if provider == 'meta':
+            base = (self.env['ir.config_parameter'].sudo()
+                    .get_param(OAUTH_REDIRECT_BASE_PARAM) or '').strip().rstrip('/')
+            if base:
+                return base
+        return self._base_url()
+
     def _adapter_requirements(self):
         """What the adapters that USE this provider demand of this row.
 
@@ -268,7 +287,9 @@ class ChannelPlatformApp(models.Model):
         base = self._base_url()
         for rec in self:
             path = OAUTH_REDIRECT_PATHS.get(rec.provider or '')
-            rec.oauth_redirect_uri = '%s%s' % (base, path) if path else ''
+            redirect_base = self._redirect_base(rec.provider)
+            rec.oauth_redirect_uri = (
+                '%s%s' % (redirect_base, path) if path else '')
             hooks = WEBHOOK_PATHS.get(rec.provider or '', [])
             if hooks:
                 rec.webhook_urls = '\n'.join(

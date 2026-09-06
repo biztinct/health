@@ -136,6 +136,19 @@ class CareChannelOauthSession(models.Model):
     # Create / consume
     # ------------------------------------------------------------------
     @api.model
+    def _mint_state(self):
+        """The random string that identifies one authorization attempt.
+
+        Its own seam. The string is OPAQUE to everything but :meth:`_consume`,
+        which hashes whatever comes back and compares it to the hash of
+        whatever went out — so a deployment that has to route the provider's
+        callback somewhere (one platform address serving many customer systems)
+        may PREFIX it, and nothing here needs to know. Never parsed, never
+        logged, never stored in the clear.
+        """
+        return secrets.token_urlsafe(32)
+
+    @api.model
     def create_for(self, connection, redirect_target=None, provider=None,
                    use_pkce=True):
         """Open an authorization attempt.
@@ -152,7 +165,7 @@ class CareChannelOauthSession(models.Model):
         if not self._allowed_redirect(redirect_target):
             # Fixed string: never echo the rejected URL back to the caller.
             raise UserError(_('That return address is not allowed.'))
-        state = secrets.token_urlsafe(32)
+        state = self._mint_state()
         vals = {
             'connection_id': connection.id,
             'company_id': connection.company_id.id,

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Care Command — Channel Connection Framework',
-    'version': '19.0.11.2.0',
+    'version': '19.0.11.3.0',
     'category': 'Healthcare/CRM',
     'summary': 'Provider-neutral channel connections + the WhatsApp / Messenger / '
                'Telegram / Web chat message spine',
@@ -379,6 +379,26 @@ status branch, a new model, a new endpoint or a new UI component.
 ``PROVIDER_EXTERNAL_STEPS`` is now empty: every provider's paperwork is
 declared exactly once. The constant and its fallback stay for the provider that
 arrives with a checklist before it has a flow.
+
+19.0.11.3.0 — three seams for the Channel Relay (R1)
+=====================================================
+
+Meta allows ONE webhook address per product per application and matches its
+sign-in return list exactly, so a platform running one system per customer must
+relay both. R1 ships that relay as two separate modules
+(``biz_platform_channel_relay`` on the platform, ``health_channel_relay`` on
+every customer); this module only opens the three seams they need, and behaves
+exactly as it did wherever they are absent:
+
+- ``care.channel.oauth.session._mint_state()`` — the random sign-in ticket now
+  has its own method. The string is opaque to everything but ``_consume``, so a
+  deployment that has to route the provider's callback may prefix it.
+- ``_MetaAdapterBase._redirect_uri()`` and the two go-live URL builders read
+  ``channel_hub.oauth_redirect_base`` for provider ``meta`` when it is set.
+  Unset — the platform's own system, and every single-system deployment —
+  nothing changes, and no other provider is affected.
+- Four audit tags: ``relay_forwarded``, ``relay_failed``,
+  ``relay_routed_signin``, ``relay_pushed``.
     """,
     'author': 'I Am Dream Catcher Ltd',
     'website': 'https://vafhs.com',

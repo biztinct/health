@@ -315,12 +315,17 @@ class TestContactCapture(ChannelSpineCase):
         self.assertGreater(len(row.raw_payload), 1000)
 
     def test_cap_11_badge_counts_only_the_backlog(self):
+        # A DELTA, not a total: the unrouted queue is a real deployment's
+        # backlog and it is never empty once the relay is carrying traffic
+        # (ledger §5.95/§5.124 — a suite that runs on the master cannot assert
+        # an absolute count of a table the product fills).
+        before = self.Capture.unrouted_count()
         self.Capture._capture('unknown_resource', 'fb', phone='0901234567')
         handled = self.Capture._capture('unknown_resource', 'fb',
                                         phone='0907654321')
-        self.assertEqual(self.Capture.unrouted_count(), 2)
+        self.assertEqual(self.Capture.unrouted_count(), before + 2)
         handled.action_dismiss()
-        self.assertEqual(self.Capture.unrouted_count(), 1)
+        self.assertEqual(self.Capture.unrouted_count(), before + 1)
 
     def test_cap_12_webchat_abandoned_is_captured(self):
         """A visitor who left a phone number and typed nothing."""

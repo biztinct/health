@@ -920,7 +920,13 @@ class ChannelPlatformAppGoLive(models.Model):
         """
         base = self._base_url()
         path = OAUTH_REDIRECT_PATHS.get(provider or '')
-        redirect = '%s%s' % (base, path) if path else ''
+        # R1: Meta returns a sign-in to ONE address, which on a platform
+        # running a system per customer is the platform's, not this one's.
+        # `_redirect_base` answers with this system's address wherever the
+        # relay has not written the parameter — every other provider, and every
+        # single-system deployment, is unchanged.
+        redirect = ('%s%s' % (self._redirect_base(provider), path)
+                    if path else '')
         hooks = WEBHOOK_PATHS.get(provider or '') or []
         webhooks = '\n'.join('%s: %s%s' % (label, base, hook)
                              for label, hook in hooks)

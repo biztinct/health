@@ -68,7 +68,7 @@ RAW_PAYLOAD_CAP = 8000
 # rewrite the channel or the reason afterwards would make the queue unusable
 # as a record of what the system actually dropped.
 IMMUTABLE_FIELDS = {
-    'channel', 'reason', 'resource_external_id', 'body_preview',
+    'channel', 'reason_id', 'resource_external_id', 'body_preview',
     'raw_payload', 'occurred_at', 'external_event_id', 'company_id',
 }
 
@@ -187,7 +187,16 @@ class CareContactCapture(models.Model):
             with self.env.cr.savepoint():
                 Care = self.env['care.conversation']
                 vals = {
-                    'reason': reason,
+                    # R1, FORCED FIX (deviation D3). `reason` became the
+                    # `reason_id` lookup in the dropdown-vocabulary conversion
+                    # and this writer was left behind, so every create raised
+                    # `Invalid field 'reason'` — swallowed by the except below,
+                    # which is why the queue has been silently empty on every
+                    # deployment since. Twelve tests in this module were red on
+                    # it. The relay's unknown-Page path lands here, so it had to
+                    # be repaired for R1 to work at all.
+                    'reason_id': self.env['health.lookup.value']._default_for(
+                        'unrouted_contact_reason', reason),
                     'channel': channel or (connection.channel if connection
                                            else 'unknown'),
                     'connection_id': connection.id if connection else False,

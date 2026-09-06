@@ -55,6 +55,12 @@ KNOWN_EVENTS = {
     # Health19, that link was opened, or it was withdrawn. NEVER the token —
     # the detail carries the provider/step and a masked address, nothing more.
     'golive_invite_sent', 'golive_invite_viewed', 'golive_invite_revoked',
+    # R1 (channel relay): on the platform, one customer's share of a verified
+    # Meta batch was handed on, or could not be and was queued, and a sign-in
+    # was sent home to the customer it belongs to. On a customer's own system,
+    # the platform pushed it the shared Meta application. Every detail is a
+    # short name, a channel and a count — never a page, a number or a message.
+    'relay_forwarded', 'relay_failed', 'relay_routed_signin', 'relay_pushed',
 }
 
 

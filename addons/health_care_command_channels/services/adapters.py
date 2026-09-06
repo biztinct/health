@@ -62,6 +62,10 @@ TELEGRAM_BASE = 'https://api.telegram.org'
 FB_DIALOG_BASE = 'https://www.facebook.com'
 META_SDK_URL = 'https://connect.facebook.net/en_US/sdk.js'
 META_CALLBACK_PATH = '/channel_hub/oauth/callback/meta'
+# R1: where a Meta sign-in comes BACK to. Unset on a single-system deployment
+# (and on the platform's own system), written into every customer system by the
+# platform's relay so one Meta application can serve all of them.
+OAUTH_REDIRECT_BASE_PARAM = 'channel_hub.oauth_redirect_base'
 META_ES_CONFIG_KEY = 'es_config_id'
 META_FLB_CONFIG_KEY = 'flb_config_id'
 
@@ -686,7 +690,23 @@ class _MetaAdapterBase(_StubAdapter):
                 .get_param('web.base.url') or '').strip().rstrip('/')
 
     def _redirect_uri(self):
-        return '%s%s' % (self._base_url(), META_CALLBACK_PATH)
+        """Where Meta returns a completed sign-in.
+
+        Meta matches this address character for character and holds exactly one
+        of them per login configuration, so on a platform that runs one system
+        per customer it cannot be this system's own address — it is the
+        platform's, which reads the customer's short name out of the sign-in
+        ticket and sends the browser home (R1). The parameter is written INTO a
+        customer system by the platform; where it is unset — the platform's own
+        system, and any single-system deployment — nothing changes.
+
+        Both ``authorize_url`` and ``exchange_code`` go through here, which is
+        what keeps the two addresses identical (Meta refuses an exchange whose
+        redirect does not match the one the code was issued for).
+        """
+        base = (self.env['ir.config_parameter'].sudo()
+                .get_param(OAUTH_REDIRECT_BASE_PARAM) or '').strip().rstrip('/')
+        return '%s%s' % (base or self._base_url(), META_CALLBACK_PATH)
 
     def _graph(self, path):
         return '%s/%s/%s' % (self._api_base(GRAPH_BASE), GRAPH_VERSION,
