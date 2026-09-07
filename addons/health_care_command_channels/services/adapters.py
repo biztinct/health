@@ -743,24 +743,25 @@ class _MetaAdapterBase(_StubAdapter):
     # ------------------------------------------------------------------
     def _store_tokens(self, access_token=None, refresh_token=None,
                       token_expires_at=None, granted_scopes=None):
-        """Persist a grant, fresh cursor first (ledger §5.74).
+        """Persist a grant IN THIS TRANSACTION — never on a fresh cursor.
 
-        Meta's long-lived tokens do not expire, so nothing here ROTATES a
-        single-use credential — but the writer is the same one CC-D hardened,
-        with its bounded ``lock_timeout``, and this phase takes no row lock
-        anywhere near it. Under ``--test-enable`` the independent cursor cannot
-        see a record the test transaction created (ledger §5.63), so the write
-        falls back in-transaction, which is what the suites assert on.
+        Until 2026-09-07 this went through ``_persist_refreshed_tokens`` (an
+        independent cursor that commits at once), and the first real Messenger
+        sign-in on carejiox.com died on it: every Meta caller writes the SAME
+        connection row again in the request transaction a few lines later
+        (``_transition('select_resource')``, the resource-id write in
+        ``select_resource``, ``upsert_check`` → ``_recompute_ready``), and under
+        Odoo's REPEATABLE READ (ledger §5.63) a row another transaction has
+        committed since our snapshot cannot be updated —
+        ``could not serialize access due to concurrent update`` — so the whole
+        callback rolled back with the token already committed and the state
+        stuck in ``authorizing`` (ledger §5.181). The fresh cursor exists for
+        Zalo's single-use rotating refresh token, which Meta does not have: a
+        Meta token lost to a rollback costs one more click on Connect. Under
+        ``--test-enable`` the old code already took this branch, which is why
+        no suite could see the failure.
         """
         conn = self.connection
-        persisted = False
-        if not (tools.config.get('test_enable') or tools.config.get('test_file')):
-            persisted = conn.sudo()._persist_refreshed_tokens(
-                access_token=access_token, refresh_token=refresh_token,
-                token_expires_at=token_expires_at,
-                granted_scopes=granted_scopes)
-        if persisted:
-            return True
         vals = {}
         if access_token is not None:
             vals['access_token_enc'] = channel_crypto.encrypt(

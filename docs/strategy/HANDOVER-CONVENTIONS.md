@@ -3016,3 +3016,26 @@ a no-op.
     test's docstring which half of the property it can still see — and put the
     other half in the deploy proof, not in the suite. (Channel Relay R1 review,
     finding 9.)
+
+- **§5.181 — a fresh-cursor commit of a row that the SAME request transaction
+    writes again afterwards is a guaranteed serialisation failure, and a
+    `test_enable` bypass hides it from every suite.** The first real Messenger
+    sign-in on carejiox.com (2026-09-07) died with `could not serialize access
+    due to concurrent update` on `UPDATE care_channel_connection … state =
+    'select_resource'`: `_MetaAdapterBase._store_tokens` had just committed the
+    user token on an independent cursor (`_persist_refreshed_tokens`), and
+    under REPEATABLE READ (§5.63) the request transaction can no longer update
+    a row another transaction committed after its snapshot began. Result: the
+    token committed, everything after it rolled back, the audit row said
+    "current transaction is aborted", the connection sat in `authorizing`, and
+    the Page picker said "Meta returned nothing to choose from". No suite saw
+    it because the writer took the in-transaction branch whenever
+    `test_enable` was set — the exact path production never ran. §5.74's
+    sibling: the fresh cursor is right for a single-use ROTATING credential
+    (Zalo) and wrong for a durable one whose caller keeps writing the row.
+    Rules: (a) a fresh-cursor writer may only touch a row the surrounding
+    transaction will NOT write again; (b) never gate a persistence path on
+    `test_enable` — if the suites cannot exercise a branch, the branch is
+    untested, say so in the docstring and prove it live; (c) when a live
+    callback fails with "transaction is aborted", the FIRST `bad query` in the
+    log is the cause, not the one the audit row quotes.
