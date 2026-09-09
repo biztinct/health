@@ -13,3 +13,8 @@ Verified account, Advanced
 Grants include sending messages, managing messages and message-management webhooks.
 Text-event subscription enabled. Webhook URL matches carejiox.com.
 Synthetic provider event at 08:14:48 UTC -> HTTP 200; sample OA differs, so no ingestion.
+
+Subsequent webhook URL validation: 54.206.18.111 [AU].
+Provider warning: use Vietnam IPs for full webhook/API responses.
+Validation dialog closed without saving configuration.
+Read-only recent-message API: HTTP 200, provider -501, outside-Vietnam restriction.

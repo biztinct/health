@@ -78,9 +78,33 @@ so it was correctly not accepted as proof for the user's connection. No syntheti
 traffic was used to turn the real connection green.
 
 At the last inspection, no real message webhook had reached the server after
-recovery. The user reports sending a message; the remaining diagnostic is to
-compare the messaged account's profile/share link with the verified OA. Real
-inbound confirmation and the outbound setup test are therefore still pending.
+recovery. The user reports sending a message to the matching account name.
+Real inbound confirmation and the outbound setup test remain pending.
 No message was sent to a person by this session.
+
+## Confirmed regional API restriction
+
+A read-only `GET /v2.0/oa/listrecentchat` with the saved connection token returned
+HTTP 200 but provider error **-501**:
+
+> Personal information is limited due to IP address not inside Vietnam: 54.206.18.111
+
+Only the error and response shape were printed; no credentials or conversation
+content were exported. The diagnostic used `carejiox-deploy -x`, rolled back its
+database transaction, and ended with service health HTTP 200.
+
+Zalo Developers' webhook URL check independently identifies this endpoint as
+`54.206.18.111 [AU]` and advises a Vietnam IP for full webhook/API responses.
+The URL was checked without saving any configuration changes. Zalo's
+[official regional-data notice](https://developers.zalo.me/docs/api/developer-notification/-quan-trong-gioi-han-du-lieu-theo-dia-chi-ip-post-7594)
+and its [published English announcement](https://vn.linkedin.com/pulse/zalo-openapi-gi%E1%BB%9Bi-h%E1%BA%A1n-d%E1%BB%AF-li%E1%BB%87u-theo-%C4%91%E1%BB%8Ba-ch%E1%BB%89-ip-zalo-cloud-bwozc)
+say this restriction applies to user-related API and webhook data.
+
+The regional API restriction is proven; it is a plausible explanation for the
+missing real webhook, not proof that every missing event has this cause. No
+Vietnam deployment target for this integration is configured in the project.
+The next step needs the user's Vietnam hosting target/access, followed by a
+provider check and a real inbound/outbound test. No unrelated host was accessed
+and no speculative hosting migration was made.
 
 No test PNGs or screenshot files were created. Evidence is textual.
