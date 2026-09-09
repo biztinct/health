@@ -955,6 +955,12 @@ class CareChannelConnection(models.Model):
         record_id, dbname = self.id, self.env.cr.dbname
         try:
             with Registry(dbname).cursor() as cr:
+                cr.execute('SELECT id FROM care_channel_connection WHERE id = %s',
+                           (record_id,))
+                if not cr.fetchone():
+                    # The caller owns a not-yet-committed connection. Avoid
+                    # an ORM MissingError and let it persist in that transaction.
+                    return False
                 # Bounded, like the send-failure writer: even if some future
                 # caller does hold a row lock on this record, persisting must
                 # fail fast so the caller can fall back to an in-transaction

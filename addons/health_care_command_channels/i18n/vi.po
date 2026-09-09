@@ -5797,3 +5797,9 @@ msgstr "Đã kết nối"
 #: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
 msgid "Calls (VoIP24h)"
 msgstr "Cuộc gọi (VoIP24h)"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Complete Sign in with Zalo before saving the webhook secret."
+msgstr "Hoàn tất đăng nhập bằng Zalo trước khi lưu khóa bí mật webhook."

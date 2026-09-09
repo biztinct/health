@@ -1030,12 +1030,25 @@ class CareChannelConnectionCenter(models.Model):
         return {
             'connection_id': conn.id,
             'state': conn.state,
+            'signed_in': conn._zalo_authorization_complete(),
             'webhook_url': '%s%s' % (self._center_base_url(),
                                      ZALO_WEBHOOK_PATH),
             'has_webhook_secret': bool(conn.sudo().provider_secret_enc),
             'resource_line': conn._center_resource_line(),
             'zns': self._center_zns_status(conn),
         }
+
+    def _zalo_authorization_complete(self):
+        """Stored webhook keys or tokens alone do not prove a completed login."""
+        self.ensure_one()
+        conn = self.sudo()
+        statuses = {c.check_key: c.status for c in conn.readiness_check_ids}
+        return bool(
+            conn.access_token_enc and conn.resource_external_id
+            and conn.state not in ('authorizing', 'not_connected', 'disabled',
+                                   'legacy', 'error')
+            and all(statuses.get(key) == 'pass' for key in (
+                'authorization_valid', 'resource_selected', 'token_fresh')))
 
     @api.model
     def center_zalo_set_webhook_secret(self, conn_id, secret):
@@ -1047,6 +1060,9 @@ class CareChannelConnectionCenter(models.Model):
         """
         conn = self._center_zalo(conn_id)
         self._center_require_https()
+        if not conn._zalo_authorization_complete():
+            raise UserError(_(
+                'Complete Sign in with Zalo before saving the webhook secret.'))
         secret = (secret or '').strip()
         if not secret:
             raise UserError(_(

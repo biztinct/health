@@ -210,6 +210,9 @@ export class ChannelCenter extends Component {
                 if (card) {
                     this.state.connectionId = card.connection_id || this.state.connectionId;
                 }
+                if (this.isZalo && this.state.connectionId && !this.state.manage) {
+                    await this._loadZaloInfo(this.state.connectionId);
+                }
             }
         } catch (e) {
             this.state.error = this._msg(e);
@@ -508,10 +511,15 @@ export class ChannelCenter extends Component {
         const info = await this.orm.call(MODEL, "center_zalo_info", [connectionId]);
         this.state.webhookUrl = info.webhook_url || "";
         this.state.hasWebhookSecret = !!info.has_webhook_secret;
-        // A tenant whose OA is already authorized starts on the webhook step.
-        // Keyed on the CHANNEL, not the mode: email shares `oauth_popup`.
-        if (this.isZalo && this.state.hasCredentials) {
-            this.state.step = Math.max(this.state.step, 1);
+        this.state.hasCredentials = !!info.signed_in;
+        // Only the server's completed authorization can advance this step.
+        // Polling also covers noopener windows, which have no popup handle.
+        if (this.isZalo) {
+            if (!info.signed_in) {
+                this.state.step = 0;
+            } else if (this.state.step === 0) {
+                this.state.step = info.has_webhook_secret ? 2 : 1;
+            }
         }
     }
 
@@ -527,11 +535,7 @@ export class ChannelCenter extends Component {
             this.state.popupBlocked = !popup;
             if (popup) {
                 this._watchPopup(popup, (card) => {
-                    this.state.hasCredentials = true;
                     this._loadZaloInfo(card.connection_id).catch(() => {});
-                    if (this.state.step === 0) {
-                        this.state.step = 1;
-                    }
                 });
             }
             await this.load();

@@ -36,8 +36,10 @@ from urllib.parse import urlencode
 
 import requests
 
-from odoo import fields, tools
+from odoo import api, fields, tools
 from odoo.exceptions import UserError
+from odoo.modules.registry import Registry
+from odoo.service.model import retrying
 
 from . import channel_crypto
 from .redact import redact
@@ -1772,9 +1774,34 @@ class ZaloAdapter(_StubAdapter):
 
         # Persist BEFORE anything else touches the wire: Zalo's refresh token
         # is single-use, so a token we hold but never stored is a dead OA.
-        self._store_tokens(**tokens)
+        persisted = self._store_tokens(**tokens)
 
         oa = self._fetch_oa(tokens['access_token'])
+        if persisted:
+            # The request snapshot predates the durable token write. Updating
+            # this connection in it would ALWAYS fail at REPEATABLE READ.
+            # Only the database-only completion is retryable; never exchange
+            # the one-use provider code again (ledger 5.181).
+            with Registry(self.env.cr.dbname).cursor() as cr:
+                env = api.Environment(cr, self.env.uid, dict(self.env.context))
+
+                def finish():
+                    cr.execute("SET LOCAL lock_timeout = '2s'")
+                    fresh = env['care.channel.connection'].sudo().browse(conn.id)
+                    fresh._get_adapter()._complete_authorization(oa)
+
+                retrying(finish, env)
+        else:
+            self._complete_authorization(oa)
+        return {'ok': True, 'next_step': 'webhook'}
+
+    def _complete_authorization(self, oa):
+        """Finalize a verified profile in the transaction that owns the row.
+
+        Also supports recovery from a callback whose tokens survived but whose
+        profile/readiness writes rolled back. No credentials are exchanged.
+        """
+        conn = self.connection
         conn.sudo()._internal().write({
             'resource_external_id': oa['id'],
             'resource_display_name': oa['name'] or oa['id'],
@@ -1791,9 +1818,7 @@ class ZaloAdapter(_StubAdapter):
             _logger.info('care_channels: zalo connection %s stays in %s after '
                          'authorization', conn.id, conn.state)
         self._sync_legacy_config(oa)
-        # NOTHING about the grant is returned: the engine renders a generic
-        # page and the browser learns the outcome by re-reading the Center.
-        return {'ok': True, 'next_step': 'webhook'}
+        self.env.flush_all()
 
     # ------------------------------------------------------------------
     # Refresh — single-use rotation under the row lock
@@ -1896,22 +1921,17 @@ class ZaloAdapter(_StubAdapter):
 
     def _store_tokens(self, access_token=None, refresh_token=None,
                       token_expires_at=None, granted_scopes=None):
-        """Persist rotated credentials, fresh cursor first.
+        """Save tokens; return whether a separate transaction committed them.
 
-        ``_persist_refreshed_tokens`` commits on an independent cursor so a
-        rotation survives a later rollback of the request transaction. Under
-        ``--test-enable`` that cursor cannot see a record the test transaction
-        created (ledger §5.63), so the write happens in-transaction instead —
-        the same either/or the CC-B send-failure writer uses, and what lets the
-        suites assert on the stored ciphertext.
+        A newly created, uncommitted connection cannot be seen by another
+        cursor. That case stays in the owning transaction, including in tests;
+        committed records exercise the same durable path in tests and live.
         """
         conn = self.connection
-        persisted = False
-        if not (tools.config.get('test_enable') or tools.config.get('test_file')):
-            persisted = conn.sudo()._persist_refreshed_tokens(
-                access_token=access_token, refresh_token=refresh_token,
-                token_expires_at=token_expires_at,
-                granted_scopes=granted_scopes)
+        persisted = conn.sudo()._persist_refreshed_tokens(
+            access_token=access_token, refresh_token=refresh_token,
+            token_expires_at=token_expires_at,
+            granted_scopes=granted_scopes)
         if persisted:
             return True
         vals = {}
@@ -1927,7 +1947,7 @@ class ZaloAdapter(_StubAdapter):
             vals['granted_scopes'] = granted_scopes
         if vals:
             conn.sudo()._internal().write(vals)
-        return bool(vals)
+        return False
 
     def _fetch_oa(self, access_token):
         """``getoa`` — the OA's own id and name. This IS resource selection:
@@ -1953,8 +1973,9 @@ class ZaloAdapter(_StubAdapter):
         if 'zalo.config' not in env:
             return False
         try:
-            return env['zalo.config'].sudo()._sync_from_connection(
-                self.connection, oa_id=oa.get('id'), oa_name=oa.get('name'))
+            with env.cr.savepoint():
+                return env['zalo.config'].sudo()._sync_from_connection(
+                    self.connection, oa_id=oa.get('id'), oa_name=oa.get('name'))
         except Exception:  # noqa: BLE001 — the legacy bridge is never fatal
             _logger.exception('care_channels: zalo legacy config sync failed '
                               'for connection %s', self.connection.id)

@@ -24,13 +24,16 @@ import base64
 import hashlib
 import json
 import time
+from types import SimpleNamespace
+from unittest.mock import patch
 from urllib.parse import parse_qs, urlparse
 
 import requests
 
+from odoo import api, SUPERUSER_ID
 from odoo.exceptions import AccessError, UserError
 from odoo.modules.registry import Registry
-from odoo.tests import tagged
+from odoo.tests import tagged, TransactionCase
 
 from odoo.addons.health_care_command_channels.models.care_channel_connection import (
     REFRESH_LOCK_CLASS,
@@ -38,6 +41,7 @@ from odoo.addons.health_care_command_channels.models.care_channel_connection imp
 
 from odoo.addons.health_care_command_channels.services.adapters import (
     ChannelSendError,
+    ZaloAdapter,
 )
 from odoo.addons.health_care_command_channels.services.webhook_verify import (
     verify_zalo,
@@ -96,6 +100,21 @@ class TestZaloCenter(ChannelSpineCase):
         opened = Session.create_for(conn, provider='zalo')
         session = Session.sudo().browse(opened['session_id'])
         return session, opened
+
+    def test_stored_secrets_do_not_complete_authorization(self):
+        conn = self._zalo_conn(state='testing', resource_external_id='old-demo')
+        conn.action_set_secret('provider_secret', ZALO_WEBHOOK_SECRET)
+        conn.action_set_secret('access_token', TOKEN_OK['access_token'])
+        self.assertTrue(conn.has_credentials)
+        self.assertFalse(self.Conn.center_zalo_info(conn.id)['signed_in'])
+        with self.assertRaises(UserError):
+            self.Conn.center_zalo_set_webhook_secret(conn.id, ZALO_WEBHOOK_SECRET)
+        conn._get_adapter()._complete_authorization(
+            {'id': ZALO_OA_ID, 'name': ZALO_OA_NAME})
+        self.assertTrue(self.Conn.center_zalo_info(conn.id)['signed_in'])
+        self.Conn.center_zalo_authorize(conn.id)
+        self.assertFalse(self.Conn.center_zalo_info(conn.id)['signed_in'],
+                         'an unfinished reauthorization must stay on sign-in')
 
     # ==================================================================
     # T108 — the authorization URL: PKCE S256, no secret material
@@ -671,3 +690,88 @@ class TestZaloCenter(ChannelSpineCase):
                          TOKEN_OK['refresh_token'])
         with self.assertRaises(UserError):
             conn.sudo()._committed_secret('not_a_credential_field')
+
+
+@tagged('post_install', '-at_install')
+class TestZaloDurableCallback(TransactionCase):
+    """Real committed fixtures exercise the production persistence boundary.
+
+    Every provider call is replaced; no real account, grant or message is used.
+    The inactive connection stays outside the deployment's unique active index.
+    """
+
+    def _exercise_callback(self, profile_fails=False):
+        dbname = self.env.cr.dbname
+        conn_id = None
+        try:
+            with Registry(dbname).cursor() as cr:
+                cr.execute("SET LOCAL lock_timeout = '2s'")
+                env = api.Environment(cr, SUPERUSER_ID, {})
+                conn = env['care.channel.connection']._internal().create({
+                    'channel': 'zalo', 'company_id': self.env.company.id,
+                    'active': False, 'state': 'authorizing'})
+                conn_id = conn.id
+                opened = env['care.channel.oauth.session'].create_for(
+                    conn, provider='zalo')
+                env.flush_all()
+
+            with patch.object(ZaloAdapter, '_platform_app', return_value=
+                              SimpleNamespace(client_id=ZALO_APP_ID)), \
+                    patch.object(ZaloAdapter, '_app_secret',
+                                 return_value=ZALO_APP_SECRET), \
+                    patch.object(ZaloAdapter, '_form_post',
+                                 return_value=TOKEN_OK) as exchange, \
+                    patch.object(ZaloAdapter, '_get', return_value=GETOA_OK,
+                                 side_effect=ChannelSendError('profile unavailable')
+                                 if profile_fails else None), \
+                    patch.object(ZaloAdapter, '_sync_legacy_config',
+                                 return_value=False):
+                with Registry(dbname).cursor() as cr:
+                    cr.execute("SET LOCAL lock_timeout = '2s'")
+                    env = api.Environment(cr, SUPERUSER_ID, {})
+                    result = env['care.channel.oauth.session']._handle_callback(
+                        'zalo', {'state': opened['state'], 'code': 'fixture-code'})
+                    self.assertEqual(result['outcome'],
+                                     'error' if profile_fails else 'ok')
+                self.assertEqual(exchange.call_count, 1)
+
+                with Registry(dbname).cursor() as cr:
+                    env = api.Environment(cr, SUPERUSER_ID, {})
+                    conn = env['care.channel.connection'].browse(conn_id)
+                    # Even a profile failure MUST retain the already-issued
+                    # one-use credentials, outside the callback savepoint.
+                    self.assertEqual(conn._get_secret('refresh_token'),
+                                     TOKEN_OK['refresh_token'])
+                    session = env['care.channel.oauth.session'].browse(
+                        opened['session_id'])
+                    self.assertTrue(session.used_at)
+                    self.assertEqual(session.outcome,
+                                     'error' if profile_fails else 'ok')
+                    self.assertEqual(conn._zalo_authorization_complete(),
+                                     not profile_fails)
+                    if not profile_fails:
+                        self.assertEqual(conn.resource_external_id, ZALO_OA_ID)
+                        self.assertEqual(conn.state, 'configuring')
+                        replay = env['care.channel.oauth.session']._handle_callback(
+                            'zalo', {'state': opened['state'], 'code': 'fixture-code'})
+                        self.assertEqual(replay['outcome'], 'generic')
+                self.assertEqual(exchange.call_count, 1)
+        finally:
+            if conn_id:
+                with Registry(dbname).cursor() as cr:
+                    cr.execute("SET LOCAL lock_timeout = '2s'")
+                    # Only evidence and records owned by this test fixture.
+                    cr.execute('DELETE FROM care_channel_audit WHERE connection_id = %s',
+                               (conn_id,))
+                    cr.execute('DELETE FROM care_channel_connection WHERE id = %s',
+                               (conn_id,))
+                with Registry(dbname).cursor() as cr:
+                    cr.execute('SELECT id FROM care_channel_connection WHERE id = %s',
+                               (conn_id,))
+                    self.assertFalse(cr.fetchone())
+
+    def test_committed_callback_finishes_without_reexchanging_code(self):
+        self._exercise_callback()
+
+    def test_profile_failure_preserves_tokens_without_claiming_signin(self):
+        self._exercise_callback(profile_fails=True)
