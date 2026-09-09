@@ -20,6 +20,7 @@ anywhere. Two shapes to notice:
   ``assertRaises`` cannot take a tuple of classes at all (§5.70).
 """
 import json
+from types import SimpleNamespace
 from unittest.mock import patch
 
 from odoo.exceptions import AccessError, UserError
@@ -37,6 +38,61 @@ APP_SECRET = 'zalo-app-secret-fixture'
 
 @tagged('post_install', '-at_install')
 class TestZaloCCD(TransactionCase):
+
+    def test_125_center_reply_v3_receipt(self):
+        config, conn = self._linked()
+        self.Message._dispatch_zalo(conn, self._event(msg_id='V3_INBOUND'))
+        response = {'error': 0, 'message': 'Success',
+                    'data': {'message_id': 'V3_REPLY', 'user_id': 'ZALO_USER_CCD_1'}}
+        with patch.object(type(config), 'get_valid_token', return_value='test-token'), \
+             patch('odoo.addons.health_zalo.services.zalo_api.requests.request',
+                   return_value=SimpleNamespace(status_code=200, text='json',
+                                                json=lambda: response)) as request:
+            conn._center_test_zalo(conn)
+        sent = self.ZMessage.search([('zalo_message_id', '=', 'V3_REPLY')])
+        self.assertEqual(len(sent), 1)
+        self.assertEqual(sent.state, 'sent')
+        self.assertEqual(request.call_args.kwargs['url'],
+                         'https://openapi.zalo.me/v3.0/oa/message/cs')
+        self.assertEqual(request.call_args.kwargs['json'], {
+            'recipient': {'user_id': 'ZALO_USER_CCD_1'},
+            'message': {'text': conn._center_test_body()}})
+        self.assertEqual(request.call_args.kwargs['headers']['access_token'], 'test-token')
+        self.assertEqual(conn.readiness_check_ids.filtered(
+            lambda check: check.check_key == 'outbound_ok').status, 'pass')
+
+    def test_126_reply_without_receipt_stays_failed(self):
+        config, conn = self._linked()
+        self.Message._dispatch_zalo(conn, self._event(msg_id='V3_NO_RECEIPT_IN'))
+        incoming = self.ZMessage.search([('zalo_message_id', '=', 'V3_NO_RECEIPT_IN')])
+        outgoing = self.ZMessage.create({
+            'conversation_id': incoming.conversation_id.id,
+            'direction': 'outgoing', 'message_type': 'text', 'text': 'Test reply'})
+        with patch.object(ZaloAPIClient, 'send_text_message',
+                          return_value={'error': 0, 'data': {}}):
+            try:
+                outgoing.action_send_message()
+            except UserError:
+                pass
+            else:
+                self.fail('A response without a receipt must not mark a reply sent')
+        self.assertEqual(outgoing.state, 'failed')
+        self.assertFalse(outgoing.zalo_message_id)
+
+    def test_127_image_v3_profile_version_unchanged(self):
+        config = self._config()
+        config.api_version = 'v2.0'
+        client = get_api_client(self.env)
+        with patch.object(type(config), 'get_valid_token', return_value='test-token'), \
+             patch('odoo.addons.health_zalo.services.zalo_api.requests.request',
+                   return_value=SimpleNamespace(status_code=200, text='json',
+                       json=lambda: {'error': 0, 'data': {'message_id': 'IMG'}})) as request:
+            client.send_image_message(config, 'test-user', 'https://example.com/image.jpg')
+            self.assertEqual(request.call_args.kwargs['url'],
+                             'https://openapi.zalo.me/v3.0/oa/message/cs')
+            client.get_oa_profile(config)
+            self.assertEqual(request.call_args.kwargs['url'],
+                             'https://openapi.zalo.me/v2.0/oa/getoa')
 
     @classmethod
     def setUpClass(cls):

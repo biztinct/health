@@ -22,7 +22,7 @@ class ZaloAPIClient:
     """
     Zalo Official Account API client wrapper.
 
-    Handles all API calls to Zalo OA API v2.0.
+    Uses OA v3 for consultation replies and endpoint-specific versions elsewhere.
     Provides methods for authentication, messaging, user management, etc.
     """
 
@@ -30,7 +30,8 @@ class ZaloAPIClient:
         """Initialize API client with Odoo environment"""
         self.env = env
 
-    def _make_request(self, method, endpoint, config, data=None, params=None, headers=None):
+    def _make_request(self, method, endpoint, config, data=None, params=None, headers=None,
+                      api_version=None):
         """
         Make HTTP request to Zalo API.
 
@@ -55,8 +56,8 @@ class ZaloAPIClient:
             raise UserError(_('No valid access token available. Please connect to Zalo first.'))
 
         # Build full URL
-        base_url = config.api_base_url
-        api_version = config.api_version
+        base_url = config.api_base_url.rstrip('/')
+        api_version = api_version or config.api_version
         url = f"{base_url}/{api_version}/{endpoint}"
 
         # Prepare headers
@@ -190,7 +191,8 @@ class ZaloAPIClient:
         Returns:
             Dict with send result
         """
-        return self._make_request('POST', 'oa/message', config, data=message_data)
+        return self._make_request('POST', 'oa/message/cs', config,
+                                  data=message_data, api_version='v3.0')
 
     def send_image_message(self, config, user_id, image_url):
         """
@@ -222,7 +224,8 @@ class ZaloAPIClient:
             },
         }
 
-        return self._make_request('POST', 'oa/message', config, data=message_data)
+        return self._make_request('POST', 'oa/message/cs', config,
+                                  data=message_data, api_version='v3.0')
 
     def send_file_message(self, config, user_id, file_url):
         """

@@ -200,10 +200,13 @@ class ZaloMessage(models.Model):
             else:
                 raise UserError(_('Message type %s not yet implemented') % self.message_type)
 
-            # Update message with Zalo message ID
-            if result.get('message_id'):
+            # OA v3 returns the receipt inside data. Retain the flat form
+            # for existing client integrations, but never invent a receipt.
+            receipt = result.get('data') or {}
+            message_id = receipt.get('message_id') or result.get('message_id')
+            if message_id:
                 self.write({
-                    'zalo_message_id': result['message_id'],
+                    'zalo_message_id': message_id,
                     'state': 'sent',
                     'delivered_date': fields.Datetime.now(),
                 })

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Health Zalo Integration',
-    'version': '19.0.2.0.0',
+    'version': '19.0.2.0.1',
     'category': 'Healthcare/Communication',
     'summary': 'Zalo Official Account integration for patient messaging and notifications',
     'description': """
@@ -21,7 +21,7 @@ Key Features:
 * Template-based notifications via ZNS (Zalo Notification Service)
 
 Technical Stack:
-* Zalo Official Account API v2.0
+* Zalo Official Account API v3 consultation replies
 * OAuth 2.0 for authentication
 * Webhooks for real-time updates
 * Odoo bus.bus for live notifications

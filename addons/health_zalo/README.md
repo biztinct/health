@@ -132,7 +132,7 @@ When a Zalo user sends a message:
 ### Zalo Official Account API
 This module uses Zalo OA API v2.0. Key endpoints:
 - **Authentication**: `POST /v4/access_token`
-- **Send Message**: `POST /v2.0/oa/message`
+- **Send text/image replies**: `POST /v3.0/oa/message/cs`
 - **Get User Profile**: `GET /v2.0/oa/getprofile`
 - **Get Followers**: `GET /v2.0/oa/getfollowers`
 
