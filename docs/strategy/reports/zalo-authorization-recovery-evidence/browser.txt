@@ -1,0 +1,15 @@
+Chrome, carejiox.com, deployed version 19.0.11.5.1
+Navigation: reload app -> normal Channel Center sidebar entry -> Zalo -> Finish setup
+Card account: Chăm sóc tại nhà Việt Úc
+Card readiness: 4/6, Almost there
+Wizard resumed at: Wait for confirmation
+Next: disabled until a verified real inbound event arrives
+Browser console errors for this drive: []
+
+Zalo Developers -> Official Account -> OA Management -> account details
+OA ID: 1485357202584688773
+Account: Chăm sóc tại nhà Việt Úc
+Verified account, Advanced
+Grants include sending messages, managing messages and message-management webhooks.
+Text-event subscription enabled. Webhook URL matches carejiox.com.
+Synthetic provider event at 08:14:48 UTC -> HTTP 200; sample OA differs, so no ingestion.

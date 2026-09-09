@@ -1,0 +1,2 @@
+2026-09-09 08:06:50,114 3193615 INFO carejiox odoo.tests.result: 0 failed, 0 error(s) of 14 tests when loading database 'carejiox' 
+2026-09-09 08:09:41,545 3194516 INFO carejiox odoo.tests.result: 0 failed, 0 error(s) of 6 tests when loading database 'carejiox' 

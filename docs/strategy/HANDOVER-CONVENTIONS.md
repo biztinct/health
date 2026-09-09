@@ -3039,3 +3039,14 @@ a no-op.
     untested, say so in the docstring and prove it live; (c) when a live
     callback fails with "transaction is aborted", the FIRST `bad query` in the
     log is the cause, not the one the audit row quotes.
+
+- **§5.182 — stored credentials do not prove a completed OAuth callback.**
+    Zalo reproduced §5.181 on 2026-09-09: its token survived on an independent
+    cursor, but profile/readiness writes in the old request snapshot failed.
+    `has_credentials` also includes the webhook secret, so using it to advance
+    the wizard displayed success for an old Demo identity. Preserve one-use
+    tokens durably, then finalize the profile/checks in a fresh transaction;
+    retry only that database work, never the authorization-code exchange. Gate
+    the UI AND secret-submission RPC on verified authorization/profile checks.
+    Exercise the durable path with committed test-owned rows and independent
+    cursors, not a `test_enable` bypass. (Zalo authorization recovery.)
