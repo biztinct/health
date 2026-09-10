@@ -328,10 +328,18 @@
                 <div t-if="!state.detail.timeline.length" class="cc-empty"><span>No messages yet.</span></div>
                 <t t-foreach="state.detail.timeline" t-as="ev" t-key="ev_index">
                   <t t-if="ev.kind === 'zalo' || ev.kind === 'email'">
-                    <div class="brow" t-att-class="ev.direction === 'out' ? 'out' : 'in'">
+                    <div class="brow" t-att-class="(ev.direction === 'out' ? 'out' : 'in') + (ev.sender_source === 'oa_external' ? ' oa-external' : '')">
                       <div class="bub">
                         <div t-if="ev.subject" class="bsubject" t-esc="ev.subject"/>
+                        <div t-if="ev.sender_label" class="bsubject" t-esc="ev.sender_label"/>
                         <t t-esc="ev.text"/>
+                        <div t-foreach="ev.attachments || []" t-as="media" t-key="media.id" class="zalo-media">
+                          <a t-att-href="media.url" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">
+                            <img t-if="media.type === 'image'" t-att-src="media.url" alt="Zalo image" loading="lazy" referrerpolicy="no-referrer"/>
+                            <span t-if="media.type === 'image'">Open image</span>
+                            <span t-else="" t-esc="media.name"/>
+                          </a>
+                        </div>
                       </div>
                       <div class="bmeta">
                         <span t-if="ev.direction === 'out'" class="ic ic-check"/>

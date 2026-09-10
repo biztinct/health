@@ -264,7 +264,7 @@ class ZaloMessage(models.Model):
         """
         vals = {
             'conversation_id': conversation.id,
-            'direction': 'incoming',
+            'direction': 'outgoing' if str(message_data.get('event_name', '')).startswith('oa_send_') else 'incoming',
             'from_id': message_data.get('from_id'),
             'to_id': message_data.get('to_id'),
             'sent_date': fields.Datetime.now(),
@@ -275,21 +275,16 @@ class ZaloMessage(models.Model):
         # Parse message content based on type
         msg_content = message_data.get('message', {})
 
-        if 'text' in msg_content:
-            vals['message_type'] = 'text'
+        if msg_content.get('text'):
             vals['text'] = msg_content['text']
-
-        elif 'attachments' in msg_content:
-            # Handle attachments (image, file, etc.)
-            attachments = msg_content['attachments']
-            if attachments:
-                first_attachment = attachments[0]
-                attachment_type = first_attachment.get('type', 'file')
-
-                if attachment_type == 'image':
-                    vals['message_type'] = 'image'
-                elif attachment_type == 'file':
-                    vals['message_type'] = 'file'
+        attachments = msg_content.get('attachments') or []
+        if attachments:
+            kind = attachments[0].get('type', 'file')
+            vals['message_type'] = kind if kind in ('image', 'file', 'sticker', 'link', 'location') else 'file'
+        elif str(message_data.get('event_name', '')).endswith('_link'):
+            vals['message_type'] = 'link'
+        elif str(message_data.get('event_name', '')).endswith('_sticker'):
+            vals['message_type'] = 'sticker'
 
         # Zalo message ID from webhook
         if 'msg_id' in message_data:
@@ -303,14 +298,15 @@ class ZaloMessage(models.Model):
             for attachment_data in msg_content['attachments']:
                 self.env['zalo.attachment'].create({
                     'message_id': message.id,
-                    'attachment_type': attachment_data.get('type', 'file'),
+                    'attachment_type': attachment_data.get('type') if attachment_data.get('type') in ('image', 'file', 'video', 'audio', 'location') else 'file',
                     'attachment_url': attachment_data.get('payload', {}).get('url'),
                     'name': attachment_data.get('payload', {}).get('name', 'Attachment'),
                 })
 
         # Update conversation
         conversation.update_last_message(message)
-        conversation.increment_unread_count()
+        if message.direction == 'incoming':
+            conversation.increment_unread_count()
 
         _logger.info(f'Created incoming Zalo message {message.id} in conversation {conversation.id}')
 

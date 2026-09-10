@@ -565,3 +565,57 @@ class TestZaloCCD(TransactionCase):
         self.assertEqual(first._effective_access_token(), 'first-oa-token')
         self.assertEqual(second._effective_access_token(), 'second-oa-token')
         self.assertFalse(self.Config.get_active_config(oa_id='OA_UNKNOWN'))
+
+    def test_129_media_and_external_oa_replies(self):
+        config, conn = self._linked()
+        payload = self._event(msg_id='MEDIA_CAPTION')
+        payload['event_name'] = 'user_send_image'
+        payload['message']['attachments'] = [{
+            'type': 'image', 'payload': {'url': 'https://example.com/picture.jpg'}}]
+        counts = self.Message._dispatch_zalo(conn, payload)
+        self.assertEqual(counts['ingested'], 1)
+        incoming = self.ZMessage.search([('zalo_message_id', '=', 'MEDIA_CAPTION')])
+        care = self.env['care.conversation'].search([
+            ('zalo_conversation_id', '=', incoming.conversation_id.id)])
+        event = care._zalo_timeline_event(incoming)
+        self.assertEqual(event['sender_label'], 'Client')
+        self.assertEqual(event['text'], payload['message']['text'])
+        self.assertEqual(event['attachments'][0]['type'], 'image')
+        last_inbound = conn.last_inbound_at
+        external = {'event_name': 'oa_send_text',
+                    'sender': {'id': OA_ID, 'admin_id': 'TEST_ADMIN'},
+                    'recipient': {'id': 'ZALO_USER_CCD_1'},
+                    'message': {'msg_id': 'EXTERNAL_OA_REPLY', 'text': 'Reply from OA app'}}
+        from odoo.addons.health_care_command_channels.controllers.zalo import ZaloWebhookController
+        routed, _payload = ZaloWebhookController._oa_id(json.dumps(external).encode())
+        self.assertEqual(routed, OA_ID)
+        self.assertEqual(self.Message._dispatch_zalo(conn, external)['ingested'], 1)
+        outgoing = self.ZMessage.search([('zalo_message_id', '=', 'EXTERNAL_OA_REPLY')])
+        self.assertEqual(outgoing.direction, 'outgoing')
+        self.assertEqual(outgoing.conversation_id, incoming.conversation_id)
+        event = care._zalo_timeline_event(outgoing)
+        self.assertEqual(event['sender_source'], 'oa_external')
+        self.assertEqual(event['sender_label'], 'OA · Zalo app')
+        self.assertEqual(event['direction'], 'out')
+        self.assertEqual(conn.last_inbound_at, last_inbound)
+        self.assertEqual(self.Message._dispatch_zalo(conn, external)['duplicate'], 1)
+        self.assertEqual(self.ZMessage.search_count([
+            ('zalo_message_id', '=', 'EXTERNAL_OA_REPLY')]), 1)
+
+    def test_130_missing_content_and_unsafe_media(self):
+        config, conn = self._linked()
+        payload = self._event(msg_id='EMPTY_LINK')
+        payload['event_name'] = 'user_send_link'
+        payload['message'] = {'msg_id': 'EMPTY_LINK', 'attachments': [
+            {'type': 'link', 'payload': {'url': 'https://example.com/article', 'name': 'Article'}}]}
+        self.Message._dispatch_zalo(conn, payload)
+        message = self.ZMessage.search([('zalo_message_id', '=', 'EMPTY_LINK')])
+        care = self.env['care.conversation'].search([
+            ('zalo_conversation_id', '=', message.conversation_id.id)])
+        event = care._zalo_timeline_event(message)
+        self.assertEqual(event['attachments'][0]['url'], 'https://example.com/article')
+        message.attachment_ids.write({'attachment_url': 'javascript:alert(1)'})
+        event = care._zalo_timeline_event(message)
+        self.assertEqual(event['attachments'], [])
+        self.assertIn('content unavailable', event['text'])
+        self.assertNotIn('[text]', event['text'])

@@ -37,8 +37,13 @@ class ZaloMessageHandler(models.AbstractModel):
         """
         event_data = event_data or {}
         msg_id = (event_data.get('message') or {}).get('msg_id')
-        if msg_id and self.env['zalo.message'].sudo().search_count(
-                [('zalo_message_id', '=', msg_id)]):
+        outgoing = str(event_data.get('event_name', '')).startswith('oa_send_')
+        owner = event_data.get('sender' if outgoing else 'recipient') or {}
+        oa_id = (self.env.context.get('zalo_oa_id')
+                 or event_data.get('oa_id') or owner.get('id'))
+        if msg_id and self.env['zalo.message'].sudo().search_count([
+                ('zalo_message_id', '=', msg_id),
+                ('conversation_id.config_id.oa_id', '=', oa_id)]):
             _logger.info('health_zalo: duplicate inbound msg_id — ignored')
             return {'ingested': 0, 'duplicate': 1, 'skipped': 0}
         ok = self.process_webhook_event(event_data)
@@ -57,24 +62,26 @@ class ZaloMessageHandler(models.AbstractModel):
             Boolean indicating success
         """
         try:
-            event_name = event_data.get('event_name')
+            event_name = event_data.get('event_name') or ''
 
             _logger.info(f'Processing Zalo webhook event: {event_name}')
 
-            if event_name == 'user_send_text':
-                return self._handle_incoming_text_message(event_data)
-
-            elif event_name == 'user_send_image':
-                return self._handle_incoming_image_message(event_data)
-
-            elif event_name == 'user_send_file':
-                return self._handle_incoming_file_message(event_data)
-
-            elif event_name == 'user_send_sticker':
-                return self._handle_incoming_sticker(event_data)
-
-            elif event_name == 'user_send_link':
-                return self._handle_incoming_link(event_data)
+            if event_name.startswith(('user_send_', 'oa_send_')):
+                outgoing = event_name.startswith('oa_send_')
+                peer = event_data.get('recipient' if outgoing else 'sender') or {}
+                if not peer.get('id'):
+                    return False
+                conversation = self._get_or_create_conversation(peer['id'], peer)
+                message_data = dict(event_data)
+                message_data.update({
+                    'from_id': (event_data.get('sender') or {}).get('id'),
+                    'to_id': (event_data.get('recipient') or {}).get('id'),
+                    'msg_id': (event_data.get('message') or {}).get('msg_id'),
+                })
+                message = self.env['zalo.message'].create_incoming_message(
+                    conversation, message_data)
+                self._send_bus_notification(conversation, message)
+                return True
 
             elif event_name == 'follow':
                 return self._handle_user_follow(event_data)

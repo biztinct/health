@@ -1625,3 +1625,39 @@ msgstr "Bình luận Facebook"
 #: code:addons/health_care_command/static/src/xml/care_command.xml:0
 msgid "Replies publicly on Facebook"
 msgstr "Trả lời công khai trên Facebook"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "OA · Zalo app"
+msgstr "OA · Ứng dụng Zalo"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "OA · external integration"
+msgstr "OA · Tích hợp bên ngoài"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "OA · Care Command"
+msgstr "OA · Care Command"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Message content unavailable — please check the original in Zalo."
+msgstr "Không có nội dung tin nhắn — vui lòng xem tin gốc trên Zalo."
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Open image"
+msgstr "Mở hình ảnh"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Zalo image"
+msgstr "Hình ảnh Zalo"

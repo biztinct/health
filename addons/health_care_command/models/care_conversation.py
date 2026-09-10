@@ -17,6 +17,8 @@ gate + company scope on every public method (§6).
 """
 
 import logging
+import json
+from urllib.parse import urlsplit
 from datetime import datetime, timedelta
 
 from markupsafe import Markup, escape
@@ -995,6 +997,47 @@ class CareConversation(models.Model):
             or (self.lead_id.phone if self.lead_id else False) or False,
         }
 
+    def _zalo_timeline_event(self, message):
+        """Expose saved content and provenance, without exposing raw webhooks."""
+        try:
+            raw = json.loads(message.raw_data or '{}')
+        except (ValueError, TypeError):
+            raw = {}
+        if not isinstance(raw, dict):
+            raw = {}
+        outgoing = message.direction == 'outgoing'
+        event = str(raw.get('event_name', ''))
+        external = outgoing and event.startswith('oa_send_')
+        source = 'oa_external' if external else 'care_command' if outgoing else 'client'
+        if external:
+            sender = raw.get('sender') or {}
+            label = (_('OA · Zalo app') if isinstance(sender, dict) and sender.get('admin_id')
+                     else _('OA · external integration'))
+        else:
+            label = _('OA · Care Command') if outgoing else _('Client')
+        media = []
+        for attachment in message.attachment_ids:
+            url = attachment.attachment_url or ''
+            # Only web links are rendered; provider data must never create a
+            # javascript/data link in the operator's browser.
+            try:
+                parsed = urlsplit(url)
+                safe = parsed.scheme == 'https' and bool(parsed.hostname) and not parsed.username
+            except ValueError:
+                safe = False
+            if safe:
+                media.append({'id': attachment.id, 'url': url,
+                              'type': attachment.attachment_type,
+                              'name': attachment.name or _('Attachment')})
+        body = message.text or ''
+        if not body and not media:
+            body = _('Message content unavailable — please check the original in Zalo.')
+        return {'kind': 'zalo', 'direction': 'out' if outgoing else 'in',
+                'text': body, 'attachments': media, 'sender_label': label,
+                'sender_source': source,
+                'ts': message.sent_date.isoformat() if message.sent_date else False,
+                'delivery': message.state}
+
     def _detail_timeline(self):
         """Read-time merge of channel events (§6.2). No storage, no clinical
         content — channel messages / calls / emails / booking lifecycle only."""
@@ -1007,13 +1050,7 @@ class CareConversation(models.Model):
                 [("conversation_id", "=", self.zalo_conversation_id.id)],
                 order="sent_date asc",
             ):
-                events.append({
-                    "kind": "zalo",
-                    "direction": "out" if m.direction == "outgoing" else "in",
-                    "text": m.text or "[%s]" % (m.message_type or "message"),
-                    "ts": m.sent_date.isoformat() if m.sent_date else False,
-                    "delivery": m.state,
-                })
+                events.append(self._zalo_timeline_event(m))
 
         # VoIP calls (optional module — guard: voip is not installed on O19 yet)
         call_domain = []
@@ -1278,11 +1315,7 @@ class CareConversation(models.Model):
         msg.action_send_message()
         rec.write({"status": "waiting", "unread_count": 0,
                    "last_event_at": fields.Datetime.now()})
-        return {
-            "kind": "zalo", "direction": "out", "text": text,
-            "ts": (msg.sent_date or fields.Datetime.now()).isoformat(),
-            "delivery": msg.state,
-        }
+        return rec._zalo_timeline_event(msg)
 
     def _mail_target(self):
         """(model, res_id) that carries the email thread — lead first."""

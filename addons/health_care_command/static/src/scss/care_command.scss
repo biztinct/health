@@ -205,6 +205,9 @@
   .bub{padding:9px 13px;border-radius:14px;font-size:13px;background:var(--card);border:1px solid var(--line);white-space:pre-wrap;word-break:break-word}
   .brow.in .bub{border-bottom-left-radius:5px}
   .brow.out .bub{background:var(--accent);color:#fff;border-color:var(--accent);border-bottom-right-radius:5px}
+  .brow.out.oa-external .bub{background:#0f766e;border-color:#0f766e;color:#fff}
+  .zalo-media img{display:block;max-width:100%;width:auto;max-height:320px;border-radius:8px;margin:6px 0;object-fit:contain}
+  .zalo-media a{color:inherit;text-decoration:underline}
   .brow.out.pending .bub{opacity:.6}
   .brow.out.error .bub{background:var(--danger);border-color:var(--danger)}
   .bmeta{font-size:10px;color:var(--faint);display:flex;gap:5px;align-items:center}

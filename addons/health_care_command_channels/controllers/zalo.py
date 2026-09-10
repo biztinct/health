@@ -74,7 +74,8 @@ class ZaloWebhookController(http.Controller):
             return None, None
         oa_id = payload.get('oa_id')
         if not oa_id:
-            recipient = payload.get('recipient')
+            outgoing = str(payload.get('event_name', '')).startswith('oa_send_')
+            recipient = payload.get('sender' if outgoing else 'recipient')
             if isinstance(recipient, dict):
                 oa_id = recipient.get('id')
         return (str(oa_id) if oa_id else None), payload

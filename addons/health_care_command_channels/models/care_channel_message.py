@@ -490,7 +490,8 @@ class CareChannelMessage(models.Model):
             except Exception:  # noqa: BLE001 — one poisoned event, not a batch
                 _logger.exception('care_channels: zalo ingest failed on '
                                   'connection %s', connection.id)
-        connection._note_inbound()
+        if counts['ingested'] and str(payload.get('event_name', '')).startswith('user_send_'):
+            connection._note_inbound()
         return counts
 
     # ------------------------------------------------------------------
