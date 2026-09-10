@@ -51,7 +51,7 @@ CHANNEL_SELECTION = [
     ("email", "Email"),
     ("zns", "ZNS"),
     ("whatsapp", "WhatsApp"),
-    ("fb", "Messenger"),
+    ("fb", "Facebook"),
     ("telegram", "Telegram"),
     ("webchat", "Web chat"),
     ("walk_in", "Walk-in"),
@@ -1442,6 +1442,17 @@ class CareConversation(models.Model):
             vals["email_from"] = rec.email_normalized
         if rec.partner_id:
             vals["partner_id"] = rec.partner_id.id
+        if rec.catchment_province_id and "catchment_province_id" in \
+                self.env["crm.lead"]._fields:
+            vals["catchment_province_id"] = rec.catchment_province_id.id
+        if rec.channel_effective == "fb" and "mode_of_contact_id" in \
+                self.env["crm.lead"]._fields:
+            mode = self.env["health.lookup.value"].sudo().search([
+                ("category_code", "=", "mode_of_contact"),
+                ("code", "=", "facebook"),
+            ], limit=1)
+            if mode:
+                vals["mode_of_contact_id"] = mode.id
         lead = self.env["crm.lead"].sudo().create(vals)
         rec.write({"lead_id": lead.id})
         return {"ok": True, "message": _("Lead created and linked.")}

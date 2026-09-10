@@ -280,6 +280,10 @@ class CareConversationChannelExt(models.Model):
                 'text': m.body or '[%s]' % (m.message_type or 'message'),
                 'ts': m.event_at.isoformat() if m.event_at else False,
                 'delivery': m.state,
+                'surface': m.surface or 'direct',
+                'thread_external_id': m.external_thread_id or False,
+                'parent_external_id': m.parent_external_id or False,
+                'external_url': m.external_url or False,
             })
         events = [e for e in events if e.get('ts')]
         events.sort(key=lambda e: e['ts'])
@@ -295,6 +299,24 @@ class CareConversationChannelExt(models.Model):
             if msg and msg.body:
                 return msg.body[:120]
         return super()._snippet()
+
+    def _facebook_account_label(self):
+        self.ensure_one()
+        connection = self.channel_connection_id
+        if not connection or connection.channel != 'fb':
+            return False
+        return (connection.account_label or connection.resource_display_name
+                or connection.catchment_province_id.display_name or False)
+
+    def _workspace_row(self):
+        row = super()._workspace_row()
+        row['channel_account'] = self._facebook_account_label()
+        return row
+
+    def _detail_header(self):
+        header = super()._detail_header()
+        header['channel_account'] = self._facebook_account_label()
+        return header
 
     # ------------------------------------------------------------------
     # Capabilities + dock honesty
@@ -328,6 +350,8 @@ class CareConversationChannelExt(models.Model):
         caps = super()._capabilities()
         if self.channel_identity_id and self._sendable_connection():
             caps['ext_reply_channel'] = self.channel_identity_id.channel
+            reply_ctx = self._channel_reply_context()
+            caps['ext_reply_surface'] = reply_ctx.get('surface', 'direct')
             # CC-E: the composer must KNOW about Meta's 24 h customer-service
             # window rather than discovering it as a failed send (§1.4). Every
             # channel answers, so a caller never has to special-case Meta;
@@ -351,8 +375,34 @@ class CareConversationChannelExt(models.Model):
                     'requires_template': False, 'requires_tag': False,
                     'blocked': True, 'tags': [], 'message': _(
                         'This channel is not connected right now.')}
+        reply_ctx = self._channel_reply_context()
+        if ident.channel == 'fb' and reply_ctx.get('surface') == 'comment':
+            return {
+                'channel': 'fb', 'surface': 'comment', 'open': True,
+                'requires_template': False, 'requires_tag': False,
+                'blocked': False, 'tags': [],
+                'message': _('Your reply will be posted publicly on Facebook.'),
+            }
         return self.env['care.channel.connection'].sudo()._center_window(
             connection, ident)
+
+    def _channel_reply_context(self):
+        """Return the newest inbound surface and provider reply target."""
+        self.ensure_one()
+        if not self.channel_identity_id:
+            return {}
+        msg = self.env['care.channel.message'].sudo().search([
+            ('identity_id', '=', self.channel_identity_id.id),
+            ('direction', '=', 'incoming'),
+        ], order='event_at desc, id desc', limit=1)
+        if not msg:
+            return {}
+        return {
+            'surface': msg.surface or 'direct',
+            'comment_id': (msg.external_message_id
+                           if msg.surface == 'comment' else False),
+            'post_id': msg.external_thread_id or False,
+        }
 
     @api.model
     def channel_send_window(self, conv_id):
@@ -480,6 +530,7 @@ class CareConversationChannelExt(models.Model):
         # fail at Meta. WhatsApp outside 24 h ⇒ the template path;
         # Messenger outside 24 h ⇒ the HUMAN_AGENT tag (7 days), then nothing.
         window = rec._channel_window()
+        reply_ctx = rec._channel_reply_context()
         kwargs = {}
         if window.get('requires_template'):
             raise UserError(_(
@@ -491,8 +542,13 @@ class CareConversationChannelExt(models.Model):
 
         Message = self.env['care.channel.message']
         try:
-            result = connection._get_adapter().send_message(ident, text,
-                                                            **kwargs)
+            adapter = connection._get_adapter()
+            if channel == 'fb' and reply_ctx.get('surface') == 'comment':
+                result = adapter.send_comment(
+                    ident, text, reply_ctx.get('comment_id'),
+                    post_id=reply_ctx.get('post_id'))
+            else:
+                result = adapter.send_message(ident, text, **kwargs)
         except Exception as exc:  # noqa: BLE001 — provider/network failure
             auth = any(m in str(exc).lower() for m in AUTH_ERROR_MARKERS)
             # The evidence has to outlive the UserError below, which rolls this
@@ -517,4 +573,7 @@ class CareConversationChannelExt(models.Model):
             'text': text,
             'ts': (msg.event_at or fields.Datetime.now()).isoformat(),
             'delivery': msg.state,
+            'surface': msg.surface or 'direct',
+            'thread_external_id': msg.external_thread_id or False,
+            'parent_external_id': msg.parent_external_id or False,
         }

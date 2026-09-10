@@ -5803,3 +5803,82 @@ msgstr "Cuộc gọi (VoIP24h)"
 #: code:addons/health_care_command_channels/models/channel_center.py:0
 msgid "Complete Sign in with Zalo before saving the webhook secret."
 msgstr "Hoàn tất đăng nhập bằng Zalo trước khi lưu khóa bí mật webhook."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_connection__channel__fb
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_reply_template__channel__fb
+msgid "Facebook"
+msgstr "Facebook"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Public comments enabled"
+msgstr "Đã bật bình luận công khai"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/care_conversation_ext.py:0
+msgid "Your reply will be posted publicly on Facebook."
+msgstr "Câu trả lời của bạn sẽ được đăng công khai trên Facebook."
+
+#. module: health_care_command_channels
+#: model:ir.model.fields,field_description:health_care_command_channels.field_care_channel_message__surface
+msgid "Facebook Surface"
+msgstr "Loại tương tác Facebook"
+
+#. module: health_care_command_channels
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_message__surface__direct
+msgid "Private message"
+msgstr "Tin nhắn riêng"
+
+#. module: health_care_command_channels
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_message__surface__comment
+msgid "Public comment"
+msgstr "Bình luận công khai"
+
+#. module: health_care_command_channels
+#: model:ir.model.fields,field_description:health_care_command_channels.field_care_channel_message__external_thread_id
+msgid "Post/Thread ID"
+msgstr "ID bài viết/cuộc trò chuyện"
+
+#. module: health_care_command_channels
+#: model:ir.model.fields,field_description:health_care_command_channels.field_care_channel_message__parent_external_id
+msgid "Reply-to ID"
+msgstr "ID được trả lời"
+
+#. module: health_care_command_channels
+#: model:ir.model.fields,field_description:health_care_command_channels.field_care_channel_message__external_url
+msgid "Provider Link"
+msgstr "Liên kết nhà cung cấp"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Pick the Page whose messages and public comments should arrive in Care Command."
+msgstr "Chọn Trang có tin nhắn và bình luận công khai cần chuyển vào Care Command."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "We tell Facebook to send your Page messages and public comments to Health19. Nothing to do here."
+msgstr "Chúng tôi yêu cầu Facebook chuyển tin nhắn và bình luận công khai của Trang đến Health19. Bạn không cần làm gì ở bước này."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Send your Page a private message and add a public comment to one of its posts. Both should appear here. Comment replies are public. Private messages follow Facebook’s messaging time limits."
+msgstr "Gửi tin nhắn riêng cho Trang và thêm bình luận công khai vào một bài viết. Cả hai sẽ xuất hiện tại đây. Trả lời bình luận là công khai. Tin nhắn riêng tuân theo giới hạn thời gian nhắn tin của Facebook."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "A Facebook window opens. Sign in as an administrator of your Page and allow Health19 to read and reply to private messages and public comments. Your Facebook password is only ever typed on Facebook's own page."
+msgstr "Một cửa sổ Facebook sẽ mở ra. Đăng nhập bằng tài khoản quản trị Trang và cho phép Health19 đọc, trả lời tin nhắn riêng và bình luận công khai. Mật khẩu Facebook chỉ được nhập trên trang của Facebook."
+
+#. module: health_care_command_channels
+#: model_terms:ir.ui.view,arch_db:health_care_command_channels.view_care_channel_message_search
+msgid "Public comments"
+msgstr "Bình luận công khai"

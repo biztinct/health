@@ -6,7 +6,7 @@ and **every** provider call is mocked: nothing here can reach
 graph.facebook.com or connect.facebook.net, and no credential in it is real.
 
 Meta cannot be proven live on this deployment — a Business-type app, Business
-Verification and App Review of five permissions are multi-week human processes
+Verification and App Review of the provider permissions are human processes
 that have not started, and there are zero ``channel.platform.app`` rows on
 vietuat. So the fixtures below seed a platform app INSIDE the test transaction
 (it rolls back with the class) and the suite proves the software against the
@@ -53,7 +53,11 @@ FB_PAGE_TOKEN = 'meta-page-token-fixture'
 
 WA_SCOPES = ['whatsapp_business_management', 'whatsapp_business_messaging',
              'business_management']
-FB_SCOPES = ['pages_show_list', 'pages_messaging', 'pages_manage_metadata']
+FB_SCOPES = [
+    'pages_show_list', 'pages_messaging', 'pages_manage_metadata',
+    'pages_read_engagement', 'pages_read_user_content',
+    'pages_manage_engagement',
+]
 
 PHONE_ROW = {
     'id': WA_PHONE_ID,
@@ -542,8 +546,34 @@ class TestMetaCenter(ChannelSpineCase):
         posted = calls['post'][0]
         self.assertIn('/%s/subscribed_apps' % FB_PAGE_ID, posted[0])
         self.assertEqual(posted[2]['subscribed_fields'],
-                         'messages,messaging_postbacks')
+                         'messages,messaging_postbacks,feed')
         self.assertEqual(posted[2]['access_token'], FB_PAGE_TOKEN)
+        comments = conn.readiness_check_ids.filtered(
+            lambda c: c.check_key == 'comments_enabled')
+        self.assertEqual(comments.status, 'pass')
+
+    def test_133b_fb_comment_permissions_are_additive(self):
+        """A comment-review delay must not switch off private Messenger."""
+        self.Conn.center_begin('fb')
+        conn = self._center_connection('fb')
+        self._authorize_fb(conn, scopes=[
+            'pages_show_list', 'pages_messaging', 'pages_manage_metadata'])
+        check = conn.readiness_check_ids.filtered(
+            lambda c: c.check_key == 'comments_enabled')
+        self.assertEqual(check.status, 'fail')
+        # The core Messenger permission check still passes.
+        scopes = conn.readiness_check_ids.filtered(
+            lambda c: c.check_key == 'scopes_granted')
+        self.assertEqual(scopes.status, 'pass')
+
+        conn.action_set_secret('access_token', FB_PAGE_TOKEN)
+        conn._internal().write({'resource_external_id': FB_PAGE_ID})
+        calls = self._mock_graph(
+            post_map={'/subscribed_apps': {'success': True}})
+        conn._get_adapter().subscribe_webhook()
+        self.assertEqual(calls['post'][0][2]['subscribed_fields'],
+                         'messages,messaging_postbacks')
+        self.assertEqual(conn.webhook_state, 'subscribed')
 
     # ==================================================================
     # T134 — inbound routes to the right connection (CC-B's _dispatch_meta)
@@ -580,6 +610,57 @@ class TestMetaCenter(ChannelSpineCase):
             [FB_PAGE_ID])
         self.assertEqual(wa.resource_external_id, WA_PHONE_ID)
         self.assertEqual(fb.resource_external_id, FB_PAGE_ID)
+
+    def test_134b_public_comment_to_reply_and_lead(self):
+        """A Page comment is visible, publicly replyable and convertible."""
+        fb = self._fb_conn()
+        fb.write({'catchment_province_id': self.province.id,
+                  'account_label': 'Facebook — HCMC'})
+        payload = self.fb_comment_payload()
+
+        counts = self.Message._dispatch_meta('fb', payload)
+        self.assertEqual(counts['ingested'], 1)
+        ident = self.identity_of(fb, 'FB_USER_1')
+        self.assertEqual(ident.display_name, 'Chị Mai')
+        conv = self.conv_of(ident)
+        msg = self.Message.search([('identity_id', '=', ident.id)])
+        self.assertEqual(msg.surface, 'comment')
+        self.assertEqual(msg.external_thread_id, 'PAGE_1_POST_1')
+        self.assertEqual(conv.catchment_province_id, self.province)
+
+        detail = self.Care.get_conversation_detail(conv.id)
+        comment = [e for e in detail['timeline']
+                   if e.get('surface') == 'comment'][0]
+        self.assertEqual(comment['text'], 'Cho hỏi giá khám')
+        self.assertEqual(detail['capabilities']['ext_reply_surface'], 'comment')
+        self.assertEqual(detail['header']['channel_account'], 'Facebook — HCMC')
+        self.assertIn('publicly',
+                      detail['capabilities']['ext_window']['message'].lower())
+
+        calls = self._mock_graph(
+            post_map={'/COMMENT_1/comments': {'id': 'COMMENT_REPLY_1'}})
+        bubble = self.Care.action_send_channel(
+            conv.id, 'fb', 'Dạ, phòng khám sẽ liên hệ chị.')
+        posted = calls['post'][0]
+        self.assertIn('/COMMENT_1/comments', posted[0])
+        self.assertEqual(posted[1]['message'],
+                         'Dạ, phòng khám sẽ liên hệ chị.')
+        self.assertEqual(posted[2]['access_token'],
+                         'fb-page-token-fixture')
+        self.assertEqual(bubble['surface'], 'comment')
+
+        self.Care.action_create_lead(conv.id)
+        self.assertTrue(conv.lead_id)
+        self.assertEqual(conv.lead_id.catchment_province_id, self.province)
+        self.assertEqual(conv.lead_id.mode_of_contact_code, 'facebook')
+
+        # A replay and our own Page-authored reply produce no new work.
+        self.Message._dispatch_meta('fb', payload)
+        own = self.fb_comment_payload(
+            author_id=FB_PAGE_ID, comment_id='COMMENT_REPLY_2')
+        self.Message._dispatch_meta('fb', own)
+        self.assertEqual(self.Message.search_count([
+            ('identity_id', '=', ident.id), ('direction', '=', 'incoming')]), 1)
 
     # ==================================================================
     # T135 — the 24 h window, and the ONE Messenger tag that still exists

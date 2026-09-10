@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Care Command — Channel Connection Framework',
-    'version': '19.0.11.5.1',
+    'version': '19.0.12.0.0',
     'category': 'Healthcare/CRM',
-    'summary': 'Provider-neutral channel connections + the WhatsApp / Messenger / '
+    'summary': 'Provider-neutral channel connections + the WhatsApp / Facebook / '
                'Telegram / Web chat message spine',
     'description': """
 Channel Connection Center — Phase CC-A (framework core)

@@ -414,10 +414,12 @@ class ChannelPlatformAppGoLive(models.Model):
                     'kind': 'wait',
                     'title': _('Pass App Review'),
                     'body': _(
-                        'Ask Meta for these five permissions: '
+                        'Ask Meta for these eight permissions: '
                         'whatsapp_business_management, '
                         'whatsapp_business_messaging, pages_show_list, '
-                        'pages_messaging and pages_manage_metadata. Each one '
+                        'pages_messaging, pages_manage_metadata, '
+                        'pages_read_engagement, pages_read_user_content and '
+                        'pages_manage_engagement. Each one '
                         'needs a short description of how the clinics use it '
                         'and a screen recording. Mark this step once the '
                         'submission is in.'),

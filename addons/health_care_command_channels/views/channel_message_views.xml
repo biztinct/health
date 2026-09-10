@@ -15,6 +15,7 @@
                 <field name="event_at"/>
                 <field name="channel"/>
                 <field name="direction"/>
+                <field name="surface"/>
                 <field name="identity_id"/>
                 <field name="conversation_id"/>
                 <field name="body"/>
@@ -24,6 +25,8 @@
                        decoration-muted="state in ('received', 'queued')"/>
                 <field name="error_message" optional="hide"/>
                 <field name="external_message_id" optional="hide"/>
+                <field name="external_thread_id" optional="hide"/>
+                <field name="parent_external_id" optional="hide"/>
                 <field name="company_id" groups="base.group_multi_company" optional="hide"/>
             </list>
         </field>
@@ -39,6 +42,8 @@
                 <field name="external_message_id"/>
                 <filter name="incoming" string="Incoming"
                         domain="[('direction', '=', 'incoming')]"/>
+                <filter name="public_comments" string="Public comments"
+                        domain="[('surface', '=', 'comment')]"/>
                 <filter name="failed" string="Failed"
                         domain="[('state', '=', 'failed')]"/>
                 <separator/>

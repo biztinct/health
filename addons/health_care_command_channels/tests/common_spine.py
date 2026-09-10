@@ -166,6 +166,29 @@ class ChannelSpineCase(ChannelHubCase):
         }
 
     @staticmethod
+    def fb_comment_payload(author_id='FB_USER_1', comment_id='COMMENT_1',
+                           post_id='PAGE_1_POST_1', text='Cho hỏi giá khám',
+                           name='Chị Mai', page_id=FB_PAGE_ID, ts=None,
+                           parent_id=None):
+        """Facebook Page ``feed`` webhook for a newly-added public comment."""
+        ts = _recent_epoch() if ts is None else ts
+        value = {
+            'item': 'comment', 'verb': 'add', 'comment_id': comment_id,
+            'post_id': post_id, 'message': text, 'created_time': ts,
+            'from': {'id': author_id, 'name': name},
+            'permalink_url': 'https://www.facebook.com/%s' % comment_id,
+        }
+        if parent_id:
+            value['parent_id'] = parent_id
+        return {
+            'object': 'page',
+            'entry': [{
+                'id': page_id, 'time': ts,
+                'changes': [{'field': 'feed', 'value': value}],
+            }],
+        }
+
+    @staticmethod
     def tg_payload(chat_id=555001, message_id=11, text='chào bạn',
                    first_name='Minh', ts=None):
         ts = _recent_epoch() if ts is None else ts

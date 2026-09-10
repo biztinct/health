@@ -39,6 +39,11 @@ MESSAGE_TYPES = [
     ('other', 'Other'),
 ]
 
+SURFACES = [
+    ('direct', 'Private message'),
+    ('comment', 'Public comment'),
+]
+
 STATES = [
     ('received', 'Received'),
     ('queued', 'Queued'),
@@ -88,6 +93,20 @@ class CareChannelMessage(models.Model):
     direction = fields.Selection(DIRECTIONS, required=True, index=True)
     message_type = fields.Selection(MESSAGE_TYPES, default='text')
     body = fields.Text()
+    surface = fields.Selection(
+        SURFACES, string='Facebook Surface', required=True, default='direct',
+        index=True,
+        help='Whether this Facebook event is a private message or a public '
+             'Page comment. Other channels use private message.')
+    external_thread_id = fields.Char(
+        string='Post/Thread ID', index=True,
+        help='Provider thread/post id for contextual replies.')
+    parent_external_id = fields.Char(
+        string='Reply-to ID',
+        help='Provider message/comment id this outbound event replies to.')
+    external_url = fields.Char(
+        string='Provider Link',
+        help='Provider permalink when one is supplied.')
 
     # Metadata ONLY — v1 downloads no media (binding non-goal).
     attachment_url = fields.Char()
@@ -170,6 +189,10 @@ class CareChannelMessage(models.Model):
             'direction': 'incoming',
             'message_type': event.get('message_type') or 'text',
             'body': (event.get('text') or '')[:BODY_CAP] or False,
+            'surface': event.get('surface') or 'direct',
+            'external_thread_id': event.get('thread_external_id') or False,
+            'parent_external_id': event.get('parent_external_id') or False,
+            'external_url': event.get('external_url') or False,
             'attachment_url': attachment.get('url'),
             'attachment_name': attachment.get('name'),
             'attachment_mime': attachment.get('mime'),
@@ -251,6 +274,10 @@ class CareChannelMessage(models.Model):
             'direction': 'outgoing',
             'message_type': 'text',
             'body': (text or '')[:BODY_CAP] or False,
+            'surface': result.get('surface') or 'direct',
+            'external_thread_id': result.get('thread_external_id') or False,
+            'parent_external_id': result.get('parent_external_id') or False,
+            'external_url': result.get('external_url') or False,
             'state': state,
             'error_message': redact(error) or False,
             'event_at': fields.Datetime.now(),

@@ -78,6 +78,11 @@ WA_REQUIRED_SCOPES = ('whatsapp_business_management',
                       'whatsapp_business_messaging')
 FB_REQUIRED_SCOPES = ('pages_show_list', 'pages_messaging',
                       'pages_manage_metadata')
+# Public Page comments are an additive Facebook capability. They stay outside
+# ``FB_REQUIRED_SCOPES`` so a Meta review delay cannot demote a working private
+# Messenger connection and drop its traffic (ledger §5.78).
+FB_COMMENT_SCOPES = ('pages_read_engagement', 'pages_read_user_content',
+                     'pages_manage_engagement')
 
 # Outbound rules that MUST reach the UI (architecture §3, "Outbound
 # restrictions"). WhatsApp: a 24 h customer-service window, outside which only
@@ -1459,6 +1464,15 @@ class MessengerAdapter(_MetaAdapterBase):
         Check = self.env['care.channel.readiness.check']
         Check.upsert_check(conn.sudo(), 'authorization_valid', 'pass')
         missing = self._record_scopes(info['scopes'])
+        comment_missing = sorted(
+            set(FB_COMMENT_SCOPES) - set(info.get('scopes') or []))
+        comment_detail = (
+            'Reconnect Facebook and grant: %s' % ', '.join(comment_missing)
+            if comment_missing
+            else 'permissions granted; waiting for feed subscription')
+        Check.upsert_check(
+            conn.sudo(), 'comments_enabled',
+            'fail' if comment_missing else 'pending', detail=comment_detail)
         try:
             conn.sudo()._transition('select_resource',
                                     reason='messenger sign-in complete')
@@ -1542,14 +1556,37 @@ class MessengerAdapter(_MetaAdapterBase):
         if not page_id or not token:
             raise ChannelSendError(
                 'choose a Facebook Page before connecting the webhook')
+        base_fields = 'messages,messaging_postbacks'
+        scopes = set((conn.granted_scopes or '').split())
+        comments_granted = set(FB_COMMENT_SCOPES).issubset(scopes)
         try:
-            # Narrow on purpose: we ingest messages and postbacks and nothing
-            # else, and asking for less is the smaller blast radius.
-            self._subscribe(page_id, token,
-                            fields_csv='messages,messaging_postbacks')
+            fields_csv = (base_fields + ',feed'
+                          if comments_granted else base_fields)
+            self._subscribe(page_id, token, fields_csv=fields_csv)
         except ChannelSendError as exc:
-            self._webhook_result(ok=False, error=exc)
-            raise
+            if not comments_granted:
+                self._webhook_result(ok=False, error=exc)
+                raise
+            # A Page can keep its private inbox while Meta's separate comment
+            # capability is reviewed or refused. Fall back to the known-good
+            # Messenger fields, then expose the comment failure independently.
+            try:
+                self._subscribe(page_id, token, fields_csv=base_fields)
+            except ChannelSendError:
+                self._webhook_result(ok=False, error=exc)
+                raise
+            self.env['care.channel.readiness.check'].upsert_check(
+                conn.sudo(), 'comments_enabled', 'fail', detail=exc)
+            return self._webhook_result(ok=True)
+        if comments_granted:
+            self.env['care.channel.readiness.check'].upsert_check(
+                conn.sudo(), 'comments_enabled', 'pass',
+                detail='Facebook feed subscribed')
+        else:
+            missing = sorted(set(FB_COMMENT_SCOPES) - scopes)
+            self.env['care.channel.readiness.check'].upsert_check(
+                conn.sudo(), 'comments_enabled', 'fail',
+                detail='Reconnect Facebook and grant: %s' % ', '.join(missing))
         return self._webhook_result(ok=True)
 
     def register_webhook(self):
@@ -1593,7 +1630,7 @@ class MessengerAdapter(_MetaAdapterBase):
 
     # -- messaging (CC-B) ----------------------------------------------
     def parse_inbound(self, payload):
-        """Messenger webhook → normalised events for THIS page."""
+        """Facebook Page webhook → messages and public comment events."""
         events = []
         mine = self.connection.resource_external_id
         for entry in (payload or {}).get('entry') or []:
@@ -1630,7 +1667,46 @@ class MessengerAdapter(_MetaAdapterBase):
                         (item['timestamp'] / 1000) if item.get('timestamp')
                         else None),
                     'attribution': attribution,
+                    'surface': 'direct',
                     'raw': item,
+                })
+            for change in entry.get('changes') or []:
+                if change.get('field') != 'feed':
+                    continue
+                value = change.get('value') or {}
+                # The Page feed also carries posts, reactions, likes, edits
+                # and removals. Only a newly-added comment is an actionable
+                # client contact for Care Command.
+                if value.get('item') != 'comment' or value.get('verb') != 'add':
+                    continue
+                author = value.get('from') or {}
+                author_id = author.get('id') or value.get('sender_id')
+                # Our own public replies come back through the feed webhook.
+                # They are already stored by the outbound path and must not
+                # reopen the conversation or bump unread.
+                if mine and str(author_id or '') == str(mine):
+                    continue
+                comment_id = value.get('comment_id')
+                if not comment_id:
+                    continue
+                permalink = str(value.get('permalink_url') or '')
+                if not permalink.startswith(('https://www.facebook.com/',
+                                              'https://facebook.com/')):
+                    permalink = ''
+                events.append({
+                    'kind': 'message',
+                    'external_id': str(author_id or ''),
+                    'external_message_id': str(comment_id),
+                    'peer_name': author.get('name') or value.get('sender_name'),
+                    'message_type': 'text',
+                    'text': value.get('message') or '',
+                    'attachment': {},
+                    'event_at': _utc_from_unix(value.get('created_time')),
+                    'surface': 'comment',
+                    'thread_external_id': str(value.get('post_id') or ''),
+                    'parent_external_id': str(value.get('parent_id') or ''),
+                    'external_url': permalink,
+                    'raw': change,
                 })
         _logger.info('care_channels: fb inbound %s event(s) on connection %s',
                      len(events), self.connection.id)
@@ -1662,6 +1738,26 @@ class MessengerAdapter(_MetaAdapterBase):
             body['tag'] = tag
         data = self._post(url, params={'access_token': token}, json_body=body)
         return {'external_message_id': data.get('message_id'), 'state': 'sent'}
+
+    def send_comment(self, identity, text, comment_id, post_id=None):
+        """Reply publicly as the connected Page beneath ``comment_id``."""
+        conn = self.connection
+        token = conn._get_secret('access_token')
+        target = str(comment_id or '').strip()
+        if not token or not target:
+            raise ChannelSendError(
+                'facebook comment reply is not configured')
+        url = '%s/%s/%s/comments' % (
+            self._api_base(GRAPH_BASE), GRAPH_VERSION, target)
+        data = self._post(
+            url, params={'access_token': token}, json_body={'message': text})
+        return {
+            'external_message_id': data.get('id'),
+            'state': 'sent',
+            'surface': 'comment',
+            'thread_external_id': str(post_id or ''),
+            'parent_external_id': target,
+        }
 
 
 @register_adapter('zalo')

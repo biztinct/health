@@ -154,7 +154,7 @@ class CareChannelConnectionCenter(models.Model):
             'email': _('Email'),
             'zns': _('Zalo notifications (ZNS)'),
             'whatsapp': _('WhatsApp'),
-            'fb': _('Messenger'),
+            'fb': _('Facebook'),
             'telegram': _('Telegram'),
             'webchat': _('Web chat'),
         })
@@ -190,6 +190,7 @@ class CareChannelConnectionCenter(models.Model):
             'inbound_ok': _('Receiving works'),
             'token_fresh': _('Sign-in up to date'),
             'provider_approvals': _('Provider approvals'),
+            'comments_enabled': _('Public comments enabled'),
         }
 
     @api.model
@@ -335,30 +336,31 @@ class CareChannelConnectionCenter(models.Model):
                           'freely for 24 hours after a client writes; after '
                           'that only an approved template may go out.'),
             },
-            # -- Messenger (Facebook Login for Business) -------------------
+            # -- Facebook Page (Login for Business) -------------------------
             'channel_hub.guide.fb.signin': {
                 'title': _('Sign in with Facebook'),
                 'body': _('A Facebook window opens. Sign in as an '
                           'administrator of your Page and allow Health19 to '
-                          'read and reply to its messages. Your Facebook '
+                          'read and reply to private messages and public '
+                          'comments. Your Facebook '
                           "password is only ever typed on Facebook's own page."),
             },
             'channel_hub.guide.fb.page': {
                 'title': _('Choose your Page'),
-                'body': _('Pick the Page whose messages should arrive in Care '
-                          'Command.'),
+                'body': _('Pick the Page whose messages and public comments '
+                          'should arrive in Care Command.'),
             },
             'channel_hub.guide.fb.connecting': {
                 'title': _('We set things up'),
-                'body': _('We tell Facebook to send your Page messages to '
-                          'Health19. Nothing to do here.'),
+                'body': _('We tell Facebook to send your Page messages and '
+                          'public comments to Health19. Nothing to do here.'),
             },
             'channel_hub.guide.fb.test': {
                 'title': _('Send a test'),
-                'body': _('Message your Page from Messenger — we will answer '
-                          'here. Facebook lets a business reply freely for 24 '
-                          'hours; after that only a human-agent reply is '
-                          'allowed, for up to 7 days.'),
+                'body': _('Send your Page a private message and add a public '
+                          'comment to one of its posts. Both should appear '
+                          'here. Comment replies are public. Private messages '
+                          'follow Facebook’s messaging time limits.'),
             },
             # -- Zalo (OAuth popup + a portal-guided webhook step) ---------
             'channel_hub.guide.zalo.signin': {

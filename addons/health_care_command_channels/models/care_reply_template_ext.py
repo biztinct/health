@@ -20,7 +20,7 @@ class CareReplyTemplateChannelExt(models.Model):
     channel = fields.Selection(
         selection_add=[
             ('whatsapp', 'WhatsApp'),
-            ('fb', 'Messenger'),
+            ('fb', 'Facebook'),
             ('telegram', 'Telegram'),
             ('webchat', 'Web chat'),
         ],

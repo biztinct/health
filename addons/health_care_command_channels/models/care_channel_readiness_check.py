@@ -25,6 +25,7 @@ CHECK_KEYS = [
     ('inbound_ok', 'Inbound proven'),
     ('token_fresh', 'Token fresh'),
     ('provider_approvals', 'Provider approvals'),
+    ('comments_enabled', 'Public comments enabled'),
 ]
 
 STATUSES = [

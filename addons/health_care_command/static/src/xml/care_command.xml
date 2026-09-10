@@ -220,6 +220,7 @@
                       <div class="c-prev" t-esc="c.snippet || c.reason.text"/>
                       <div class="c-tags">
                         <span t-if="c.chips.length" class="mtag" t-att-class="c.chips[0].kind" t-esc="c.chips[0].label"/>
+                        <span t-if="c.channel_account" class="mtag" t-esc="c.channel_account"/>
                         <span t-if="c.watch" class="watchflag sm" t-att-title="c.watch.terms">
                           <span class="ic ic-warn"/><t t-esc="c.watch.terms"/></span>
                         <button t-if="sec.key === 'needs_un'" class="rowclaim"
@@ -272,6 +273,7 @@
                     <div class="th-sub">
                       <t t-if="h.relation"><t t-esc="h.relation"/> · </t>
                       <t t-esc="chan(h.channel).label"/>
+                      <t t-if="h.channel_account"> · <t t-esc="h.channel_account"/></t>
                       <t t-if="h.owner"> · owned by <t t-esc="h.owner.name"/></t>
                       <t t-else=""> · unclaimed</t>
                     </div>
@@ -337,6 +339,24 @@
                       </div>
                     </div>
                   </t>
+                  <t t-elif="ev.kind === 'fb' || ev.kind === 'whatsapp' || ev.kind === 'telegram' || ev.kind === 'webchat'">
+                    <div class="brow" t-att-class="ev.direction === 'out' ? 'out' : 'in'">
+                      <div class="bub">
+                        <div t-if="ev.kind === 'fb' and ev.surface === 'comment'"
+                             class="bsubject">Public Facebook comment</div>
+                        <t t-esc="ev.text"/>
+                        <a t-if="ev.external_url" class="cc-link"
+                           t-att-href="ev.external_url" target="_blank"
+                           rel="noopener noreferrer">View on Facebook</a>
+                      </div>
+                      <div class="bmeta">
+                        <span t-if="ev.direction === 'out'" class="ic ic-check"/>
+                        <t t-esc="clockTime(ev.ts)"/> ·
+                        <t t-if="ev.kind === 'fb' and ev.surface === 'comment'">Facebook comment</t>
+                        <t t-else="" t-esc="chan(ev.kind).label"/>
+                      </div>
+                    </div>
+                  </t>
                   <t t-elif="ev.kind === 'note'">
                     <div class="evt" style="--cv:var(--mut)"><span class="ic ic-note"/>
                       <div><div class="ev-t">Internal note</div><div class="ev-s" t-esc="ev.text"/></div></div>
@@ -396,7 +416,9 @@
                 </div>
                 <div class="comp-meta">
                   <span t-if="sendChannel" class="via" t-att-style="'--cv:' + chan(sendChannel).cv">
-                    <span class="ic" t-att-class="chan(sendChannel).ic"/>Sends via <t t-esc="chan(sendChannel).label"/></span>
+                    <span class="ic" t-att-class="chan(sendChannel).ic"/>
+                    <t t-if="state.detail.capabilities.ext_reply_surface === 'comment'">Replies publicly on Facebook</t>
+                    <t t-else="">Sends via <t t-esc="chan(sendChannel).label"/></t></span>
                   <span t-else="">This channel is read-only in Phase 1.</span>
                 </div>
               </div>

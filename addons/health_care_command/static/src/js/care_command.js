@@ -18,7 +18,7 @@ const CHANNELS = [
     { key: "email", label: _t("Email"), short: _t("EMAIL"), ic: "ic-mail", cv: "var(--ch-email)" },
     { key: "zns", label: _t("ZNS"), short: _t("ZNS"), ic: "ic-send", cv: "var(--ch-zns)" },
     { key: "whatsapp", label: _t("WhatsApp"), short: _t("WHATSAPP"), ic: "ic-chat", cv: "var(--ch-whatsapp)" },
-    { key: "fb", label: _t("Messenger"), short: _t("FB MSGR"), ic: "ic-chat", cv: "var(--ch-fb)" },
+    { key: "fb", label: _t("Facebook"), short: _t("FACEBOOK"), ic: "ic-chat", cv: "var(--ch-fb)" },
     { key: "telegram", label: _t("Telegram"), short: _t("TELEGRAM"), ic: "ic-chat", cv: "var(--ch-telegram)" },
     { key: "webchat", label: _t("Web chat"), short: _t("WEB CHAT"), ic: "ic-globe", cv: "var(--ch-webchat)" },
     // walk_in has no provider and no connection — the front desk logs it by

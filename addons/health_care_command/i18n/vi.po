@@ -1590,3 +1590,38 @@ msgstr "· ghi âm có sẵn"
 #: code:addons/health_care_command/static/src/xml/care_command.xml:0
 msgid "· unclaimed"
 msgstr "· không có người nhận"
+
+#. module: health_care_command
+#. odoo-python
+#. odoo-javascript
+#: code:addons/health_care_command/models/care_conversation.py:0
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_declared__fb
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_effective__fb
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_primary__fb
+msgid "Facebook"
+msgstr "Facebook"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Public Facebook comment"
+msgstr "Bình luận công khai trên Facebook"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "View on Facebook"
+msgstr "Xem trên Facebook"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Facebook comment"
+msgstr "Bình luận Facebook"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Replies publicly on Facebook"
+msgstr "Trả lời công khai trên Facebook"
