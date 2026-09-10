@@ -579,7 +579,7 @@ class CareConversation(models.Model):
             ("lead_id", "!=", False),
             ("channel_declared", "=", False),
         ]):
-            declared = MODE_TO_CHANNEL.get(conv.lead_id.mode_of_contact)
+            declared = MODE_TO_CHANNEL.get(conv.lead_id.mode_of_contact_code)
             if declared:
                 conv.write({"channel_declared": declared})
                 declared_counts[declared] = declared_counts.get(declared, 0) + 1

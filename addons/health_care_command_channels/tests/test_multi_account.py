@@ -227,7 +227,10 @@ class TestContactCapture(ChannelSpineCase):
         self.assertEqual(counts['unknown'], 1)
         self.assertEqual(self.Care.search_count([]), before,
                          'an unknown page must NOT create a conversation')
-        row = self.Capture.search([('reason_code', '=', 'unknown_resource')])
+        row = self.Capture.search([
+            ('reason_code', '=', 'unknown_resource'),
+            ('resource_external_id', '=', 'PAGE_NOBODY_CONNECTED'),
+        ])
         self.assertEqual(len(row), 1)
         self.assertEqual(row.resource_external_id, 'PAGE_NOBODY_CONNECTED')
         self.assertEqual(row.state, 'new')
@@ -237,7 +240,10 @@ class TestContactCapture(ChannelSpineCase):
                           resource_external_id=FB_PAGE_ID)
         counts = self.Message._dispatch_connection(conn, self.fb_payload())
         self.assertEqual(counts['ignored'], 1)
-        row = self.Capture.search([('reason_code', '=', 'not_ingestable')])
+        row = self.Capture.search([
+            ('reason_code', '=', 'not_ingestable'),
+            ('connection_id', '=', conn.id),
+        ])
         self.assertEqual(len(row), 1)
         self.assertEqual(row.connection_id, conn)
 

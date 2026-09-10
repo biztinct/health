@@ -984,12 +984,18 @@ class TestGoliveHandshakeHttp(HttpCase):
             return original(self, connection, payload)
 
         with patch.object(CareChannelMessage, '_dispatch_zalo', counting):
-            first = self._post_zalo(b'{"oa_id":"%s","event_name":"user_send_'
-                                    b'text","message":{"msg_id":"gl1-1"}}'
-                                    % ZALO_OA_ID.encode())
-            second = self._post_zalo(b'{"oa_id":"%s","event_name":"user_send_'
-                                     b'text","message":{"msg_id":"gl1-2"}}'
-                                     % ZALO_OA_ID.encode())
+            first = self._post_zalo(
+                b'{"oa_id":"%s","event_name":"user_send_text",'
+                b'"sender":{"id":"gl1-user"},'
+                b'"recipient":{"id":"%s"},'
+                b'"message":{"msg_id":"gl1-1","text":"hello"}}'
+                % (ZALO_OA_ID.encode(), ZALO_OA_ID.encode()))
+            second = self._post_zalo(
+                b'{"oa_id":"%s","event_name":"user_send_text",'
+                b'"sender":{"id":"gl1-user"},'
+                b'"recipient":{"id":"%s"},'
+                b'"message":{"msg_id":"gl1-2","text":"hello again"}}'
+                % (ZALO_OA_ID.encode(), ZALO_OA_ID.encode()))
 
         self.assertEqual(first.status_code, 200)
         self.assertEqual(second.status_code, 200)

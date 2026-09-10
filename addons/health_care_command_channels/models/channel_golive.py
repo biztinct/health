@@ -945,8 +945,19 @@ class ChannelPlatformAppGoLive(models.Model):
         channels = GOLIVE_HANDSHAKE_CHANNELS.get(provider) or []
         if not channels:
             return False
+        domain = [('event', '=', 'webhook_handshake'),
+                  ('channel', 'in', channels)]
+        app = self.sudo().search([
+            ('provider', '=', provider), ('active', '=', True),
+        ], order='id desc', limit=1)
+        if not app:
+            return False
+        # A handshake for a retired app cannot prove that the current app's
+        # callback is reachable. This also keeps a new setup honest when the
+        # database contains immutable evidence from an earlier configuration.
+        domain.append(('ts', '>=', app.create_date))
         row = self.env['care.channel.audit'].sudo().search(
-            [('event', '=', 'webhook_handshake'), ('channel', 'in', channels)],
+            domain,
             order='ts desc, id desc', limit=1)
         return fields.Datetime.to_string(row.ts) if row else False
 

@@ -123,7 +123,7 @@ class CrmLeadHook(models.Model):
             # who got in touch, so it goes on the queue where an operator can
             # add a number and convert it.
             _capture(self.env, "no_anchor",
-                     MODE_TO_CHANNEL.get(lead.mode_of_contact) or "unknown",
+                     MODE_TO_CHANNEL.get(lead.mode_of_contact_code) or "unknown",
                      peer_hint=lead.contact_name or lead.name,
                      body=lead.description and str(lead.description)[:280],
                      external_event_id="crm.lead:%s" % lead.id,
@@ -136,7 +136,7 @@ class CrmLeadHook(models.Model):
             {"lead_id": lead.id, "phone_normalized": phone, "email_normalized": email},
             {"inbound": True, "event_at": lead.create_date, "set_status": "needs_reply",
              "unread": "keep",
-             "declared_channel": MODE_TO_CHANNEL.get(lead.mode_of_contact)},
+             "declared_channel": MODE_TO_CHANNEL.get(lead.mode_of_contact_code)},
         )
 
 

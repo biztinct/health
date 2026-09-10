@@ -376,7 +376,7 @@ VALID_MODES = {MODE_OAUTH_POPUP, MODE_EMBEDDED_SIGNUP, MODE_GUIDED_SECRET,
 CHECK_KEYS = (
     'authorization_valid', 'scopes_granted', 'resource_selected',
     'webhook_configured', 'webhook_verified', 'outbound_ok', 'inbound_ok',
-    'token_fresh', 'provider_approvals',
+    'token_fresh', 'provider_approvals', 'comments_enabled',
 )
 
 # Keys every authorization_capabilities() dict must carry.

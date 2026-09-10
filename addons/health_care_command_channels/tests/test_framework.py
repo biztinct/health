@@ -429,7 +429,7 @@ class TestChannelFramework(ChannelHubCase):
     def test_89_settings_param(self):
         settings = self.env['res.config.settings'].create({
             'channel_hub_allowed_redirect_hosts': 'partner.example.com'})
-        settings.execute()
+        settings.set_values()
         icp = self.env['ir.config_parameter'].sudo()
         self.assertEqual(icp.get_param('channel_hub.allowed_redirect_hosts'),
                          'partner.example.com')

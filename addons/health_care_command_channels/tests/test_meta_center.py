@@ -34,6 +34,9 @@ from odoo import fields
 from odoo.exceptions import AccessError, UserError
 from odoo.tests import tagged
 
+from odoo.addons.health_care_command_channels.models.care_channel_connection import (
+    INTERNAL_CTX,
+)
 from odoo.addons.health_care_command_channels.services.adapters import (
     FB_MESSAGE_TAGS, BaseChannelAdapter, ChannelSendError, meta_window_state,
 )
@@ -614,8 +617,10 @@ class TestMetaCenter(ChannelSpineCase):
     def test_134b_public_comment_to_reply_and_lead(self):
         """A Page comment is visible, publicly replyable and convertible."""
         fb = self._fb_conn()
-        fb.write({'catchment_province_id': self.province.id,
-                  'account_label': 'Facebook — HCMC'})
+        fb.with_context(**{INTERNAL_CTX: True}).write({
+            'catchment_province_id': self.province.id,
+            'account_label': 'Facebook — HCMC',
+        })
         payload = self.fb_comment_payload()
 
         counts = self.Message._dispatch_meta('fb', payload)
@@ -947,6 +952,11 @@ class TestMetaCenter(ChannelSpineCase):
     def test_137_no_platform_app_is_honest(self):
         self.meta_app.write({'active': False})
         self.addCleanup(self.meta_app.write, {'active': True})
+        existing_connections = self.Conn.with_context(
+            active_test=False).search_count([
+                ('channel', 'in', ('whatsapp', 'fb')),
+                ('company_id', '=', self.company.id),
+            ])
         self.assertFalse(self.App.sudo().search_count(
             [('provider', '=', 'meta'), ('active', '=', True)]))
 
@@ -969,9 +979,13 @@ class TestMetaCenter(ChannelSpineCase):
                 self.Conn.center_meta_start(channel)
 
         # Nothing was created on the way through.
-        self.assertFalse(self.Conn.with_context(active_test=False).search_count(
-            [('channel', 'in', ('whatsapp', 'fb')),
-             ('company_id', '=', self.company.id)]))
+        self.assertEqual(
+            self.Conn.with_context(active_test=False).search_count([
+                ('channel', 'in', ('whatsapp', 'fb')),
+                ('company_id', '=', self.company.id),
+            ]),
+            existing_connections,
+        )
 
         # ...and an adapter asked directly refuses rather than guessing.
         probe = self._conn('whatsapp', state='authorizing')
