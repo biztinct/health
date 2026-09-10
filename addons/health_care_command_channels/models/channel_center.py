@@ -42,8 +42,7 @@ from odoo.addons.health_care_command.models.care_conversation import (
 from ..services.adapters import (
     EMAIL_PROVIDER_SETTING, EMAIL_PROVIDERS, FB_MESSAGE_TAGS, META_SDK_URL,
     MODE_EMBEDDED_SIGNUP, MODE_GUIDED_SECRET, MODE_OAUTH_POPUP, MODE_ONE_CLICK,
-    ChannelSendError, get_adapter, meta_window_state, zalo_relay_configured,
-    zalo_webhook_url,
+    ChannelSendError, get_adapter, meta_window_state, zalo_webhook_url,
 )
 from ..services.redact import redact
 from .care_channel_connection import SENDABLE_STATES
@@ -1046,7 +1045,6 @@ class CareChannelConnectionCenter(models.Model):
             'state': conn.state,
             'signed_in': conn._zalo_authorization_complete(),
             'webhook_url': zalo_webhook_url(self.env),
-            'regional_relay_configured': zalo_relay_configured(self.env),
             'has_webhook_secret': bool(conn.sudo().provider_secret_enc),
             'resource_line': conn._center_resource_line(),
             'zns': self._center_zns_status(conn),

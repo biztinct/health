@@ -193,12 +193,6 @@ def zalo_webhook_url(env):
     return '%s%s' % (base, ZALO_WEBHOOK_PATH)
 
 
-def zalo_relay_configured(env):
-    """Whether Zalo reaches us through the required Vietnam ingress."""
-    return bool((env['ir.config_parameter'].sudo()
-                 .get_param(ZALO_WEBHOOK_BASE_PARAM) or '').strip())
-
-
 def _fb_referral(item):
     """Ad / link attribution off one Messenger messaging item.
 

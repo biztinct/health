@@ -559,7 +559,6 @@ class TestZaloCenter(ChannelSpineCase):
         info = self.Conn.center_zalo_info(conn.id)
         self.assertEqual(info['webhook_url'],
                          relay + '/care_channels/zalo/webhook')
-        self.assertTrue(info['regional_relay_configured'])
 
     # ==================================================================
     # T120 — spoofing the new endpoints

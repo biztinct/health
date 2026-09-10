@@ -355,9 +355,6 @@
 
             <!-- ===== Zalo: the portal-guided webhook checklist ===== -->
             <t t-if="isZalo and state.step === 1">
-              <div class="cc-alert warn" t-if="!state.regionalRelayConfigured">
-                <p>Zalo inbound messages require the Vietnam relay. Ask the platform administrator to configure it before copying this address into Zalo.</p>
-              </div>
               <label class="cc-label" for="cc_zalo_hook">Webhook address</label>
               <textarea id="cc_zalo_hook" class="cc-input area mono" rows="2"
                         readonly="readonly"

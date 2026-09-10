@@ -110,7 +110,6 @@ export class ChannelCenter extends Component {
             popupBlocked: false,
             webhookUrl: "",
             webhookSecret: "",
-            regionalRelayConfigured: false,
             hasWebhookSecret: false,
             // Meta (CC-E): the SDK/dialog payload, the resource picker and the
             // provider-approval rows.
@@ -527,7 +526,6 @@ export class ChannelCenter extends Component {
         const info = await this.orm.call(MODEL, "center_zalo_info", [connectionId]);
         this.state.webhookUrl = info.webhook_url || "";
         this.state.hasWebhookSecret = !!info.has_webhook_secret;
-        this.state.regionalRelayConfigured = !!info.regional_relay_configured;
         this.state.hasCredentials = !!info.signed_in;
         // Only the server's completed authorization can advance this step.
         // Polling also covers noopener windows, which have no popup handle.

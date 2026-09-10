@@ -1,9 +1,9 @@
 # Zalo Vietnam ingress relay
 
-Zalo restricts delivery of user information when the receiving server is
-outside Vietnam. Health19 currently runs in Australia, so its Zalo webhook must
-be fronted by a small HTTPS reverse proxy with a public IPv4 address that Zalo
-geolocates to Vietnam.
+Zalo restricts some user-information API responses when the caller is outside
+Vietnam. Health19 currently runs in Australia. Its signed webhook is delivering
+directly today, but this relay provides a supported regional ingress if Zalo
+applies the same restriction to webhook delivery or a future OA requires it.
 
 This relay stores no messages and performs no authentication. It forwards only
 the exact Zalo webhook route to `https://carejiox.com`; Health19 still validates
