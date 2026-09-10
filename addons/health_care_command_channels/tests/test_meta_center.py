@@ -633,7 +633,8 @@ class TestMetaCenter(ChannelSpineCase):
         self.assertEqual(msg.external_thread_id, 'PAGE_1_POST_1')
         self.assertEqual(conv.catchment_province_id, self.province)
 
-        detail = self.Care.get_conversation_detail(conv.id)
+        Care = self.Care.with_user(self.crm_user)
+        detail = Care.get_conversation_detail(conv.id)
         comment = [e for e in detail['timeline']
                    if e.get('surface') == 'comment'][0]
         self.assertEqual(comment['text'], 'Cho hỏi giá khám')
@@ -644,7 +645,7 @@ class TestMetaCenter(ChannelSpineCase):
 
         calls = self._mock_graph(
             post_map={'/COMMENT_1/comments': {'id': 'COMMENT_REPLY_1'}})
-        bubble = self.Care.action_send_channel(
+        bubble = Care.action_send_channel(
             conv.id, 'fb', 'Dạ, phòng khám sẽ liên hệ chị.')
         posted = calls['post'][0]
         self.assertIn('/COMMENT_1/comments', posted[0])
@@ -654,7 +655,7 @@ class TestMetaCenter(ChannelSpineCase):
                          'fb-page-token-fixture')
         self.assertEqual(bubble['surface'], 'comment')
 
-        self.Care.action_create_lead(conv.id)
+        Care.action_create_lead(conv.id)
         self.assertTrue(conv.lead_id)
         self.assertEqual(conv.lead_id.catchment_province_id, self.province)
         self.assertEqual(conv.lead_id.mode_of_contact_code, 'facebook')

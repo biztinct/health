@@ -136,6 +136,7 @@ class TestZaloCCD(TransactionCase):
                 'app_secret': APP_SECRET,
                 'oa_id': OA_ID,
                 'company_id': self.company.id,
+                'state': 'connected',
             })
         else:
             config.sudo().write({'oa_id': OA_ID, 'state': 'connected'})
@@ -262,7 +263,7 @@ class TestZaloCCD(TransactionCase):
         # -- the three things ten modules depend on, unchanged -----------
         client = get_api_client(self.env)
         self.assertIsInstance(client, ZaloAPIClient)
-        config = self.Config.search([('active', '=', True)], limit=1)
+        config = self._config()
         self.assertTrue(config, 'the active-config search still finds a row')
         self.assertEqual(
             list(inspect.signature(
@@ -511,6 +512,9 @@ class TestZaloCCD(TransactionCase):
         config = self._config()
         config.sudo().write({'state': 'draft'})
         conn = self._connection(state='configuring')
+        conn.with_context(**{INTERNAL_CTX: True}).write({
+            'resource_external_id': 'OA_SYNCED',
+        })
         result = self.Config._sync_from_connection(
             conn, oa_id='OA_SYNCED', oa_name='Synced OA')
         self.assertEqual(result, config)
