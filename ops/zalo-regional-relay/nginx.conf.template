@@ -1,0 +1,40 @@
+# Install on an HTTPS host whose public IPv4 geolocates to Vietnam.
+# Replace RELAY_HOST; the upstream remains the Carejiox application.
+server {
+    listen 80;
+    server_name RELAY_HOST;
+
+    location ^~ /.well-known/acme-challenge/ {
+        root /var/www/html;
+    }
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl http2;
+    server_name RELAY_HOST;
+
+    ssl_certificate /etc/letsencrypt/live/RELAY_HOST/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/RELAY_HOST/privkey.pem;
+
+    # Zalo signs the original bytes. Nginx forwards the body, query string and
+    # provider headers unchanged; Health19 remains the signature authority.
+    location = /care_channels/zalo/webhook {
+        limit_except GET POST { deny all; }
+        proxy_pass https://carejiox.com;
+        proxy_ssl_server_name on;
+        proxy_ssl_name carejiox.com;
+        proxy_set_header Host carejiox.com;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_pass_request_headers on;
+        proxy_request_buffering on;
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 30s;
+    }
+
+    location / { return 404; }
+}

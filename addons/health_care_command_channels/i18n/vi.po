@@ -5882,3 +5882,23 @@ msgstr "Một cửa sổ Facebook sẽ mở ra. Đăng nhập bằng tài khoả
 #: model_terms:ir.ui.view,arch_db:health_care_command_channels.view_care_channel_message_search
 msgid "Public comments"
 msgstr "Bình luận công khai"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "This Zalo account is not linked to its message history yet. Reconnect this account, then send it a new message."
+msgstr "Tài khoản Zalo này chưa được liên kết với lịch sử tin nhắn. Hãy kết nối lại tài khoản rồi gửi một tin nhắn mới."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Turn this account off before removing it from the list."
+msgstr "Hãy tắt tài khoản này trước khi xóa khỏi danh sách."
+
+#. module: health_care_command_channels
+#. odoo-python
+#. odoo-javascript
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+#: code:addons/health_care_command_channels/static/src/center/channel_center.js:0
+msgid "Account removed from the list."
+msgstr "Đã xóa tài khoản khỏi danh sách."

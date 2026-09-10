@@ -33,7 +33,7 @@ from ..services import channel_crypto
 from ..services.adapters import (
     CHANNEL_ADAPTERS, META_CALLBACK_PATH, OAUTH_REDIRECT_BASE_PARAM,
     ZALO_CALLBACK_PATH,
-    ZALO_WEBHOOK_PATH, ChannelSendError, meta_app_identity,
+    ZALO_WEBHOOK_PATH, ChannelSendError, meta_app_identity, zalo_webhook_url,
 )
 from ..services.redact import redact
 from ..services.webhook_verify import VERIFY_TOKEN_KEY
@@ -292,8 +292,13 @@ class ChannelPlatformApp(models.Model):
                 '%s%s' % (redirect_base, path) if path else '')
             hooks = WEBHOOK_PATHS.get(rec.provider or '', [])
             if hooks:
-                rec.webhook_urls = '\n'.join(
-                    '%s: %s%s' % (label, base, path) for label, path in hooks)
+                if rec.provider == 'zalo':
+                    rec.webhook_urls = 'Zalo OA: %s' % zalo_webhook_url(
+                        self.env)
+                else:
+                    rec.webhook_urls = '\n'.join(
+                        '%s: %s%s' % (label, base, path)
+                        for label, path in hooks)
             else:
                 # An empty box reads as "not configured yet"; the truth is
                 # that this provider has no webhook at all.

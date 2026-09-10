@@ -58,4 +58,7 @@ class ChannelHubOauthController(http.Controller):
         if outcome == 'denied':
             return self._page('health_care_command_channels.oauth_denied',
                               result.get('channel'))
+        if outcome == 'duplicate':
+            return self._page('health_care_command_channels.oauth_duplicate',
+                              result.get('channel'))
         return self._page('health_care_command_channels.oauth_generic')

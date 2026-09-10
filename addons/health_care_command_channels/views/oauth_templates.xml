@@ -40,14 +40,19 @@
         <script type="text/javascript">
             (function () {
                 var el = document.getElementById('ch_bridge');
-                if (!el || !window.opener || !el.dataset.origin) { return; }
-                try {
-                    window.opener.postMessage({
-                        channelHub: true,
-                        ok: el.dataset.ok === '1',
-                        channel: el.dataset.channel || ''
-                    }, el.dataset.origin);
-                } catch (e) { /* opener gone or cross-origin — the link below covers it */ }
+                if (!el) { return; }
+                if (window.opener &amp;&amp; el.dataset.origin) {
+                    try {
+                        window.opener.postMessage({
+                            channelHub: true,
+                            ok: el.dataset.ok === '1',
+                            channel: el.dataset.channel || ''
+                        }, el.dataset.origin);
+                    } catch (e) { /* opener gone or cross-origin */ }
+                }
+                if (el.dataset.ok === '1') {
+                    window.setTimeout(function () { window.close(); }, 150);
+                }
             })();
         </script>
     </template>
@@ -74,11 +79,44 @@
                             để hoàn tất các bước còn lại.</p>
                         <p class="ch-en">Connected. You can close this window and return to
                             Health19 to finish the remaining steps.</p>
-                        <a class="ch-link" t-att-href="origin or '/'">Quay lại Health19 / Return to Health19</a>
+                        <a class="ch-link" href="#"
+                           onclick="window.close(); return false;">Đóng cửa sổ / Close window</a>
                     </div>
                 </div>
                 <t t-call="health_care_command_channels.oauth_bridge">
                     <t t-set="ok" t-value="True"/>
+                </t>
+            </body>
+        </html>
+    </template>
+
+    <template id="oauth_duplicate" name="Channel Hub — Already connected">
+        <html>
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <title>Health19</title>
+                <t t-call="health_care_command_channels.oauth_styles"/>
+            </head>
+            <body>
+                <div class="ch-wrap">
+                    <div class="ch-card">
+                        <div class="ch-mark neutral">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 8v5"/><path d="M12 16.5h.01"/>
+                                <circle cx="12" cy="12" r="9"/>
+                            </svg>
+                        </div>
+                        <p class="ch-h1">Official Account này đã được kết nối</p>
+                        <p class="ch-sub">Hãy đóng cửa sổ này và chọn Official Account khác khi thêm tài khoản.</p>
+                        <p class="ch-en">This Official Account is already connected. Close this window and select the other OA when adding an account.</p>
+                        <a class="ch-link" href="#"
+                           onclick="window.close(); return false;">Đóng cửa sổ / Close window</a>
+                    </div>
+                </div>
+                <t t-call="health_care_command_channels.oauth_bridge">
+                    <t t-set="ok" t-value="False"/>
                 </t>
             </body>
         </html>

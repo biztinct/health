@@ -193,9 +193,10 @@ class ZaloConfig(models.Model):
     # sits between them and depends on this one), and Odoo runs an incremental
     # `_setup_models__` after every module it loads — the comodel would not
     # exist yet. Declaring the dependency the other way closes a loop and the
-    # whole graph is skipped. So the join key is the framework's OWN
-    # uniqueness key instead: one active connection per (channel, company),
-    # which is exactly what its partial unique index enforces.
+    # whole graph is skipped. The soft join therefore uses the framework's
+    # provider resource id: ``zalo.config.oa_id`` matches the connection's
+    # ``resource_external_id`` inside the company. A company may own several
+    # OAs, so company is not a safe join key on its own.
     def _channel_connection(self):
         """This company's Zalo connection, as sudo, or None.
 
@@ -206,10 +207,25 @@ class ZaloConfig(models.Model):
         self.ensure_one()
         if 'care.channel.connection' not in self.env:
             return None
-        return self.env['care.channel.connection'].sudo().search([
+        Connection = self.env['care.channel.connection'].sudo()
+        domain = [
             ('channel', '=', 'zalo'),
             ('company_id', '=', (self.company_id or self.env.company).id),
-        ], order='id desc', limit=1)
+            ('state', '!=', 'disabled'),
+        ]
+        if self.oa_id:
+            # Exact means exact. Falling back to the newest company row here
+            # sent one OA's reply with a half-created sibling OA's token.
+            return Connection.search(
+                domain + [('resource_external_id', '=', self.oa_id)],
+                order='id desc', limit=1)
+
+        # A legacy config with no OA id may adopt only an unclaimed setup row.
+        # It must never borrow credentials from an already identified OA.
+        unclaimed = Connection.search(
+            domain + [('resource_external_id', '=', False)],
+            order='id desc', limit=2)
+        return unclaimed if len(unclaimed) == 1 else Connection.browse()
 
     def _connection(self):
         """The connection that actually holds credentials, or an empty/None."""
@@ -481,12 +497,12 @@ class ZaloConfig(models.Model):
             config = self.search(domain + [('oa_id', '=', oa_id)], limit=1)
             if config:
                 return config
-            # No config bound to this OA yet (a connection mid-migration).
-            # Falling through to "any config" would file the second OA's
-            # messages under the first OA's conversations, so say so.
+            # No config bound to this OA yet. Falling through to "any config"
+            # files a second OA's messages under the first OA and makes its
+            # replies leave with the wrong token, so fail closed.
             _logger.warning(
-                'health_zalo: no configuration for OA %s — falling back to '
-                'the company default', oa_id)
+                'health_zalo: no configuration for the requested OA')
+            return False
 
         config = self.search(domain, limit=1)
 
@@ -634,9 +650,17 @@ class ZaloConfig(models.Model):
             [('active', '=', True)])
         for config in configs:
             company = config.company_id or self.env.company
-            conn = Connection.with_context(active_test=False).search([
-                ('channel', '=', 'zalo'),
-                ('company_id', '=', company.id)], order='id desc', limit=1)
+            base = [('channel', '=', 'zalo'),
+                    ('company_id', '=', company.id)]
+            conn = Connection.with_context(active_test=False).search(
+                base + [('resource_external_id', '=', config.oa_id)],
+                order='id desc', limit=1) if config.oa_id else Connection.browse()
+            if not conn:
+                # Only an unclaimed row may be adopted. A sibling OA is a
+                # separate account and its credentials are never a fallback.
+                conn = Connection.with_context(active_test=False).search(
+                    base + [('resource_external_id', '=', False)],
+                    order='id desc', limit=1)
             if not conn:
                 conn = Connection._internal().create({
                     'channel': 'zalo', 'company_id': company.id})

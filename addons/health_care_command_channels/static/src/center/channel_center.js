@@ -91,6 +91,7 @@ export class ChannelCenter extends Component {
             steps: [],
             connectionId: null,
             hasCredentials: false,
+            additionalAccount: false,
             manage: false, // manage panel instead of the wizard
             // channel-specific working values
             token: "",
@@ -102,12 +103,14 @@ export class ChannelCenter extends Component {
             copied: false,
             copiedWebhook: false,
             confirmOff: false,
+            confirmRemove: false,
             toast: null,
             // Zalo (CC-D): the sign-in popup and the portal-guided webhook step
             authUrl: "",
             popupBlocked: false,
             webhookUrl: "",
             webhookSecret: "",
+            regionalRelayConfigured: false,
             hasWebhookSecret: false,
             // Meta (CC-E): the SDK/dialog payload, the resource picker and the
             // provider-approval rows.
@@ -147,6 +150,10 @@ export class ChannelCenter extends Component {
         // authoritative list still comes from Meta's own debug_token.
         this._metaHint = {};
         this._onMetaMessage = (ev) => {
+            if (ev.origin === window.location.origin && ev.data?.channelHub) {
+                this.load();
+                return;
+            }
             if (!META_SIGNUP_ORIGINS.includes(ev.origin)) {
                 return;
             }
@@ -208,7 +215,14 @@ export class ChannelCenter extends Component {
             if (this.state.open) {
                 const card = this.card(this.state.open);
                 if (card) {
-                    this.state.connectionId = card.connection_id || this.state.connectionId;
+                    const accounts = card.accounts || [];
+                    const selectedStillExists = accounts.some(
+                        (account) => account.connection_id === this.state.connectionId);
+                    if (!selectedStillExists) {
+                        this.state.connectionId = card.connection_id
+                            || accounts[0]?.connection_id
+                            || this.state.connectionId;
+                    }
                 }
                 if (this.isZalo && this.state.connectionId && !this.state.manage) {
                     await this._loadZaloInfo(this.state.connectionId);
@@ -420,11 +434,13 @@ export class ChannelCenter extends Component {
         this.state.steps = info.guide_steps || [];
         this.state.connectionId = info.connection_id;
         this.state.hasCredentials = !!info.has_credentials;
+        this.state.additionalAccount = !!info.additional_account;
         this.state.token = "";
         this.state.botName = "";
         this.state.copied = false;
         this.state.copiedWebhook = false;
         this.state.confirmOff = false;
+        this.state.confirmRemove = false;
         this.state.authUrl = "";
         this.state.popupBlocked = false;
         this.state.webhookSecret = "";
@@ -511,6 +527,7 @@ export class ChannelCenter extends Component {
         const info = await this.orm.call(MODEL, "center_zalo_info", [connectionId]);
         this.state.webhookUrl = info.webhook_url || "";
         this.state.hasWebhookSecret = !!info.has_webhook_secret;
+        this.state.regionalRelayConfigured = !!info.regional_relay_configured;
         this.state.hasCredentials = !!info.signed_in;
         // Only the server's completed authorization can advance this step.
         // Polling also covers noopener windows, which have no popup handle.
@@ -530,12 +547,17 @@ export class ChannelCenter extends Component {
             this.state.authUrl = res.url || "";
             // A blocked popup must never look like a silent failure: the URL
             // is shown as a normal link the tenant can click themselves.
+            // Keep an opener only for this provider popup: our callback checks
+            // the exact origin before postMessage, then closes itself.  With
+            // noopener the success page could only open a second Health19
+            // home window and the original four-step dialog never resumed.
             const popup = window.open(res.url, "h19_zalo_signin",
-                "width=520,height=720,noopener");
+                "width=520,height=720");
             this.state.popupBlocked = !popup;
             if (popup) {
-                this._watchPopup(popup, (card) => {
-                    this._loadZaloInfo(card.connection_id).catch(() => {});
+                const connectionId = this.state.connectionId;
+                this._watchPopup(popup, () => {
+                    this._loadZaloInfo(connectionId).catch(() => {});
                 });
             }
             await this.load();
@@ -550,9 +572,9 @@ export class ChannelCenter extends Component {
             this._popupTimer = null;
             window.removeEventListener("focus", finish);
             this.load().then(() => {
-                const card = this.openCard;
-                if (card && card.connection_id && onDone) {
-                    onDone(card);
+                const account = this.openAccount || this.openCard;
+                if (account && account.connection_id && onDone) {
+                    onDone(account);
                 }
             });
         };
@@ -914,6 +936,7 @@ export class ChannelCenter extends Component {
         this.state.steps = card.guide_steps || [];
         this.state.mode = card.mode;
         this.state.confirmOff = false;
+        this.state.confirmRemove = false;
         this.state.token = "";
         this.state.webhookSecret = "";
         this.state.approvals = card.approvals || [];
@@ -1117,6 +1140,14 @@ export class ChannelCenter extends Component {
         this.state.confirmOff = false;
     }
 
+    askRemove() {
+        this.state.confirmRemove = true;
+    }
+
+    cancelRemove() {
+        this.state.confirmRemove = false;
+    }
+
     async doDisconnect() {
         await this._guarded(async () => {
             await this.orm.call(MODEL, "center_disconnect",
@@ -1125,6 +1156,22 @@ export class ChannelCenter extends Component {
             await this.load();
             this.closeStepper();
         });
+    }
+
+    async doRemove() {
+        await this._guarded(async () => {
+            const res = await this.orm.call(MODEL, "center_remove_account",
+                [this.state.connectionId]);
+            this.state.confirmRemove = false;
+            this.toast(res.message || _t("Account removed from the list."));
+            await this.load();
+            this.closeStepper();
+        });
+    }
+
+    checkPassed(account, key) {
+        return !!(account && (account.checks || []).some(
+            (check) => check.key === key && check.status === "pass"));
     }
 
     async doReconnect(card) {

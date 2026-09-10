@@ -46,6 +46,7 @@ from odoo.exceptions import UserError, ValidationError
 
 from ..services.adapters import (
     CHANNEL_ADAPTERS, META_ES_CONFIG_KEY, META_FLB_CONFIG_KEY,
+    zalo_webhook_url,
 )
 from ..services.webhook_verify import VERIFY_TOKEN_KEY
 
@@ -930,8 +931,11 @@ class ChannelPlatformAppGoLive(models.Model):
         redirect = ('%s%s' % (self._redirect_base(provider), path)
                     if path else '')
         hooks = WEBHOOK_PATHS.get(provider or '') or []
-        webhooks = '\n'.join('%s: %s%s' % (label, base, hook)
-                             for label, hook in hooks)
+        if provider == 'zalo':
+            webhooks = 'Zalo OA: %s' % zalo_webhook_url(self.env)
+        else:
+            webhooks = '\n'.join('%s: %s%s' % (label, base, hook)
+                                 for label, hook in hooks)
         return redirect, webhooks
 
     @api.model

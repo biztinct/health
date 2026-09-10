@@ -525,3 +525,39 @@ class TestZaloCCD(TransactionCase):
         blob = json.dumps(config.sudo().read(
             ['name', 'oa_id', 'state'])[0], default=str)
         self.assertNotIn('chs$1$', blob)
+
+    def test_128_each_oa_uses_only_its_own_connection(self):
+        """A newer sibling or disabled setup must never shadow this OA."""
+        first, first_conn = self._linked()
+        second_oa = 'OA_CCD_SECOND'
+        second = self.Config.sudo().search([
+            ('company_id', '=', self.company.id),
+            ('oa_id', '=', second_oa),
+        ], limit=1)
+        if not second:
+            second = self.Config.sudo().create({
+                'name': 'CC-D second OA', 'app_id': APP_ID,
+                'app_secret': APP_SECRET, 'oa_id': second_oa,
+                'company_id': self.company.id, 'state': 'connected',
+            })
+        second_conn = self.Conn.sudo().with_context(
+            **{INTERNAL_CTX: True}).create({
+                'channel': 'zalo', 'company_id': self.company.id,
+                'state': 'testing', 'resource_external_id': second_oa,
+                'resource_display_name': 'CC-D second OA',
+            })
+        first_conn.action_set_secret('access_token', 'first-oa-token')
+        second_conn.action_set_secret('access_token', 'second-oa-token')
+
+        abandoned = self.Conn.sudo().with_context(
+            **{INTERNAL_CTX: True}).create({
+                'channel': 'zalo', 'company_id': self.company.id,
+                'state': 'disabled', 'resource_display_name': 'Abandoned',
+            })
+        abandoned.action_set_secret('access_token', 'expired-shadow-token')
+
+        self.assertEqual(first._channel_connection(), first_conn)
+        self.assertEqual(second._channel_connection(), second_conn)
+        self.assertEqual(first._effective_access_token(), 'first-oa-token')
+        self.assertEqual(second._effective_access_token(), 'second-oa-token')
+        self.assertFalse(self.Config.get_active_config(oa_id='OA_UNKNOWN'))

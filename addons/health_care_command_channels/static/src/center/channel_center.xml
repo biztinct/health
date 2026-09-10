@@ -170,9 +170,9 @@
           </span>
           <div>
             <h2 t-esc="openCard and openCard.label"/>
-            <span class="cc-chip" t-if="openCard"
-                  t-att-class="'tone-' + tone(openCard.state)"
-                  t-esc="openCard.state_chip"/>
+            <span class="cc-chip" t-if="openAccount"
+                  t-att-class="'tone-' + tone(openAccount.state)"
+                  t-esc="openAccount.state_chip"/>
           </div>
           <button class="cc-x" t-on-click="closeStepper" aria-label="Close">
             <span class="ic ic-x"/>
@@ -238,11 +238,11 @@
             <details>
               <summary>Technical details</summary>
               <dl>
-                <dt>Status</dt><dd t-esc="openCard.state"/>
+                <dt>Status</dt><dd t-esc="openAccount.state"/>
                 <dt>Last received</dt>
-                <dd t-esc="openCard.last_inbound_at or '—'"/>
+                <dd t-esc="openAccount.last_inbound_at or '—'"/>
                 <dt>Last sent</dt>
-                <dd t-esc="openCard.last_outbound_at or '—'"/>
+                <dd t-esc="openAccount.last_outbound_at or '—'"/>
               </dl>
             </details>
           </div>
@@ -255,16 +255,30 @@
                       t-on-click="doDisconnect">Turn it off</button>
             </div>
           </div>
+          <div t-if="state.confirmRemove" class="cc-alert warn">
+            <p>This account will disappear from the Channel Center. Its conversation history and audit trail stay available.</p>
+            <div class="cc-row">
+              <button class="cc-btn ghost" t-on-click="cancelRemove">Keep it</button>
+              <button class="cc-btn danger" t-att-disabled="state.busy"
+                      t-on-click="doRemove">Remove account</button>
+            </div>
+          </div>
         </div>
 
         <footer t-if="state.manage" class="cc-modal-foot">
           <!-- No test button for Calls: there is no VoIP24h endpoint we hold
                a verified contract for, so the button could only ever explain
                why it cannot work. The card carries that sentence instead. -->
-          <button class="cc-btn ghost" t-if="!isCall" t-att-disabled="state.busy"
+          <button class="cc-btn ghost"
+                  t-if="!isCall and openAccount and openAccount.state !== 'disabled'"
+                  t-att-disabled="state.busy"
                   t-on-click="sendTest">Send a test</button>
-          <button class="cc-btn ghost" t-if="!state.confirmOff"
+          <button class="cc-btn ghost"
+                  t-if="openAccount and openAccount.state !== 'disabled' and !state.confirmOff"
                   t-on-click="askDisconnect">Turn off</button>
+          <button class="cc-btn danger"
+                  t-if="openAccount and openAccount.state === 'disabled' and !state.confirmRemove"
+                  t-on-click="askRemove">Remove from list</button>
           <button class="cc-btn primary" t-on-click="closeStepper">Done</button>
         </footer>
 
@@ -305,15 +319,15 @@
 
             <!-- ===== Telegram: waiting for the first message ===== -->
             <t t-if="isTelegram and state.step === 3">
-              <p class="cc-wait" t-if="openCard and !openCard.last_inbound_at">
+              <p class="cc-wait" t-if="openAccount and !openAccount.last_inbound_at">
                 <span class="ic ic-clock"/> Waiting for your first message…
               </p>
               <p class="cc-ok"
-                 t-if="openCard and openCard.last_inbound_at and openCard.state !== 'ready'">
+                 t-if="openAccount and openAccount.last_inbound_at and openAccount.state !== 'ready'">
                 <span class="ic ic-check"/>
                 <span>We received your message. Send a reply to finish.</span>
               </p>
-              <p class="cc-ok" t-if="openCard and openCard.state === 'ready'">
+              <p class="cc-ok" t-if="openAccount and openAccount.state === 'ready'">
                 <span class="ic ic-check"/>
                 <span>Telegram is connected. New messages arrive in Care Command.</span>
               </p>
@@ -321,6 +335,9 @@
 
             <!-- ===== Zalo: sign in with the provider ===== -->
             <t t-if="isZalo and state.step === 0">
+              <div class="cc-alert warn" t-if="state.additionalAccount">
+                <p>Select the other Official Account on Zalo's permission page. If it is not listed, link that OA to the same Zalo developer app and sign in as one of its administrators.</p>
+              </div>
               <p class="cc-wait" t-if="state.popupBlocked">
                 <span class="ic ic-clock"/>
                 <span>Your browser blocked the sign-in window.</span>
@@ -331,13 +348,16 @@
               </p>
               <p class="cc-ok" t-if="state.hasCredentials">
                 <span class="ic ic-check"/>
-                <span>Signed in<t t-if="openCard and openCard.resource_line">
-                  — <t t-esc="openCard.resource_line"/></t></span>
+                <span>Signed in<t t-if="openAccount and openAccount.resource_line">
+                  — <t t-esc="openAccount.resource_line"/></t></span>
               </p>
             </t>
 
             <!-- ===== Zalo: the portal-guided webhook checklist ===== -->
             <t t-if="isZalo and state.step === 1">
+              <div class="cc-alert warn" t-if="!state.regionalRelayConfigured">
+                <p>Zalo inbound messages require the Vietnam relay. Ask the platform administrator to configure it before copying this address into Zalo.</p>
+              </div>
               <label class="cc-label" for="cc_zalo_hook">Webhook address</label>
               <textarea id="cc_zalo_hook" class="cc-input area mono" rows="2"
                         readonly="readonly"
@@ -361,10 +381,10 @@
 
             <!-- ===== Zalo: waiting for Zalo to confirm ===== -->
             <t t-if="isZalo and state.step === 2">
-              <p class="cc-wait" t-if="openCard and !openCard.last_inbound_at">
+              <p class="cc-wait" t-if="!checkPassed(openAccount, 'inbound_ok')">
                 <span class="ic ic-clock"/> Waiting for Zalo to confirm…
               </p>
-              <p class="cc-ok" t-if="openCard and openCard.last_inbound_at">
+              <p class="cc-ok" t-if="checkPassed(openAccount, 'inbound_ok')">
                 <span class="ic ic-check"/>
                 <span>We received a message from Zalo.</span>
               </p>
@@ -372,7 +392,7 @@
 
             <!-- ===== Zalo: the synthetic test reply ===== -->
             <t t-if="isZalo and state.step === 3">
-              <p class="cc-ok" t-if="openCard and openCard.state === 'ready'">
+              <p class="cc-ok" t-if="openAccount and openAccount.state === 'ready'">
                 <span class="ic ic-check"/>
                 <span>Zalo is connected. New messages arrive in Care Command.</span>
               </p>
@@ -404,8 +424,8 @@
               </p>
               <p class="cc-ok" t-if="state.hasCredentials">
                 <span class="ic ic-check"/>
-                <span>Signed in<t t-if="openCard and openCard.resource_line">
-                  — <t t-esc="openCard.resource_line"/></t></span>
+                <span>Signed in<t t-if="openAccount and openAccount.resource_line">
+                  — <t t-esc="openAccount.resource_line"/></t></span>
               </p>
               <div class="cc-alert warn" t-if="state.metaMissingScopes.length">
                 <p>Meta did not grant everything Health19 needs. Ask whoever administers your Meta account for:</p>
@@ -449,10 +469,10 @@
 
             <!-- ===== Meta: we set things up ===== -->
             <t t-if="isMeta and state.step === 2">
-              <p class="cc-res" t-if="openCard and openCard.resource_line"
-                 t-esc="openCard.resource_line"/>
+              <p class="cc-res" t-if="openAccount and openAccount.resource_line"
+                 t-esc="openAccount.resource_line"/>
               <p class="cc-ok"
-                 t-if="openCard and openCard.state !== 'select_resource' and openCard.state !== 'authorizing' and openCard.state !== 'configuring'">
+                 t-if="openAccount and openAccount.state !== 'select_resource' and openAccount.state !== 'authorizing' and openAccount.state !== 'configuring'">
                 <span class="ic ic-check"/>
                 <span>Meta is sending your messages to Health19.</span>
               </p>
@@ -460,10 +480,10 @@
 
             <!-- ===== Meta: test + the approvals that are not ours ===== -->
             <t t-if="isMeta and state.step === 3">
-              <p class="cc-wait" t-if="openCard and !openCard.last_inbound_at">
+              <p class="cc-wait" t-if="openAccount and !openAccount.last_inbound_at">
                 <span class="ic ic-clock"/> Waiting for your first message…
               </p>
-              <p class="cc-ok" t-if="openCard and openCard.state === 'ready'">
+              <p class="cc-ok" t-if="openAccount and openAccount.state === 'ready'">
                 <span class="ic ic-check"/>
                 <span>Connected. New messages arrive in Care Command.</span>
               </p>
@@ -513,10 +533,10 @@
 
             <!-- ===== Web chat: verify installation ===== -->
             <t t-if="isWebchat and state.step === 2">
-              <p class="cc-wait" t-if="openCard and !openCard.last_inbound_at">
+              <p class="cc-wait" t-if="openAccount and !openAccount.last_inbound_at">
                 <span class="ic ic-clock"/> Waiting for the first message…
               </p>
-              <p class="cc-ok" t-if="openCard and openCard.last_inbound_at">
+              <p class="cc-ok" t-if="openAccount and openAccount.last_inbound_at">
                 <span class="ic ic-check"/>
                 <span>Web chat is working. Messages appear in Care Command.</span>
               </p>
@@ -573,11 +593,11 @@
 
             <!-- ===== Email: the round trip ===== -->
             <t t-if="isEmail and state.step === 2">
-              <p class="cc-wait" t-if="openCard and !openCard.last_inbound_at">
+              <p class="cc-wait" t-if="openAccount and !openAccount.last_inbound_at">
                 <span class="ic ic-clock"/>
                 <span>Waiting for the first message to arrive…</span>
               </p>
-              <p class="cc-ok" t-if="openCard and openCard.state === 'ready'">
+              <p class="cc-ok" t-if="openAccount and openAccount.state === 'ready'">
                 <span class="ic ic-check"/>
                 <span>Email is connected. New messages arrive in Care Command.</span>
               </p>
@@ -619,10 +639,10 @@
 
             <!-- ===== Calls: wait for a real call ===== -->
             <t t-if="isCall and state.step === 2">
-              <p class="cc-wait" t-if="openCard and !openCard.last_inbound_at">
+              <p class="cc-wait" t-if="openAccount and !openAccount.last_inbound_at">
                 <span class="ic ic-clock"/> Waiting for a call…
               </p>
-              <p class="cc-ok" t-if="openCard and openCard.last_inbound_at">
+              <p class="cc-ok" t-if="openAccount and openAccount.last_inbound_at">
                 <span class="ic ic-check"/>
                 <span>We received a call event.</span>
               </p>
@@ -646,11 +666,11 @@
           <button t-if="isTelegram and state.step === 2"
                   class="cc-btn primary" t-att-disabled="state.busy"
                   t-on-click="registerWebhook">Connect</button>
-          <button t-if="isTelegram and state.step === 3 and !(openCard and openCard.state === 'ready')"
+          <button t-if="isTelegram and state.step === 3 and !(openAccount and openAccount.state === 'ready')"
                   class="cc-btn primary"
-                  t-att-disabled="state.busy or !(openCard and openCard.last_inbound_at)"
+                  t-att-disabled="state.busy or !(openAccount and openAccount.last_inbound_at)"
                   t-on-click="sendTest">Send a reply</button>
-          <button t-if="isTelegram and state.step === 3 and openCard and openCard.state === 'ready'"
+          <button t-if="isTelegram and state.step === 3 and openAccount and openAccount.state === 'ready'"
                   class="cc-btn primary" t-on-click="closeStepper">Done</button>
 
           <!-- Zalo -->
@@ -667,12 +687,12 @@
                   class="cc-btn ghost" t-on-click="next">Skip</button>
           <button t-if="isZalo and state.step === 2"
                   class="cc-btn primary"
-                  t-att-disabled="state.busy or !(openCard and openCard.last_inbound_at)"
+                  t-att-disabled="state.busy or !checkPassed(openAccount, 'inbound_ok')"
                   t-on-click="next">Next</button>
-          <button t-if="isZalo and state.step === 3 and !(openCard and openCard.state === 'ready')"
+          <button t-if="isZalo and state.step === 3 and !(openAccount and openAccount.state === 'ready')"
                   class="cc-btn primary" t-att-disabled="state.busy"
                   t-on-click="sendTest">Send a reply</button>
-          <button t-if="isZalo and state.step === 3 and openCard and openCard.state === 'ready'"
+          <button t-if="isZalo and state.step === 3 and openAccount and openAccount.state === 'ready'"
                   class="cc-btn primary" t-on-click="closeStepper">Done</button>
 
           <!-- Meta (WhatsApp Embedded Signup + Messenger FLB) -->
@@ -694,11 +714,11 @@
           <button t-if="isMeta and state.step === 2"
                   class="cc-btn primary" t-att-disabled="state.busy"
                   t-on-click="subscribeMeta">Connect</button>
-          <button t-if="isMeta and state.step === 3 and !(openCard and openCard.state === 'ready')"
+          <button t-if="isMeta and state.step === 3 and !(openAccount and openAccount.state === 'ready')"
                   class="cc-btn primary"
-                  t-att-disabled="state.busy or !(openCard and openCard.last_inbound_at)"
+                  t-att-disabled="state.busy or !(openAccount and openAccount.last_inbound_at)"
                   t-on-click="sendTest">Send a reply</button>
-          <button t-if="isMeta and state.step === 3 and openCard and openCard.state === 'ready'"
+          <button t-if="isMeta and state.step === 3 and openAccount and openAccount.state === 'ready'"
                   class="cc-btn primary" t-on-click="closeStepper">Done</button>
 
           <!-- Email -->
@@ -713,10 +733,10 @@
                   t-on-click="refreshEmailStatus">Check again</button>
           <button t-if="isEmail and state.step === 1 and state.emailSignedIn"
                   class="cc-btn primary" t-on-click="next">Next</button>
-          <button t-if="isEmail and state.step === 2 and !(openCard and openCard.state === 'ready')"
+          <button t-if="isEmail and state.step === 2 and !(openAccount and openAccount.state === 'ready')"
                   class="cc-btn primary" t-att-disabled="state.busy"
                   t-on-click="sendTest">Send a test</button>
-          <button t-if="isEmail and state.step === 2 and openCard and openCard.state === 'ready'"
+          <button t-if="isEmail and state.step === 2 and openAccount and openAccount.state === 'ready'"
                   class="cc-btn primary" t-on-click="closeStepper">Done</button>
 
           <!-- Calls (receive only — there is deliberately no "test" button:

@@ -42,6 +42,7 @@ from odoo.addons.health_care_command_channels.models.care_channel_connection imp
 from odoo.addons.health_care_command_channels.services.adapters import (
     ChannelSendError,
     ZaloAdapter,
+    ZALO_WEBHOOK_BASE_PARAM,
 )
 from odoo.addons.health_care_command_channels.services.webhook_verify import (
     verify_zalo,
@@ -522,6 +523,43 @@ class TestZaloCenter(ChannelSpineCase):
         # T104's contract still holds: ZNS is part of the Zalo connection.
         with self.assertRaises(UserError):
             self.Conn.center_begin('zns')
+
+    def test_128_reauthorization_and_duplicate_oa_are_safe(self):
+        """A fresh login needs fresh proof and cannot create an OA twin."""
+        existing = self._zalo_conn(
+            state='testing', resource_external_id=ZALO_OA_ID)
+        self.Check.upsert_check(existing, 'webhook_verified', 'pass')
+        self.Check.upsert_check(existing, 'inbound_ok', 'pass')
+
+        self.Conn.center_zalo_authorize(existing.id)
+        statuses = {c.check_key: c.status
+                    for c in existing.sudo().readiness_check_ids}
+        self.assertEqual(statuses['webhook_verified'], 'pending')
+        self.assertEqual(statuses['inbound_ok'], 'pending')
+
+        second = self._zalo_conn(state='authorizing')
+        _session, opened = self._open_session(second)
+        with self.mock_post(TOKEN_OK) as posted:
+            result = self.env['care.channel.oauth.session']._handle_callback(
+                'zalo', {'state': opened['state'], 'code': 'unused-code',
+                         'oa_id': ZALO_OA_ID})
+        self.assertEqual(result['outcome'], 'duplicate')
+        posted.assert_not_called()
+        second = self.Conn.with_context(active_test=False).browse(second.id)
+        self.assertFalse(second.active)
+        self.assertEqual(second.state, 'disabled')
+        self.assertFalse(second.has_credentials)
+
+    def test_129_relay_url_is_the_public_zalo_url(self):
+        relay = 'https://zalo-vn.example.test'
+        self.env['ir.config_parameter'].sudo().set_param(
+            ZALO_WEBHOOK_BASE_PARAM, relay + '/')
+        conn = self._zalo_conn(
+            state='configuring', resource_external_id=ZALO_OA_ID)
+        info = self.Conn.center_zalo_info(conn.id)
+        self.assertEqual(info['webhook_url'],
+                         relay + '/care_channels/zalo/webhook')
+        self.assertTrue(info['regional_relay_configured'])
 
     # ==================================================================
     # T120 — spoofing the new endpoints

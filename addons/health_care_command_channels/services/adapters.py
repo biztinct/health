@@ -112,6 +112,10 @@ ZALO_TOKEN_PATH = '/v4/oa/access_token'
 ZALO_GETOA_PATH = '/v2.0/oa/getoa'
 ZALO_CALLBACK_PATH = '/channel_hub/oauth/callback/zalo'
 ZALO_WEBHOOK_PATH = '/care_channels/zalo/webhook'
+# Zalo withholds user data from non-Vietnam IP addresses.  A deployment that
+# terminates Zalo traffic on a Vietnam relay sets this to that relay's HTTPS
+# origin; the relay preserves the raw body/signature and forwards here.
+ZALO_WEBHOOK_BASE_PARAM = 'channel_hub.zalo_webhook_base'
 # The access token lives ~25 h; refresh this far ahead of the wire so a cron
 # tick that lands late still has a working grant to renew.
 ZALO_REFRESH_AHEAD_HOURS = 3
@@ -179,6 +183,20 @@ def _utc_from_unix(value):
             tzinfo=None)
     except (TypeError, ValueError, OSError, OverflowError):
         return None
+
+
+def zalo_webhook_url(env):
+    """Public Zalo endpoint, optionally fronted by a Vietnam relay."""
+    icp = env['ir.config_parameter'].sudo()
+    base = (icp.get_param(ZALO_WEBHOOK_BASE_PARAM)
+            or icp.get_param('web.base.url') or '').strip().rstrip('/')
+    return '%s%s' % (base, ZALO_WEBHOOK_PATH)
+
+
+def zalo_relay_configured(env):
+    """Whether Zalo reaches us through the required Vietnam ingress."""
+    return bool((env['ir.config_parameter'].sudo()
+                 .get_param(ZALO_WEBHOOK_BASE_PARAM) or '').strip())
 
 
 def _fb_referral(item):
@@ -1816,7 +1834,7 @@ class ZaloAdapter(_StubAdapter):
 
     def webhook_url(self):
         """The ONE webhook URL for this deployment (portal-only, one per app)."""
-        return '%s%s' % (self._base_url(), ZALO_WEBHOOK_PATH)
+        return zalo_webhook_url(self.env)
 
     # ------------------------------------------------------------------
     # Authorization — OAuth v4 with MANDATORY PKCE S256
@@ -1849,6 +1867,23 @@ class ZaloAdapter(_StubAdapter):
         savepoint, AFTER the single-use state has been burned.
         """
         conn = self.connection
+        callback_oa = str((params or {}).get('oa_id') or '').strip()
+        if callback_oa:
+            duplicate = self.env['care.channel.connection'].sudo().search([
+                ('channel', '=', 'zalo'),
+                ('resource_external_id', '=', callback_oa),
+                ('active', '=', True),
+                ('id', '!=', conn.id),
+            ], limit=1)
+            if duplicate:
+                # Do not spend the one-use authorization code or store another
+                # token for an OA that is already live.  Remove the empty
+                # setup row from the catalogue in the same callback tx.
+                if conn.state != 'disabled':
+                    conn.sudo()._transition(
+                        'disabled', reason='duplicate Zalo OA selected')
+                conn.sudo()._internal().write({'active': False})
+                return {'ok': False, 'duplicate_resource': True}
         code = (params or {}).get('code') or (params or {}).get('oa_code')
         if not code:
             raise ChannelSendError('the Zalo callback carried no code')

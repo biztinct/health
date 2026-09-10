@@ -408,6 +408,23 @@ class TestChannelCenter(ChannelSpineCase):
                          'the checks it already proved still count')
         self.assertIn('telegram', self.Care._channel_keys())
 
+    def test_130_disabled_account_can_be_removed_from_the_list(self):
+        conn = self._tg_conn()
+        check_ids = conn.readiness_check_ids.ids
+        self.Conn.center_disconnect(conn.id)
+        result = self.Conn.center_remove_account(conn.id)
+        self.assertTrue(result['removed'])
+
+        archived = self.Conn.with_context(active_test=False).browse(conn.id)
+        self.assertFalse(archived.active)
+        self.assertEqual(archived.state, 'disabled')
+        self.assertEqual(archived.readiness_check_ids.ids, check_ids)
+        self.assertFalse(self.Conn.search_count([('id', '=', conn.id)]))
+
+        live = self._wc_conn()
+        with self.assertRaises(UserError):
+            self.Conn.center_remove_account(live.id)
+
     # ==================================================================
     # T104 — center_begin is idempotent
     # ==================================================================

@@ -42,7 +42,8 @@ from odoo.addons.health_care_command.models.care_conversation import (
 from ..services.adapters import (
     EMAIL_PROVIDER_SETTING, EMAIL_PROVIDERS, FB_MESSAGE_TAGS, META_SDK_URL,
     MODE_EMBEDDED_SIGNUP, MODE_GUIDED_SECRET, MODE_OAUTH_POPUP, MODE_ONE_CLICK,
-    ZALO_WEBHOOK_PATH, ChannelSendError, get_adapter, meta_window_state,
+    ChannelSendError, get_adapter, meta_window_state, zalo_relay_configured,
+    zalo_webhook_url,
 )
 from ..services.redact import redact
 from .care_channel_connection import SENDABLE_STATES
@@ -862,6 +863,7 @@ class CareChannelConnectionCenter(models.Model):
             'mode': caps.get('mode'),
             'guide_steps': self._center_guide_steps(caps, conn),
             'has_credentials': conn.has_credentials,
+            'additional_account': bool(add_account),
         }
 
     # ==================================================================
@@ -1011,6 +1013,16 @@ class CareChannelConnectionCenter(models.Model):
                           'action_required', 'ready', 'expiring'):
             if conn.state != 'authorizing':
                 conn._transition('authorizing', reason='zalo sign-in')
+        # A reconnect must prove the current inbound path again.  Keeping an
+        # old green check here made yesterday's message look like the message
+        # the operator had just sent during today's setup.
+        Check = self.env['care.channel.readiness.check']
+        Check.upsert_check(
+            conn.sudo(), 'webhook_verified', 'pending',
+            detail='Awaiting a signed event after this Zalo sign-in')
+        Check.upsert_check(
+            conn.sudo(), 'inbound_ok', 'pending',
+            detail='Awaiting a message after this Zalo sign-in')
         Session = self.env['care.channel.oauth.session']
         opened = Session.create_for(conn, provider='zalo')
         session = Session.sudo().browse(opened['session_id'])
@@ -1033,8 +1045,8 @@ class CareChannelConnectionCenter(models.Model):
             'connection_id': conn.id,
             'state': conn.state,
             'signed_in': conn._zalo_authorization_complete(),
-            'webhook_url': '%s%s' % (self._center_base_url(),
-                                     ZALO_WEBHOOK_PATH),
+            'webhook_url': zalo_webhook_url(self.env),
+            'regional_relay_configured': zalo_relay_configured(self.env),
             'has_webhook_secret': bool(conn.sudo().provider_secret_enc),
             'resource_line': conn._center_resource_line(),
             'zns': self._center_zns_status(conn),
@@ -1071,8 +1083,16 @@ class CareChannelConnectionCenter(models.Model):
                 'Paste the webhook secret Zalo shows on your app page.'))
         conn.action_set_secret('provider_secret', secret)
         conn.sudo()._internal().write({'webhook_state': 'subscribed'})
-        self.env['care.channel.readiness.check'].upsert_check(
-            conn, 'webhook_configured', 'pass')
+        Check = self.env['care.channel.readiness.check']
+        Check.upsert_check(conn, 'webhook_configured', 'pass')
+        # A replacement secret invalidates the old signature proof until a
+        # new provider event verifies with the value just saved.
+        Check.upsert_check(
+            conn, 'webhook_verified', 'pending',
+            detail='Awaiting a signed event with the saved Zalo secret')
+        Check.upsert_check(
+            conn, 'inbound_ok', 'pending',
+            detail='Awaiting a message after the Zalo webhook was updated')
         if conn.state in ('authorizing', 'select_resource', 'configuring',
                           'action_required'):
             conn._transition('testing', reason='zalo webhook secret stored')
@@ -1081,8 +1101,7 @@ class CareChannelConnectionCenter(models.Model):
             'webhook_subscribed', connection=conn,
             detail='zalo per-OA webhook secret stored')
         return {'connection_id': conn.id, 'state': conn.state,
-                'webhook_url': '%s%s' % (self._center_base_url(),
-                                         ZALO_WEBHOOK_PATH),
+                'webhook_url': zalo_webhook_url(self.env),
                 'has_webhook_secret': True}
 
     # ==================================================================
@@ -1796,10 +1815,17 @@ class CareChannelConnectionCenter(models.Model):
         """
         if 'zalo.message' not in self.env:
             raise UserError(_('The Zalo module is not installed.'))
+        Config = self.env['zalo.config'].sudo().with_company(conn.company_id)
+        config = Config.get_active_config(oa_id=conn.resource_external_id)
+        if not config:
+            raise UserError(_(
+                'This Zalo account is not linked to its message history yet. '
+                'Reconnect this account, then send it a new message.'))
         Care = self.env['care.conversation'].sudo()
         conv = Care.search([
             ('company_id', '=', conn.company_id.id),
             ('zalo_conversation_id', '!=', False),
+            ('zalo_conversation_id.config_id', '=', config.id),
         ], order='last_event_at desc, id desc', limit=1)
         if not conv:
             raise UserError(_(
@@ -1887,6 +1913,25 @@ class CareChannelConnectionCenter(models.Model):
         self.env['care.channel.audit']._log('disconnect', connection=conn)
         return {'connection_id': conn.id, 'state': conn.state,
                 'message': _('Turned off.')}
+
+    @api.model
+    def center_remove_account(self, conn_id):
+        """Archive a turned-off account so it disappears from the Center.
+
+        The row, credentials, audit and conversation history remain intact.
+        That gives the tenant the requested remove control without making a
+        mistaken click destroy evidence or patient communication history.
+        """
+        conn = self._center_get(conn_id)
+        if conn.state != 'disabled':
+            raise UserError(_(
+                'Turn this account off before removing it from the list.'))
+        self.env['care.channel.audit']._log(
+            'disconnect', connection=conn,
+            detail='account archived from Channel Center')
+        conn.sudo()._internal().write({'active': False})
+        return {'connection_id': conn.id, 'removed': True,
+                'message': _('Account removed from the list.')}
 
     @api.model
     def _center_pause_email(self, conn, resume=False):

@@ -296,6 +296,16 @@ class CareChannelOauthSession(models.Model):
                 'callback_error', connection=connection, detail=exc)
             return {'outcome': 'error', 'ok': False,
                     'channel': connection.channel}
+        if isinstance(result, dict) and result.get('duplicate_resource'):
+            session.write({
+                'outcome': 'error',
+                'detail_redacted': 'Zalo OA is already connected',
+            })
+            self.env['care.channel.audit']._log(
+                'callback_error', connection=connection,
+                detail='Zalo OA is already connected')
+            return {'outcome': 'duplicate', 'ok': False,
+                    'channel': connection.channel}
         session.write({'outcome': 'ok'})
         self.env['care.channel.audit']._log(
             'callback_ok', connection=connection,
