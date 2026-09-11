@@ -465,6 +465,14 @@ class ZaloConfig(models.Model):
         """Get a valid access token, refreshing if necessary"""
         self.ensure_one()
 
+        if 'care.channel.connection' in self.env and self.oa_id:
+            paused = self.env['care.channel.connection'].sudo().search([
+                ('channel', '=', 'zalo'), ('company_id', '=', self.company_id.id),
+                ('resource_external_id', '=', self.oa_id), ('state', '=', 'disabled'),
+            ], limit=1)
+            if paused:
+                raise UserError(_('This OA connection is turned off or paused. Resume it in Channel Center.'))
+
         if self.is_token_expired() and self._effective_refresh_token():
             _logger.info('Zalo access token expired for config %s, refreshing',
                          self.id)

@@ -127,6 +127,8 @@
                     t-att-disabled="card.primary_action === 'unavailable' or state.busy"
                     t-on-click="() => this.onPrimary(card)"
                     t-esc="card.primary_label"/>
+            <button class="cc-btn ghost" t-if="card.accounts.length === 1 and card.primary_action !== 'open'"
+                    t-att-disabled="state.busy" t-on-click="() => this.openManage(card)">Manage account</button>
             <!-- Two Facebook pages, two Zalo accounts (client requirement 1).
                  Only offered once the first account exists — "add another"
                  with nothing to add another TO is just a confusing Connect. -->
@@ -247,6 +249,12 @@
             </details>
           </div>
 
+          <div t-if="openAccount and openAccount.paused" class="cc-alert warn">
+            <p>This connection is paused. Saved setup and conversation history are retained. Messages received while paused are not imported automatically.</p>
+          </div>
+          <div t-if="openAccount and openAccount.sendable" class="cc-alert">
+            <p>Pause stops new messages and replies for this account while keeping its setup. Other accounts stay connected.</p>
+          </div>
           <div t-if="state.confirmOff" class="cc-alert warn">
             <p>New messages will stop arriving in Care Command. Conversation history stays.</p>
             <div class="cc-row">
@@ -279,6 +287,10 @@
           <button class="cc-btn danger"
                   t-if="openAccount and openAccount.state === 'disabled' and !state.confirmRemove"
                   t-on-click="askRemove">Remove from list</button>
+          <button class="cc-btn ghost" t-if="openAccount and openAccount.sendable"
+                  t-att-disabled="state.busy" t-on-click="pauseConnection">Pause connection</button>
+          <button class="cc-btn primary" t-if="openAccount and openAccount.paused"
+                  t-att-disabled="state.busy" t-on-click="() => this.resumeConnection(state.connectionId)">Resume connection</button>
           <button class="cc-btn primary" t-on-click="closeStepper">Done</button>
         </footer>
 

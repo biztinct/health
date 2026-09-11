@@ -547,6 +547,7 @@ class CareChannelConnectionCenter(models.Model):
             'label': check_labels.get(key, key),
             'status': statuses.get(key, 'pending'),
         } for key in caps.get('required_checks') or []]
+        paused = bool(conn.state == 'disabled' and conn.get_setting('paused_state'))
         return {
             'connection_id': conn.id,
             # Falls back through the tenant's label, then the provider's name,
@@ -557,7 +558,8 @@ class CareChannelConnectionCenter(models.Model):
             'named': bool(conn.account_label),
             'resource_line': conn._center_resource_line(),
             'state': conn.state,
-            'state_chip': chips.get(conn.state, conn.state),
+            'state_chip': _('Paused') if paused else chips.get(conn.state, conn.state),
+            'paused': paused,
             'health_status': conn.health_status or '',
             'sendable': conn.state in SENDABLE_STATES,
             'catchment': (conn.catchment_province_id.display_name
@@ -628,11 +630,15 @@ class CareChannelConnectionCenter(models.Model):
             } for key in caps.get('required_checks') or []]
             action, action_label = self._center_primary_action(
                 state, available, implemented)
+            paused = bool(conn and state == 'disabled' and conn.get_setting('paused_state'))
+            if paused:
+                action, action_label = 'resume', _('Resume connection')
             cards.append({
                 'channel': channel,
                 'label': labels.get(channel, channel),
                 'state': state,
-                'state_chip': chips.get(state, state),
+                'state_chip': _('Paused') if paused else chips.get(state, state),
+                'paused': paused,
                 'connection_id': conn.id if conn else False,
                 'resource_line': conn._center_resource_line() if conn else '',
                 'last_inbound_at': (fields.Datetime.to_string(conn.last_inbound_at)
@@ -1911,6 +1917,33 @@ class CareChannelConnectionCenter(models.Model):
         self.env['care.channel.audit']._log('disconnect', connection=conn)
         return {'connection_id': conn.id, 'state': conn.state,
                 'message': _('Turned off.')}
+
+    @api.model
+    def center_pause_account(self, conn_id):
+        conn = self._center_get(conn_id)
+        if conn.state == 'disabled' and conn.get_setting('paused_state'):
+            return {'state': conn.state}
+        if conn.state not in SENDABLE_STATES:
+            raise UserError(_('Finish connecting this account before pausing it.'))
+        conn.set_settings({'paused_state': conn.state})
+        self.center_disconnect(conn.id)
+        return {'state': conn.state, 'message': _('Connection paused.')}
+
+    @api.model
+    def center_resume_account(self, conn_id):
+        conn = self._center_get(conn_id)
+        if conn.state in SENDABLE_STATES and not conn.get_setting('paused_state'):
+            return {'state': conn.state}
+        if conn.state != 'disabled' or not conn.get_setting('paused_state'):
+            raise UserError(_('This account is not paused.'))
+        conn._transition('authorizing', reason='tenant resume saved connection')
+        conn._transition('testing', reason='restore saved readiness checks')
+        conn._recompute_ready()
+        self._center_pause_email(conn, resume=True)
+        conn.set_settings({'paused_state': False})
+        conn.sudo()._internal().write({'next_health_check_at': fields.Datetime.now()})
+        self.env['care.channel.audit']._log('reconnect', connection=conn)
+        return {'state': conn.state, 'message': _('Connection resumed. Saved setup retained.')}
 
     @api.model
     def center_remove_account(self, conn_id):

@@ -394,6 +394,9 @@ export class ChannelCenter extends Component {
         if (card.primary_action === "unavailable") {
             return;
         }
+        if (card.primary_action === "resume") {
+            return this.resumeConnection(card.connection_id);
+        }
         if (card.primary_action === "open") {
             return this.openManage(card);
         }
@@ -1144,6 +1147,24 @@ export class ChannelCenter extends Component {
 
     cancelRemove() {
         this.state.confirmRemove = false;
+    }
+
+    async pauseConnection() {
+        await this._guarded(async () => {
+            const res = await this.orm.call(MODEL, "center_pause_account", [this.state.connectionId]);
+            this.toast(res.message);
+            await this.load();
+            this.closeStepper();
+        });
+    }
+
+    async resumeConnection(connectionId) {
+        await this._guarded(async () => {
+            const res = await this.orm.call(MODEL, "center_resume_account", [connectionId]);
+            this.toast(res.message);
+            await this.load();
+            this.closeStepper();
+        });
     }
 
     async doDisconnect() {

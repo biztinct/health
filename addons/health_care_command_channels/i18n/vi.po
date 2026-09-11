@@ -5902,3 +5902,81 @@ msgstr "Hãy tắt tài khoản này trước khi xóa khỏi danh sách."
 #: code:addons/health_care_command_channels/static/src/center/channel_center.js:0
 msgid "Account removed from the list."
 msgstr "Đã xóa tài khoản khỏi danh sách."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Paused"
+msgstr "Tạm dừng"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Pause connection"
+msgstr "Tạm dừng kết nối"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Resume connection"
+msgstr "Tiếp tục kết nối"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Connection paused."
+msgstr "Đã tạm dừng kết nối."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Connection resumed. Saved setup retained."
+msgstr "Đã tiếp tục kết nối. Cấu hình đã lưu được giữ nguyên."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Finish connecting this account before pausing it."
+msgstr "Hoàn tất kết nối tài khoản trước khi tạm dừng."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "This account is not paused."
+msgstr "Tài khoản này không ở trạng thái tạm dừng."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "This connection is paused. Saved setup and conversation history are retained. Messages received while paused are not imported automatically."
+msgstr "Kết nối đang tạm dừng. Cấu hình và lịch sử trò chuyện được giữ nguyên. Tin nhắn trong thời gian tạm dừng không được tự động nhập lại."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Pause stops new messages and replies for this account while keeping its setup. Other accounts stay connected."
+msgstr "Tạm dừng nhận và gửi tin nhắn của tài khoản này, giữ nguyên cấu hình. Các tài khoản khác vẫn kết nối."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Manage account"
+msgstr "Quản lý tài khoản"

@@ -20,6 +20,8 @@ anywhere. Two shapes to notice:
   ``assertRaises`` cannot take a tuple of classes at all (§5.70).
 """
 import json
+from datetime import timedelta
+from odoo import fields
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -619,3 +621,55 @@ class TestZaloCCD(TransactionCase):
         self.assertEqual(event['attachments'], [])
         self.assertIn('content unavailable', event['text'])
         self.assertNotIn('[text]', event['text'])
+
+    def test_131_pause_resume_preserves_setup_and_isolates_oa(self):
+        config, conn = self._linked()
+        for key in conn._required_checks():
+            self.Check.upsert_check(conn, key, 'pass')
+        self.assertEqual(conn.state, 'ready')
+        before = conn.readiness_check_ids.read(['check_key', 'status'])
+        sibling = self.Conn.sudo()._internal().create({
+            'channel': 'zalo', 'company_id': self.company.id,
+            'resource_external_id': 'OTHER_PAUSE_OA', 'state': 'ready'})
+        self.Conn.center_pause_account(conn.id)
+        self.assertEqual(conn.state, 'disabled')
+        self.assertEqual(sibling.state, 'ready')
+        with self.assertRaises(UserError):
+            config.get_valid_token()
+        self.Conn.center_resume_account(conn.id)
+        self.assertEqual(conn.state, 'ready')
+        self.assertCountEqual(before, conn.readiness_check_ids.read(['check_key', 'status']))
+        self.assertFalse(conn.get_setting('paused_state'))
+        self.assertTrue(conn.next_health_check_at)
+        self.assertEqual(sibling.state, 'ready')
+        # Idempotent resume cannot reopen the wizard or mint a fresh grant.
+        self.assertEqual(self.Conn.center_resume_account(conn.id)['state'], 'ready')
+
+    def test_132_unfinished_connection_cannot_skip_setup_by_resuming(self):
+        conn = self._connection('testing')
+        with self.assertRaises(UserError):
+            self.Conn.center_pause_account(conn.id)
+        self.Conn.center_disconnect(conn.id)
+        with self.assertRaises(UserError):
+            self.Conn.center_resume_account(conn.id)
+        self.assertEqual(conn.state, 'disabled')
+
+    def test_133_refreshable_token_does_not_require_reconnect(self):
+        config, conn = self._linked()
+        for key in conn._required_checks():
+            self.Check.upsert_check(conn, key, 'pass')
+        conn._internal().write({
+            'refresh_token_enc': 'fixture-encrypted-value',
+            'token_expires_at': fields.Datetime.now() + timedelta(hours=6),
+            'state': 'expiring', 'health_status': 'expiring',
+            'next_health_check_at': False})
+        self.Conn._sweep_token_expiry()
+        self.assertEqual(conn.state, 'ready')
+        self.assertEqual(conn.health_status, 'healthy')
+        with patch.object(type(conn), '_run_health_check', autospec=True) as check:
+            self.Conn._cron_channel_health()
+            self.assertIn(conn.id, [call.args[0].id for call in check.call_args_list])
+        # Without a renewable grant the manual-expiry warning must remain.
+        conn._internal().write({'refresh_token_enc': False})
+        self.Conn._sweep_token_expiry()
+        self.assertEqual(conn.state, 'expiring')

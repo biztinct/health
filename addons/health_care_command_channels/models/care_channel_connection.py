@@ -993,7 +993,9 @@ class CareChannelConnection(models.Model):
     def _cron_channel_health(self):
         now = fields.Datetime.now()
         due = self.sudo().search([
-            ('next_health_check_at', '<=', now),
+            '|', ('next_health_check_at', '<=', now),
+            '&', ('next_health_check_at', '=', False),
+            ('state', 'in', ('ready', 'expiring')),
             ('state', 'not in', ('not_connected', 'disabled', 'legacy')),
         ])
         for conn in due:
@@ -1061,6 +1063,17 @@ class CareChannelConnection(models.Model):
         ])
         for conn in soon:
             expired = conn.token_expires_at <= now
+            # Zalo access tokens are short-lived and routinely refreshed.
+            # A seven-day manual-reconnect warning would remain on forever.
+            refreshable = (conn.channel == 'zalo' and conn.refresh_token_enc
+                           and any(c.check_key == 'token_fresh' and c.status == 'pass'
+                                   for c in conn.readiness_check_ids))
+            if refreshable and not expired:
+                if conn.state == 'expiring':
+                    conn._recompute_ready()
+                if conn.health_status == 'expiring':
+                    conn._internal().write({'health_status': 'healthy'})
+                continue
             if expired:
                 conn._internal().write({'health_status': 'action_required'})
                 if conn.state != 'action_required':
