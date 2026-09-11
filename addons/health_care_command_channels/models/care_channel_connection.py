@@ -1004,6 +1004,10 @@ class CareChannelConnection(models.Model):
             try:
                 with self.env.cr.savepoint():
                     conn._run_health_check()
+            except (psycopg2.errors.SerializationFailure, psycopg2.errors.DeadlockDetected):
+                # Retry the whole transaction with a fresh snapshot. A token
+                # rotation may have committed safely on its separate cursor.
+                raise
             except Exception:  # noqa: BLE001
                 _logger.exception('Channel health check crashed for connection %s',
                                   conn.id)
@@ -1018,6 +1022,10 @@ class CareChannelConnection(models.Model):
             # Declaration-only adapter (this phase): nothing to check yet.
             self._schedule_next_health_check(HEALTH_INTERVAL_MINUTES)
             return False
+        except psycopg2.Error:
+            # Database conflicts are not provider outages. Preserve the
+            # original error so Odoo can retry instead of using an aborted cursor.
+            raise
         except Exception as exc:  # noqa: BLE001 — provider/network failure
             self._register_health_failure(exc)
             return False

@@ -20,6 +20,7 @@ anywhere. Two shapes to notice:
   ``assertRaises`` cannot take a tuple of classes at all (§5.70).
 """
 import json
+import psycopg2
 from datetime import timedelta
 from odoo import fields
 from types import SimpleNamespace
@@ -673,3 +674,16 @@ class TestZaloCCD(TransactionCase):
         conn._internal().write({'refresh_token_enc': False})
         self.Conn._sweep_token_expiry()
         self.assertEqual(conn.state, 'expiring')
+
+    def test_134_health_preserves_database_retry_errors(self):
+        config, conn = self._linked('ready')
+        adapter = conn._get_adapter()
+        with patch.object(type(adapter), 'health_check',
+                          side_effect=psycopg2.errors.SerializationFailure('retry')):
+            with self.assertRaises(psycopg2.errors.SerializationFailure):
+                conn._run_health_check()
+        conn._internal().write({'next_health_check_at': fields.Datetime.now()})
+        with patch.object(type(conn), '_run_health_check',
+                          side_effect=psycopg2.errors.SerializationFailure('retry')):
+            with self.assertRaises(psycopg2.errors.SerializationFailure):
+                self.Conn._cron_channel_health()
