@@ -298,7 +298,7 @@ class ZaloMessage(models.Model):
             for attachment_data in msg_content['attachments']:
                 self.env['zalo.attachment'].create({
                     'message_id': message.id,
-                    'attachment_type': attachment_data.get('type') if attachment_data.get('type') in ('image', 'file', 'video', 'audio', 'location') else 'file',
+                    'attachment_type': attachment_data.get('type') if attachment_data.get('type') in ('image', 'sticker', 'gif', 'file', 'video', 'audio', 'location') else 'file',
                     'attachment_url': attachment_data.get('payload', {}).get('url'),
                     'name': attachment_data.get('payload', {}).get('name', 'Attachment'),
                 })

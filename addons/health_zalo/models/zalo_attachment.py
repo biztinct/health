@@ -31,6 +31,8 @@ class ZaloAttachment(models.Model):
 
     attachment_type = fields.Selection([
         ('image', 'Image'),
+        ('sticker', 'Sticker'),
+        ('gif', 'GIF'),
         ('file', 'File'),
         ('video', 'Video'),
         ('audio', 'Audio'),

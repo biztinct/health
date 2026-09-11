@@ -335,8 +335,8 @@
                         <t t-esc="ev.text"/>
                         <div t-foreach="ev.attachments || []" t-as="media" t-key="media.id" class="zalo-media">
                           <a t-att-href="media.url" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">
-                            <img t-if="media.type === 'image'" t-att-src="media.url" alt="Zalo image" loading="lazy" referrerpolicy="no-referrer"/>
-                            <span t-if="media.type === 'image'">Open image</span>
+                            <img t-if="['image', 'sticker', 'gif'].includes(media.type)" t-att-src="media.url" t-att-alt="media.type === 'sticker' ? 'Zalo sticker' : 'Zalo image'" t-att-style="media.type === 'sticker' ? 'max-width: 130px; max-height: 130px; object-fit: contain;' : ''" loading="lazy" referrerpolicy="no-referrer"/>
+                            <span t-if="['image', 'sticker', 'gif'].includes(media.type)">Open image</span>
                             <span t-else="" t-esc="media.name"/>
                           </a>
                         </div>

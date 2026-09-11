@@ -1016,6 +1016,14 @@ class CareConversation(models.Model):
         else:
             label = _('OA · Care Command') if outgoing else _('Client')
         media = []
+        # Older ingests stored stickers/GIFs as files. Recover their display
+        # type from the original provider event without rewriting history.
+        content = raw.get('message') or {}
+        original_types = {}
+        if isinstance(content, dict):
+            for item in content.get('attachments') or []:
+                if isinstance(item, dict) and isinstance(item.get('payload'), dict):
+                    original_types[item['payload'].get('url')] = item.get('type')
         for attachment in message.attachment_ids:
             url = attachment.attachment_url or ''
             # Only web links are rendered; provider data must never create a
@@ -1026,8 +1034,9 @@ class CareConversation(models.Model):
             except ValueError:
                 safe = False
             if safe:
+                kind = original_types.get(url, attachment.attachment_type)
                 media.append({'id': attachment.id, 'url': url,
-                              'type': attachment.attachment_type,
+                              'type': kind,
                               'name': attachment.name or _('Attachment')})
         body = message.text or ''
         if not body and not media:

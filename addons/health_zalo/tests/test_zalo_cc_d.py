@@ -687,3 +687,19 @@ class TestZaloCCD(TransactionCase):
                           side_effect=psycopg2.errors.SerializationFailure('retry')):
             with self.assertRaises(psycopg2.errors.SerializationFailure):
                 self.Conn._cron_channel_health()
+
+    def test_135_stickers_and_gifs_render_including_legacy_files(self):
+        config, conn = self._linked()
+        for kind in ('sticker', 'gif'):
+            event = self._event('MEDIA_' + kind)
+            event['event_name'] = 'user_send_' + kind
+            event['message'] = {'msg_id': 'MEDIA_' + kind, 'attachments': [{
+                'type': kind, 'payload': {'url': 'https://example.com/' + kind}}]}
+            self.env['zalo.message.handler'].with_context(zalo_oa_id=OA_ID)._ingest_verified_event(event)
+            message = self.ZMessage.search([('zalo_message_id', '=', 'MEDIA_' + kind)])
+            self.assertEqual(message.attachment_ids.attachment_type, kind)
+            timeline = self.env['care.conversation']._zalo_timeline_event(message)
+            self.assertEqual(timeline['attachments'][0]['type'], kind)
+            message.attachment_ids.write({'attachment_type': 'file'})
+            timeline = self.env['care.conversation']._zalo_timeline_event(message)
+            self.assertEqual(timeline['attachments'][0]['type'], kind)

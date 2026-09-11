@@ -367,6 +367,8 @@
 
             <!-- ===== Zalo: the portal-guided webhook checklist ===== -->
             <t t-if="isZalo and state.step === 1">
+              <p class="cc-help">In Zalo Developers, enable message events for both users and the Official Account. OA replies sent from the Zalo inbox appear here only when OA-send events are enabled.</p>
+              <p class="cc-help">OA reply events: oa_send_text, oa_send_image, oa_send_gif, oa_send_file, oa_send_sticker.</p>
               <label class="cc-label" for="cc_zalo_hook">Webhook address</label>
               <textarea id="cc_zalo_hook" class="cc-input area mono" rows="2"
                         readonly="readonly"
