@@ -711,6 +711,36 @@ class TestMetaCenter(ChannelSpineCase):
         self.assertEqual(self.Message.search_count([
             ('identity_id', '=', ident.id), ('direction', '=', 'incoming')]), 1)
 
+    def test_134c_comment_poll_recovers_missing_webhook_without_faking_it(self):
+        """Polling fills a delivery gap and never claims a webhook arrived."""
+        fb = self._fb_conn()
+        created = fields.Datetime.now().replace(microsecond=0)
+        reply = {'data': [{
+            'id': '%s_POST_2' % FB_PAGE_ID,
+            'comments': {'data': [{
+                'id': 'COMMENT_POLLED_1',
+                'created_time': created.strftime('%Y-%m-%dT%H:%M:%S+0000'),
+                'message': 'A missed public comment',
+                'from': {'id': 'FB_USER_POLLED', 'name': 'Mai'},
+                'parent': {'id': '%s_POST_2' % FB_PAGE_ID},
+                'permalink_url': 'https://www.facebook.com/example/posts/2',
+            }]},
+        }]}
+        self._mock_graph(get_map={'/feed': reply})
+
+        self.assertEqual(self.Message._poll_facebook_connection(fb), 1)
+        self.assertEqual(self.Message._poll_facebook_connection(fb), 0)
+        message = self.Message.search([
+            ('connection_id', '=', fb.id),
+            ('external_message_id', '=', 'COMMENT_POLLED_1'),
+        ])
+        self.assertEqual(len(message), 1)
+        self.assertEqual(message.surface, 'comment')
+        self.assertTrue(fb.last_inbound_at)
+        self.assertFalse(fb.last_webhook_at,
+                         'a provider poll is not webhook delivery evidence')
+        self.assertTrue(fb.get_setting('fb_comment_poll_at'))
+
     # ==================================================================
     # T135 — the 24 h window, and the ONE Messenger tag that still exists
     # ==================================================================

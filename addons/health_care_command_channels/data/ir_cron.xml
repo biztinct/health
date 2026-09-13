@@ -47,4 +47,19 @@
         <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).strftime('%Y-%m-%d 03:10:00')"/>
     </record>
 
+    <!-- Provider resilience: Meta delivers no production Page webhooks while
+         an app is unpublished.  Poll recent comments as a deduplicated safety
+         net; after publication it also fills brief webhook delivery gaps. -->
+    <record id="ir_cron_poll_facebook_comments" model="ir.cron" forcecreate="True">
+        <field name="name">Channels: recover Facebook comments</field>
+        <field name="model_id" ref="model_care_channel_message"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_poll_facebook_comments()</field>
+        <field name="active" eval="True"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">2</field>
+        <field name="interval_type">minutes</field>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(minutes=2)).strftime('%Y-%m-%d %H:%M:00')"/>
+    </record>
+
 </data></odoo>

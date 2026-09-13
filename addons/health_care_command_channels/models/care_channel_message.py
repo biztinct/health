@@ -20,7 +20,7 @@ Two rules do the heavy lifting:
 import json
 import logging
 import uuid
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 
 from odoo import _, api, fields, models
 
@@ -151,7 +151,7 @@ class CareChannelMessage(models.Model):
     # THE single inbound funnel (phase6 §2.3)
     # ------------------------------------------------------------------
     @api.model
-    def _ingest_inbound(self, connection, event):
+    def _ingest_inbound(self, connection, event, webhook=True):
         """Land one normalised inbound event. Idempotent, savepoint-isolated.
 
         ``event`` is what ``adapter.parse_inbound`` produces: ``external_id``,
@@ -248,8 +248,101 @@ class CareChannelMessage(models.Model):
                               'message %s', msg.id)
 
         # Traffic is the only honest proof a webhook works (CC-B §2.4).
-        connection._note_inbound(msg.event_at)
+        connection._note_inbound(msg.event_at, webhook=webhook)
         return msg
+
+    @api.model
+    def _cron_poll_facebook_comments(self):
+        """Recover Page comments when Meta has not delivered a webhook.
+
+        Meta stops all production webhook delivery while an app is
+        unpublished.  Polling the Page feed keeps authorised clinic Pages
+        usable during that provider-side state and also closes short webhook
+        outages after publication.  The ordinary message-id constraint makes
+        this safe to run alongside live webhooks.
+        """
+        Connection = self.env['care.channel.connection'].sudo()
+        connections = Connection.search([
+            ('channel', '=', 'fb'),
+            ('active', '=', True),
+            ('resource_external_id', '!=', False),
+            ('state', 'in', sorted(INGESTABLE_STATES)),
+        ])
+        total = 0
+        for connection in connections:
+            try:
+                with self.env.cr.savepoint():
+                    total += self._poll_facebook_connection(connection)
+            except Exception:  # noqa: BLE001 — one Page must not stop others
+                _logger.exception('care_channels: Facebook comment poll failed '
+                                  'for connection %s', connection.id)
+        return total
+
+    @api.model
+    def _poll_facebook_connection(self, connection):
+        connection.ensure_one()
+        adapter = connection._get_adapter()
+        token = connection._get_secret('access_token')
+        if not token:
+            return 0
+        now = fields.Datetime.now()
+        cursor = connection.get_setting('fb_comment_poll_at')
+        cutoff = fields.Datetime.to_datetime(cursor) if cursor else (
+            now - timedelta(days=2))
+        data = adapter._get(adapter._graph('%s/feed' %
+                            connection.resource_external_id), params={
+            'access_token': token,
+            'fields': ('id,comments.limit(100){id,created_time,message,from,'
+                       'parent,permalink_url}'),
+            'limit': 50,
+        })
+        ingested = 0
+        for post in (data or {}).get('data') or []:
+            for comment in ((post.get('comments') or {}).get('data') or []):
+                stamp = str(comment.get('created_time') or '')
+                try:
+                    event_at = fields.Datetime.to_datetime(
+                        datetime.strptime(stamp, '%Y-%m-%dT%H:%M:%S%z')
+                        .astimezone(timezone.utc).replace(tzinfo=None))
+                except (TypeError, ValueError):
+                    continue
+                if event_at <= cutoff:
+                    continue
+                author = comment.get('from') or {}
+                author_id = author.get('id')
+                if not author_id or str(author_id) == str(
+                        connection.resource_external_id):
+                    continue
+                comment_id = comment.get('id')
+                if not comment_id:
+                    continue
+                parent = comment.get('parent') or {}
+                permalink = str(comment.get('permalink_url') or '')
+                if not permalink.startswith(('https://www.facebook.com/',
+                                              'https://facebook.com/')):
+                    permalink = ''
+                before = self._existing(connection, str(comment_id))
+                self._ingest_inbound(connection, {
+                    'kind': 'message',
+                    'external_id': str(author_id),
+                    'external_message_id': str(comment_id),
+                    'peer_name': author.get('name'),
+                    'message_type': 'text',
+                    'text': comment.get('message') or '',
+                    'attachment': {},
+                    'event_at': event_at,
+                    'surface': 'comment',
+                    'thread_external_id': str(post.get('id') or ''),
+                    'parent_external_id': str(parent.get('id') or ''),
+                    'external_url': permalink,
+                    'raw': comment,
+                }, webhook=False)
+                if not before:
+                    ingested += 1
+        adapter._merge_settings({
+            'fb_comment_poll_at': fields.Datetime.to_string(now),
+        })
+        return ingested
 
     # ------------------------------------------------------------------
     # Outbound mirror (phase6 §2.3 — zalo outgoing signal, hooks.py:60-67)
