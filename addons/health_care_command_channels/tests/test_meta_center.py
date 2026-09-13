@@ -741,6 +741,28 @@ class TestMetaCenter(ChannelSpineCase):
                          'a provider poll is not webhook delivery evidence')
         self.assertTrue(fb.get_setting('fb_comment_poll_at'))
 
+    def test_134d_center_test_replies_publicly_to_latest_comment(self):
+        """The setup test must not treat a comment author as a Messenger PSID."""
+        fb = self._fb_conn()
+        self.Message._dispatch_meta('fb', self.fb_comment_payload())
+        calls = self._mock_graph(
+            post_map={'/COMMENT_1/comments': {'id': 'COMMENT_TEST_REPLY'}})
+
+        result = self.Conn.center_test(fb.id)
+
+        self.assertEqual(result['message'], 'Test message sent.')
+        self.assertIn('/COMMENT_1/comments', calls['post'][0][0])
+        self.assertEqual(calls['post'][0][1]['message'],
+                         self.Conn._center_test_body())
+        self.assertFalse(any('/me/messages' in call[0]
+                             for call in calls['post']))
+        outbound = self.Message.search([
+            ('connection_id', '=', fb.id),
+            ('external_message_id', '=', 'COMMENT_TEST_REPLY'),
+        ])
+        self.assertEqual(outbound.surface, 'comment')
+        self.assertEqual(outbound.parent_external_id, 'COMMENT_1')
+
     # ==================================================================
     # T135 — the 24 h window, and the ONE Messenger tag that still exists
     # ==================================================================

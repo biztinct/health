@@ -1752,9 +1752,15 @@ class CareChannelConnectionCenter(models.Model):
             return self._center_test_zalo(conn)
         if conn.channel == 'email':
             return self._center_test_email(conn)
-        identity = self.env['care.channel.identity'].sudo().search(
-            [('connection_id', '=', conn.id)], order='last_seen_at desc, id desc',
-            limit=1)
+        Message = self.env['care.channel.message']
+        latest_inbound = Message.sudo().search([
+            ('connection_id', '=', conn.id),
+            ('direction', '=', 'incoming'),
+        ], order='event_at desc, id desc', limit=1)
+        identity = latest_inbound.identity_id or self.env[
+            'care.channel.identity'].sudo().search(
+                [('connection_id', '=', conn.id)],
+                order='last_seen_at desc, id desc', limit=1)
         if not identity:
             if conn.channel == 'telegram':
                 raise UserError(_(
@@ -1775,11 +1781,12 @@ class CareChannelConnectionCenter(models.Model):
                 'we can only reply to a conversation somebody started.'))
 
         body = self._center_test_body()
-        Message = self.env['care.channel.message']
+        is_fb_comment = bool(
+            conn.channel == 'fb' and latest_inbound.surface == 'comment')
         # Meta's customer-service window applies to the test send too: pushing
         # a free-form message at a closed window would fail AT META and read
         # as "the connection is broken" when the connection is fine (§1.4).
-        window = self._center_window(conn, identity)
+        window = ({} if is_fb_comment else self._center_window(conn, identity))
         kwargs = {}
         if window.get('blocked'):
             raise UserError(_(
@@ -1794,8 +1801,13 @@ class CareChannelConnectionCenter(models.Model):
         if window.get('requires_tag') and window.get('tags'):
             kwargs['tag'] = window['tags'][0]
         try:
-            result = conn.sudo()._get_adapter().send_message(
-                identity, body, **kwargs)
+            adapter = conn.sudo()._get_adapter()
+            if is_fb_comment:
+                result = adapter.send_comment(
+                    identity, body, latest_inbound.external_message_id,
+                    post_id=latest_inbound.external_thread_id)
+            else:
+                result = adapter.send_message(identity, body, **kwargs)
         except Exception as exc:  # noqa: BLE001 — provider/network failure
             auth = any(marker in str(exc).lower()
                        for marker in ('401', 'unauthorized', 'invalid token'))
