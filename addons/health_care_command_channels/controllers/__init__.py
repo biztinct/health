@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from . import oauth
 from . import golive_invite
+from . import legal
 from . import meta
 from . import telegram
 from . import webchat
