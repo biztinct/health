@@ -461,7 +461,8 @@
                    t-if="state.metaResourceError" t-esc="state.metaResourceError"/>
               <p class="cc-help"
                  t-if="!state.metaLoadingResources and !state.metaResources.length and !state.metaResourceError">
-                Meta returned nothing to choose from yet. Finish the sign-in, then try again.
+                <t t-if="isMessenger">Facebook returned no Pages for this login. Sign in again with an account that manages your Pages, and include the Pages in the permission selection.</t>
+                <t t-else="">Meta returned nothing to choose from yet. Finish the sign-in, then try again.</t>
               </p>
               <ul class="cc-picker" t-if="state.metaResources.length">
                 <t t-foreach="state.metaResources" t-as="res" t-key="res.id">
@@ -713,6 +714,8 @@
             <t t-if="isWhatsApp">Sign in with Meta</t>
             <t t-if="isMessenger">Sign in with Facebook</t>
           </button>
+          <button t-if="isMessenger and state.hasCredentials and (state.step === 0 or state.step === 1)"
+                  class="cc-btn ghost" t-att-disabled="state.busy" t-on-click="startMeta">Sign in again with Facebook</button>
           <button t-if="isMeta and state.step === 0 and state.hasCredentials"
                   class="cc-btn primary" t-on-click="next">Next</button>
           <button t-if="isMeta and state.step === 1"

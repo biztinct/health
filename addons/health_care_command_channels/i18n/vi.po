@@ -5980,3 +5980,15 @@ msgstr "Tạm dừng nhận và gửi tin nhắn của tài khoản này, giữ 
 #: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
 msgid "Manage account"
 msgstr "Quản lý tài khoản"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Sign in again with Facebook"
+msgstr "Đăng nhập lại bằng Facebook"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Facebook returned no Pages for this login. Sign in again with an account that manages your Pages, and include the Pages in the permission selection."
+msgstr "Facebook không trả về Trang nào cho tài khoản này. Đăng nhập lại bằng tài khoản quản lý các Trang của bạn và chọn các Trang khi cấp quyền."
