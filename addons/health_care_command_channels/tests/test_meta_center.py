@@ -555,6 +555,49 @@ class TestMetaCenter(ChannelSpineCase):
             lambda c: c.check_key == 'comments_enabled')
         self.assertEqual(comments.status, 'pass')
 
+    def test_133c_fb_page_lookup_when_listing_is_empty(self):
+        self.Conn.center_begin('fb')
+        conn = self._center_connection('fb')
+        self._authorize_fb(conn)
+        page_id = '108117161101494'
+        calls = self._mock_graph(get_map={
+            'me/accounts': {'data': []},
+            '/' + page_id: {'id': page_id, 'name': 'Authorized Page',
+                            'access_token': FB_PAGE_TOKEN},
+        })
+        self.assertFalse(self.Conn.center_meta_resources(conn.id)['resources'])
+        page = self.Conn.center_fb_lookup_page(conn.id, page_id)
+        self.assertEqual(page['name'], 'Authorized Page')
+        self.assertNotIn(FB_PAGE_TOKEN, json.dumps(page))
+        self.assertFalse(conn.resource_external_id)
+        self.assertFalse(conn.sudo()._get_secret('access_token'))
+        self.assertEqual(self.Conn.center_meta_resources(conn.id)['resources'], [page])
+        self.Conn.center_meta_select(conn.id, page_id)
+        self.assertEqual(conn.resource_external_id, page_id)
+        self.assertEqual(conn.sudo()._get_secret('access_token'), FB_PAGE_TOKEN)
+        self.assertTrue(all(call[1]['access_token'] == FB_USER_TOKEN
+                            for call in calls['get']))
+
+    def test_133d_fb_page_lookup_requires_management_access(self):
+        self.Conn.center_begin('fb')
+        conn = self._center_connection('fb')
+        self._authorize_fb(conn)
+        for page_id in ['https://example.test', '../me', '123?fields=token', '１２３']:
+            with self.assertRaises(UserError):
+                self.Conn.center_fb_lookup_page(conn.id, page_id)
+        page_id = '123456789'
+        for reply in [
+                {'id': page_id, 'name': 'Publicly visible only'},
+                {'id': '999', 'name': 'Wrong Page', 'access_token': FB_PAGE_TOKEN}]:
+            self._mock_graph(get_map={'me/accounts': {'data': []},
+                                      '/' + page_id: reply})
+            with self.assertRaises(UserError):
+                self.Conn.center_fb_lookup_page(conn.id, page_id)
+            with self.assertRaises(UserError):
+                self.Conn.center_meta_select(conn.id, page_id)
+            self.assertFalse(conn.resource_external_id)
+            self.assertFalse(conn.sudo()._get_secret('access_token'))
+
     def test_133b_fb_comment_permissions_are_additive(self):
         """A comment-review delay must not switch off private Messenger."""
         self.Conn.center_begin('fb')

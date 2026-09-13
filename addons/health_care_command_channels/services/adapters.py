@@ -1514,7 +1514,49 @@ class MessengerAdapter(_MetaAdapterBase):
             raise ChannelSendError('this Messenger connection is not authorized')
         data = self._get(self._graph('me/accounts'), params={
             'access_token': token, 'fields': 'id,name,access_token', 'limit': 100})
-        return [row for row in ((data or {}).get('data') or []) if row.get('id')]
+        pages = [row for row in ((data or {}).get('data') or []) if row.get('id')]
+        seen = {str(page['id']) for page in pages}
+        # Remember IDs only, and recheck the current grant on every refresh.
+        # Revoked access must never be restored from a cached Page token.
+        for page_id in self._setting('fb_verified_page_ids', [])[:100]:
+            if page_id in seen:
+                continue
+            try:
+                pages.append(self._page_by_id(page_id))
+                seen.add(page_id)
+            except ChannelSendError:
+                _logger.info('care_channels: saved Facebook Page no longer '
+                             'available on connection %s', self.connection.id)
+        return pages
+
+    def _page_by_id(self, external_id):
+        """Resolve an explicitly supplied Page using this connection's grant.
+
+        Meta can omit authorized Pages from /me/accounts. A Page token from
+        the direct endpoint, not visibility of its public name, proves access.
+        Never accept arbitrary paths or URLs from the picker.
+        """
+        wanted = str(external_id or '').strip()
+        if not wanted.isascii() or not wanted.isdigit():
+            raise ChannelSendError('Enter the numeric Facebook Page ID')
+        token = self._user_token()
+        if not token:
+            raise ChannelSendError('this Messenger connection is not authorized')
+        page = self._get(self._graph(wanted), params={
+            'access_token': token, 'fields': 'id,name,access_token'}) or {}
+        if str(page.get('id') or '') != wanted or not page.get('access_token'):
+            raise ChannelSendError(
+                'Facebook did not grant access to manage this Page. '
+                'Sign in with a Page administrator and include this Page.')
+        return page
+
+    def lookup_page(self, external_id):
+        page = self._page_by_id(external_id)
+        known = self._setting('fb_verified_page_ids', [])
+        self._merge_settings({'fb_verified_page_ids':
+                              list(dict.fromkeys([str(page['id'])] + known))[:100]})
+        return {'id': str(page['id']), 'name': page.get('name') or str(page['id']),
+                'kind': 'page', 'meta': {'has_token': True}}
 
     def list_resources(self):
         """The Page list for the picker — with every token stripped out."""
@@ -1531,7 +1573,10 @@ class MessengerAdapter(_MetaAdapterBase):
         wanted = str(external_id or '').strip()
         if not wanted:
             raise ChannelSendError('no Facebook Page was chosen')
-        for page in self._pages():
+        pages = self._pages()
+        if not any(str(page['id']) == wanted for page in pages):
+            pages = [self._page_by_id(wanted)]
+        for page in pages:
             if str(page['id']) != wanted:
                 continue
             page_token = page.get('access_token')

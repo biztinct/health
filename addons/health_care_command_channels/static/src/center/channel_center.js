@@ -115,6 +115,7 @@ export class ChannelCenter extends Component {
             // provider-approval rows.
             meta: null,
             metaResources: [],
+            metaPageId: "",
             metaSelected: "",
             metaLoadingResources: false,
             metaResourceError: "",
@@ -448,6 +449,7 @@ export class ChannelCenter extends Component {
         this.state.webhookSecret = "";
         this.state.meta = null;
         this.state.metaResources = [];
+        this.state.metaPageId = "";
         this.state.metaSelected = "";
         this.state.metaResourceError = "";
         this.state.metaMissingScopes = [];
@@ -752,6 +754,26 @@ export class ChannelCenter extends Component {
         }
     }
 
+    async lookupFacebookPage() {
+        if (!this.state.metaPageId.trim()) {
+            return;
+        }
+        this.state.metaLoadingResources = true;
+        this.state.metaResourceError = "";
+        try {
+            const page = await this.orm.call(MODEL, "center_fb_lookup_page",
+                [this.state.connectionId, this.state.metaPageId.trim()]);
+            this.state.metaResources = [
+                ...this.state.metaResources.filter((r) => r.id !== page.id), page,
+            ];
+            this.state.metaSelected = page.id;
+        } catch (e) {
+            this.state.metaResourceError = this._msg(e);
+        } finally {
+            this.state.metaLoadingResources = false;
+        }
+    }
+
     pickMetaResource(id) {
         this.state.metaSelected = id;
     }
@@ -942,6 +964,7 @@ export class ChannelCenter extends Component {
         this.state.webhookSecret = "";
         this.state.approvals = card.approvals || [];
         this.state.metaResources = [];
+        this.state.metaPageId = "";
         this.state.metaSelected = "";
         this.state.callSecret = "";
         this.state.callNotice = "";

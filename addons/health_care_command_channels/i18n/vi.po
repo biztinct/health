@@ -5990,5 +5990,29 @@ msgstr "Đăng nhập lại bằng Facebook"
 #. module: health_care_command_channels
 #. odoo-javascript
 #: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
-msgid "Facebook returned no Pages for this login. Sign in again with an account that manages your Pages, and include the Pages in the permission selection."
-msgstr "Facebook không trả về Trang nào cho tài khoản này. Đăng nhập lại bằng tài khoản quản lý các Trang của bạn và chọn các Trang khi cấp quyền."
+msgid "Facebook returned an empty Page list. If you already authorized your Page, look it up by its numeric Page ID below. Otherwise, sign in again and include your Page."
+msgstr "Facebook trả về danh sách Trang trống. Nếu đã cấp quyền cho Trang, hãy tra cứu bằng ID Trang bên dưới. Nếu chưa, hãy đăng nhập lại và chọn Trang của bạn."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Missing a Page? Enter its Facebook Page ID"
+msgstr "Không thấy Trang? Nhập ID Trang Facebook"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Numeric Page ID"
+msgstr "ID Trang dạng số"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Find Page"
+msgstr "Tìm Trang"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Find the Page ID in Facebook under About → Page transparency. We verify your access before you can connect it."
+msgstr "Tìm ID Trang trên Facebook trong phần Giới thiệu → Tính minh bạch của Trang. Chúng tôi xác minh quyền truy cập trước khi kết nối."

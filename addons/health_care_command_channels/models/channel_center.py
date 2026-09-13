@@ -1266,6 +1266,18 @@ class CareChannelConnectionCenter(models.Model):
                 'resources': resources}
 
     @api.model
+    def center_fb_lookup_page(self, conn_id, page_id):
+        """Validate a Page omitted by Meta's listing without exposing tokens."""
+        conn = self._center_meta(conn_id)
+        if conn.channel != 'fb':
+            raise UserError(_('Page lookup is only available for Facebook.'))
+        try:
+            return conn.sudo()._get_adapter().lookup_page(page_id)
+        except ChannelSendError as exc:
+            raise UserError(_('That Page could not be verified: %s',
+                              redact(exc) or _('unknown error'))) from exc
+
+    @api.model
     def center_meta_select(self, conn_id, external_id):
         """Pin the connection to one number / Page."""
         conn = self._center_meta(conn_id)
