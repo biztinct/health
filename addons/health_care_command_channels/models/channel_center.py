@@ -1254,6 +1254,8 @@ class CareChannelConnectionCenter(models.Model):
         conn = self._center_meta(conn_id)
         try:
             resources = conn.sudo()._get_adapter().list_resources()
+            if conn.channel == 'fb':
+                resources = self._center_fb_page_choices(conn, resources)
         except ChannelSendError as exc:
             raise UserError(_(
                 'We could not read your %(channel)s accounts: %(reason)s',
@@ -1264,6 +1266,49 @@ class CareChannelConnectionCenter(models.Model):
                 'selected': conn.resource_external_id or '',
                 'hint': conn.sudo().get_setting('meta_phone_hint') or '',
                 'resources': resources}
+
+    @api.model
+    def _center_fb_page_choices(self, conn, resources):
+        """Return verified, not-yet-connected Pages for a new connection.
+
+        Meta intermittently returns an empty ``/me/accounts`` list even when
+        the fresh grant can manage the Pages directly. A working sibling
+        Facebook connection often still receives the complete list. Use its
+        public Page IDs as discovery hints, verify each one with THIS grant,
+        and keep every token server-side. This turns the numeric-ID field into
+        an exceptional fallback rather than the normal onboarding path.
+        """
+        conn.ensure_one()
+        siblings = self.sudo().search([
+            ('channel', '=', 'fb'),
+            ('company_id', '=', conn.company_id.id),
+            ('id', '!=', conn.id),
+            ('active', '=', True),
+        ])
+        connected_ids = {
+            str(row.resource_external_id) for row in siblings
+            if row.resource_external_id
+        }
+        choices = {str(row.get('id')): row for row in (resources or [])
+                   if row.get('id')}
+        if not choices:
+            discovered = {}
+            for sibling in siblings:
+                try:
+                    for row in sibling._get_adapter().list_resources():
+                        if row.get('id'):
+                            discovered[str(row['id'])] = row
+                except ChannelSendError:
+                    continue
+            adapter = conn._get_adapter()
+            for page_id in discovered:
+                try:
+                    verified = adapter.lookup_page(page_id)
+                except ChannelSendError:
+                    continue
+                choices[str(verified['id'])] = verified
+        return [row for page_id, row in choices.items()
+                if page_id not in connected_ids]
 
     @api.model
     def center_fb_lookup_page(self, conn_id, page_id):

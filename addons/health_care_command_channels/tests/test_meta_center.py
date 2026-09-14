@@ -572,6 +572,35 @@ class TestMetaCenter(ChannelSpineCase):
         self.assertFalse(conn.resource_external_id)
         self.assertFalse(conn.sudo()._get_secret('access_token'))
         self.assertEqual(self.Conn.center_meta_resources(conn.id)['resources'], [page])
+
+    def test_133c2_fb_picker_discovers_unconnected_sibling_page(self):
+        """A second Page is offered by name when Meta returns an empty list."""
+        existing = self._fb_conn()
+        pending = self._conn('fb', state='select_resource')
+        hanoi_id = '622665924274714'
+
+        def list_resources(adapter):
+            if adapter.connection == pending:
+                return []
+            return [
+                {'id': FB_PAGE_ID, 'name': 'HCMC Page', 'kind': 'page'},
+                {'id': hanoi_id, 'name': 'Hanoi Page', 'kind': 'page'},
+            ]
+
+        def lookup_page(adapter, page_id):
+            return {'id': str(page_id),
+                    'name': ('Hanoi Page' if str(page_id) == hanoi_id
+                             else 'HCMC Page'),
+                    'kind': 'page'}
+
+        with patch.object(BaseChannelAdapter, 'list_resources', list_resources), \
+                patch.object(BaseChannelAdapter, 'lookup_page', lookup_page):
+            listing = self.Conn.center_meta_resources(pending.id)
+
+        self.assertEqual(listing['resources'], [{
+            'id': hanoi_id, 'name': 'Hanoi Page', 'kind': 'page'}])
+        self.assertNotIn(existing.resource_external_id,
+                         [row['id'] for row in listing['resources']])
         self.Conn.center_meta_select(conn.id, page_id)
         self.assertEqual(conn.resource_external_id, page_id)
         self.assertEqual(conn.sudo()._get_secret('access_token'), FB_PAGE_TOKEN)

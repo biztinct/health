@@ -765,6 +765,12 @@ export class ChannelCenter extends Component {
                     this.state.metaSelected = match.id;
                 }
             }
+            // The server has removed Pages already connected to sibling
+            // accounts. Default to the first remaining verified Page so the
+            // normal path is choose-by-name and one click, never hunt for ID.
+            if (!this.state.metaSelected && this.state.metaResources.length) {
+                this.state.metaSelected = this.state.metaResources[0].id;
+            }
         } catch (e) {
             this.state.metaResources = [];
             this.state.metaResourceError = this._msg(e);

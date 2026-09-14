@@ -480,14 +480,14 @@
                   </li>
                 </t>
               </ul>
-              <div t-if="isMessenger" class="cc-help">
+              <div t-if="isMessenger and !state.metaResources.length" class="cc-help">
                 <label for="cc_fb_page_id">Missing a Page? Enter its Facebook Page ID</label>
                 <input id="cc_fb_page_id" type="text" inputmode="numeric"
                        class="form-control" t-model="state.metaPageId"
                        placeholder="Numeric Page ID"/>
                 <button class="cc-btn secondary" t-on-click="lookupFacebookPage"
                         t-att-disabled="state.metaLoadingResources or !state.metaPageId.trim()">Find Page</button>
-                <p>Find the Page ID in Facebook under About → Page transparency. We verify your access before you can connect it.</p>
+                <p>If Facebook does not list a Page, enter its numeric Page ID. We verify your access before you can connect it.</p>
               </div>
             </t>
 
