@@ -573,6 +573,11 @@ class TestMetaCenter(ChannelSpineCase):
         self.assertFalse(conn.resource_external_id)
         self.assertFalse(conn.sudo()._get_secret('access_token'))
         self.assertEqual(self.Conn.center_meta_resources(conn.id)['resources'], [page])
+        self.Conn.center_meta_select(conn.id, page_id)
+        self.assertEqual(conn.resource_external_id, page_id)
+        self.assertEqual(conn.sudo()._get_secret('access_token'), FB_PAGE_TOKEN)
+        self.assertTrue(all(call[1]['access_token'] == FB_USER_TOKEN
+                            for call in calls['get']))
 
     def test_133c2_fb_picker_discovers_unconnected_sibling_page(self):
         """A second Page is offered by name when Meta returns an empty list."""
@@ -602,11 +607,6 @@ class TestMetaCenter(ChannelSpineCase):
             'id': hanoi_id, 'name': 'Hanoi Page', 'kind': 'page'}])
         self.assertNotIn(existing.resource_external_id,
                          [row['id'] for row in listing['resources']])
-        self.Conn.center_meta_select(conn.id, page_id)
-        self.assertEqual(conn.resource_external_id, page_id)
-        self.assertEqual(conn.sudo()._get_secret('access_token'), FB_PAGE_TOKEN)
-        self.assertTrue(all(call[1]['access_token'] == FB_USER_TOKEN
-                            for call in calls['get']))
 
     def test_133d_fb_page_lookup_requires_management_access(self):
         self.Conn.center_begin('fb')
