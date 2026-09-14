@@ -30,6 +30,7 @@ six render honestly and their steppers are structure only (CC-D/E/F).
 import logging
 import re
 import secrets
+import unicodedata
 from urllib.parse import urlparse
 
 from odoo import _, api, fields, models
@@ -564,6 +565,11 @@ class CareChannelConnectionCenter(models.Model):
             'sendable': conn.state in SENDABLE_STATES,
             'catchment': (conn.catchment_province_id.display_name
                           if conn.catchment_province_id else ''),
+            'catchment_id': conn.catchment_province_id.id or False,
+            'catchment_options': [{
+                'id': area.id, 'name': area.display_name,
+            } for area in self.env['health.catchment.province'].sudo().search(
+                [], order='sequence, name')],
             'last_inbound_at': (fields.Datetime.to_string(conn.last_inbound_at)
                                 if conn.last_inbound_at else ''),
             'last_outbound_at': (fields.Datetime.to_string(conn.last_outbound_at)
@@ -585,6 +591,26 @@ class CareChannelConnectionCenter(models.Model):
         label = (label or '').strip()[:120]
         conn.write({'account_label': label or False})
         return {'ok': True, 'account_label': label}
+
+    @api.model
+    def center_set_catchment(self, conn_id, catchment_id=False):
+        """Attach one channel account to the area that owns its traffic."""
+        conn = self._center_get(conn_id)
+        try:
+            catchment_id = int(catchment_id or 0)
+        except (TypeError, ValueError):
+            catchment_id = 0
+        catchment = self.env['health.catchment.province'].sudo().browse(
+            catchment_id).exists() if catchment_id else self.env[
+                'health.catchment.province']
+        conn.sudo()._internal().write({
+            'catchment_province_id': catchment.id or False,
+        })
+        return {
+            'ok': True,
+            'catchment_id': catchment.id or False,
+            'catchment': catchment.display_name if catchment else '',
+        }
 
     # ==================================================================
     # 1. center_overview — the catalogue
@@ -1332,6 +1358,13 @@ class CareChannelConnectionCenter(models.Model):
             raise UserError(_(
                 'That choice could not be saved: %s',
                 redact(exc) or _('unknown error'))) from exc
+        if conn.channel == 'fb' and not conn.catchment_province_id:
+            catchment = self._center_fb_catchment_from_name(
+                (resource or {}).get('name'))
+            if catchment:
+                conn.sudo()._internal().write({
+                    'catchment_province_id': catchment.id,
+                })
         if conn.state in ('authorizing', 'select_resource'):
             conn._transition('configuring', reason='meta resource selected')
         conn.invalidate_recordset()
@@ -1339,6 +1372,28 @@ class CareChannelConnectionCenter(models.Model):
                 'selected': conn.resource_external_id or '',
                 'resource_line': conn._center_resource_line(),
                 'resource': resource}
+
+    @api.model
+    def _center_fb_catchment_from_name(self, page_name):
+        """Match explicit city words in a Page name to a catchment area."""
+        def clean(value):
+            value = unicodedata.normalize('NFKD', str(value or ''))
+            value = ''.join(ch for ch in value
+                            if not unicodedata.combining(ch))
+            return re.sub(r'[^a-z0-9]+', ' ', value.lower()).strip()
+
+        page = clean(page_name)
+        aliases = {
+            'ha noi': ('ha noi', 'hanoi'),
+            'tphcm': ('tphcm', 'ho chi minh', 'hcmc', 'sai gon', 'saigon'),
+        }
+        for province in self.env['health.catchment.province'].sudo().search([]):
+            province_name = clean(province.name)
+            terms = aliases.get(province_name, (province_name,))
+            if any(re.search(r'(^| )%s( |$)' % re.escape(term), page)
+                   for term in terms if term):
+                return province
+        return self.env['health.catchment.province']
 
     @api.model
     def center_meta_subscribe(self, conn_id):

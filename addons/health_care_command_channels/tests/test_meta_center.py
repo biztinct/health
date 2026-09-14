@@ -608,6 +608,33 @@ class TestMetaCenter(ChannelSpineCase):
         self.assertNotIn(existing.resource_external_id,
                          [row['id'] for row in listing['resources']])
 
+    def test_133c3_fb_page_name_assigns_matching_catchment(self):
+        """Selecting a Hanoi Page scopes its future messages to Hanoi."""
+        hanoi = self.env['health.catchment.province'].create({
+            'name': 'Hà Nội'})
+        conn = self._conn('fb', state='select_resource')
+        conn.action_set_secret('refresh_token', FB_USER_TOKEN)
+        page_id = '622665924274714'
+        self._mock_graph(get_map={'me/accounts': {'data': [{
+            'id': page_id,
+            'name': 'Phòng Khám Gia Đình Việt Úc Hà Nội',
+            'access_token': FB_PAGE_TOKEN,
+        }]}})
+
+        self.Conn.center_meta_select(conn.id, page_id)
+
+        self.assertEqual(conn.catchment_province_id, hanoi)
+        hcm = self.env['health.catchment.province'].create({'name': 'TPHCM'})
+        result = self.Conn.center_set_catchment(conn.id, hcm.id)
+        self.assertEqual(result['catchment_id'], hcm.id)
+        self.assertEqual(conn.catchment_province_id, hcm)
+        account = self.Conn._center_account_payload(
+            conn, conn._capabilities(), self.Conn._center_state_chips(),
+            self.Conn._center_check_labels())
+        self.assertEqual(account['catchment_id'], hcm.id)
+        self.assertIn(hanoi.id,
+                      [row['id'] for row in account['catchment_options']])
+
     def test_133d_fb_page_lookup_requires_management_access(self):
         self.Conn.center_begin('fb')
         conn = self._center_connection('fb')

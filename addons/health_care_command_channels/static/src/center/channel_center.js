@@ -1044,6 +1044,16 @@ export class ChannelCenter extends Component {
         });
     }
 
+    async setAccountCatchment(ev) {
+        if (!this.state.connectionId) return;
+        const catchmentId = Number.parseInt(ev.target.value, 10) || false;
+        await this._guarded(async () => {
+            await this.orm.call(MODEL, "center_set_catchment",
+                [this.state.connectionId, catchmentId]);
+            await this.load();
+        });
+    }
+
     /** The ZNS sub-card's honest readiness, if the catalogue carries one. */
     get znsCard() {
         return this.state.cards.find((c) => c.channel === "zns") || null;

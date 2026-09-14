@@ -208,6 +208,19 @@
             </t>
           </div>
 
+          <div class="cc-field" t-if="openAccount and state.connectionId">
+            <label for="cc_account_catchment">Catchment Area</label>
+            <select id="cc_account_catchment" class="form-select"
+                    t-on-change="setAccountCatchment">
+              <option value="" t-att-selected="!openAccount.catchment_id">Shared / not assigned</option>
+              <option t-foreach="openAccount.catchment_options || []"
+                      t-as="area" t-key="area.id" t-att-value="area.id"
+                      t-att-selected="openAccount.catchment_id === area.id"
+                      t-esc="area.name"/>
+            </select>
+            <p class="cc-help">Messages arriving on this account are shown in this area's Care Command inbox.</p>
+          </div>
+
           <ul class="cc-checklist" t-if="openAccount">
             <t t-foreach="openAccount.checks" t-as="chk" t-key="chk.key">
               <li t-att-class="'st-' + chk.status">
