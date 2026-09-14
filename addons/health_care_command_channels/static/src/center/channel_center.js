@@ -600,13 +600,18 @@ export class ChannelCenter extends Component {
     // -----------------------------------------------------------------
     /** Re-open a Meta stepper where the tenant left it. */
     async _resumeMeta(connectionId, card) {
+        const account = ((card && card.accounts) || []).find(
+            (row) => row.connection_id === connectionId);
         this.state.approvals = (card && card.approvals) || [];
         if (!this.state.hasCredentials) {
             return;
         }
         // Signed in already: the picker is the next thing that matters.
         this.state.step = Math.max(this.state.step, 1);
-        if (card && card.resource_line) {
+        // Multi-account: the card headline describes the healthiest sibling
+        // (usually the already-connected HCMC Page). Only THIS connection's
+        // resource may advance its wizard beyond the Page picker.
+        if (account && account.resource_line) {
             this.state.step = Math.max(this.state.step, 2);
         }
         await this.loadMetaResources();
