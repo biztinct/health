@@ -288,7 +288,11 @@ class CareChannelMessage(models.Model):
         try:
             parsed = datetime.fromisoformat(stamp.replace('Z', '+00:00'))
         except ValueError:
-            return False
+            # Python 3.10 does not accept Graph's compact ``+0000`` offset.
+            try:
+                parsed = datetime.strptime(stamp, '%Y-%m-%dT%H:%M:%S%z')
+            except ValueError:
+                return False
         if parsed.tzinfo:
             parsed = parsed.astimezone(timezone.utc).replace(tzinfo=None)
         return fields.Datetime.to_datetime(parsed)
