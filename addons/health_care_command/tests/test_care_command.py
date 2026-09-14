@@ -610,6 +610,36 @@ class TestCareCommand(TransactionCase):
             "status": "needs_reply"})
         self.assertNotIn(other.id, ids(query="0912340003"))
 
+    def test_24b_owner_workspace_honours_sidebar_catchment(self):
+        """The custom Care Command dashboard follows the owner's area picker."""
+        other_area = self.env["health.catchment.province"].create({
+            "name": "CC Other Prov"})
+        own = self.Care.sudo().create({
+            "phone_normalized": "0912340241", "company_id": self.company.id,
+            "catchment_province_id": self.province.id,
+            "status": "needs_reply", "has_channel_activity": True})
+        other = self.Care.sudo().create({
+            "phone_normalized": "0912340242", "company_id": self.company.id,
+            "catchment_province_id": other_area.id,
+            "status": "needs_reply", "has_channel_activity": True})
+        owner = self._mk_user(
+            "cc_owner_scope", ["health_crm.group_health_crm_user",
+                               "health_base.group_healthcare_owner"])
+        workspace = self.Care.with_user(owner)
+
+        mine_ids = [r["id"] for r in workspace.get_workspace_data(
+            view="all", catchment_id="mine")["conversations"]]
+        other_ids = [r["id"] for r in workspace.get_workspace_data(
+            view="all", catchment_id=other_area.id)["conversations"]]
+        all_ids = [r["id"] for r in workspace.get_workspace_data(
+            view="all", catchment_id="all")["conversations"]]
+        self.assertIn(own.id, mine_ids)
+        self.assertNotIn(other.id, mine_ids)
+        self.assertIn(other.id, other_ids)
+        self.assertNotIn(own.id, other_ids)
+        self.assertIn(own.id, all_ids)
+        self.assertIn(other.id, all_ids)
+
     # ======================================================================
     # T25 — capped payload: honest cap + exact counts (Phase 2, §5.4)
     # ======================================================================

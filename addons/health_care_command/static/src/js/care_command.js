@@ -4,6 +4,7 @@ import { registry } from "@web/core/registry";
 import { Component, useState, onWillStart, onMounted, onWillUnmount } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
+import { user } from "@web/core/user";
 
 // Channel dock definition — the STATIC label/icon/colour of all 8 channels.
 // KEYS MUST equal the server-side channel_effective Selection values: the dock
@@ -112,11 +113,18 @@ export class CareCommand extends Component {
     async load(silent = false) {
         if (!silent) this.state.loading = true;
         try {
+            let catchmentId = "mine";
+            try {
+                catchmentId = localStorage.getItem(`cms_catchment_${user.userId || 0}`) || "mine";
+            } catch {
+                // The server safely resolves "mine" for users without storage.
+            }
             const data = await this.orm.call("care.conversation", "get_workspace_data", [], {
                 channel: this.state.filter,
                 mine_only: this.state.mineOnly,
                 query: this.state.search || null,
                 view: this.state.listView,
+                catchment_id: catchmentId,
             });
             this.state.data = data;
             this.state.error = null;

@@ -284,6 +284,13 @@ class CareConversationChannelExt(models.Model):
                 'thread_external_id': m.external_thread_id or False,
                 'parent_external_id': m.parent_external_id or False,
                 'external_url': m.external_url or False,
+                'attachments': ([{
+                    'id': m.id,
+                    'url': m.attachment_url,
+                    'name': m.attachment_name or m.message_type or 'attachment',
+                    'type': m.message_type or 'file',
+                    'mime': m.attachment_mime or False,
+                }] if m.attachment_url else []),
             })
         events = [e for e in events if e.get('ts')]
         events.sort(key=lambda e: e['ts'])

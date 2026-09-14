@@ -803,6 +803,43 @@ class TestMetaCenter(ChannelSpineCase):
                          'a provider poll is not webhook delivery evidence')
         self.assertTrue(fb.get_setting('fb_messenger_poll_at'))
 
+    def test_134f_messenger_poll_keeps_sticker_attachment(self):
+        """An attachment-only DM renders as media, not the generic [text]."""
+        fb = self._fb_conn()
+        created = fields.Datetime.now().replace(microsecond=0)
+        reply = {'data': [{
+            'id': 'THREAD_STICKER',
+            'participants': {'data': [
+                {'id': FB_PAGE_ID, 'name': 'Clinic Page'},
+                {'id': 'PSID_STICKER', 'name': 'Sticker Sender'},
+            ]},
+            'messages': {'data': [{
+                'id': 'MID_STICKER',
+                'created_time': created.strftime('%Y-%m-%dT%H:%M:%S+00:00'),
+                'message': '',
+                'from': {'id': 'PSID_STICKER', 'name': 'Sticker Sender'},
+                'attachments': {'data': [{
+                    'id': 'sticker_123', 'name': 'sticker-123',
+                    'mime_type': 'image/png',
+                    'image_data': {'url': 'https://cdn.example/sticker.png'},
+                }]},
+            }]},
+        }]}
+        self._mock_graph(get_map={'/conversations': reply})
+
+        self.assertEqual(self.Message._poll_facebook_messenger(fb), 1)
+        message = self.Message.search([
+            ('connection_id', '=', fb.id),
+            ('external_message_id', '=', 'MID_STICKER'),
+        ])
+        self.assertEqual(message.message_type, 'sticker')
+        self.assertEqual(message.attachment_url,
+                         'https://cdn.example/sticker.png')
+        event = next(e for e in message.conversation_id._detail_timeline()
+                     if e.get('kind') == 'fb')
+        self.assertEqual(event['text'], '[sticker]')
+        self.assertEqual(event['attachments'][0]['type'], 'sticker')
+
     # ==================================================================
     # T135 — the 24 h window, and the ONE Messenger tag that still exists
     # ==================================================================

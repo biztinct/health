@@ -161,6 +161,22 @@ class CareChannelMessage(models.Model):
         connection.ensure_one()
         existing = self._existing(connection, event.get('external_message_id'))
         if existing:
+            # Polling can return richer media metadata than the original
+            # webhook (and older pollers discarded it altogether).  Enrich a
+            # deduplicated row without bumping unread or opening a new thread.
+            attachment = event.get('attachment') or {}
+            enrich = {}
+            if attachment.get('url') and not existing.attachment_url:
+                enrich.update({
+                    'attachment_url': attachment.get('url'),
+                    'attachment_name': attachment.get('name'),
+                    'attachment_mime': attachment.get('mime'),
+                })
+            event_type = event.get('message_type')
+            if event_type and event_type != 'text' and existing.message_type == 'text':
+                enrich['message_type'] = event_type
+            if enrich:
+                existing.sudo().write(enrich)
             # Redelivery: one row, one conversation, no second unread bump.
             return existing
 
@@ -344,15 +360,32 @@ class CareChannelMessage(models.Model):
                 message_id = str(item.get('id') or '')
                 if not message_id:
                     continue
+                attachment = {}
+                message_type = 'text'
+                graph_attachments = (item.get('attachments') or {}).get('data') or []
+                if graph_attachments:
+                    media = graph_attachments[0] or {}
+                    image = media.get('image_data') or {}
+                    video = media.get('video_data') or {}
+                    media_url = image.get('url') or video.get('url') or media.get('file_url')
+                    media_name = media.get('name') or media.get('id') or 'attachment'
+                    is_sticker = str(media.get('id') or '').startswith('sticker_')
+                    message_type = ('sticker' if is_sticker else
+                                    ('image' if image else 'video' if video else 'file'))
+                    attachment = {
+                        'url': media_url,
+                        'name': media_name,
+                        'mime': media.get('mime_type'),
+                    }
                 before = self._existing(connection, message_id)
                 self._ingest_inbound(connection, {
                     'kind': 'message',
                     'external_id': sender_id,
                     'external_message_id': message_id,
                     'peer_name': sender.get('name') or peer.get('name'),
-                    'message_type': 'text',
+                    'message_type': message_type,
                     'text': item.get('message') or '',
-                    'attachment': {},
+                    'attachment': attachment,
                     'event_at': event_at,
                     'surface': 'direct',
                     'thread_external_id': str(thread.get('id') or ''),

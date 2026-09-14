@@ -706,10 +706,25 @@ class CareConversation(models.Model):
 
     @api.model
     def get_workspace_data(self, channel=None, mine_only=False, query=None,
-                           view="attention"):
+                           view="attention", catchment_id=None):
         self._ensure_access()
         uid = self.env.user.id
-        open_domain = self._scope_domain() + [("status", "!=", "closed")]
+        open_domain = self._scope_domain()
+        selected_catchment = False
+        if self.env.user._catchment_can_switch() and catchment_id != "all":
+            if catchment_id in (None, False, "", "mine"):
+                selected_catchment = self.env.user.catchment_province_id
+            else:
+                try:
+                    selected_catchment = self.env["health.catchment.province"].sudo().browse(
+                        int(catchment_id)).exists()
+                except (TypeError, ValueError):
+                    selected_catchment = self.env.user.catchment_province_id
+                if not selected_catchment:
+                    selected_catchment = self.env.user.catchment_province_id
+            if selected_catchment:
+                open_domain += [("catchment_province_id", "=", selected_catchment.id)]
+        open_domain += [("status", "!=", "closed")]
 
         # attention-first surface (§2.3): the wall/list shows conversations with
         # REAL channel activity; dormant leads collapse behind the Leads bucket.
@@ -810,9 +825,9 @@ class CareConversation(models.Model):
             # all of them) and for an account with no area — in the latter case
             # the wall is empty and `catchment_empty` says why, so nobody reads
             # a fail-closed board as "no work today".
-            "catchment": (
-                False if self.env.user._catchment_can_switch()
-                else self.env.user.catchment_province_id.name or False),
+            "catchment": (selected_catchment.name if selected_catchment else
+                (False if self.env.user._catchment_can_switch()
+                 else self.env.user.catchment_province_id.name or False)),
             "catchment_empty": (
                 not self.env.user._catchment_can_switch()
                 and not self.env.user.catchment_province_id),
