@@ -38,7 +38,8 @@ from odoo.addons.health_care_command_channels.models.care_channel_connection imp
     INTERNAL_CTX,
 )
 from odoo.addons.health_care_command_channels.services.adapters import (
-    FB_MESSAGE_TAGS, BaseChannelAdapter, ChannelSendError, meta_window_state,
+    FB_MESSAGE_TAGS, BaseChannelAdapter, ChannelSendError, MessengerAdapter,
+    meta_window_state,
 )
 
 from .common_spine import (
@@ -593,8 +594,8 @@ class TestMetaCenter(ChannelSpineCase):
                              else 'HCMC Page'),
                     'kind': 'page'}
 
-        with patch.object(BaseChannelAdapter, 'list_resources', list_resources), \
-                patch.object(BaseChannelAdapter, 'lookup_page', lookup_page):
+        with patch.object(MessengerAdapter, 'list_resources', list_resources), \
+                patch.object(MessengerAdapter, 'lookup_page', lookup_page):
             listing = self.Conn.center_meta_resources(pending.id)
 
         self.assertEqual(listing['resources'], [{
