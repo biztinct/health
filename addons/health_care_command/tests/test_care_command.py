@@ -614,14 +614,15 @@ class TestCareCommand(TransactionCase):
         """The custom Care Command dashboard follows the owner's area picker."""
         other_area = self.env["health.catchment.province"].create({
             "name": "CC Other Prov"})
+        other_partner = self.env["res.partner"].create({
+            "name": "CC Other Area Contact",
+            "catchment_province_id": other_area.id})
         own = self.Care.sudo().create({
-            "phone_normalized": "0912340241", "company_id": self.company.id,
-            "catchment_province_id": self.province.id,
-            "status": "needs_reply", "has_channel_activity": True})
+            "partner_id": self.patient.id, "company_id": self.company.id,
+            "status": "needs_reply"})
         other = self.Care.sudo().create({
-            "phone_normalized": "0912340242", "company_id": self.company.id,
-            "catchment_province_id": other_area.id,
-            "status": "needs_reply", "has_channel_activity": True})
+            "partner_id": other_partner.id, "company_id": self.company.id,
+            "status": "needs_reply"})
         owner = self._mk_user(
             "cc_owner_scope", ["health_crm.group_health_crm_user",
                                "health_base.group_healthcare_owner"])

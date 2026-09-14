@@ -34,6 +34,7 @@ DIRECTIONS = [('incoming', 'Incoming'), ('outgoing', 'Outgoing')]
 MESSAGE_TYPES = [
     ('text', 'Text'),
     ('image', 'Image'),
+    ('sticker', 'Sticker'),
     ('file', 'File'),
     ('location', 'Location'),
     ('other', 'Other'),
