@@ -433,6 +433,9 @@
                 <a class="cc-link" t-att-href="state.authUrl"
                    target="_blank" rel="noopener noreferrer">Open the Facebook sign-in page</a>
               </p>
+              <button t-if="isMessenger and state.popupBlocked"
+                      class="cc-btn secondary" t-att-disabled="state.busy"
+                      t-on-click="continueMessengerAfterSignin">I’ve signed in — continue</button>
               <p class="cc-ok" t-if="state.hasCredentials">
                 <span class="ic ic-check"/>
                 <span>Signed in<t t-if="openAccount and openAccount.resource_line">

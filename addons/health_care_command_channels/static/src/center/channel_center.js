@@ -662,8 +662,12 @@ export class ChannelCenter extends Component {
                 // Facebook Login for Business is an ordinary redirect flow:
                 // the popup lands on our own OAuth callback.
                 this.state.authUrl = cfg.url || "";
+                // Keep the opener: our same-origin callback validates the
+                // configured origin before postMessage, then closes itself.
+                // `noopener` makes Chromium return no usable popup handle and
+                // prevents the callback from advancing this original wizard.
                 const popup = window.open(cfg.url, "h19_fb_signin",
-                    "width=560,height=740,noopener");
+                    "width=560,height=740");
                 this.state.popupBlocked = !popup;
                 if (popup) {
                     this._watchPopup(popup, async (card) => {
@@ -696,6 +700,16 @@ export class ChannelCenter extends Component {
                 this._metaHint,
             ]);
             this.state.metaMissingScopes = res.missing_scopes || [];
+            this.state.hasCredentials = true;
+            this.state.step = 1;
+            await this.load();
+            await this.loadMetaResources();
+        });
+    }
+
+    /** Recover after the browser opened OAuth as an unlinked tab/window. */
+    async continueMessengerAfterSignin() {
+        await this._guarded(async () => {
             this.state.hasCredentials = true;
             this.state.step = 1;
             await this.load();
