@@ -763,6 +763,46 @@ class TestMetaCenter(ChannelSpineCase):
         self.assertEqual(outbound.surface, 'comment')
         self.assertEqual(outbound.parent_external_id, 'COMMENT_1')
 
+    def test_134e_messenger_poll_recovers_missing_webhook(self):
+        """A private DM lands even when Meta omits the Page webhook."""
+        fb = self._fb_conn()
+        created = fields.Datetime.now().replace(microsecond=0)
+        reply = {'data': [{
+            'id': 'THREAD_POLLED_1',
+            'participants': {'data': [
+                {'id': FB_PAGE_ID, 'name': 'Clinic Page'},
+                {'id': 'PSID_POLLED', 'name': 'Ashu Ash'},
+            ]},
+            'messages': {'data': [
+                {'id': 'MID_PAGE_REPLY',
+                 'created_time': created.strftime('%Y-%m-%dT%H:%M:%S+00:00'),
+                 'message': 'How can we help?',
+                 'from': {'id': FB_PAGE_ID, 'name': 'Clinic Page'}},
+                {'id': 'MID_POLLED_1',
+                 'created_time': created.strftime('%Y-%m-%dT%H:%M:%S+00:00'),
+                 'message': 'Hi, how are you?',
+                 'from': {'id': 'PSID_POLLED', 'name': 'Ashu Ash'}},
+            ]},
+        }]}
+        self._mock_graph(get_map={'/conversations': reply})
+
+        self.assertEqual(self.Message._poll_facebook_messenger(fb), 1)
+        self.assertEqual(self.Message._poll_facebook_messenger(fb), 0)
+        message = self.Message.search([
+            ('connection_id', '=', fb.id),
+            ('external_message_id', '=', 'MID_POLLED_1'),
+        ])
+        self.assertEqual(len(message), 1)
+        self.assertEqual(message.surface, 'direct')
+        self.assertEqual(message.body, 'Hi, how are you?')
+        self.assertEqual(message.identity_id.display_name, 'Ashu Ash')
+        self.assertFalse(self.Message.search([
+            ('external_message_id', '=', 'MID_PAGE_REPLY')]))
+        self.assertTrue(message.conversation_id)
+        self.assertFalse(fb.last_webhook_at,
+                         'a provider poll is not webhook delivery evidence')
+        self.assertTrue(fb.get_setting('fb_messenger_poll_at'))
+
     # ==================================================================
     # T135 — the 24 h window, and the ONE Messenger tag that still exists
     # ==================================================================

@@ -253,7 +253,7 @@ class CareChannelMessage(models.Model):
 
     @api.model
     def _cron_poll_facebook_comments(self):
-        """Recover Page comments when Meta has not delivered a webhook.
+        """Recover Page comments and Messenger DMs missed by webhooks.
 
         Meta stops all production webhook delivery while an app is
         unpublished.  Polling the Page feed keeps authorised clinic Pages
@@ -273,10 +273,93 @@ class CareChannelMessage(models.Model):
             try:
                 with self.env.cr.savepoint():
                     total += self._poll_facebook_connection(connection)
+                    total += self._poll_facebook_messenger(connection)
             except Exception:  # noqa: BLE001 — one Page must not stop others
                 _logger.exception('care_channels: Facebook comment poll failed '
                                   'for connection %s', connection.id)
         return total
+
+    @staticmethod
+    def _facebook_graph_datetime(value):
+        """Return a naive UTC datetime for Graph API ISO timestamps."""
+        stamp = str(value or '').strip()
+        if not stamp:
+            return False
+        try:
+            parsed = datetime.fromisoformat(stamp.replace('Z', '+00:00'))
+        except ValueError:
+            return False
+        if parsed.tzinfo:
+            parsed = parsed.astimezone(timezone.utc).replace(tzinfo=None)
+        return fields.Datetime.to_datetime(parsed)
+
+    @api.model
+    def _poll_facebook_messenger(self, connection):
+        """Recover private Page messages when Meta omits webhook delivery.
+
+        The Page conversations endpoint is read-only and the ordinary
+        connection/message unique key makes it safe to overlap with live
+        webhooks.  Page-authored messages are deliberately ignored: outbound
+        messages are already mirrored by the send path.
+        """
+        connection.ensure_one()
+        adapter = connection._get_adapter()
+        token = connection._get_secret('access_token')
+        page_id = str(connection.resource_external_id or '')
+        if not token or not page_id:
+            return 0
+        now = fields.Datetime.now()
+        cursor = connection.get_setting('fb_messenger_poll_at')
+        cutoff = fields.Datetime.to_datetime(cursor) if cursor else (
+            now - timedelta(days=2))
+        data = adapter._get(adapter._graph('%s/conversations' % page_id),
+                            params={
+            'access_token': token,
+            'platform': 'messenger',
+            'fields': ('id,participants,messages.limit(100){id,created_time,'
+                       'message,from,to,attachments}'),
+            'limit': 50,
+        })
+        ingested = 0
+        for thread in (data or {}).get('data') or []:
+            participants = (thread.get('participants') or {}).get('data') or []
+            peer = next((p for p in participants
+                         if str(p.get('id') or '') != page_id), {})
+            messages = (thread.get('messages') or {}).get('data') or []
+            # Graph commonly returns newest first. Ingest oldest first so the
+            # conversation's latest state remains deterministic.
+            for item in reversed(messages):
+                event_at = self._facebook_graph_datetime(
+                    item.get('created_time'))
+                if not event_at or event_at <= cutoff:
+                    continue
+                sender = item.get('from') or {}
+                sender_id = str(sender.get('id') or '')
+                if not sender_id or sender_id == page_id:
+                    continue
+                message_id = str(item.get('id') or '')
+                if not message_id:
+                    continue
+                before = self._existing(connection, message_id)
+                self._ingest_inbound(connection, {
+                    'kind': 'message',
+                    'external_id': sender_id,
+                    'external_message_id': message_id,
+                    'peer_name': sender.get('name') or peer.get('name'),
+                    'message_type': 'text',
+                    'text': item.get('message') or '',
+                    'attachment': {},
+                    'event_at': event_at,
+                    'surface': 'direct',
+                    'thread_external_id': str(thread.get('id') or ''),
+                    'raw': item,
+                }, webhook=False)
+                if not before:
+                    ingested += 1
+        adapter._merge_settings({
+            'fb_messenger_poll_at': fields.Datetime.to_string(now),
+        })
+        return ingested
 
     @api.model
     def _poll_facebook_connection(self, connection):
@@ -299,12 +382,9 @@ class CareChannelMessage(models.Model):
         ingested = 0
         for post in (data or {}).get('data') or []:
             for comment in ((post.get('comments') or {}).get('data') or []):
-                stamp = str(comment.get('created_time') or '')
-                try:
-                    event_at = fields.Datetime.to_datetime(
-                        datetime.strptime(stamp, '%Y-%m-%dT%H:%M:%S%z')
-                        .astimezone(timezone.utc).replace(tzinfo=None))
-                except (TypeError, ValueError):
+                event_at = self._facebook_graph_datetime(
+                    comment.get('created_time'))
+                if not event_at:
                     continue
                 if event_at <= cutoff:
                     continue
