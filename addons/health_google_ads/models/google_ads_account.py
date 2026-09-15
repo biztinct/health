@@ -76,6 +76,11 @@ EVIDENCE_FIELDS = (
     'access_token_enc', 'refresh_token_enc', 'token_expires_at',
     'token_scope', 'authorized_by', 'authorized_at',
     'reporting_error_redacted', 'login_customer_id',
+    # GA3 — the sync queue. A form that could set `sync_requested_at` or move
+    # `backfill_cursor` would be a form that can make this system ask Google
+    # for anything it likes; both are written by the buttons through
+    # `_internal()` and by the scheduled job.
+    'sync_requested_at', 'backfill_until', 'backfill_cursor',
 )
 
 # Advisory-lock class key for reporting-token refresh. "gads" in hex, chosen
@@ -1314,7 +1319,7 @@ class GoogleAdsAccount(models.Model):
             'not_connected': _('Not connected'),
             'authorizing': _('Sign-in started'),
             'select_account': _('Choose the advertising account'),
-            'syncing': _('Syncing'),
+            'syncing': _('Syncing…'),
             'connected': _('Connected'),
             'action_required': _('Action required — reconnect'),
             'paused': _('Paused'),
@@ -1330,6 +1335,20 @@ class GoogleAdsAccount(models.Model):
         last_sync = max(
             [a.last_sync_success_at for a in accounts if a.last_sync_success_at]
             or [False])
+
+        # Zero versus unknown (rail R8). A successful run that read nothing is
+        # a ZERO and the line says when it happened; a FAILED run leaves the
+        # earlier time in place and says the last attempt failed beside it —
+        # never a silent stale number, and never a zero that looks like a fact.
+        reporting_line = _('Reporting updated: %s') % (
+            fields.Datetime.to_string(last_sync) if last_sync
+            else _('Not synced'))
+        newest_run = self.env['google.ads.sync.run'].sudo().search(
+            [('account_id', 'in', accounts.ids)], order='id desc', limit=1
+        ) if accounts else self.env['google.ads.sync.run'].browse()
+        if newest_run and newest_run.state == 'failed':
+            reporting_line = '%s · %s' % (reporting_line, _(
+                'last attempt failed (%s)', newest_run.error_code or '-'))
 
         return {
             'channel': 'google_ads',
@@ -1383,9 +1402,7 @@ class GoogleAdsAccount(models.Model):
                 _('Last website lead: %s') % (
                     fields.Datetime.to_string(last_lead) if last_lead
                     else _('No leads received yet')),
-                _('Reporting updated: %s') % (
-                    fields.Datetime.to_string(last_sync) if last_sync
-                    else _('Not synced')),
+                reporting_line,
             ],
             'notice': '',
             'view_leads_action': 'health_google_ads.action_google_ads_leads',

@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =============================================================
+         THE REPORT — google.ads.campaign.stat (a SQL view)
+         ============================================================= -->
+
+    <!-- Ledger §5.93: a `search_default_` group-by REPLACES a pivot's arch row
+         groupbys, so the dimensions are declared in BOTH places — in the arch,
+         which is the honest description of the view, and as the action's two
+         search defaults, which is what actually survives the search model.
+         `currency_id` is a row in its own right because R5 forbids a total
+         that adds two currencies together: one campaign, one currency, one
+         column of money. `has_metrics` is deliberately NOT a measure — it is a
+         yes/no about whether Google has answered at all. -->
+    <record id="view_google_ads_campaign_stat_pivot" model="ir.ui.view">
+        <field name="name">google.ads.campaign.stat.pivot</field>
+        <field name="model">google.ads.campaign.stat</field>
+        <field name="arch" type="xml">
+            <pivot string="Google Ads report">
+                <field name="campaign_id" type="row"/>
+                <field name="currency_id" type="row"/>
+                <field name="date" interval="month" type="col"/>
+                <field name="spend" type="measure"/>
+                <field name="clicks" type="measure"/>
+                <field name="google_conversions" type="measure"/>
+                <field name="new_enquiries" type="measure"/>
+                <field name="submissions" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_google_ads_campaign_stat_list" model="ir.ui.view">
+        <field name="name">google.ads.campaign.stat.list</field>
+        <field name="model">google.ads.campaign.stat</field>
+        <field name="arch" type="xml">
+            <list string="Google Ads report" create="false" delete="false"
+                  edit="false">
+                <field name="date"/>
+                <field name="campaign_id"/>
+                <field name="account_id" optional="hide"/>
+                <field name="company_id" optional="hide"
+                       groups="base.group_multi_company"/>
+                <field name="impressions" sum="Impressions" optional="show"/>
+                <field name="clicks" sum="Clicks"/>
+                <field name="spend" sum="Spend"/>
+                <field name="currency_id" optional="show"/>
+                <field name="google_conversions" sum="Google Conversions"/>
+                <field name="new_enquiries" sum="New Enquiries"/>
+                <field name="submissions" sum="Form Submissions"/>
+                <field name="has_metrics" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_google_ads_campaign_stat_graph" model="ir.ui.view">
+        <field name="name">google.ads.campaign.stat.graph</field>
+        <field name="model">google.ads.campaign.stat</field>
+        <field name="arch" type="xml">
+            <graph string="Google Ads report" type="line">
+                <field name="date"/>
+                <field name="spend" type="measure"/>
+                <field name="new_enquiries" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_google_ads_campaign_stat_search" model="ir.ui.view">
+        <field name="name">google.ads.campaign.stat.search</field>
+        <field name="model">google.ads.campaign.stat</field>
+        <field name="arch" type="xml">
+            <search string="Google Ads report">
+                <field name="campaign_id"/>
+                <field name="account_id"/>
+                <!-- Ledger §5.10: group-by filters go straight in <search>,
+                     with no <group expand="0"> wrapper, and no `attrs=`. -->
+                <filter name="last_30" string="Last 30 days"
+                        domain="[('date', '&gt;=', (context_today() - datetime.timedelta(days=29)).strftime('%Y-%m-%d'))]"/>
+                <filter name="last_90" string="Last 90 days"
+                        domain="[('date', '&gt;=', (context_today() - datetime.timedelta(days=89)).strftime('%Y-%m-%d'))]"/>
+                <filter name="this_month" string="This month"
+                        domain="[('date', '&gt;=', (context_today().replace(day=1)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter name="with_metrics" string="Has figures from Google"
+                        domain="[('has_metrics', '=', True)]"/>
+                <filter name="group_campaign" string="Campaign"
+                        context="{'group_by': 'campaign_id'}"/>
+                <filter name="group_currency" string="Currency"
+                        context="{'group_by': 'currency_id'}"/>
+                <filter name="group_account" string="Advertising Account"
+                        context="{'group_by': 'account_id'}"/>
+                <filter name="group_date" string="Day"
+                        context="{'group_by': 'date'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_google_ads_campaign_stat" model="ir.actions.act_window">
+        <field name="name">Google Ads report</field>
+        <field name="res_model">google.ads.campaign.stat</field>
+        <field name="view_mode">list,pivot,graph</field>
+        <field name="search_view_id" ref="view_google_ads_campaign_stat_search"/>
+        <field name="context">{'search_default_last_30': 1, 'search_default_group_campaign': 1, 'search_default_group_currency': 2}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No campaign figures yet</p>
+            <p>Cost per new enquiry is shown per campaign for the last 30 days
+               on the advertising account page. Google conversions and this
+               system's own enquiry counts use different attribution rules and
+               are not expected to match.</p>
+            <p>A day with no figures from Google shows zero spend because
+               nothing has been read for it, not because nothing was spent.</p>
+        </field>
+    </record>
+
+    <!-- =============================================================
+         THE HONESTY LOG — google.ads.sync.run
+         ============================================================= -->
+    <record id="view_google_ads_sync_run_list" model="ir.ui.view">
+        <field name="name">google.ads.sync.run.list</field>
+        <field name="model">google.ads.sync.run</field>
+        <field name="arch" type="xml">
+            <list string="Sync history" create="false" delete="false"
+                  edit="false"
+                  decoration-danger="state == 'failed'"
+                  decoration-warning="state in ('skipped_locked', 'skipped_reconnect')">
+                <field name="started_at"/>
+                <field name="account_id" optional="hide"/>
+                <field name="kind"/>
+                <field name="state"/>
+                <field name="window_from"/>
+                <field name="window_to"/>
+                <field name="campaigns_seen"/>
+                <field name="rows_written"/>
+                <field name="rows_removed"/>
+                <field name="attempts"/>
+                <field name="error_code"/>
+                <field name="detail_redacted" optional="show"/>
+                <field name="finished_at" optional="hide"/>
+                <field name="request_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_google_ads_sync_run_form" model="ir.ui.view">
+        <field name="name">google.ads.sync.run.form</field>
+        <field name="model">google.ads.sync.run</field>
+        <field name="arch" type="xml">
+            <form string="Sync run" create="false" edit="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="account_id"/>
+                            <field name="kind"/>
+                            <field name="state"/>
+                            <field name="attempts"/>
+                        </group>
+                        <group>
+                            <field name="window_from"/>
+                            <field name="window_to"/>
+                            <field name="started_at"/>
+                            <field name="finished_at"/>
+                        </group>
+                    </group>
+                    <group string="What it read">
+                        <field name="campaigns_seen"/>
+                        <field name="rows_written"/>
+                        <field name="rows_removed"/>
+                    </group>
+                    <group string="What went wrong"
+                           invisible="state == 'success'">
+                        <field name="error_code"/>
+                        <field name="detail_redacted"/>
+                        <field name="request_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_google_ads_sync_runs" model="ir.actions.act_window">
+        <field name="name">Google Ads sync history</field>
+        <field name="res_model">google.ads.sync.run</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Nothing read yet</p>
+            <p>Every attempt to read campaign figures from Google is recorded
+               here, including the ones that read nothing and the ones that
+               failed.</p>
+        </field>
+    </record>
+
+    <!-- =============================================================
+         THE DAILY CACHE — google.ads.campaign.day
+         ============================================================= -->
+    <record id="view_google_ads_campaign_day_list" model="ir.ui.view">
+        <field name="name">google.ads.campaign.day.list</field>
+        <field name="model">google.ads.campaign.day</field>
+        <field name="arch" type="xml">
+            <list string="Daily figures" create="false" delete="false"
+                  edit="false">
+                <field name="date"/>
+                <field name="campaign_id"/>
+                <field name="impressions" sum="Impressions"/>
+                <field name="clicks" sum="Clicks"/>
+                <field name="spend" sum="Spend"/>
+                <field name="currency_id"/>
+                <field name="google_conversions" sum="Google Conversions"/>
+                <field name="overflow" optional="hide"/>
+                <field name="cost_micros" optional="hide"/>
+                <field name="synced_at" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_google_ads_campaign_days" model="ir.actions.act_window">
+        <field name="name">Google Ads daily figures</field>
+        <field name="res_model">google.ads.campaign.day</field>
+        <field name="view_mode">list</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Nothing read yet</p>
+            <p>One row per campaign and day, exactly as Google reported it.
+               Spend is kept as the exact figure Google sent, so no digit is
+               lost.</p>
+        </field>
+    </record>
+
+    <!-- =============================================================
+         THE BACKFILL WIZARD
+         ============================================================= -->
+    <record id="view_google_ads_backfill_wizard_form" model="ir.ui.view">
+        <field name="name">google.ads.backfill.wizard.form</field>
+        <field name="model">google.ads.backfill.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Fetch older days">
+                <group>
+                    <field name="account_id" readonly="1"/>
+                    <field name="days"/>
+                </group>
+                <div class="text-muted">
+                    <p>This system normally holds the last 30 days. Older days
+                       are fetched in batches of 30 over the next scheduled
+                       runs, so Google is never asked for everything at
+                       once.</p>
+                </div>
+                <footer>
+                    <button name="action_apply" type="object" string="Fetch"
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

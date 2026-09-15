@@ -32,8 +32,8 @@
         <field name="icon">fa fa-google</field>
         <field name="parent_id" eval="False"/>
         <field name="action_xmlid">health_google_ads.action_google_ads_accounts</field>
-        <field name="match_action_xmlids">health_google_ads.action_google_ads_accounts,health_google_ads.action_google_ads_leads</field>
-        <field name="match_models">google.ads.account</field>
+        <field name="match_action_xmlids">health_google_ads.action_google_ads_accounts,health_google_ads.action_google_ads_leads,health_google_ads.action_google_ads_campaign_stat,health_google_ads.action_google_ads_sync_runs,health_google_ads.action_google_ads_campaign_days</field>
+        <field name="match_models">google.ads.account,google.ads.campaign.stat,google.ads.sync.run,google.ads.campaign.day</field>
     </record>
 
     <!-- The platform operator's own leaf, in ADMIN. No `role_ids`: the

@@ -69,11 +69,42 @@ GA2 non-goals: no campaign or spend fetch and no sync job (next phase), no
 mutate service and no arbitrary GAQL, no Google-hosted lead forms, and no
 platform relay — each system registers its own return address with Google.
 
+Phase GA3 — campaign figures, daily sync and the report
+-------------------------------------------------------
+
+After GA2 a clinic could connect its advertising account and nothing was read.
+GA3 reads it.
+
+* **A daily cache.** Once a day, and whenever an operator presses *Sync now*,
+  this system reads the last 30 days of campaign names, spend, clicks and
+  Google-reported conversions into a local table, counted on the advertising
+  account's OWN calendar day. Spend is kept as the exact figure Google sent
+  (millionths, as text) so no digit is lost, and no total ever adds two
+  currencies together.
+* **The clinic's own numbers beside Google's.** For each campaign the report
+  also shows how many NEW enquiries it produced and how many form submissions
+  arrived, including repeat ones from people already in the pipeline, plus a
+  cost per new enquiry worked out from this system's own enquiry count and
+  labelled as such. Google's conversion count uses different attribution rules
+  and is not expected to agree.
+* **Zero is not unknown.** A successful read that returns nothing writes a
+  zero and says when it happened. A failed read leaves the previous figures in
+  place and says "last attempt failed" beside them. Every attempt, including
+  the ones that read nothing, is recorded in a sync history.
+* **Bounded by construction.** One run per account at a time, three attempts
+  with a short wait between them, never an HTTP call inside a browser request,
+  and older days fetched in batches of 30 over successive runs rather than all
+  at once.
+
+GA3 non-goals: no conversion upload to Google, no ad or budget writes, no
+ad-group or keyword detail, no lifetime totals, and no blended cost per area.
+
 Design: docs/strategy/google-ads-channel-design.md
 Handovers: docs/strategy/handovers/google-ads-phaseGA1.md,
-docs/strategy/handovers/google-ads-phaseGA2.md
+docs/strategy/handovers/google-ads-phaseGA2.md,
+docs/strategy/handovers/google-ads-phaseGA3.md
 """,
-    'version': '19.0.2.0.0',
+    'version': '19.0.3.0.0',
     'category': 'Sales/CRM',
     'author': 'Biztinct',
     'website': 'https://carejiox.com',
@@ -92,6 +123,7 @@ docs/strategy/handovers/google-ads-phaseGA2.md
         'security/ir.model.access.csv',
         'views/google_ads_platform_config_views.xml',
         'views/google_ads_select_wizard_views.xml',
+        'views/google_ads_reporting_views.xml',
         'views/google_ads_account_views.xml',
         'views/crm_lead_views.xml',
         'views/lead_touchpoint_views.xml',

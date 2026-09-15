@@ -34,4 +34,43 @@
         <field name="perm_unlink" eval="True"/>
     </record>
 
+    <!-- GA3. The daily cache, the report view and the honesty log all carry
+         `company_id`, and all three get the same GLOBAL company clause for the
+         same reason: money figures must never cross a clinic boundary, and a
+         company clause written as a group rule would be OR-ed away by any
+         sees-everything group rule a user also matches. -->
+
+    <record id="google_ads_campaign_day_company_rule" model="ir.rule">
+        <field name="name">Google Ads daily figures: own companies</field>
+        <field name="model_id" ref="model_google_ads_campaign_day"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="google_ads_sync_run_company_rule" model="ir.rule">
+        <field name="name">Google Ads sync history: own companies</field>
+        <field name="model_id" ref="model_google_ads_sync_run"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="google_ads_campaign_stat_company_rule" model="ir.rule">
+        <field name="name">Google Ads report: own companies</field>
+        <field name="model_id" ref="model_google_ads_campaign_stat"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
 </odoo>

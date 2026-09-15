@@ -18,4 +18,28 @@
         <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).strftime('%Y-%m-%d 02:50:00')"/>
     </record>
 
+    <!-- Daily 03:30 UTC: read the last 30 days of campaign figures for every
+         connected advertising account, then move the "older days" queue on.
+
+         Ledger §5.81 — a cron that ships ACTIVE must be harmless by default.
+         This one selects on `reporting_state in ('connected','syncing')`, and
+         an account only reaches those states after a human has signed in with
+         Google AND chosen an advertising account. With zero connected accounts
+         — which is every database on this cluster today — it makes no provider
+         call of any kind and logs one line saying there was nothing to read.
+         The golden template's ritual switches it off with every other job
+         anyway (SaaS runbook §5 / ledger §5.178). -->
+    <record id="ir_cron_google_ads_sync_reporting" model="ir.cron"
+            forcecreate="True">
+        <field name="name">Google Ads: read campaign figures</field>
+        <field name="model_id" ref="model_google_ads_account"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_sync_reporting()</field>
+        <field name="active" eval="True"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).strftime('%Y-%m-%d 03:30:00')"/>
+    </record>
+
 </data></odoo>

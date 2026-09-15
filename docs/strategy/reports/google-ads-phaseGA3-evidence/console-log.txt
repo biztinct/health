@@ -1,0 +1,24 @@
+Browser console, GA3 evidence pass — carejiox.com, 2026-09-15
+=============================================================
+Captured with `list_console_messages(includePreservedMessages=true)` at the end
+of the drive, covering every screen in the pack.
+
+[error] Failed to load resource: the server responded with a status of 502
+        -> the page was reloaded DURING a `carejiox-deploy` restart (the
+           service is down for the length of an upgrade). Not a page error:
+           the next load answered 200.
+
+[debug] web_debranding: field_upgrade.js loaded (compatibility mode)
+        -> pre-existing debug line from another module's asset. A console
+           line is not a user-visible string; nothing on any screen in this
+           pack names the application vendor.
+
+[log]   Zalo Bus Service initialized
+        -> pre-existing, the CMS shell's own bus service.
+
+[issue] Incorrect use of <label for=FORM_ELEMENT>  (count: 29)
+        -> a DevTools accessibility HINT raised by the CMS shell's own form
+           markup, on every screen in the product. Pre-existing; the same
+           hint appears in the GA2 pack.
+
+0 JavaScript errors and 0 warnings attributable to this phase.

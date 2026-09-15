@@ -25,3 +25,23 @@ access_google_ads_select_line_clinic_admin,google.ads.account.select.line clinic
 access_google_ads_select_line_healthcare_admin,google.ads.account.select.line healthcare admin,model_google_ads_account_select_line,health_base.group_healthcare_admin,1,1,1,1
 access_google_ads_select_line_owner,google.ads.account.select.line owner,model_google_ads_account_select_line,health_base.group_healthcare_owner,1,1,1,1
 access_google_ads_select_line_system,google.ads.account.select.line system,model_google_ads_account_select_line,base.group_system,1,1,1,1
+access_google_ads_campaign_day_crm_manager,google.ads.campaign.day crm manager,model_google_ads_campaign_day,health_crm.group_health_crm_manager,1,0,0,0
+access_google_ads_campaign_day_clinic_admin,google.ads.campaign.day clinic admin,model_google_ads_campaign_day,health_access.group_clinic_admin,1,0,0,0
+access_google_ads_campaign_day_healthcare_admin,google.ads.campaign.day healthcare admin,model_google_ads_campaign_day,health_base.group_healthcare_admin,1,0,0,0
+access_google_ads_campaign_day_owner,google.ads.campaign.day owner,model_google_ads_campaign_day,health_base.group_healthcare_owner,1,0,0,0
+access_google_ads_campaign_day_system,google.ads.campaign.day system,model_google_ads_campaign_day,base.group_system,1,1,1,1
+access_google_ads_sync_run_crm_manager,google.ads.sync.run crm manager,model_google_ads_sync_run,health_crm.group_health_crm_manager,1,0,0,0
+access_google_ads_sync_run_clinic_admin,google.ads.sync.run clinic admin,model_google_ads_sync_run,health_access.group_clinic_admin,1,0,0,0
+access_google_ads_sync_run_healthcare_admin,google.ads.sync.run healthcare admin,model_google_ads_sync_run,health_base.group_healthcare_admin,1,0,0,0
+access_google_ads_sync_run_owner,google.ads.sync.run owner,model_google_ads_sync_run,health_base.group_healthcare_owner,1,0,0,0
+access_google_ads_sync_run_system,google.ads.sync.run system,model_google_ads_sync_run,base.group_system,1,1,1,1
+access_google_ads_campaign_stat_crm_manager,google.ads.campaign.stat crm manager,model_google_ads_campaign_stat,health_crm.group_health_crm_manager,1,0,0,0
+access_google_ads_campaign_stat_clinic_admin,google.ads.campaign.stat clinic admin,model_google_ads_campaign_stat,health_access.group_clinic_admin,1,0,0,0
+access_google_ads_campaign_stat_healthcare_admin,google.ads.campaign.stat healthcare admin,model_google_ads_campaign_stat,health_base.group_healthcare_admin,1,0,0,0
+access_google_ads_campaign_stat_owner,google.ads.campaign.stat owner,model_google_ads_campaign_stat,health_base.group_healthcare_owner,1,0,0,0
+access_google_ads_campaign_stat_system,google.ads.campaign.stat system,model_google_ads_campaign_stat,base.group_system,1,0,0,0
+access_google_ads_backfill_wizard_crm_manager,google.ads.backfill.wizard crm manager,model_google_ads_backfill_wizard,health_crm.group_health_crm_manager,1,1,1,1
+access_google_ads_backfill_wizard_clinic_admin,google.ads.backfill.wizard clinic admin,model_google_ads_backfill_wizard,health_access.group_clinic_admin,1,1,1,1
+access_google_ads_backfill_wizard_healthcare_admin,google.ads.backfill.wizard healthcare admin,model_google_ads_backfill_wizard,health_base.group_healthcare_admin,1,1,1,1
+access_google_ads_backfill_wizard_owner,google.ads.backfill.wizard owner,model_google_ads_backfill_wizard,health_base.group_healthcare_owner,1,1,1,1
+access_google_ads_backfill_wizard_system,google.ads.backfill.wizard system,model_google_ads_backfill_wizard,base.group_system,1,1,1,1

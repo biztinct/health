@@ -276,15 +276,32 @@ class TestGoogleAdsClient(GoogleAdsGa2Case):
     def test_ga2_t13f_the_reporting_surface_is_read_only(self):
         self._fake_google()
         client = self._client()
-        for method, args in (('list_campaigns', (CUSTOMER_A1,)),
-                             ('fetch_campaign_days',
-                              (CUSTOMER_A1, '2026-09-01', '2026-09-15'))):
+        # GA3 implemented both reads. What GA2 asserted through
+        # `NotImplementedError` — that no caller can put a query on the wire —
+        # is asserted here directly, because that is the property that matters
+        # and it has to keep holding now the methods do something.
+        self.assertEqual(client.list_campaigns(CUSTOMER_A1), [])
+        # Dates are `datetime.date` OBJECTS the client formats itself. A
+        # caller STRING is refused outright, so there is no interpolation path
+        # from an RPC into the query.
+        for bad in (('2026-09-01', '2026-09-15'), (None, None)):
             raised = None
             try:
-                getattr(client, method)(*args)
-            except NotImplementedError as caught:
+                client.fetch_campaign_days(CUSTOMER_A1, *bad)
+            except gads.GoogleAdsError as caught:
                 raised = caught
-            self.assertIsNotNone(raised, '%s belongs to the next phase' % method)
+            self.assertIsNotNone(raised, 'a caller string reached the query')
+            self.assertEqual(raised.code, 'bad_window')
+        # Every query this module can run is a module-level constant, and not
+        # one of them names a write.
+        for name in dir(gads):
+            if not name.startswith('Q_'):
+                continue
+            query = getattr(gads, name)
+            self.assertTrue(query.upper().startswith('SELECT '), name)
+            for verb in ('MUTATE', 'INSERT', 'UPDATE', 'DELETE', 'REMOVE'):
+                self.assertNotIn(verb, query.upper(), '%s names %s' % (name,
+                                                                       verb))
         # There is no path from a caller to a query string at all.
         self.assertFalse([name for name in dir(client)
                           if name in ('search', 'query', 'mutate', 'run_gaql')])

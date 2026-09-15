@@ -11,9 +11,9 @@ Three postures are load-bearing:
 
 * **No method takes a query string.** Every read runs one of the module-level
   ``Q_*`` constants, so there is no path from an RPC to arbitrary GAQL and no
-  mutate service is reachable at all. ``list_campaigns`` /
-  ``fetch_campaign_days`` are declared here and raise ``NotImplementedError``
-  — GA3 fills them, and the read-only surface is declared exactly once.
+  mutate service is reachable at all. ``fetch_campaign_days`` is the one read
+  whose query is not a bare constant, and the only thing interpolated into it
+  is two ``datetime.date`` objects the method formats itself.
 * **Fixed hosts.** ``ADS_HOST`` / ``TOKEN_URL`` / ``AUTH_URL`` are constants,
   TLS verification is the requests default, and every call carries
   ``timeout=HTTP_TIMEOUT``.
@@ -30,6 +30,7 @@ Three postures are load-bearing:
 Ids are strings everywhere: a Google customer id is ten digits and a campaign
 id exceeds 2**53, so ``int()`` never appears in this file.
 """
+import datetime
 import logging
 
 import requests
@@ -59,6 +60,27 @@ Q_CHILDREN = ('SELECT customer_client.id, customer_client.descriptive_name, '
               'customer_client.currency_code, customer_client.time_zone, '
               'customer_client.status, customer_client.hidden '
               'FROM customer_client WHERE customer_client.level <= 5')
+
+# GA3. The campaign metadata query and the daily metrics query, both fixed.
+# `Q_DAYS` carries two `%s` placeholders filled from `datetime.date` OBJECTS
+# formatted by `fetch_campaign_days` — never from a caller's string, so the
+# read-only posture at the top of this file still holds: there is no path from
+# an RPC to arbitrary GAQL.
+#
+# `metrics.conversions` is read WITHOUT any conversion-action segment on
+# purpose (design §7.2): segmenting the primary metrics table by conversion
+# action repeats every cost row once per action and multiplies spend.
+Q_CAMPAIGNS = ('SELECT campaign.id, campaign.name, campaign.status, '
+               'campaign.advertising_channel_type FROM campaign')
+Q_DAYS = ('SELECT campaign.id, segments.date, metrics.impressions, '
+          'metrics.clicks, metrics.cost_micros, metrics.conversions '
+          'FROM campaign '
+          "WHERE segments.date BETWEEN '%s' AND '%s'")
+
+# A single fetch never asks for more than this many days (design §7.2 —
+# bounded query dates). The rolling window is 30 and the backfill walks in
+# chunks of 30, so anything past a year is a programming error, not a request.
+MAX_WINDOW_DAYS = 366
 
 # Error codes that mean "the sign-in itself is gone" — the account moves to
 # `action_required` and the operator must press Reconnect. Anything else is
@@ -208,6 +230,27 @@ def _pick(row, *names):
     return ''
 
 
+def _as_int(value):
+    """An int64 that arrived as a STRING, as an int. Junk reads 0.
+
+    No clamping here — the int4 question belongs to the cache model
+    (ledger §5.80), and the honest answer at this layer is what Google sent.
+    """
+    try:
+        return int(str(value).strip() or 0)
+    except (TypeError, ValueError):
+        return 0
+
+
+def _as_float(value):
+    """``metrics.conversions`` is fractional and may arrive as a number OR a
+    string. Junk reads 0.0."""
+    try:
+        return float(value if value not in (None, '') else 0.0)
+    except (TypeError, ValueError):
+        return 0.0
+
+
 def _customer_dict(raw):
     """The REST payload for one customer, in our own vocabulary.
 
@@ -343,13 +386,93 @@ class GoogleAdsClient:
         return out
 
     # ------------------------------------------------------------------
-    # GA3 — declared here so the read-only surface is stated once.
+    # GA3 — the reporting reads.
     # ------------------------------------------------------------------
     def list_campaigns(self, customer_id, login_customer_id=None):
-        raise NotImplementedError(
-            'Campaign metadata arrives in the reporting phase.')
+        """Every campaign on this advertising account, as typed dicts.
+
+        ``id`` stays a STRING: a Google campaign id exceeds 2**53 and one
+        ``int()`` anywhere in the chain silently renames a campaign.
+        """
+        rows = self._search(customer_id, Q_CAMPAIGNS,
+                            login_customer_id=login_customer_id)
+        out = []
+        for row in rows:
+            raw = (row or {}).get('campaign') or {}
+            campaign_id = str(_pick(raw, 'id') or '')
+            if not campaign_id:
+                continue
+            out.append({
+                'id': campaign_id,
+                'name': str(_pick(raw, 'name') or ''),
+                'status': str(_pick(raw, 'status') or ''),
+                'advertising_channel_type': str(
+                    _pick(raw, 'advertisingChannelType',
+                          'advertising_channel_type') or ''),
+            })
+        return out
 
     def fetch_campaign_days(self, customer_id, date_from, date_to,
                             login_customer_id=None):
-        raise NotImplementedError(
-            'Daily campaign figures arrive in the reporting phase.')
+        """One row per (campaign, account-local day) in the window.
+
+        ``date_from`` / ``date_to`` are ``datetime.date`` OBJECTS — the client
+        formats them itself, so no caller string ever reaches the query. A
+        window that is inverted or longer than :data:`MAX_WINDOW_DAYS` is
+        refused with ``GoogleAdsError('bad_window')`` rather than silently
+        truncated.
+
+        ``cost_micros`` comes back as the EXACT STRING Google sent: it is an
+        int64 and the caller stores it byte for byte (rail R3). Impressions and
+        clicks are parsed to ``int`` here and clamped by the cache model, which
+        is where int4 lives (§5.80).
+        """
+        date_from = self._as_date(date_from)
+        date_to = self._as_date(date_to)
+        if date_to < date_from \
+                or (date_to - date_from).days > MAX_WINDOW_DAYS:
+            raise GoogleAdsError('bad_window')
+        query = Q_DAYS % (date_from.strftime('%Y-%m-%d'),
+                          date_to.strftime('%Y-%m-%d'))
+        rows = self._search(customer_id, query,
+                            login_customer_id=login_customer_id)
+        out = []
+        for row in rows:
+            row = row or {}
+            campaign = row.get('campaign') or {}
+            segments = row.get('segments') or {}
+            metrics = row.get('metrics') or {}
+            campaign_id = str(_pick(campaign, 'id') or '')
+            day = self._as_day(_pick(segments, 'date'))
+            if not campaign_id or not day:
+                continue
+            out.append({
+                'campaign_id': campaign_id,
+                'date': day,
+                'impressions': _as_int(_pick(metrics, 'impressions')),
+                'clicks': _as_int(_pick(metrics, 'clicks')),
+                # The string, untouched — validated by the writer.
+                'cost_micros': str(
+                    _pick(metrics, 'costMicros', 'cost_micros') or '0'),
+                'conversions': _as_float(_pick(metrics, 'conversions')),
+            })
+        return out
+
+    @staticmethod
+    def _as_date(value):
+        """A ``datetime.date``, or ``bad_window``. A ``datetime`` is narrowed
+        to its date — never parsed from a string."""
+        if isinstance(value, datetime.datetime):
+            return value.date()
+        if isinstance(value, datetime.date):
+            return value
+        raise GoogleAdsError('bad_window')
+
+    @staticmethod
+    def _as_day(value):
+        """``segments.date`` ("2026-09-01") as a date, or False."""
+        text = str(value or '')[:10]
+        try:
+            return datetime.date.fromisoformat(text)
+        except ValueError:
+            return False

@@ -1237,3 +1237,485 @@ msgstr "Địa chỉ trả về"
 #: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_platform_secret_wizard_form
 msgid "Store it"
 msgstr "Lưu lại"
+
+# =====================================================================
+# GA3 — the daily campaign cache, the report and the sync history
+# =====================================================================
+
+#. module: health_google_ads
+#: model:ir.model,name:health_google_ads.model_google_ads_campaign_day
+msgid "Google Ads Campaign Day"
+msgstr "Số liệu theo ngày của chiến dịch Google Ads"
+
+#. module: health_google_ads
+#: model:ir.model,name:health_google_ads.model_google_ads_sync_run
+msgid "Google Ads Sync Run"
+msgstr "Lần đọc số liệu Google Ads"
+
+#. module: health_google_ads
+#: model:ir.model,name:health_google_ads.model_google_ads_campaign_stat
+msgid "Google Ads Report"
+msgstr "Báo cáo Google Ads"
+
+#. module: health_google_ads
+#: model:ir.model,name:health_google_ads.model_google_ads_backfill_wizard
+msgid "Google Ads: Fetch Older Days"
+msgstr "Google Ads: Lấy các ngày trước đó"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign_day__account_id
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_sync_run__account_id
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign_stat__account_id
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_backfill_wizard__account_id
+msgid "Advertising Account"
+msgstr "Tài khoản quảng cáo"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign_day__campaign_id
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign_stat__campaign_id
+msgid "Campaign"
+msgstr "Chiến dịch"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign_day__company_id
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_sync_run__company_id
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign_stat__company_id
+msgid "Company"
+msgstr "Công ty"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign_day__date
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign_stat__date
+msgid "Day"
+msgstr "Ngày"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign_day__impressions
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign_stat__impressions
+msgid "Impressions"
+msgstr "Lượt hiển thị"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign_day__clicks
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign_stat__clicks
+msgid "Clicks"
+msgstr "Lượt nhấp"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign_day__spend
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign_stat__spend
+msgid "Spend"
+msgstr "Chi phí"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign_day__google_conversions
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign_stat__google_conversions
+msgid "Google Conversions"
+msgstr "Chuyển đổi theo Google"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign_day__cost_micros
+msgid "Spend (millionths)"
+msgstr "Chi phí (phần triệu)"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign_day__overflow
+msgid "Counted at the ceiling"
+msgstr "Đã đếm tới mức tối đa"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign_day__synced_at
+msgid "Read from Google at"
+msgstr "Đọc từ Google lúc"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign_stat__new_enquiries
+msgid "New Enquiries"
+msgstr "Yêu cầu tư vấn mới"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign_stat__submissions
+msgid "Form Submissions"
+msgstr "Lượt gửi biểu mẫu"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign_stat__has_metrics
+msgid "Figures from Google"
+msgstr "Đã có số liệu từ Google"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_sync_run__kind
+msgid "Why"
+msgstr "Lý do"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_sync_run__state
+msgid "Result"
+msgstr "Kết quả"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_sync_run__window_from
+msgid "From"
+msgstr "Từ ngày"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_sync_run__window_to
+msgid "To"
+msgstr "Đến ngày"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_sync_run__started_at
+msgid "Started"
+msgstr "Bắt đầu"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_sync_run__finished_at
+msgid "Finished"
+msgstr "Kết thúc"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_sync_run__attempts
+msgid "Attempts"
+msgstr "Số lần thử"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_sync_run__campaigns_seen
+msgid "Campaigns Seen"
+msgstr "Số chiến dịch đọc được"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_sync_run__rows_written
+msgid "Days Written"
+msgstr "Số ngày đã ghi"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_sync_run__rows_removed
+msgid "Days Removed"
+msgstr "Số ngày đã bỏ"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_sync_run__error_code
+msgid "Error Code"
+msgstr "Mã lỗi"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_sync_run__detail_redacted
+msgid "Detail"
+msgstr "Chi tiết"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_sync_run__request_id
+msgid "Google Request ID"
+msgstr "Mã yêu cầu của Google"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__sync_requested_at
+msgid "Sync Asked For"
+msgstr "Yêu cầu đọc số liệu lúc"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__backfill_until
+msgid "Fetch Back To"
+msgstr "Lấy ngược đến ngày"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__backfill_cursor
+msgid "Fetched Back To"
+msgstr "Đã lấy ngược đến ngày"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__campaign_day_count
+msgid "Days of Figures Held"
+msgstr "Số ngày đang lưu số liệu"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__unresolved_campaign_count
+msgid "Enquiries with no matching campaign"
+msgstr "Yêu cầu tư vấn không khớp chiến dịch nào"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__sync_run_ids
+msgid "Sync History"
+msgstr "Lịch sử đọc số liệu"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign__status_label
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign__window_from
+msgid "Figures From"
+msgstr "Số liệu từ ngày"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign__window_to
+msgid "Figures To"
+msgstr "Số liệu đến ngày"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign__spend_30d
+msgid "Spend (30 days)"
+msgstr "Chi phí (30 ngày)"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign__clicks_30d
+msgid "Clicks (30 days)"
+msgstr "Lượt nhấp (30 ngày)"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign__impressions_30d
+msgid "Impressions (30 days)"
+msgstr "Lượt hiển thị (30 ngày)"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign__conversions_30d
+msgid "Google Conversions (30 days)"
+msgstr "Chuyển đổi theo Google (30 ngày)"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign__new_enquiries_30d
+msgid "New Enquiries (30 days)"
+msgstr "Yêu cầu tư vấn mới (30 ngày)"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign__submissions_30d
+msgid "Form Submissions (30 days)"
+msgstr "Lượt gửi biểu mẫu (30 ngày)"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign__cost_per_new_enquiry_30d
+msgid "Cost per New Enquiry (30 days)"
+msgstr "Chi phí mỗi yêu cầu tư vấn mới (30 ngày)"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign__cost_per_new_enquiry_display
+msgid "Cost per New Enquiry"
+msgstr "Chi phí mỗi yêu cầu tư vấn mới"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_backfill_wizard__days
+msgid "How many days back"
+msgstr "Lấy ngược bao nhiêu ngày"
+
+#. module: health_google_ads
+#: model:ir.model.fields.selection,name:health_google_ads.selection__google_ads_sync_run__kind__scheduled
+msgid "Daily"
+msgstr "Hằng ngày"
+
+#. module: health_google_ads
+#: model:ir.model.fields.selection,name:health_google_ads.selection__google_ads_sync_run__kind__manual
+msgid "Asked for"
+msgstr "Do yêu cầu"
+
+#. module: health_google_ads
+#: model:ir.model.fields.selection,name:health_google_ads.selection__google_ads_sync_run__kind__initial
+msgid "First read"
+msgstr "Lần đọc đầu"
+
+#. module: health_google_ads
+#: model:ir.model.fields.selection,name:health_google_ads.selection__google_ads_sync_run__kind__backfill
+msgid "Older days"
+msgstr "Các ngày trước đó"
+
+#. module: health_google_ads
+#: model:ir.model.fields.selection,name:health_google_ads.selection__google_ads_sync_run__state__success
+msgid "Read"
+msgstr "Đã đọc"
+
+#. module: health_google_ads
+#: model:ir.model.fields.selection,name:health_google_ads.selection__google_ads_sync_run__state__failed
+msgid "Failed"
+msgstr "Thất bại"
+
+#. module: health_google_ads
+#: model:ir.model.fields.selection,name:health_google_ads.selection__google_ads_sync_run__state__skipped_locked
+msgid "Skipped — already running"
+msgstr "Bỏ qua — đang chạy rồi"
+
+#. module: health_google_ads
+#: model:ir.model.fields.selection,name:health_google_ads.selection__google_ads_sync_run__state__skipped_reconnect
+msgid "Skipped — sign-in needed"
+msgstr "Bỏ qua — cần đăng nhập lại"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_campaign.py:0
+msgid "Running"
+msgstr "Đang chạy"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_campaign.py:0
+msgid "Removed"
+msgstr "Đã xoá"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_campaign.py:0
+msgid "Unknown"
+msgstr "Không rõ"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Syncing…"
+msgstr "Đang đọc số liệu…"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "last attempt failed (%s)"
+msgstr "lần đọc gần nhất thất bại (%s)"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_sync.py:0
+msgid "Sync queued — the numbers refresh within a minute."
+msgstr "Đã xếp hàng — số liệu sẽ được làm mới trong vòng một phút."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_sync.py:0
+msgid "Scheduled jobs are off on this system, so this will not run until they are on."
+msgstr "Các tác vụ định kỳ đang tắt trên hệ thống này, nên việc đọc số liệu sẽ chưa chạy cho tới khi bật lại."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_sync.py:0
+msgid "Google Ads: already queued"
+msgstr "Google Ads: đã xếp hàng rồi"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_sync.py:0
+msgid "A sync is already queued for this advertising account."
+msgstr "Đã có một lượt đọc số liệu đang chờ cho tài khoản quảng cáo này."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_sync.py:0
+msgid "Google Ads: sync queued"
+msgstr "Google Ads: đã xếp hàng đọc số liệu"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_sync.py:0
+msgid "Connect campaign reporting first — there is nothing to read until this system has permission to read it."
+msgstr "Hãy kết nối báo cáo chiến dịch trước — chưa có gì để đọc cho tới khi hệ thống này được cấp quyền đọc."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_sync.py:0
+msgid "Fetch older days"
+msgstr "Lấy các ngày trước đó"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_sync.py:0
+msgid "Sync history"
+msgstr "Lịch sử đọc số liệu"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_sync.py:0
+msgid "Daily figures"
+msgstr "Số liệu theo ngày"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_sync.py:0
+msgid "%s malformed row"
+msgstr "%s dòng sai định dạng"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_sync.py:0
+msgid "%s malformed rows"
+msgstr "%s dòng sai định dạng"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_sync.py:0
+msgid "%s row for a campaign Google did not list"
+msgstr "%s dòng thuộc chiến dịch Google không liệt kê"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_sync.py:0
+msgid "%s rows for campaigns Google did not list"
+msgstr "%s dòng thuộc các chiến dịch Google không liệt kê"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_backfill_wizard.py:0
+msgid "Choose an advertising account first."
+msgstr "Hãy chọn một tài khoản quảng cáo trước."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_backfill_wizard.py:0
+msgid "Google Ads: older days queued"
+msgstr "Google Ads: đã xếp hàng lấy các ngày trước đó"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_backfill_wizard.py:0
+msgid "Older days will be fetched in batches of 30 over the next runs, back to %s."
+msgstr "Các ngày trước đó sẽ được lấy theo từng đợt 30 ngày trong các lần chạy kế tiếp, ngược đến %s."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_backfill_wizard.py:0
+msgid "This system holds at most %s days of history, so that is what was asked for."
+msgstr "Hệ thống này lưu tối đa %s ngày lịch sử, nên đó là mức đã được yêu cầu."
+
+#. module: health_google_ads
+#: model:ir.actions.act_window,name:health_google_ads.action_google_ads_campaign_stat
+msgid "Google Ads report"
+msgstr "Báo cáo Google Ads"
+
+#. module: health_google_ads
+#: model:ir.actions.act_window,name:health_google_ads.action_google_ads_sync_runs
+msgid "Google Ads sync history"
+msgstr "Lịch sử đọc số liệu Google Ads"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_account_form
+msgid "Campaign figures"
+msgstr "Số liệu chiến dịch"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_account_form
+msgid "Sync now"
+msgstr "Đọc số liệu ngay"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_account_form
+msgid "Open report"
+msgstr "Mở báo cáo"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_sync_run_form
+msgid "What it read"
+msgstr "Đã đọc được gì"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_sync_run_form
+msgid "What went wrong"
+msgstr "Sai ở đâu"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_sync_run_form
+msgid "Sync run"
+msgstr "Lượt đọc số liệu"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_backfill_wizard_form
+msgid "Fetch"
+msgstr "Lấy"
+
+#. module: health_google_ads
+#: model:ir.actions.act_window,name:health_google_ads.action_google_ads_campaign_days
+msgid "Google Ads daily figures"
+msgstr "Số liệu theo ngày của Google Ads"

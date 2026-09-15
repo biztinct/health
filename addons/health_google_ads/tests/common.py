@@ -21,6 +21,7 @@ from odoo.addons.health_web_leads.models.web_lead_service import (
     PARAM_URL_CITY_MAP,
 )
 
+from odoo.addons.health_google_ads.models import google_ads_sync as gsync
 from odoo.addons.health_google_ads.services import google_ads_client as gads
 
 # Ten digits, and provably not a real Viet UC advertising customer: they are
@@ -251,6 +252,15 @@ class FakeGoogle:
         self.children = {}           # manager id -> list of customerClient
         self.search_error = None     # exception raised by the NEXT _search
         self.search_pages = None     # explicit page list, overrides the above
+        # GA3 — the reporting reads.
+        self.campaigns = []          # raw {'campaign': {...}} result rows
+        self.campaign_days = []      # raw metrics result rows
+        # Explicit page list for the DAYS query, indexed by `pageToken`, so a
+        # retry restarts at page 0 the way a real second attempt does. An
+        # entry may be an Exception, which is raised for that page.
+        self.campaign_day_pages = None
+        self.campaigns_error = None  # raised on EVERY campaign-metadata call
+        self.days_error = None       # raised on EVERY campaign-days call
 
     # -- the three patched primitives ---------------------------------
     def post_form(self, url, data=None, headers=None):
@@ -289,6 +299,20 @@ class FakeGoogle:
         if 'FROM customer_client' in query:
             return {'results': [{'customerClient': row}
                                 for row in self.children.get(cid, [])]}
+        if 'FROM campaign' in query:
+            if 'segments.date' in query:
+                if self.days_error is not None:
+                    raise self.days_error
+                if self.campaign_day_pages is not None:
+                    index = int(body.get('pageToken') or 0)
+                    page = self.campaign_day_pages[index]
+                    if isinstance(page, Exception):
+                        raise page
+                    return page
+                return {'results': list(self.campaign_days)}
+            if self.campaigns_error is not None:
+                raise self.campaigns_error
+            return {'results': list(self.campaigns)}
         raw = self.customers.get(cid)
         return {'results': [{'customer': raw}] if raw else []}
 
@@ -301,6 +325,30 @@ class FakeGoogle:
         return {'id': cid, 'descriptiveName': name, 'currencyCode': currency,
                 'timeZone': time_zone, 'manager': manager, 'status': status,
                 'testAccount': test_account, 'hidden': hidden, 'level': level}
+
+    @staticmethod
+    def campaign_row(campaign_id, name='Campaign', status='ENABLED',
+                     channel='SEARCH'):
+        """One campaign metadata row in Google's own REST spelling."""
+        return {'campaign': {
+            'resourceName': 'customers/1111111111/campaigns/%s' % campaign_id,
+            'id': campaign_id, 'name': name, 'status': status,
+            'advertisingChannelType': channel}}
+
+    @staticmethod
+    def day_row(campaign_id, day, impressions='123', clicks='4',
+                cost_micros='1230000', conversions=1.5):
+        """One metrics row. Every int64 arrives as a STRING, exactly as the
+        REST surface sends it; `conversions` is fractional and is a number."""
+        return {
+            'campaign': {
+                'resourceName':
+                    'customers/1111111111/campaigns/%s' % campaign_id,
+                'id': campaign_id},
+            'segments': {'date': day},
+            'metrics': {'impressions': impressions, 'clicks': clicks,
+                        'costMicros': cost_micros, 'conversions': conversions},
+        }
 
 
 class GoogleAdsGa2Case(GoogleAdsCase):
@@ -355,9 +403,14 @@ class GoogleAdsGa2Case(GoogleAdsCase):
             self.addCleanup(patcher.stop)
         return fake
 
-    def _grant(self, account, access=FIXTURE_ACCESS, refresh=FIXTURE_REFRESH,
+    @classmethod
+    def _grant(cls, account, access=FIXTURE_ACCESS, refresh=FIXTURE_REFRESH,
                expires_in=3600, state='connected'):
-        """Give `account` a stored reporting grant, the way a callback would."""
+        """Give `account` a stored reporting grant, the way a callback would.
+
+        A CLASSMETHOD so GA3's `setUpClass` can arm an account before any test
+        runs; instances still call it as `self._grant(...)`.
+        """
         from datetime import timedelta
 
         from odoo import fields as odoo_fields
@@ -365,9 +418,9 @@ class GoogleAdsGa2Case(GoogleAdsCase):
             channel_crypto,
         )
         vals = {
-            'access_token_enc': channel_crypto.encrypt(self.env, access)
+            'access_token_enc': channel_crypto.encrypt(cls.env, access)
             if access else False,
-            'refresh_token_enc': channel_crypto.encrypt(self.env, refresh)
+            'refresh_token_enc': channel_crypto.encrypt(cls.env, refresh)
             if refresh else False,
             'token_expires_at': (odoo_fields.Datetime.now()
                                  + timedelta(seconds=expires_in))
@@ -389,3 +442,60 @@ class GoogleAdsGa2Case(GoogleAdsCase):
         action = account.action_start_reporting_oauth()
         query = parse_qs(urlparse(action['url']).query)
         return action, {k: v[0] for k, v in query.items()}
+
+
+# ======================================================================
+# GA3 — the reporting sync
+# ======================================================================
+class GoogleAdsGa3Case(GoogleAdsGa2Case):
+    """GA2's fixtures plus ONE connected advertising account with a grant.
+
+    `account_a1` is the account under test: it carries the repdigit customer id
+    GA1 already proved is free, a real IANA zone (so the account-local day is
+    genuinely different from the UTC day for part of every afternoon) and a
+    stored grant, which is what `_sync_reporting` requires before it will read
+    anything at all.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        env = cls.env
+        cls.Day = env['google.ads.campaign.day']
+        cls.Run = env['google.ads.sync.run']
+        cls.Stat = env['google.ads.campaign.stat']
+
+        currency = env['res.currency'].with_context(
+            active_test=False).search([('name', '=', 'VND')], limit=1) \
+            or env.company.currency_id
+        cls.account_a1._internal().write({
+            'account_timezone': 'Asia/Ho_Chi_Minh',
+            'currency_id': currency.id,
+            'provider_name': 'GADS A1 in Google',
+        })
+        cls._grant(cls.account_a1)
+        cls.currency = currency
+
+    # ------------------------------------------------------------------
+    def _no_sleep(self):
+        """Replace the ONE wait in the sync with a recorder.
+
+        A PLAIN FUNCTION, never `autospec` (ledger §5.76) — these flows re-arm
+        their fakes constantly.
+        """
+        slept = []
+        patcher = patch.object(gsync, '_backoff_sleep', slept.append)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        return slept
+
+    def _campaign_of(self, account, external_id):
+        return self.Campaign.sudo().search(
+            [('account_id', '=', account.id),
+             ('external_campaign_id', '=', external_id)], limit=1)
+
+    def _days_of(self, account):
+        return self.Day.sudo().search([('account_id', '=', account.id)])
+
+    def _runs_of(self, account):
+        return self.Run.sudo().search([('account_id', '=', account.id)])

@@ -143,12 +143,16 @@ class TestGoogleAdsDiscovery(GoogleAdsGa2Case):
         self.draft.invalidate_recordset()
         self.assertEqual(self.draft.customer_id, CHILD_C1)
         self.assertEqual(self.draft.login_customer_id, MANAGER_M)
-        self.assertEqual(self.draft.reporting_state, 'connected')
+        # From GA3 the binding step also QUEUES the first read, so the record
+        # lands on `syncing` rather than `connected`: a screen that says
+        # "Connected" and shows no figures at all invites exactly one question.
+        self.assertEqual(self.draft.reporting_state, 'syncing')
+        self.assertTrue(self.draft.sync_requested_at)
         self.assertEqual(self.draft.provider_name, 'Viet UC Hanoi')
         self.assertEqual(self.draft.currency_id.name, 'VND')
         self.assertEqual(self.draft.account_timezone, 'Asia/Ho_Chi_Minh')
         self.assertFalse(self.draft.last_error_code)
-        # GA2 ends at "connected": no figures are fetched here.
+        # Queued, never fetched in the request (rail R7): no figures here.
         self.assertFalse(self.draft.last_sync_success_at)
 
         validation = [c for c in fake.calls if c['kind'] == 'json'][-1]
