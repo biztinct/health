@@ -36,4 +36,21 @@
         <field name="match_models">google.ads.account</field>
     </record>
 
+    <!-- The platform operator's own leaf, in ADMIN. No `role_ids`: the
+         `google.ads.platform.config` ACL is `base.group_system` only, so a
+         clinic user who reaches the leaf gets an access error rather than a
+         screen. Whether the sidebar itself hides it is a DB question (role
+         rows carry no xmlid) and is answered in the phase's browser pass,
+         not guessed here. -->
+    <record id="item_google_ads_platform" model="cms.sidebar.item">
+        <field name="name">Google Ads application</field>
+        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <field name="sequence">94</field>
+        <field name="icon">fa fa-google</field>
+        <field name="parent_id" eval="False"/>
+        <field name="action_xmlid">health_google_ads.action_google_ads_platform_config</field>
+        <field name="match_action_xmlids">health_google_ads.action_google_ads_platform_config</field>
+        <field name="match_models">google.ads.platform.config</field>
+    </record>
+
 </odoo>

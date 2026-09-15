@@ -54,7 +54,7 @@
                             string="View touches"/>
                     <field name="reporting_state" widget="statusbar"
                            readonly="1"
-                           statusbar_visible="not_connected,syncing,connected"/>
+                           statusbar_visible="not_connected,authorizing,select_account,connected"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
@@ -67,8 +67,10 @@
                                    groups="base.group_multi_company"/>
                             <field name="customer_id"
                                    placeholder="1234567890"/>
-                            <field name="login_customer_id"
-                                   placeholder="optional"/>
+                            <!-- Filled by the account-selection step, never
+                                 typed: an id typed into a form establishes
+                                 no access at all (design §7.1). -->
+                            <field name="login_customer_id" readonly="1"/>
                         </group>
                         <group>
                             <field name="website_status"/>
@@ -136,14 +138,54 @@
                         </page>
 
                         <page string="Campaign reporting" name="reporting">
-                            <div class="text-muted">
-                                <p>Campaign reporting is set up in a later
-                                   step: connect a Google account, choose the
-                                   advertising account, and this system reads
-                                   campaign names, spend, clicks and
-                                   conversions. Nothing is changed in Google
-                                   Ads.</p>
+                            <div class="oe_button_box">
+                                <button name="action_start_reporting_oauth"
+                                        type="object" class="btn-primary"
+                                        string="Connect Google account"
+                                        invisible="reporting_state not in ('not_connected', 'authorizing')"/>
+                                <button name="action_list_reporting_accounts"
+                                        type="object" class="btn-primary"
+                                        string="Choose advertising account"
+                                        invisible="reporting_state != 'select_account'"/>
+                                <button name="action_list_reporting_accounts"
+                                        type="object" class="btn-secondary"
+                                        string="Change advertising account"
+                                        invisible="reporting_state != 'connected' or not has_reporting_grant"/>
+                                <button name="action_reconnect_reporting"
+                                        type="object" class="btn-primary"
+                                        string="Reconnect"
+                                        invisible="reporting_state not in ('action_required', 'connected')"/>
+                                <button name="action_disconnect_reporting"
+                                        type="object" class="btn-secondary"
+                                        string="Disconnect reporting"
+                                        invisible="reporting_state not in ('connected', 'action_required', 'select_account')"/>
                             </div>
+                            <div class="text-muted">
+                                <p>Connecting lets this system <strong>read</strong>
+                                   your advertising account: campaign names,
+                                   spend, clicks and Google-reported
+                                   conversions. It never creates, edits or
+                                   publishes ads, and never changes budgets.</p>
+                                <p>Website enquiries keep arriving whatever
+                                   this page says — the two are independent.</p>
+                            </div>
+                            <group>
+                                <group string="Connection">
+                                    <field name="has_reporting_grant"/>
+                                    <field name="authorized_by"/>
+                                    <field name="authorized_at"/>
+                                    <field name="token_expires_at"
+                                           groups="base.group_system"/>
+                                    <field name="token_scope"
+                                           groups="base.group_system"/>
+                                </group>
+                                <group string="Advertising account">
+                                    <field name="provider_name"/>
+                                    <field name="currency_id"/>
+                                    <field name="account_timezone"/>
+                                    <field name="reporting_error_redacted"/>
+                                </group>
+                            </group>
                             <field name="campaign_ids">
                                 <list string="Campaigns" editable="bottom">
                                     <field name="external_campaign_id"/>

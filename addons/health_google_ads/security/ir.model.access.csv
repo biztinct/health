@@ -12,3 +12,16 @@ access_google_ads_campaign_healthcare_admin,google.ads.campaign healthcare admin
 access_google_ads_campaign_owner,google.ads.campaign owner,model_google_ads_campaign,health_base.group_healthcare_owner,1,1,1,1
 access_google_ads_campaign_system,google.ads.campaign system,model_google_ads_campaign,base.group_system,1,1,1,1
 access_google_ads_account_web_leads_service,google.ads.account web service,model_google_ads_account,health_web_leads.group_web_leads_service,1,0,0,0
+access_google_ads_platform_config_system,google.ads.platform.config system,model_google_ads_platform_config,base.group_system,1,1,1,1
+access_google_ads_platform_secret_wizard_system,google.ads.platform.secret.wizard system,model_google_ads_platform_secret_wizard,base.group_system,1,1,1,1
+access_google_ads_oauth_session_system,google.ads.oauth.session system,model_google_ads_oauth_session,base.group_system,1,1,1,1
+access_google_ads_select_crm_manager,google.ads.account.select crm manager,model_google_ads_account_select,health_crm.group_health_crm_manager,1,1,1,1
+access_google_ads_select_clinic_admin,google.ads.account.select clinic admin,model_google_ads_account_select,health_access.group_clinic_admin,1,1,1,1
+access_google_ads_select_healthcare_admin,google.ads.account.select healthcare admin,model_google_ads_account_select,health_base.group_healthcare_admin,1,1,1,1
+access_google_ads_select_owner,google.ads.account.select owner,model_google_ads_account_select,health_base.group_healthcare_owner,1,1,1,1
+access_google_ads_select_system,google.ads.account.select system,model_google_ads_account_select,base.group_system,1,1,1,1
+access_google_ads_select_line_crm_manager,google.ads.account.select.line crm manager,model_google_ads_account_select_line,health_crm.group_health_crm_manager,1,1,1,1
+access_google_ads_select_line_clinic_admin,google.ads.account.select.line clinic admin,model_google_ads_account_select_line,health_access.group_clinic_admin,1,1,1,1
+access_google_ads_select_line_healthcare_admin,google.ads.account.select.line healthcare admin,model_google_ads_account_select_line,health_base.group_healthcare_admin,1,1,1,1
+access_google_ads_select_line_owner,google.ads.account.select.line owner,model_google_ads_account_select_line,health_base.group_healthcare_owner,1,1,1,1
+access_google_ads_select_line_system,google.ads.account.select.line system,model_google_ads_account_select_line,base.group_system,1,1,1,1

@@ -23,19 +23,25 @@ Three postures are deliberate and load-bearing:
 """
 import logging
 import uuid
+from datetime import timedelta
+from urllib.parse import urlencode
 
+import psycopg2
 from markupsafe import Markup
 
 from odoo import _, api, fields, models
 from odoo.exceptions import AccessError, UserError, ValidationError
 
 from odoo.addons.health_api_gateway.controllers.gateway import ApiError
+from odoo.addons.health_care_command_channels.services import channel_crypto
 from odoo.addons.health_care_command_channels.services.redact import redact
 from odoo.addons.health_web_leads.models.web_lead_service import (
     PARAM_FORM_CITY_MAP,
 )
 
 from ..services import attribution
+from ..services import google_ads_client as gads
+from ..services.google_ads_client import GoogleAdsClient, GoogleAdsError
 
 _logger = logging.getLogger(__name__)
 
@@ -63,7 +69,25 @@ EVIDENCE_FIELDS = (
     'reporting_state', 'last_sync_attempt_at', 'last_sync_success_at',
     'last_error_code', 'currency_id', 'account_timezone', 'provider_name',
     'native_eligibility', 'eligibility_checked_at', 'eligibility_reference',
+    # GA2 — the reporting grant. Every one of these is written by the
+    # sign-in / selection code and by nothing else; a form that could set
+    # `access_token_enc` or `customer_id`'s manager would be a form that can
+    # forge a connection.
+    'access_token_enc', 'refresh_token_enc', 'token_expires_at',
+    'token_scope', 'authorized_by', 'authorized_at',
+    'reporting_error_redacted', 'login_customer_id',
 )
+
+# Advisory-lock class key for reporting-token refresh. "gads" in hex, chosen
+# so it is recognisable in `pg_locks` and distinct from the channels'
+# 0x63686E6C ("chnl").
+REPORTING_LOCK_CLASS = 0x67616473
+TOKEN_SKEW_SECONDS = 60
+
+# Which error codes describe a manager-level refusal rather than a lost
+# sign-in. Kept as a constant so the message map and the state machine cannot
+# drift apart.
+RECONNECT_STATES = ('action_required',)
 
 REPORTING_STATE_SELECTION = [
     ('not_connected', 'Not connected'),
@@ -183,6 +207,29 @@ class GoogleAdsAccount(models.Model):
     last_sync_success_at = fields.Datetime(
         string='Last Successful Sync', readonly=True)
     last_error_code = fields.Char(string='Last Error Code', readonly=True)
+
+    # -- The reporting grant (GA2) -----------------------------------------
+    # `groups='base.group_system'` on the two token columns: a clinic operator
+    # may CONNECT a Google account and may DISCONNECT it, and may never read
+    # the material that connection is made of.
+    access_token_enc = fields.Text(
+        string='Access Token (stored)', groups='base.group_system')
+    refresh_token_enc = fields.Text(
+        string='Long-lived Permission (stored)', groups='base.group_system')
+    token_expires_at = fields.Datetime(
+        string='Access Token Expires', readonly=True)
+    token_scope = fields.Char(string='Granted Permissions', readonly=True)
+    authorized_by = fields.Many2one(
+        'res.users', string='Signed in by', readonly=True)
+    authorized_at = fields.Datetime(string='Signed in on', readonly=True)
+    has_reporting_grant = fields.Boolean(
+        string='Google Account Connected', compute='_compute_has_grant',
+        help='Whether this system still holds permission to read this '
+             'advertising account.')
+    reporting_error_redacted = fields.Char(
+        string='Reporting Message', readonly=True,
+        help='What went wrong the last time this system talked to Google, in '
+             'plain words. Never a password or a token.')
 
     # -- Website-lead evidence ---------------------------------------------
     website_test_at = fields.Datetime(
@@ -310,6 +357,14 @@ class GoogleAdsAccount(models.Model):
             else:
                 account.overall_status = 'setup_needed'
 
+    @api.depends('refresh_token_enc')
+    def _compute_has_grant(self):
+        # Through sudo(): the source column is group-restricted, and the
+        # batched fetch would otherwise raise for the clinic operator this
+        # flag exists to inform (the channel_platform_app precedent).
+        for account in self:
+            account.has_reporting_grant = bool(account.sudo().refresh_token_enc)
+
     @api.depends('customer_id')
     def _compute_final_url_suffix(self):
         for account in self:
@@ -432,6 +487,32 @@ class GoogleAdsAccount(models.Model):
         raise AccessError(_(
             'Only a system administrator, a CRM manager, a clinic '
             'administrator or an owner may set up Google Ads.'))
+
+    def _check_company_scope(self):
+        """An operator acts only on their OWN clinic's advertising account.
+
+        The company record rule already hides another company's rows from a
+        read, so this mostly fires on a hand-built RPC that browses an id it
+        should not have — which is precisely the caller a view attribute does
+        nothing about.
+        """
+        if self.env.su:
+            return
+        allowed = self.env.user.company_ids
+        for account in self:
+            if account.company_id and account.company_id not in allowed:
+                raise AccessError(_(
+                    'This advertising account belongs to another clinic.'))
+
+    def _internal(self):
+        """The recordset evidence is written through.
+
+        Both halves are required by `_internal_write_allowed`: the context
+        flag says "this write came from the code that measured the thing",
+        and the elevation says "and it was not forged by an RPC that happened
+        to know the key".
+        """
+        return self.sudo().with_context(**{INTERNAL_CTX: True})
 
     def _is_platform_admin(self):
         return bool(self.env.su
@@ -759,6 +840,427 @@ class GoogleAdsAccount(models.Model):
         return action
 
     # ==================================================================
+    # Campaign reporting (GA2) — sign in, choose an account, prove access
+    # ==================================================================
+    def _reporting_messages(self):
+        """Every provider failure, in words a clinic operator can act on.
+
+        Spelled out one `_()` per entry rather than built from a variable:
+        `_(some_variable)` is invisible to the catalogue extractor and would
+        ship untranslatable (the same reason the card's label maps are
+        written out).
+        """
+        return {
+            'no_grant': _('This system has no permission to read Google Ads '
+                          'for this account yet. Press Connect Google '
+                          'account.'),
+            'invalid_grant': _('Google no longer accepts this sign-in. Press '
+                               'Reconnect.'),
+            'OAUTH_TOKEN_INVALID': _('Google no longer accepts this sign-in. '
+                                     'Press Reconnect.'),
+            'NOT_ADS_USER': _('The Google account you signed in with has no '
+                              'Google Ads access. Sign in with the account '
+                              'that manages the ads.'),
+            'no_refresh_token': _(
+                'Google did not return a long-lived permission. Remove this '
+                'system from the Google account\'s third-party access list '
+                'and sign in again.'),
+            'scope_missing': _('The sign-in did not include permission to '
+                               'read advertising accounts. Sign in again and '
+                               'leave the Google Ads permission ticked.'),
+            'oauth_exchange': _('Signing in with Google did not finish. Try '
+                                'again.'),
+            'exchange_malformed': _('Google sent back an answer this system '
+                                    'could not use. Try again.'),
+            'not_configured': _('The Google Ads application has not been set '
+                                'up by the platform operator yet.'),
+            'USER_PERMISSION_DENIED': _(
+                'The Google account you signed in with cannot read that '
+                'advertising account. Ask whoever manages the ads to give it '
+                'access.'),
+            'DEVELOPER_TOKEN_NOT_APPROVED': _(
+                'Google has not approved this system for reading advertising '
+                'accounts yet.'),
+            'CUSTOMER_NOT_ENABLED': _('That advertising account is not active '
+                                      'in Google Ads.'),
+            'customer_not_enabled': _('That advertising account is not active '
+                                      'in Google Ads.'),
+            'not_an_advertiser': _('That is a manager account, not an '
+                                   'advertising account. Choose one of the '
+                                   'accounts underneath it.'),
+            'customer_mismatch': _('Google answered about a different '
+                                   'advertising account. Try again.'),
+            'bad_customer_id': _('A Google Ads account number is ten digits. '
+                                 'Check the number and try again.'),
+            'busy': _('Another sign-in for this account is in progress. Try '
+                      'again in a moment.'),
+            'too_many_pages': _('There are more advertising accounts than '
+                                'this system will read in one go. Tell the '
+                                'platform operator.'),
+            'network': _('This system could not reach Google. Try again in a '
+                         'few minutes.'),
+        }
+
+    def _reporting_message_for(self, code):
+        return self._reporting_messages().get(code) or _(
+            'Google refused this request. Try again, and tell the platform '
+            'operator if it keeps happening.')
+
+    def _reporting_message(self, err):
+        return self._reporting_message_for(getattr(err, 'code', None))
+
+    def _reporting_failure(self, err):
+        """Record one provider failure and answer the caller.
+
+        Two shapes, deliberately:
+
+        * ``needs_reconnect`` — the grant itself is gone, and the account must
+          END UP in ``action_required`` whatever the caller does next. A
+          `UserError` would roll that write back with itself (ledger §5.65),
+          so this branch RETURNS a sticky warning instead: the state persists
+          and the operator still sees the message.
+        * anything else — nothing durable has changed, so the honest answer is
+          the exception. The evidence write ahead of it is best-effort; an
+          RPC's rollback takes it with the error, and that is stated rather
+          than papered over.
+
+        Nothing about the website capability is touched in either branch
+        (rail R6): a lost reporting grant is not a lost website connector.
+        """
+        self.ensure_one()
+        message = self._reporting_message(err)
+        vals = {
+            'last_error_code': (getattr(err, 'code', None) or 'error')[:64],
+            'reporting_error_redacted': message[:255],
+        }
+        if getattr(err, 'needs_reconnect', False):
+            vals['reporting_state'] = 'action_required'
+        self._internal().write(vals)
+        if getattr(err, 'needs_reconnect', False):
+            return self._with_reload(self._notify(
+                _('Google Ads: reconnect needed'), message, kind='warning'))
+        detail = getattr(err, 'detail_redacted', False)
+        raise UserError('%s\n\n%s' % (message, detail) if detail else message)
+
+    def _google_client(self):
+        self.ensure_one()
+        return GoogleAdsClient(self.env, self)
+
+    # ------------------------------------------------------------------
+    def _reporting_access_token(self):
+        """A valid access token for this account, refreshing under a lock.
+
+        Advisory xact lock (never FOR UPDATE — ledger §5.74): two workers that
+        both find the token expired serialise here; the loser re-reads after
+        the winner's write is visible on ITS cursor, which under REPEATABLE
+        READ it is not — so the loser may refresh a second time. That is
+        harmless: Google refresh tokens are reusable and a second access token
+        is just as valid. What the lock prevents is the thundering-herd of N
+        parallel refreshes, not correctness.
+
+        The rotated token is written on the SAME cursor, deliberately: a
+        fresh-cursor persist is right for a SINGLE-USE rotating credential
+        (Zalo) and wrong here — the surrounding transaction writes this row
+        again straight afterwards, which is exactly the serialisation failure
+        of ledger §5.181.
+        """
+        self.ensure_one()
+        rec = self.sudo()
+        now = fields.Datetime.now()
+        if rec.access_token_enc and rec.token_expires_at \
+                and rec.token_expires_at > now + timedelta(
+                    seconds=TOKEN_SKEW_SECONDS):
+            return channel_crypto.decrypt(self.env, rec.access_token_enc)
+        if not rec.refresh_token_enc:
+            raise GoogleAdsError('no_grant', needs_reconnect=True)
+        self.env.flush_all()
+        try:
+            # The savepoint is not in the handover's kernel and is not
+            # decoration: a lock timeout ABORTS the PostgreSQL transaction, so
+            # without it the caller's `except` block inherits a transaction in
+            # which every later statement fails with "current transaction is
+            # aborted" — including the evidence write that explains the
+            # failure. Rolling back to the savepoint restores a usable
+            # transaction; a RELEASE on the happy path hands the lock up to
+            # the parent, so the mutual exclusion is unchanged.
+            with self.env.cr.savepoint():
+                self.env.cr.execute("SET LOCAL lock_timeout = '5s'")
+                self.env.cr.execute('SELECT pg_advisory_xact_lock(%s, %s)',
+                                    (REPORTING_LOCK_CLASS, rec.id))
+        except psycopg2.errors.LockNotAvailable as exc:
+            raise GoogleAdsError('busy', retryable=True) from exc
+        rec.invalidate_recordset(['access_token_enc', 'token_expires_at'])
+        if rec.access_token_enc and rec.token_expires_at \
+                and rec.token_expires_at > now + timedelta(
+                    seconds=TOKEN_SKEW_SECONDS):
+            return channel_crypto.decrypt(self.env, rec.access_token_enc)
+        config = self.env['google.ads.platform.config']._active()
+        if not config or not config._ready():
+            raise GoogleAdsError('not_configured')
+        body = gads._http_post_form(gads.TOKEN_URL, data={
+            'grant_type': 'refresh_token',
+            'refresh_token': channel_crypto.decrypt(
+                self.env, rec.refresh_token_enc),
+            'client_id': config.client_id,
+            'client_secret': config._get_client_secret(),
+        })
+        body = body if isinstance(body, dict) else {}
+        access = body.get('access_token')
+        if not access:
+            raise GoogleAdsError('refresh_malformed', retryable=True)
+        try:
+            expires_in = int(body.get('expires_in') or 3600)
+        except (TypeError, ValueError):
+            expires_in = 3600
+        vals = {
+            'access_token_enc': channel_crypto.encrypt(self.env, access),
+            'token_expires_at': now + timedelta(seconds=expires_in),
+        }
+        if body.get('refresh_token'):
+            # Google rarely rotates; keep ours when the answer omits one.
+            vals['refresh_token_enc'] = channel_crypto.encrypt(
+                self.env, body['refresh_token'])
+        rec._internal().write(vals)
+        return access
+
+    # ------------------------------------------------------------------
+    def _provider_vals(self, info):
+        """What Google says about an advertising account, as field values.
+
+        An unknown currency code leaves the field empty and says so in the
+        chatter — this module creates no currency records (design §5.1: the
+        money vocabulary belongs to accounting, not to an ad platform).
+        """
+        self.ensure_one()
+        currency = self.env['res.currency'].with_context(
+            active_test=False).search(
+                [('name', '=', info.get('currency') or '')], limit=1)
+        return {
+            'provider_name': (info.get('name') or '')[:255],
+            'currency_id': currency.id or False,
+            'account_timezone': (info.get('time_zone') or '')[:64],
+            'last_error_code': False,
+            'reporting_error_redacted': False,
+        }
+
+    def _validate_reporting_access(self, customer_id, login_customer_id=None):
+        """Prove this sign-in can READ that advertising account, right now.
+
+        An id typed into a form establishes nothing (design §7.1): the only
+        evidence that counts is Google answering for that exact customer, as
+        a non-manager, enabled.
+        """
+        self.ensure_one()
+        info = self._google_client().get_customer(
+            customer_id, login_customer_id=login_customer_id or None)
+        if not info or not info.get('id'):
+            raise GoogleAdsError('customer_mismatch')
+        if info['id'] != attribution.norm_customer_id(customer_id):
+            raise GoogleAdsError('customer_mismatch')
+        if info.get('manager'):
+            raise GoogleAdsError('not_an_advertiser')
+        if (info.get('status') or '') != 'ENABLED':
+            raise GoogleAdsError('customer_not_enabled')
+        return info
+
+    def _discover_reporting_candidates(self):
+        """Every advertising account this sign-in could report on.
+
+        The directly accessible list is NOT the whole picture: a clinic whose
+        ads are run through an agency sees only the manager account, and the
+        advertising accounts hang underneath it. Managers are walked one level
+        of the API down and their children tagged with the manager id, which
+        is what has to travel in `login-customer-id` on every later call.
+        """
+        self.ensure_one()
+        client = self._google_client()
+        direct, children = {}, {}
+        for customer_id in client.list_accessible_customers():
+            info = client.get_customer(customer_id)
+            if not info or not info.get('id'):
+                continue
+            if info.get('manager'):
+                for child in client.list_customer_children(customer_id):
+                    child = dict(child, login_customer_id=customer_id)
+                    children.setdefault(child['id'], child)
+            else:
+                direct.setdefault(info['id'],
+                                  dict(info, login_customer_id=False))
+        # Children first, then the direct entries on top: an account we can
+        # read without a manager context is the simpler binding of the two.
+        out = dict(children)
+        out.update(direct)
+        return list(out.values())
+
+    # ------------------------------------------------------------------
+    # Actions
+    # ------------------------------------------------------------------
+    def action_start_reporting_oauth(self):
+        """Send the operator to Google to sign in."""
+        self.ensure_one()
+        self._check_operator()
+        self._check_company_scope()
+        config = self.env['google.ads.platform.config']._active()
+        if not config or not config._ready():
+            raise UserError(_(
+                'The Google Ads application has not been set up by the '
+                'platform operator yet.'))
+        redirect_uri = config.redirect_uri or ''
+        if not redirect_uri.startswith('https://'):
+            raise UserError(_(
+                'Signing in with Google needs this system to be reached at a '
+                'secure web address (one starting with https). Ask the '
+                'platform operator to set it.'))
+        session = self.env['google.ads.oauth.session'].create_for(self)
+        if self.reporting_state != 'connected':
+            # A RECONNECT keeps the working state until it succeeds.
+            self._internal().write({
+                'reporting_state': 'authorizing',
+                'last_error_code': False,
+                'reporting_error_redacted': False,
+            })
+        params = {
+            'client_id': config.client_id,
+            'redirect_uri': redirect_uri,
+            'response_type': 'code',
+            'scope': gads.SCOPE,
+            'access_type': 'offline',
+            # Both are required for a refresh token to come back at all; a
+            # re-consent without them returns an hour of access and nothing
+            # durable.
+            'prompt': 'consent',
+            'include_granted_scopes': 'false',
+            'state': session['state'],
+            'code_challenge': session['code_challenge'],
+            'code_challenge_method': session['code_challenge_method'],
+        }
+        return {
+            'type': 'ir.actions.act_url',
+            'url': '%s?%s' % (gads.AUTH_URL, urlencode(params)),
+            'target': 'self',
+        }
+
+    def action_reconnect_reporting(self):
+        """Same handshake, different word on the button."""
+        return self.action_start_reporting_oauth()
+
+    def action_list_reporting_accounts(self):
+        """Ask Google what this sign-in can read, and offer the choice."""
+        self.ensure_one()
+        self._check_operator()
+        self._check_company_scope()
+        if not self.has_reporting_grant:
+            raise UserError(_(
+                'Connect a Google account first — there is nothing to list '
+                'until someone has signed in.'))
+        try:
+            candidates = self._discover_reporting_candidates()
+        except GoogleAdsError as err:
+            return self._reporting_failure(err)
+        wizard = self.env['google.ads.account.select'].create({
+            'account_id': self.id,
+            'line_ids': [(0, 0, {
+                'customer_id': entry.get('id') or '',
+                'login_customer_id': entry.get('login_customer_id') or '',
+                'name': entry.get('name') or '',
+                'currency': entry.get('currency') or '',
+                'time_zone': entry.get('time_zone') or '',
+                'status': entry.get('status') or '',
+                'is_manager': bool(entry.get('manager')),
+                'test_account': bool(entry.get('test_account')),
+            }) for entry in candidates],
+        })
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Choose the advertising account'),
+            'res_model': 'google.ads.account.select',
+            'res_id': wizard.id,
+            'view_mode': 'form',
+            'views': [(False, 'form')],
+            'target': 'new',
+        }
+
+    def action_select_reporting_account(self, customer_id,
+                                        login_customer_id=None):
+        """Bind this record to ONE advertising account, after proving access."""
+        self.ensure_one()
+        self._check_operator()
+        self._check_company_scope()
+        cid = attribution.norm_customer_id(customer_id)
+        if not cid:
+            raise UserError(_(
+                'A Google Ads account number is ten digits. Check the number '
+                'and try again.'))
+        login = attribution.norm_customer_id(login_customer_id) \
+            if login_customer_id else False
+        if login_customer_id and not login:
+            raise UserError(_(
+                'A Google Ads manager account number is ten digits. Check the '
+                'number and try again.'))
+        # A customer id binds to ONE record on this database. The message
+        # deliberately names NOBODY: which other clinic advertises as that
+        # customer is not this operator's business (rail R5).
+        clash = self.sudo().with_context(active_test=False).search(
+            [('customer_id', '=', cid), ('id', '!=', self.id)], limit=1)
+        if clash:
+            raise UserError(_(
+                'That advertising account is already set up on this system. '
+                'Open the entry it is already on instead of adding it twice.'))
+        try:
+            info = self._validate_reporting_access(cid, login)
+        except GoogleAdsError as err:
+            return self._reporting_failure(err)
+        vals = dict(self._provider_vals(info),
+                    customer_id=cid,
+                    login_customer_id=login or False,
+                    reporting_state='connected')
+        self._internal().write(vals)
+        self.message_post(body=Markup('<p>%s</p>') % _(
+            'Advertising account %(name)s (%(customer)s) connected for '
+            'reporting by %(user)s.',
+            name=info.get('name') or cid, customer=cid,
+            user=self.env.user.name))
+        message = _('This system can now read campaign figures for %s. '
+                    'Nothing in Google Ads is ever changed.',
+                    info.get('name') or cid)
+        if not vals.get('currency_id') and info.get('currency'):
+            message = '%s\n\n%s' % (message, _(
+                'The account currency (%s) is not one this system knows, so '
+                'spend will be shown without a currency until someone adds '
+                'it.', info.get('currency')))
+        return self._with_reload(self._notify(
+            _('Google Ads: reporting connected'), message))
+
+    def action_disconnect_reporting(self):
+        """Drop OUR copy of the permission. Nothing else changes.
+
+        No revoke call to Google, deliberately (design §7.1): the same Google
+        grant may also back the clinic's mailbox, and revoking it here would
+        silently disconnect an integration this screen knows nothing about.
+        Campaign figures already cached, the website connector, the enquiries
+        and the account number all stay exactly where they are.
+        """
+        self.ensure_one()
+        self._check_operator()
+        self._check_company_scope()
+        self._internal().write({
+            'access_token_enc': False,
+            'refresh_token_enc': False,
+            'token_expires_at': False,
+            'token_scope': False,
+            'reporting_state': 'not_connected',
+            'last_error_code': False,
+            'reporting_error_redacted': False,
+        })
+        self.message_post(body=Markup('<p>%s</p>') % _(
+            'Campaign reporting disconnected by %s. Website enquiries are '
+            'unaffected.', self.env.user.name))
+        return self._with_reload(self._notify(
+            _('Google Ads: reporting disconnected'),
+            _('This system no longer reads anything from Google Ads. '
+              'Website enquiries keep arriving as before.')))
+
+    # ==================================================================
     # The Channel Center card (design §4.1)
     # ==================================================================
     @api.model
@@ -810,15 +1312,17 @@ class GoogleAdsAccount(models.Model):
         # invisible to the catalogue extractor and would ship untranslatable.
         reporting_labels = {
             'not_connected': _('Not connected'),
-            'authorizing': _('Signing in'),
-            'select_account': _('Choose account'),
+            'authorizing': _('Sign-in started'),
+            'select_account': _('Choose the advertising account'),
             'syncing': _('Syncing'),
             'connected': _('Connected'),
-            'action_required': _('Action required'),
+            'action_required': _('Action required — reconnect'),
             'paused': _('Paused'),
         }
         reporting_tones = {'connected': 'ok', 'action_required': 'warn',
-                           'paused': 'off', 'not_connected': 'off'}
+                           'paused': 'off', 'not_connected': 'off',
+                           'authorizing': 'info', 'select_account': 'info',
+                           'syncing': 'info'}
 
         last_lead = max(
             [a.website_last_lead_at for a in accounts if a.website_last_lead_at]

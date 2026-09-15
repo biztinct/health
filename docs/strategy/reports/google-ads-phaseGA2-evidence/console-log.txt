@@ -1,0 +1,25 @@
+GA2 browser pass — console, every screen
+========================================
+Chrome 153, https://carejiox.com, 2026-09-15.
+Read with `includePreservedMessages: true` across the whole pass (login →
+platform application → both secret wizards → operator login → account form →
+Google sign-in → callback page → reconnect-needed → disconnect).
+
+Errors:   0
+Warnings: 0
+Logs:     0
+
+The only entries in the console at all are two DevTools *issue* hints, both
+pre-existing and both raised by the CMS shell's own markup, not by anything
+this phase added:
+
+  [issue] Incorrect use of <label for=FORM_ELEMENT>  (count: 15)
+  [issue] Incorrect use of <label for=FORM_ELEMENT>  (count: 15)
+
+They are accessibility advisories emitted by the backend form renderer on any
+Odoo form (the same class of hint GA1's pass recorded on the same screens),
+not JavaScript failures, and they appear identically on screens this phase
+never touched.
+
+The public callback page (11-bogus-state-generic-page.png) was loaded in the
+same session and produced no console output of any kind.

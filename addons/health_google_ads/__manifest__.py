@@ -40,10 +40,40 @@ developer token, no reporting fetch — ``reporting_state`` stays
 for one, no change to the website credential model, and no campaign
 auto-create (``utm.campaign`` stays find-only).
 
+Phase GA2 — campaign reporting sign-in
+--------------------------------------
+
+A clinic operator can now press **Connect Google account**, sign in with the
+Google account that manages their advertising, choose the advertising account
+(including one that sits under a manager account), and have this system prove
+it can read that account.
+
+* **Two credential planes.** A platform operator stores the Google sign-in
+  application (client id + secret) and the advertising access token ONCE per
+  system, encrypted at rest and never readable by a clinic user. Each clinic's
+  own sign-in produces its own permission, stored on its own advertising
+  account record, equally encrypted.
+* **Read-only by construction.** The client exposes named methods over fixed
+  queries against fixed Google addresses; no method accepts a query string,
+  nothing can change anything in Google Ads, and the reporting fetch itself
+  lands in the next phase.
+* **Honest states.** *Not connected* → *Sign-in started* → *Choose the
+  advertising account* → *Connected*, plus *Action required — reconnect* when
+  Google stops accepting the sign-in. Website enquiries keep arriving in every
+  one of them.
+* **Undo without collateral.** Disconnecting drops this system's copy of the
+  permission and nothing else: no call to Google (a shared grant may also back
+  the clinic's mailbox), no archived leads, no touched website connection.
+
+GA2 non-goals: no campaign or spend fetch and no sync job (next phase), no
+mutate service and no arbitrary GAQL, no Google-hosted lead forms, and no
+platform relay — each system registers its own return address with Google.
+
 Design: docs/strategy/google-ads-channel-design.md
-Handover: docs/strategy/handovers/google-ads-phaseGA1.md
+Handovers: docs/strategy/handovers/google-ads-phaseGA1.md,
+docs/strategy/handovers/google-ads-phaseGA2.md
 """,
-    'version': '19.0.1.0.0',
+    'version': '19.0.2.0.0',
     'category': 'Sales/CRM',
     'author': 'Biztinct',
     'website': 'https://carejiox.com',
@@ -60,10 +90,13 @@ Handover: docs/strategy/handovers/google-ads-phaseGA1.md
     'data': [
         'security/google_ads_security.xml',
         'security/ir.model.access.csv',
+        'views/google_ads_platform_config_views.xml',
+        'views/google_ads_select_wizard_views.xml',
         'views/google_ads_account_views.xml',
         'views/crm_lead_views.xml',
         'views/lead_touchpoint_views.xml',
-        # after the views: the sidebar item references the actions by xmlid
+        'data/ir_cron.xml',
+        # after the views: the sidebar items reference the actions by xmlid
         'data/cms_sidebar_items_google_ads.xml',
     ],
     'assets': {

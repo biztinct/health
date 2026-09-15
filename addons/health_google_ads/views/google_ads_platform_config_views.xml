@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Write-only secret entry. Declared FIRST: the config form below
+         references the wizard view by xmlid through the button's python
+         method, and the action record is resolved as this file loads. -->
+    <record id="view_google_ads_platform_secret_wizard_form" model="ir.ui.view">
+        <field name="name">google.ads.platform.secret.wizard.form</field>
+        <field name="model">google.ads.platform.secret.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Store a Google value">
+                <group>
+                    <field name="config_id" readonly="1"/>
+                    <field name="kind" readonly="1"/>
+                    <field name="secret" password="True" required="1"/>
+                </group>
+                <p class="text-muted">
+                    Pasted once. It is scrambled the moment it is stored and can
+                    never be read back from this screen.
+                </p>
+                <footer>
+                    <button string="Store it" name="action_apply" type="object"
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ===================== LIST ===================== -->
+    <record id="view_google_ads_platform_config_list" model="ir.ui.view">
+        <field name="name">google.ads.platform.config.list</field>
+        <field name="model">google.ads.platform.config</field>
+        <field name="arch" type="xml">
+            <list string="Google Ads application">
+                <field name="name"/>
+                <field name="client_id"/>
+                <field name="has_client_secret"/>
+                <field name="has_developer_token"/>
+                <field name="access_level"/>
+                <field name="active" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ===================== FORM =====================
+         No statusbar: there is no workflow here, only "is it filled in".
+         Neither `*_enc` column appears in any view, by design. -->
+    <record id="view_google_ads_platform_config_form" model="ir.ui.view">
+        <field name="name">google.ads.platform.config.form</field>
+        <field name="model">google.ads.platform.config</field>
+        <field name="arch" type="xml">
+            <form string="Google Ads application">
+                <header>
+                    <button name="action_open_client_secret_wizard"
+                            type="object" string="Set the sign-in secret"
+                            class="btn-primary"/>
+                    <button name="action_open_developer_token_wizard"
+                            type="object"
+                            string="Set the advertising access token"
+                            class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"
+                                   placeholder="Google Ads application"/></h1>
+                    </div>
+                    <group>
+                        <group string="Sign-in application">
+                            <field name="active" invisible="1"/>
+                            <field name="client_id"
+                                   placeholder="000000000000-xxxx.apps.googleusercontent.com"/>
+                            <field name="client_secret_hint"/>
+                            <field name="has_client_secret" invisible="1"/>
+                        </group>
+                        <group string="Advertising access">
+                            <field name="developer_token_hint"/>
+                            <field name="has_developer_token" invisible="1"/>
+                            <field name="access_level"/>
+                        </group>
+                    </group>
+                    <group string="What is still missing">
+                        <field name="checklist" nolabel="1" colspan="2"
+                               readonly="1"/>
+                    </group>
+                    <group string="Return address">
+                        <field name="redirect_uri" widget="CopyClipboardChar"/>
+                    </group>
+                    <div class="text-muted">
+                        <p>Register this exact address in the Google Cloud
+                           console, under the sign-in application's authorised
+                           redirect addresses. Do it once for each system
+                           address you run — Google accepts several exact
+                           addresses, but no wildcards.</p>
+                        <p>This screen is for the platform operator only. A
+                           clinic never sees it, and neither value can be read
+                           back once it is stored.</p>
+                    </div>
+                    <group string="Note">
+                        <field name="environment_note" nolabel="1" colspan="2"
+                               placeholder="Which Google Cloud project this is, and who owns it."/>
+                    </group>
+                </sheet>
+                <!-- Chatter at the bottom, full width — never a side column.
+                     It records that a value was set, and by whom. Never the
+                     value. -->
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_google_ads_platform_config" model="ir.actions.act_window">
+        <field name="name">Google Ads application</field>
+        <field name="res_model">google.ads.platform.config</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Set up the Google Ads
+               application</p>
+            <p>One set of Google credentials serves every clinic on this
+               system. A clinic signs in with its own Google account; this is
+               the application it signs in to.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_google_ads_platform_config"
+              name="Google Ads application"
+              parent="health_care_command.menu_care_command_config"
+              action="action_google_ads_platform_config"
+              groups="base.group_system"
+              sequence="55"/>
+
+</odoo>

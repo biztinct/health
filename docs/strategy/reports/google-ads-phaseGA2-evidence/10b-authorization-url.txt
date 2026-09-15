@@ -1,0 +1,38 @@
+GA2 browser pass — the authorization request this system actually issued
+========================================================================
+Captured from the browser's own network log (Chrome DevTools, reqid 197),
+after pressing "Connect Google account" on the QA advertising account as the
+clinic-operator persona `ga2_qa_ops` on https://carejiox.com.
+
+GET https://accounts.google.com/o/oauth2/v2/auth
+    ?client_id=qa-ga2-throwaway-000000.apps.googleusercontent.com
+    &redirect_uri=https%3A%2F%2Fcarejiox.com%2Fchannel_hub%2Foauth%2Fcallback%2Fgoogle_ads
+    &response_type=code
+    &scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fadwords
+    &access_type=offline
+    &prompt=consent
+    &include_granted_scopes=false
+    &state=-SgihyTEcX3CthOx-zWmN6RiFHZFRmE6-sXqPzYFvnE
+    &code_challenge=7HG7vHodsjcdDdUeO9QvgAeaAzBKRdtHklAYogAja2I
+    &code_challenge_method=S256
+-> 302 to https://accounts.google.com/signin/oauth/error?authError=...invalid_client...
+
+What this proves
+----------------
+* The return address is the exact one the platform screen shows and the exact
+  one an operator must register with Google:
+  https://carejiox.com/channel_hub/oauth/callback/google_ads
+* The permission asked for is the advertising one and nothing else
+  (scope = .../auth/adwords).
+* Both of the parameters Google needs before it will hand back a long-lived
+  permission are present (access_type=offline AND prompt=consent).
+* The handshake is PKCE-protected (code_challenge_method=S256) and carries a
+  one-time state.
+* Google answered "The OAuth client was not found / Error 401: invalid_client"
+  because the sign-in ID used for this pass is a throwaway. That refusal is
+  the evidence: Google read our request, recognised the shape, and rejected
+  only the made-up application id. See 10-google-signin-invalid-client.png
+  — the browser's own network log is quoted above in full, which carries the return address the URL bar cannot show after Google's instant redirect.
+
+The state above was single-use and was burnt by the pass; the QA application
+row and its two throwaway values were deleted afterwards (see README §4).

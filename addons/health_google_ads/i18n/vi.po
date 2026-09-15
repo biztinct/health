@@ -624,3 +624,616 @@ msgstr "Nguồn đầu tiên là Google Ads"
 #: model_terms:ir.ui.view,arch_db:health_google_ads.view_health_lead_touchpoint_search_google_ads
 msgid "Unmatched Google Ads"
 msgstr "Google Ads chưa khớp"
+
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_platform_config.py:0
+msgid "A Google Ads application is already set up on this system. Open that one and change it, or archive it first."
+msgstr "Hệ thống này đã có một ứng dụng Google Ads. Hãy mở ứng dụng đó để sửa, hoặc lưu trữ nó trước."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_platform_config.py:0
+#: model:ir.model.fields.selection,name:health_google_ads.selection__google_ads_platform_secret_wizard__kind__developer_token
+msgid "Advertising access token"
+msgstr "Mã truy cập quảng cáo"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_platform_config.py:0
+msgid "Advertising access token stored"
+msgstr "Đã lưu mã truy cập quảng cáo"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_platform_config.py:0
+msgid "It is encrypted on this server and will never be shown again."
+msgstr "Giá trị được mã hoá trên máy chủ và sẽ không bao giờ hiển thị lại."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_platform_config.py:0
+msgid "Only a platform administrator can set up the Google Ads application."
+msgstr "Chỉ quản trị viên nền tảng mới có thể thiết lập ứng dụng Google Ads."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_platform_config.py:0
+msgid "Return address registered with Google"
+msgstr "Địa chỉ trả về đã đăng ký với Google"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_platform_config.py:0
+msgid "Set the advertising access token"
+msgstr "Đặt mã truy cập quảng cáo"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_platform_config.py:0
+msgid "Set the sign-in secret"
+msgstr "Đặt mã bí mật đăng nhập"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_platform_config.py:0
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_platform_config__client_id
+msgid "Sign-in ID"
+msgstr "Mã ứng dụng đăng nhập"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_platform_config.py:0
+#: model:ir.model.fields.selection,name:health_google_ads.selection__google_ads_platform_secret_wizard__kind__client_secret
+msgid "Sign-in secret"
+msgstr "Mã bí mật đăng nhập"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_platform_config.py:0
+msgid "Sign-in secret stored"
+msgstr "Đã lưu mã bí mật đăng nhập"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_platform_config.py:0
+msgid "The Google Ads application is not configured. Ask the platform operator to finish setting it up."
+msgstr "Ứng dụng Google Ads chưa được cấu hình. Hãy đề nghị quản trị viên nền tảng hoàn tất thiết lập."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_platform_config.py:0
+msgid "The Google advertising access token was stored by %s."
+msgstr "Mã truy cập quảng cáo Google đã được %s lưu lại."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_platform_config.py:0
+msgid "The Google sign-in secret was stored by %s."
+msgstr "Mã bí mật đăng nhập Google đã được %s lưu lại."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_platform_config.py:0
+msgid "The advertising access token cannot be empty."
+msgstr "Mã truy cập quảng cáo không được để trống."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_platform_config.py:0
+msgid "The sign-in secret cannot be empty."
+msgstr "Mã bí mật đăng nhập không được để trống."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_platform_config.py:0
+msgid "confirmed on the first successful sign-in"
+msgstr "sẽ được xác nhận ở lần đăng nhập thành công đầu tiên"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_platform_config.py:0
+msgid "done"
+msgstr "xong"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_platform_config.py:0
+msgid "to do"
+msgstr "cần làm"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "A Google Ads account number is ten digits. Check the number and try again."
+msgstr "Số tài khoản Google Ads gồm mười chữ số. Hãy kiểm tra lại số và thử lần nữa."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "A Google Ads manager account number is ten digits. Check the number and try again."
+msgstr "Số tài khoản quản lý Google Ads gồm mười chữ số. Hãy kiểm tra lại số và thử lần nữa."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Action required — reconnect"
+msgstr "Cần xử lý — kết nối lại"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Advertising account %(name)s (%(customer)s) connected for reporting by %(user)s."
+msgstr "Tài khoản quảng cáo %(name)s (%(customer)s) đã được %(user)s kết nối để xem báo cáo."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Another sign-in for this account is in progress. Try again in a moment."
+msgstr "Đang có một lượt đăng nhập khác cho tài khoản này. Hãy thử lại sau giây lát."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Campaign reporting disconnected by %s. Website enquiries are unaffected."
+msgstr "%s đã ngắt kết nối báo cáo chiến dịch. Yêu cầu từ website không bị ảnh hưởng."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Choose the advertising account"
+msgstr "Chọn tài khoản quảng cáo"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Connect a Google account first — there is nothing to list until someone has signed in."
+msgstr "Hãy kết nối một tài khoản Google trước — chưa có gì để liệt kê cho đến khi có người đăng nhập."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Google Ads: reconnect needed"
+msgstr "Google Ads: cần kết nối lại"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Google Ads: reporting connected"
+msgstr "Google Ads: đã kết nối báo cáo"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Google Ads: reporting disconnected"
+msgstr "Google Ads: đã ngắt kết nối báo cáo"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Google answered about a different advertising account. Try again."
+msgstr "Google trả lời về một tài khoản quảng cáo khác. Hãy thử lại."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Google did not return a long-lived permission. Remove this system from the Google account's third-party access list and sign in again."
+msgstr "Google không trả về quyền truy cập dài hạn. Hãy gỡ hệ thống này khỏi danh sách ứng dụng bên thứ ba của tài khoản Google rồi đăng nhập lại."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Google has not approved this system for reading advertising accounts yet."
+msgstr "Google chưa phê duyệt cho hệ thống này đọc tài khoản quảng cáo."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Google no longer accepts this sign-in. Press Reconnect."
+msgstr "Google không còn chấp nhận lượt đăng nhập này. Hãy bấm Kết nối lại."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Google refused this request. Try again, and tell the platform operator if it keeps happening."
+msgstr "Google từ chối yêu cầu này. Hãy thử lại, và báo cho quản trị viên nền tảng nếu vẫn tiếp diễn."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Google sent back an answer this system could not use. Try again."
+msgstr "Google trả về câu trả lời mà hệ thống không dùng được. Hãy thử lại."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Sign-in started"
+msgstr "Đã bắt đầu đăng nhập"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Signing in with Google did not finish. Try again."
+msgstr "Việc đăng nhập bằng Google chưa hoàn tất. Hãy thử lại."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Signing in with Google needs this system to be reached at a secure web address (one starting with https). Ask the platform operator to set it."
+msgstr "Đăng nhập bằng Google cần hệ thống có địa chỉ web an toàn (bắt đầu bằng https). Hãy đề nghị quản trị viên nền tảng thiết lập."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "That advertising account is already set up on this system. Open the entry it is already on instead of adding it twice."
+msgstr "Tài khoản quảng cáo đó đã được thiết lập trên hệ thống này. Hãy mở mục đã có thay vì thêm lần thứ hai."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "That advertising account is not active in Google Ads."
+msgstr "Tài khoản quảng cáo đó không hoạt động trong Google Ads."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "That is a manager account, not an advertising account. Choose one of the accounts underneath it."
+msgstr "Đó là tài khoản quản lý, không phải tài khoản quảng cáo. Hãy chọn một trong các tài khoản bên dưới nó."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "The Google Ads application has not been set up by the platform operator yet."
+msgstr "Quản trị viên nền tảng chưa thiết lập ứng dụng Google Ads."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "The Google account you signed in with cannot read that advertising account. Ask whoever manages the ads to give it access."
+msgstr "Tài khoản Google bạn đã đăng nhập không đọc được tài khoản quảng cáo đó. Hãy đề nghị người quản lý quảng cáo cấp quyền."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "The Google account you signed in with has no Google Ads access. Sign in with the account that manages the ads."
+msgstr "Tài khoản Google bạn đã đăng nhập không có quyền Google Ads. Hãy đăng nhập bằng tài khoản quản lý quảng cáo."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "The account currency (%s) is not one this system knows, so spend will be shown without a currency until someone adds it."
+msgstr "Đơn vị tiền tệ của tài khoản (%s) chưa có trong hệ thống, nên chi phí sẽ hiển thị không kèm tiền tệ cho đến khi được thêm vào."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "The sign-in did not include permission to read advertising accounts. Sign in again and leave the Google Ads permission ticked."
+msgstr "Lượt đăng nhập không kèm quyền đọc tài khoản quảng cáo. Hãy đăng nhập lại và giữ nguyên dấu tích quyền Google Ads."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "There are more advertising accounts than this system will read in one go. Tell the platform operator."
+msgstr "Có nhiều tài khoản quảng cáo hơn mức hệ thống đọc được trong một lần. Hãy báo cho quản trị viên nền tảng."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "This advertising account belongs to another clinic."
+msgstr "Tài khoản quảng cáo này thuộc về một phòng khám khác."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "This system can now read campaign figures for %s. Nothing in Google Ads is ever changed."
+msgstr "Hệ thống đã có thể đọc số liệu chiến dịch của %s. Không có gì trong Google Ads bị thay đổi."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "This system could not reach Google. Try again in a few minutes."
+msgstr "Hệ thống không kết nối được tới Google. Hãy thử lại sau vài phút."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "This system has no permission to read Google Ads for this account yet. Press Connect Google account."
+msgstr "Hệ thống chưa có quyền đọc Google Ads cho tài khoản này. Hãy bấm Kết nối tài khoản Google."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "This system no longer reads anything from Google Ads. Website enquiries keep arriving as before."
+msgstr "Hệ thống không còn đọc bất cứ dữ liệu nào từ Google Ads. Yêu cầu từ website vẫn về như trước."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_oauth_session.py:0
+msgid "Google sign-in completed by %s."
+msgstr "%s đã hoàn tất đăng nhập Google."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_select_wizard.py:0
+msgid "Tick exactly one advertising account. Add a second entry if this clinic advertises through more than one."
+msgstr "Hãy tích đúng một tài khoản quảng cáo. Thêm một mục khác nếu phòng khám quảng cáo qua nhiều tài khoản."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_select_wizard.py:0
+msgid "Tick the advertising account to use."
+msgstr "Hãy tích tài khoản quảng cáo cần dùng."
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_platform_config__client_secret_hint
+msgid "Sign-in Secret"
+msgstr "Mã bí mật đăng nhập"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_platform_config__client_secret_enc
+msgid "Sign-in Secret (stored)"
+msgstr "Mã bí mật đăng nhập (đã lưu)"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_platform_config__has_client_secret
+msgid "Sign-in Secret Stored"
+msgstr "Đã lưu mã bí mật đăng nhập"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_platform_config__developer_token_hint
+msgid "Advertising Access Token"
+msgstr "Mã truy cập quảng cáo"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_platform_config__developer_token_enc
+msgid "Advertising Access Token (stored)"
+msgstr "Mã truy cập quảng cáo (đã lưu)"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_platform_config__has_developer_token
+msgid "Advertising Access Token Stored"
+msgstr "Đã lưu mã truy cập quảng cáo"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_platform_config__access_level
+msgid "Access Level"
+msgstr "Mức truy cập"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_platform_config__redirect_uri
+msgid "Return Address"
+msgstr "Địa chỉ trả về"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_platform_config__checklist
+msgid "Checklist"
+msgstr "Danh sách kiểm tra"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_platform_secret_wizard__kind
+msgid "What to set"
+msgstr "Cần đặt giá trị nào"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_platform_secret_wizard__secret
+msgid "Value"
+msgstr "Giá trị"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__access_token_enc
+msgid "Access Token (stored)"
+msgstr "Mã truy cập (đã lưu)"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__refresh_token_enc
+msgid "Long-lived Permission (stored)"
+msgstr "Quyền truy cập dài hạn (đã lưu)"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__token_expires_at
+msgid "Access Token Expires"
+msgstr "Mã truy cập hết hạn"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__token_scope
+msgid "Granted Permissions"
+msgstr "Quyền đã được cấp"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__authorized_by
+msgid "Signed in by"
+msgstr "Người đăng nhập"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__authorized_at
+msgid "Signed in on"
+msgstr "Thời điểm đăng nhập"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__has_reporting_grant
+msgid "Google Account Connected"
+msgstr "Đã kết nối tài khoản Google"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__reporting_error_redacted
+msgid "Reporting Message"
+msgstr "Thông báo báo cáo"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account_select__account_id
+msgid "Google Ads entry"
+msgstr "Mục Google Ads"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account_select__line_ids
+msgid "Accounts"
+msgstr "Tài khoản"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account_select_line__selected
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_account_select_form
+msgid "Use this one"
+msgstr "Dùng tài khoản này"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account_select_line__customer_id
+msgid "Account Number"
+msgstr "Số tài khoản"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account_select_line__login_customer_id
+msgid "Manager Number"
+msgstr "Số tài khoản quản lý"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account_select_line__name
+msgid "Account Name"
+msgstr "Tên tài khoản"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account_select_line__currency
+msgid "Currency"
+msgstr "Tiền tệ"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account_select_line__time_zone
+msgid "Time Zone"
+msgstr "Múi giờ"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account_select_line__status
+msgid "Status in Google"
+msgstr "Trạng thái trong Google"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account_select_line__is_manager
+msgid "Manager Account"
+msgstr "Tài khoản quản lý"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account_select_line__test_account
+msgid "Test Account"
+msgstr "Tài khoản thử nghiệm"
+
+#. module: health_google_ads
+#: model:ir.model,name:health_google_ads.model_google_ads_platform_config
+msgid "Google Ads Application"
+msgstr "Ứng dụng Google Ads"
+
+#. module: health_google_ads
+#: model:ir.model,name:health_google_ads.model_google_ads_platform_secret_wizard
+msgid "Set Google Ads Application Secret"
+msgstr "Đặt mã bí mật ứng dụng Google Ads"
+
+#. module: health_google_ads
+#: model:ir.model,name:health_google_ads.model_google_ads_oauth_session
+msgid "Google Ads Sign-in Session"
+msgstr "Phiên đăng nhập Google Ads"
+
+#. module: health_google_ads
+#: model:ir.model,name:health_google_ads.model_google_ads_account_select
+msgid "Choose the Advertising Account"
+msgstr "Chọn tài khoản quảng cáo"
+
+#. module: health_google_ads
+#: model:ir.model,name:health_google_ads.model_google_ads_account_select_line
+msgid "Advertising Account Candidate"
+msgstr "Tài khoản quảng cáo ứng viên"
+
+#. module: health_google_ads
+#: model:ir.model.fields.selection,name:health_google_ads.selection__google_ads_platform_config__access_level__unknown
+msgid "Not stated"
+msgstr "Chưa nêu"
+
+#. module: health_google_ads
+#: model:ir.model.fields.selection,name:health_google_ads.selection__google_ads_platform_config__access_level__test
+msgid "Test accounts only"
+msgstr "Chỉ tài khoản thử nghiệm"
+
+#. module: health_google_ads
+#: model:ir.model.fields.selection,name:health_google_ads.selection__google_ads_platform_config__access_level__basic
+msgid "Basic access"
+msgstr "Truy cập cơ bản"
+
+#. module: health_google_ads
+#: model:ir.model.fields.selection,name:health_google_ads.selection__google_ads_platform_config__access_level__standard
+msgid "Standard access"
+msgstr "Truy cập tiêu chuẩn"
+
+#. module: health_google_ads
+#: model:ir.actions.act_window,name:health_google_ads.action_google_ads_platform_config
+#: model:ir.ui.menu,name:health_google_ads.menu_google_ads_platform_config
+#: model:cms.sidebar.item,name:health_google_ads.item_google_ads_platform
+msgid "Google Ads application"
+msgstr "Ứng dụng Google Ads"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_account_form
+msgid "Connect Google account"
+msgstr "Kết nối tài khoản Google"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_account_form
+msgid "Choose advertising account"
+msgstr "Chọn tài khoản quảng cáo"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_account_form
+msgid "Change advertising account"
+msgstr "Đổi tài khoản quảng cáo"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_account_form
+msgid "Reconnect"
+msgstr "Kết nối lại"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_account_form
+msgid "Disconnect reporting"
+msgstr "Ngắt kết nối báo cáo"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_account_form
+msgid "Connection"
+msgstr "Kết nối"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_account_form
+msgid "Advertising account"
+msgstr "Tài khoản quảng cáo"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_account_select_form
+msgid "Refresh list"
+msgstr "Làm mới danh sách"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_account_select_form
+msgid "Advertising accounts"
+msgstr "Tài khoản quảng cáo"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_platform_config_form
+msgid "Sign-in application"
+msgstr "Ứng dụng đăng nhập"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_platform_config_form
+msgid "Advertising access"
+msgstr "Truy cập quảng cáo"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_platform_config_form
+msgid "What is still missing"
+msgstr "Còn thiếu những gì"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_platform_config_form
+msgid "Return address"
+msgstr "Địa chỉ trả về"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_platform_secret_wizard_form
+msgid "Store it"
+msgstr "Lưu lại"
