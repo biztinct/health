@@ -147,7 +147,11 @@ class TestWebLeadService(TransactionCase):
         self.assertFalse(lead.web_needs_review)
         self.assertEqual(lead.phone, self.phone)
         self.assertEqual(lead.email_from, self.email)
-        self.assertEqual(lead.mode_of_contact, 'website')
+        # GA1 forced edit: the dropdown-vocabulary conversion replaced the
+        # `mode_of_contact` Selection with a `health.lookup.value` m2o, and
+        # this assertion had been red ever since (AttributeError, not a
+        # wrong value). The related code field is the stable spelling.
+        self.assertEqual(lead.mode_of_contact_code, 'website')
         self.assertEqual(lead.contact_source, 'website_form')
         self.assertEqual(lead.healthcare_lead_source, 'website_form')
         self.assertEqual(lead.vietnamese_channel, 'website')
@@ -522,8 +526,11 @@ class TestWebLeadService(TransactionCase):
         self.assertEqual(loaded.get('Rate limit exceeded'),
                          'Đã vượt quá giới hạn số lần gọi')
 
+        # GA1 forced edit: the dropdown-vocabulary conversion renamed this
+        # field to `touchpoint_type_id`, so the old xmlid does not exist and
+        # this assertion had been raising ValueError ever since.
         field = self.env.ref(
-            'health_web_leads.field_health_lead_touchpoint__touchpoint_type')
+            'health_web_leads.field_health_lead_touchpoint__touchpoint_type_id')
         self.assertNotEqual(
             field.with_context(lang='vi_VN').field_description,
             'Touchpoint Type',

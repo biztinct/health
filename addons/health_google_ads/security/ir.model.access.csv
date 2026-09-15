@@ -1,0 +1,14 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_google_ads_account_crm_user,google.ads.account crm user,model_google_ads_account,health_crm.group_health_crm_user,1,0,0,0
+access_google_ads_account_crm_manager,google.ads.account crm manager,model_google_ads_account,health_crm.group_health_crm_manager,1,1,1,0
+access_google_ads_account_clinic_admin,google.ads.account clinic admin,model_google_ads_account,health_access.group_clinic_admin,1,1,1,0
+access_google_ads_account_healthcare_admin,google.ads.account healthcare admin,model_google_ads_account,health_base.group_healthcare_admin,1,1,1,0
+access_google_ads_account_owner,google.ads.account owner,model_google_ads_account,health_base.group_healthcare_owner,1,1,1,0
+access_google_ads_account_system,google.ads.account system,model_google_ads_account,base.group_system,1,1,1,1
+access_google_ads_campaign_crm_user,google.ads.campaign crm user,model_google_ads_campaign,health_crm.group_health_crm_user,1,0,0,0
+access_google_ads_campaign_crm_manager,google.ads.campaign crm manager,model_google_ads_campaign,health_crm.group_health_crm_manager,1,1,1,1
+access_google_ads_campaign_clinic_admin,google.ads.campaign clinic admin,model_google_ads_campaign,health_access.group_clinic_admin,1,1,1,1
+access_google_ads_campaign_healthcare_admin,google.ads.campaign healthcare admin,model_google_ads_campaign,health_base.group_healthcare_admin,1,1,1,1
+access_google_ads_campaign_owner,google.ads.campaign owner,model_google_ads_campaign,health_base.group_healthcare_owner,1,1,1,1
+access_google_ads_campaign_system,google.ads.campaign system,model_google_ads_campaign,base.group_system,1,1,1,1
+access_google_ads_account_web_leads_service,google.ads.account web service,model_google_ads_account,health_web_leads.group_web_leads_service,1,0,0,0

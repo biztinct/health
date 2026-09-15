@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Ledger §5.91: `crm.lead` has THREE standalone primary form views and
+        TWO primary search views on this database, and a tab or a filter added
+        to "the lead form" reaches nobody until it reaches all of them. Each
+        addition below therefore comes in a matched set, anchored INSIDE the
+        Web Attribution surfaces health_web_leads already ships (so there is
+        one attribution tab per form, not two).
+    -->
+
+    <!-- 1. The full opportunity form — inside the Web Attribution tab. -->
+    <record id="view_healthcare_opportunity_form_google_ads" model="ir.ui.view">
+        <field name="name">crm.lead.form.google.ads</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id"
+               ref="health_web_leads.view_healthcare_opportunity_form_web_attribution"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='web_attribution']" position="inside">
+                <div class="vu-section">
+                    <div class="vu-section__title">
+                        <span class="vu-section__icon" data-icon="globe"/>
+                        <div>
+                            <span>Google Ads</span>
+                            <small class="text-muted d-block">What the advertising click carried — first touch, frozen at creation</small>
+                        </div>
+                    </div>
+                    <div class="vu-section-grid">
+                        <div class="vu-card">
+                            <div class="vu-card__title">
+                                <span class="vu-section__icon" data-icon="tag"/>
+                                <span>Advertising account</span>
+                            </div>
+                            <group col="2">
+                                <field name="google_ads_origin" readonly="1"/>
+                                <field name="google_ads_match_status" readonly="1"/>
+                                <field name="google_ads_account_id" readonly="1"/>
+                                <field name="google_ads_customer_id" readonly="1"/>
+                            </group>
+                        </div>
+                        <div class="vu-card">
+                            <div class="vu-card__title">
+                                <span class="vu-section__icon" data-icon="history"/>
+                                <span>Which ad</span>
+                            </div>
+                            <group col="2">
+                                <field name="google_ads_campaign_id" readonly="1"/>
+                                <field name="google_ads_adgroup_id" readonly="1"/>
+                                <field name="google_ads_creative_id" readonly="1"/>
+                                <field name="google_ads_asset_group_id" readonly="1"/>
+                            </group>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+            <!-- The braid click ids beside the gclid the tab already shows:
+                 a consent-mode ad click routinely carries one of these and no
+                 gclid at all, so showing only gclid reads as "no ad click". -->
+            <xpath expr="//page[@name='web_attribution']//field[@name='gclid']"
+                   position="after">
+                <field name="wbraid" readonly="1"/>
+                <field name="gbraid" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 2. The Lead-Hub Source spoke modal — one readable line. -->
+    <record id="view_lead_source_modal_google_ads" model="ir.ui.view">
+        <field name="name">crm.lead.source.modal.google.ads</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id"
+               ref="health_web_leads.view_lead_source_modal_web_attribution"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='web_consent_bridged']" position="after">
+                <!-- The modifier needs its driver present in the arch. -->
+                <field name="google_ads_origin" invisible="1"/>
+                <field name="google_ads_source_line" readonly="1"
+                       invisible="not google_ads_origin"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 3. The CMS-shell contact form — the view the ops persona opens. -->
+    <record id="view_crm_contact_form_crm_center_google_ads" model="ir.ui.view">
+        <field name="name">crm.lead.form.crm.center.google.ads</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id"
+               ref="health_web_leads.view_crm_contact_form_crm_center_web_attribution"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='web_attribution']" position="inside">
+                <group string="Google Ads">
+                    <group>
+                        <field name="google_ads_origin" readonly="1"/>
+                        <field name="google_ads_match_status" readonly="1"/>
+                        <field name="google_ads_account_id" readonly="1"/>
+                        <field name="google_ads_customer_id" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="google_ads_campaign_id" readonly="1"/>
+                        <field name="google_ads_adgroup_id" readonly="1"/>
+                        <field name="google_ads_creative_id" readonly="1"/>
+                        <field name="google_ads_asset_group_id" readonly="1"/>
+                    </group>
+                </group>
+            </xpath>
+            <xpath expr="//page[@name='web_attribution']//field[@name='gclid']"
+                   position="after">
+                <field name="wbraid" readonly="1"/>
+                <field name="gbraid" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 4. The stock opportunity search view. -->
+    <record id="view_crm_case_opportunities_filter_google_ads" model="ir.ui.view">
+        <field name="name">crm.lead.search.google.ads</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator string="Google Ads"/>
+                <!-- FIRST SOURCE, not "the word google appears somewhere":
+                     neither filter may match an enquiry merely because
+                     `source_id.name` contains "google" (design §5.3). -->
+                <filter name="google_ads_first" string="First source Google Ads"
+                        domain="[('google_ads_origin', '!=', False)]"/>
+                <filter name="google_ads_influenced" string="Google Ads influenced"
+                        domain="[('google_ads_influenced', '=', True)]"/>
+                <filter name="groupby_google_ads_account" string="Google Ads Account"
+                        context="{'group_by': 'google_ads_account_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 4b. …and the CMS-shell contact search view, its sibling. -->
+    <record id="view_crm_contact_search_crm_center_google_ads" model="ir.ui.view">
+        <field name="name">crm.lead.search.crm.center.google.ads</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="health_crm.view_crm_contact_search_crm_center"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator string="Google Ads"/>
+                <filter name="google_ads_first" string="First source Google Ads"
+                        domain="[('google_ads_origin', '!=', False)]"/>
+                <filter name="google_ads_influenced" string="Google Ads influenced"
+                        domain="[('google_ads_influenced', '=', True)]"/>
+                <filter name="groupby_google_ads_account" string="Google Ads Account"
+                        context="{'group_by': 'google_ads_account_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

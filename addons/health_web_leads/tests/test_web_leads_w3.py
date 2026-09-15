@@ -468,7 +468,9 @@ class TestWebLeadsW3(TransactionCase):
                 self.env.ref('%s.view_crm_lead_web_funnel_%s'
                              % (MODULE, view_type)).id, view_type)['arch']
             self.assertIn('name="catchment_province_id"', arch)
-            self.assertIn('name="mode_of_contact"', arch)
+            # GA1 forced edit: same conversion as above — the funnel's
+            # column dimension is `mode_of_contact_id` now.
+            self.assertIn('name="mode_of_contact_id"', arch)
         # The outcome dimension is the pivot's SECOND row, not a
         # `search_default_` group-by: measured in the browser, a search-panel
         # group-by REPLACES a pivot's arch rows and the city axis disappears.

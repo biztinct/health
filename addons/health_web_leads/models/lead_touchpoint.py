@@ -178,6 +178,26 @@ class HealthLeadTouchpoint(models.Model):
         help='The original submission, capped at 8 KB. Behind ACLs; never '
              'logged.')
 
+    # The touchpoint has no company of its own — it belongs to whatever its
+    # anchor belongs to. Stored (so a record rule can domain on it) and
+    # computed (so it can never disagree with the anchor). Design §5.3.
+    company_id = fields.Many2one(
+        'res.company', string='Company',
+        compute='_compute_company_id', store=True, index=True,
+        help='Taken from the lead or conversation this touch belongs to. It '
+             'is never set by hand.')
+
+    @api.depends('lead_id.company_id', 'conversation_id.company_id')
+    def _compute_company_id(self):
+        for touch in self:
+            if touch.lead_id:
+                touch.company_id = touch.lead_id.company_id
+            elif touch.conversation_id \
+                    and 'company_id' in touch.conversation_id._fields:
+                touch.company_id = touch.conversation_id.company_id
+            else:
+                touch.company_id = False
+
     @api.constrains('lead_id', 'conversation_id')
     def _check_attached(self):
         """A touchpoint must belong to something.
@@ -190,6 +210,22 @@ class HealthLeadTouchpoint(models.Model):
             if not touch.lead_id and not touch.conversation_id:
                 raise ValidationError(_(
                     'A touchpoint must belong to a lead or a conversation.'))
+            # GA1: both anchors may coexist (a conversation that became a
+            # lead). They must then agree about the company, or the computed
+            # `company_id` above silently picks one and the record rule reads
+            # a company the other anchor never belonged to.
+            if touch.lead_id and touch.conversation_id \
+                    and 'company_id' in touch.conversation_id._fields:
+                lead_company = touch.lead_id.company_id
+                conv_company = touch.conversation_id.company_id
+                if lead_company and conv_company \
+                        and lead_company != conv_company:
+                    raise ValidationError(_(
+                        'This touchpoint is attached to a lead and a '
+                        'conversation that belong to different companies '
+                        '(%(lead)s and %(conversation)s).',
+                        lead=lead_company.display_name,
+                        conversation=conv_company.display_name))
 
     @api.model_create_multi
     def create(self, vals_list):

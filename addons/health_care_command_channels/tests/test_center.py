@@ -89,10 +89,25 @@ class TestChannelCenter(ChannelSpineCase):
         tg = self._tg_conn()
         cards = self.Conn.center_overview()
 
-        self.assertEqual([c['channel'] for c in cards],
+        # GA1 (forced edit, conventions §5.62): `center_overview` now also
+        # returns ACQUISITION cards contributed by satellite modules through
+        # `_center_extra_cards()`. The assertion below is about the eight
+        # CONVERSATION channels, so it filters on `kind` — a conversation
+        # card carries no `kind` key at all, which is what the default says.
+        convo = [c for c in cards if c.get('kind', 'conversation') != 'acquisition']
+        self.assertEqual([c['channel'] for c in convo],
                          ['zalo', 'call', 'email', 'zns', 'whatsapp', 'fb',
                           'telegram', 'webchat'],
                          'the catalogue is the dock order, all eight channels')
+
+        # ...and when health_google_ads IS installed, its acquisition card is
+        # present and sits immediately after Facebook.
+        if 'google.ads.account' in self.env:
+            keys = [c['channel'] for c in cards]
+            self.assertIn('google_ads', keys,
+                          'the Google Ads acquisition card must be offered')
+            self.assertEqual(keys[keys.index('fb') + 1], 'google_ads',
+                             'the acquisition card sits after Facebook')
 
         blob = json.dumps(cards, default=str)
         for forbidden in (TG_BOT_TOKEN, 'chs$1$', tg.sudo().secret_hint):

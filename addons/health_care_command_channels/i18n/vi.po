@@ -6016,3 +6016,9 @@ msgstr "Tìm Trang"
 #: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
 msgid "Find the Page ID in Facebook under About → Page transparency. We verify your access before you can connect it."
 msgstr "Tìm ID Trang trên Facebook trong phần Giới thiệu → Tính minh bạch của Trang. Chúng tôi xác minh quyền truy cập trước khi kết nối."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "View leads"
+msgstr "Xem khách hàng tiềm năng"

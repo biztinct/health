@@ -488,7 +488,11 @@ class TestCallCenter(ChannelSpineCase):
     #        copy (the trap CC-E half-fixed and CC-F finished)
     # =================================================================
     def test_155_catalogue_and_stepper_keys_are_intact(self):
-        cards = self.Conn.center_overview()
+        # GA1 forced edit (conventions §5.62): acquisition cards contributed
+        # by `_center_extra_cards()` are filtered out — this assertion is
+        # about the conversation catalogue.
+        cards = [c for c in self.Conn.center_overview()
+                 if c.get('kind', 'conversation') != 'acquisition']
         self.assertEqual([c['channel'] for c in cards], list(CENTER_CHANNELS))
         self.assertEqual(len(cards), 8, 'eight channels, in dock order')
         # Seven top-level cards: `zns` is a capability OF zalo and renders

@@ -1,0 +1,27 @@
+// Google Ads accent + the acquisition card's capability rows.
+//
+// Ledger §5.68: NO css math functions here (`min()` / `max()` / `clamp()`) —
+// libsass evaluates them as SASS functions and ONE bad rule drops every
+// co-bundled module's stylesheet, not just this file's. Flat mono colour, no
+// gradient.
+:root {
+    --ch-google-ads: #1a73e8;
+}
+
+.cc-card .cc-caps {
+    list-style: none;
+    margin: 6px 0 0;
+    padding: 0;
+}
+
+.cc-card .cc-cap {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 3px 0;
+    font-size: 13px;
+}
+
+.cc-card .cc-cap-name {
+    color: var(--mut, #6b7280);
+}

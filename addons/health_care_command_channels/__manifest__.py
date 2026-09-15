@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Care Command — Channel Connection Framework',
-    'version': '19.0.12.1.16',
+    'version': '19.0.12.2.0',
     'category': 'Healthcare/CRM',
     'summary': 'Provider-neutral channel connections + the WhatsApp / Facebook / '
                'Telegram / Web chat message spine',
@@ -419,6 +419,21 @@ queueing can never cost us a message:
 Both now resolve the code through ``health.lookup.value._default_for`` and
 **log a warning when it cannot be resolved**, so the silence cannot return.
 Fourteen tests in this module were red on the pair.
+
+19.0.12.2.0 — the acquisition-card seam (GA1)
+---------------------------------------------
+
+``care.channel.connection._center_extra_cards()`` — a named, overridable hook
+returning ``[]``. ``center_overview()`` appends whatever it returns after the
+eight conversation cards, honouring an optional ``after_key`` so a satellite
+can place its card next to a related channel. The OWL client gained one
+branch (``mode === 'external_action'`` opens a server-declared action instead
+of a stepper) and renders the optional ``tagline`` / ``capabilities`` /
+``lines`` / ``view_leads_action`` keys an acquisition card carries.
+
+Nothing in this module produces such a card: Google Ads is an acquisition
+source, not a chat channel, and lives in ``health_google_ads``. No
+``CHANNEL_SELECTION`` key, no connection row, no reply transport.
     """,
     'author': 'I Am Dream Catcher Ltd',
     'website': 'https://vafhs.com',

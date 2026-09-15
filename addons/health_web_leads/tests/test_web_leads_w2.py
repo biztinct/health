@@ -339,7 +339,19 @@ class TestWebLeadsW2(TransactionCase):
         self.assertEqual(reachable, {
             'crm.lead', 'crm.stage', 'crm.team', 'health.catchment.province',
             'health.lead.touchpoint', 'utm.campaign', 'utm.medium',
-            'utm.source'})
+            'utm.source',
+            # GA1 forced edit, and this tripwire did its job. Two READ-ONLY
+            # rows were added, both because the relay's own capture path
+            # already needed them:
+            #   health.lookup.value — `_create_lead` resolves
+            #     `mode_of_contact` and `touchpoint_type` through it since the
+            #     dropdown-vocabulary conversion, and with no ACL the LIVE
+            #     endpoint answered 403 to every website submission,
+            #   google.ads.account — `crm.lead.google_ads_account_id` is
+            #     `check_company=True`, and `_check_company` reads the
+            #     account's company as the writing user.
+            # Neither carries patient data; both are read-only.
+            'health.lookup.value', 'google.ads.account'})
         for forbidden in ('res.partner', 'account.move', 'account.move.line',
                           'health.ews.score'):
             self.assertNotIn(forbidden, reachable)

@@ -90,9 +90,12 @@ _FALSY_PARAM = ('', '0', 'false', 'no', 'off', 'none')
 # legal review that will set it is a W0 item owned by counsel; this module
 # makes no compliance claim and hard-codes no number).
 PARAM_RAW_RETENTION_DAYS = 'web_leads.raw_payload_retention_days'
-# One night's work. At the current volume (170 touchpoints ever) this is
-# never reached; when it is, the sweep simply continues the next night, and
-# the log line says how many it touched.
+# One night's work. The volume this batch is sized against is whatever the
+# deployment actually holds — measured 2026-09-15, every database on this
+# cluster holds ZERO touchpoints, so the cap is never reached today; when it
+# is, the sweep simply continues the next night, and the log line says how
+# many it touched. (The old comment here quoted "170 touchpoints ever" as a
+# standing fact; a count is a measurement with a date on it, not a constant.)
 RAW_PRUNE_BATCH = 500
 
 
@@ -619,6 +622,13 @@ class WebLeadService(models.AbstractModel):
             'utm_content': _clean(utm.get('content')),
             'utm_term': _clean(utm.get('term')),
             'gclid': _clean(clicks.get('gclid')),
+            # GA1: the two cookie-less Google click ids. The COLUMNS have
+            # existed since W1 and nothing ever wrote them — under consent
+            # mode / ITP an ad click routinely arrives with wbraid (web) or
+            # gbraid (app) and no gclid at all, so every such enquiry lost the
+            # only identifier an offline-conversion upload could have used.
+            'wbraid': _clean(clicks.get('wbraid')),
+            'gbraid': _clean(clicks.get('gbraid')),
             'fbclid': _clean(clicks.get('fbclid')),
             'fbc': _clean(clicks.get('fbc')),
             'fbp': _clean(clicks.get('fbp')),
@@ -629,8 +639,33 @@ class WebLeadService(models.AbstractModel):
             'web_consent_marketing': bool(consent.get('marketing')),
             'web_consent_text_version': _clean(consent.get('text_version')),
         }
+        # GA1 seam. Runs BEFORE `_utm_ids` so the shipped UTM policy
+        # (find-only campaigns) always has the last word on the utm.* m2o
+        # fields — an extension may add its own columns, never rewrite those.
+        vals.update(self._lead_extra_vals(payload, catchment, city_source))
         vals.update(self._utm_ids(utm))
         return self.env['crm.lead'].create(vals)
+
+    # ------------------------------------------------------------------
+    # Extension seams (GA1)
+    # ------------------------------------------------------------------
+    # Two named, overridable methods with empty defaults. A satellite module
+    # that needs to record something about a submission overrides these
+    # instead of re-implementing the handler or patching its dict in place;
+    # the base behaviour is unchanged when nothing overrides them.
+    def _lead_extra_vals(self, payload, catchment, city_source):
+        """Extension seam: extra ``crm.lead`` vals for a NEW lead.
+
+        Called once, from `_create_lead`, i.e. for the FIRST touch only —
+        `_merge` never calls it, which is what keeps first-touch attribution
+        immutable. Returns ``{}`` by default.
+        """
+        return {}
+
+    def _touchpoint_extra_vals(self, lead, payload, catchment, city_source):
+        """Extension seam: extra ``health.lead.touchpoint`` vals for EVERY
+        touch (the creating one and every later merge). Returns ``{}``."""
+        return {}
 
     def _cross_reference(self, new_lead, other_lead):
         """Reciprocal notes on a shared phone number (design §9.2).
@@ -675,7 +710,7 @@ class WebLeadService(models.AbstractModel):
                          city_source, occurred_at):
         utm = _sub(payload, 'utm')
         clicks = _sub(payload, 'click_ids')
-        return {
+        vals = {
             'lead_id': lead.id,
             'occurred_at': occurred_at,          # rail R7 — the visitor's time
             'received_at': fields.Datetime.now(),
@@ -689,12 +724,23 @@ class WebLeadService(models.AbstractModel):
             'utm_content': _clean(utm.get('content')),
             'utm_term': _clean(utm.get('term')),
             'gclid': _clean(clicks.get('gclid')),
+            # GA1: the braid columns exist on the touchpoint too
+            # (lead_touchpoint.py) and were never written either — a
+            # braid-only ad click left no identifier on ANY row.
+            'wbraid': _clean(clicks.get('wbraid')),
+            'gbraid': _clean(clicks.get('gbraid')),
             'fbclid': _clean(clicks.get('fbclid')),
             'page_url': _clean(payload.get('page_url'), _URL_CAP),
             'referrer_url': _clean(payload.get('referrer_url'), _URL_CAP),
             'external_event_id': submission_id,
             'raw_payload': self._raw_payload(payload),
         }
+        # GA1 seam — EVERY touch (the creating one and every later merge), so
+        # a repeat enquiry from an ad carries its own attribution even though
+        # the lead's first-touch fields stay frozen.
+        vals.update(self._touchpoint_extra_vals(lead, payload, catchment,
+                                                city_source))
+        return vals
 
     @staticmethod
     def _raw_payload(payload):

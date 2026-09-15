@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================== LIST ===================== -->
+    <record id="view_google_ads_account_list" model="ir.ui.view">
+        <field name="name">google.ads.account.list</field>
+        <field name="model">google.ads.account</field>
+        <field name="arch" type="xml">
+            <list string="Google Ads">
+                <field name="name"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="customer_id"/>
+                <field name="website_status"/>
+                <field name="reporting_state"/>
+                <field name="website_last_lead_at"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ===================== SEARCH ===================== -->
+    <record id="view_google_ads_account_search" model="ir.ui.view">
+        <field name="name">google.ads.account.search</field>
+        <field name="model">google.ads.account</field>
+        <field name="arch" type="xml">
+            <search string="Google Ads">
+                <field name="name"/>
+                <field name="customer_id"/>
+                <filter name="filter_archived" string="Archived"
+                        domain="[('active', '=', False)]"/>
+                <!-- Ledger §5.10: group-by filters go straight in <search>,
+                     with no <group expand="0"> wrapper. -->
+                <filter name="groupby_company" string="Company"
+                        context="{'group_by': 'company_id'}"/>
+                <filter name="groupby_reporting" string="Campaign Reporting"
+                        context="{'group_by': 'reporting_state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ===================== FORM ===================== -->
+    <record id="view_google_ads_account_form" model="ir.ui.view">
+        <field name="name">google.ads.account.form</field>
+        <field name="model">google.ads.account</field>
+        <field name="arch" type="xml">
+            <form string="Google Ads">
+                <header>
+                    <button name="action_test_website" type="object"
+                            string="Test the website pipeline"
+                            class="btn-primary"
+                            groups="base.group_system,health_access.group_clinic_admin,health_crm.group_health_crm_manager,health_base.group_healthcare_owner,health_base.group_healthcare_admin"/>
+                    <button name="action_view_leads" type="object"
+                            string="View leads"/>
+                    <button name="action_view_touchpoints" type="object"
+                            string="View touches"/>
+                    <field name="reporting_state" widget="statusbar"
+                           readonly="1"
+                           statusbar_visible="not_connected,syncing,connected"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Google Ads"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="active" invisible="1"/>
+                            <field name="company_id"
+                                   groups="base.group_multi_company"/>
+                            <field name="customer_id"
+                                   placeholder="1234567890"/>
+                            <field name="login_customer_id"
+                                   placeholder="optional"/>
+                        </group>
+                        <group>
+                            <field name="website_status"/>
+                            <field name="overall_status"/>
+                        </group>
+                    </group>
+                    <notebook>
+
+                        <page string="Overview" name="overview">
+                            <group>
+                                <group string="Website leads">
+                                    <field name="website_last_lead_at"/>
+                                    <field name="website_lead_count"/>
+                                    <field name="unmatched_lead_count"/>
+                                </group>
+                                <group string="Last test">
+                                    <field name="website_test_at"/>
+                                    <field name="website_test_kind"/>
+                                    <field name="website_test_summary"/>
+                                </group>
+                            </group>
+                            <group string="Campaign reporting">
+                                <field name="last_sync_success_at"/>
+                                <field name="last_sync_attempt_at"/>
+                                <field name="last_error_code"/>
+                                <field name="currency_id"/>
+                                <field name="account_timezone"/>
+                                <field name="provider_name"/>
+                            </group>
+                        </page>
+
+                        <page string="Website leads" name="website_leads">
+                            <group>
+                                <field name="website_connector_id"/>
+                                <button name="action_open_connector"
+                                        type="object" class="btn-link"
+                                        string="Open website connector"
+                                        invisible="not website_connector_id"/>
+                            </group>
+                            <group string="Tracking to put in Google Ads">
+                                <field name="final_url_suffix"
+                                       widget="CopyClipboardChar"/>
+                            </group>
+                            <div class="text-muted">
+                                <p>Paste the line above into the campaign's
+                                   <strong>Final URL suffix</strong> in Google
+                                   Ads, after checking what tracking is already
+                                   there — it adds to whatever exists, it does
+                                   not replace it. Leave auto-tagging switched
+                                   on: it is what supplies the click
+                                   identifier. The line contains no password
+                                   or key of any kind.</p>
+                                <p><strong>Test the website pipeline</strong>
+                                   checks this system only: it runs one made-up
+                                   enquiry through the real handling and then
+                                   throws it away, so nothing is saved. It
+                                   cannot check that your website actually
+                                   sends these values. A full round trip from
+                                   the website becomes available once the
+                                   website connection piece is installed.</p>
+                            </div>
+                            <group string="Area">
+                                <field name="default_catchment_id"/>
+                            </group>
+                        </page>
+
+                        <page string="Campaign reporting" name="reporting">
+                            <div class="text-muted">
+                                <p>Campaign reporting is set up in a later
+                                   step: connect a Google account, choose the
+                                   advertising account, and this system reads
+                                   campaign names, spend, clicks and
+                                   conversions. Nothing is changed in Google
+                                   Ads.</p>
+                            </div>
+                            <field name="campaign_ids">
+                                <list string="Campaigns" editable="bottom">
+                                    <field name="external_campaign_id"/>
+                                    <field name="name"/>
+                                    <field name="utm_campaign_id"/>
+                                    <field name="catchment_id"/>
+                                    <field name="source" readonly="1"/>
+                                    <field name="last_seen_at" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Google lead forms" name="native">
+                            <group>
+                                <field name="native_eligibility"/>
+                                <field name="eligibility_checked_at"/>
+                                <field name="eligibility_reference"/>
+                            </group>
+                            <div class="text-muted">
+                                <p>Google does not allow healthcare
+                                   advertisers to use Google-hosted lead
+                                   forms. Website leads and campaign reporting
+                                   work without them.</p>
+                                <p>
+                                    <a href="https://support.google.com/adspolicy/answer/9472930"
+                                       target="_blank" rel="noopener noreferrer">
+                                       Read Google's lead form policy</a>
+                                </p>
+                            </div>
+                        </page>
+
+                    </notebook>
+                </sheet>
+                <!-- Chatter at the bottom, full width — never a side column. -->
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ===================== ACTIONS ===================== -->
+    <record id="action_google_ads_accounts" model="ir.actions.act_window">
+        <field name="name">Google Ads</field>
+        <field name="res_model">google.ads.account</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Set up Google Ads</p>
+            <p>Add an advertising account so enquiries that come from your
+               Google ads are recognised as such.</p>
+        </field>
+    </record>
+
+    <!-- FOUND BY DRIVING THE SCREEN, not by reading the arch: the shared
+         opportunity list carries `sample="1"`, so an EMPTY "Google Ads leads"
+         list rendered ten greyed-out invented people (john.miller@…, Carrie
+         Helle, …) instead of saying it is empty. On every other list that is
+         harmless decoration; on this one it directly contradicts the card
+         that says "No leads received yet" one click earlier, and a reader
+         could reasonably conclude the ads had produced ten enquiries.
+         An empty inherited attribute REMOVES it in Odoo's inheritance. -->
+    <record id="view_google_ads_leads_list" model="ir.ui.view">
+        <field name="name">crm.lead.list.google.ads</field>
+        <field name="model">crm.lead</field>
+        <field name="mode">primary</field>
+        <field name="priority">50</field>
+        <field name="inherit_id" ref="health_web_leads.view_crm_lead_web_funnel_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="sample"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- The enquiries the ads produced. `view_ids` clones the posture of
+         health_web_leads' Lead Analysis action (crm_lead_views.xml): the CMS
+         contact form is the view this persona actually opens (ledger §5.91),
+         and the list is the one that does not hijack the row click into the
+         retired Lead Hub. The context carries the FILTER only — never a
+         `search_default_` group-by (ledger §5.93). -->
+    <record id="action_google_ads_leads" model="ir.actions.act_window">
+        <field name="name">Google Ads leads</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('google_ads_origin', '!=', False)]</field>
+        <field name="context">{'search_default_google_ads_first': 1}</field>
+        <field name="search_view_id" ref="crm.view_crm_case_opportunities_filter"/>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_google_ads_leads_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('health_crm.view_crm_contact_form_crm_center')}),
+        ]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No Google Ads enquiries yet</p>
+            <p>Enquiries that arrived from one of your Google ads will show up
+               here.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_google_ads_accounts"
+              name="Google Ads"
+              parent="health_crm.menu_healthcare_crm_config"
+              action="action_google_ads_accounts"
+              sequence="64"/>
+
+</odoo>

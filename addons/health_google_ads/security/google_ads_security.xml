@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Company scoping for the advertising account and its campaign mappings.
+
+        GLOBAL rules (no `groups`), deliberately: Odoo ORs the group rules a
+        user matches, so a company clause written as a group rule would be
+        widened away the moment a user is also in a group carrying a
+        sees-everything rule. A global rule ANDs with every group rule
+        instead, which is exactly the semantics wanted — company ownership is
+        not a privilege anybody outranks.
+    -->
+
+    <record id="google_ads_account_company_rule" model="ir.rule">
+        <field name="name">Google Ads accounts: own companies</field>
+        <field name="model_id" ref="model_google_ads_account"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="google_ads_campaign_company_rule" model="ir.rule">
+        <field name="name">Google Ads campaigns: own companies</field>
+        <field name="model_id" ref="model_google_ads_campaign"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+</odoo>

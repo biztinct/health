@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ledger §5.69: a backend `menuitem` is NOT a reachable surface for the
+     users who live in the /bizapp CMS shell — a real login lands there, /odoo
+     redirects back into it, and the app switcher lists only the shell's own
+     apps. This leaf is also what keeps the Channel Center's `doAction` INSIDE
+     the CMS chrome (§5.93): the shell resolves the opened action against
+     `match_action_xmlids`, and an action it does not recognise opens outside
+     the sidebar.
+
+     Two traps from that same ledger entry, both avoided here:
+       (a) seeded as a SIBLING leaf, never as a child — `cms_sidebar.js:124`
+           turns any item WITH children into a non-navigating expandable
+           group, which would break the parent;
+       (b) `parent_id` written EXPLICITLY as False — an omitted field is not
+           an unset field on a data update.
+
+     `match_models` IS declared here, unlike health_web_leads' satellite
+     leaves (§5.94): `google.ads.account` is a NEW model whose ONE primary
+     surface is this leaf, so there is no existing leaf's highlight to steal.
+
+     NO noupdate: the item stays updatable on upgrade. Ungated (no `role_ids`)
+     like its CRM siblings — the `google.ads.account` ACLs govern the rows.
+
+     `fa fa-google` is font-awesome on purpose: `cms.sidebar.item.icon` is the
+     one documented exception to the no-font-awesome rule. -->
+<odoo>
+
+    <record id="item_google_ads" model="cms.sidebar.item">
+        <field name="name">Google Ads</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="sequence">22</field>
+        <field name="icon">fa fa-google</field>
+        <field name="parent_id" eval="False"/>
+        <field name="action_xmlid">health_google_ads.action_google_ads_accounts</field>
+        <field name="match_action_xmlids">health_google_ads.action_google_ads_accounts,health_google_ads.action_google_ads_leads</field>
+        <field name="match_models">google.ads.account</field>
+    </record>
+
+</odoo>

@@ -54,6 +54,10 @@ const CHANNEL_STYLE = {
     fb: { ic: "ic-chat", cv: "var(--ch-fb)" },
     telegram: { ic: "ic-send", cv: "var(--ch-telegram)" },
     webchat: { ic: "ic-globe", cv: "var(--ch-webchat)" },
+    // GA1: an ACQUISITION card, not a conversation channel. The accent var is
+    // declared by health_google_ads' own stylesheet, so the fallback keeps
+    // this entry harmless when that module is not installed.
+    google_ads: { ic: "ic-globe", cv: "var(--ch-google-ads, var(--mut))" },
 };
 
 // Status chip tone. `state` is the server's, the tone is purely visual.
@@ -394,6 +398,12 @@ export class ChannelCenter extends Component {
     async onPrimary(card) {
         if (card.primary_action === "unavailable") {
             return;
+        }
+        // GA1: an acquisition card has no stepper — its button opens a
+        // server-declared internal action. The xmlid comes from the server
+        // payload, never from anything a website submission could supply.
+        if (card.mode === "external_action" && card.action_xmlid) {
+            return this.action.doAction(card.action_xmlid);
         }
         if (card.primary_action === "resume") {
             return this.resumeConnection(card.connection_id);

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_health_lead_touchpoint_list_google_ads" model="ir.ui.view">
+        <field name="name">health.lead.touchpoint.list.google.ads</field>
+        <field name="model">health.lead.touchpoint</field>
+        <field name="inherit_id" ref="health_web_leads.view_health_lead_touchpoint_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='utm_campaign']" position="after">
+                <field name="google_ads_origin" optional="show"/>
+                <field name="google_ads_match_status" optional="show"/>
+                <field name="google_ads_account_id" optional="hide"/>
+                <field name="google_ads_campaign_id" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_health_lead_touchpoint_form_google_ads" model="ir.ui.view">
+        <field name="name">health.lead.touchpoint.form.google.ads</field>
+        <field name="model">health.lead.touchpoint</field>
+        <field name="inherit_id" ref="health_web_leads.view_health_lead_touchpoint_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='gclid']" position="after">
+                <field name="wbraid" readonly="1"/>
+                <field name="gbraid" readonly="1"/>
+            </xpath>
+            <!-- Ledger §5.21: `@string` is NOT a legal inheritance selector
+                 on Odoo 19 (it is translatable), and the touchpoint form's
+                 groups carry no `name=`. The notebook page below is the
+                 stable structural anchor — and a page is the right home for
+                 nine fields anyway. (Hit live: the first deploy of this
+                 phase died on `//group[@string='Click Identifiers']`.) -->
+            <xpath expr="//page[@name='raw_payload']" position="before">
+                <page string="Google Ads" name="google_ads">
+                    <group>
+                        <group string="Advertising account">
+                            <field name="google_ads_origin" readonly="1"/>
+                            <field name="google_ads_match_status" readonly="1"/>
+                            <field name="google_ads_account_id" readonly="1"/>
+                            <field name="google_ads_customer_id" readonly="1"/>
+                            <field name="company_id" readonly="1"
+                                   groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Which ad">
+                            <field name="google_ads_campaign_id" readonly="1"/>
+                            <field name="google_ads_adgroup_id" readonly="1"/>
+                            <field name="google_ads_creative_id" readonly="1"/>
+                            <field name="google_ads_asset_group_id" readonly="1"/>
+                            <field name="google_ads_time_basis" readonly="1"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_health_lead_touchpoint_search_google_ads" model="ir.ui.view">
+        <field name="name">health.lead.touchpoint.search.google.ads</field>
+        <field name="model">health.lead.touchpoint</field>
+        <field name="inherit_id" ref="health_web_leads.view_health_lead_touchpoint_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator string="Google Ads"/>
+                <filter name="filter_google_ads" string="Google Ads"
+                        domain="[('google_ads_origin', '!=', False)]"/>
+                <filter name="filter_google_ads_unmatched"
+                        string="Unmatched Google Ads"
+                        domain="[('google_ads_match_status', '=', 'unmatched')]"/>
+                <!-- Ledger §5.10: group-by filters go straight in <search>. -->
+                <filter name="groupby_google_ads_account"
+                        string="Google Ads Account"
+                        context="{'group_by': 'google_ads_account_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

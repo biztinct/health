@@ -70,8 +70,13 @@ class TestPlatformGoLive(ChannelHubCase):
 
     # -- helpers -------------------------------------------------------
     def _cards(self, user=None):
+        # GA1 forced edit (conventions §5.62): this helper feeds assertions
+        # about the CONVERSATION catalogue (including `len(cards) == 8`), so
+        # acquisition cards contributed by `_center_extra_cards()` are
+        # filtered out here rather than at every call site.
         Conn = self.Conn.with_user(user) if user else self.Conn
-        return {c['channel']: c for c in Conn.center_overview()}
+        return {c['channel']: c for c in Conn.center_overview()
+                if c.get('kind', 'conversation') != 'acquisition'}
 
     def _meta_app(self, complete=True, **extra):
         app = self.App.create({'provider': 'meta', 'client_id': META_ID})

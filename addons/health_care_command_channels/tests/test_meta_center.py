@@ -610,8 +610,14 @@ class TestMetaCenter(ChannelSpineCase):
 
     def test_133c3_fb_page_name_assigns_matching_catchment(self):
         """Selecting a Hanoi Page scopes its future messages to Hanoi."""
-        hanoi = self.env['health.catchment.province'].create({
-            'name': 'Hà Nội'})
+        # GA1 forced edit (ledger §5.50): the deployment already carries a
+        # province called "Hà Nội" (id 2 on the master), and the name matcher
+        # finds THAT one — so a fixture that unconditionally creates a second
+        # row asserts against a record the engine will never pick. Adopt the
+        # live row when it exists; create one only on a database without it.
+        Province = self.env['health.catchment.province']
+        hanoi = Province.search([('name', '=', 'Hà Nội')], limit=1) \
+            or Province.create({'name': 'Hà Nội'})
         conn = self._conn('fb', state='select_resource')
         conn.action_set_secret('refresh_token', FB_USER_TOKEN)
         page_id = '622665924274714'
@@ -1287,7 +1293,12 @@ class TestMetaCenter(ChannelSpineCase):
     # T139 — the catalogue is still 8 cards, in dock order
     # ==================================================================
     def test_139_catalogue_shape(self):
-        cards = self.Conn.center_overview()
+        # GA1 forced edit (conventions §5.62): `center_overview` now also
+        # returns ACQUISITION cards contributed through `_center_extra_cards()`.
+        # This assertion is about the eight CONVERSATION channels, so it
+        # filters on `kind` — a conversation card carries no `kind` key at all.
+        cards = [c for c in self.Conn.center_overview()
+                 if c.get('kind', 'conversation') != 'acquisition']
         self.assertEqual([c['channel'] for c in cards],
                          ['zalo', 'call', 'email', 'zns', 'whatsapp', 'fb',
                           'telegram', 'webchat'],

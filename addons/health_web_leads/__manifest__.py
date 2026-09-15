@@ -58,11 +58,26 @@ Phase W3 makes the pipeline reportable and the consent checkbox real:
 * the UTM vocabulary seeds the naming standard prescribes,
 * a raw-payload retention cron that ships INERT until counsel sets a horizon.
 
+Phase GA1 opens the pipeline to acquisition satellites:
+
+* the two cookie-less Google click ids (`wbraid`, `gbraid`) are finally
+  PERSISTED — the columns had existed since W1 and nothing ever wrote them,
+  so under consent mode / ITP every braid-only ad click lost the one
+  identifier an offline-conversion upload could have used,
+* two named extension seams on the handler — `_lead_extra_vals` (first touch
+  only, which is what keeps first-touch attribution immutable) and
+  `_touchpoint_extra_vals` (every touch), both returning `{}` by default,
+* `health.lead.touchpoint.company_id` — a stored compute over the lead /
+  conversation anchor, plus the GLOBAL company record rule it exists for,
+* `_LEAD_ATTRIBUTION_FIELDS` carries the Google Ads snapshot when
+  health_google_ads is installed.
+
 Design: docs/strategy/website-crm-integration.md
 Handovers: docs/strategy/handovers/web-leads-phaseW1.md, …-phaseW2.md,
-…-phaseW2_5.md, …-phaseW3.md
+…-phaseW2_5.md, …-phaseW3.md,
+docs/strategy/handovers/google-ads-phaseGA1.md
 """,
-    'version': '19.0.4.2.0',
+    'version': '19.0.5.0.0',
     'category': 'Healthcare',
     'author': 'Biztinct',
     'website': 'https://carejiox.com',

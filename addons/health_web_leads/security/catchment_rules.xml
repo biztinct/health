@@ -36,4 +36,29 @@
         <field name="perm_unlink" eval="True"/>
     </record>
 
+    <!--
+        GA1 — company scoping for the touchpoint.
+
+        A GLOBAL rule (no `groups`), deliberately: Odoo ORs the group rules
+        above, so a company clause written as a group rule would be widened
+        away by the Owner twin. A global rule ANDs with every group rule
+        instead, which is exactly the semantics wanted — an owner sees every
+        CATCHMENT, still only inside the companies they are allowed into.
+
+        The `company_id = False` branch keeps any legacy row whose anchor
+        never carried a company visible rather than vanishing it. The column
+        is a stored compute over the lead / conversation, so it is never a
+        value a user typed.
+    -->
+    <record id="lead_touchpoint_company_rule" model="ir.rule">
+        <field name="name">Lead Touchpoints: own companies</field>
+        <field name="model_id" ref="model_health_lead_touchpoint"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
 </odoo>

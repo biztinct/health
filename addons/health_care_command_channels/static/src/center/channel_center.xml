@@ -92,6 +92,18 @@
                that VoIP24h's API works — which we have no way to know. -->
           <p class="cc-sub-line" t-if="card.notice" t-esc="card.notice"/>
 
+          <!-- GA1: an ACQUISITION card describes capabilities, not traffic.
+               A conversation card carries none of these keys, so nothing
+               below renders for the eight existing cards. -->
+          <p class="cc-res muted" t-if="card.tagline" t-esc="card.tagline"/>
+          <ul class="cc-caps" t-if="card.capabilities" data-a="ch-caps">
+            <li t-foreach="card.capabilities" t-as="cap" t-key="cap.key" class="cc-cap">
+              <span class="cc-cap-name" t-esc="cap.label"/>
+              <span class="cc-chip small" t-att-class="'tone-' + cap.tone" t-esc="cap.status_label"/>
+            </li>
+          </ul>
+          <p class="cc-sub-line" t-foreach="card.lines || []" t-as="line" t-key="line_index" t-esc="line"/>
+
           <div class="cc-traffic" t-if="card.last_inbound_at or card.last_outbound_at">
             <span t-if="card.last_inbound_at">
               <span class="ic ic-in"/> Received <t t-esc="since(card.last_inbound_at)"/>
@@ -127,6 +139,11 @@
                     t-att-disabled="card.primary_action === 'unavailable' or state.busy"
                     t-on-click="() => this.onPrimary(card)"
                     t-esc="card.primary_label"/>
+            <!-- GA1: acquisition cards link straight to the enquiries they
+                 produced. Conversation cards carry no `view_leads_action`. -->
+            <button class="cc-btn ghost" t-if="card.view_leads_action"
+                    t-att-disabled="state.busy"
+                    t-on-click="() => this.action.doAction(card.view_leads_action)">View leads</button>
             <button class="cc-btn ghost" t-if="card.accounts.length === 1 and card.primary_action !== 'open'"
                     t-att-disabled="state.busy" t-on-click="() => this.openManage(card)">Manage account</button>
             <!-- Two Facebook pages, two Zalo accounts (client requirement 1).

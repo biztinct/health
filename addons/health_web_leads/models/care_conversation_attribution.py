@@ -31,6 +31,15 @@ _LEAD_ATTRIBUTION_FIELDS = (
     'gclid', 'wbraid', 'gbraid', 'fbclid',
     'utm_content', 'utm_term',
     'web_landing_url', 'web_submit_page_url', 'web_referrer_url',
+    # GA1: the Google Ads first-touch snapshot. Present only when
+    # health_google_ads is installed — the copy loop below already skips any
+    # name missing from either model's `_fields`, so this tuple is safe on a
+    # database that does not have it. `google_ads_influenced` is deliberately
+    # ABSENT: it is a search-only compute on the lead, not a stored column.
+    'google_ads_account_id', 'google_ads_customer_id',
+    'google_ads_campaign_id', 'google_ads_adgroup_id',
+    'google_ads_creative_id', 'google_ads_asset_group_id',
+    'google_ads_origin', 'google_ads_match_status',
 )
 
 

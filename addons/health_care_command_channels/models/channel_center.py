@@ -703,7 +703,34 @@ class CareChannelConnectionCenter(models.Model):
                 # Receive-only, on the CARD — a tenant must not have to open a
                 # stepper to learn what this channel does and does not do.
                 cards[-1]['notice'] = self._center_call_notice()
+        # GA1: acquisition cards contributed by satellite modules. They are
+        # appended AFTER the eight conversation cards are built, so every
+        # existing card dict is byte-identical whether or not a satellite is
+        # installed.
+        for extra in self._center_extra_cards():
+            after = extra.pop('after_key', None)
+            keys = [c['channel'] for c in cards]
+            if after in keys:
+                cards.insert(keys.index(after) + 1, extra)
+            else:
+                cards.append(extra)
         return cards
+
+    @api.model
+    def _center_extra_cards(self):
+        """Acquisition cards contributed by other modules. Default: none.
+
+        Each dict must carry every key `center_overview` emits for a
+        conversation card plus `kind`, `mode`, `action_xmlid`; an optional
+        `after_key` names the conversation card to insert after.
+
+        An acquisition card is NOT a `care.channel.connection`: it never has a
+        connection id, never sends, and its button opens an action rather than
+        a stepper. The hook exists so the Center can show one without Google
+        Ads (or any future acquisition source) having to pretend to be a chat
+        channel.
+        """
+        return []
 
     # ------------------------------------------------------------------
     # Meta approvals — first-class STATE on the card, never an error dialog

@@ -1,0 +1,626 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_google_ads
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-15 08:00+0000\n"
+"PO-Revision-Date: 2026-09-15 08:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+#: model:ir.actions.act_window,name:health_google_ads.action_google_ads_accounts
+#: model:ir.ui.menu,name:health_google_ads.menu_google_ads_accounts
+msgid "Google Ads"
+msgstr "Google Ads"
+
+#. module: health_google_ads
+#: model:ir.model,name:health_google_ads.model_google_ads_campaign
+msgid "Google Ads Campaign"
+msgstr "Chiến dịch Google Ads"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+#: model:ir.actions.act_window,name:health_google_ads.action_google_ads_leads
+msgid "Google Ads leads"
+msgstr "Khách hàng tiềm năng từ Google Ads"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Google Ads touches"
+msgstr "Lượt tiếp cận từ Google Ads"
+
+# ---------------------------------------------------------------- the card
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Leads from your advertising campaigns"
+msgstr "Khách hàng tiềm năng từ các chiến dịch quảng cáo của bạn"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Set up Google Ads"
+msgstr "Thiết lập Google Ads"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Manage"
+msgstr "Quản lý"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Setup needed"
+msgstr "Cần thiết lập"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Partially connected"
+msgstr "Đã kết nối một phần"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Connected"
+msgstr "Đã kết nối"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+#: model:ir.model.fields.selection,name:health_google_ads.selection__google_ads_account__reporting_state__not_connected
+msgid "Not connected"
+msgstr "Chưa kết nối"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Signing in"
+msgstr "Đang đăng nhập"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Choose account"
+msgstr "Chọn tài khoản"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Syncing"
+msgstr "Đang đồng bộ"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Action required"
+msgstr "Cần xử lý"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Paused"
+msgstr "Tạm dừng"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Website leads"
+msgstr "Khách hàng tiềm năng từ website"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Campaign reporting"
+msgstr "Báo cáo chiến dịch"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Google lead forms"
+msgstr "Biểu mẫu khách hàng tiềm năng của Google"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+#: model:ir.model.fields.selection,name:health_google_ads.selection__google_ads_account__native_eligibility__healthcare_blocked
+msgid "Unavailable for healthcare ads"
+msgstr "Không khả dụng với quảng cáo lĩnh vực y tế"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Receiving"
+msgstr "Đang nhận"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Test passed; awaiting live lead"
+msgstr "Đã kiểm tra đạt; đang chờ khách hàng tiềm năng thật"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Ready for test"
+msgstr "Sẵn sàng kiểm tra"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "%s accounts"
+msgstr "%s tài khoản"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Last website lead: %s"
+msgstr "Khách hàng tiềm năng gần nhất từ website: %s"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "No leads received yet"
+msgstr "Chưa nhận được khách hàng tiềm năng nào"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Reporting updated: %s"
+msgstr "Báo cáo cập nhật lúc: %s"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Not synced"
+msgstr "Chưa đồng bộ"
+
+# ------------------------------------------------------- validation + gates
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "%(label)s must be exactly ten digits, with no hyphens or spaces."
+msgstr "%(label)s phải gồm đúng mười chữ số, không có dấu gạch ngang hay khoảng trắng."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid ""
+"The website connector \"%(connector)s\" belongs to %(their)s, but this "
+"advertising account belongs to %(ours)s."
+msgstr "Kết nối website \"%(connector)s\" thuộc về %(their)s, nhưng tài khoản quảng cáo này thuộc về %(ours)s."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid ""
+"Customer ID %(customer)s is already used by \"%(name)s\" (%(company)s). One "
+"Google Ads customer belongs to one company — open that account instead of "
+"creating a second one."
+msgstr "Mã khách hàng %(customer)s đã được \"%(name)s\" (%(company)s) sử dụng. Một khách hàng Google Ads chỉ thuộc về một công ty — hãy mở tài khoản đó thay vì tạo tài khoản thứ hai."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid ""
+"There is already a Google Ads account without a customer ID for this company "
+"(\"%s\"). Give that one its customer ID instead of creating a second draft."
+msgstr "Đã có một tài khoản Google Ads chưa nhập mã khách hàng cho công ty này (\"%s\"). Hãy nhập mã khách hàng cho tài khoản đó thay vì tạo bản nháp thứ hai."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid ""
+"Only a system administrator, a CRM manager, a clinic administrator or an "
+"owner may set up Google Ads."
+msgstr "Chỉ quản trị viên hệ thống, quản lý CRM, quản trị viên phòng khám hoặc chủ sở hữu mới được thiết lập Google Ads."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_campaign.py:0
+msgid ""
+"Only a system administrator, a CRM manager, a clinic administrator or an "
+"owner may set up Google Ads campaigns."
+msgstr "Chỉ quản trị viên hệ thống, quản lý CRM, quản trị viên phòng khám hoặc chủ sở hữu mới được thiết lập chiến dịch Google Ads."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid ""
+"Only a platform administrator can change whether Google lead forms are "
+"available, and only against a written policy finding."
+msgstr "Chỉ quản trị viên nền tảng mới được thay đổi trạng thái khả dụng của biểu mẫu Google, và chỉ khi có kết luận chính sách bằng văn bản."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid ""
+"A Google Ads account is kept for its history. Archive it instead — only a "
+"system administrator can delete one."
+msgstr "Tài khoản Google Ads được giữ lại để lưu lịch sử. Hãy lưu trữ tài khoản — chỉ quản trị viên hệ thống mới được xóa."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_campaign.py:0
+msgid "A Google campaign ID is digits only, with no spaces — \"%s\" is not one."
+msgstr "Mã chiến dịch Google chỉ gồm chữ số, không có khoảng trắng — \"%s\" không hợp lệ."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/lead_touchpoint.py:0
+msgid ""
+"This touch belongs to %(ours)s, but the Google Ads account \"%(account)s\" "
+"belongs to %(theirs)s."
+msgstr "Lượt tiếp cận này thuộc %(ours)s, nhưng tài khoản Google Ads \"%(account)s\" thuộc %(theirs)s."
+
+# ------------------------------------------------------------ website test
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid ""
+"Link the website connector first — there is nothing to test the enquiry "
+"against until this account knows which website its enquiries arrive from."
+msgstr "Hãy liên kết kết nối website trước — chưa có gì để kiểm tra cho tới khi tài khoản này biết các yêu cầu đến từ website nào."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "No website connector is linked yet."
+msgstr "Chưa liên kết kết nối website nào."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid ""
+"This checks this system only. A full round trip from the website becomes "
+"available once the website connection piece is installed; until then, the "
+"proof that Google's own values reach us is a real enquiry."
+msgstr "Phần này chỉ kiểm tra hệ thống. Việc kiểm tra trọn vòng từ website sẽ khả dụng khi phần kết nối website được cài đặt; trước đó, bằng chứng rằng dữ liệu của Google đến được với chúng ta là một yêu cầu thật."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "FAILED: %s"
+msgstr "THẤT BẠI: %s"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "the test produced nothing to inspect"
+msgstr "lần kiểm tra không tạo ra dữ liệu nào để xem xét"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Website pipeline test FAILED for %(user)s: %(reason)s"
+msgstr "Kiểm tra luồng website THẤT BẠI cho %(user)s: %(reason)s"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Google Ads: website test failed"
+msgstr "Google Ads: kiểm tra website thất bại"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Website pipeline test run by %(user)s: %(result)s"
+msgstr "Kiểm tra luồng website do %(user)s thực hiện: %(result)s"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Google Ads: website pipeline OK"
+msgstr "Google Ads: luồng website hoạt động tốt"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "matched to this account"
+msgstr "đã khớp với tài khoản này"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "not matched to any account"
+msgstr "không khớp với tài khoản nào"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "matched, but the enquiry contradicts itself"
+msgstr "đã khớp, nhưng yêu cầu này tự mâu thuẫn"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "not matched"
+msgstr "chưa khớp"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid ""
+"Pipeline OK — a Google ad click on form %(form)s would be recorded as a "
+"Google Ads enquiry, %(match)s. Nothing was saved."
+msgstr "Luồng hoạt động tốt — một lượt nhấp quảng cáo Google trên biểu mẫu %(form)s sẽ được ghi nhận là yêu cầu từ Google Ads, %(match)s. Không có dữ liệu nào được lưu."
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid "Campaign ID carried through exactly: %s"
+msgstr "Mã chiến dịch được giữ nguyên chính xác: %s"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+msgid ""
+"The synthetic enquiry resolved to \"%s\" rather than a new enquiry — an open "
+"enquiry already matches the test phone number. The pipeline itself worked."
+msgstr "Yêu cầu mô phỏng được xử lý thành \"%s\" thay vì một yêu cầu mới — đã có một yêu cầu đang mở trùng số điện thoại kiểm tra. Bản thân luồng xử lý vẫn hoạt động."
+
+# ------------------------------------------------------- the source summary
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/crm_lead.py:0
+msgid "Google Ads: %(campaign)s · %(match)s"
+msgstr "Google Ads: %(campaign)s · %(match)s"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/crm_lead.py:0
+msgid "matched to an account"
+msgstr "đã khớp với một tài khoản"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/crm_lead.py:0
+msgid "no matching account"
+msgstr "không có tài khoản nào khớp"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/crm_lead.py:0
+msgid "conflicting source — needs a look"
+msgstr "nguồn mâu thuẫn — cần kiểm tra"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/crm_lead.py:0
+msgid "campaign unknown"
+msgstr "chưa rõ chiến dịch"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__customer_id
+msgid "Customer ID"
+msgstr "Mã khách hàng"
+
+#. module: health_google_ads
+#. odoo-python
+#: code:addons/health_google_ads/models/google_ads_account.py:0
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__login_customer_id
+msgid "Manager Account ID"
+msgstr "Mã tài khoản quản lý"
+
+# ------------------------------------------------------------ field labels
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__website_connector_id
+msgid "Website Connector"
+msgstr "Kết nối website"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__default_catchment_id
+msgid "Default Area"
+msgstr "Khu vực mặc định"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__reporting_state
+msgid "Campaign Reporting"
+msgstr "Báo cáo chiến dịch"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__website_last_lead_at
+msgid "Last Website Lead"
+msgstr "Khách hàng tiềm năng gần nhất từ website"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__website_lead_count
+msgid "Website Enquiries"
+msgstr "Số yêu cầu từ website"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__unmatched_lead_count
+msgid "Google enquiries not matched to any account (this company)"
+msgstr "Yêu cầu từ Google chưa khớp tài khoản nào (công ty này)"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__website_test_at
+msgid "Last Successful Test"
+msgstr "Lần kiểm tra thành công gần nhất"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__website_test_kind
+msgid "Test Kind"
+msgstr "Loại kiểm tra"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__website_test_summary
+msgid "Last Test Result"
+msgstr "Kết quả kiểm tra gần nhất"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__final_url_suffix
+msgid "Final URL Suffix"
+msgstr "Hậu tố URL cuối"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__website_status
+msgid "Website Leads"
+msgstr "Khách hàng tiềm năng từ website"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__overall_status
+msgid "Overall Status"
+msgstr "Trạng thái tổng thể"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_account__native_eligibility
+msgid "Google Lead Forms"
+msgstr "Biểu mẫu Google"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign__external_campaign_id
+msgid "Campaign ID in Google"
+msgstr "Mã chiến dịch trên Google"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_google_ads_campaign__name
+msgid "Campaign Name"
+msgstr "Tên chiến dịch"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_crm_lead__google_ads_origin
+#: model:ir.model.fields,field_description:health_google_ads.field_health_lead_touchpoint__google_ads_origin
+msgid "Google Ads Origin"
+msgstr "Nguồn Google Ads"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_crm_lead__google_ads_match_status
+#: model:ir.model.fields,field_description:health_google_ads.field_health_lead_touchpoint__google_ads_match_status
+msgid "Google Ads Match"
+msgstr "Mức khớp Google Ads"
+
+#. module: health_google_ads
+#: model:ir.model,name:health_google_ads.model_google_ads_account
+#: model:ir.model.fields,field_description:health_google_ads.field_crm_lead__google_ads_account_id
+#: model:ir.model.fields,field_description:health_google_ads.field_health_lead_touchpoint__google_ads_account_id
+msgid "Google Ads Account"
+msgstr "Tài khoản Google Ads"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_crm_lead__google_ads_customer_id
+#: model:ir.model.fields,field_description:health_google_ads.field_health_lead_touchpoint__google_ads_customer_id
+msgid "Google Ads Customer ID"
+msgstr "Mã khách hàng Google Ads"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_crm_lead__google_ads_campaign_id
+#: model:ir.model.fields,field_description:health_google_ads.field_health_lead_touchpoint__google_ads_campaign_id
+msgid "Google Campaign ID"
+msgstr "Mã chiến dịch Google"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_crm_lead__google_ads_adgroup_id
+#: model:ir.model.fields,field_description:health_google_ads.field_health_lead_touchpoint__google_ads_adgroup_id
+msgid "Google Ad Group ID"
+msgstr "Mã nhóm quảng cáo Google"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_crm_lead__google_ads_creative_id
+#: model:ir.model.fields,field_description:health_google_ads.field_health_lead_touchpoint__google_ads_creative_id
+msgid "Google Ad ID"
+msgstr "Mã quảng cáo Google"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_crm_lead__google_ads_asset_group_id
+#: model:ir.model.fields,field_description:health_google_ads.field_health_lead_touchpoint__google_ads_asset_group_id
+msgid "Google Asset Group ID"
+msgstr "Mã nhóm tài sản Google"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_crm_lead__google_ads_influenced
+msgid "Google Ads influenced"
+msgstr "Có ảnh hưởng từ Google Ads"
+
+#. module: health_google_ads
+#: model:ir.model.fields,field_description:health_google_ads.field_health_lead_touchpoint__google_ads_time_basis
+msgid "Time Basis"
+msgstr "Cơ sở thời gian"
+
+# --------------------------------------------------------- selection labels
+#. module: health_google_ads
+#: model:ir.model.fields.selection,name:health_google_ads.selection__crm_lead__google_ads_origin__website
+#: model:ir.model.fields.selection,name:health_google_ads.selection__health_lead_touchpoint__google_ads_origin__website
+msgid "Website"
+msgstr "Website"
+
+#. module: health_google_ads
+#: model:ir.model.fields.selection,name:health_google_ads.selection__crm_lead__google_ads_match_status__matched
+#: model:ir.model.fields.selection,name:health_google_ads.selection__health_lead_touchpoint__google_ads_match_status__matched
+msgid "Matched"
+msgstr "Đã khớp"
+
+#. module: health_google_ads
+#: model:ir.model.fields.selection,name:health_google_ads.selection__crm_lead__google_ads_match_status__unmatched
+#: model:ir.model.fields.selection,name:health_google_ads.selection__health_lead_touchpoint__google_ads_match_status__unmatched
+msgid "Unmatched"
+msgstr "Chưa khớp"
+
+#. module: health_google_ads
+#: model:ir.model.fields.selection,name:health_google_ads.selection__crm_lead__google_ads_match_status__conflict
+#: model:ir.model.fields.selection,name:health_google_ads.selection__health_lead_touchpoint__google_ads_match_status__conflict
+msgid "Conflict"
+msgstr "Mâu thuẫn"
+
+# ------------------------------------------------------------- view strings
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_account_form
+msgid "Test the website pipeline"
+msgstr "Kiểm tra luồng website"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_account_form
+msgid "View leads"
+msgstr "Xem khách hàng tiềm năng"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_account_form
+msgid "View touches"
+msgstr "Xem lượt tiếp cận"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_account_form
+msgid "Open website connector"
+msgstr "Mở kết nối website"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_account_form
+msgid "Overview"
+msgstr "Tổng quan"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_account_form
+msgid "Tracking to put in Google Ads"
+msgstr "Tham số theo dõi để dán vào Google Ads"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_google_ads_account_form
+msgid "Read Google's lead form policy"
+msgstr "Đọc chính sách biểu mẫu khách hàng tiềm năng của Google"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_crm_case_opportunities_filter_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_crm_contact_search_crm_center_google_ads
+msgid "First source Google Ads"
+msgstr "Nguồn đầu tiên là Google Ads"
+
+#. module: health_google_ads
+#: model_terms:ir.ui.view,arch_db:health_google_ads.view_health_lead_touchpoint_search_google_ads
+msgid "Unmatched Google Ads"
+msgstr "Google Ads chưa khớp"

@@ -197,11 +197,6 @@ msgid "Attribution"
 msgstr "Nguồn gốc"
 
 #. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__call_cdr
-msgid "Call Record (CDR)"
-msgstr "Bản ghi cuộc gọi (CDR)"
-
-#. module: health_web_leads
 #. odoo-python
 #: code:addons/health_web_leads/models/lead_touchpoint.py:0
 msgid ""
@@ -285,11 +280,6 @@ msgstr "Mã click"
 #: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
 msgid "Click identifiers"
 msgstr "Mã click"
-
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__click_to_call
-msgid "Click to Call"
-msgstr "Bấm gọi"
 
 #. module: health_web_leads
 #: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__clicked_phone
@@ -742,7 +732,6 @@ msgstr ""
 
 #. module: health_web_leads
 #: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__source_system__manual
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__manual
 msgid "Manual Entry"
 msgstr "Nhập thủ công"
 
@@ -760,11 +749,6 @@ msgstr ""
 #: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__message_ids
 msgid "Messages"
 msgstr "Tin nhắn"
-
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__messenger_click
-msgid "Messenger Click"
-msgstr "Bấm Messenger"
 
 #. module: health_web_leads
 #: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__fbp
@@ -1476,7 +1460,7 @@ msgid "Token is missing a required scope (%s)"
 msgstr "Token thiếu phạm vi quyền bắt buộc (%s)"
 
 #. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__touchpoint_type
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__touchpoint_type_id
 #: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
 msgid "Touchpoint Type"
 msgstr "Loại điểm chạm"
@@ -1633,11 +1617,6 @@ msgstr "Web: %s"
 #: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_list
 msgid "Website Connector"
 msgstr "Kết nối website"
-
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__form_submit
-msgid "Website Form Submission"
-msgstr "Gửi biểu mẫu website"
 
 #. module: health_web_leads
 #: model:ir.model,name:health_web_leads.model_web_lead_service
@@ -1862,11 +1841,6 @@ msgid "WordPress configuration"
 msgstr "Cấu hình WordPress"
 
 #. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__zalo_click
-msgid "Zalo Click"
-msgstr "Bấm Zalo"
-
-#. module: health_web_leads
 #: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__zalo_oa
 #: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__zalo_oa
 msgid "Zalo Official Account"
@@ -1923,47 +1897,3 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
 msgid "{\"15838\": \"HN\", \"15670\": \"HCM\"}"
 msgstr ""
-
-#~ msgid ""
-#~ "<p class=\"o_view_nocontent_smiling_face\">No web touchpoints yet</p>"
-#~ msgstr ""
-#~ "<p class=\"o_view_nocontent_smiling_face\">Chưa có điểm chạm web nào</p>"
-
-#~ msgid "Why this lead may need a human look"
-#~ msgstr "Vì sao lead này có thể cần người xem lại"
-
-#~ msgid "Where the visit happened"
-#~ msgstr "Khách đã truy cập ở đâu"
-
-#~ msgid "First touch, frozen at creation"
-#~ msgstr "Điểm chạm đầu tiên, cố định từ lúc tạo lead"
-
-#~ msgid "Click identifiers and consent"
-#~ msgstr "Mã click và sự đồng ý"
-
-#~ msgid "Kept for offline-conversion export; never edited by hand"
-#~ msgstr "Lưu để xuất chuyển đổi offline; không chỉnh sửa thủ công"
-
-#~ msgid "Every touch behind this lead — the newest row is the last touch"
-#~ msgstr ""
-#~ "Mọi điểm chạm phía sau lead này — dòng mới nhất là điểm chạm cuối cùng"
-
-#~ msgid ""
-#~ "<p class=\"o_view_nocontent_smiling_face\">Connect the website in a few "
-#~ "minutes</p>"
-#~ msgstr ""
-#~ "<p class=\"o_view_nocontent_smiling_face\">Kết nối website chỉ trong vài "
-#~ "phút</p>"
-
-#~ msgid ""
-#~ "<p class=\"o_view_nocontent_smiling_face\">Every campaign string the "
-#~ "website sent is already in the CRM register</p>"
-#~ msgstr ""
-#~ "<p class=\"o_view_nocontent_smiling_face\">Mọi chuỗi chiến dịch website "
-#~ "gửi sang đều đã có trong danh mục CRM</p>"
-
-#~ msgid ""
-#~ "<p class=\"o_view_nocontent_smiling_face\">No leads to analyse yet</p>"
-#~ msgstr ""
-#~ "<p class=\"o_view_nocontent_smiling_face\">Chưa có khách tiềm năng nào để "
-#~ "phân tích</p>"
