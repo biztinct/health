@@ -130,7 +130,9 @@ class TestChannelCenter(ChannelSpineCase):
         # cannot verify VoIP24h's API, and the card says exactly that.
         self.assertTrue(by_key['call']['available'])
         self.assertTrue(by_key['call']['implemented'])
-        self.assertIn('cannot verify', (by_key['call'].get('notice') or '').lower())
+        # Wording changed by 03103e07 ("Make VoIP24h setup fail-safe"); the
+        # honesty claim is the same — placing calls is not offered here.
+        self.assertIn('not configured here', (by_key['call'].get('notice') or '').lower())
         # ZNS is a capability OF zalo, rendered inside its card.
         self.assertEqual(by_key['zns']['parent_channel'], 'zalo')
 

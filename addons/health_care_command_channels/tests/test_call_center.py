@@ -406,7 +406,8 @@ class TestCallCenter(ChannelSpineCase):
             self.Conn.center_test(conn.id)
         except UserError as exc:
             raised = True
-            self.assertIn('cannot verify', str(exc).lower())
+            # center_test raises the card notice itself (03103e07 wording).
+            self.assertIn('not configured here', str(exc).lower())
         self.assertTrue(raised)
 
         # The adapter itself refuses too — the honesty is not only in the UI.
