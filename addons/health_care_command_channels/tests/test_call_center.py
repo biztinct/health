@@ -390,7 +390,8 @@ class TestCallCenter(ChannelSpineCase):
         self.assertTrue(card['available'])
         self.assertTrue(card['implemented'])
         self.assertTrue(card.get('notice'))
-        self.assertIn('cannot verify', card['notice'].lower())
+        self.assertIn('not configured here', card['notice'].lower())
+        self.assertIn('before the appointment', card['notice'].lower())
 
         # Required checks are ONLY what arriving traffic can prove. Anything
         # needing an API round trip would be a demand we cannot test.
@@ -556,3 +557,8 @@ class TestCallCenter(ChannelSpineCase):
         for getter in ('get isTelegram', 'get isEmail', 'get isCall',
                        'get isWebchat'):
             self.assertIn(getter, script, getter)
+
+        # Calls must not be marked done merely because credentials were pasted.
+        self.assertIn('refreshCallStatus', script)
+        self.assertIn('!state.callProviderReady', arch)
+        self.assertIn('Check again', arch)

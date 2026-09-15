@@ -139,6 +139,7 @@ export class ChannelCenter extends Component {
             callSecret: "",
             hasCallSecret: false,
             callNotice: "",
+            callProviderReady: false,
             // Multi-account: which account the manage panel is on, and
             // whether its name is being edited.
             accountLabel: "",
@@ -473,6 +474,7 @@ export class ChannelCenter extends Component {
         this.state.callSecret = "";
         this.state.hasCallSecret = false;
         this.state.callNotice = "";
+        this.state.callProviderReady = false;
         this._metaHint = {};
         // A reconnect on a channel whose key we still hold skips the paste
         // screen: the tenant should never be asked for a credential twice.
@@ -976,6 +978,14 @@ export class ChannelCenter extends Component {
         });
     }
 
+    async refreshCallStatus() {
+        if (!this.state.connectionId) return;
+        await this._guarded(async () => {
+            await this.load();
+            await this._loadCallInfo(this.state.connectionId);
+        });
+    }
+
     /**
      * Open the manage panel for one account.
      *
@@ -1003,6 +1013,7 @@ export class ChannelCenter extends Component {
         this.state.metaSelected = "";
         this.state.callSecret = "";
         this.state.callNotice = "";
+        this.state.callProviderReady = false;
         const connId = this.state.connectionId;
         if (card.channel === "zalo" && connId) {
             this._loadZaloInfo(connId).catch((e) => this._err(e));

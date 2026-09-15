@@ -662,10 +662,25 @@
               <div class="cc-alert warn" t-if="state.callNotice">
                 <p t-esc="state.callNotice"/>
               </div>
+              <div class="cc-help">
+                <strong>Before the end-user appointment</strong>
+                <p>Ask VoIP24h support to enable CRM call-event webhooks for this account and confirm:</p>
+                <ol>
+                  <li>the exact account identifier included in every event;</li>
+                  <li>JSON events are sent by HTTPS POST;</li>
+                  <li>the signature is HMAC-SHA256 of the unmodified request body; and</li>
+                  <li>the signature header is <code>X-Voip24h-Signature</code> or <code>X-Signature</code>.</li>
+                </ol>
+                <p>If VoIP24h gives different details, stop here and send them to Health19 support. Do not improvise during the appointment.</p>
+              </div>
               <label class="cc-label" for="cc_call_account">Account name</label>
               <input id="cc_call_account" type="text" class="cc-input"
                      autocomplete="off" spellcheck="false"
                      t-model="state.callAccountId"/>
+              <label class="cc-checkline">
+                <input type="checkbox" t-model="state.callProviderReady"/>
+                <span>VoIP24h has confirmed these webhook details for this account.</span>
+              </label>
             </t>
 
             <!-- ===== Calls: the portal-guided webhook checklist ===== -->
@@ -680,6 +695,13 @@
                   <span t-if="state.copiedWebhook">Copied ✓</span>
                   <span t-if="!state.copiedWebhook">Copy</span>
                 </button>
+              </div>
+              <div class="cc-help">
+                <ol>
+                  <li>Give this address to VoIP24h support (or save it in their portal).</li>
+                  <li>Ask them for the signing secret used for this webhook.</li>
+                  <li>Paste that secret below, then save.</li>
+                </ol>
               </div>
               <label class="cc-label" for="cc_call_secret">Webhook secret</label>
               <input id="cc_call_secret" type="password" class="cc-input"
@@ -703,6 +725,9 @@
               <div class="cc-alert warn" t-if="state.callNotice">
                 <p t-esc="state.callNotice"/>
               </div>
+              <p class="cc-help" t-if="openAccount and !openAccount.last_inbound_at">
+                Make an inbound call to the clinic number, let it ring, then check again. Do not finish setup until the event is received.
+              </p>
             </t>
           </div>
         </div>
@@ -799,13 +824,16 @@
                we have no verified VoIP24h endpoint to test against) -->
           <button t-if="isCall and state.step === 0"
                   class="cc-btn primary"
-                  t-att-disabled="state.busy or !state.callAccountId"
+                  t-att-disabled="state.busy or !state.callAccountId or !state.callProviderReady"
                   t-on-click="next">Next</button>
           <button t-if="isCall and state.step === 1"
                   class="cc-btn primary"
                   t-att-disabled="state.busy or !(state.callSecret or state.hasCallSecret)"
                   t-on-click="saveCallSetup">Save</button>
-          <button t-if="isCall and state.step === 2"
+          <button t-if="isCall and state.step === 2 and !(openAccount and openAccount.last_inbound_at)"
+                  class="cc-btn primary" t-att-disabled="state.busy"
+                  t-on-click="refreshCallStatus">Check again</button>
+          <button t-if="isCall and state.step === 2 and openAccount and openAccount.last_inbound_at"
                   class="cc-btn primary" t-on-click="closeStepper">Done</button>
 
           <!-- Web chat -->

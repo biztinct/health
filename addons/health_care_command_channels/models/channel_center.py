@@ -447,8 +447,9 @@ class CareChannelConnectionCenter(models.Model):
         in the legacy client is unverified.
         """
         return _('Calls arrive in Care Command. Placing calls and pulling '
-                 'call history need the VoIP24h API, which we cannot verify '
-                 'yet — so we do not offer them.')
+                 'call history need a separate VoIP24h API contract, which '
+                 'is not configured here — so we do not offer them. Confirm '
+                 'the webhook contract with VoIP24h before the appointment.')
 
     # ==================================================================
     # Access + lookup
@@ -1700,10 +1701,12 @@ class CareChannelConnectionCenter(models.Model):
         try:
             return self.env['voip.config'].sudo()._sync_from_connection(
                 conn, account_id=account_id)
-        except Exception:  # noqa: BLE001 — the legacy bridge is never fatal
+        except Exception as exc:  # noqa: BLE001 — redact provider internals
             _logger.exception('care_channels: voip legacy config sync failed '
                               'for connection %s', conn.id)
-            return False
+            raise UserError(_(
+                'Health19 could not prepare call logging for this account. '
+                'Nothing was connected. Contact support before continuing.')) from exc
 
     # ==================================================================
     # 4. Web chat — one click
