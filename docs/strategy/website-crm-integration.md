@@ -4,6 +4,8 @@
 **Scope note:** this is an implementation design, not a formal SDD. It contains what the WordPress team (Proima), the CRM implementer (Opus), and marketing need to build and operate the pipeline — nothing more.
 **Companion:** `handovers/web-leads-phaseW1.md` (first CRM implementation phase, ready for kickoff).
 
+**Google Ads extension (2026-09-15):** [Channel Center design](google-ads-channel-design.md) and [implementation handover](handovers/google-ads-implementation.md) specify the new acquisition card, website attribution verification, and campaign reporting. They also document Google's healthcare restriction on hosted lead forms. Use that design for new Google Ads work; the historical implementation status below describes the original website project.
+
 ---
 
 ## 1. What this design does, channel by channel (plain-language summary)
