@@ -3096,3 +3096,32 @@ a no-op.
     same failures. Report both counts; do not fix the other stream's module
     from inside a phase that does not sanction it (the orchestrator did, in
     ce224fb7).
+- **§5.189 — a hand-built `ir.actions.act_window` dict opens OUTSIDE the CMS
+    shell: no sidebar, no breadcrumb root.** The shell matches actions by
+    xmlid (`match_action_xmlids`), and a dict has none. Always return
+    `self.env['ir.actions.act_window']._for_xml_id('<module>.<action>')` and
+    then override `domain`/`context`; seed every such action into the
+    sidebar leaf's `match_action_xmlids`. Sharpens §5.69/§5.93. (Google Ads
+    GA3 D1 — the sync history opened with no sidebar at all.)
+- **§5.190 — a model without a `name` field prints `<model>,<id>` as its
+    title on the user's screen**; give every user-facing model a
+    `_compute_display_name`, and format any timestamp in it with
+    `fields.Datetime.context_timestamp` or it disagrees with the field shown
+    below it. (Google Ads GA3 D5.)
+- **§5.191 — `fields.Monetary` silently rounds to the currency's decimal
+    precision, and VND has NONE.** Keep exact provider figures in their own
+    non-Monetary column (`cost_micros` as a Char, derivation through
+    `Decimal`) and assert exactness there; assert the money column against
+    `currency.round()`. (Google Ads GA3 D3.)
+- **§5.192 — the template's scheduled jobs come back ON with the release that
+    CREATES them, and only that one** (`noupdate="1"` protects later
+    upgrades). Refines §5.178/H78: after any upgrade that adds an `ir.cron`,
+    re-check `carejiox_template` and `UPDATE ir_cron SET active = false`.
+    (Google Ads GA3 — count went 0 → 1 → 0.)
+- **§5.193 — `timestamp AT TIME ZONE 'UTC' AT TIME ZONE <column>` converts
+    per row with a zone name stored on the account**, which is the right way
+    to bucket "the customer's calendar, not the server's" inside one SQL view.
+    PostgreSQL accepts a text column as the zone. (Google Ads GA3 §4.4.)
+- **§5.194 — `ir.cron._trigger()` on an INACTIVE job is a silent no-op**; a
+    "queued" notification on a system whose jobs are off (the template, a
+    practice copy) must say so. (Google Ads GA3.)
