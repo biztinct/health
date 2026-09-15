@@ -3050,3 +3050,24 @@ a no-op.
     the UI AND secret-submission RPC on verified authorization/profile checks.
     Exercise the durable path with committed test-owned rows and independent
     cursors, not a `test_enable` bypass. (Zalo authorization recovery.)
+
+- **§5.183 — a `search=` method on a Boolean field receives an `OrderedSet`, and
+    a naive truthiness test returns the EXACT COMPLEMENT, silently.** §5.13 warns
+    about the type; it does not say the failure inverts. Odoo 19's domain
+    optimizer rewrites `('flag', '=', True)` into `('flag', 'in',
+    OrderedSet([True]))`, so `value == [True]` / `value in (True, 1)` read
+    False and the filter lists everything EXCEPT what it was named for (298
+    unrelated enquiries shown, the one Google-influenced lead hidden — Google
+    Ads GA1). Rule: branch on the operator, derive truthiness by iterating the
+    value, XOR with `not in`/`!=`, and pin every spelling (`= True`, `!= True`,
+    `= False`, `in [True]`) in a test that asserts the id set both ways.
+- **§5.184 — a service user that may CREATE a record can still be refused a
+    field on it: `check_company=True` and lookup-backed defaults make the ORM
+    read OTHER tables as that user.** After the dropdown-vocabulary conversion
+    the website relay's service account (`group_web_leads_service`) had no
+    `health.lookup.value` read ACL, so `POST /api/v1/web/leads` answered HTTP
+    403 to EVERY submission — five pre-existing tests had been saying so
+    unread (Google Ads GA1, D4). Rule: whenever a field on a model a service
+    user writes gains a Many2one to a lookup/company-checked model, add the
+    read ACL for that service group in the same change, and run the service
+    persona's tests (§5.4), not uid 1's.
