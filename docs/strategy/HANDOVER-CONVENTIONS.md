@@ -3071,3 +3071,28 @@ a no-op.
     user writes gains a Many2one to a lookup/company-checked model, add the
     read ACL for that service group in the same change, and run the service
     persona's tests (§5.4), not uid 1's.
+- **§5.185 — a `lock_timeout` firing ABORTS the transaction, so the `except`
+    that wants to record "busy" can write nothing.** Wrap the `SET LOCAL
+    lock_timeout` + `pg_advisory_xact_lock` pair in `cr.savepoint()`; catch
+    `psycopg2.errors.LockNotAvailable` (verified present on the server) outside
+    it, then write the evidence. (Google Ads GA2 D3.)
+- **§5.186 — a macOS AppleDouble file (`._vi.po`) in the SERVER addons tree
+    can make the repo-wide i18n gate unrunnable and shows in no diff** — it
+    arrived via `scp` from a Mac, lives in no repository, and the catalogue
+    walker opens it as a `.po`. Rule: `find /odoo/odoo-server/addons -name
+    '._*' -delete` is a legitimate deploy hygiene step; run it when the i18n
+    gate errors on a file you never wrote. (Google Ads GA2 D9.)
+- **§5.187 — a wizard that answers with a `display_notification` leaves the
+    parent form's NON-STORED computes stale**, so a secret just set reads as
+    "not set" until a reload; the screen then looks like a failure. Return the
+    notification with `params.next = {'type': 'ir.actions.act_window_close'}`
+    plus a reload of the parent (the W2.5 `_with_reload` pattern) whenever the
+    parent shows a compute over what the wizard wrote. (Google Ads GA2 D8.)
+- **§5.188 — a concurrent stream's commit lands in YOUR test run.** Two red
+    tests in GA2's run came from 03103e07 (another session, 40 min earlier)
+    that changed a card's wording and updated one of its three tests. The only
+    way to say "not mine" is a pristine-baseline run: `git archive <your
+    previous commit>` of your module into the tree, same tags, same count →
+    same failures. Report both counts; do not fix the other stream's module
+    from inside a phase that does not sanction it (the orchestrator did, in
+    ce224fb7).
