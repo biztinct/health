@@ -1,37 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Sync call history every 15 minutes -->
-    <record id="cron_sync_call_history" model="ir.cron">
-        <field name="name">VoIP24h: Sync Call History</field>
-        <field name="model_id" ref="model_voip_config"/>
+    <!--
+        Ledger §5.81: "no cron ships for X" is a claim about ir_cron, not about
+        the repo, and a cron that has never done anything because it found no
+        rows is invisible, not safe. So: every job below states what it selects
+        on, and none of them can reach a provider endpoint that has not been
+        confirmed for the account.
+
+        §5.178/§5.192: an upgrade switches the golden template's jobs back on.
+        After any deploy that touches this file, re-check that the template's
+        scheduled jobs are off (docs/SAAS_RUNBOOK.md).
+    -->
+
+    <!-- Drains the durable inbox. The receiver already reduces live events
+         inline, so this is the safety net for anything that failed or arrived
+         while a worker was busy — not the primary path for a ringing alert. -->
+    <record id="cron_drain_events" model="ir.cron">
+        <field name="name">Phone: process messages from the phone system</field>
+        <field name="model_id" ref="model_voip_call_event"/>
         <field name="state">code</field>
-        <field name="code">model.cron_sync_call_history()</field>
-        <field name="interval_number">15</field>
+        <field name="code">model._cron_drain()</field>
+        <field name="interval_number">1</field>
         <field name="interval_type">minutes</field>
         <field name="active" eval="True"/>
     </record>
 
-    <!-- Download pending recordings every 5 minutes -->
-    <record id="cron_download_recordings" model="ir.cron">
-        <field name="name">VoIP24h: Download Pending Recordings</field>
-        <field name="model_id" ref="model_voip_call_recording"/>
+    <!-- Delivers notifications, Care Command projections and call-back tasks
+         AFTER the call fact they belong to is committed. -->
+    <record id="cron_drain_effects" model="ir.cron">
+        <field name="name">Phone: send call notifications and updates</field>
+        <field name="model_id" ref="model_voip_call_effect"/>
         <field name="state">code</field>
-        <field name="code">model.cron_download_pending_recordings()</field>
+        <field name="code">model._cron_drain()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- Closes calls whose legs ended but whose final record never came. The
+         result is "no ending recorded", never an invented outcome. -->
+    <record id="cron_finalise_sessions" model="ir.cron">
+        <field name="name">Phone: settle calls with no final record</field>
+        <field name="model_id" ref="model_voip_call_session"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_finalise()</field>
         <field name="interval_number">5</field>
         <field name="interval_type">minutes</field>
         <field name="active" eval="True"/>
     </record>
 
-    <!-- Auto-create activities for missed calls every 10 minutes -->
+    <!-- Releases browser phone leases whose heartbeat stopped. -->
+    <record id="cron_expire_leases" model="ir.cron">
+        <field name="name">Phone: release finished browser sessions</field>
+        <field name="model_id" ref="model_voip_client_lease"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_expire_leases()</field>
+        <field name="interval_number">2</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- Renews the provider token shortly before its validated expiry.
+         Selects on a stored token, so a config with no credentials is never
+         touched. -->
+    <record id="cron_renew_tokens" model="ir.cron">
+        <field name="name">Phone: renew the phone system access</field>
+        <field name="model_id" ref="model_voip_config"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_renew_tokens()</field>
+        <field name="interval_number">15</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- Clears raw provider payloads past the connection's retention.
+         Call records are never deleted by this. -->
+    <record id="cron_apply_retention" model="ir.cron">
+        <field name="name">Phone: clear old raw messages</field>
+        <field name="model_id" ref="model_voip_config"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_apply_retention()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <record id="cron_apply_recording_retention" model="ir.cron">
+        <field name="name">Phone: apply the recording retention policy</field>
+        <field name="model_id" ref="model_voip_call_recording"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_apply_recording_retention()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- =================================================================
+         OFF by default. Each of these needs a supplier contract that has
+         not been confirmed for this account, and the code refuses even if
+         the job is switched on by hand.
+         ================================================================= -->
+
+    <record id="cron_sync_call_history" model="ir.cron">
+        <field name="name">Phone: fetch past calls (needs confirmation)</field>
+        <field name="model_id" ref="model_voip_config"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_sync_call_history()</field>
+        <field name="interval_number">15</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="False"/>
+    </record>
+
+    <record id="cron_download_recordings" model="ir.cron">
+        <field name="name">Phone: fetch recordings to keep</field>
+        <field name="model_id" ref="model_voip_call_recording"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_download_pending_recordings()</field>
+        <field name="interval_number">10</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- Legacy. The call-back queue on voip.call.session owns this work now;
+         this only covers rows that predate it. Two independent creators of
+         the same task is how a clinic gets two activities for one missed
+         call. -->
     <record id="cron_create_missed_call_activities" model="ir.cron">
-        <field name="name">VoIP24h: Create Missed Call Activities</field>
+        <field name="name">Phone: tasks for old unanswered calls</field>
         <field name="model_id" ref="model_voip_call_log"/>
         <field name="state">code</field>
         <field name="code">model.cron_create_missed_call_activities()</field>
         <field name="interval_number">10</field>
         <field name="interval_type">minutes</field>
-        <field name="active" eval="True"/>
+        <field name="active" eval="False"/>
     </record>
 
 </odoo>

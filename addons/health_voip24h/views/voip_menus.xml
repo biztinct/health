@@ -1,61 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Root Menu -->
     <menuitem id="menu_voip24h_root"
-              name="VoIP24h"
+              name="Phone"
               sequence="100"
               groups="health_voip24h.group_voip_user"/>
 
-    <!-- Call Logs Menu -->
-    <menuitem id="menu_voip24h_call_logs"
-              name="Call Logs"
+    <!-- The work, first. Calls people owe a ring back are the top item on
+         purpose: that is the only list in here anybody has to act on. -->
+    <menuitem id="menu_voip24h_callbacks"
+              name="Call backs"
               parent="menu_voip24h_root"
+              action="action_voip_callbacks"
+              sequence="5"/>
+
+    <menuitem id="menu_voip24h_calls"
+              name="Calls"
+              parent="menu_voip24h_root"
+              action="action_voip_call_session"
               sequence="10"/>
 
+    <menuitem id="menu_voip24h_call_logs"
+              name="Records from the phone system"
+              parent="menu_voip24h_root"
+              sequence="20"
+              groups="health_voip24h.group_voip_supervisor"/>
+
     <menuitem id="menu_voip24h_call_logs_all"
-              name="All Calls"
+              name="All records"
               parent="menu_voip24h_call_logs"
               action="action_voip_call_log"
               sequence="10"/>
 
     <menuitem id="menu_voip24h_call_logs_missed"
-              name="Missed Calls"
+              name="Unanswered"
               parent="menu_voip24h_call_logs"
               action="action_voip_call_log_missed"
               sequence="20"/>
 
-    <!-- Recordings Menu -->
     <menuitem id="menu_voip24h_recordings"
               name="Recordings"
               parent="menu_voip24h_root"
               action="action_voip_call_recording"
-              sequence="20"/>
+              sequence="30"
+              groups="health_voip24h.group_voip_recording"/>
 
-    <!-- Extensions Menu -->
     <menuitem id="menu_voip24h_extensions"
               name="Extensions"
               parent="menu_voip24h_root"
               action="action_voip_extension"
-              sequence="30"/>
+              sequence="40"
+              groups="health_voip24h.group_voip_supervisor"/>
 
-    <!-- Configuration Menu -->
     <menuitem id="menu_voip24h_config"
               name="Configuration"
               parent="menu_voip24h_root"
               sequence="90"
-              groups="health_voip24h.group_voip_manager"/>
+              groups="health_voip24h.group_voip_operator"/>
 
     <menuitem id="menu_voip24h_config_settings"
-              name="VoIP Configuration"
+              name="Phone system"
               parent="menu_voip24h_config"
               action="action_voip_config"
-              sequence="10"/>
+              sequence="10"
+              groups="health_voip24h.group_voip_manager"/>
+
+    <menuitem id="menu_voip24h_events"
+              name="Messages from the phone system"
+              parent="menu_voip24h_config"
+              action="action_voip_call_event"
+              sequence="20"
+              groups="health_voip24h.group_voip_operator"/>
 
     <menuitem id="menu_voip24h_sync_wizard"
-              name="Sync Call History"
+              name="Fetch past calls"
               parent="menu_voip24h_config"
               action="action_voip_sync_wizard"
-              sequence="20"/>
+              sequence="30"
+              groups="health_voip24h.group_voip_manager"/>
 
 </odoo>

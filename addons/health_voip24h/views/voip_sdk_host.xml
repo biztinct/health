@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        The isolated host page for the supplier's WebRTC libraries.
+
+        Why an iframe rather than an entry in web.assets_backend: the supplied
+        libraries are legacy globals that expect jQuery 1.9 and adapter.js
+        0.15.5 on `window`. Adding those to the Odoo bundle would replace the
+        framework's own JavaScript dependencies for every screen in the
+        product. Here they live in a same-origin page of their own, and the
+        phone panel speaks to them only through explicit, origin-checked
+        messages.
+
+        Two things this page is NOT: it is not a floating CDN include (the
+        addresses come from the connection record, so a reviewed artefact can
+        be pinned and served locally the moment the supplier provides one), and
+        it is not a general-purpose frame (it renders no controls, holds no
+        credentials of its own, and accepts commands only from this origin).
+
+        Microphone permission is delegated to the frame by `allow="microphone"`
+        on the embedding element; the page itself must be served over https for
+        that to work at all.
+    -->
+    <template id="sdk_host_page" name="VoIP24h SDK host">
+        <html>
+            <head>
+                <meta charset="utf-8"/>
+                <title>Phone</title>
+                <style>
+                    html, body { margin: 0; padding: 0; background: transparent; }
+                </style>
+                <script type="text/javascript"
+                        src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"/>
+                <script type="text/javascript"
+                        src="https://cdnjs.cloudflare.com/ajax/libs/adapterjs/0.15.5/adapter.min.js"/>
+                <script type="text/javascript" t-att-src="library_url"/>
+                <script type="text/javascript" t-att-src="gateway_url"/>
+                <script type="text/javascript"
+                        src="/health_voip24h/static/src/js/sdk_host_bridge.js"/>
+            </head>
+            <body>
+                <div id="voip24h-host" hidden="hidden"/>
+            </body>
+        </html>
+    </template>
+
+</odoo>

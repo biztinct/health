@@ -49,6 +49,14 @@ class VoIPSyncWizard(models.TransientModel):
 
         config = self.voip_config_id
         config._check_credentials()
+        if not config.history_sync_verified:
+            # The honest answer, given where we are. Completed calls still
+            # arrive by call-back as they happen; what is unavailable is
+            # reaching back for calls that already finished.
+            raise UserError(_(
+                'Fetching past calls needs a part of the phone system’s '
+                'interface the supplier has not confirmed for this account '
+                'yet. New calls still arrive on their own as they happen.'))
 
         result = sync_call_history(
             config.sudo(),

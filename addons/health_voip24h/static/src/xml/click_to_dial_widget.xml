@@ -2,17 +2,20 @@
 <templates xml:space="preserve">
 
     <t t-name="health_voip24h.ClickToDialWidget">
-        <div class="o_field_click_to_dial d-inline-flex align-items-center gap-2">
-            <!-- Phone number display -->
-            <a t-if="phoneNumber" class="o_field_phone" t-attf-href="tel:{{phoneNumber}}" t-esc="phoneNumber"/>
+        <div class="o_field_click_to_dial hv-phone d-inline-flex align-items-center gap-2">
+            <a t-if="phoneNumber" class="o_field_phone"
+               t-attf-href="tel:{{phoneNumber}}" t-esc="phoneNumber"/>
 
-            <!-- Dial button (only visible if a phone number exists) -->
-            <button
-                t-if="phoneNumber"
-                class="btn btn-sm btn-primary o_voip_dial_btn"
-                t-on-click.prevent="onClickDial"
-                title="Click to dial">
-                <i class="fa fa-phone"/> Call
+            <!-- Shown only where a phone exists for this user at all. The
+                 button stays visible but disabled when it cannot dial, with
+                 the reason in its tooltip, so the path out is obvious. -->
+            <button t-if="phoneNumber and phone.state.available"
+                    class="btn btn-sm hv-btn hv-btn--accept o_voip_dial_btn"
+                    t-att-disabled="!canDial"
+                    t-on-click.prevent="onClickDial"
+                    t-att-title="dialTitle">
+                <span class="hv-wt-ico hv-ico-phone-out"/>
+                <span>Call</span>
             </button>
         </div>
     </t>

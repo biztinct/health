@@ -1,31 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- VoIP Configuration Form View -->
+    <!--
+        The setup surface.
+
+        Its shape is the point: several separate readiness facts, not one green
+        "Connected" light. Authenticating proves the credentials. It does not
+        prove call records arrive, that a browser can register, or that anyone
+        can hear anything. A quiet phone line is not a broken call-back, and a
+        successful registration response is not a delivered event, so each fact
+        gets its own row and its own timestamp.
+    -->
+
     <record id="view_voip_config_form" model="ir.ui.view">
         <field name="name">voip.config.form</field>
         <field name="model">voip.config</field>
         <field name="arch" type="xml">
-            <form string="VoIP24h Configuration">
+            <form string="Phone System">
                 <header>
-                    <button name="action_test_connection" type="object" string="Test Connection" class="oe_highlight"/>
-                    <button name="action_sync_call_history" type="object" string="Sync Now"/>
-                    <button name="%(health_voip24h.action_voip_sync_wizard)d" type="action" string="Sync Date Range..."/>
-                    <button name="action_sync_extensions" type="object" string="Sync Extensions"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,connected"/>
+                    <button name="action_test_connection" type="object"
+                            string="Check the credentials" class="oe_highlight"/>
+                    <button name="action_register_cdr_webhook" type="object"
+                            string="Register call-back"
+                            groups="health_voip24h.group_voip_operator"
+                            confirm="This tells the supplier to send completed call records to this server. If another system is already registered, its records will stop arriving. Continue?"/>
+                    <button name="action_delete_cdr_webhook" type="object"
+                            string="Remove call-back"
+                            groups="health_voip24h.group_voip_operator"
+                            invisible="not subscription_active"
+                            confirm="The supplier will stop sending completed call records here. Continue?"/>
+                    <button name="action_rotate_receiver_tokens" type="object"
+                            string="Renew call-back addresses"
+                            groups="base.group_system"
+                            confirm="New addresses are created and the old ones keep working for 24 hours. You must register the new completed-call address with the supplier within that time. Continue?"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,connected"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button name="action_sync_call_history" type="object" class="oe_stat_button" icon="fa-refresh">
-                            <div class="o_field_widget o_stat_info">
-                                <span class="o_stat_value"><field name="total_calls_synced"/></span>
-                                <span class="o_stat_text">Calls Synced</span>
-                            </div>
-                        </button>
-                        <button name="action_view_extensions" type="object" class="oe_stat_button" icon="fa-sitemap">
+                        <button name="action_view_extensions" type="object"
+                                class="oe_stat_button" icon="fa-sitemap">
                             <div class="o_field_widget o_stat_info">
                                 <span class="o_stat_value"><field name="extension_count"/></span>
                                 <span class="o_stat_text">Extensions</span>
+                            </div>
+                        </button>
+                        <button name="action_view_events" type="object"
+                                class="oe_stat_button" icon="fa-inbox"
+                                groups="health_voip24h.group_voip_operator">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value"><field name="pending_event_count"/></span>
+                                <span class="o_stat_text">Waiting</span>
                             </div>
                         </button>
                     </div>
@@ -33,117 +58,237 @@
                     <group>
                         <group>
                             <field name="name"/>
+                            <field name="account_id"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                         </group>
                         <group>
                             <field name="active"/>
+                            <field name="provider_timezone"/>
                         </group>
                     </group>
 
+                    <div class="alert alert-danger" role="alert"
+                         invisible="not error_message">
+                        <field name="error_message" readonly="1" nolabel="1"/>
+                    </div>
+
                     <notebook>
-                        <!-- API Configuration Tab -->
-                        <page string="API Configuration">
+
+                        <page string="What is working" name="readiness">
+                            <div class="alert alert-info" role="alert">
+                                Each line below is a separate fact with its own
+                                evidence. One of them being true says nothing
+                                about the others.
+                            </div>
                             <group>
-                                <group string="Credentials">
+                                <group string="The connection">
+                                    <field name="ready_api_at" readonly="1"
+                                           string="Credentials accepted"/>
+                                    <field name="token_expiry_quality" readonly="1"/>
+                                    <field name="token_expires_at" readonly="1"/>
+                                    <field name="subscription_active" readonly="1"
+                                           string="Call-back registered"/>
+                                    <field name="subscription_registered_at" readonly="1"/>
+                                </group>
+                                <group string="What has actually arrived">
+                                    <field name="ready_cdr_at" readonly="1"
+                                           string="First completed call received"/>
+                                    <field name="ready_state_at" readonly="1"
+                                           string="First live event received"/>
+                                    <field name="ready_recording_at" readonly="1"
+                                           string="First recording reached"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="The browser phone">
+                                    <field name="ready_registration_at" readonly="1"
+                                           string="An extension has registered"/>
+                                    <field name="ready_inbound_call_at" readonly="1"
+                                           string="An incoming call was answered in a browser"/>
+                                    <field name="ready_outbound_call_at" readonly="1"
+                                           string="An outgoing browser call connected"/>
+                                </group>
+                                <group string="Message queue">
+                                    <field name="pending_event_count" readonly="1"/>
+                                    <field name="oldest_pending_event" readonly="1"/>
+                                    <field name="quarantined_event_count" readonly="1"
+                                           string="Needing review"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Credentials" name="credentials"
+                              groups="base.group_system">
+                            <group>
+                                <group string="Supplier account">
                                     <field name="api_key" password="True"/>
                                     <field name="api_secret" password="True"/>
-                                    <field name="account_id"/>
-                                </group>
-                                <group string="API Settings">
                                     <field name="api_base_url"/>
                                     <field name="domain"/>
-                                    <field name="access_token" readonly="1" password="True"/>
-                                    <field name="token_expires_at" readonly="1"/>
+                                </group>
+                                <group string="Access token">
+                                    <field name="auth_longlive"/>
+                                    <field name="auth_longlive_wire"/>
+                                    <field name="token_obtained_at" readonly="1"/>
+                                    <field name="token_longlive" readonly="1"/>
                                 </group>
                             </group>
-                            <group invisible="not error_message">
-                                <field name="error_message" readonly="1" class="text-danger"/>
+                            <div class="alert alert-warning" role="alert"
+                                 invisible="token_expiry_quality in ('ok', 'none')">
+                                The supplier did not give a usable expiry time
+                                for the access it granted. Renewals are being
+                                scheduled on the documented lifetime instead,
+                                which is a guess. Ask the supplier to confirm
+                                the expiry format and its time zone.
+                            </div>
+                        </page>
+
+                        <page string="Call-backs" name="callbacks">
+                            <div class="alert alert-info" role="alert">
+                                These are the addresses the supplier sends call
+                                information to. <strong>The address itself is
+                                the password</strong> — anyone who has it can
+                                send us call records, so it is shown only to
+                                administrators and should go to the supplier
+                                and nobody else.
+                            </div>
+                            <group>
+                                <group string="Addresses">
+                                    <field name="receiver_id" readonly="1"/>
+                                    <field name="cdr_webhook_url" readonly="1"/>
+                                    <field name="state_webhook_url" readonly="1"/>
+                                </group>
+                                <group string="Security">
+                                    <field name="callback_auth_profile"/>
+                                    <field name="callback_param_auth" password="True"
+                                           groups="base.group_system"
+                                           invisible="callback_auth_profile != 'url_token_param_auth'"/>
+                                    <field name="callback_source_ips"/>
+                                </group>
+                            </group>
+                            <group string="What is switched on">
+                                <group>
+                                    <field name="cdr_ingest_enabled"/>
+                                    <field name="state_ingest_enabled"/>
+                                </group>
+                                <group>
+                                    <field name="subscription_method"/>
+                                    <field name="subscription_url" readonly="1"
+                                           groups="base.group_system"/>
+                                </group>
+                            </group>
+                            <group string="Registration notes">
+                                <field name="subscription_note" nolabel="1"
+                                       placeholder="If another system was registered here before, write down its address and settings so it can be put back."/>
+                            </group>
+                            <group string="The old call-back route"
+                                   groups="base.group_system">
+                                <field name="webhook_enabled"/>
+                                <field name="webhook_secret" password="True"
+                                       invisible="not webhook_enabled"/>
                             </group>
                         </page>
 
-                        <!-- Call Functionality Tab (NEW - Master Switch) -->
-                        <page string="Call Functionality">
-                            <div class="alert alert-info mb-3" role="alert">
-                                <h5><i class="fa fa-info-circle"/> Call Functionality Control</h5>
-                                <p>Toggle these settings to control whether users can make or receive calls through the system.
-                                   <strong>Data collection (call logs, recordings, analytics) continues regardless of these settings.</strong></p>
+                        <page string="Calling" name="calling">
+                            <div class="alert alert-info" role="alert">
+                                These control whether people can make and take
+                                calls. Call history, recordings and reporting
+                                keep working whatever you set here.
                             </div>
-
                             <group>
-                                <group string="Master Control">
+                                <group string="In the browser">
                                     <field name="enable_call_functionality"/>
-                                </group>
-                                <group/>
-                            </group>
-
-                            <group invisible="not enable_call_functionality">
-                                <group string="Outgoing Calls">
+                                    <field name="webrtc_enabled"/>
+                                    <field name="outbound_enabled"/>
                                     <field name="enable_outgoing_calls"/>
-                                    <div class="text-muted" invisible="not enable_outgoing_calls">
-                                        <p>Users can initiate calls via click-to-dial buttons on contact/lead forms.</p>
-                                    </div>
-                                    <div class="text-danger" invisible="enable_outgoing_calls">
-                                        <p>Click-to-dial buttons will be hidden from all forms.</p>
-                                    </div>
                                 </group>
-                                <group string="Incoming Calls">
+                                <group string="Alerts">
+                                    <field name="live_notifications_enabled"/>
                                     <field name="enable_incoming_call_popups"/>
-                                    <div class="text-muted" invisible="not enable_incoming_call_popups">
-                                        <p>Real-time popups will display caller information when calls arrive.</p>
-                                    </div>
-                                    <div class="text-danger" invisible="enable_incoming_call_popups">
-                                        <p>Incoming call popups will not be shown to users.</p>
-                                    </div>
                                 </group>
                             </group>
+                            <group string="Phone software" groups="base.group_system">
+                                <group>
+                                    <field name="sdk_library_url"/>
+                                    <field name="sdk_gateway_url"/>
+                                    <field name="sdk_pinned_version"/>
+                                </group>
+                                <group>
+                                    <field name="sip_host_default"/>
+                                    <field name="lease_heartbeat_seconds"/>
+                                    <field name="lease_expiry_seconds"/>
+                                </group>
+                            </group>
+                            <group string="Matching and settling"
+                                   groups="health_voip24h.group_voip_operator">
+                                <group>
+                                    <field name="correlation_window_seconds"/>
+                                    <field name="finalisation_grace_seconds"/>
+                                </group>
+                                <group>
+                                    <field name="callback_target_minutes"/>
+                                </group>
+                            </group>
+                        </page>
 
-                            <div class="alert alert-warning mt-3" role="alert" invisible="enable_call_functionality">
-                                <h5><i class="fa fa-warning"/> ⚠️ Call Functionality Disabled</h5>
-                                <p><strong>What's disabled:</strong></p>
-                                <ul class="mb-2">
-                                    <li>Users cannot initiate outgoing calls (click-to-dial)</li>
-                                    <li>Incoming call popups will not appear</li>
-                                    <li>Real-time call status updates disabled</li>
-                                </ul>
-                                <p><strong>What remains active:</strong></p>
-                                <ul class="mb-0">
-                                    <li>Call log synchronization (every 15 minutes)</li>
-                                    <li>Call recordings download and playback</li>
-                                    <li>Analytics dashboard and reports</li>
-                                    <li>Contact/lead matching</li>
-                                    <li>Activity creation for missed calls</li>
-                                </ul>
+                        <page string="Recordings" name="recordings">
+                            <div class="alert alert-warning" role="alert">
+                                Before switching this on, make sure the clinic
+                                has agreed who may listen to recordings, what
+                                callers are told, and how long recordings are
+                                kept. This software does not make that decision.
                             </div>
-                        </page>
-
-                        <!-- Webhook Configuration Tab -->
-                        <page string="Webhooks">
                             <group>
                                 <group>
-                                    <field name="webhook_enabled"/>
-                                    <field name="webhook_url" readonly="1"/>
-                                    <field name="webhook_secret" password="True"/>
+                                    <field name="recording_access_enabled"/>
+                                    <field name="allowed_recording_hosts"/>
                                 </group>
                                 <group>
-                                    <p class="text-muted">
-                                        Configure this URL in your VoIP24h admin panel to receive real-time call notifications.
-                                    </p>
+                                    <field name="recording_retention_days"/>
+                                    <field name="total_recordings_synced" readonly="1"/>
                                 </group>
                             </group>
                         </page>
 
-                        <!-- Sync Settings Tab -->
-                        <page string="Sync Settings">
+                        <page string="Not confirmed yet" name="unverified"
+                              groups="base.group_system">
+                            <div class="alert alert-danger" role="alert">
+                                Everything on this page needs the supplier to
+                                confirm how it works for this account first.
+                                Switching one on without that lets this server
+                                call an address nobody has ever tested.
+                            </div>
                             <group>
-                                <group>
-                                    <field name="auto_sync_enabled"/>
+                                <group string="Past calls">
+                                    <field name="history_sync_verified"/>
+                                    <field name="auto_sync_enabled"
+                                           readonly="not history_sync_verified"/>
                                     <field name="sync_interval_minutes"/>
                                     <field name="sync_history_days"/>
-                                </group>
-                                <group>
                                     <field name="last_sync_date" readonly="1"/>
                                     <field name="total_calls_synced" readonly="1"/>
-                                    <field name="total_recordings_synced" readonly="1"/>
+                                </group>
+                                <group string="Other supplier features">
+                                    <field name="rest_originate_verified"/>
+                                    <field name="extension_sync_verified"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Keeping data" name="retention"
+                              groups="health_voip24h.group_voip_operator">
+                            <group>
+                                <group>
+                                    <field name="event_retention_days"/>
+                                    <field name="diagnostic_retention_days"/>
+                                </group>
+                                <group>
+                                    <div class="text-muted">
+                                        Raw messages from the phone system are
+                                        cleared after the number of days set
+                                        here. The call records themselves are
+                                        never deleted by this setting.
+                                    </div>
                                 </group>
                             </group>
                         </page>
@@ -154,34 +299,37 @@
         </field>
     </record>
 
-    <!-- VoIP Configuration List View -->
     <record id="view_voip_config_list" model="ir.ui.view">
         <field name="name">voip.config.list</field>
         <field name="model">voip.config</field>
         <field name="arch" type="xml">
-            <list string="VoIP24h Configurations">
+            <list string="Phone Systems">
                 <field name="name"/>
                 <field name="account_id"/>
-                <field name="state"/>
-                <field name="enable_call_functionality" widget="boolean_toggle"/>
-                <field name="total_calls_synced"/>
-                <field name="last_sync_date"/>
+                <field name="state"
+                       decoration-success="state == 'connected'"
+                       decoration-warning="state == 'degraded'"
+                       decoration-danger="state == 'error'"/>
+                <field name="cdr_ingest_enabled" widget="boolean_toggle"
+                       string="Call records"/>
+                <field name="webrtc_enabled" widget="boolean_toggle"
+                       string="Browser phone"/>
+                <field name="ready_cdr_at" string="First record"/>
+                <field name="pending_event_count" string="Waiting"/>
                 <field name="company_id" groups="base.group_multi_company"/>
             </list>
         </field>
     </record>
 
-    <!-- VoIP Configuration Action -->
     <record id="action_voip_config" model="ir.actions.act_window">
-        <field name="name">VoIP Configuration</field>
+        <field name="name">Phone System</field>
         <field name="res_model">voip.config</field>
         <field name="view_mode">list,form</field>
         <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                Configure VoIP24h Integration
-            </p>
+            <p class="o_view_nocontent_smiling_face">Set up the phone system</p>
             <p>
-                Set up your VoIP24h API credentials and configure call functionality settings.
+                Enter the supplier account details, register the call-back
+                address, then assign extensions to your team.
             </p>
         </field>
     </record>

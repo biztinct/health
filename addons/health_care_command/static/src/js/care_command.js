@@ -77,7 +77,11 @@ export class CareCommand extends Component {
         });
 
         this._busChannel = null;
-        this._voipChannel = "voip_notifications";  // plain (not company-scoped) §4.1
+        // The global "voip_notifications" topic is gone: it delivered every
+        // caller's number to every signed-in browser, and an obscure topic
+        // name is not access control. Call notifications now arrive on the
+        // user's OWN channel (the server addresses them by user), so there is
+        // no channel to add here — only an event to listen for.
         this._pollTimer = null;
         this._debounce = null;
         this._searchDebounce = null;
@@ -101,9 +105,8 @@ export class CareCommand extends Component {
             if (this._toastTimer) clearTimeout(this._toastTimer);
             Object.values(this._ringTimers).forEach((t) => clearTimeout(t));
             if (this._busChannel) this.busService.deleteChannel(this._busChannel);
-            this.busService.deleteChannel(this._voipChannel);
             this.busService.unsubscribe?.("care.conversation/update", this._onBus);
-            this.busService.unsubscribe?.("voip_incoming_call", this._onRing);
+            this.busService.unsubscribe?.("voip24h_call", this._onRing);
         });
     }
 
@@ -166,20 +169,31 @@ export class CareCommand extends Component {
         };
         this.busService.subscribe("care.conversation/update", this._onBus);
 
-        // Phase 3: live ringing hero. Subscribe to the EXISTING voip bus
-        // (plain 'voip_notifications' string, §4.1). Ships dark where VoIP is
-        // un-provisioned (no CDR source ever fires the event).
-        this._onRing = (payload) => this._handleRing(payload || {});
-        this.busService.addChannel(this._voipChannel);
-        this.busService.subscribe("voip_incoming_call", this._onRing);
+        // Live ringing hero. The server sends "voip24h_call" to each entitled
+        // recipient's own channel, so this only subscribes — it adds no
+        // channel, and a user who is not entitled simply never hears it.
+        // Ships dark where VoIP is un-provisioned (nothing ever fires it).
+        this._onRing = (payload) => {
+            const kind = (payload || {}).kind;
+            if (kind && kind !== "incoming_ring") {
+                return;   // answered / ended / missed are handled by the poll
+            }
+            this._handleRing(payload || {});
+        };
+        this.busService.subscribe("voip24h_call", this._onRing);
     }
 
     // ---------------------------------------------------------------
     // live ringing hero + now-ticker (JS-only, no persistence)
     // ---------------------------------------------------------------
     async _handleRing(payload) {
+        // The payload deliberately carries identifiers and a state, not the
+        // caller's details. `resolve_incoming_call` below is what fetches a
+        // name, and it checks who is asking before answering.
         const number = payload.caller_number || "";
-        const key = String(payload.call_id || payload.call_log_id || `${number}-${Date.now()}`);
+        const key = String(
+            payload.session_id || payload.call_id || payload.call_log_id ||
+            `${number}-${Date.now()}`);
         if (this.state.rings.find((r) => r.key === key)) return;  // dedupe
         let convId = false;
         let name = payload.partner_name || number || _t("Unknown caller");

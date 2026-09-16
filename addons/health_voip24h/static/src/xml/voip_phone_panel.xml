@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_voip24h.PhonePanel">
+        <div class="hv-phone" t-if="state.available">
+
+            <!-- Launcher -->
+            <button class="hv-phone__launcher"
+                    t-att-class="{
+                        'hv-phone__launcher--ready': state.browserState === 'ready',
+                        'hv-phone__launcher--busy': state.callState === 'active',
+                        'hv-phone__launcher--alert': state.incoming or state.awareness.length,
+                    }"
+                    t-on-click="togglePanel"
+                    t-att-aria-expanded="state.panelOpen ? 'true' : 'false'"
+                    aria-label="Phone">
+                <span class="hv-wt-ico hv-ico-phone"/>
+                <span class="hv-phone__badge"
+                      t-if="state.callbacks.length"
+                      t-esc="state.callbacks.length"/>
+            </button>
+
+            <!-- Incoming: only ever shown when THIS browser holds the call -->
+            <div class="hv-phone__ring" t-if="state.incoming">
+                <div class="hv-phone__ring-who">
+                    <span class="hv-wt-ico hv-ico-phone-in"/>
+                    <strong t-esc="state.incoming.name"/>
+                </div>
+                <div class="hv-phone__ring-actions">
+                    <button class="hv-btn hv-btn--accept" t-on-click="onAnswer">
+                        Answer
+                    </button>
+                    <button class="hv-btn hv-btn--reject" t-on-click="onReject">
+                        Decline
+                    </button>
+                </div>
+            </div>
+
+            <!-- Panel -->
+            <div class="hv-phone__panel" t-if="state.panelOpen">
+                <header class="hv-phone__head">
+                    <span class="hv-phone__status"
+                          t-att-class="'hv-phone__status--' + state.browserState"
+                          t-esc="statusLabel"/>
+                    <span class="hv-phone__ext"
+                          t-if="state.profile and state.profile.extension_number">
+                        Ext <t t-esc="state.profile.extension_number"/>
+                    </span>
+                    <button class="hv-phone__close" t-on-click="togglePanel"
+                            aria-label="Close">×</button>
+                </header>
+
+                <!-- Errors are a recovery path, never a dead end -->
+                <div class="hv-phone__error" t-if="state.error">
+                    <p t-esc="state.error"/>
+                    <button class="hv-btn hv-btn--ghost"
+                            t-if="state.browserState === 'failed'"
+                            t-on-click="onStartPhone">Try again</button>
+                    <button class="hv-btn hv-btn--ghost"
+                            t-if="state.diagnostic === 'conflict'"
+                            t-on-click="onTakeOver">Use it here instead</button>
+                </div>
+
+                <nav class="hv-phone__tabs">
+                    <button t-att-class="{'is-active': local.tab === 'phone'}"
+                            t-on-click="() => this.local.tab = 'phone'">Phone</button>
+                    <button t-att-class="{'is-active': local.tab === 'callbacks'}"
+                            t-on-click="() => this.local.tab = 'callbacks'">
+                        Call backs
+                        <span class="hv-count" t-if="state.callbacks.length"
+                              t-esc="state.callbacks.length"/>
+                    </button>
+                    <button t-att-class="{'is-active': local.tab === 'wrapup'}"
+                            t-on-click="() => this.local.tab = 'wrapup'">
+                        Write-ups
+                        <span class="hv-count" t-if="state.wrapUp.length"
+                              t-esc="state.wrapUp.length"/>
+                    </button>
+                </nav>
+
+                <!-- ============ PHONE ============ -->
+                <section t-if="local.tab === 'phone'" class="hv-phone__body">
+
+                    <div t-if="state.browserState === 'off'" class="hv-phone__idle">
+                        <p t-if="state.profile and !state.profile.browser_phone_allowed">
+                            Calling in the browser is not switched on for you yet.
+                            You can still see call history and call backs.
+                        </p>
+                        <button t-else=""
+                                class="hv-btn hv-btn--primary"
+                                t-on-click="onStartPhone">
+                            Turn the phone on
+                        </button>
+                        <p class="hv-phone__hint" t-if="state.profile and state.profile.browser_phone_allowed">
+                            Your browser will ask to use the microphone.
+                        </p>
+                    </div>
+
+                    <div t-if="['initialising','registering'].includes(state.browserState)"
+                         class="hv-phone__idle">
+                        <p>Signing your extension in…</p>
+                    </div>
+
+                    <!-- Active call -->
+                    <div t-if="state.activeCall" class="hv-phone__call">
+                        <div class="hv-phone__call-who">
+                            <strong t-esc="state.activeCall.name"/>
+                            <small t-esc="state.activeCall.number"/>
+                        </div>
+                        <div class="hv-phone__call-state">
+                            <span t-esc="callLabel"/>
+                            <span class="hv-phone__timer"
+                                  t-if="state.callState === 'active'"
+                                  t-esc="talkDisplay"/>
+                        </div>
+                        <div class="hv-phone__controls">
+                            <button class="hv-btn hv-btn--toggle"
+                                    t-att-class="{'is-on': state.muted}"
+                                    t-att-disabled="state.callState !== 'active'"
+                                    t-on-click="onToggleMute">
+                                <t t-if="state.muted">Unmute</t>
+                                <t t-else="">Mute</t>
+                            </button>
+                            <button class="hv-btn hv-btn--toggle"
+                                    t-att-class="{'is-on': state.held}"
+                                    t-att-disabled="state.callState !== 'active'"
+                                    t-on-click="onToggleHold">
+                                <t t-if="state.held">Resume</t>
+                                <t t-else="">Hold</t>
+                            </button>
+                            <button class="hv-btn hv-btn--toggle"
+                                    t-if="showKeypadControl"
+                                    t-on-click="() => this.local.showKeypad = !this.local.showKeypad">
+                                Keypad
+                            </button>
+                            <button class="hv-btn hv-btn--toggle"
+                                    t-if="state.transferAvailable and state.callState === 'active'"
+                                    t-on-click="() => this.local.showTransfer = !this.local.showTransfer">
+                                Transfer
+                            </button>
+                            <button class="hv-btn hv-btn--reject"
+                                    t-att-disabled="!canHangUp"
+                                    t-on-click="onHangUp">
+                                Hang up
+                            </button>
+                        </div>
+
+                        <!-- One sequence, sent once: the supplier's own limit -->
+                        <div class="hv-phone__keypad" t-if="local.showKeypad">
+                            <label>Tones to send (once only)</label>
+                            <input type="text" t-model="local.digitsInput"
+                                   placeholder="e.g. 102#"/>
+                            <button class="hv-btn hv-btn--primary"
+                                    t-on-click="onSendDigits">Send</button>
+                        </div>
+
+                        <div class="hv-phone__transfer" t-if="local.showTransfer">
+                            <label>Transfer to extension</label>
+                            <input type="text" t-model="local.transferInput"
+                                   placeholder="e.g. 531"/>
+                            <button class="hv-btn hv-btn--primary"
+                                    t-on-click="onTransfer">Transfer</button>
+                            <p class="hv-phone__hint">
+                                The call moves straight across. You will not be
+                                able to speak to the person first.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Dialler -->
+                    <div class="hv-phone__dial" t-if="canDial">
+                        <input type="tel" t-model="local.dialInput"
+                               placeholder="Number to call"
+                               t-on-keydown="(ev) => ev.key === 'Enter' and this.onDial()"/>
+                        <button class="hv-btn hv-btn--accept" t-on-click="onDial">
+                            Call
+                        </button>
+                    </div>
+
+                    <!-- Server awareness: no Answer button here, on purpose -->
+                    <div class="hv-phone__awareness" t-if="state.awareness.length">
+                        <h4>Ringing elsewhere</h4>
+                        <div class="hv-phone__aware-card"
+                             t-foreach="state.awareness" t-as="card" t-key="card.id">
+                            <span t-esc="card.name or card.peer or 'Unknown caller'"/>
+                            <div class="hv-phone__aware-actions">
+                                <button class="hv-btn hv-btn--ghost"
+                                        t-on-click="() => this.openRecord(card)">
+                                    Open record
+                                </button>
+                                <button class="hv-btn hv-btn--ghost"
+                                        t-on-click="() => this.onDismissAwareness(card)">
+                                    Hide
+                                </button>
+                            </div>
+                        </div>
+                        <p class="hv-phone__hint">
+                            Hiding a card does not decline the call.
+                        </p>
+                    </div>
+
+                    <div class="hv-phone__foot" t-if="state.browserState === 'ready'">
+                        <button class="hv-btn hv-btn--ghost" t-on-click="onStopPhone">
+                            Turn the phone off
+                        </button>
+                    </div>
+                </section>
+
+                <!-- ============ CALL BACKS ============ -->
+                <section t-if="local.tab === 'callbacks'" class="hv-phone__body">
+                    <p t-if="!state.callbacks.length" class="hv-phone__empty">
+                        Nobody is waiting for a call back.
+                    </p>
+                    <div class="hv-phone__row"
+                         t-foreach="state.callbacks" t-as="session" t-key="session.id">
+                        <div class="hv-phone__row-main">
+                            <strong t-esc="session.name"/>
+                            <small>
+                                <t t-esc="session.peer"/>
+                                <t t-if="session.anonymous"> · number withheld</t>
+                            </small>
+                        </div>
+                        <div class="hv-phone__row-actions">
+                            <button class="hv-btn hv-btn--accept"
+                                    t-if="session.peer and canDial"
+                                    t-on-click="() => this.callbackFor(session)">
+                                Call
+                            </button>
+                            <button class="hv-btn hv-btn--ghost"
+                                    t-on-click="() => this.openRecord(session)">
+                                Open
+                            </button>
+                            <button class="hv-btn hv-btn--ghost"
+                                    t-on-click="() => this.onCalledBack(session)">
+                                Done
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ WRITE-UPS ============ -->
+                <section t-if="local.tab === 'wrapup'" class="hv-phone__body">
+                    <div t-if="local.wrapUpSession" class="hv-phone__wrapup">
+                        <h4 t-esc="local.wrapUpSession.name"/>
+                        <p class="hv-phone__hint"
+                           t-if="local.wrapUpSession.state !== 'final'">
+                            Call ended — waiting for the phone system's record.
+                            You can write your notes now.
+                        </p>
+                        <label>What happened</label>
+                        <select t-model="local.wrapUpOutcome">
+                            <option value="">Not set</option>
+                            <option value="service_booked">Service booked</option>
+                            <option value="follow_up_required">Follow-up required</option>
+                            <option value="information_provided">Information provided</option>
+                            <option value="complaint">Complaint</option>
+                            <option value="no_action">No action needed</option>
+                        </select>
+                        <label>Notes</label>
+                        <textarea t-model="local.wrapUpNotes" rows="4"/>
+                        <div class="hv-phone__row-actions">
+                            <button class="hv-btn hv-btn--primary"
+                                    t-on-click="saveWrapUp">Save</button>
+                            <button class="hv-btn hv-btn--ghost"
+                                    t-on-click="() => this.local.wrapUpSession = null">
+                                Back
+                            </button>
+                        </div>
+                    </div>
+                    <t t-else="">
+                        <p t-if="!state.wrapUp.length" class="hv-phone__empty">
+                            Nothing to write up.
+                        </p>
+                        <div class="hv-phone__row"
+                             t-foreach="state.wrapUp" t-as="session" t-key="session.id">
+                            <div class="hv-phone__row-main">
+                                <strong t-esc="session.name"/>
+                                <small t-esc="session.ended_at"/>
+                            </div>
+                            <button class="hv-btn hv-btn--ghost"
+                                    t-on-click="() => this.openWrapUp(session)">
+                                Write up
+                            </button>
+                        </div>
+                    </t>
+                </section>
+            </div>
+        </div>
+    </t>
+
+</templates>

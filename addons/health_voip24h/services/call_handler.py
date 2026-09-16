@@ -1,242 +1,159 @@
 # -*- coding: utf-8 -*-
+"""Handlers for the LEGACY ``/voip24h/webhook`` route.
+
+The five event names below — ``call.started``, ``call.answered``,
+``call.ended``, ``call.missed``, ``recording.available`` — are **ours**. No
+supplied VoIP24h document mentions any of them. They are kept as internal
+canonical names for whatever producer is actually posting to the old route, and
+nothing in this module ever REQUIRES VoIP24h to send them.
+
+Everything the v3 receivers handle goes through the inbox, the normaliser and
+the reducer instead. This file exists so a deployment with an identified legacy
+producer keeps working, and it deliberately does not grow.
+
+The global ``voip_notifications`` bus topic is gone. A topic name is not access
+control: anything sent there reached every signed-in browser on the server,
+including the caller's number. Notifications now go to one named person's own
+channel (``services/event_worker.py``), and this legacy path reuses that.
+"""
 
 import logging
-from .cdr_sync import (
-    parse_datetime,
-    process_call_record,
-    schedule_recording_download,
-)
+
+from .cdr_sync import parse_datetime, process_call_record, \
+    schedule_recording_download
 
 _logger = logging.getLogger(__name__)
 
+_VALID_STATUSES = ('completed', 'no_answer', 'busy', 'failed', 'cancelled')
+
 
 def process_call_event(env, event_data):
-    """
-    Process incoming webhook event from VoIP24h.
+    event_type = event_data.get('event_type')
+    call_data = event_data.get('call_data') or {}
+    account_id = event_data.get('account_id')
 
-    Args:
-        env: Odoo environment
-        event_data: Event data from webhook
+    config = env['voip.config'].sudo().search([
+        ('account_id', '=', account_id), ('active', '=', True),
+    ], limit=1)
+    if not config:
+        return {'status': 'error', 'message': 'Configuration not found'}
 
-    Returns:
-        dict: Processing result
-    """
+    handler = {
+        'call.started': _handle_started,
+        'call.answered': _handle_answered,
+        'call.ended': _handle_ended,
+        'call.missed': _handle_missed,
+        'recording.available': _handle_recording,
+    }.get(event_type)
+    if not handler:
+        _logger.info('Legacy webhook: unrecognised event %r', event_type)
+        return {'status': 'ignored', 'message': 'Unknown event type'}
+
     try:
-        event_type = event_data.get('event_type')
-        call_data = event_data.get('call_data', {})
-        account_id = event_data.get('account_id')
-
-        _logger.info(f'Processing webhook event: {event_type} for call {call_data.get("call_id")}')
-
-        # Find configuration
-        config = env['voip.config'].search([
-            ('account_id', '=', account_id),
-            ('active', '=', True),
-        ], limit=1)
-
-        if not config:
-            _logger.warning(f'No configuration found for account {account_id}')
-            return {'status': 'error', 'message': 'Configuration not found'}
-
-        # Process based on event type
-        if event_type == 'call.started':
-            return handle_call_started(env, config, call_data)
-
-        elif event_type == 'call.answered':
-            return handle_call_answered(env, config, call_data)
-
-        elif event_type == 'call.ended':
-            return handle_call_ended(env, config, call_data)
-
-        elif event_type == 'call.missed':
-            return handle_call_missed(env, config, call_data)
-
-        elif event_type == 'recording.available':
-            return handle_recording_available(env, config, call_data)
-
-        else:
-            _logger.warning(f'Unknown event type: {event_type}')
-            return {'status': 'ignored', 'message': f'Unknown event type: {event_type}'}
-
-    except Exception as e:
-        _logger.error(f'Webhook processing error: {e}', exc_info=True)
-        return {'status': 'error', 'message': str(e)}
+        return handler(env, config, call_data)
+    except Exception as exc:  # noqa: BLE001
+        _logger.exception('Legacy webhook handler failed for %s', event_type)
+        return {'status': 'error', 'message': str(exc)}
 
 
-def handle_call_started(env, config, call_data):
-    """Handle call.started event"""
-    try:
-        # Create or update call log
-        result = process_call_record(config, call_data)
-
-        # Trigger incoming call popup if enabled
-        if call_data.get('direction') == 'incoming' and config.can_show_incoming_popups():
-            call_log = env['voip.call.log'].search([
-                ('call_id', '=', call_data.get('call_id')),
-                ('voip_config_id', '=', config.id)
-            ], limit=1)
-
-            if call_log:
-                send_incoming_call_notification(call_log)
-
-        return {'status': 'success', 'result': result}
-
-    except Exception as e:
-        _logger.error(f'Failed to handle call.started: {e}')
-        return {'status': 'error', 'message': str(e)}
+def _find_log(env, config, call_data):
+    return env['voip.call.log'].sudo().search([
+        ('call_id', '=', call_data.get('call_id')),
+        ('voip_config_id', '=', config.id),
+    ], limit=1)
 
 
-def handle_call_answered(env, config, call_data):
-    """Handle call.answered event"""
-    try:
-        call_log = env['voip.call.log'].search([
-            ('call_id', '=', call_data.get('call_id')),
-            ('voip_config_id', '=', config.id)
-        ], limit=1)
-
-        if call_log:
-            call_log.write({
-                'call_type': 'answered',
-                'answer_time': parse_datetime(call_data.get('answer_time')),
-            })
-
-        return {'status': 'success'}
-
-    except Exception as e:
-        _logger.error(f'Failed to handle call.answered: {e}')
-        return {'status': 'error', 'message': str(e)}
+def _handle_started(env, config, call_data):
+    result = process_call_record(config, call_data)
+    if call_data.get('direction') == 'incoming' and \
+            config.can_show_incoming_popups():
+        log = _find_log(env, config, call_data)
+        if log:
+            _notify_assigned(env, config, log, 'incoming_ring')
+    return {'status': 'success', 'result': result}
 
 
-def handle_call_ended(env, config, call_data):
-    """Handle call.ended event"""
-    try:
-        result = process_call_record(config, call_data)
-
-        call_log = env['voip.call.log'].search([
-            ('call_id', '=', call_data.get('call_id')),
-            ('voip_config_id', '=', config.id)
-        ], limit=1)
-
-        if call_log:
-            # Update call log with final data
-            call_status = call_data.get('status', 'completed')
-            if call_status not in ('completed', 'no_answer', 'busy', 'failed', 'cancelled'):
-                call_status = 'completed'
-            call_log.write({
-                'end_time': parse_datetime(call_data.get('end_time')),
-                'duration_seconds': call_data.get('duration', 0),
-                'talk_duration_seconds': call_data.get('talk_duration', 0),
-                'call_status': call_status,
-            })
-
-            # Send call ended notification
-            send_call_ended_notification(call_log)
-
-        return {'status': 'success', 'result': result}
-
-    except Exception as e:
-        _logger.error(f'Failed to handle call.ended: {e}')
-        return {'status': 'error', 'message': str(e)}
+def _handle_answered(env, config, call_data):
+    log = _find_log(env, config, call_data)
+    if log:
+        log.with_context(voip_reducer=True).write({
+            'call_type': 'answered',
+            'answer_time': parse_datetime(call_data.get('answer_time')),
+        })
+    return {'status': 'success'}
 
 
-def handle_call_missed(env, config, call_data):
-    """Handle call.missed event"""
-    try:
-        # Process call record
-        result = process_call_record(config, call_data)
-
-        call_log = env['voip.call.log'].search([
-            ('call_id', '=', call_data.get('call_id')),
-            ('voip_config_id', '=', config.id)
-        ], limit=1)
-
-        if call_log:
-            call_log.write({'call_type': 'missed'})
-
-            # Auto-create activity for missed call if partner/lead is matched
-            if call_log.partner_id or call_log.lead_id:
+def _handle_ended(env, config, call_data):
+    result = process_call_record(config, call_data)
+    log = _find_log(env, config, call_data)
+    if log:
+        status = call_data.get('status')
+        # Unknown stays unknown. It is not quietly promoted to "completed".
+        if status not in _VALID_STATUSES:
+            status = 'unknown'
+        vals = {'call_status': status}
+        end_time = parse_datetime(call_data.get('end_time'))
+        if end_time:
+            vals['end_time'] = end_time
+        for key, field in (('duration', 'duration_seconds'),
+                           ('talk_duration', 'talk_duration_seconds')):
+            if call_data.get(key) is not None:
                 try:
-                    call_log.action_create_activity()
-                except Exception as e:
-                    _logger.error(f'Failed to create activity: {e}')
-
-        return {'status': 'success', 'result': result}
-
-    except Exception as e:
-        _logger.error(f'Failed to handle call.missed: {e}')
-        return {'status': 'error', 'message': str(e)}
+                    vals[field] = max(int(call_data[key]), 0)
+                except (TypeError, ValueError):
+                    pass
+        log.with_context(voip_reducer=True).write(vals)
+        _notify_assigned(env, config, log, 'ended')
+    return {'status': 'success', 'result': result}
 
 
-def handle_recording_available(env, config, call_data):
-    """Handle recording.available event"""
-    try:
-        call_log = env['voip.call.log'].search([
-            ('call_id', '=', call_data.get('call_id')),
-            ('voip_config_id', '=', config.id)
-        ], limit=1)
-
-        if call_log:
-            call_log.write({'has_recording': True})
-            schedule_recording_download(call_log, call_data)
-
-        return {'status': 'success'}
-
-    except Exception as e:
-        _logger.error(f'Failed to handle recording.available: {e}')
-        return {'status': 'error', 'message': str(e)}
+def _handle_missed(env, config, call_data):
+    result = process_call_record(config, call_data)
+    log = _find_log(env, config, call_data)
+    if log:
+        log.with_context(voip_reducer=True).write({'call_type': 'missed'})
+        if log.partner_id or log.lead_id:
+            try:
+                with env.cr.savepoint():
+                    log.action_create_activity()
+            except Exception as exc:  # noqa: BLE001
+                _logger.error('Failed to create activity: %s', exc)
+        _notify_assigned(env, config, log, 'missed_inbound')
+    return {'status': 'success', 'result': result}
 
 
-def send_incoming_call_notification(call_log):
+def _handle_recording(env, config, call_data):
+    log = _find_log(env, config, call_data)
+    if log:
+        log.with_context(voip_reducer=True).write({'has_recording': True})
+        schedule_recording_download(log, call_data)
+    return {'status': 'success'}
+
+
+def _notify_assigned(env, config, call_log, kind):
+    """Tell the people entitled to know. One person, one channel, each.
+
+    Small payload: identifiers and a state. The caller's name and number are
+    fetched afterwards through an authenticated call that checks who is asking.
     """
-    Send bus notification for incoming call popup.
-
-    Args:
-        call_log: voip.call.log record
-    """
     try:
+        users = env['res.users'].sudo().browse()
+        if call_log.extension_id and call_log.extension_id.user_id:
+            users |= call_log.extension_id.user_id
+        if not users:
+            group = env.ref('health_voip24h.group_voip_user',
+                            raise_if_not_found=False)
+            if group:
+                users = group.sudo().user_ids.filtered(
+                    lambda u: u.active and config.company_id in u.company_ids)
         payload = {
-            'call_id': call_log.call_id,
+            'kind': kind,
+            'session_id': call_log.session_id.id or False,
             'call_log_id': call_log.id,
-            'caller_number': call_log.caller_number,
-            'partner_id': call_log.partner_id.id if call_log.partner_id else False,
-            'partner_name': call_log.partner_id.name if call_log.partner_id else False,
-            'lead_id': call_log.lead_id.id if call_log.lead_id else False,
-            'lead_name': call_log.lead_id.name if call_log.lead_id else False,
+            'state': 'legacy',
+            'version': 0,
         }
-
-        # Clone of health_zalo message_handler bus pattern
-        # (services/message_handler.py:256): _sendone(channel, type, payload)
-        call_log.env['bus.bus']._sendone(
-            'voip_notifications',
-            'voip_incoming_call',
-            payload,
-        )
-
-        _logger.info('Sent incoming call notification for %s', call_log.call_id)
-
-    except Exception as e:
-        _logger.error('Failed to send incoming call notification: %s', e)
-
-
-def send_call_ended_notification(call_log):
-    """
-    Send bus notification for call ended.
-
-    Args:
-        call_log: voip.call.log record
-    """
-    try:
-        payload = {
-            'call_id': call_log.call_id,
-            'call_log_id': call_log.id,
-            'duration_display': call_log.duration_display,
-        }
-
-        call_log.env['bus.bus']._sendone(
-            'voip_notifications',
-            'voip_call_ended',
-            payload,
-        )
-
-    except Exception as e:
-        _logger.error('Failed to send call ended notification: %s', e)
+        for user in users:
+            user._bus_send('voip24h_call', payload)
+    except Exception as exc:  # noqa: BLE001 — a bus hiccup never fails ingest
+        _logger.error('Legacy call notification failed: %s', exc)

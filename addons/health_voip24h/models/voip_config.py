@@ -3,21 +3,42 @@
 import hashlib
 import hmac
 import logging
+import secrets
+from contextlib import contextmanager
+from datetime import timedelta
 
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 
+from ..services import voip_crypto
+from ..services.voip24h_api import (
+    DEFAULT_API_BASE_URL,
+    default_token_expiry,
+    parse_provider_datetime,
+)
+
 _logger = logging.getLogger(__name__)
+
+# PostgreSQL advisory-lock namespace for per-config token renewal (§5.74: an
+# advisory lock, never a row lock, because the token is written from the same
+# transaction that holds the lock).
+_AUTH_LOCK_CLASS = 0x0710  # arbitrary, stable, module-private
+
+# How long before the validated expiry a token is considered due for renewal.
+TOKEN_RENEW_MARGIN = timedelta(minutes=30)
+
+# Receiver token entropy. 32 bytes = 256 bits, per the handover's floor.
+RECEIVER_TOKEN_BYTES = 32
 
 
 def verify_voip_signature(secret, raw_body, signature):
     """HMAC-SHA256 over the RAW request bytes, compared in constant time.
 
-    Extracted to a module function in CC-F so the webhook route can verify an
-    event that belongs to a Channel Center connection with no ``voip.config``
-    row behind it yet. The logic is byte-for-byte what
-    ``_verify_webhook_signature`` has always done — this is a move, not a
-    rewrite. Fails CLOSED on a missing secret or a missing signature.
+    Retained verbatim for the LEGACY ``/voip24h/webhook`` route only. No
+    supplied VoIP24h document describes a signature header, so the v3
+    receivers below do not require this — they authenticate by a high-entropy
+    URL token (and, where the provider proves it delivers ``param.auth``, by a
+    bearer value too). Fails CLOSED on a missing secret or signature.
     """
     if not secret or not signature:
         return False
@@ -29,18 +50,36 @@ def verify_voip_signature(secret, raw_body, signature):
     return hmac.compare_digest(expected, provided)
 
 
-class VoIP24hConfig(models.Model):
-    """
-    VoIP24h Configuration and Authentication.
+def token_digest(value):
+    """The stored form of a receiver token. Never store the token itself."""
+    return hashlib.sha256((value or '').encode('utf-8')).hexdigest()
 
-    Manages API credentials, webhooks, sync settings, and call functionality controls.
+
+class VoIP24hConfig(models.Model):
+    """VoIP24h connection, capabilities and callback identity.
+
+    One row per company holds: the provider credentials, the token obtained
+    from V1, the public receiver identities the provider calls back on, and the
+    capability flags that decide what this deployment is allowed to do. Every
+    provider-facing action defaults OFF; a valid token switches none of them
+    on, because a token proves credentials and nothing else.
     """
     _name = 'voip.config'
     _description = 'VoIP24h Configuration'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _rec_name = 'name'
 
-    # Basic Info
+    def init(self):
+        # §5.1 — _sql_constraints are not materialized on Odoo 19.
+        self.env.cr.execute("""
+            CREATE UNIQUE INDEX IF NOT EXISTS voip_config_receiver_uidx
+            ON voip_config (receiver_id)
+            WHERE receiver_id IS NOT NULL
+        """)
+
+    # ------------------------------------------------------------------
+    # Identity
+    # ------------------------------------------------------------------
     name = fields.Char(
         string='Configuration Name',
         required=True,
@@ -54,153 +93,326 @@ class VoIP24hConfig(models.Model):
         required=True,
         index=True,
     )
-    active = fields.Boolean(
-        default=True,
-        tracking=True,
-    )
+    active = fields.Boolean(default=True, tracking=True)
 
-    # API Credentials (never tracked: tracking would log secrets into chatter)
-    api_key = fields.Char(
-        string='API Key',
-        groups='base.group_system',
-    )
-    api_secret = fields.Char(
-        string='API Secret',
-        groups='base.group_system',
-    )
     account_id = fields.Char(
-        string='Account ID',
+        string='Phone System Account',
         required=True,
         tracking=True,
     )
-    domain = fields.Char(
-        string='VoIP24h Domain',
-        default='voip24h.vn',
-    )
+    domain = fields.Char(string='VoIP24h Domain', default='voip24h.vn')
     api_base_url = fields.Char(
         string='API Base URL',
-        default='https://api.voip24h.vn/v1',
+        default=DEFAULT_API_BASE_URL,
         required=True,
+        help='Must be an https:// address on an allow-listed provider host.',
     )
 
-    # Authentication Token
-    access_token = fields.Char(
-        string='Access Token',
+    provider_timezone = fields.Selection(
+        selection='_selection_provider_timezone',
+        string='Phone System Time Zone',
+        default='Asia/Ho_Chi_Minh',
+        required=True,
+        tracking=True,
+        help='The time zone the phone system stamps its call times in. '
+             'Call times arrive without a zone; reading them in the wrong one '
+             'shifts every call in the history.',
+    )
+
+    # ------------------------------------------------------------------
+    # Credentials and token (all group_system; never tracked)
+    # ------------------------------------------------------------------
+    api_key = fields.Char(string='API Key', groups='base.group_system')
+    api_secret = fields.Char(string='API Secret', groups='base.group_system')
+
+    access_token_enc = fields.Char(
+        string='Access Token (encrypted)',
         groups='base.group_system',
         readonly=True,
     )
-    token_expires_at = fields.Datetime(
-        string='Token Expires At',
-        readonly=True,
-    )
-    token_type = fields.Char(
-        string='Token Type',
-        readonly=True,
-    )
-
-    # Webhook Configuration
-    webhook_enabled = fields.Boolean(
-        string='Webhook Enabled',
+    token_expires_at = fields.Datetime(string='Token Expires At', readonly=True)
+    token_obtained_at = fields.Datetime(string='Token Obtained At', readonly=True)
+    token_expiry_quality = fields.Selection([
+        ('none', 'No token yet'),
+        ('ok', 'Read from the phone system'),
+        ('missing', 'Phone system sent no expiry'),
+        ('unparsable', 'Expiry could not be read'),
+        ('no_timezone', 'Expiry has no usable time zone'),
+    ], string='Expiry Source', default='none', readonly=True, tracking=True,
+        help='Anything other than “Read from the phone system” means the '
+             'renewal time is a guess and the connection is degraded.')
+    token_longlive = fields.Boolean(string='Long-lived Token', readonly=True)
+    auth_longlive = fields.Boolean(
+        string='Request 7-day Token',
         default=False,
         tracking=True,
-        help='Enable real-time webhook notifications from VoIP24h',
+        help='Off requests the 1-day token, which is the safer default.',
     )
-    webhook_url = fields.Char(
-        string='Webhook URL',
-        compute='_compute_webhook_url',
-        readonly=True,
-        help='URL for VoIP24h to send webhook notifications',
-    )
+    auth_longlive_wire = fields.Selection([
+        ('bool', 'JSON true/false (as documented)'),
+        ('string', 'Text "true"/"false" (as the samples show)'),
+    ], string='Token Lifetime Format', default='bool',
+        help='The supplier documents a true/false value but every sample '
+             'sends text. Switch this only if authentication is refused.')
+
+    # Legacy plaintext columns. KEPT so an unmigrated deployment still reads
+    # what it always read; the migration copies them into the encrypted store
+    # and then blanks them. Nothing new ever writes these.
+    access_token = fields.Char(string='Access Token (legacy)',
+                               groups='base.group_system', readonly=True)
+    token_type = fields.Char(string='Token Type (legacy)', readonly=True)
     webhook_secret = fields.Char(
-        string='Webhook Secret',
-        groups='base.group_system',
-        help='Secret key for webhook signature validation (HMAC-SHA256 of the raw body)',
-    )
+        string='Legacy Webhook Secret', groups='base.group_system',
+        help='Only used by the old /voip24h/webhook route.')
+    webhook_enabled = fields.Boolean(
+        string='Accept Legacy Call-backs', default=False, tracking=True,
+        help='The pre-v3 signed call-back route. Leave off unless a producer '
+             'is known to still post to it.')
 
-    # Call Functionality Control (Master Switch Feature)
+    # ------------------------------------------------------------------
+    # Callback receivers
+    # ------------------------------------------------------------------
+    receiver_id = fields.Char(
+        string='Callback ID',
+        readonly=True,
+        copy=False,
+        help='A random public identifier that appears in the callback '
+             'address. It names this connection; it does not authorise '
+             'anything on its own.',
+    )
+    cdr_token_digest = fields.Char(string='Completed-call Token Digest',
+                                   groups='base.group_system', readonly=True,
+                                   copy=False)
+    cdr_token_enc = fields.Char(string='Completed-call Token (encrypted)',
+                                groups='base.group_system', readonly=True,
+                                copy=False)
+    state_token_digest = fields.Char(string='Live-events Token Digest',
+                                     groups='base.group_system', readonly=True,
+                                     copy=False)
+    state_token_enc = fields.Char(string='Live-events Token (encrypted)',
+                                  groups='base.group_system', readonly=True,
+                                  copy=False)
+    # Rotation overlap: the previous digest stays valid until it expires, so a
+    # rotation does not drop the events in flight.
+    cdr_token_prev_digest = fields.Char(groups='base.group_system',
+                                        readonly=True, copy=False)
+    state_token_prev_digest = fields.Char(groups='base.group_system',
+                                          readonly=True, copy=False)
+    token_rotation_grace_until = fields.Datetime(readonly=True, copy=False)
+
+    cdr_webhook_url = fields.Char(string='Completed-call Callback',
+                                  compute='_compute_receiver_urls')
+    state_webhook_url = fields.Char(string='Live-events Callback',
+                                    compute='_compute_receiver_urls')
+
+    callback_auth_profile = fields.Selection([
+        ('url_token', 'Address token only'),
+        ('url_token_param_auth', 'Address token + supplier auth value'),
+        ('hmac', 'Signed request (not offered by this supplier)'),
+    ], string='Callback Security', default='url_token', required=True,
+        tracking=True,
+        help='An address token proves possession of the address. It is not a '
+             'signature: it does not prove the message body is untouched or '
+             'that the request is fresh.')
+    callback_param_auth = fields.Char(
+        string='Supplier Auth Value', groups='base.group_system',
+        help='The value sent back in the callback’s auth parameter, if the '
+             'supplier proves it delivers one.')
+    callback_source_ips = fields.Char(
+        string='Allowed Source Addresses',
+        help='Optional comma-separated list. Leave empty until the supplier '
+             'confirms the addresses their system calls from.')
+
+    # Subscription bookkeeping (what we last asked the provider for)
+    subscription_url = fields.Char(string='Registered Callback Address',
+                                   readonly=True)
+    subscription_method = fields.Selection([('GET', 'GET'), ('POST', 'POST')],
+                                           string='Registered Method',
+                                           default='POST')
+    subscription_active = fields.Boolean(string='Registration Active',
+                                         readonly=True)
+    subscription_registered_at = fields.Datetime(readonly=True)
+    subscription_note = fields.Text(
+        string='Registration Notes',
+        help='Who owned the callback address before this one, and anything '
+             'the supplier said. Never overwrite another system’s callback '
+             'without recording what it was.')
+
+    # ------------------------------------------------------------------
+    # Capability flags — every provider-facing action is off by default
+    # ------------------------------------------------------------------
+    cdr_ingest_enabled = fields.Boolean(
+        string='Accept Completed Calls', default=False, tracking=True)
+    state_ingest_enabled = fields.Boolean(
+        string='Accept Live Call Events', default=False, tracking=True)
+    live_notifications_enabled = fields.Boolean(
+        string='Show Live Notifications', default=False, tracking=True)
+    webrtc_enabled = fields.Boolean(
+        string='Allow Calling in the Browser', default=False, tracking=True)
+    outbound_enabled = fields.Boolean(
+        string='Allow Outgoing Calls', default=False, tracking=True)
+    recording_access_enabled = fields.Boolean(
+        string='Allow Recording Playback', default=False, tracking=True)
+    history_sync_verified = fields.Boolean(
+        string='Past-calls Interface Confirmed', default=False, tracking=True)
+    rest_originate_verified = fields.Boolean(
+        string='Server Dialling Confirmed', default=False, tracking=True)
+    extension_sync_verified = fields.Boolean(
+        string='Extension List Confirmed', default=False, tracking=True)
+
+    # Legacy master switch, kept as a facade over the browser/outgoing
+    # controls ONLY. It must never disable historical ingestion — a clinic
+    # that turns calling off still needs its call history.
     enable_call_functionality = fields.Boolean(
-        string='Enable Call Functionality',
-        default=False,
-        tracking=True,
-        help='Enable click-to-dial and incoming call popups. '
-             'When disabled, only call logs, recordings, and analytics are available.',
-    )
-    enable_outgoing_calls = fields.Boolean(
-        string='Enable Outgoing Calls',
-        default=True,
-        tracking=True,
-        help='Allow users to initiate calls via click-to-dial. '
-             'Requires "Enable Call Functionality" to be enabled.',
-    )
+        string='Enable Calling', default=False, tracking=True,
+        help='Turns the browser phone and outgoing calls on or off. Call '
+             'history, recordings and reporting are unaffected.')
+    enable_outgoing_calls = fields.Boolean(string='Enable Outgoing Calls',
+                                           default=True, tracking=True)
     enable_incoming_call_popups = fields.Boolean(
-        string='Enable Incoming Call Popups',
-        default=True,
-        tracking=True,
-        help='Show real-time popups for incoming calls. '
-             'Requires "Enable Call Functionality" to be enabled.',
-    )
+        string='Enable Incoming Call Alerts', default=True, tracking=True)
 
-    # Sync Settings
-    auto_sync_enabled = fields.Boolean(
-        string='Auto Sync CDR',
-        default=True,
-        tracking=True,
-        help='Automatically sync call detail records periodically',
-    )
-    sync_interval_minutes = fields.Integer(
-        string='Sync Interval (Minutes)',
-        default=15,
-        help='How often to sync call history (in minutes)',
-    )
-    sync_history_days = fields.Integer(
-        string='Sync History (Days)',
-        default=30,
-        help='Number of days to sync call history on first setup',
-    )
-    last_sync_date = fields.Datetime(
-        string='Last Sync Date',
-        readonly=True,
-    )
+    # ------------------------------------------------------------------
+    # WebRTC / SDK profile
+    # ------------------------------------------------------------------
+    sdk_library_url = fields.Char(
+        string='Phone Library Address',
+        default='https://sipgetway.voip24h.vn/public/js/voip24hlibrary.min.js')
+    sdk_gateway_url = fields.Char(
+        string='Phone Gateway Address',
+        default='https://sipgetway.voip24h.vn/public/js/voip24hgateway.min.js')
+    sdk_pinned_version = fields.Char(
+        string='Phone Library Version',
+        help='Recorded for audit. The supplier does not version these files '
+             'in their address, so this is what was reviewed, not a promise '
+             'about what is served.')
+    sip_host_default = fields.Char(
+        string='Default SIP Server',
+        help='The address extensions register against, unless an extension '
+             'overrides it.')
 
-    # Statistics
-    total_calls_synced = fields.Integer(
-        string='Total Calls Synced',
-        readonly=True,
-        default=0,
-    )
-    total_recordings_synced = fields.Integer(
-        string='Total Recordings Synced',
-        readonly=True,
-        default=0,
-    )
+    lease_heartbeat_seconds = fields.Integer(
+        string='Phone Heartbeat (seconds)', default=10)
+    lease_expiry_seconds = fields.Integer(
+        string='Phone Lease Expiry (seconds)', default=30)
+    finalisation_grace_seconds = fields.Integer(
+        string='Call Settle Time (seconds)', default=30,
+        help='How long a call stays open after its last leg ends, waiting for '
+             'the phone system’s final record.')
+    correlation_window_seconds = fields.Integer(
+        string='Matching Window (seconds)', default=15)
+    callback_target_minutes = fields.Integer(
+        string='Call-back Target (minutes)', default=0,
+        help='Zero means no target is set. This is a clinic decision, not a '
+             'contractual promise.')
 
-    # State
+    # ------------------------------------------------------------------
+    # Retention
+    # ------------------------------------------------------------------
+    event_retention_days = fields.Integer(
+        string='Keep Raw Events (days)', default=14)
+    diagnostic_retention_days = fields.Integer(
+        string='Keep Diagnostics (days)', default=90)
+    recording_retention_days = fields.Integer(
+        string='Keep Recordings (days)', default=0,
+        help='Zero means keep indefinitely. Set this only after the clinic '
+             'has agreed a retention policy.')
+    allowed_recording_hosts = fields.Char(
+        string='Allowed Recording Hosts',
+        default='customer.voip24h.vn',
+        help='Comma-separated. A recording address on any other host is '
+             'refused.')
+
+    # ------------------------------------------------------------------
+    # Readiness — seven independent facts, never one green light
+    # ------------------------------------------------------------------
+    ready_api_at = fields.Datetime(string='API Authenticated', readonly=True)
+    ready_cdr_at = fields.Datetime(string='Completed Calls Received',
+                                   readonly=True)
+    ready_state_at = fields.Datetime(string='Live Events Received',
+                                     readonly=True)
+    ready_recording_at = fields.Datetime(string='Recording Reached',
+                                         readonly=True)
+    ready_registration_at = fields.Datetime(string='Extension Registered',
+                                            readonly=True)
+    ready_inbound_call_at = fields.Datetime(string='Inbound Browser Call',
+                                            readonly=True)
+    ready_outbound_call_at = fields.Datetime(string='Outbound Browser Call',
+                                             readonly=True)
+
     state = fields.Selection([
         ('draft', 'Draft'),
         ('connected', 'Connected'),
+        ('degraded', 'Degraded'),
         ('error', 'Connection Error'),
     ], string='Status', default='draft', tracking=True, required=True)
+    error_message = fields.Text(string='Error Message', readonly=True)
 
-    error_message = fields.Text(
-        string='Error Message',
-        readonly=True,
-    )
+    # ------------------------------------------------------------------
+    # Legacy sync settings (the guessed-endpoint cron selects on these)
+    # ------------------------------------------------------------------
+    auto_sync_enabled = fields.Boolean(
+        string='Auto Sync Past Calls', default=False, tracking=True,
+        help='Needs a confirmed past-calls interface. Off by default.')
+    sync_interval_minutes = fields.Integer(string='Sync Interval (Minutes)',
+                                           default=15)
+    sync_history_days = fields.Integer(string='Sync History (Days)', default=30)
+    last_sync_date = fields.Datetime(string='Last Sync Date', readonly=True)
+    total_calls_synced = fields.Integer(readonly=True, default=0)
+    total_recordings_synced = fields.Integer(readonly=True, default=0)
 
-    extension_ids = fields.One2many(
-        'voip.extension',
-        'voip_config_id',
-        string='Extensions',
-    )
-    extension_count = fields.Integer(
-        compute='_compute_extension_count',
-    )
+    extension_ids = fields.One2many('voip.extension', 'voip_config_id',
+                                    string='Extensions')
+    extension_count = fields.Integer(compute='_compute_extension_count')
 
-    @api.depends('company_id')
-    def _compute_webhook_url(self):
-        """Compute webhook URL for VoIP24h to call"""
-        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+    pending_event_count = fields.Integer(compute='_compute_event_health')
+    oldest_pending_event = fields.Datetime(compute='_compute_event_health')
+    quarantined_event_count = fields.Integer(compute='_compute_event_health')
+
+    # ==================================================================
+    # Computes / selections
+    # ==================================================================
+
+    @api.model
+    def _selection_provider_timezone(self):
+        try:
+            import pytz
+            return [(tz, tz) for tz in pytz.common_timezones]
+        except ImportError:  # pragma: no cover
+            try:
+                from zoneinfo import available_timezones
+                return [(tz, tz) for tz in sorted(available_timezones())]
+            except Exception:  # noqa: BLE001
+                return [('Asia/Ho_Chi_Minh', 'Asia/Ho_Chi_Minh'),
+                        ('UTC', 'UTC')]
+
+    def _base_url(self):
+        return (self.env['ir.config_parameter'].sudo()
+                .get_param('web.base.url') or '').strip().rstrip('/')
+
+    @api.depends('receiver_id')
+    def _compute_receiver_urls(self):
+        base = self._base_url()
+        is_admin = self.env.user.has_group('base.group_system')
         for config in self:
-            config.webhook_url = f"{base_url}/voip24h/webhook"
+            if not config.receiver_id:
+                config.cdr_webhook_url = False
+                config.state_webhook_url = False
+                continue
+            if not is_admin:
+                # The address IS the credential. Anybody who can read it can
+                # inject call events, so it is administrator-only — a masked
+                # form is what everyone else sees.
+                masked = '%s/voip24h/v3/cdr/%s/••••••' % (base, config.receiver_id)
+                config.cdr_webhook_url = masked
+                config.state_webhook_url = masked.replace('/cdr/', '/events/')
+                continue
+            cdr = config.sudo()._voip_secret_read('cdr_token')
+            state = config.sudo()._voip_secret_read('state_token')
+            config.cdr_webhook_url = '%s/voip24h/v3/cdr/%s/%s' % (
+                base, config.receiver_id, cdr or '<token-not-stored>')
+            config.state_webhook_url = '%s/voip24h/v3/events/%s/%s' % (
+                base, config.receiver_id, state or '<token-not-stored>')
 
     def _compute_extension_count(self):
         counts = dict(self.env['voip.extension']._read_group(
@@ -211,124 +423,322 @@ class VoIP24hConfig(models.Model):
         for config in self:
             config.extension_count = counts.get(config, 0)
 
+    def _compute_event_health(self):
+        Event = self.env['voip.call.event'].sudo()
+        for config in self:
+            pending = Event.search(
+                [('voip_config_id', '=', config.id),
+                 ('processing_state', 'in', ('pending', 'retry'))],
+                order='received_at asc', limit=1)
+            config.pending_event_count = Event.search_count(
+                [('voip_config_id', '=', config.id),
+                 ('processing_state', 'in', ('pending', 'retry'))])
+            config.oldest_pending_event = pending.received_at or False
+            config.quarantined_event_count = Event.search_count(
+                [('voip_config_id', '=', config.id),
+                 ('processing_state', '=', 'quarantined')])
+
+    # ==================================================================
+    # Secret store
+    # ==================================================================
+    #
+    # ``_voip_secret_backend`` is the single overridable seam. Core answers
+    # with its own AES-GCM cipher (services/voip_crypto.py); the Care Command
+    # bridge may answer with the channel connection store where a Channel
+    # Center owns the setup. Both are encrypted at rest. There is no plaintext
+    # branch anywhere in this pair of methods.
+
+    _SECRET_COLUMNS = {
+        'access_token': 'access_token_enc',
+        'cdr_token': 'cdr_token_enc',
+        'state_token': 'state_token_enc',
+        'callback_param_auth': 'callback_param_auth',
+    }
+
+    def _voip_secret_backend(self):
+        """Return an object with ``encrypt(env, v)`` / ``decrypt(env, v)``."""
+        return voip_crypto
+
+    def _voip_secret_read(self, name):
+        """Decrypt and return the named secret, or None.
+
+        Fails CLOSED and LOUDLY-IN-THE-LOG: an undecryptable secret returns
+        None (so the caller refuses to act) rather than a mangled value that
+        would be sent to a provider.
+        """
+        self.ensure_one()
+        column = self._SECRET_COLUMNS.get(name)
+        if not column:
+            raise ValueError('unknown telephony secret %r' % name)
+        raw = self.sudo()[column]
+        if not raw:
+            return None
+        try:
+            return self._voip_secret_backend().decrypt(self.env, raw)
+        except Exception:  # noqa: BLE001 — never leak, never guess
+            _logger.exception('Telephony secret %s unreadable on config %s',
+                              name, self.id)
+            return None
+
+    def _voip_secret_write(self, name, value):
+        self.ensure_one()
+        column = self._SECRET_COLUMNS.get(name)
+        if not column:
+            raise ValueError('unknown telephony secret %r' % name)
+        enc = self._voip_secret_backend().encrypt(self.env, value) if value else False
+        self.sudo().write({column: enc})
+
+    # ==================================================================
+    # Credentials and token lifecycle
+    # ==================================================================
+
     def _check_credentials(self):
         self.ensure_one()
         config_sudo = self.sudo()
         if not config_sudo.api_key or not config_sudo.api_secret:
-            raise UserError(_('Please configure the VoIP24h API credentials first.'))
+            raise UserError(_(
+                'The phone system credentials have not been entered yet.'))
 
     def _get_api_client(self):
-        """Return an authenticated-capable API client for this config."""
         from ..services.voip24h_api import VoIP24hAPI
         self.ensure_one()
         self._check_credentials()
-        # sudo: api_key/api_secret/access_token are group_system-protected fields
         return VoIP24hAPI(self.sudo())
 
+    @contextmanager
+    def _auth_single_flight(self):
+        """Advisory transaction lock around token renewal (§5.74).
+
+        Yields True when this transaction owns the renewal, False when another
+        one does. Never blocks: a caller that does not get the lock re-reads
+        rather than queueing behind a provider round trip.
+        """
+        self.ensure_one()
+        self.env.cr.execute('SELECT pg_try_advisory_xact_lock(%s, %s)',
+                            (_AUTH_LOCK_CLASS, self.id))
+        acquired = bool(self.env.cr.fetchone()[0])
+        yield acquired
+        # Advisory *xact* locks release on commit/rollback — nothing to undo.
+
+    def _token_is_usable(self):
+        self.ensure_one()
+        me = self.sudo()
+        if not me.access_token_enc:
+            return False
+        if not me.token_expires_at:
+            return False
+        return fields.Datetime.now() < me.token_expires_at - TOKEN_RENEW_MARGIN
+
+    def _parse_provider_expiry(self, value):
+        self.ensure_one()
+        return parse_provider_datetime(value, self.provider_timezone)
+
+    def _store_token(self, token, expires_at, expiry_quality, longlive,
+                     created_at_raw=''):
+        self.ensure_one()
+        me = self.sudo()
+        me._voip_secret_write('access_token', token)
+        vals = {
+            'token_obtained_at': fields.Datetime.now(),
+            'token_expiry_quality': expiry_quality,
+            'token_longlive': longlive,
+            'ready_api_at': fields.Datetime.now(),
+            'error_message': False,
+            # A token that is stored is not a plaintext token any more.
+            'access_token': False,
+            'token_type': False,
+        }
+        if expires_at:
+            vals['token_expires_at'] = expires_at
+            vals['state'] = 'connected'
+        else:
+            # Documented lifetime as a SCHEDULING hint only, and the state
+            # says degraded so the operator can see that the renewal time is
+            # a guess rather than a fact.
+            vals['token_expires_at'] = default_token_expiry(longlive)
+            vals['state'] = 'degraded'
+        me.write(vals)
+        if created_at_raw:
+            _logger.debug('VoIP24h token issued at %s (config %s)',
+                          created_at_raw, self.id)
+
+    def _note_auth_failure(self, code, message):
+        self.ensure_one()
+        self.sudo().write({
+            'state': 'error',
+            'error_message': '%s: %s' % (code, message or ''),
+        })
+
+    def _ensure_token(self):
+        """Return a usable token, renewing if it is close to expiry."""
+        self.ensure_one()
+        if self._token_is_usable():
+            return self.sudo()._voip_secret_read('access_token')
+        self._get_api_client().authenticate()
+        return self.sudo()._voip_secret_read('access_token')
+
+    # ==================================================================
+    # Receiver identity
+    # ==================================================================
+
+    def _ensure_receiver(self):
+        """Create the public receiver id and its two tokens if absent."""
+        self.ensure_one()
+        me = self.sudo()
+        if not me.receiver_id:
+            me.write({'receiver_id': secrets.token_urlsafe(12)})
+        for name, digest_field in (('cdr_token', 'cdr_token_digest'),
+                                   ('state_token', 'state_token_digest')):
+            if not me[digest_field]:
+                raw = secrets.token_urlsafe(RECEIVER_TOKEN_BYTES)
+                me._voip_secret_write(name, raw)
+                me.write({digest_field: token_digest(raw)})
+        return me.receiver_id
+
+    def action_rotate_receiver_tokens(self):
+        """New callback tokens, with a bounded overlap so nothing is dropped.
+
+        The previous digests stay valid for the grace window, which is what
+        makes rotation safe while events are in flight. Re-registering the new
+        address with the provider is a separate, deliberate step.
+        """
+        self.ensure_one()
+        me = self.sudo()
+        me.write({
+            'cdr_token_prev_digest': me.cdr_token_digest,
+            'state_token_prev_digest': me.state_token_digest,
+            'token_rotation_grace_until': fields.Datetime.now() + timedelta(hours=24),
+            'cdr_token_digest': False,
+            'state_token_digest': False,
+        })
+        me._ensure_receiver()
+        me.message_post(body=_(
+            'Call-back addresses were renewed. The previous addresses keep '
+            'working for 24 hours. Register the new completed-call address '
+            'with the supplier before then.'))
+        return self._notify(_('Call-back addresses renewed'), _(
+            'Register the new address with the supplier within 24 hours.'))
+
+    def _verify_receiver_token(self, feed, supplied):
+        """Constant-time check of a supplied callback token for one feed."""
+        self.ensure_one()
+        me = self.sudo()
+        if not supplied:
+            return False
+        digest = token_digest(supplied)
+        current = me.cdr_token_digest if feed == 'cdr' else me.state_token_digest
+        if current and hmac.compare_digest(digest, current):
+            return True
+        grace = me.token_rotation_grace_until
+        if grace and fields.Datetime.now() <= grace:
+            previous = (me.cdr_token_prev_digest if feed == 'cdr'
+                        else me.state_token_prev_digest)
+            if previous and hmac.compare_digest(digest, previous):
+                return True
+        return False
+
+    @api.model
+    def _resolve_receiver(self, receiver_id, feed, supplied_token):
+        """Find the config a callback belongs to, or an empty recordset.
+
+        Resolution is by the receiver id ALONE — never by a query parameter,
+        never by ``account_id``, never by an extension. The database was
+        already chosen by the tenant hostname and dbfilter before this method
+        runs; nothing in the request body may re-select a tenant.
+        """
+        if not receiver_id or not supplied_token:
+            return self.browse()
+        config = self.sudo().with_context(active_test=False).search(
+            [('receiver_id', '=', receiver_id)], limit=1)
+        if not config:
+            return self.browse()
+        if not config._verify_receiver_token(feed, supplied_token):
+            return self.browse()
+        return config
+
+    # ==================================================================
+    # Actions
+    # ==================================================================
+
+    def _notify(self, title, message, kind='success', sticky=False):
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {'title': title, 'message': message, 'type': kind,
+                       'sticky': sticky},
+        }
+
     def action_test_connection(self):
-        """Test VoIP24h API connection"""
+        """Authenticate. Proves the credentials — and says so, precisely."""
         self.ensure_one()
-
         try:
-            api = self._get_api_client()
-            api.authenticate()
+            result = self._get_api_client().test_connection()
+        except UserError as exc:
+            self.sudo().write({'state': 'error', 'error_message': str(exc)})
+            return self._notify(_('Could not connect'), str(exc), 'danger', True)
+        except Exception as exc:  # noqa: BLE001
+            _logger.error('VoIP24h connection test failed: %s', exc, exc_info=True)
+            self.sudo().write({'state': 'error', 'error_message': str(exc)})
+            return self._notify(_('Could not connect'), _(
+                'Something went wrong reaching the phone system.'),
+                'danger', True)
+        if result.get('expiry_quality') != 'ok':
+            return self._notify(_('Connected, with a warning'), _(
+                'The credentials were accepted, but the phone system did not '
+                'give a usable expiry time for the access it granted. The '
+                'connection will still work; renewals are scheduled on the '
+                'documented lifetime instead.'), 'warning', True)
+        return self._notify(_('Credentials accepted'), _(
+            'The phone system accepted these credentials. This does not yet '
+            'prove that call records arrive or that a browser can ring.'))
 
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': _('Connection Successful'),
-                    'message': _('Successfully connected to VoIP24h API'),
-                    'type': 'success',
-                    'sticky': False,
-                }
-            }
-
-        except UserError:
-            raise
-        except Exception as e:
-            _logger.error('VoIP24h connection test failed: %s', e, exc_info=True)
-            self.sudo().write({
-                'state': 'error',
-                'error_message': str(e),
-            })
-
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': _('Connection Failed'),
-                    'message': str(e),
-                    'type': 'danger',
-                    'sticky': True,
-                }
-            }
-
-    def action_sync_call_history(self):
-        """Manually trigger call history sync"""
-        from ..services.cdr_sync import sync_call_history
+    def action_register_cdr_webhook(self):
+        """Register the completed-call callback (V2)."""
         self.ensure_one()
-        self._check_credentials()
-
-        result = sync_call_history(self.sudo())
-
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': _('Sync Completed'),
-                'message': _(
-                    '%(created)s new calls, %(updated)s updated, %(errors)s errors.',
-                    created=result['created'],
-                    updated=result['updated'],
-                    errors=result['errors'],
-                ),
-                'type': 'success' if not result['errors'] else 'warning',
-                'sticky': False,
-            }
-        }
-
-    def action_sync_extensions(self):
-        """Fetch extensions/lines from VoIP24h and upsert voip.extension records."""
-        self.ensure_one()
+        self._ensure_receiver()
+        me = self.sudo()
+        if me.subscription_url and me.subscription_url != me.cdr_webhook_url \
+                and not me.subscription_note:
+            raise UserError(_(
+                'A different call-back address is already registered with the '
+                'supplier. Record what it was in Registration Notes first so '
+                'it can be put back — replacing another system’s call-back '
+                'silently would stop their call records arriving.'))
+        auth_value = ''
+        if me.callback_auth_profile == 'url_token_param_auth':
+            auth_value = me._voip_secret_read('callback_param_auth') or ''
+            if not auth_value:
+                raise UserError(_(
+                    'This connection is set to use a supplier auth value, but '
+                    'none has been entered.'))
         api = self._get_api_client()
-        extensions = api.get_extensions()
+        api.register_call_log_webhook(
+            url=me.cdr_webhook_url,
+            method=me.subscription_method or 'POST',
+            active=True,
+            auth_token=auth_value,
+        )
+        me.write({
+            'subscription_url': me.cdr_webhook_url,
+            'subscription_active': True,
+            'subscription_registered_at': fields.Datetime.now(),
+        })
+        me.message_post(body=_(
+            'The completed-call call-back was registered with the supplier.'))
+        return self._notify(_('Call-back registered'), _(
+            'The supplier accepted the registration. Call records will only '
+            'confirm it once a real call arrives.'))
 
-        Extension = self.env['voip.extension']
-        created = updated = 0
-        for ext_data in extensions:
-            number = str(ext_data.get('extension') or ext_data.get('extension_number') or '').strip()
-            if not number:
-                continue
-            vals = {
-                'name': ext_data.get('name') or number,
-                'extension_number': number,
-                'voip_config_id': self.id,
-            }
-            existing = Extension.with_context(active_test=False).search([
-                ('voip_config_id', '=', self.id),
-                ('extension_number', '=', number),
-            ], limit=1)
-            if existing:
-                existing.write(vals)
-                updated += 1
-            else:
-                Extension.create(vals)
-                created += 1
-
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': _('Extensions Synced'),
-                'message': _(
-                    '%(created)s created, %(updated)s updated.',
-                    created=created, updated=updated,
-                ),
-                'type': 'success',
-                'sticky': False,
-            }
-        }
+    def action_delete_cdr_webhook(self):
+        self.ensure_one()
+        me = self.sudo()
+        if not me.subscription_url:
+            raise UserError(_('No call-back address is registered.'))
+        self._get_api_client().delete_call_log_webhook(me.subscription_url)
+        me.write({'subscription_active': False})
+        me.message_post(body=_('The completed-call call-back was removed.'))
+        return self._notify(_('Call-back removed'), _(
+            'The supplier will stop sending completed-call records.'))
 
     def action_view_extensions(self):
         self.ensure_one()
@@ -341,165 +751,191 @@ class VoIP24hConfig(models.Model):
             'context': {'default_voip_config_id': self.id},
         }
 
+    def action_view_events(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Phone System Messages'),
+            'res_model': 'voip.call.event',
+            'view_mode': 'list,form',
+            'domain': [('voip_config_id', '=', self.id)],
+        }
+
+    def action_sync_call_history(self):
+        """Kept so the button and the wizard have an owner — it now refuses."""
+        self.ensure_one()
+        if not self.history_sync_verified:
+            raise UserError(_(
+                'Downloading past calls needs a part of the phone system’s '
+                'interface the supplier has not confirmed for this account. '
+                'Completed calls still arrive by call-back as they happen.'))
+        from ..services.cdr_sync import sync_call_history
+        result = sync_call_history(self.sudo())
+        return self._notify(_('Sync completed'), _(
+            '%(created)s new calls, %(updated)s updated, %(errors)s errors.',
+            created=result['created'], updated=result['updated'],
+            errors=result['errors']))
+
+    def action_sync_extensions(self):
+        self.ensure_one()
+        if not self.extension_sync_verified:
+            raise UserError(_(
+                'Reading the extension list needs a part of the phone '
+                'system’s interface the supplier has not confirmed for this '
+                'account. Extensions can be added by hand in the meantime.'))
+        raise UserError(_(
+            'The extension-list interface is marked confirmed but no captured '
+            'contract has been implemented for it yet.'))
+
+    # ==================================================================
+    # Gates
+    # ==================================================================
+
     @api.model
     def get_active_config(self):
-        """Get active VoIP24h configuration (singleton pattern per company)"""
-        return self.search([
-            ('company_id', '=', self.env.company.id)
-        ], limit=1)
-
-    @api.model
-    def cron_sync_call_history(self):
-        """Cron job to sync call history for all active configurations"""
-        from ..services.cdr_sync import sync_call_history
-
-        configs = self.search([
-            ('auto_sync_enabled', '=', True),
-            ('state', '=', 'connected'),
-        ])
-
-        now = fields.Datetime.now()
-        for config in configs:
-            # Respect the per-config interval (the cron itself runs frequently)
-            interval = max(config.sync_interval_minutes or 15, 1)
-            if config.last_sync_date and (now - config.last_sync_date).total_seconds() < interval * 60:
-                continue
-            try:
-                _logger.info('Starting VoIP24h call history sync for config: %s', config.name)
-                sync_call_history(config.sudo())
-                self.env.cr.commit()
-            except Exception as e:
-                _logger.error('Cron sync failed for %s: %s', config.name, e, exc_info=True)
-                self.env.cr.rollback()
-                config.sudo().write({
-                    'state': 'error',
-                    'error_message': str(e),
-                })
-                self.env.cr.commit()
-
-    # ------------------------------------------------------------------
-    # Call functionality gates
-    # ------------------------------------------------------------------
+        return self.search([('company_id', '=', self.env.company.id)], limit=1)
 
     def is_calling_enabled(self):
-        """Check if calling functionality is enabled"""
         self.ensure_one()
-        return self.enable_call_functionality
+        return bool(self.enable_call_functionality and self.webrtc_enabled)
 
     def can_make_outgoing_calls(self):
-        """Check if outgoing calls are allowed"""
         self.ensure_one()
-        return self.enable_call_functionality and self.enable_outgoing_calls
+        return bool(self.enable_call_functionality
+                    and self.enable_outgoing_calls
+                    and self.outbound_enabled)
 
     def can_show_incoming_popups(self):
-        """Check if incoming call popups should be shown"""
         self.ensure_one()
-        return self.enable_call_functionality and self.enable_incoming_call_popups
-
-    # ------------------------------------------------------------------
-    # Click-to-dial
-    # ------------------------------------------------------------------
+        return bool(self.enable_incoming_call_popups
+                    and (self.live_notifications_enabled or self.webrtc_enabled))
 
     def _get_user_extension(self, user=None):
-        """Extension assigned to the given (or current) user on this config."""
         self.ensure_one()
         user = user or self.env.user
-        return self.env['voip.extension'].search([
+        return self.env['voip.extension'].sudo().search([
             ('voip_config_id', '=', self.id),
             ('user_id', '=', user.id),
-            ('allow_outgoing', '=', True),
         ], limit=1)
 
     def initiate_user_call(self, phone_number, extension=None):
-        """Initiate an outbound call for the current user via VoIP24h.
+        """Server-originated dial. Refuses until that contract is confirmed.
 
-        Returns the raw API response dict.
+        The browser phone is the supported path (see ``controllers/phone.py``);
+        this method exists because a desk-phone click-to-dial is a real ask,
+        and the honest answer today is that the supplier has not given us an
+        originate contract.
         """
         self.ensure_one()
-
+        if not self.rest_originate_verified:
+            raise UserError(_(
+                'Starting a call from the server is not available for this '
+                'account. Use the phone panel in the browser instead.'))
         if not self.can_make_outgoing_calls():
-            raise UserError(_('Outgoing calls are disabled. Please contact your administrator.'))
-        if not phone_number:
-            raise UserError(_('No phone number to call.'))
-
+            raise UserError(_('Outgoing calls are switched off.'))
         extension = extension or self._get_user_extension()
         if not extension:
-            raise UserError(_(
-                'No VoIP extension is assigned to your user. '
-                'Please contact your administrator.'))
+            raise UserError(_('You do not have an extension assigned.'))
+        return self._get_api_client().initiate_call(
+            extension.extension_number, phone_number)
 
-        api = self._get_api_client()
-        result = api.initiate_call(extension.extension_number, phone_number)
-        _logger.info('Click-to-dial: user %s ext %s -> %s',
-                     self.env.user.login, extension.extension_number, phone_number)
-        return result
+    # ==================================================================
+    # Crons
+    # ==================================================================
 
-    # ------------------------------------------------------------------
-    # Webhook signature
-    # ------------------------------------------------------------------
+    @api.model
+    def cron_renew_tokens(self):
+        """Renew tokens shortly before validated expiry."""
+        horizon = fields.Datetime.now() + TOKEN_RENEW_MARGIN
+        configs = self.sudo().search([
+            ('active', '=', True),
+            ('access_token_enc', '!=', False),
+            ('token_expires_at', '<=', horizon),
+        ])
+        for config in configs:
+            try:
+                with self.env.cr.savepoint():
+                    config._get_api_client().authenticate()
+            except Exception as exc:  # noqa: BLE001
+                _logger.warning('Token renewal failed for config %s: %s',
+                                config.id, exc)
+
+    @api.model
+    def cron_sync_call_history(self):
+        """Past-call polling. Selects on the CONFIRMED flag as well.
+
+        Ledger §5.81: this cron ships active, and the only thing that ever
+        kept it harmless was that it found no rows. Now it also refuses any
+        config whose past-calls interface has not been confirmed, so a newly
+        valid token cannot wake an unevidenced endpoint.
+        """
+        configs = self.sudo().search([
+            ('auto_sync_enabled', '=', True),
+            ('history_sync_verified', '=', True),
+            ('state', 'in', ('connected', 'degraded')),
+        ])
+        if not configs:
+            return
+        from ..services.cdr_sync import sync_call_history
+        now = fields.Datetime.now()
+        for config in configs:
+            interval = max(config.sync_interval_minutes or 15, 1)
+            if config.last_sync_date and \
+                    (now - config.last_sync_date).total_seconds() < interval * 60:
+                continue
+            try:
+                sync_call_history(config)
+                self.env.cr.commit()
+            except Exception as exc:  # noqa: BLE001
+                _logger.error('Cron sync failed for %s: %s', config.name, exc,
+                              exc_info=True)
+                self.env.cr.rollback()
+                config.write({'state': 'error', 'error_message': str(exc)})
+                self.env.cr.commit()
+
+    @api.model
+    def cron_apply_retention(self):
+        """Delete raw event payloads past their retention window."""
+        Event = self.env['voip.call.event'].sudo()
+        for config in self.sudo().search([('active', '=', True)]):
+            days = config.event_retention_days or 0
+            if days <= 0:
+                continue
+            cutoff = fields.Datetime.now() - timedelta(days=days)
+            stale = Event.search([
+                ('voip_config_id', '=', config.id),
+                ('received_at', '<', cutoff),
+                ('payload_raw', '!=', False),
+            ], limit=2000)
+            if stale:
+                stale.write({'payload_raw': False, 'payload_redacted': False})
+                _logger.info('Cleared raw payloads on %s events for config %s',
+                             len(stale), config.id)
+
+    # ==================================================================
+    # Legacy webhook signature (old route only)
+    # ==================================================================
 
     def _verify_webhook_signature(self, raw_body, signature, connection=None):
-        """Validate the HMAC-SHA256 signature of a webhook payload.
-
-        Fails CLOSED: the webhook route is public and runs su, so an
-        unconfigured secret must reject events, not accept everything —
-        otherwise anyone who guesses the account_id can inject forged calls.
-
-        CC-F changes exactly one thing here: WHERE the secret comes from. The
-        algorithm, the raw-bytes basis, the ``sha256=`` tolerance and the
-        constant-time compare are untouched — this verifier was already the
-        posture the rest of the framework was told to clone (ledger §5.61).
-        """
         self.ensure_one()
         secret = self._effective_webhook_secret(connection=connection)
         if not secret:
             _logger.warning(
-                'VoIP24h webhook rejected for %s: no webhook secret configured '
-                '(signature validation cannot run)', self.name)
+                'VoIP24h legacy webhook rejected for %s: no secret configured',
+                self.name)
             return False
         return verify_voip_signature(secret, raw_body, signature)
 
     # ==================================================================
-    # CC-F — the Channel Center facade
+    # Channel Center facade (unchanged contract; see CC-F)
     # ==================================================================
-    # Same shape as CC-D's zalo facade, and for the same reason: there is
-    # deliberately NO Many2one from here to `care.channel.connection`. The two
-    # modules have no dependency edge in either direction (ledger §5.71 — the
-    # loop CC-D closed by accident made the whole graph skip), so the join key
-    # is the framework's own uniqueness contract: one active connection per
-    # (channel, company), backed by its partial unique index.
-    #
-    # Every reference below is SOFT: health_voip24h must stay installable and
-    # working on a server with no Channel Center at all, which is also what
-    # every not-yet-migrated deployment looks like.
 
     def _channel_connection(self):
-        """The Calls connection behind this config, as sudo, or None.
-
-        Resolution order matters, and getting it wrong is a real bug rather
-        than a tidiness point. The webhook router resolves by ``account_id``
-        (company-agnostic — the provider addresses us by account, and whose
-        company it is is exactly what we are working out). If this method
-        resolved *only* by company, the verifier and the ingest gate could end
-        up consulting a DIFFERENT connection than the one the event was routed
-        to: verifying against the wrong secret, or gating on the wrong state.
-        So the account id is tried first, and the company match is only the
-        fallback that keeps a freshly migrated legacy row — which may carry no
-        resource id yet — working. (Found in the CC-F self-review.)
-        """
         self.ensure_one()
         if 'care.channel.connection' not in self.env:
             return None
         Conn = self.env['care.channel.connection'].sudo()
         company_id = (self.company_id or self.env.company).id
-        # Company-scoped on BOTH branches. The company-agnostic lookup belongs
-        # to the webhook router alone, which is answering "who owns this
-        # account across the deployment"; a config asking "which connection is
-        # MINE" that resolved company-agnostically would happily adopt another
-        # tenant's connection and verify with their secret. (Caught by T150f
-        # after the first attempt at this fix left the account-id branch
-        # unscoped — the guard and its test were written together, and the
-        # test is what found the hole.)
         if self.account_id:
             exact = Conn.search([
                 ('channel', '=', 'call'),
@@ -514,32 +950,16 @@ class VoIP24hConfig(models.Model):
         ], order='id desc', limit=1)
         if (fallback and self.account_id and fallback.resource_external_id
                 and fallback.resource_external_id != self.account_id):
-            # It has claimed a DIFFERENT account. Standing in for this one
-            # would verify an event with someone else's secret, so answer
-            # "no connection" and let the legacy column decide.
             return Conn.browse()
         return fallback
 
     def _effective_webhook_secret(self, connection=None):
-        """The webhook secret to verify against, from wherever it really lives.
-
-        ``connection`` is passed in by the webhook route so the secret we
-        verify with belongs to the connection the event was actually routed
-        to. Re-deriving it here would be a second, independent answer to the
-        same question, and two answers to one question eventually disagree.
-
-        The connection wins when it has one: there the value is encrypted at
-        rest (AES-GCM), while this model's own column is plaintext. The legacy
-        column stays readable so a deployment that never migrates keeps
-        working — nothing is deleted by this phase.
-        """
         self.ensure_one()
         conn = connection if connection is not None else self._channel_connection()
         if conn:
             try:
                 secret = conn._get_secret('provider_secret')
-            except Exception:  # noqa: BLE001 — a broken token must not
-                # silently accept events; fall through to the legacy column.
+            except Exception:  # noqa: BLE001
                 _logger.exception('Could not read the channel webhook secret '
                                   'for voip config %s', self.id)
                 secret = None
@@ -549,13 +969,6 @@ class VoIP24hConfig(models.Model):
 
     @api.model
     def _resolve_channel_connection(self, account_id):
-        """The Calls connection a webhook's ``account_id`` belongs to, or None.
-
-        Company-agnostic on purpose (the provider addresses us by account id;
-        which company owns it is exactly what we are resolving) and usable
-        with NO ``voip.config`` row at all — a tenant who set Calls up through
-        the Center alone must still be routable.
-        """
         if not account_id or 'care.channel.connection' not in self.env:
             return None
         return self.env['care.channel.connection']._find_for_resource(
@@ -563,55 +976,17 @@ class VoIP24hConfig(models.Model):
 
     @api.model
     def _route_channel_connection(self, config, account_id):
-        """The connection that may speak for ``account_id`` on the webhook.
-
-        Company-agnostic resolution is correct in itself — the provider
-        addresses us by account id, and whose company that is is exactly what
-        we are working out — but it becomes a company-isolation break the
-        moment two tenants can claim the same id. ``call`` is the one channel
-        whose resource id a tenant TYPES, so that was reachable: typing a
-        neighbour's account name made this lookup return YOUR connection for
-        THEIR event, which skipped their legacy ``webhook_enabled`` off switch
-        and pointed verification at the wrong secret.
-
-        The Center now refuses the claim at source, so a collision cannot be
-        created any more. This is the guard for databases where one already
-        exists: when the resolved connection and the config that owns the
-        account disagree about the company, the connection does not speak —
-        the legacy config keeps its own switch and its own secret.
-        """
         conn = self._resolve_channel_connection(account_id)
         if config and conn and conn.company_id != config.company_id:
             _logger.warning(
-                'VoIP24h webhook: connection %s (company %s) and config %s '
-                '(company %s) disagree about who owns this account; the '
-                'connection does not speak for it',
-                conn.id, conn.company_id.id, config.id, config.company_id.id)
+                'VoIP24h webhook: connection %s and config %s disagree about '
+                'who owns this account; the connection does not speak for it',
+                conn.id, config.id)
             return None
         return conn
 
     @api.model
     def _sync_from_connection(self, connection, account_id=None):
-        """A Center-configured Calls channel needs a config row to land in.
-
-        ``process_call_event`` resolves ``voip.config`` by ``account_id`` and
-        ``voip.call.log.voip_config_id`` is required, so without this a tenant
-        would finish the stepper, see call events arrive, watch the card turn
-        Connected — and get zero call logs. That is the "configured ≠
-        connected" lie in reverse, so the row is created when it is missing.
-
-        **What is deliberately NOT written is the point of this method.**
-        ``api_key`` and ``api_secret`` stay EMPTY, and that emptiness is a
-        safety mechanism, not an omission: ``_check_credentials`` refuses to
-        build an API client without them, which is what keeps every unverified
-        VoIP24h endpoint (``/auth/login``, ``/calls/history``, the recording
-        download) unreachable from a connection this phase created. For the
-        same reason ``state`` stays ``draft`` and ``auto_sync_enabled`` is
-        forced off: the CDR cron ships ACTIVE on this deployment and selects
-        on exactly those two fields, so a 'connected' row with auto-sync on
-        would start calling an endpoint nobody has ever verified, every 15
-        minutes.
-        """
         connection.ensure_one()
         account_id = (account_id or connection.resource_external_id or '').strip()
         if not account_id:
@@ -624,38 +999,27 @@ class VoIP24hConfig(models.Model):
                 'name': 'Health19 Channel Center',
                 'company_id': company.id,
                 'account_id': account_id,
-                'webhook_enabled': True,
-                # See the docstring: every one of these is load-bearing.
+                # §5.81: enumerate every field the crons select on, explicitly.
                 'state': 'draft',
                 'auto_sync_enabled': False,
+                'history_sync_verified': False,
                 'enable_call_functionality': False,
+                'cdr_ingest_enabled': False,
+                'state_ingest_enabled': False,
+                'webrtc_enabled': False,
+                'outbound_enabled': False,
             })
             _logger.info('health_voip24h: created config %s for channel '
                          'connection %s', config.id, connection.id)
             return config
-        vals = {'webhook_enabled': True}
+        vals = {}
         if config.account_id != account_id:
             vals['account_id'] = account_id
-        config.sudo().write(vals)
+        if vals:
+            config.sudo().write(vals)
         return config
 
     def _note_channel_event(self, event_type=None, connection=None):
-        """Framework bookkeeping for an ALREADY-VERIFIED call event.
-
-        Returns one of:
-
-        * ``'ignored'`` — a connection owns this account and is not in an
-          ingestable state (disabled, errored, still not_connected). The
-          caller must drop the event.
-        * ``'ok'`` — either no connection governs this account (legacy
-          behaviour, unchanged) or one does and accepted it.
-
-        The gate applies ONLY to a connection that actually owns the setup.
-        A ``legacy`` row — which is all the migration creates for an existing
-        deployment — observes traffic without gating it, because demoting a
-        working phone system to "ignored" the day this module upgrades would
-        be exactly the §5.66 lockout in a new costume.
-        """
         self.ensure_one()
         conn = connection if connection is not None else self._channel_connection()
         if not conn:
@@ -671,18 +1035,9 @@ class VoIP24hConfig(models.Model):
 
     @api.model
     def _migrate_legacy_connections(self):
-        """One ``state='legacy'`` connection per active config. Idempotent.
-
-        Nothing is deleted and nothing is invalidated: an existing VoIP setup
-        keeps working exactly as it did until a human completes the new setup
-        in the Channel Center. The three plaintext secrets are ENCRYPT-COPIED
-        onto the connection; the legacy columns are left in place so the
-        existing code keeps reading what it always read.
-        """
+        """One ``state='legacy'`` connection per active config. Idempotent."""
         if 'care.channel.connection' not in self.env:
             return {'created': 0, 'existing': 0, 'copied': 0}
-        # Imported here, not at module level: this module must stay importable
-        # and installable with no Channel Center at all.
         from odoo.addons.health_care_command_channels.services import (  # noqa: PLC0415
             channel_crypto,
         )
@@ -708,10 +1063,6 @@ class VoIP24hConfig(models.Model):
                 vals['resource_external_id'] = config.account_id
             if config.name and not conn.resource_display_name:
                 vals['resource_display_name'] = config.name
-            # api_key / api_secret have no semantic slot of their own on the
-            # connection, so they ride the two token columns. The mapping is
-            # explicit here and nowhere else; nothing in CC-F ever SPENDS
-            # them, because there is no verified endpoint to spend them at.
             pairs = (('webhook_secret', 'provider_secret_enc'),
                      ('api_key', 'access_token_enc'),
                      ('api_secret', 'refresh_token_enc'))
@@ -726,3 +1077,30 @@ class VoIP24hConfig(models.Model):
                      '%s already present, %s secret(s) copied',
                      created, existing_count, copied)
         return {'created': created, 'existing': existing_count, 'copied': copied}
+
+    # ==================================================================
+    # Frontend-safe view of this config
+    # ==================================================================
+
+    def _client_profile(self, user=None):
+        """What the browser is allowed to know. No credentials, ever."""
+        self.ensure_one()
+        user = user or self.env.user
+        extension = self._get_user_extension(user)
+        return {
+            'config_id': self.id,
+            'company_id': self.company_id.id,
+            'calling_enabled': self.is_calling_enabled(),
+            'outgoing_enabled': self.can_make_outgoing_calls(),
+            'alerts_enabled': self.can_show_incoming_popups(),
+            'webrtc_enabled': bool(self.webrtc_enabled),
+            'recording_enabled': bool(self.recording_access_enabled),
+            'has_extension': bool(extension),
+            'extension_number': extension.extension_number if extension else False,
+            'browser_phone_allowed': bool(extension and extension.browser_enabled
+                                          and self.webrtc_enabled),
+            'heartbeat_seconds': self.lease_heartbeat_seconds or 10,
+            'lease_expiry_seconds': self.lease_expiry_seconds or 30,
+            'transfer_enabled': bool(extension and extension.allow_transfer),
+            'dtmf_enabled': bool(extension and extension.allow_dtmf),
+        }

@@ -49,6 +49,20 @@ class TestCareCommandVoipBridge(TransactionCase):
         env.user.sudo().write({
             "group_ids": [(4, env.ref("health_crm.group_health_crm_manager").id)]})
 
+        # ...and the catchment scope, for the same reason one rung down.
+        # `care.conversation._scope_domain` filters every service method by
+        # catchment area: a user who is not an owner sees only their own area
+        # plus the conversations that resolve to no area at all. These fixture
+        # patients all carry `cls.province`, while uid 1 on this deployment
+        # has no area and is not an owner — so `get_conversation_detail`
+        # answered "Conversation not found" for a conversation the test had
+        # just created. Pre-existing, and invisible until this module was next
+        # run with tests. The engine is right and the fixture was
+        # under-specified (§5.62: fix the test, not the engine), so give the
+        # test user the same area as its patients — which is what a real
+        # operator would have.
+        env.user.sudo().write({"catchment_province_id": cls.province.id})
+
     def _call(self, phone, call_type="missed", direction="incoming", partner=False):
         return self.env["voip.call.log"].create({
             "call_id": "vb_%s_%s_%s" % (phone, call_type, direction),

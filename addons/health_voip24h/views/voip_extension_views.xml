@@ -1,27 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Extension List View -->
+    <record id="view_voip_extension_form" model="ir.ui.view">
+        <field name="name">voip.extension.form</field>
+        <field name="model">voip.extension</field>
+        <field name="arch" type="xml">
+            <form string="Extension">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="extension_number"/>
+                        <h1><field name="extension_number" placeholder="e.g. 531"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="extension_type"/>
+                            <field name="voip_config_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="user_id"/>
+                            <field name="employee_id"/>
+                            <field name="active"/>
+                            <field name="live_state" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Signing in" name="sip"
+                              groups="base.group_system">
+                            <div class="alert alert-warning" role="alert">
+                                The sign-in details below are what lets this
+                                extension ring in someone's browser. They are
+                                stored scrambled and are only ever sent to the
+                                one person this extension is assigned to.
+                                <strong>They cannot be read back here</strong> —
+                                to change one, type a new one.
+                            </div>
+                            <group>
+                                <group>
+                                    <field name="sip_host"
+                                           placeholder="Leave empty to use the connection default"/>
+                                    <field name="sip_username"/>
+                                    <field name="sip_password_input" password="True"
+                                           placeholder="Type a new password to replace the stored one"/>
+                                    <field name="sip_password_set" readonly="1"
+                                           string="A password is stored"/>
+                                </group>
+                                <group>
+                                    <field name="browser_enabled"/>
+                                    <field name="caller_id_did"/>
+                                    <field name="hotline_did"/>
+                                    <field name="team_id"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="What this extension may do" name="policy">
+                            <group>
+                                <group>
+                                    <field name="allow_incoming"/>
+                                    <field name="allow_outgoing"/>
+                                    <field name="allow_international"/>
+                                    <field name="record_calls"/>
+                                </group>
+                                <group>
+                                    <field name="allow_transfer"/>
+                                    <field name="allow_dtmf"/>
+                                </group>
+                            </group>
+                            <group string="Allowed destinations">
+                                <field name="destination_allowlist" nolabel="1"
+                                       placeholder="One number prefix per line, for example 09 or +84. Leave empty to allow any Vietnamese number."/>
+                            </group>
+                            <group string="Allowed transfer targets"
+                                   invisible="not allow_transfer">
+                                <field name="transfer_allowlist" nolabel="1"
+                                       placeholder="One extension or number per line. Leave empty to allow only other extensions on this phone system."/>
+                            </group>
+                            <div class="alert alert-info" role="alert">
+                                These rules are checked here before a call is
+                                allowed. They are not a spending limit: only
+                                the phone system itself can stop a call being
+                                placed and billed, so set the same limits there
+                                as well.
+                            </div>
+                        </page>
+
+                        <page string="Activity" name="activity">
+                            <group>
+                                <group>
+                                    <field name="total_calls" readonly="1"/>
+                                    <field name="missed_calls" readonly="1"/>
+                                </group>
+                            </group>
+                            <field name="lease_ids" readonly="1">
+                                <list string="Browser sessions">
+                                    <field name="user_id"/>
+                                    <field name="sdk_state"/>
+                                    <field name="heartbeat_at"/>
+                                    <field name="expires_at"/>
+                                    <field name="released"/>
+                                    <field name="released_reason"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
     <record id="view_voip_extension_list" model="ir.ui.view">
         <field name="name">voip.extension.list</field>
         <field name="model">voip.extension</field>
         <field name="arch" type="xml">
-            <list string="VoIP Extensions">
-                <field name="name"/>
+            <list string="Extensions">
                 <field name="extension_number"/>
-                <field name="extension_type"/>
+                <field name="name"/>
                 <field name="user_id"/>
+                <field name="browser_enabled" widget="boolean_toggle"/>
+                <field name="sip_password_set" string="Sign-in stored"/>
+                <field name="live_state"/>
                 <field name="total_calls"/>
                 <field name="missed_calls"/>
             </list>
         </field>
     </record>
 
-    <!-- Extension Action -->
     <record id="action_voip_extension" model="ir.actions.act_window">
         <field name="name">Extensions</field>
         <field name="res_model">voip.extension</field>
         <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add your team's extensions</p>
+            <p>
+                Give each person their extension number and sign-in details, then
+                switch the browser phone on for them.
+            </p>
+        </field>
     </record>
 
 </odoo>

@@ -1,0 +1,331 @@
+// Phone panel layout.
+//
+// Flat mono colours only — no gradients, no dual tone (house rule). Icons are
+// CSS-mask SVGs from voip_phone_icons.css, never emoji or font-awesome.
+// Nothing here uses a CSS math function: libsass evaluates min()/max() as SASS
+// functions and one bad call takes the whole bundle down (ledger §5.68).
+
+$hv-ink:        #1f2933;
+$hv-muted:      #6b7280;
+$hv-line:       #e3e8ee;
+$hv-surface:    #ffffff;
+$hv-canvas:     #f7f9fb;
+$hv-accent:     #1b6ac9;
+$hv-accept:     #1a7f52;
+$hv-reject:     #b3261e;
+$hv-warn:       #9a6200;
+
+.hv-phone {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 1045;
+    font-size: 13px;
+    color: $hv-ink;
+
+    // -------------------------------------------------- launcher
+    &__launcher {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        border: 1px solid $hv-line;
+        border-radius: 23px;
+        background: $hv-surface;
+        color: $hv-muted;
+        box-shadow: 0 2px 8px rgba(31, 41, 51, 0.12);
+        cursor: pointer;
+
+        &--ready { color: $hv-accept; border-color: $hv-accept; }
+        &--busy  { color: $hv-accent; border-color: $hv-accent; }
+        &--alert { color: $hv-reject; border-color: $hv-reject; }
+    }
+
+    &__badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 4px;
+        border-radius: 9px;
+        background: $hv-reject;
+        color: #fff;
+        font-size: 11px;
+        line-height: 18px;
+        text-align: center;
+    }
+
+    // -------------------------------------------------- ringing
+    &__ring {
+        position: absolute;
+        right: 0;
+        bottom: 58px;
+        width: 280px;
+        padding: 14px;
+        border: 1px solid $hv-reject;
+        border-radius: 10px;
+        background: $hv-surface;
+        box-shadow: 0 6px 22px rgba(31, 41, 51, 0.18);
+    }
+
+    &__ring-who {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+        color: $hv-reject;
+
+        strong { color: $hv-ink; font-size: 15px; }
+    }
+
+    &__ring-actions { display: flex; gap: 8px; }
+
+    // -------------------------------------------------- panel
+    &__panel {
+        position: absolute;
+        right: 0;
+        bottom: 58px;
+        width: 340px;
+        max-height: 70vh;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid $hv-line;
+        border-radius: 10px;
+        background: $hv-surface;
+        box-shadow: 0 6px 22px rgba(31, 41, 51, 0.18);
+        overflow: hidden;
+    }
+
+    &__head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        border-bottom: 1px solid $hv-line;
+        background: $hv-canvas;
+    }
+
+    &__status {
+        font-weight: 600;
+        &--ready { color: $hv-accept; }
+        &--failed, &--disconnected { color: $hv-reject; }
+        &--registering, &--initialising { color: $hv-warn; }
+    }
+
+    &__ext { margin-left: auto; color: $hv-muted; }
+
+    &__close {
+        border: 0;
+        background: none;
+        color: $hv-muted;
+        font-size: 18px;
+        line-height: 1;
+        cursor: pointer;
+    }
+
+    &__error {
+        padding: 10px 12px;
+        border-bottom: 1px solid $hv-line;
+        background: #fdf3f2;
+        color: $hv-reject;
+
+        p { margin: 0 0 8px; }
+    }
+
+    &__tabs {
+        display: flex;
+        border-bottom: 1px solid $hv-line;
+
+        button {
+            flex: 1;
+            padding: 8px 4px;
+            border: 0;
+            border-bottom: 2px solid transparent;
+            background: none;
+            color: $hv-muted;
+            cursor: pointer;
+
+            &.is-active { color: $hv-accent; border-bottom-color: $hv-accent; }
+        }
+    }
+
+    .hv-count {
+        display: inline-block;
+        margin-left: 4px;
+        padding: 0 5px;
+        border-radius: 8px;
+        background: $hv-reject;
+        color: #fff;
+        font-size: 11px;
+    }
+
+    &__body {
+        padding: 12px;
+        overflow-y: auto;
+    }
+
+    &__idle { text-align: center; padding: 10px 0; }
+
+    &__hint { margin: 8px 0 0; color: $hv-muted; font-size: 12px; }
+
+    &__empty { color: $hv-muted; text-align: center; padding: 16px 0; }
+
+    // -------------------------------------------------- active call
+    &__call {
+        padding: 10px;
+        border: 1px solid $hv-line;
+        border-radius: 8px;
+        background: $hv-canvas;
+        margin-bottom: 12px;
+    }
+
+    &__call-who {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 6px;
+
+        strong { font-size: 15px; }
+        small { color: $hv-muted; }
+    }
+
+    &__call-state {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        color: $hv-muted;
+    }
+
+    &__timer { font-variant-numeric: tabular-nums; color: $hv-ink; }
+
+    &__controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    &__keypad,
+    &__transfer {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid $hv-line;
+
+        label { display: block; margin-bottom: 4px; color: $hv-muted; }
+        input { width: 100%; margin-bottom: 8px; padding: 6px 8px;
+                border: 1px solid $hv-line; border-radius: 6px; }
+    }
+
+    &__dial {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 12px;
+
+        input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid $hv-line;
+            border-radius: 6px;
+        }
+    }
+
+    // -------------------------------------------------- awareness
+    &__awareness {
+        margin-top: 8px;
+        padding-top: 10px;
+        border-top: 1px solid $hv-line;
+
+        h4 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase;
+             letter-spacing: 0.04em; color: $hv-muted; }
+    }
+
+    &__aware-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 8px;
+        margin-bottom: 6px;
+        border: 1px solid $hv-line;
+        border-radius: 6px;
+    }
+
+    &__aware-actions { display: flex; gap: 4px; }
+
+    // -------------------------------------------------- lists
+    &__row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 8px 0;
+        border-bottom: 1px solid $hv-line;
+
+        &:last-child { border-bottom: 0; }
+    }
+
+    &__row-main {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+
+        strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        small { color: $hv-muted; }
+    }
+
+    &__row-actions { display: flex; gap: 4px; flex: none; }
+
+    &__wrapup {
+        label { display: block; margin: 10px 0 4px; color: $hv-muted; }
+        select, textarea {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid $hv-line;
+            border-radius: 6px;
+        }
+        h4 { margin: 0; }
+    }
+
+    &__foot {
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid $hv-line;
+        text-align: center;
+    }
+
+    // -------------------------------------------------- buttons
+    .hv-btn {
+        padding: 6px 12px;
+        border: 1px solid $hv-line;
+        border-radius: 6px;
+        background: $hv-surface;
+        color: $hv-ink;
+        cursor: pointer;
+        font-size: 13px;
+
+        &:disabled { opacity: 0.45; cursor: not-allowed; }
+
+        &--primary { background: $hv-accent; border-color: $hv-accent; color: #fff; }
+        &--accept  { background: $hv-accept; border-color: $hv-accept; color: #fff; }
+        &--reject  { background: $hv-reject; border-color: $hv-reject; color: #fff; }
+        &--ghost   { background: none; color: $hv-accent; border-color: transparent; }
+        &--toggle.is-on { background: $hv-accent; border-color: $hv-accent; color: #fff; }
+    }
+}
+
+// Small screens: the panel takes the width it needs rather than hanging off
+// the edge. No CSS math functions here either.
+@media (max-width: 480px) {
+    .hv-phone {
+        left: 12px;
+        right: 12px;
+
+        &__panel,
+        &__ring {
+            width: auto;
+            left: 0;
+            right: 0;
+        }
+    }
+}

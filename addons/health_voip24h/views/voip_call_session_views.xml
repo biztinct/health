@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================================================================
+         Calls — one row per customer interaction, not per provider message.
+         A transferred call is one row here and several legs inside it; the
+         legs are shown because they are evidence, not because anyone should
+         add their durations together.
+         ================================================================== -->
+
+    <record id="view_voip_call_session_form" model="ir.ui.view">
+        <field name="name">voip.call.session.form</field>
+        <field name="model">voip.call.session</field>
+        <field name="arch" type="xml">
+            <form string="Call">
+                <header>
+                    <button name="action_mark_called_back" type="object"
+                            string="Mark as called back" class="oe_highlight"
+                            invisible="callback_state != 'due'"/>
+                    <button name="action_open_record" type="object"
+                            string="Open the person's record"
+                            invisible="not partner_id and not lead_id"/>
+                    <field name="live_state" widget="statusbar"
+                           statusbar_visible="ringing,answered,final"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="display_name_c" readonly="1"/></h1>
+                        <h3><field name="external_peer_raw" readonly="1"/></h3>
+                    </div>
+
+                    <div class="alert alert-warning" role="alert"
+                         invisible="data_quality_state == 'ok'">
+                        <strong>Something about this call does not add up.</strong>
+                        <field name="data_quality_note" readonly="1" nolabel="1"/>
+                    </div>
+
+                    <div class="alert alert-info" role="alert"
+                         invisible="match_state != 'ambiguous'">
+                        More than one person has this number
+                        (<field name="match_candidate_count" readonly="1" nolabel="1"/>),
+                        so nobody has been linked automatically. Open the call
+                        and choose the right person.
+                    </div>
+
+                    <group>
+                        <group string="The call">
+                            <field name="direction"/>
+                            <field name="outcome"/>
+                            <field name="started_at"/>
+                            <field name="answered_at"/>
+                            <field name="ended_at"/>
+                            <field name="duration_display" string="Length"/>
+                            <field name="talk_seconds" string="Talk time (seconds)"/>
+                        </group>
+                        <group string="Who and where">
+                            <field name="partner_id"/>
+                            <field name="lead_id"/>
+                            <field name="match_state" readonly="1"/>
+                            <field name="extension_id" readonly="1"/>
+                            <field name="did" readonly="1"/>
+                            <field name="is_anonymous" readonly="1"/>
+                            <field name="external_peer_e164" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group string="Calling back" invisible="callback_state == 'none'">
+                        <group>
+                            <field name="callback_state" readonly="1"/>
+                            <field name="callback_owner_id"/>
+                            <field name="callback_due_at"/>
+                            <field name="callback_attempts" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="callback_resolution" readonly="1"/>
+                            <field name="callback_resolved_at" readonly="1"/>
+                            <field name="callback_resolved_by" readonly="1"/>
+                            <field name="activity_id" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Write-up" name="wrapup">
+                            <group>
+                                <field name="business_outcome"/>
+                                <field name="wrap_up_state" readonly="1"/>
+                            </group>
+                            <field name="notes" placeholder="What was discussed."/>
+                        </page>
+                        <page string="Legs" name="legs">
+                            <div class="alert alert-info" role="alert">
+                                One row per line the phone system rang. When a
+                                call is transferred or rings a group, several
+                                rows are normal — do not add their talk times
+                                together to get the length of the call.
+                            </div>
+                            <field name="leg_ids" readonly="1">
+                                <list>
+                                    <field name="extension_number"/>
+                                    <field name="state"/>
+                                    <field name="outcome"/>
+                                    <field name="disposition_raw"/>
+                                    <field name="ringing_at"/>
+                                    <field name="answered_at"/>
+                                    <field name="ended_at"/>
+                                    <field name="talk_seconds"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Records from the phone system" name="logs">
+                            <field name="log_ids" readonly="1">
+                                <list>
+                                    <field name="call_id"/>
+                                    <field name="source_profile"/>
+                                    <field name="call_type"/>
+                                    <field name="call_status"/>
+                                    <field name="call_date"/>
+                                    <field name="duration_seconds"/>
+                                    <field name="talk_duration_seconds"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="References" name="identities"
+                              groups="health_voip24h.group_voip_operator">
+                            <field name="identity_ids" readonly="1">
+                                <list>
+                                    <field name="namespace"/>
+                                    <field name="value"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_voip_call_session_list" model="ir.ui.view">
+        <field name="name">voip.call.session.list</field>
+        <field name="model">voip.call.session</field>
+        <field name="arch" type="xml">
+            <list string="Calls"
+                  decoration-danger="callback_state == 'due'"
+                  decoration-muted="live_state == 'stale_unconfirmed'"
+                  decoration-info="not is_final">
+                <field name="started_at"/>
+                <field name="display_name_c" string="Who"/>
+                <field name="external_peer_key" string="Number"/>
+                <field name="direction"/>
+                <field name="live_state"/>
+                <field name="outcome"/>
+                <field name="duration_display" string="Length"/>
+                <field name="extension_id"/>
+                <field name="callback_state" string="Call back"/>
+                <field name="callback_owner_id" string="Owner"/>
+                <field name="data_quality_state" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_voip_call_session_search" model="ir.ui.view">
+        <field name="name">voip.call.session.search</field>
+        <field name="model">voip.call.session</field>
+        <field name="arch" type="xml">
+            <search string="Calls">
+                <field name="display_name_c" string="Who"/>
+                <field name="external_peer_key" string="Number"/>
+                <field name="extension_id"/>
+                <field name="partner_id"/>
+                <filter name="due" string="Call back due"
+                        domain="[('callback_state', '=', 'due')]"/>
+                <filter name="live" string="Happening now"
+                        domain="[('is_final', '=', False)]"/>
+                <filter name="unmatched" string="Nobody linked"
+                        domain="[('match_state', 'in', ('unmatched', 'ambiguous'))]"/>
+                <filter name="unconfirmed" string="No ending recorded"
+                        domain="[('live_state', '=', 'stale_unconfirmed')]"/>
+                <separator/>
+                <filter name="incoming" string="Incoming"
+                        domain="[('direction', '=', 'incoming')]"/>
+                <filter name="outgoing" string="Outgoing"
+                        domain="[('direction', '=', 'outgoing')]"/>
+                <filter name="today" string="Today"
+                        domain="[('started_at', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]"/>
+                <filter name="group_direction" string="Direction"
+                        context="{'group_by': 'direction'}"/>
+                <filter name="group_outcome" string="Outcome"
+                        context="{'group_by': 'outcome'}"/>
+                <filter name="group_extension" string="Extension"
+                        context="{'group_by': 'extension_id'}"/>
+                <filter name="group_day" string="Day"
+                        context="{'group_by': 'started_at:day'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_voip_call_session" model="ir.actions.act_window">
+        <field name="name">Calls</field>
+        <field name="res_model">voip.call.session</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_voip_call_session_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No calls yet</p>
+            <p>
+                Calls appear here as soon as the phone system starts sending
+                them. Each row is one conversation, however many lines rang.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_voip_callbacks" model="ir.actions.act_window">
+        <field name="name">Call backs</field>
+        <field name="res_model">voip.call.session</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('callback_state', '=', 'due')]</field>
+        <field name="search_view_id" ref="view_voip_call_session_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Nobody is waiting for a call back</p>
+            <p>
+                When somebody rings and nobody picks up, they appear here until
+                you reach them.
+            </p>
+        </field>
+    </record>
+
+    <!-- ==================================================================
+         The inbox. Operators only, and never a customer timeline.
+         ================================================================== -->
+
+    <record id="view_voip_call_event_list" model="ir.ui.view">
+        <field name="name">voip.call.event.list</field>
+        <field name="model">voip.call.event</field>
+        <field name="arch" type="xml">
+            <list string="Messages from the phone system"
+                  decoration-danger="processing_state == 'quarantined'"
+                  decoration-warning="processing_state == 'retry'"
+                  decoration-muted="processing_state == 'ignored'">
+                <field name="received_at"/>
+                <field name="feed"/>
+                <field name="canonical_type"/>
+                <field name="raw_state_token" optional="hide"/>
+                <field name="processing_state"/>
+                <field name="error_code"/>
+                <field name="attempts"/>
+                <field name="next_retry_at" optional="hide"/>
+                <field name="session_id"/>
+                <button name="action_replay" type="object" string="Try again"
+                        icon="fa-refresh"
+                        invisible="processing_state in ('processed', 'pending')"/>
+                <button name="action_ignore" type="object" string="Set aside"
+                        icon="fa-ban"
+                        invisible="processing_state in ('processed', 'ignored')"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_voip_call_event_form" model="ir.ui.view">
+        <field name="name">voip.call.event.form</field>
+        <field name="model">voip.call.event</field>
+        <field name="arch" type="xml">
+            <form string="Message from the phone system">
+                <header>
+                    <button name="action_replay" type="object" string="Try again"
+                            class="oe_highlight"
+                            invisible="processing_state in ('processed', 'pending')"/>
+                    <button name="action_ignore" type="object" string="Set aside"
+                            invisible="processing_state in ('processed', 'ignored')"/>
+                    <field name="processing_state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="voip_config_id"/>
+                            <field name="feed"/>
+                            <field name="canonical_type"/>
+                            <field name="raw_state_token"/>
+                            <field name="delivery_id"/>
+                        </group>
+                        <group>
+                            <field name="received_at"/>
+                            <field name="provider_time"/>
+                            <field name="transport"/>
+                            <field name="auth_method"/>
+                            <field name="parser_version"/>
+                        </group>
+                    </group>
+                    <group string="What happened to it">
+                        <group>
+                            <field name="attempts"/>
+                            <field name="next_retry_at"/>
+                            <field name="processed_at"/>
+                        </group>
+                        <group>
+                            <field name="error_code"/>
+                            <field name="session_id"/>
+                            <field name="leg_id"/>
+                            <field name="call_log_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="What arrived">
+                            <field name="payload_redacted" readonly="1"/>
+                        </page>
+                        <page string="Detail" groups="base.group_system">
+                            <field name="error_detail" readonly="1"/>
+                            <field name="payload_raw" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_voip_call_event_search" model="ir.ui.view">
+        <field name="name">voip.call.event.search</field>
+        <field name="model">voip.call.event</field>
+        <field name="arch" type="xml">
+            <search string="Messages">
+                <field name="delivery_id"/>
+                <field name="fingerprint"/>
+                <filter name="needs_review" string="Needs review"
+                        domain="[('processing_state', '=', 'quarantined')]"/>
+                <filter name="waiting" string="Waiting"
+                        domain="[('processing_state', 'in', ('pending', 'retry'))]"/>
+                <separator/>
+                <filter name="feed_cdr" string="Completed calls"
+                        domain="[('feed', '=', 'cdr')]"/>
+                <filter name="feed_state" string="Live events"
+                        domain="[('feed', '=', 'state')]"/>
+                <filter name="group_state" string="Status"
+                        context="{'group_by': 'processing_state'}"/>
+                <filter name="group_reason" string="Reason"
+                        context="{'group_by': 'error_code'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_voip_call_event" model="ir.actions.act_window">
+        <field name="name">Messages from the phone system</field>
+        <field name="res_model">voip.call.event</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_voip_call_event_search"/>
+        <field name="context">{'search_default_needs_review': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Nothing needs looking at</p>
+            <p>
+                This is the plumbing, not a call list: every message the phone
+                system sent, and what we made of it.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,53 +1,228 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Module Category -->
+    <!-- ==================================================================
+         Groups
+         ==================================================================
+         Five roles, not two. Being able to see that a call happened, being
+         able to hear it, being able to manage the connection and being able
+         to replay provider messages are four different powers, and bundling
+         them is how a receptionist ends up able to read every recording in
+         the clinic.
+         ================================================================== -->
+
     <record id="module_category_voip24h" model="ir.module.category">
         <field name="name">VoIP24h</field>
-        <field name="description">VoIP24h call logging and telephony integration</field>
+        <field name="description">Phone system integration</field>
         <field name="sequence">20</field>
     </record>
 
-    <!-- Base User Group -->
     <record id="group_voip_user" model="res.groups">
-        <field name="name">VoIP: User</field>
+        <field name="name">Phone: User</field>
         <field name="privilege_id" ref="health_base.res_groups_privilege_healthcare"/>
         <field name="implied_ids" eval="[(4, ref('health_base.group_healthcare_base'))]"/>
-        <field name="comment">Basic access to view call logs and make calls</field>
+        <field name="comment">Use an assigned extension, see own and unassigned calls, write call notes.</field>
     </record>
 
-    <!-- Manager Group -->
-    <record id="group_voip_manager" model="res.groups">
-        <field name="name">VoIP: Manager</field>
+    <record id="group_voip_supervisor" model="res.groups">
+        <field name="name">Phone: Supervisor</field>
         <field name="privilege_id" ref="health_base.res_groups_privilege_healthcare"/>
         <field name="implied_ids" eval="[(4, ref('group_voip_user'))]"/>
-        <field name="comment">Full access to VoIP configuration and all call logs</field>
+        <field name="comment">See every call in the company and reassign call backs.</field>
     </record>
 
-    <!-- Record Rules -->
+    <record id="group_voip_recording" model="res.groups">
+        <field name="name">Phone: Listen to Recordings</field>
+        <field name="privilege_id" ref="health_base.res_groups_privilege_healthcare"/>
+        <field name="comment">Play and download call recordings. Deliberately separate from seeing that a call happened.</field>
+    </record>
 
-    <!-- Users can see their own call logs -->
-    <record id="voip_call_log_user_rule" model="ir.rule">
-        <field name="name">Call Logs: User Own Logs</field>
+    <record id="group_voip_operator" model="res.groups">
+        <field name="name">Phone: Integration Operator</field>
+        <field name="privilege_id" ref="health_base.res_groups_privilege_healthcare"/>
+        <field name="implied_ids" eval="[(4, ref('group_voip_supervisor'))]"/>
+        <field name="comment">Manage call-back subscriptions, inspect the phone system message inbox and replay messages. Does NOT include secret administration.</field>
+    </record>
+
+    <record id="group_voip_manager" model="res.groups">
+        <field name="name">Phone: Manager</field>
+        <field name="privilege_id" ref="health_base.res_groups_privilege_healthcare"/>
+        <field name="implied_ids" eval="[(4, ref('group_voip_supervisor')), (4, ref('group_voip_recording'))]"/>
+        <field name="comment">Full access to the phone configuration and every call log.</field>
+    </record>
+
+    <!-- ==================================================================
+         Global company boundaries
+         ==================================================================
+         `global` is deliberately True on every rule below, so each one is
+         AND-ed with whatever any role rule allows: a group rule can broaden
+         access within a company but can never reach across one. The previous
+         manager rule was [(1,'=',1)] with no global rule beneath it, which
+         meant a manager in one clinic could read every other clinic's calls.
+         ================================================================== -->
+
+    <record id="rule_voip_config_company" model="ir.rule">
+        <field name="name">Phone settings: company boundary</field>
+        <field name="model_id" ref="model_voip_config"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+
+    <record id="rule_voip_call_log_company" model="ir.rule">
+        <field name="name">Call records: company boundary</field>
         <field name="model_id" ref="model_voip_call_log"/>
         <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+
+    <record id="rule_voip_session_company" model="ir.rule">
+        <field name="name">Calls: company boundary</field>
+        <field name="model_id" ref="model_voip_call_session"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+
+    <record id="rule_voip_leg_company" model="ir.rule">
+        <field name="name">Call legs: company boundary</field>
+        <field name="model_id" ref="model_voip_call_leg"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+
+    <record id="rule_voip_recording_company" model="ir.rule">
+        <field name="name">Recordings: company boundary</field>
+        <field name="model_id" ref="model_voip_call_recording"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+
+    <record id="rule_voip_extension_company" model="ir.rule">
+        <field name="name">Extensions: company boundary</field>
+        <field name="model_id" ref="model_voip_extension"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+
+    <record id="rule_voip_event_company" model="ir.rule">
+        <field name="name">Phone system messages: company boundary</field>
+        <field name="model_id" ref="model_voip_call_event"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+
+    <record id="rule_voip_action_company" model="ir.rule">
+        <field name="name">Call actions: company boundary</field>
+        <field name="model_id" ref="model_voip_call_action"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+
+    <record id="rule_voip_lease_company" model="ir.rule">
+        <field name="name">Browser phone sessions: company boundary</field>
+        <field name="model_id" ref="model_voip_client_lease"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+
+    <record id="rule_voip_effect_company" model="ir.rule">
+        <field name="name">Pending notifications: company boundary</field>
+        <field name="model_id" ref="model_voip_call_effect"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+
+    <record id="rule_voip_identity_company" model="ir.rule">
+        <field name="name">Provider references: company boundary</field>
+        <field name="model_id" ref="model_voip_call_identity"/>
+        <field name="domain_force">[('voip_config_id.company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+
+    <!-- ==================================================================
+         Role rules, inside the company boundary
+         ==================================================================
+         A phone user sees the calls that are theirs and the ones nobody has
+         claimed. Unassigned calls are deliberately visible: an unrouted
+         caller only a supervisor can see is an unrouted caller nobody rings
+         back.
+
+         Patient-catchment scoping is NOT applied to call records, and that is
+         a decision rather than an omission. A call arrives before anyone
+         knows who is on the line; scoping the list by the caller's catchment
+         would hide every unmatched and withheld-number call from the desk
+         whose job is to ring them back. The clinical boundary is enforced
+         where it belongs — on the patient record the call links to, and on
+         recording playback, which is its own permission.
+         ================================================================== -->
+
+    <record id="rule_voip_call_log_user" model="ir.rule">
+        <field name="name">Call records: own and unassigned</field>
+        <field name="model_id" ref="model_voip_call_log"/>
+        <field name="domain_force">['|', '|', ('extension_id.user_id', '=', user.id), ('extension_id', '=', False), ('create_uid', '=', user.id)]</field>
         <field name="groups" eval="[(4, ref('group_voip_user'))]"/>
     </record>
 
-    <!-- Managers can see all logs -->
-    <record id="voip_call_log_manager_rule" model="ir.rule">
-        <field name="name">Call Logs: Manager All Access</field>
+    <record id="rule_voip_call_log_supervisor" model="ir.rule">
+        <field name="name">Call records: supervisor sees the company</field>
         <field name="model_id" ref="model_voip_call_log"/>
         <field name="domain_force">[(1, '=', 1)]</field>
-        <field name="groups" eval="[(4, ref('group_voip_manager'))]"/>
+        <field name="groups" eval="[(4, ref('group_voip_supervisor'))]"/>
     </record>
 
-    <!-- Config access for managers only -->
-    <record id="voip_config_manager_rule" model="ir.rule">
-        <field name="name">VoIP Config: Manager Access</field>
-        <field name="model_id" ref="model_voip_config"/>
-        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
-        <field name="groups" eval="[(4, ref('group_voip_manager'))]"/>
+    <record id="rule_voip_session_user" model="ir.rule">
+        <field name="name">Calls: own, owned call backs and unassigned</field>
+        <field name="model_id" ref="model_voip_call_session"/>
+        <field name="domain_force">['|', '|', ('extension_id.user_id', '=', user.id), ('callback_owner_id', '=', user.id), ('extension_id', '=', False)]</field>
+        <field name="groups" eval="[(4, ref('group_voip_user'))]"/>
+    </record>
+
+    <record id="rule_voip_session_supervisor" model="ir.rule">
+        <field name="name">Calls: supervisor sees the company</field>
+        <field name="model_id" ref="model_voip_call_session"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_voip_supervisor'))]"/>
+    </record>
+
+    <record id="rule_voip_extension_own" model="ir.rule">
+        <field name="name">Extensions: a user sees their own</field>
+        <field name="model_id" ref="model_voip_extension"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_voip_user'))]"/>
+    </record>
+
+    <record id="rule_voip_extension_supervisor" model="ir.rule">
+        <field name="name">Extensions: supervisor sees the company</field>
+        <field name="model_id" ref="model_voip_extension"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_voip_supervisor'))]"/>
+    </record>
+
+    <record id="rule_voip_lease_own" model="ir.rule">
+        <field name="name">Browser phone: a user sees their own session</field>
+        <field name="model_id" ref="model_voip_client_lease"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_voip_user'))]"/>
+    </record>
+
+    <record id="rule_voip_lease_supervisor" model="ir.rule">
+        <field name="name">Browser phone: supervisor sees the company</field>
+        <field name="model_id" ref="model_voip_client_lease"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_voip_supervisor'))]"/>
+    </record>
+
+    <record id="rule_voip_action_own" model="ir.rule">
+        <field name="name">Call actions: a user sees their own</field>
+        <field name="model_id" ref="model_voip_call_action"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_voip_user'))]"/>
+    </record>
+
+    <record id="rule_voip_action_supervisor" model="ir.rule">
+        <field name="name">Call actions: supervisor sees the company</field>
+        <field name="model_id" ref="model_voip_call_action"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_voip_supervisor'))]"/>
     </record>
 
 </odoo>

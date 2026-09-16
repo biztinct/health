@@ -1800,3 +1800,943 @@ msgstr ""
 # GB: no reference in this module — kept for history, inert by construction.
 #~ msgid "Group By"
 #~ msgstr "Nhóm theo"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/controllers/phone.py:0
+msgid "No phone system is set up for this company."
+msgstr "Chưa thiết lập tổng đài cho công ty này."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/controllers/phone.py:0
+msgid "You do not have access to the phone system."
+msgstr "Bạn không có quyền truy cập tổng đài."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/controllers/phone.py:0
+msgid "Calling in the browser is switched off for this phone system."
+msgstr "Tính năng gọi trên trình duyệt đang tắt cho tổng đài này."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/controllers/phone.py:0
+msgid "You do not have an extension assigned. Ask an administrator to assign one."
+msgstr "Bạn chưa được gán máy lẻ. Hãy đề nghị quản trị viên gán một máy lẻ."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/controllers/phone.py:0
+msgid "Your extension is not set up for the browser phone."
+msgstr "Máy lẻ của bạn chưa được bật để gọi trên trình duyệt."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/controllers/phone.py:0
+msgid "Your extension has no sign-in details yet. Ask an administrator to add them."
+msgstr "Máy lẻ của bạn chưa có thông tin đăng nhập. Hãy đề nghị quản trị viên bổ sung."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/controllers/phone.py:0
+msgid "Your phone session was taken over or timed out."
+msgstr "Phiên điện thoại của bạn đã bị chuyển sang nơi khác hoặc đã hết hạn."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/controllers/phone.py:0
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "Outgoing calls are switched off."
+msgstr "Tính năng gọi đi đang tắt."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/controllers/phone.py:0
+msgid "Start your phone before calling."
+msgstr "Hãy bật điện thoại trước khi gọi."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/controllers/phone.py:0
+msgid "That extension is not yours."
+msgstr "Máy lẻ đó không phải của bạn."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/controllers/phone.py:0
+msgid "The call request was incomplete."
+msgstr "Yêu cầu gọi chưa đầy đủ."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/controllers/phone.py:0
+msgid "That is not a number this phone can call."
+msgstr "Đây không phải là số mà điện thoại này có thể gọi."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/controllers/phone.py:0
+msgid "Your phone session ended."
+msgstr "Phiên điện thoại của bạn đã kết thúc."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/controllers/phone.py:0
+msgid "That call request is not yours."
+msgstr "Yêu cầu gọi đó không phải của bạn."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/controllers/phone.py:0
+msgid "That call is no longer available."
+msgstr "Cuộc gọi đó không còn khả dụng."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/controllers/phone.py:0
+msgid "Calls are placed from the phone panel in your browser. Open the phone, then press call."
+msgstr "Cuộc gọi được thực hiện từ bảng điện thoại trên trình duyệt. Hãy mở điện thoại rồi bấm gọi."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/controllers/recording.py:0
+msgid "This recording is not available right now."
+msgstr "Bản ghi này hiện không khả dụng."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/controllers/recording.py:0
+msgid "This recording could not be played."
+msgstr "Không thể phát bản ghi này."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_event.py:0
+msgid "Only an integration operator can replay phone system messages."
+msgstr "Chỉ người vận hành kết nối mới có thể xử lý lại tin nhắn từ tổng đài."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_event.py:0
+msgid "%(user)s re-processed phone system message %(ref)s."
+msgstr "%(user)s đã xử lý lại tin nhắn tổng đài %(ref)s."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_event.py:0
+msgid "Only an integration operator can set a message aside."
+msgstr "Chỉ người vận hành kết nối mới có thể gác lại một tin nhắn."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_log.py:0
+msgid "These details come from the phone system and cannot be edited: %s"
+msgstr "Những thông tin này do tổng đài cung cấp và không thể sửa: %s"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_log.py:0
+msgid "Call — %s"
+msgstr "Cuộc gọi — %s"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_log.py:0
+msgid "Call on %(date)s\nDuration: %(duration)s"
+msgstr "Cuộc gọi ngày %(date)s\nThời lượng: %(duration)s"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_log.py:0
+msgid "Match this call to a contact or lead first."
+msgstr "Hãy gán cuộc gọi này cho một liên hệ hoặc cơ hội trước đã."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_log.py:0
+msgid "Follow up on call — %s"
+msgstr "Theo dõi cuộc gọi — %s"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_log.py:0
+msgid "No recording is available for this call."
+msgstr "Cuộc gọi này không có bản ghi."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_log.py:0
+msgid "This record is not linked to a call yet."
+msgstr "Bản ghi này chưa được gắn với cuộc gọi nào."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_recording.py:0
+msgid "Recording — %s"
+msgstr "Bản ghi — %s"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_recording.py:0
+msgid "unknown call"
+msgstr "cuộc gọi không xác định"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_recording.py:0
+msgid "You do not have permission to listen to call recordings."
+msgstr "Bạn không có quyền nghe bản ghi cuộc gọi."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_recording.py:0
+msgid "Recording playback is switched off for this phone system."
+msgstr "Tính năng nghe bản ghi đang tắt cho tổng đài này."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_recording.py:0
+msgid "This recording belongs to another company."
+msgstr "Bản ghi này thuộc về một công ty khác."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_recording.py:0
+msgid "This recording is not available."
+msgstr "Bản ghi này không khả dụng."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_recording.py:0
+msgid "The recording could not be fetched."
+msgstr "Không tải được bản ghi."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_recording.py:0
+msgid "Recording saved"
+msgstr "Đã lưu bản ghi"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_recording.py:0
+msgid "Removed under the retention policy."
+msgstr "Đã xoá theo chính sách lưu trữ."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_session.py:0
+msgid "Number withheld"
+msgstr "Số ẩn danh"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_session.py:0
+#: code:addons/health_voip24h/static/src/js/voip_phone_service.js:0
+msgid "Unknown caller"
+msgstr "Người gọi không xác định"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_session.py:0
+msgid "This call is not on the call-back list."
+msgstr "Cuộc gọi này không nằm trong danh sách cần gọi lại."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_session.py:0
+msgid "%s marked this call back as done."
+msgstr "%s đã đánh dấu đã gọi lại xong."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_session.py:0
+msgid "This call is not linked to anyone yet."
+msgstr "Cuộc gọi này chưa được gắn với ai."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_session.py:0
+msgid "You do not have access to call records."
+msgstr "Bạn không có quyền xem hồ sơ cuộc gọi."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_session.py:0
+msgid "This call belongs to another company."
+msgstr "Cuộc gọi này thuộc về một công ty khác."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_session.py:0
+msgid "These call details come from the phone system and cannot be edited here: %s"
+msgstr "Những chi tiết cuộc gọi này do tổng đài cung cấp và không thể sửa ở đây: %s"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_call_session.py:0
+msgid "This call was updated while you were writing. Reopen it and check before saving again."
+msgstr "Cuộc gọi này đã được cập nhật trong lúc bạn đang nhập. Hãy mở lại và kiểm tra trước khi lưu."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_client.py:0
+msgid "This extension is already in use in another browser (%(who)s). Close it there, or choose to take over."
+msgstr "Máy lẻ này đang được dùng ở một trình duyệt khác (%(who)s). Hãy đóng ở đó, hoặc chọn tiếp quản."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_client.py:0
+msgid "That extension is signed in and active in another browser right now. Ask %(who)s to hang up and sign out first."
+msgstr "Máy lẻ đó đang đăng nhập và hoạt động ở một trình duyệt khác. Hãy đề nghị %(who)s gác máy và đăng xuất trước."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "The phone system credentials have not been entered yet."
+msgstr "Chưa nhập thông tin đăng nhập tổng đài."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "Call-back addresses were renewed. The previous addresses keep working for 24 hours. Register the new completed-call address with the supplier before then."
+msgstr "Đã tạo địa chỉ nhận dữ liệu mới. Địa chỉ cũ còn hoạt động trong 24 giờ. Hãy đăng ký địa chỉ mới với nhà cung cấp trước thời hạn đó."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "Call-back addresses renewed"
+msgstr "Đã tạo địa chỉ nhận dữ liệu mới"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "Register the new address with the supplier within 24 hours."
+msgstr "Hãy đăng ký địa chỉ mới với nhà cung cấp trong vòng 24 giờ."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "Could not connect"
+msgstr "Không kết nối được"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "Something went wrong reaching the phone system."
+msgstr "Đã xảy ra lỗi khi kết nối tới tổng đài."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "Connected, with a warning"
+msgstr "Đã kết nối, kèm cảnh báo"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "The credentials were accepted, but the phone system did not give a usable expiry time for the access it granted. The connection will still work; renewals are scheduled on the documented lifetime instead."
+msgstr "Thông tin đăng nhập đã được chấp nhận, nhưng tổng đài không trả về thời hạn sử dụng đọc được. Kết nối vẫn hoạt động; việc gia hạn sẽ dựa trên thời hạn ghi trong tài liệu."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "Credentials accepted"
+msgstr "Thông tin đăng nhập hợp lệ"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "The phone system accepted these credentials. This does not yet prove that call records arrive or that a browser can ring."
+msgstr "Tổng đài đã chấp nhận thông tin đăng nhập này. Điều đó chưa chứng minh rằng dữ liệu cuộc gọi sẽ về hay trình duyệt có thể đổ chuông."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "A different call-back address is already registered with the supplier. Record what it was in Registration Notes first so it can be put back — replacing another system’s call-back silently would stop their call records arriving."
+msgstr "Nhà cung cấp đang đăng ký một địa chỉ nhận dữ liệu khác. Hãy ghi lại địa chỉ đó vào phần Ghi chú đăng ký trước, để có thể khôi phục — thay thế địa chỉ của hệ thống khác mà không ghi nhận sẽ làm dữ liệu cuộc gọi của họ ngừng về."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "This connection is set to use a supplier auth value, but none has been entered."
+msgstr "Kết nối này được đặt dùng mã xác thực của nhà cung cấp, nhưng chưa nhập mã nào."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "The completed-call call-back was registered with the supplier."
+msgstr "Đã đăng ký địa chỉ nhận dữ liệu cuộc gọi đã kết thúc với nhà cung cấp."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "Call-back registered"
+msgstr "Đã đăng ký địa chỉ nhận dữ liệu"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "The supplier accepted the registration. Call records will only confirm it once a real call arrives."
+msgstr "Nhà cung cấp đã chấp nhận đăng ký. Chỉ khi có cuộc gọi thật thì mới xác nhận được dữ liệu về."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "No call-back address is registered."
+msgstr "Chưa đăng ký địa chỉ nhận dữ liệu nào."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "The completed-call call-back was removed."
+msgstr "Đã gỡ địa chỉ nhận dữ liệu cuộc gọi đã kết thúc."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "Call-back removed"
+msgstr "Đã gỡ địa chỉ nhận dữ liệu"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "The supplier will stop sending completed-call records."
+msgstr "Nhà cung cấp sẽ ngừng gửi dữ liệu cuộc gọi đã kết thúc."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "Phone System Messages"
+msgstr "Tin nhắn từ tổng đài"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "Downloading past calls needs a part of the phone system’s interface the supplier has not confirmed for this account. Completed calls still arrive by call-back as they happen."
+msgstr "Việc tải các cuộc gọi cũ cần một phần giao diện tổng đài mà nhà cung cấp chưa xác nhận cho tài khoản này. Các cuộc gọi vừa kết thúc vẫn tự động về như bình thường."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "Sync completed"
+msgstr "Đã đồng bộ xong"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "Reading the extension list needs a part of the phone system’s interface the supplier has not confirmed for this account. Extensions can be added by hand in the meantime."
+msgstr "Việc đọc danh sách máy lẻ cần một phần giao diện tổng đài mà nhà cung cấp chưa xác nhận cho tài khoản này. Trong lúc chờ, có thể thêm máy lẻ thủ công."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "The extension-list interface is marked confirmed but no captured contract has been implemented for it yet."
+msgstr "Giao diện danh sách máy lẻ đã được đánh dấu xác nhận nhưng chưa có đặc tả nào được triển khai."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "Starting a call from the server is not available for this account. Use the phone panel in the browser instead."
+msgstr "Tài khoản này chưa thể gọi từ máy chủ. Hãy dùng bảng điện thoại trên trình duyệt."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_config.py:0
+msgid "You do not have an extension assigned."
+msgstr "Bạn chưa được gán máy lẻ."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_extension.py:0
+msgid "Not signed in"
+msgstr "Chưa đăng nhập"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_extension.py:0
+msgid "%s (in the browser)"
+msgstr "%s (trên trình duyệt)"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_extension.py:0
+msgid "Only an administrator can set a SIP password."
+msgstr "Chỉ quản trị viên mới đặt được mật khẩu SIP."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_extension.py:0
+msgid "The SIP password for extension %(ext)s was changed by %(user)s."
+msgstr "Mật khẩu SIP của máy lẻ %(ext)s đã được %(user)s thay đổi."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_extension.py:0
+msgid "The outgoing number shown must be a plain phone number."
+msgstr "Số hiển thị khi gọi đi phải là một số điện thoại thuần."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_extension.py:0
+msgid "No number to call."
+msgstr "Không có số để gọi."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_extension.py:0
+msgid "That does not look like a phone number."
+msgstr "Đây không giống một số điện thoại."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_extension.py:0
+msgid "This extension is not allowed to make calls."
+msgstr "Máy lẻ này không được phép gọi đi."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_extension.py:0
+msgid "This extension is not allowed to call that number."
+msgstr "Máy lẻ này không được phép gọi số đó."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_extension.py:0
+msgid "International calls are not enabled for this extension."
+msgstr "Máy lẻ này chưa được bật gọi quốc tế."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_extension.py:0
+msgid "Transfer is not enabled for this extension."
+msgstr "Máy lẻ này chưa được bật chuyển cuộc gọi."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_extension.py:0
+msgid "No transfer target given."
+msgstr "Chưa chọn nơi chuyển cuộc gọi đến."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_extension.py:0
+msgid "That transfer target is not allowed."
+msgstr "Không được phép chuyển tới đích đó."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/models/voip_extension.py:0
+msgid "Transfer is limited to extensions on this phone system until other targets are approved."
+msgstr "Chỉ được chuyển tới các máy lẻ của tổng đài này cho tới khi các đích khác được phê duyệt."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/event_reducer.py:0
+msgid "This call back was closed because call %s reached them."
+msgstr "Yêu cầu gọi lại này được đóng vì cuộc gọi %s đã liên lạc được."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/event_worker.py:0
+msgid "Call back %s"
+msgstr "Gọi lại %s"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/recording_fetch.py:0
+msgid "Recording access is switched off."
+msgstr "Tính năng bản ghi đang tắt."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/recording_fetch.py:0
+msgid "No recording link was supplied."
+msgstr "Không có đường dẫn bản ghi nào được cung cấp."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/recording_fetch.py:0
+msgid "The supplier no longer has this recording."
+msgstr "Nhà cung cấp không còn giữ bản ghi này."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/recording_fetch.py:0
+msgid "That link returns a web page, not an audio file."
+msgstr "Đường dẫn đó trả về một trang web, không phải tệp âm thanh."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/recording_fetch.py:0
+msgid "The recording could not be fetched (%s)."
+msgstr "Không tải được bản ghi (%s)."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/recording_fetch.py:0
+msgid "The supplier could not be reached."
+msgstr "Không kết nối được tới nhà cung cấp."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "The phone system address must start with https://."
+msgstr "Địa chỉ tổng đài phải bắt đầu bằng https://."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "The phone system address “%s” is not one this server is allowed to call."
+msgstr "Máy chủ này không được phép gọi tới địa chỉ tổng đài “%s”."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "The secure connection to the phone system could not be established."
+msgstr "Không thiết lập được kết nối bảo mật tới tổng đài."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "The phone system did not answer in time."
+msgstr "Tổng đài không phản hồi kịp."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "The phone system could not be reached."
+msgstr "Không kết nối được tới tổng đài."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "The phone system redirected the request; this server does not follow redirects on an authenticated call."
+msgstr "Tổng đài chuyển hướng yêu cầu; máy chủ này không đi theo chuyển hướng trên một yêu cầu đã xác thực."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "The phone system sent an oversized reply."
+msgstr "Tổng đài gửi phản hồi vượt quá kích thước cho phép."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "The phone system sent a reply this server could not read."
+msgstr "Tổng đài gửi phản hồi mà máy chủ này không đọc được."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "The phone system refused the request (%(code)s): %(msg)s"
+msgstr "Tổng đài từ chối yêu cầu (%(code)s): %(msg)s"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "no detail given"
+msgstr "không có chi tiết"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "The phone system did not accept these credentials (%(code)s). %(msg)s"
+msgstr "Tổng đài không chấp nhận thông tin đăng nhập này (%(code)s). %(msg)s"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "The phone system accepted the credentials but returned no access token."
+msgstr "Tổng đài chấp nhận thông tin đăng nhập nhưng không trả về mã truy cập."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "The address the phone system should call back must be an https:// address."
+msgstr "Địa chỉ để tổng đài gửi dữ liệu về phải là địa chỉ https://."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "The callback method must be GET or POST."
+msgstr "Phương thức gửi dữ liệu phải là GET hoặc POST."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "The phone system did not accept the callback registration (%(code)s): %(msg)s"
+msgstr "Tổng đài không chấp nhận đăng ký nhận dữ liệu (%(code)s): %(msg)s"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "No callback address to remove."
+msgstr "Không có địa chỉ nào để gỡ."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "The phone system did not accept the callback removal (%(code)s): %(msg)s"
+msgstr "Tổng đài không chấp nhận việc gỡ đăng ký (%(code)s): %(msg)s"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "%(what)s needs a part of the phone system’s interface that has not been confirmed for this account yet. An administrator can turn it on in the phone settings once the supplier has confirmed it (%(cap)s)."
+msgstr "%(what)s cần một phần giao diện tổng đài chưa được xác nhận cho tài khoản này. Quản trị viên có thể bật trong cài đặt tổng đài sau khi nhà cung cấp xác nhận (%(cap)s)."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "Downloading past calls"
+msgstr "Tải các cuộc gọi cũ"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "The past-calls interface is marked confirmed but no captured contract has been implemented for it yet."
+msgstr "Giao diện cuộc gọi cũ đã được đánh dấu xác nhận nhưng chưa có đặc tả nào được triển khai."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "Reading the list of extensions"
+msgstr "Đọc danh sách máy lẻ"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "Starting a call from the server"
+msgstr "Gọi đi từ máy chủ"
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/services/voip24h_api.py:0
+msgid "The server-dialling interface is marked confirmed but no captured contract has been implemented for it yet."
+msgstr "Giao diện gọi từ máy chủ đã được đánh dấu xác nhận nhưng chưa có đặc tả nào được triển khai."
+
+#. module: health_voip24h
+#. odoo-python
+#: code:addons/health_voip24h/wizard/voip_sync_wizard.py:0
+msgid "Fetching past calls needs a part of the phone system’s interface the supplier has not confirmed for this account yet. New calls still arrive on their own as they happen."
+msgstr "Việc lấy các cuộc gọi cũ cần một phần giao diện tổng đài mà nhà cung cấp chưa xác nhận cho tài khoản này. Các cuộc gọi mới vẫn tự động về như bình thường."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_service.js:0
+msgid "Start your phone first."
+msgstr "Hãy bật điện thoại trước."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_service.js:0
+msgid "You are already on a call."
+msgstr "Bạn đang trong một cuộc gọi."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_service.js:0
+msgid "That call could not be started."
+msgstr "Không bắt đầu được cuộc gọi đó."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_service.js:0
+msgid "Transfer is not switched on for your extension."
+msgstr "Máy lẻ của bạn chưa bật chuyển cuộc gọi."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_service.js:0
+msgid "Keypad tones can only be sent once during a call on this phone system."
+msgstr "Tổng đài này chỉ cho phép gửi phím bấm một lần trong mỗi cuộc gọi."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_service.js:0
+msgid "That could not be saved."
+msgstr "Không lưu được."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_service.js:0
+msgid "The phone could not start."
+msgstr "Không khởi động được điện thoại."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_service.js:0
+msgid "The phone software could not be loaded. Check the connection settings."
+msgstr "Không tải được phần mềm điện thoại. Hãy kiểm tra cài đặt kết nối."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_service.js:0
+msgid "Your extension could not sign in to the phone system."
+msgstr "Máy lẻ của bạn không đăng nhập được vào tổng đài."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_service.js:0
+msgid "Your phone is not signed in yet."
+msgstr "Điện thoại của bạn chưa đăng nhập."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_service.js:0
+#: code:addons/health_voip24h/static/src/js/click_to_dial_widget.js:0
+msgid "There is no number to call."
+msgstr "Không có số để gọi."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_service.js:0
+msgid "The phone software is not available."
+msgstr "Phần mềm điện thoại không khả dụng."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_service.js:0
+msgid "This phone system allows keypad tones only once per call."
+msgstr "Tổng đài này chỉ cho phép gửi phím bấm một lần mỗi cuộc gọi."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_service.js:0
+msgid "Choose who to transfer the call to."
+msgstr "Hãy chọn người nhận cuộc gọi chuyển tiếp."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_service.js:0
+msgid "This browser cannot use the microphone. A secure (https) page is required."
+msgstr "Trình duyệt này không dùng được micro. Cần một trang bảo mật (https)."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_service.js:0
+msgid "Microphone access was blocked. Allow it for this site, then start the phone again."
+msgstr "Quyền dùng micro bị chặn. Hãy cho phép cho trang này rồi bật lại điện thoại."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_service.js:0
+msgid "No microphone was found. Plug one in, then start the phone again."
+msgstr "Không tìm thấy micro. Hãy cắm micro rồi bật lại điện thoại."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_service.js:0
+msgid "The microphone could not be used."
+msgstr "Không sử dụng được micro."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_service.js:0
+msgid "The server could not be reached."
+msgstr "Không kết nối được tới máy chủ."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_panel.js:0
+msgid "Phone off"
+msgstr "Điện thoại đang tắt"
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_panel.js:0
+msgid "Starting…"
+msgstr "Đang khởi động…"
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_panel.js:0
+msgid "Signing in…"
+msgstr "Đang đăng nhập…"
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_panel.js:0
+msgid "Ready"
+msgstr "Sẵn sàng"
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_panel.js:0
+msgid "Not working"
+msgstr "Không hoạt động"
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_panel.js:0
+msgid "Signed out"
+msgstr "Đã đăng xuất"
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_panel.js:0
+msgid "Calling…"
+msgstr "Đang gọi…"
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_panel.js:0
+msgid "Ringing"
+msgstr "Đang đổ chuông"
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_panel.js:0
+msgid "On a call"
+msgstr "Đang trong cuộc gọi"
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_panel.js:0
+msgid "Ending…"
+msgstr "Đang kết thúc…"
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_panel.js:0
+msgid "Write up this call"
+msgstr "Ghi chép cuộc gọi này"
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_panel.js:0
+msgid "Call notes saved."
+msgstr "Đã lưu ghi chú cuộc gọi."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/voip_phone_panel.js:0
+msgid "This caller withheld their number, so there is nothing to ring back."
+msgstr "Người gọi đã ẩn số nên không có số nào để gọi lại."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/click_to_dial_widget.js:0
+msgid "No phone number"
+msgstr "Không có số điện thoại"
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/click_to_dial_widget.js:0
+msgid "The phone system is not set up for you."
+msgstr "Tổng đài chưa được thiết lập cho bạn."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/click_to_dial_widget.js:0
+msgid "Turn your phone on first, from the phone button."
+msgstr "Hãy bật điện thoại trước, bằng nút điện thoại."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/js/click_to_dial_widget.js:0
+msgid "Call %s"
+msgstr "Gọi %s"
