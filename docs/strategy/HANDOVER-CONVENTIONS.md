@@ -3125,3 +3125,37 @@ a no-op.
 - **§5.194 — `ir.cron._trigger()` on an INACTIVE job is a silent no-op**; a
     "queued" notification on a system whose jobs are off (the template, a
     practice copy) must say so. (Google Ads GA3.)
+- **§5.195 — a search view `<group>` may contain ONLY `<field>` on Odoo 19,
+    and `expand` is no longer one of its attributes.** Group-by entries are
+    plain `<filter context="{'group_by': …}"/>` siblings at the top level of
+    `<search>`, after a `<separator/>` — the shape `health_voip24h`'s own
+    search views already use. Wrapping them in `<group expand="0">` fails the
+    RELAX NG check with `Invalid attribute expand for element group` +
+    `Expecting an element field, got nothing`, and the ParseError that reaches
+    the console says only `Invalid view … definition` with `'-no context-'`:
+    the real reason is three `odoo.tools.view_validation` WARNING lines
+    earlier in the log. (VoIP relay V2.)
+- **§5.196 — a non-stored compute used in a search `<filter>` domain needs a
+    `search=` method or the module will not install.** The message is
+    `Unsearchable field "x" in path "x" in domain of <filter …>` and it is a
+    hard ParseError, not a warning. Either give the field a search method or
+    filter on the stored columns underneath it. (VoIP relay V2.)
+- **§5.197 — EVERY database, or new files run against an old schema in
+    silence.** After the VoIP 19.0.3.0.0 wave only `carejiox` was upgraded;
+    `hhh` and `carejiox_template` sat on 19.0.2.0.1 with the NEW files on
+    disk, so every request touching a recording raised
+    `column voip_call_recording.access_mode does not exist` — in the tenant's
+    log, not the platform's, which is why a green deploy hid it. The deploy
+    contract's "upgrade every database" is not paperwork: on a one-addons-tree
+    platform the files change under every database at once and only `-D`
+    migrates one. Loop `-D` over `carejiox`, every tenant, and
+    `carejiox_template`. (VoIP relay V2.)
+- **§5.198 — a platform relay must forward the credential, not hold it.** The
+    v3 call-back address carries its token in the path, so the relay routes on
+    the PUBLIC receiver id and passes the path through byte for byte. The
+    platform then stores no tenant secret, mints nothing, rotates nothing, and
+    the destination does the same constant-time check it always did. A tenant
+    answer of any kind (200/400/403) is the supplier's answer and is passed
+    back verbatim; only "could not be reached" (network error, 5xx) becomes a
+    queued hand-off. Queueing a 403 would accumulate rows holding a stale
+    credential that no retry could ever fix. (VoIP relay V2.)

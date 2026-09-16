@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Beside the phone settings these two belong to: same parent, same
+         audience, straight after it. Only whoever runs this machine sees them
+         — on a customer system the module is not installed at all. -->
+    <menuitem id="menu_voip_relay_tenant"
+              name="Customer phone relay"
+              parent="health_voip24h.menu_voip24h_config"
+              action="action_voip_relay_tenant"
+              groups="base.group_system"
+              sequence="80"/>
+
+    <menuitem id="menu_voip_relay_delivery"
+              name="Relay deliveries"
+              parent="health_voip24h.menu_voip24h_config"
+              action="action_voip_relay_delivery"
+              groups="base.group_system"
+              sequence="90"/>
+
+</odoo>

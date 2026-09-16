@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo><data noupdate="1">
+
+    <!-- Every ten minutes: read the customer list, re-read which call-back
+         addresses each customer answers to, and tell each of them to publish
+         this platform's address to the phone supplier. A customer created five
+         minutes ago is being served inside ten without anybody pressing
+         anything. -->
+    <record id="ir_cron_voip_relay_reconcile" model="ir.cron" forcecreate="True">
+        <field name="name">Phone relay: re-read customers</field>
+        <field name="model_id" ref="model_voip_relay_tenant"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_reconcile()</field>
+        <field name="active" eval="True"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">10</field>
+        <field name="interval_type">minutes</field>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(minutes=5)).strftime('%Y-%m-%d %H:%M:00')"/>
+    </record>
+
+    <!-- Every minute: try the hand-offs that did not land. Ours to retry
+         rather than the supplier's, because nothing they have documented says
+         what they do with an error — see models/relay_delivery.py. -->
+    <record id="ir_cron_voip_relay_retry" model="ir.cron" forcecreate="True">
+        <field name="name">Phone relay: retry hand-offs</field>
+        <field name="model_id" ref="model_voip_relay_delivery"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_retry()</field>
+        <field name="active" eval="True"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">minutes</field>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(minutes=2)).strftime('%Y-%m-%d %H:%M:00')"/>
+    </record>
+
+    <!-- Daily 03:50: the queue is a queue, not an archive. Anything delivered
+         or given up on more than a week ago goes, and the encrypted call goes
+         with the row. -->
+    <record id="ir_cron_voip_relay_purge" model="ir.cron" forcecreate="True">
+        <field name="name">Phone relay: clear finished hand-offs</field>
+        <field name="model_id" ref="model_voip_relay_delivery"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_purge()</field>
+        <field name="active" eval="True"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).strftime('%Y-%m-%d 03:50:00')"/>
+    </record>
+
+</data></odoo>

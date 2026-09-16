@@ -390,9 +390,37 @@ class VoIP24hConfig(models.Model):
         return (self.env['ir.config_parameter'].sudo()
                 .get_param('web.base.url') or '').strip().rstrip('/')
 
+    def _callback_base(self):
+        """Where the phone supplier should be told to send call-backs.
+
+        Normally this system's own address. On a platform that serves several
+        clinics from one machine, the platform writes its OWN address into
+        ``voip24h.callback_base`` on every clinic it serves, so the supplier is
+        given ONE address for everybody and the platform passes each call on to
+        the clinic it belongs to.
+
+        The receiver id and the token in the address are the same either way:
+        the platform routes on the receiver id and forwards the token
+        untouched, so the check this system does on arrival is the same check
+        whichever address the supplier dialled. Nothing else in this module
+        needs to know which of the two is in play.
+        """
+        relayed = (self.env['ir.config_parameter'].sudo()
+                   .get_param('voip24h.callback_base') or '').strip().rstrip('/')
+        # https only, and never a bare hostname: this string is published to a
+        # third party and pasted into their dashboard. A setting that is not a
+        # usable address is ignored rather than published.
+        if relayed.startswith('https://') and len(relayed) > len('https://'):
+            return relayed
+        if relayed:
+            _logger.warning("VoIP24h: the platform call-back address %r is not "
+                            "an https address — using this system's own",
+                            relayed)
+        return self._base_url()
+
     @api.depends('receiver_id')
     def _compute_receiver_urls(self):
-        base = self._base_url()
+        base = self._callback_base()
         is_admin = self.env.user.has_group('base.group_system')
         for config in self:
             if not config.receiver_id:
