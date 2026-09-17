@@ -3159,3 +3159,22 @@ a no-op.
     back verbatim; only "could not be reached" (network error, 5xx) becomes a
     queued hand-off. Queueing a 403 would accumulate rows holding a stale
     credential that no retry could ever fix. (VoIP relay V2.)
+- **§5.199 — one bad service dependency blanks EVERY screen in the product,
+    and nothing on the server can see it.** `voip24hPhoneService` named `"rpc"`
+    in `dependencies`; on Odoo 19 `rpc` is an exported FUNCTION
+    (`@web/core/network/rpc`), not a service. Odoo refuses to mount the web
+    client when any service fails to start, so the CMS, Healthcare and Discuss
+    all went blank from one word in the phone module — with no traceback, no
+    failed request, no view-validation error, and 118 green Python tests. The
+    ONLY evidence is `Some services could not be started: … Missing
+    dependencies: …` in a browser console. **A UI claim is not proven until a
+    browser has been opened on it.** This box has no headless Chrome, so an
+    Odoo tour would SKIP rather than fail — false confidence, worse than no
+    test; the guard is instead a text scan
+    (`health_voip24h/tests/test_assets.py`) checking every declared dependency
+    against the services `web`/`bus`/`mail` actually register. (VoIP relay V2.)
+- **§5.200 — after a JS change, clear `ir_attachment` assets on EVERY database
+    and expect ONE blank first load.** The first request after the purge
+    rebuilds the bundle and can render an empty page or time out; it is not a
+    failure. Reload before diagnosing. (VoIP relay V2 — 58 rows cleared on
+    `carejiox`, 8 on `hhh`.)
