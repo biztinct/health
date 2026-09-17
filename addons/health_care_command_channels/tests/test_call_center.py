@@ -1,16 +1,32 @@
 # -*- coding: utf-8 -*-
-"""T150–T155 — Calls (VoIP24h) on the connection framework (CC-F).
+"""T150–T155 — Calls (VoIP24h) on the connection framework (CC-F, CC-F2).
 
-Receive-only by design, and these tests exist to keep it that way. **No test
-here calls a VoIP24h endpoint, because no VoIP24h endpoint has ever been
-verified**: their documentation is unreachable from outside Vietnam and every
-path in ``health_voip24h/services/voip24h_api.py`` is an unevidenced guess
-(see docs/strategy/voip24h-contract-capture.md). T153 asserts that the product
-says so out loud instead of shipping a button that cannot work.
+Receive-only by design, and these tests exist to keep it that way.
 
-The webhook half is asserted against the ALREADY-EXISTING verifier rather than
-a new one — CC-F adopted it, and porting its assertions here is how we prove
-the adoption did not regress it (T150).
+**CC-F2 rewrote the card.** The supplier's own documents arrived
+(docs/voip24hdocs/), and they contradicted what the card had been telling
+operators to ask for. What they actually say:
+
+* ``Authorization.docx`` — an API key and an API secret are exchanged for a
+  token at ``POST /v3/authentication``. That is the customer's only credential.
+* ``Webhook.docx`` — the customer registers a call-back address themselves at
+  ``POST /v3/webhook-call-log/``, or hands it to the supplier's staff.
+* The delivery carries ``msgid, id, calldate, callid, play, eplay, download,
+  did, src, dst, status, note, disposition, billsec, duration, type`` — and
+  **nothing identifying the customer**. There is no account id in an event, no
+  signature and no signing header.
+
+So the card no longer asks for an account name (it is not sent) or a signing
+secret (there is none). T153 asserts that, because the previous wording sent a
+real operator looking for a secret that does not exist.
+
+The two suppliers' endpoints these tests DO exercise are patched at
+``VoIP24hAPI._request`` and answer the documents' verbatim shapes — everything
+above that seam runs for real. Fetching past calls and dialling from the server
+are still unevidenced and still refused.
+
+The legacy ``/voip24h/webhook`` route is unchanged and still resolves by
+account id, so T150/T151 keep a legacy-shaped fixture (``_configured``).
 
 Everything is a TransactionCase (ledger §5.32). The controller is tested
 through the model methods it calls: an HttpCase in this module has poisoned
@@ -20,6 +36,8 @@ them in setUpClass anyway.
 import hashlib
 import hmac
 import json
+from contextlib import contextmanager
+from unittest.mock import patch
 
 from odoo.exceptions import AccessError, UserError
 from odoo.tests import tagged
@@ -58,9 +76,69 @@ class TestCallCenter(ChannelSpineCase):
         opened = self.Conn.center_begin('call')
         return self.Conn.browse(opened['connection_id'])
 
-    def _configured(self):
-        conn = self._call_conn()
-        self.Conn.center_call_configure(conn.id, VOIP_ACCOUNT, VOIP_SECRET)
+    def _configured(self, company=None, account=VOIP_ACCOUNT):
+        """A LEGACY-shaped connection: a typed account id and a signing secret.
+
+        `/voip24h/webhook` still exists and still resolves by account id, so
+        the suites that prove its refusals need a connection in that shape.
+        The Channel Center no longer produces one (see `_center_configured`),
+        so this builds it directly rather than through a flow that would now
+        do something else entirely.
+        """
+        conn = self._conn('call', company=company, state='testing',
+                          resource_external_id=account)
+        conn.action_set_secret('provider_secret', VOIP_SECRET)
+        if self.has_voip:
+            # The legacy route resolves its config BY ACCOUNT ID, so these
+            # suites need the row that lookup will find. The Channel Center
+            # used to make it as a side effect of being configured; it no
+            # longer does, so the fixture asks for it directly.
+            self.env['voip.config'].sudo()._sync_from_connection(
+                conn, account_id=account)
+        conn.invalidate_recordset()
+        return conn
+
+    @contextmanager
+    def _provider_accepts(self, auth=True, register=True):
+        """The supplier, answering exactly what their documents show.
+
+        Patched at `_request` — the one HTTP seam — so everything above it runs
+        for real: `authenticate` parses this, `_store_token` writes the state
+        the card reads back, and the facade sees what a live call would leave
+        behind. Patching higher would prove only that the stub was called.
+        """
+        from odoo.addons.health_voip24h.services.voip24h_api import VoIP24hAPI
+
+        def _fake(api_self, method, path, **kwargs):
+            if 'authentication' in path:
+                if not auth:
+                    raise UserError('The phone system refused these details.')
+                # Authorization.docx, verbatim (status 1000, misspelt expried).
+                return {'message': 'Success', 'status': 1000, 'data': {
+                    'token': 'fixture-token',
+                    'createAt': '2026-09-17 10:00:00',
+                    'expried': '2026-09-24 10:00:00',
+                    'isLonglive': True}}
+            if 'webhook-call-log' in path:
+                if not register:
+                    raise UserError('The phone system refused the address.')
+                # Webhook.docx, verbatim (status 200).
+                return {'status': 200,
+                        'message': 'Update webhook call log is success'}
+            raise AssertionError('unexpected provider call: %s %s'
+                                 % (method, path))
+
+        with patch.object(VoIP24hAPI, '_request', _fake):
+            yield
+
+    def _center_configured(self, conn=None, register=True):
+        """A connection set up the way the Calls card now does it."""
+        conn = conn or self._call_conn()
+        with self._provider_accepts():
+            self.Conn.center_call_save_credentials(
+                conn.id, 'fixture-api-key', 'fixture-api-secret')
+            if register:
+                self.Conn.center_call_register(conn.id)
         conn.invalidate_recordset()
         return conn
 
@@ -184,39 +262,39 @@ class TestCallCenter(ChannelSpineCase):
     # T150e/f — the cross-company account-id collision (review CRITICAL)
     # =================================================================
     def test_150e_a_second_company_cannot_claim_an_account_id(self):
-        """`call` is the one channel whose resource id a TENANT TYPES.
+        """The cross-tenant claim is now structurally impossible (CC-F2).
 
-        The webhook router must resolve company-agnostically (the provider
-        addresses us by account id), so an unchecked claim reaches across
-        tenants: typing a neighbour's account name made the route resolve
-        THEIR event to YOUR connection, which skipped their legacy
-        `webhook_enabled` off switch and pointed verification at the wrong
-        secret. The claim is refused at source, because the route cannot
-        disambiguate afterwards.
+        `call` USED TO BE the one channel whose resource id a tenant typed, and
+        an unchecked claim reached across tenants: typing a neighbour's account
+        name made the route resolve THEIR event to YOUR connection. The refusal
+        is still there, but it can no longer be provoked from the UI — nobody
+        types the key any more. It is minted per company from random bytes, so
+        two clinics cannot collide even deliberately.
         """
-        first = self._configured()
-        self.assertEqual(first.resource_external_id, VOIP_ACCOUNT)
+        if not self.has_voip:
+            self.skipTest('health_voip24h is not installed')
+        first = self._center_configured()
+        mine = first.resource_external_id
+        self.assertTrue(mine, 'the connection is linked to its phone account')
+        self.assertNotEqual(mine, VOIP_ACCOUNT,
+                            'the key is minted here, not typed by anybody')
 
-        # Another company, its own admin, its own Center — same typed name.
+        # Another company, its own admin, its own Center.
         other = self._conn('call', company=self.company2, state='authorizing')
-        raised = False
-        try:
-            self.Conn.center_call_configure(other.id, VOIP_ACCOUNT, 'their-secret')
-        except UserError as exc:
-            raised = True
-            self.assertIn('already connected', str(exc))
-            # It must not say WHO holds it.
-            self.assertNotIn(self.company.name, str(exc))
-        self.assertTrue(raised, 'a duplicate account id must be refused')
+        self._center_configured(conn=other, register=False)
         other.invalidate_recordset()
-        self.assertFalse(other.resource_external_id,
-                         'a refused claim must store nothing')
-        self.assertFalse(other.sudo().provider_secret_enc,
-                         'and must not store the secret either')
+        self.assertTrue(other.resource_external_id)
+        self.assertNotEqual(other.resource_external_id, mine,
+                            'two clinics can never share a routing key')
 
-        # Re-configuring your OWN connection with the same id still works.
-        again = self.Conn.center_call_configure(first.id, VOIP_ACCOUNT, VOIP_SECRET)
-        self.assertEqual(again['account_id'], VOIP_ACCOUNT)
+        # Nothing a tenant can type reaches the routing key at all — which is
+        # the point. The deployment-wide refusal is kept in
+        # `center_call_save_credentials` for a database where a collision
+        # somehow already exists, but it is no longer reachable from the UI.
+        self.assertEqual(
+            self.Conn.sudo().with_context(active_test=False).search_count(
+                [('channel', '=', 'call'),
+                 ('resource_external_id', '=', mine)]), 1)
 
     def test_150f_a_foreign_connection_never_speaks_for_a_config(self):
         """The guard for databases where a collision already exists."""
@@ -367,7 +445,15 @@ class TestCallCenter(ChannelSpineCase):
         self.assertFalse(config.api_secret)
         self.assertFalse(config.auto_sync_enabled)
         self.assertNotEqual(config.state, 'connected')
-        self.assertTrue(config.webhook_enabled)
+        # The LEGACY signed route stays OFF, and that is a change of posture,
+        # not a regression. Before the rebuild `_sync_from_connection` forced
+        # `webhook_enabled = True`, which switched on the old
+        # `/voip24h/webhook` route for every connection the Center made —
+        # including ones that would never use it. Call records now arrive on
+        # the v3 receivers, so the old route is opt-in and off until somebody
+        # knows a producer still posts to it.
+        self.assertFalse(config.webhook_enabled,
+                         'the legacy signed route is opt-in since the rebuild')
 
         raised = False
         try:
@@ -384,14 +470,19 @@ class TestCallCenter(ChannelSpineCase):
     # T153 — the card is honest: receive-only, and no test button
     # =================================================================
     def test_153_the_calls_card_is_receive_only_and_says_so(self):
-        conn = self._configured() if self.has_voip else self._call_conn()
+        conn = self._call_conn()
         card = next(c for c in self.Conn.center_overview()
                     if c['channel'] == 'call')
         self.assertTrue(card['available'])
         self.assertTrue(card['implemented'])
         self.assertTrue(card.get('notice'))
-        self.assertIn('not configured here', card['notice'].lower())
-        self.assertIn('before the appointment', card['notice'].lower())
+        notice = card['notice'].lower()
+        self.assertIn('not offered here', notice)
+        self.assertIn('past call history', notice)
+        # CC-F2: the notice may no longer claim the supplier's documentation
+        # cannot be read. It can — it is in docs/voip24hdocs/ — and saying
+        # otherwise is what let the rest of the card go unchecked for so long.
+        self.assertNotIn('appointment', notice)
 
         # Required checks are ONLY what arriving traffic can prove. Anything
         # needing an API round trip would be a demand we cannot test.
@@ -407,7 +498,7 @@ class TestCallCenter(ChannelSpineCase):
         except UserError as exc:
             raised = True
             # center_test raises the card notice itself (03103e07 wording).
-            self.assertIn('not configured here', str(exc).lower())
+            self.assertIn('not offered here', str(exc).lower())
         self.assertTrue(raised)
 
         # The adapter itself refuses too — the honesty is not only in the UI.
@@ -419,36 +510,52 @@ class TestCallCenter(ChannelSpineCase):
             self.assertIn('cannot verify', str(exc).lower())
         self.assertTrue(raised)
 
-    def test_153b_configure_refuses_without_a_secret(self):
+    def test_153b_a_credential_the_provider_refuses_is_never_stored(self):
+        """The state that would make this card lie.
+
+        A key kept without ever being accepted reads as set up, and no call
+        ever arrives. The save authenticates first and raises on refusal, and
+        a raising request rolls its transaction back — so nothing is kept.
+        """
+        if not self.has_voip:
+            self.skipTest('health_voip24h is not installed')
         conn = self._call_conn()
+
+        for key, secret in (('', ''), ('key-only', ''), ('', 'secret-only')):
+            raised = False
+            try:
+                self.Conn.center_call_save_credentials(conn.id, key, secret)
+            except UserError:
+                raised = True
+            self.assertTrue(raised, 'both halves are required')
+
         raised = False
         try:
-            self.Conn.center_call_configure(conn.id, VOIP_ACCOUNT, '')
+            with self._provider_accepts(auth=False):
+                self.Conn.center_call_save_credentials(conn.id, 'k', 's')
         except UserError:
             raised = True
-        self.assertTrue(raised, 'no secret means every event is refused — the '
-                                'stepper must not let a tenant finish blind')
+        self.assertTrue(raised, 'a refused credential must raise')
         conn.invalidate_recordset()
-        self.assertFalse(conn.resource_external_id,
-                         'a refused configure must store nothing')
-
-        raised = False
-        try:
-            self.Conn.center_call_configure(conn.id, '', VOIP_SECRET)
-        except UserError:
-            raised = True
-        self.assertTrue(raised, 'an empty account id must be refused')
-
-    def test_153c_the_stored_secret_never_comes_back(self):
-        conn = self._configured() if self.has_voip else None
-        if conn is None:
-            conn = self._call_conn()
-            self.Conn.center_call_configure(conn.id, VOIP_ACCOUNT, VOIP_SECRET)
         info = self.Conn.center_call_info(conn.id)
-        self.assertTrue(info['has_webhook_secret'])
-        self.assertNotIn(VOIP_SECRET, json.dumps(info))
-        self.assertNotIn(VOIP_SECRET, json.dumps(self.Conn.center_overview()))
-        self.assertIn('/voip24h/webhook', info['webhook_url'])
+        self.assertFalse(info.get('credentials_ok'),
+                         'a refused credential must never read as working')
+
+    def test_153c_no_credential_ever_comes_back(self):
+        if not self.has_voip:
+            self.skipTest('health_voip24h is not installed')
+        conn = self._center_configured()
+        info = self.Conn.center_call_info(conn.id)
+        self.assertTrue(info['has_credentials'])
+        self.assertTrue(info['credentials_ok'])
+        self.assertTrue(info['registered'])
+        blob = json.dumps(info) + json.dumps(self.Conn.center_overview())
+        for secret in ('fixture-api-key', 'fixture-api-secret',
+                       'fixture-token'):
+            self.assertNotIn(secret, blob)
+        # The v3 receiver, not the legacy route — and the token half of the
+        # address is masked for anybody who is not a system administrator.
+        self.assertIn('/voip24h/v3/cdr/', info['callback_url'])
 
     # =================================================================
     # T154 — spoof: a plain CRM user and another company's connection
@@ -458,7 +565,8 @@ class TestCallCenter(ChannelSpineCase):
         as_user = self.Conn.with_user(self.crm_user)
         for call in (
             lambda m: m.center_call_info(conn.id),
-            lambda m: m.center_call_configure(conn.id, VOIP_ACCOUNT, VOIP_SECRET),
+            lambda m: m.center_call_save_credentials(conn.id, 'k', 's'),
+            lambda m: m.center_call_register(conn.id),
         ):
             raised = False
             try:
@@ -467,7 +575,7 @@ class TestCallCenter(ChannelSpineCase):
                 raised = True  # §5.70: never a tuple in assertRaises
             self.assertTrue(raised, 'a plain CRM user must be refused')
         self.assertFalse(conn.sudo().provider_secret_enc,
-                         'a refused configure must store no secret')
+                         'a refused call must store no secret')
 
         other = self._conn('call', company=self.company2, state='testing')
         raised = False
@@ -559,7 +667,20 @@ class TestCallCenter(ChannelSpineCase):
                        'get isWebchat'):
             self.assertIn(getter, script, getter)
 
-        # Calls must not be marked done merely because credentials were pasted.
+        # Calls must not be marked done merely because credentials were pasted:
+        # the last step still waits for a real call record and offers only
+        # "Check again" until one arrives.
         self.assertIn('refreshCallStatus', script)
-        self.assertIn('!state.callProviderReady', arch)
         self.assertIn('Check again', arch)
+        self.assertIn('registerCallWebhook', script)
+
+        # CC-F2: the card must not ask for the things the supplier's documents
+        # show it never sends. This is the assertion that would have caught the
+        # wrong screen, so each is pinned by the exact string that was there.
+        # Scoped to strings only the CALLS block ever had — `Webhook secret` on
+        # its own is Zalo's, and Zalo really does issue one.
+        for gone in ('callAccountId',
+                     'account identifier included in every event',
+                     'X-Voip24h-Signature',
+                     'signing secret used for this webhook'):
+            self.assertNotIn(gone, arch, gone)

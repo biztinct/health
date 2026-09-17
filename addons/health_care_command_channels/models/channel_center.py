@@ -417,17 +417,17 @@ class CareChannelConnectionCenter(models.Model):
             },
             # -- Calls (VoIP24h — receive only, and it says so) ------------
             'channel_hub.guide.call.account': {
-                'title': _('Your phone system account'),
-                'body': _('Type the account name VoIP24h gave you. It is what '
-                          'they put on every call event they send us, and it '
-                          'is how we know a call belongs to your clinic.'),
+                'title': _('Your phone system key'),
+                'body': _('Paste the API key and API secret your phone system '
+                          'provider gave you. We check them straight away and '
+                          'only keep them if the provider accepts them.'),
             },
             'channel_hub.guide.call.webhook': {
                 'title': _('Point your phone system at us'),
-                'body': _('Open your VoIP24h portal (or ask their support) '
-                          'and set this address as the webhook. They will '
-                          'show you a secret — paste it back here so we can '
-                          'check that call events really came from them.'),
+                'body': _('This is your clinic\'s own private call-back '
+                          'address. Press the button and we register it with '
+                          'your provider for you. If their support registers '
+                          'it instead, send them this exact address.'),
             },
             'channel_hub.guide.call.wait': {
                 'title': _('Make a real call'),
@@ -441,15 +441,23 @@ class CareChannelConnectionCenter(models.Model):
     def _center_call_notice(self):
         """The one sentence the Calls card must never be without (§3.3).
 
-        "Connected" for Calls means we are RECEIVING call events. It has never
-        meant their API works, because we have no way to know that: VoIP24h's
-        documentation is unreachable from outside Vietnam and every endpoint
-        in the legacy client is unverified.
+        "Connected" for Calls means we are RECEIVING call records, and nothing
+        more. The supplier's documents cover exactly three things — getting a
+        token, registering a call-back address, and the shape of the call data
+        they then send. Fetching past calls and dialling from the server are
+        NOT in them, so they are not offered; see the capability flags in
+        `health_voip24h`, each of which refuses until a human has captured the
+        contract.
+
+        Rewritten in CC-F2. The previous text said the supplier's
+        documentation was unreachable, which was true when it was written and
+        is not true now.
         """
-        return _('Calls arrive in Care Command. Placing calls and pulling '
-                 'call history need a separate VoIP24h API contract, which '
-                 'is not configured here — so we do not offer them. Confirm '
-                 'the webhook contract with VoIP24h before the appointment.')
+        return _('Call records arrive in Care Command, and call backs are '
+                 'raised from them. Pulling past call history and dialling '
+                 'from the server are not covered by your provider\'s '
+                 'documentation, so they are not offered here. Ringing from '
+                 'the browser is set up separately, under Phone.')
 
     # ==================================================================
     # Access + lookup
@@ -1602,111 +1610,146 @@ class CareChannelConnectionCenter(models.Model):
         return conn
 
     @api.model
-    def center_call_info(self, conn_id):
-        """Webhook address, account id, whether a secret is stored — no secret."""
-        conn = self._center_call(conn_id)
-        return {
-            'connection_id': conn.id,
-            'state': conn.state,
-            'webhook_url': conn.sudo()._get_adapter().webhook_url(),
-            'account_id': conn.resource_external_id or '',
-            'has_webhook_secret': bool(conn.sudo().provider_secret_enc),
-            'notice': self._center_call_notice(),
-            'resource_line': conn._center_resource_line(),
-        }
+    def _center_phone(self):
+        """The phone module, or None. SOFT reference (ledger §5.71).
+
+        There is no manifest dependency edge in either direction, so this is a
+        registry probe. When the phone module is absent the card says so in
+        words rather than offering a flow that cannot work.
+
+        CALLERS MUST TEST ``is None``, never truthiness: what comes back is an
+        empty recordset, and an empty recordset is FALSY. `if not phone` read
+        as "not installed" on a system where it was installed, and every card
+        answered "the phone system is not installed on this system".
+        """
+        if 'voip.config' not in self.env:
+            return None
+        return self.env['voip.config'].sudo()
 
     @api.model
-    def center_call_configure(self, conn_id, account_id, webhook_secret=None):
-        """Store the PBX account id and the webhook secret it signs with.
+    def center_call_info(self, conn_id):
+        """Everything the Calls card shows. Never a credential.
 
-        Both halves of the tenant's own work. Neither proves anything yet:
-        ``webhook_verified`` and ``inbound_ok`` are flipped by a real, signed
-        call event and by nothing else — a pasted secret is a claim, an
-        accepted signature is evidence.
+        The call-back address IS a credential — anybody holding it can inject
+        call events — so the phone module masks it for anybody who is not a
+        system administrator, and this passes through whatever it was given.
+        """
+        conn = self._center_call(conn_id)
+        phone = self._center_phone()
+        info = {
+            'connection_id': conn.id,
+            'state': conn.state,
+            'notice': self._center_call_notice(),
+            'resource_line': conn._center_resource_line(),
+            'phone_available': phone is not None,
+        }
+        if phone is None:
+            info.update({'configured': False, 'has_credentials': False})
+            return info
+        info.update(phone._center_phone_state(conn.company_id))
+        return info
+
+    @api.model
+    def center_call_save_credentials(self, conn_id, api_key, api_secret):
+        """Step 1: the API key and secret, PROVED before they are kept.
+
+        The phone module authenticates the pair against the supplier and
+        raises if they are refused — and a raising request rolls its whole
+        transaction back, so a rejected credential is never stored. That
+        matters more here than it looks: a stored key that has never worked is
+        exactly the state that makes this card read "connected" while no call
+        will ever arrive.
+
+        Nothing is claimed about receiving yet. ``inbound_ok`` is flipped by a
+        real call record and by nothing else.
         """
         conn = self._center_call(conn_id)
         self._center_require_https()
-        account_id = (account_id or '').strip()
-        if not account_id or len(account_id) > 128:
+        phone = self._center_phone()
+        if phone is None:
             raise UserError(_(
-                'Enter the account name your phone system provider gave you.'))
-        # ONE tenant per account id, deployment-wide (review CRITICAL).
+                'The phone system is not installed on this system, so it '
+                'cannot be connected here. Contact support.'))
+        try:
+            state = phone._center_phone_save_credentials(
+                api_key, api_secret, company=conn.company_id)
+        except UserError:
+            raise
+        except Exception as exc:  # noqa: BLE001 — never leak provider internals
+            _logger.exception('care_channels: saving phone credentials failed '
+                              'for connection %s', conn.id)
+            raise UserError(_(
+                'Health19 could not set up call logging for this account. '
+                'Nothing was saved. Contact support before continuing.')) from exc
+
+        # Link the connection to the phone connection it now owns.
         #
-        # `call` is the only channel whose resource id a TENANT TYPES — every
-        # other one is issued by the provider (getMe, getoa, Graph). The
-        # webhook router has to resolve company-agnostically, because the
-        # provider addresses us by account and whose company it is is exactly
-        # what we are working out. Those two facts together mean an unchecked
-        # claim lets one company reach into another's routing: typing a
-        # neighbour's account id made `connection` truthy at the route, which
-        # SKIPPED that neighbour's `webhook_enabled` off switch and pointed
-        # verification at the wrong secret. Refusing the claim is what closes
-        # it — the route cannot disambiguate after the fact.
-        #
-        # Deliberately not a DB index: `webchat` uses the literal 'default'
-        # for every company, so a unique (channel, resource_external_id)
-        # constraint would refuse the second tenant's web chat.
-        clash = self.sudo().with_context(active_test=False).search([
-            ('channel', '=', 'call'),
-            ('resource_external_id', '=', account_id),
-            ('id', '!=', conn.id),
-        ], limit=1)
-        if clash:
-            # Says nothing about WHO holds it — the tenant needs to know the
-            # name is taken, not who took it.
-            raise UserError(_(
-                'That account name is already connected to Health19. Check '
-                'the name with your phone system provider, and contact '
-                'support if you believe it is yours.'))
-        secret = (webhook_secret or '').strip()
-        if secret:
-            conn.action_set_secret('provider_secret', secret)
-        elif not conn.sudo().provider_secret_enc:
-            raise UserError(_(
-                'Paste the webhook secret your phone system shows. Without it '
-                'we cannot tell a real call event from a forged one, and we '
-                'will refuse every event.'))
-        if conn.resource_external_id != account_id:
+        # `account_key` is NOT typed by anybody and is not sent by the
+        # supplier — their call data carries no account identifier at all (see
+        # `_center_phone_config`). It exists only so that the phone module can
+        # find this row back (`voip.config._channel_connection`), which is
+        # what makes a real call record turn step 3 green.
+        key = state.get('account_key') or ''
+        if key and conn.resource_external_id != key:
+            # Still refused if another company somehow holds it. It is minted
+            # from 12 random bytes, so this is unreachable in practice and
+            # kept because routing must never become a coin flip.
+            clash = self.sudo().with_context(active_test=False).search(
+                [('channel', '=', 'call'),
+                 ('resource_external_id', '=', key),
+                 ('id', '!=', conn.id)], limit=1)
+            if clash:
+                raise UserError(_(
+                    'This phone connection is already connected elsewhere on '
+                    'this system. Contact support.'))
             conn.sudo()._internal().write({
-                'resource_external_id': account_id,
-                'resource_display_name': account_id,
+                'resource_external_id': key,
+                'resource_display_name': _('Phone system'),
             })
+        self.env['care.channel.audit']._log(
+            'credentials_saved', connection=conn,
+            detail='phone credentials accepted by the provider')
+        return self.center_call_info(conn.id)
+
+    @api.model
+    def center_call_register(self, conn_id):
+        """Step 2: register our call-back address with the supplier.
+
+        `POST /v3/webhook-call-log/` with the customer's own token — the
+        self-service half of the supplier's Webhook document. Their staff can
+        register the same address by hand instead, which is why step 2 also
+        shows it to copy.
+
+        A successful registration still proves nothing about receiving: the
+        supplier accepting an address is not the same as a call arriving on
+        it, so the connection only moves to `testing` here.
+        """
+        conn = self._center_call(conn_id)
+        self._center_require_https()
+        phone = self._center_phone()
+        if phone is None:
+            raise UserError(_(
+                'The phone system is not installed on this system.'))
+        try:
+            phone._center_phone_register(company=conn.company_id)
+        except UserError:
+            raise
+        except Exception as exc:  # noqa: BLE001
+            _logger.exception('care_channels: registering the phone call-back '
+                              'failed for connection %s', conn.id)
+            raise UserError(_(
+                'Your provider did not accept the call-back address. Nothing '
+                'was changed. Contact support before continuing.')) from exc
+
         conn.sudo()._internal().write({'webhook_state': 'subscribed'})
         if conn.state in ('authorizing', 'select_resource', 'configuring',
                           'action_required'):
-            conn._transition('testing', reason='call webhook configured')
+            conn._transition('testing', reason='call-back registered')
             conn._recompute_ready()
         self.env['care.channel.audit']._log(
             'webhook_subscribed', connection=conn,
-            detail='voip account %s' % account_id)
-        self._center_sync_voip_config(conn, account_id)
-        return {'connection_id': conn.id, 'state': conn.state,
-                'account_id': account_id, 'has_webhook_secret': True,
-                'webhook_url': conn.sudo()._get_adapter().webhook_url(),
-                'notice': self._center_call_notice()}
-
-    @api.model
-    def _center_sync_voip_config(self, conn, account_id):
-        """Tell health_voip24h, if it is installed. SOFT reference both ways.
-
-        There is no manifest dependency edge in either direction (ledger
-        §5.71 — one is what made CC-D's first deploy unbuildable), so this is
-        a registry probe and a never-fatal call. The legacy webhook resolves
-        its config by ``account_id``, so a connection configured here has to
-        reach the row that lookup will find, or a real call event would be
-        answered "ignored" forever.
-        """
-        if 'voip.config' not in self.env:
-            return False
-        try:
-            return self.env['voip.config'].sudo()._sync_from_connection(
-                conn, account_id=account_id)
-        except Exception as exc:  # noqa: BLE001 — redact provider internals
-            _logger.exception('care_channels: voip legacy config sync failed '
-                              'for connection %s', conn.id)
-            raise UserError(_(
-                'Health19 could not prepare call logging for this account. '
-                'Nothing was connected. Contact support before continuing.')) from exc
+            detail='call-back registered with the provider')
+        return self.center_call_info(conn.id)
 
     # ==================================================================
     # 4. Web chat — one click

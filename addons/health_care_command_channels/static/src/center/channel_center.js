@@ -133,13 +133,21 @@ export class ChannelCenter extends Component {
             emailProvider: "",
             mailbox: "",
             emailSignedIn: false,
-            // Calls (CC-F): receive-only, so there is an account id and a
-            // webhook secret and nothing that could "test" an API.
-            callAccountId: "",
-            callSecret: "",
-            hasCallSecret: false,
+            // Calls (CC-F2): the supplier issues an API key and an API secret,
+            // and we mint the call-back address ourselves and register it for
+            // them. There is deliberately no account name and no signing
+            // secret: the supplier sends neither (see `_center_phone_config`).
+            callApiKey: "",
+            callApiSecret: "",
+            callHasCredentials: false,
+            callCredentialsOk: false,
+            callCredentialsError: "",
+            callRegistered: false,
+            callRegisteredUrl: "",
+            callEventsSeen: 0,
+            callRelayed: false,
+            callPhoneAvailable: true,
             callNotice: "",
-            callProviderReady: false,
             // Multi-account: which account the manage panel is on, and
             // whether its name is being edited.
             accountLabel: "",
@@ -470,11 +478,17 @@ export class ChannelCenter extends Component {
         this.state.mailbox = "";
         this.state.emailProvider = "";
         this.state.emailProviders = [];
-        this.state.callAccountId = "";
-        this.state.callSecret = "";
-        this.state.hasCallSecret = false;
+        this.state.callApiKey = "";
+        this.state.callApiSecret = "";
+        this.state.callHasCredentials = false;
+        this.state.callCredentialsOk = false;
+        this.state.callCredentialsError = "";
+        this.state.callRegistered = false;
+        this.state.callRegisteredUrl = "";
+        this.state.callEventsSeen = 0;
+        this.state.callRelayed = false;
+        this.state.callPhoneAvailable = true;
         this.state.callNotice = "";
-        this.state.callProviderReady = false;
         this._metaHint = {};
         // A reconnect on a channel whose key we still hold skips the paste
         // screen: the tenant should never be asked for a credential twice.
@@ -943,38 +957,62 @@ export class ChannelCenter extends Component {
     }
 
     // -----------------------------------------------------------------
-    // Calls (CC-F): receive only, and the UI says so
+    // Calls (CC-F2): receive only, and the UI says so
     // -----------------------------------------------------------------
+    _applyCallInfo(info) {
+        this.state.callPhoneAvailable = info.phone_available !== false;
+        this.state.webhookUrl = info.callback_url || "";
+        this.state.callHasCredentials = !!info.has_credentials;
+        this.state.callCredentialsOk = !!info.credentials_ok;
+        this.state.callCredentialsError = info.credentials_error || "";
+        this.state.callRegistered = !!info.registered;
+        this.state.callRegisteredUrl = info.registered_url || "";
+        this.state.callEventsSeen = info.events_seen || 0;
+        this.state.callRelayed = !!info.relayed;
+        this.state.callNotice = info.notice || "";
+    }
+
     async _loadCallInfo(connectionId) {
         const info = await this.orm.call(MODEL, "center_call_info", [connectionId]);
-        this.state.webhookUrl = info.webhook_url || "";
-        this.state.callAccountId = info.account_id || "";
-        this.state.hasCallSecret = !!info.has_webhook_secret;
-        this.state.callNotice = info.notice || "";
-        if (this.state.callAccountId) {
+        this._applyCallInfo(info);
+        // Skip ahead over work already done, never backwards: an operator who
+        // stepped back to re-read something must not be yanked forward again.
+        if (this.state.callRegistered) {
+            this.state.step = Math.max(this.state.step, 2);
+        } else if (this.state.callCredentialsOk) {
             this.state.step = Math.max(this.state.step, 1);
         }
     }
 
-    async saveCallSetup() {
-        const account = (this.state.callAccountId || "").trim();
-        if (!account) {
+    async saveCallCredentials() {
+        const key = (this.state.callApiKey || "").trim();
+        const secret = (this.state.callApiSecret || "").trim();
+        if (!key || !secret) {
             return;
         }
         await this._guarded(async () => {
             try {
-                const res = await this.orm.call(MODEL, "center_call_configure", [
-                    this.state.connectionId,
-                    account,
-                    this.state.callSecret,
-                ]);
-                this.state.hasCallSecret = !!res.has_webhook_secret;
-                this.state.step = 2;
+                const info = await this.orm.call(
+                    MODEL, "center_call_save_credentials",
+                    [this.state.connectionId, key, secret]);
+                this._applyCallInfo(info);
+                this.state.step = 1;
                 await this.load();
             } finally {
                 // Zeroed on BOTH paths: a rejected paste is still a secret.
-                this.state.callSecret = "";
+                this.state.callApiKey = "";
+                this.state.callApiSecret = "";
             }
+        });
+    }
+
+    async registerCallWebhook() {
+        await this._guarded(async () => {
+            const info = await this.orm.call(
+                MODEL, "center_call_register", [this.state.connectionId]);
+            this._applyCallInfo(info);
+            this.state.step = 2;
+            await this.load();
         });
     }
 
@@ -1011,9 +1049,9 @@ export class ChannelCenter extends Component {
         this.state.metaResources = [];
         this.state.metaPageId = "";
         this.state.metaSelected = "";
-        this.state.callSecret = "";
+        this.state.callApiKey = "";
+        this.state.callApiSecret = "";
         this.state.callNotice = "";
-        this.state.callProviderReady = false;
         const connId = this.state.connectionId;
         if (card.channel === "zalo" && connId) {
             this._loadZaloInfo(connId).catch((e) => this._err(e));

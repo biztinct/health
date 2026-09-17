@@ -3192,3 +3192,25 @@ a no-op.
     `privilege_id`** (`res.groups.privilege`, `odoo/addons/base/models/
     res_groups.py`). Columns are `name, privilege_id, share, sequence, comment,
     api_key_duration` and nothing else. (VoIP relay V2.)
+- **§5.203 — an empty recordset is FALSY, so `if not model:` is not a
+    registry probe.** `_center_phone()` returns `env['voip.config'].sudo()`
+    when the module is installed — an EMPTY recordset — so `if not phone:`
+    read as "not installed" on a system where it was installed, and every
+    Calls card answered "the phone system is not installed on this system".
+    Test `is None` when a helper returns a model-or-None. (CC-F2.)
+- **§5.204 — restart through `carejiox-deploy -s`, never
+    `service odoo-server restart`.** The wrapper owns the start/stop under its
+    flock; a direct restart raced it and left `systemd` reporting
+    `active (exited)` with NOTHING listening on 8069 and no error in the log —
+    the box looked up and answered nothing for ten minutes. `carejiox-deploy
+    -s` brought it back first try. (CC-F2.)
+- **§5.205 — the Calls card asked for two things the supplier never sends.**
+    Its wording predated `docs/voip24hdocs/` and told operators to obtain "the
+    account identifier included in every event" and an HMAC signing secret
+    under `X-Voip24h-Signature`. The delivery carries `msgid, id, calldate,
+    callid, play, eplay, download, did, src, dst, status, note, disposition,
+    billsec, duration, type` — no customer identifier, no signature, no header
+    — and arrives by GET, not signed JSON POST. A real operator followed it and
+    hit a dead end. When a vendor document finally arrives, RE-READ EVERY
+    SCREEN THAT CLAIMS TO DESCRIBE IT; the card is now pinned to the documents
+    by name in `test_155b`. (CC-F2.)

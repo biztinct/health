@@ -1107,6 +1107,127 @@ class VoIP24hConfig(models.Model):
         return {'created': created, 'existing': existing_count, 'copied': copied}
 
     # ==================================================================
+    # The Channel Center's Calls card (CC-F2)
+    # ==================================================================
+    # A SOFT reference in both directions: there is no manifest dependency
+    # edge either way (ledger §5.71), so the Channel Center probes
+    # ``'voip.config' in env`` and calls these, and this module never imports
+    # anything of theirs. Everything the card needs is here rather than there,
+    # because the supplier's contract is this module's business.
+    #
+    # WHAT THE SUPPLIER'S DOCUMENTS ACTUALLY SAY, since the card used to claim
+    # otherwise and an operator followed it:
+    #
+    #  * Authorization.docx — an API key and an API secret are exchanged for a
+    #    token. That is the only credential a customer holds.
+    #  * Webhook.docx — the customer REGISTERS a call-back address themselves
+    #    (`POST /v3/webhook-call-log/`, Bearer token), or gives it to the
+    #    supplier's staff. Either way the address is ours to mint.
+    #  * The delivery carries msgid, id, calldate, callid, play, eplay,
+    #    download, did, src, dst, status, note, disposition, billsec, duration
+    #    and type — and NOTHING that says which customer it belongs to. There
+    #    is no account identifier in an event, no signature, and no signing
+    #    header. Identity is the receiver id in the address we minted, which is
+    #    why the card no longer asks for an account name or a secret.
+
+    @api.model
+    def _center_phone_config(self, company=None, create=False):
+        """This company's phone connection, optionally creating it."""
+        company = company or self.env.company
+        config = self.sudo().search(
+            [('company_id', '=', company.id), ('active', '=', True)], limit=1)
+        if config or not create:
+            return config
+        config = self.sudo().create({
+            'name': company.name or 'Phone system',
+            'company_id': company.id,
+            # `account_id` is required and is the string the Channel Center
+            # connection is linked by (`_channel_connection`). It is NOT sent
+            # by the supplier and must never be asked for as though it were:
+            # the receiver id is stable, unique and already ours.
+            'account_id': 'CC-%s' % secrets.token_urlsafe(9),
+            'state': 'draft',
+            'auto_sync_enabled': False,
+            'history_sync_verified': False,
+            'enable_call_functionality': False,
+            'cdr_ingest_enabled': True,
+            'state_ingest_enabled': True,
+        })
+        config._ensure_receiver()
+        _logger.info('health_voip24h: Channel Center created config %s for '
+                     'company %s', config.id, company.id)
+        return config
+
+    @api.model
+    def _center_phone_state(self, company=None):
+        """One read with everything the Calls card shows. No credentials."""
+        config = self._center_phone_config(company)
+        if not config:
+            return {'available': True, 'configured': False}
+        me = config.sudo()
+        return {
+            'available': True,
+            'configured': True,
+            'config_id': me.id,
+            'account_key': me.account_id or '',
+            'has_credentials': bool(me.api_key and me.api_secret),
+            # Evidence, not a claim: `state` is written by the authentication
+            # itself — 'connected' when the supplier also gave a usable expiry,
+            # 'degraded' when it accepted the credentials but the expiry had to
+            # be guessed from the documented lifetime, 'error' when it refused.
+            # Degraded still means ACCEPTED, so both count. A stored key nobody
+            # has ever used is 'draft', and is not "working".
+            'credentials_ok': me.state in ('connected', 'degraded'),
+            'credentials_error': me.error_message or '',
+            'callback_ready': bool(me.receiver_id),
+            # Masked for anybody but a system administrator — the address IS
+            # the credential (see `_compute_receiver_urls`).
+            'callback_url': config.cdr_webhook_url or '',
+            'relayed': bool(self.env['ir.config_parameter'].sudo().get_param(
+                'voip24h.callback_base')),
+            'registered': bool(me.subscription_active),
+            'registered_url': me.subscription_url or '',
+            'registered_at': me.subscription_registered_at and
+            fields.Datetime.to_string(me.subscription_registered_at) or '',
+            'events_seen': self.env['voip.call.event'].sudo().search_count(
+                [('voip_config_id', '=', me.id)]),
+        }
+
+    @api.model
+    def _center_phone_save_credentials(self, api_key, api_secret,
+                                       company=None):
+        """Store the key and secret ONLY if the supplier accepts them.
+
+        A rejected credential raises, and an Odoo request that raises rolls its
+        whole transaction back — so nothing is kept. That is deliberate: a
+        stored key that has never worked is exactly the state that makes a card
+        read "connected" while no call will ever arrive.
+        """
+        api_key = (api_key or '').strip()
+        api_secret = (api_secret or '').strip()
+        if not api_key or not api_secret:
+            raise UserError(_(
+                'Enter both the API key and the API secret from your phone '
+                'system provider.'))
+        config = self._center_phone_config(company, create=True)
+        config.sudo().write({'api_key': api_key, 'api_secret': api_secret})
+        # Proves the pair against `POST /v3/authentication`. Raises UserError
+        # with the supplier's own reason when they refuse it.
+        config._get_api_client().test_connection()
+        config._ensure_receiver()
+        return self._center_phone_state(company)
+
+    @api.model
+    def _center_phone_register(self, company=None):
+        """Mint the address if needed and register it with the supplier."""
+        config = self._center_phone_config(company)
+        if not config:
+            raise UserError(_('Enter your phone system credentials first.'))
+        config._ensure_receiver()
+        config.action_register_cdr_webhook()
+        return self._center_phone_state(company)
+
+    # ==================================================================
     # Frontend-safe view of this config
     # ==================================================================
 
