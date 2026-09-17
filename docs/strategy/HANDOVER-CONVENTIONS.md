@@ -3178,3 +3178,17 @@ a no-op.
     rebuilds the bundle and can render an empty page or time out; it is not a
     failure. Reload before diagnosing. (VoIP relay V2 — 58 rows cleared on
     `carejiox`, 8 on `hhh`.)
+- **§5.201 — in an `odoo-bin shell` script, COMMIT AT THE CHANGE, not at the
+    end of the file — and never trust a `print` as evidence.** A script that
+    deleted a user, printed `DELETED uid=…`, and then raised further down
+    (`AttributeError` on `res.groups.category_id`, §5.202) had its whole
+    transaction rolled back by the shell: the account was still there and still
+    logged in. The print was emitted from inside the doomed transaction and so
+    was a lie. Put `env.cr.commit()` immediately after each mutation, and prove
+    the result from OUTSIDE that transaction — a fresh `psql` row count, or the
+    behaviour itself (`/web/session/authenticate` answering `Access Denied`).
+    (VoIP relay V2.)
+- **§5.202 — `res.groups` has no `category_id` on Odoo 19; it is
+    `privilege_id`** (`res.groups.privilege`, `odoo/addons/base/models/
+    res_groups.py`). Columns are `name, privilege_id, share, sequence, comment,
+    api_key_duration` and nothing else. (VoIP relay V2.)
