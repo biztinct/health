@@ -699,12 +699,11 @@
 
             <!-- ===== Calls: the call-back address ===== -->
             <t t-if="isCall and state.step === 1">
-              <div class="cc-help">
-                <p>This is your clinic's own private call-back address. Press
-                   <strong>Register with my provider</strong> and we set it up
-                   for you. If their support sets it up instead, send them this
-                   exact address.</p>
-              </div>
+              <!-- No blurb here. The step's own body (channel_center.py,
+                   `channel_hub.guide.call.webhook`) already says exactly this,
+                   and 12.5.0 shipped it printed twice — once grey from the step
+                   definition, once black from here. One step, one explanation,
+                   and it lives beside the other two. -->
               <label class="cc-label" for="cc_call_hook">Call-back address</label>
               <textarea id="cc_call_hook" class="cc-input area mono" rows="2"
                         readonly="readonly"
