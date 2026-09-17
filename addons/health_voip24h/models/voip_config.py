@@ -3,6 +3,7 @@
 import hashlib
 import hmac
 import logging
+import re
 import secrets
 from contextlib import contextmanager
 from datetime import timedelta
@@ -29,6 +30,26 @@ TOKEN_RENEW_MARGIN = timedelta(minutes=30)
 
 # Receiver token entropy. 32 bytes = 256 bits, per the handover's floor.
 RECEIVER_TOKEN_BYTES = 32
+
+#: The SIP server a new clinic's extensions register against, before anybody
+#: types one. THREE LAYERS, each able to override the one above it:
+#:
+#:   platform  this parameter, pushed into every customer by the relay
+#:   clinic    voip.config.sip_host_default, typed on the Calls card
+#:   person    voip.extension.sip_host, for the rare split-server account
+#:
+#: It is a default and never a lock: suppliers hand different customers
+#: different servers, so a value that could not be changed on the card would
+#: be a value that stops the next clinic connecting at all.
+SIP_HOST_PARAM = 'voip24h.sip_host_default'
+
+#: A SIP server as the supplier writes it: a host or an IP, optionally with a
+#: port. Deliberately NOT a URL — `registerSip(host, number, password)` takes a
+#: bare address, so a pasted `https://…` or a trailing path is a mistake worth
+#: refusing at the point of typing rather than at the point of ringing.
+SIP_HOST_RE = re.compile(
+    r'^(?:\d{1,3}(?:\.\d{1,3}){3}|[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?'
+    r'(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?)+)(?::\d{1,5})?$')
 
 
 def verify_voip_signature(secret, raw_body, signature):
@@ -288,6 +309,7 @@ class VoIP24hConfig(models.Model):
              'about what is served.')
     sip_host_default = fields.Char(
         string='Default SIP Server',
+        default=lambda self: self._default_sip_host(),
         help='The address extensions register against, unless an extension '
              'overrides it.')
 
@@ -1228,6 +1250,14 @@ class VoIP24hConfig(models.Model):
             fields.Datetime.to_string(me.subscription_registered_at) or '',
             'events_seen': self.env['voip.call.event'].sudo().search_count(
                 [('voip_config_id', '=', me.id)]),
+            # Answering, as opposed to recording. Both are needed before a
+            # clinic can actually use the phone, and a card that reports only
+            # the first is a card that says "connected" to a clinic where
+            # nobody can pick up.
+            'sip_host': me.sip_host_default or '',
+            'sip_host_suggested': self._default_sip_host(),
+            'extensions': self.env['voip.extension'].sudo().search_count(
+                [('voip_config_id', '=', me.id)]),
         }
 
     @api.model
@@ -1304,6 +1334,157 @@ class VoIP24hConfig(models.Model):
         _logger.info('health_voip24h: receiving switched %s for config %s',
                      'on' if wanted else 'off', me.id)
         return True
+
+    # ------------------------------------------------------------------
+    # The SIP server, and the people who answer on it
+    # ------------------------------------------------------------------
+    #
+    # Everything above this line is about RECEIVING a record of a call that
+    # already happened. Everything below is about ANSWERING one, which needs
+    # two things the call-back flow never asks for: the server the extensions
+    # register against, and one extension per person.
+    #
+    # They are asked for on the card rather than on an administrator-only
+    # settings form because the person connecting a new clinic is the person
+    # holding the supplier's e-mail with the numbers in it, and sending them
+    # to a different screen is how a clinic ends up receiving call records
+    # that nobody can pick up.
+
+    @api.model
+    def _default_sip_host(self):
+        """The platform's suggestion. Empty is a perfectly good answer."""
+        return (self.env['ir.config_parameter'].sudo()
+                .get_param(SIP_HOST_PARAM) or '').strip()
+
+    @api.model
+    def _center_phone_server(self, company=None):
+        """What the card shows for the server box: the value and the hint."""
+        config = self._center_phone_config(company)
+        return {
+            'sip_host': (config.sudo().sip_host_default or '') if config else '',
+            'suggested': self._default_sip_host(),
+        }
+
+    @api.model
+    def _center_phone_set_server(self, sip_host, company=None):
+        """Save the SIP server for this clinic. Blank clears it.
+
+        Validated here rather than trusted: a pasted `https://…`, a trailing
+        path or a stray space all produce a registration that fails silently in
+        somebody's browser hours later, with nothing on any screen to say why.
+        """
+        config = self._center_phone_config(company, create=True)
+        host = (sip_host or '').strip()
+        if host and not SIP_HOST_RE.match(host):
+            raise UserError(_(
+                'Enter the phone server exactly as your provider wrote it — '
+                'an address like pbx.example.com or 203.0.113.10, with no '
+                'https:// in front and nothing after it. A port is allowed '
+                '(pbx.example.com:5060).'))
+        config.sudo().write({'sip_host_default': host or False})
+        return self._center_phone_server(company)
+
+    @api.model
+    def _center_phone_people(self, company=None):
+        """Who an extension can be given to: this company's real users."""
+        company = company or self.env.company
+        users = self.env['res.users'].sudo().search([
+            ('active', '=', True),
+            ('share', '=', False),
+            ('company_ids', 'in', company.id),
+        ], order='name', limit=500)
+        return [{'id': user.id, 'name': user.name or user.login}
+                for user in users]
+
+    @api.model
+    def _center_phone_extensions(self, company=None):
+        """Every extension on this clinic's connection. NEVER a password.
+
+        `has_password` answers the only question the screen needs to ask —
+        "is one stored?" — and the stored value has no plaintext column to
+        read even for an administrator.
+        """
+        config = self._center_phone_config(company)
+        if not config:
+            return []
+        rows = self.env['voip.extension'].sudo().search(
+            [('voip_config_id', '=', config.id)], order='extension_number')
+        return [{
+            'id': ext.id,
+            'number': ext.extension_number or '',
+            'sip_username': ext.sip_username or '',
+            'has_password': bool(ext.sip_password_enc),
+            'user_id': ext.user_id.id or False,
+            'user_name': ext.user_id.name or '',
+            'browser_enabled': bool(ext.browser_enabled),
+            'caller_id_did': ext.caller_id_did or '',
+        } for ext in rows]
+
+    @api.model
+    def _center_phone_save_extension(self, vals, company=None):
+        """Create or update ONE extension from the card.
+
+        The password is write-only in both directions: it arrives here, it is
+        encrypted, and nothing ever sends it back. A blank password on an
+        existing extension means "leave the stored one alone", never "clear
+        it" — clearing is what the remove button is for, and a text box that
+        silently wipes a credential when somebody tabs past it is a phone that
+        stops ringing for no visible reason.
+        """
+        vals = vals or {}
+        config = self._center_phone_config(company, create=True)
+        number = (vals.get('number') or '').strip()
+        if not number:
+            raise UserError(_('Enter the extension number.'))
+
+        Ext = self.env['voip.extension'].sudo()
+        ext = Ext.browse(int(vals.get('id') or 0)).exists()
+        if ext and ext.voip_config_id != config:
+            raise UserError(_('That extension belongs to another connection.'))
+
+        clash = Ext.with_context(active_test=False).search([
+            ('voip_config_id', '=', config.id),
+            ('extension_number', '=', number),
+            ('id', '!=', ext.id or 0),
+        ], limit=1)
+        if clash:
+            raise UserError(_(
+                'Extension %s is already on this connection.', number))
+
+        user_id = int(vals.get('user_id') or 0) or False
+        write_vals = {
+            'name': (vals.get('name') or '').strip() or number,
+            'extension_number': number,
+            # The supplier's sign-in name is NOT always the extension number —
+            # theirs looks like `260-xxxxxxxx@yyy` — so it is asked for
+            # separately and defaults to the number when left blank.
+            'sip_username': (vals.get('sip_username') or '').strip() or number,
+            'user_id': user_id,
+            'browser_enabled': bool(vals.get('browser_enabled')),
+            'caller_id_did': (vals.get('caller_id_did') or '').strip() or False,
+        }
+        if not ext:
+            write_vals['voip_config_id'] = config.id
+            ext = Ext.create(write_vals)
+        else:
+            ext.write(write_vals)
+
+        password = vals.get('password') or ''
+        if password:
+            ext._set_sip_password(password)
+
+        return self._center_phone_extensions(company)
+
+    @api.model
+    def _center_phone_remove_extension(self, ext_id, company=None):
+        """Take an extension off this clinic's connection, credential and all."""
+        config = self._center_phone_config(company)
+        ext = self.env['voip.extension'].sudo().browse(
+            int(ext_id or 0)).exists()
+        if not ext or not config or ext.voip_config_id != config:
+            raise UserError(_('That extension is not on this connection.'))
+        ext.unlink()
+        return self._center_phone_extensions(company)
 
     # ==================================================================
     # Frontend-safe view of this config

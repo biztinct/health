@@ -731,8 +731,106 @@
               </p>
             </t>
 
-            <!-- ===== Calls: wait for a real call ===== -->
+            <!-- ===== Calls: the server, and who answers on it ===== -->
             <t t-if="isCall and state.step === 2">
+              <label class="cc-label" for="cc_call_sip">Phone server</label>
+              <input id="cc_call_sip" type="text" class="cc-input"
+                     autocomplete="off" spellcheck="false"
+                     placeholder="pbx.example.com or 203.0.113.10"
+                     t-att-value="state.callSipHost"
+                     t-on-input="onSipHostInput"/>
+              <p class="cc-help">
+                The address your provider gave you for signing handsets in.
+                Every extension uses it unless one is given its own.
+              </p>
+              <div class="cc-row">
+                <button class="cc-btn ghost" t-att-disabled="state.busy"
+                        t-on-click="saveCallServer">Save the server</button>
+              </div>
+
+              <label class="cc-label">People who answer</label>
+              <p class="cc-help" t-if="!state.callExtensions.length">
+                Nobody yet. Call records will still arrive, but no screen will
+                ring and no call can be picked up here.
+              </p>
+              <table class="cc-table" t-if="state.callExtensions.length">
+                <thead>
+                  <tr>
+                    <th>Extension</th><th>Person</th>
+                    <th>Password</th><th>Browser</th><th/>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr t-foreach="state.callExtensions" t-as="row" t-key="row.id">
+                    <td t-esc="row.number"/>
+                    <td t-esc="row.user_name or '—'"/>
+                    <td>
+                      <span t-if="row.has_password">Stored</span>
+                      <span t-if="!row.has_password" class="cc-warn">Missing</span>
+                    </td>
+                    <td>
+                      <span t-if="row.browser_enabled">On</span>
+                      <span t-if="!row.browser_enabled">Off</span>
+                    </td>
+                    <td>
+                      <button class="cc-btn ghost sm" t-att-disabled="state.busy"
+                              t-on-click="() => this.editExtension(row)">Edit</button>
+                      <button class="cc-btn ghost sm" t-att-disabled="state.busy"
+                              t-on-click="() => this.removeExtension(row)">Remove</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="cc-row" t-if="!state.callExtDraft">
+                <button class="cc-btn ghost" t-att-disabled="state.busy"
+                        t-on-click="newExtension">Add a person</button>
+              </div>
+
+              <t t-if="state.callExtDraft">
+                <label class="cc-label" for="cc_ext_no">Extension number</label>
+                <input id="cc_ext_no" type="text" class="cc-input"
+                       autocomplete="off" spellcheck="false" placeholder="260"
+                       t-model="state.callExtDraft.number"/>
+                <label class="cc-label" for="cc_ext_user">Sign-in name</label>
+                <input id="cc_ext_user" type="text" class="cc-input"
+                       autocomplete="off" spellcheck="false"
+                       t-model="state.callExtDraft.sip_username"/>
+                <p class="cc-help">
+                  Your provider may give a longer sign-in name than the
+                  extension number. Leave this blank to use the number.
+                </p>
+                <label class="cc-label" for="cc_ext_pw">Password</label>
+                <input id="cc_ext_pw" type="password" class="cc-input"
+                       autocomplete="new-password" spellcheck="false"
+                       t-model="state.callExtDraft.password"/>
+                <p class="cc-help" t-if="state.callExtDraft.id">
+                  Leave blank to keep the password already stored.
+                </p>
+                <label class="cc-label" for="cc_ext_who">Who this belongs to</label>
+                <select id="cc_ext_who" class="cc-input"
+                        t-model="state.callExtDraft.user_id">
+                  <option value="false">Nobody yet</option>
+                  <option t-foreach="state.callPeople" t-as="person"
+                          t-key="person.id" t-att-value="person.id"
+                          t-esc="person.name"/>
+                </select>
+                <label class="cc-check">
+                  <input type="checkbox"
+                         t-model="state.callExtDraft.browser_enabled"/>
+                  <span>Let them take calls in the browser</span>
+                </label>
+                <div class="cc-row">
+                  <button class="cc-btn" t-att-disabled="state.busy"
+                          t-on-click="saveExtension">Save this person</button>
+                  <button class="cc-btn ghost" t-att-disabled="state.busy"
+                          t-on-click="cancelExtension">Cancel</button>
+                </div>
+              </t>
+            </t>
+
+            <!-- ===== Calls: wait for a real call ===== -->
+            <t t-if="isCall and state.step === 3">
               <p class="cc-wait" t-if="openAccount and !openAccount.last_inbound_at">
                 <span class="ic ic-clock"/> Waiting for a call…
               </p>
@@ -855,10 +953,17 @@
           <button t-if="isCall and state.step === 1"
                   class="cc-btn ghost" t-att-disabled="state.busy"
                   t-on-click="next">Their support will do it</button>
-          <button t-if="isCall and state.step === 2 and !(openAccount and openAccount.last_inbound_at)"
+          <!-- Step 3 never blocks: a clinic may connect the call RECORDS
+               today and hand out extensions next week, and a wizard that
+               refuses to go on until every person is entered is a wizard
+               nobody finishes. -->
+          <button t-if="isCall and state.step === 2"
+                  class="cc-btn primary" t-att-disabled="state.busy"
+                  t-on-click="next">Next</button>
+          <button t-if="isCall and state.step === 3 and !(openAccount and openAccount.last_inbound_at)"
                   class="cc-btn primary" t-att-disabled="state.busy"
                   t-on-click="refreshCallStatus">Check again</button>
-          <button t-if="isCall and state.step === 2 and openAccount and openAccount.last_inbound_at"
+          <button t-if="isCall and state.step === 3 and openAccount and openAccount.last_inbound_at"
                   class="cc-btn primary" t-on-click="closeStepper">Done</button>
 
           <!-- Web chat -->

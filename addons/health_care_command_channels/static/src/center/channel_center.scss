@@ -198,6 +198,21 @@
   .cc-toast{position:absolute;left:18px;right:18px;bottom:64px;background:var(--navy);
     color:#fff;border-radius:var(--r);padding:9px 12px;font-weight:600;text-align:center}
 
+  /* The people-who-answer table on the Calls card. Deliberately plain: it is
+     a short list somebody reads once while holding an e-mail from their phone
+     supplier, not a screen they live in. */
+  .cc-table{width:100%;border-collapse:collapse;margin:8px 0 4px;font-size:13px}
+  .cc-table th{text-align:left;color:var(--faint);font-weight:700;
+    padding:6px 8px;border-bottom:1px solid var(--line)}
+  .cc-table td{padding:7px 8px;border-bottom:1px solid var(--line);
+    vertical-align:middle}
+  .cc-table td .cc-btn{margin-right:6px}
+  .cc-warn{color:var(--danger);font-weight:600}
+  .cc-btn.sm{padding:3px 9px;font-size:12px}
+  .cc-check{display:flex;align-items:center;gap:8px;margin:10px 0 2px;
+    font-weight:600;color:var(--ink)}
+  .cc-check input{width:16px;height:16px}
+
   @media (max-width:640px){
     .cc-grid{grid-template-columns:1fr;padding:14px}
     .cc-top{padding:16px 14px 10px}

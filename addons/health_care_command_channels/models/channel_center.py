@@ -429,6 +429,12 @@ class CareChannelConnectionCenter(models.Model):
                           'your provider for you. If their support registers '
                           'it instead, send them this exact address.'),
             },
+            'channel_hub.guide.call.phones': {
+                'title': _('Who answers the phone'),
+                'body': _('The server your handsets sign in to, and one '
+                          'extension per person. Without these, call records '
+                          'still arrive but nobody can pick up in the browser.'),
+            },
             'channel_hub.guide.call.wait': {
                 'title': _('Make a real call'),
                 'body': _('Ring your clinic number from any phone. The moment '
@@ -1647,7 +1653,60 @@ class CareChannelConnectionCenter(models.Model):
             info.update({'configured': False, 'has_credentials': False})
             return info
         info.update(phone._center_phone_state(conn.company_id))
+        info['extension_rows'] = phone._center_phone_extensions(conn.company_id)
+        info['people'] = phone._center_phone_people(conn.company_id)
         return info
+
+    # ------------------------------------------------------------------
+    # Step 3: the server the handsets sign in to, and who holds each line
+    # ------------------------------------------------------------------
+    #
+    # Steps 1 and 2 connect the RECORD of a call. These connect the call
+    # itself. They are separate methods rather than more fields on
+    # `center_call_save_credentials` because they are separately useful: a
+    # clinic adds a receptionist in month three without ever touching the
+    # credentials again.
+
+    @api.model
+    def _center_call_phone(self, conn_id):
+        """The gated connection and the phone module, or a clear refusal."""
+        conn = self._center_call(conn_id)
+        phone = self._center_phone()
+        if phone is None:
+            raise UserError(_(
+                'The phone system is not installed on this system, so calls '
+                'cannot be connected here. Contact support.'))
+        return conn, phone
+
+    @api.model
+    def center_call_set_server(self, conn_id, sip_host):
+        """Save the phone server this clinic's extensions register against."""
+        conn, phone = self._center_call_phone(conn_id)
+        phone._center_phone_set_server(sip_host, company=conn.company_id)
+        self.env['care.channel.audit']._log(
+            'phone_server_set', connection=conn,
+            detail='phone server set for this clinic')
+        return self.center_call_info(conn.id)
+
+    @api.model
+    def center_call_save_extension(self, conn_id, vals):
+        """Add or update one person's extension. The password never returns."""
+        conn, phone = self._center_call_phone(conn_id)
+        number = ((vals or {}).get('number') or '').strip()
+        phone._center_phone_save_extension(vals or {}, company=conn.company_id)
+        self.env['care.channel.audit']._log(
+            'phone_extension_saved', connection=conn,
+            detail='extension %s' % (number or '?'))
+        return self.center_call_info(conn.id)
+
+    @api.model
+    def center_call_remove_extension(self, conn_id, ext_id):
+        conn, phone = self._center_call_phone(conn_id)
+        phone._center_phone_remove_extension(ext_id, company=conn.company_id)
+        self.env['care.channel.audit']._log(
+            'phone_extension_removed', connection=conn,
+            detail='extension removed')
+        return self.center_call_info(conn.id)
 
     @api.model
     def center_call_save_credentials(self, conn_id, api_key, api_secret):

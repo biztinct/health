@@ -148,6 +148,15 @@ export class ChannelCenter extends Component {
             callRelayed: false,
             callPhoneAvailable: true,
             callNotice: "",
+            // Step 3 — the answering half. `callSipTouched` stops the
+            // platform's suggestion from creeping back over a box the
+            // operator has deliberately cleared.
+            callSipHost: "",
+            callSipSuggested: "",
+            callSipTouched: false,
+            callExtensions: [],
+            callPeople: [],
+            callExtDraft: null,
             // Multi-account: which account the manage panel is on, and
             // whether its name is being edited.
             accountLabel: "",
@@ -970,6 +979,103 @@ export class ChannelCenter extends Component {
         this.state.callEventsSeen = info.events_seen || 0;
         this.state.callRelayed = !!info.relayed;
         this.state.callNotice = info.notice || "";
+        // Step 3 — answering, as opposed to recording.
+        this.state.callSipHost = info.sip_host || "";
+        this.state.callSipSuggested = info.sip_host_suggested || "";
+        this.state.callExtensions = info.extension_rows || [];
+        this.state.callPeople = info.people || [];
+        // A server box that opens empty on a platform that HAS a default is a
+        // box the operator has to be told about. Pre-fill it instead, and let
+        // them type over it — the supplier gives different customers different
+        // servers.
+        if (!this.state.callSipHost && this.state.callSipSuggested
+                && !this.state.callSipTouched) {
+            this.state.callSipHost = this.state.callSipSuggested;
+        }
+    }
+
+    onSipHostInput(ev) {
+        // Typed over, or deliberately cleared. Either way the platform's
+        // suggestion stops being written back on the next reload.
+        this.state.callSipTouched = true;
+        this.state.callSipHost = ev.target.value;
+    }
+
+    _blankExtensionDraft() {
+        return {
+            id: 0, number: "", sip_username: "", password: "",
+            user_id: false, browser_enabled: true, caller_id_did: "",
+        };
+    }
+
+    editExtension(row) {
+        // The stored password is never sent to the browser, so the box opens
+        // blank on an edit and blank means "leave it alone" (see
+        // `_center_phone_save_extension`).
+        this.state.callExtDraft = {
+            id: row.id, number: row.number || "",
+            sip_username: row.sip_username || "", password: "",
+            user_id: row.user_id || false,
+            browser_enabled: !!row.browser_enabled,
+            caller_id_did: row.caller_id_did || "",
+        };
+    }
+
+    newExtension() {
+        this.state.callExtDraft = this._blankExtensionDraft();
+    }
+
+    cancelExtension() {
+        this.state.callExtDraft = null;
+    }
+
+    async saveCallServer() {
+        await this._guarded(async () => {
+            const info = await this.orm.call(
+                MODEL, "center_call_set_server",
+                [this.state.connectionId, (this.state.callSipHost || "").trim()]);
+            this._applyCallInfo(info);
+        });
+    }
+
+    async saveExtension() {
+        const draft = this.state.callExtDraft;
+        if (!draft || !(draft.number || "").trim()) {
+            return;
+        }
+        await this._guarded(async () => {
+            try {
+                const info = await this.orm.call(
+                    MODEL, "center_call_save_extension",
+                    [this.state.connectionId, {
+                        id: draft.id || 0,
+                        number: (draft.number || "").trim(),
+                        sip_username: (draft.sip_username || "").trim(),
+                        password: draft.password || "",
+                        user_id: draft.user_id || false,
+                        browser_enabled: !!draft.browser_enabled,
+                        caller_id_did: (draft.caller_id_did || "").trim(),
+                    }]);
+                this._applyCallInfo(info);
+                this.state.callExtDraft = null;
+            } finally {
+                // Zeroed on BOTH paths, like the API secret above: a rejected
+                // save is still somebody's sign-in.
+                if (this.state.callExtDraft) {
+                    this.state.callExtDraft.password = "";
+                }
+                draft.password = "";
+            }
+        });
+    }
+
+    async removeExtension(row) {
+        await this._guarded(async () => {
+            const info = await this.orm.call(
+                MODEL, "center_call_remove_extension",
+                [this.state.connectionId, row.id]);
+            this._applyCallInfo(info);
+        });
     }
 
     async _loadCallInfo(connectionId) {

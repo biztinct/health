@@ -726,3 +726,129 @@ class TestCallCenter(ChannelSpineCase):
                      'X-Voip24h-Signature',
                      'signing secret used for this webhook'):
             self.assertNotIn(gone, arch, gone)
+
+    # ======================================================================
+    # Step 3 — the answering half: the server, and who holds each line
+    #
+    # Receiving a RECORD of a call and being able to ANSWER one are different
+    # jobs with different credentials, and the card only did the first. A
+    # clinic could finish the whole wizard, see "connected", and have no screen
+    # that ever rings.
+    # ======================================================================
+    def test_160_the_server_box_offers_the_platform_default(self):
+        if not self.has_voip:
+            self.skipTest('the phone module is not installed here')
+        self.env['ir.config_parameter'].sudo().set_param(
+            'voip24h.sip_host_default', 'pbx.example.com')
+        conn = self._center_configured()
+        info = self.Conn.center_call_info(conn.id)
+        self.assertEqual(info['sip_host_suggested'], 'pbx.example.com',
+                         'the platform default must reach the card')
+
+    def test_161_the_server_is_editable_and_validated(self):
+        if not self.has_voip:
+            self.skipTest('the phone module is not installed here')
+        conn = self._center_configured()
+
+        info = self.Conn.center_call_set_server(conn.id, '222.255.115.74')
+        self.assertEqual(info['sip_host'], '222.255.115.74')
+
+        # A different clinic, a different server: the default is a suggestion
+        # and never a lock, which is the whole point of asking on the card.
+        info = self.Conn.center_call_set_server(conn.id, 'pbx.other.vn:5060')
+        self.assertEqual(info['sip_host'], 'pbx.other.vn:5060')
+
+        for bad in ('https://pbx.example.com', 'pbx.example.com/sip',
+                    'not a host'):
+            with self.assertRaises(UserError, msg=bad):
+                self.Conn.center_call_set_server(conn.id, bad)
+
+    def test_162_a_person_can_be_given_an_extension(self):
+        if not self.has_voip:
+            self.skipTest('the phone module is not installed here')
+        conn = self._center_configured()
+        user = self.env['res.users'].sudo().search(
+            [('share', '=', False)], limit=1)
+
+        info = self.Conn.center_call_save_extension(conn.id, {
+            'number': '260',
+            # The supplier's sign-in name is NOT the extension number.
+            'sip_username': '260-abc12345@pbx',
+            'password': 'sip-secret',
+            'user_id': user.id,
+            'browser_enabled': True,
+        })
+        rows = info['extension_rows']
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]['number'], '260')
+        self.assertEqual(rows[0]['sip_username'], '260-abc12345@pbx')
+        self.assertEqual(rows[0]['user_id'], user.id)
+        self.assertTrue(rows[0]['has_password'])
+        self.assertNotIn('password', rows[0],
+                         'a stored SIP password must never come back')
+
+    def test_163_a_blank_password_keeps_the_stored_one(self):
+        if not self.has_voip:
+            self.skipTest('the phone module is not installed here')
+        conn = self._center_configured()
+        info = self.Conn.center_call_save_extension(
+            conn.id, {'number': '261', 'password': 'first-secret'})
+        ext_id = info['extension_rows'][0]['id']
+        stored = self.env['voip.extension'].sudo().browse(ext_id)
+        before = stored.sip_password_enc
+
+        # Editing the person's name must not wipe their sign-in.
+        info = self.Conn.center_call_save_extension(
+            conn.id, {'id': ext_id, 'number': '261', 'password': ''})
+        stored.invalidate_recordset()
+        self.assertTrue(info['extension_rows'][0]['has_password'])
+        self.assertEqual(stored.sip_password_enc, before,
+                         'a blank box means "leave it", never "clear it"')
+
+    def test_164_two_people_cannot_hold_the_same_extension(self):
+        if not self.has_voip:
+            self.skipTest('the phone module is not installed here')
+        conn = self._center_configured()
+        self.Conn.center_call_save_extension(conn.id, {'number': '262'})
+        with self.assertRaises(UserError):
+            self.Conn.center_call_save_extension(conn.id, {'number': '262'})
+
+    def test_165_an_extension_can_be_removed(self):
+        if not self.has_voip:
+            self.skipTest('the phone module is not installed here')
+        conn = self._center_configured()
+        info = self.Conn.center_call_save_extension(conn.id, {'number': '263'})
+        ext_id = info['extension_rows'][0]['id']
+        info = self.Conn.center_call_remove_extension(conn.id, ext_id)
+        self.assertEqual(info['extension_rows'], [])
+        self.assertFalse(
+            self.env['voip.extension'].sudo().browse(ext_id).exists())
+
+    def test_166_the_step_is_on_the_card_and_in_the_screen(self):
+        """The wizard must actually offer it, not merely support it."""
+        from odoo.addons.health_care_command_channels.services import adapters
+        steps = adapters.CallAdapter._capabilities['guide_steps']
+        self.assertIn('channel_hub.guide.call.phones', steps)
+        self.assertLess(steps.index('channel_hub.guide.call.phones'),
+                        steps.index('channel_hub.guide.call.wait'),
+                        'entering the people comes before testing the phone')
+
+        arch = self._center_source('channel_center.xml')
+        script = self._center_source('channel_center.js')
+        for needed in ('cc_call_sip', 'cc_ext_no', 'cc_ext_pw', 'cc_ext_who'):
+            self.assertIn(needed, arch, needed)
+        for needed in ('saveCallServer', 'saveExtension', 'removeExtension'):
+            self.assertIn(needed, script, needed)
+
+    def _center_source(self, filename):
+        """The card's own source. Same seam as test_155b (ledger §5.72).
+
+        A tour test would be the better proof and would SKIP on this server,
+        which has no headless browser — and a skip that reads as a pass is how
+        the one-word service bug reached every screen (ledger §5.199).
+        """
+        import os
+        base = os.path.join(os.path.dirname(os.path.dirname(__file__)),
+                            'static', 'src', 'center')
+        with open(os.path.join(base, filename), encoding='utf-8') as fh:
+            return fh.read()

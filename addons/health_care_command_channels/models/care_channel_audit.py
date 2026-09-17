@@ -61,6 +61,10 @@ KNOWN_EVENTS = {
     # the platform pushed it the shared Meta application. Every detail is a
     # short name, a channel and a count — never a page, a number or a message.
     'relay_forwarded', 'relay_failed', 'relay_routed_signin', 'relay_pushed',
+    # The answering half of the phone: the server the handsets sign in to, and
+    # who holds each line. Never the SIP password and never the sign-in name —
+    # the detail is the extension NUMBER, which is already on every call.
+    'phone_server_set', 'phone_extension_saved', 'phone_extension_removed',
 }
 
 

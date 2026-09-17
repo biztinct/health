@@ -2687,6 +2687,10 @@ class CallAdapter(_StubAdapter):
         'required_checks': ['webhook_verified', 'inbound_ok'],
         'guide_steps': ['channel_hub.guide.call.account',
                         'channel_hub.guide.call.webhook',
+                        # Steps 1 and 2 connect the RECORD of a call; this one
+                        # connects the call. It comes before the test because
+                        # the honest test of a phone is somebody picking it up.
+                        'channel_hub.guide.call.phones',
                         'channel_hub.guide.call.wait'],
     }
 
