@@ -1185,6 +1185,9 @@ class VoIP24hConfig(models.Model):
             'callback_url': config.cdr_webhook_url or '',
             'relayed': bool(self.env['ir.config_parameter'].sudo().get_param(
                 'voip24h.callback_base')),
+            # Whether call records are being taken at all. False means paused:
+            # deliveries are acknowledged and dropped, nothing is stored.
+            'receiving': bool(me.cdr_ingest_enabled or me.state_ingest_enabled),
             'registered': bool(me.subscription_active),
             'registered_url': me.subscription_url or '',
             'registered_at': me.subscription_registered_at and
@@ -1226,6 +1229,47 @@ class VoIP24hConfig(models.Model):
         config._ensure_receiver()
         config.action_register_cdr_webhook()
         return self._center_phone_state(company)
+
+    @api.model
+    def _center_phone_set_receiving(self, on, company=None):
+        """Pause or resume taking call records. Returns True if it moved.
+
+        WHAT PAUSE DOES, AND WHAT IT DELIBERATELY DOES NOT DO.
+
+        It switches the two ingest flags off. An authenticated delivery then
+        gets ``200 {"status": "ignored"}`` — acknowledged, audited, and NOT
+        stored: no event row, no call record, no call back, no notification.
+
+        It does NOT unregister the call-back with the supplier, and it does NOT
+        archive the connection:
+
+        * unregistering would mean re-registering on resume, over an API that
+          can refuse, so a pause could strand a clinic with no way back;
+        * archiving would drop the platform relay's route (it reads ACTIVE
+          configs only), and the supplier would start getting 403s at the
+          platform for a clinic that is merely paused rather than gone. A
+          polite 200-and-ignore is the right answer to a partner who is doing
+          nothing wrong.
+
+        So resume is instant and needs nothing from the supplier. The cost is
+        that records which arrive while paused are lost rather than queued —
+        which is what "paused" should mean, and is said in those words on the
+        screen.
+        """
+        config = self._center_phone_config(company)
+        if not config:
+            return False
+        me = config.sudo()
+        wanted = bool(on)
+        if me.cdr_ingest_enabled == wanted and me.state_ingest_enabled == wanted:
+            return False
+        me.write({'cdr_ingest_enabled': wanted,
+                  'state_ingest_enabled': wanted})
+        me.message_post(body=_('Taking call records was switched %s.',
+                               _('on') if wanted else _('off')))
+        _logger.info('health_voip24h: receiving switched %s for config %s',
+                     'on' if wanted else 'off', me.id)
+        return True
 
     # ==================================================================
     # Frontend-safe view of this config

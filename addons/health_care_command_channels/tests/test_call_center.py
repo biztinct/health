@@ -557,6 +557,48 @@ class TestCallCenter(ChannelSpineCase):
         # address is masked for anybody who is not a system administrator.
         self.assertIn('/voip24h/v3/cdr/', info['callback_url'])
 
+    def test_153d_pausing_the_card_really_stops_call_records(self):
+        """Pause has to reach the RECEIVER, not just our own bookkeeping.
+
+        The v3 call-back addresses authenticate and then consult the phone
+        connection's own switches — they never look at the connection state —
+        so before CC-F2 a paused Calls card went on storing every record,
+        raising call backs and notifying people.
+        """
+        if not self.has_voip:
+            self.skipTest('health_voip24h is not installed')
+        conn = self._center_configured()
+        config = self.env['voip.config'].sudo().search(
+            [('company_id', '=', conn.company_id.id)], limit=1)
+        self.assertTrue(config.cdr_ingest_enabled)
+        self.assertTrue(config.state_ingest_enabled)
+
+        # Only a working connection can be paused.
+        self._seed_checks(conn)
+        conn.sudo()._internal().write({'state': 'ready'})
+
+        self.Conn.center_pause_account(conn.id)
+        config.invalidate_recordset()
+        self.assertFalse(config.cdr_ingest_enabled,
+                         'a paused card must stop taking call records')
+        self.assertFalse(config.state_ingest_enabled)
+        # The supplier registration is KEPT, so resume needs nothing from them.
+        self.assertTrue(config.subscription_active,
+                        'pausing must not unregister the call-back address')
+        # And the config stays active, or the platform relay would drop its
+        # route and the supplier would get 403s for a clinic that is paused
+        # rather than gone.
+        self.assertTrue(config.active)
+        info = self.Conn.center_call_info(conn.id)
+        self.assertFalse(info['receiving'])
+        self.assertTrue(info['registered'])
+
+        self.Conn.center_resume_account(conn.id)
+        config.invalidate_recordset()
+        self.assertTrue(config.cdr_ingest_enabled, 'resume must restore it')
+        self.assertTrue(config.state_ingest_enabled)
+        self.assertTrue(self.Conn.center_call_info(conn.id)['receiving'])
+
     # =================================================================
     # T154 — spoof: a plain CRM user and another company's connection
     # =================================================================

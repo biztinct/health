@@ -2111,6 +2111,7 @@ class CareChannelConnectionCenter(models.Model):
             return {'connection_id': conn.id, 'state': conn.state}
         conn._transition('disabled', reason='tenant disconnect')
         self._center_pause_email(conn)
+        self._center_pause_phone(conn)
         self.env['care.channel.audit']._log('disconnect', connection=conn)
         return {'connection_id': conn.id, 'state': conn.state,
                 'message': _('Turned off.')}
@@ -2137,6 +2138,7 @@ class CareChannelConnectionCenter(models.Model):
         conn._transition('testing', reason='restore saved readiness checks')
         conn._recompute_ready()
         self._center_pause_email(conn, resume=True)
+        self._center_pause_phone(conn, resume=True)
         conn.set_settings({'paused_state': False})
         conn.sudo()._internal().write({'next_health_check_at': fields.Datetime.now()})
         self.env['care.channel.audit']._log('reconnect', connection=conn)
@@ -2160,6 +2162,35 @@ class CareChannelConnectionCenter(models.Model):
         conn.sudo()._internal().write({'active': False})
         return {'connection_id': conn.id, 'removed': True,
                 'message': _('Account removed from the list.')}
+
+    @api.model
+    def _center_pause_phone(self, conn, resume=False):
+        """Stop (or restart) taking call records behind a phone connection.
+
+        The state machine gates OUR bookkeeping, but the v3 receivers are not
+        gated by it: they authenticate the call-back address and then consult
+        the PHONE connection's own switches. So a paused Calls card went on
+        storing every call record, raising call backs and notifying people —
+        exactly the problem `_center_pause_email` exists for, one channel over.
+
+        The supplier's registration is deliberately LEFT IN PLACE, so resume is
+        instant and cannot be refused by an API. See
+        `voip.config._center_phone_set_receiving` for why that is the right
+        trade, and for what a paused connection answers the supplier.
+        """
+        if conn.channel != 'call':
+            return False
+        phone = self._center_phone()
+        if phone is None:
+            return False
+        try:
+            return phone._center_phone_set_receiving(
+                bool(resume), company=conn.company_id)
+        except Exception:  # noqa: BLE001 — pausing must never fail loudly
+            _logger.exception('care_channels: could not switch call records '
+                              '%s for connection %s',
+                              'on' if resume else 'off', conn.id)
+            return False
 
     @api.model
     def _center_pause_email(self, conn, resume=False):

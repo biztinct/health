@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Health VoIP24h Integration',
-    'version': '19.0.3.2.0',
+    'version': '19.0.3.3.0',
     'category': 'Healthcare/Telephony',
     'summary': 'Call history, live call notifications and browser calling over VoIP24h',
     'description': """
