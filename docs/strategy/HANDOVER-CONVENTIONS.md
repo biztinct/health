@@ -3214,3 +3214,31 @@ a no-op.
     hit a dead end. When a vendor document finally arrives, RE-READ EVERY
     SCREEN THAT CLAIMS TO DESCRIBE IT; the card is now pinned to the documents
     by name in `test_155b`. (CC-F2.)
+
+- **§5.206 — a call-back cannot be DELETED at VoIP24h while it is still
+    switched on.** `DELETE /v3/webhook-call-log/` answers
+    `403 "The webhook call log service is currently active. Please disable the
+    service before performing the delete function"`. No supplied document says
+    so. Found withdrawing the demo registration while moving the live
+    connection to `hhh`: the withdrawal failed, and the supplier went on
+    posting real patients' calls at demo data with nothing on screen to say so.
+    `action_delete_cdr_webhook` now posts `active=False` first and then
+    deletes; the deactivation is tolerated if it fails (an already-off
+    subscription refuses it identically). Pinned by `test_113` with a stub that
+    holds the on/off flag, so the ORDER is what fails, not an assertion.
+
+- **§5.207 — a backend `menuitem` is not a surface for this product's users,
+    and that now includes the phone.** Third time (§5.69/§5.41/§5.94): the
+    Phone app's menu was correct and unreachable, because CMS-shell users have
+    no app grid. Anything a clinic must reach needs a `cms.sidebar.item`. The
+    seed lives in `health_care_command_voip` — the bridge is the only module
+    that already knows about both the shell and the phone — which makes
+    `health_cms_sidebar` a hard dependency of it from 19.0.2.1.0.
+
+- **§5.208 — the sidebar is ungated, the models are not, so granting the
+    ROLE is part of shipping a menu block.** `ash@biztinct.com` held
+    `Phone: Manager` on `carejiox` and nothing on `hhh`, so on the database
+    that now takes the real calls every new row would have drawn and then
+    refused on click. Whenever a sidebar block is added for a group-gated
+    model, check the role on EVERY database, not on the one that was being
+    worked in.
