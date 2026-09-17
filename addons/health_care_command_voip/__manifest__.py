@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Care Command — VoIP Bridge',
-    'version': '19.0.2.0.0',
+    'version': '19.0.2.1.0',
     'category': 'Healthcare/CRM',
     'summary': 'Live VoIP call ingestion into the Care Command wall',
     'description': """
@@ -23,6 +23,12 @@ What it does:
   Care Command bug can never break a VoIP webhook (§5.55).
 - Re-runs the existing (already call-aware, idempotent) Care Command backfill
   on install so historic calls surface immediately.
+- Seeds the CMS left menu's Phone block (data/cms_sidebar_items_phone.xml).
+  The Phone app's backend menu is only reachable through the app grid, which
+  CMS-shell users do not have; this is the same argument that put Channel
+  Center and Unrouted Contacts in the sidebar. It belongs HERE rather than in
+  ``health_voip24h`` because it is the CMS shell that needs wiring to the
+  phone, and this bridge is the only module that already knows about both.
 
 The timeline + backfill in ``health_care_command`` already read
 ``voip.call.log`` defensively; this module supplies only the live create-hook.
@@ -33,8 +39,15 @@ The timeline + backfill in ``health_care_command`` already read
     'depends': [
         'health_care_command',
         'health_voip24h',
+        # The left menu the clinic actually navigates by. Hard from 2.1.0 on:
+        # the sidebar seed references health_cms_sidebar.section_crm. It is
+        # installed on every database here, so widening the auto-install
+        # condition changes nothing in practice.
+        'health_cms_sidebar',
     ],
-    'data': [],
+    'data': [
+        'data/cms_sidebar_items_phone.xml',
+    ],
     'post_init_hook': 'post_init_hook',
     'installable': True,
     # Auto-install the moment BOTH parents are present — the bridge should

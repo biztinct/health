@@ -174,3 +174,49 @@ class TestCareCommandVoipBridge(TransactionCase):
         self.assertTrue(log.exists())
         # and no conversation leaked from the failed ingest
         self.assertFalse(self._conv_for_partner(self.patient))
+
+    # ======================================================================
+    # T23 — the CMS left menu's Phone block
+    #
+    # The Phone app's backend menu is only reachable through the app grid, and
+    # the clinic's users do not have it. These rows ARE the phone, so a typo in
+    # an action xml-id is not a cosmetic defect: it is a menu row that throws
+    # when somebody clicks it mid-call. Asserted on xml-ids and structure, not
+    # on labels (ledger §5.32/§5.50).
+    # ======================================================================
+    LEAVES = (
+        ("item_phone_callbacks", "health_voip24h.action_voip_callbacks"),
+        ("item_phone_calls", "health_voip24h.action_voip_call_session"),
+        ("item_phone_records", "health_voip24h.action_voip_call_log"),
+        ("item_phone_recordings", "health_voip24h.action_voip_call_recording"),
+        ("item_phone_extensions", "health_voip24h.action_voip_extension"),
+        ("item_phone_settings", "health_voip24h.action_voip_config"),
+    )
+
+    def test_23_phone_sidebar_block_exists(self):
+        parent = self.env.ref("health_care_command_voip.item_phone")
+        self.assertTrue(parent.active)
+        self.assertFalse(parent.parent_id, "the block is a top-level accordion")
+        self.assertFalse(
+            parent.action_xmlid,
+            "a parent that navigates cannot also expand (cms_sidebar.js:124)")
+        self.assertEqual(
+            parent.section_id,
+            self.env.ref("health_cms_sidebar.section_crm"))
+
+    def test_24_phone_sidebar_leaves_open_real_actions(self):
+        parent = self.env.ref("health_care_command_voip.item_phone")
+        for item_id, action_xmlid in self.LEAVES:
+            item = self.env.ref("health_care_command_voip.%s" % item_id)
+            self.assertEqual(item.parent_id, parent, item_id)
+            self.assertEqual(item.action_xmlid, action_xmlid, item_id)
+            # The whole point: the action it names must actually exist.
+            action = self.env.ref(action_xmlid, raise_if_not_found=False)
+            self.assertTrue(action, "%s points at a missing action" % item_id)
+
+    def test_25_phone_sidebar_is_in_the_match_keys(self):
+        """Navigating to a phone screen must keep the CMS shell around."""
+        keys = self.env["cms.sidebar.item"].get_match_keys()
+        for _item_id, action_xmlid in self.LEAVES:
+            self.assertIn(action_xmlid, keys["xmlids"], action_xmlid)
+        self.assertIn("voip.call.session", keys["models"])

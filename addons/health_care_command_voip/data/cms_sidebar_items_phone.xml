@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The phone's REAL entry point.
+
+     Same reasoning as cms_sidebar_items_channel_center.xml and
+     cms_sidebar_items_contact_capture.xml (ledger §5.69/§5.41/§5.94): a
+     backend `menuitem` is not a reachable surface for CMS-shell users. The
+     Phone app's menu exists and is correct, but it lives behind the app grid,
+     and the owner reports that no user of theirs can get to the grid at all.
+     A phone nobody can find is a phone nobody answers.
+
+     Shape: ONE accordion ("Phone") with six leaves, mirroring the Staff block
+     in cms_sidebar_items_ops.xml. The parent carries no action on purpose —
+     parenting leaves under an item that also navigates turns that item into a
+     non-navigating accordion (cms_sidebar.js:124); that regression already hit
+     Care Command once.
+
+     Placed at 14: immediately after Unrouted Contacts (13) and before Contacts
+     (20), keeping the whole "somebody is trying to reach us" group together.
+
+     Ungated (no biz_role_ids), matching every other item in the product. The
+     phone models are themselves group-gated (health_voip24h/security), so a
+     colleague without a Phone role sees the rows and is refused on click. That
+     is the existing convention rather than a new decision here; the fix is to
+     grant the Phone roles, not to invent a second gating scheme.
+-->
+<odoo>
+
+    <record id="item_phone" model="cms.sidebar.item">
+        <field name="name">Phone</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <!-- Explicitly FALSE, not merely absent: an XML data update only
+             writes the fields it names. -->
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">14</field>
+        <field name="icon">fa fa-headphones</field>
+        <field name="action_xmlid"></field>
+        <field name="action_tag"></field>
+    </record>
+
+    <!-- Work first: the only list in here anybody has to ACT on, which is why
+         the Phone app's own menu puts it above Calls too. -->
+    <record id="item_phone_callbacks" model="cms.sidebar.item">
+        <field name="name">Call backs</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="parent_id" ref="item_phone"/>
+        <field name="sequence">10</field>
+        <field name="icon">fa fa-reply</field>
+        <field name="action_xmlid">health_voip24h.action_voip_callbacks</field>
+        <field name="match_action_xmlids">health_voip24h.action_voip_callbacks</field>
+    </record>
+
+    <record id="item_phone_calls" model="cms.sidebar.item">
+        <field name="name">Calls</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="parent_id" ref="item_phone"/>
+        <field name="sequence">20</field>
+        <field name="icon">fa fa-phone</field>
+        <field name="action_xmlid">health_voip24h.action_voip_call_session</field>
+        <field name="match_action_xmlids">health_voip24h.action_voip_call_session</field>
+        <field name="match_models">voip.call.session</field>
+    </record>
+
+    <record id="item_phone_records" model="cms.sidebar.item">
+        <field name="name">Records from the phone system</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="parent_id" ref="item_phone"/>
+        <field name="sequence">30</field>
+        <field name="icon">fa fa-list</field>
+        <field name="action_xmlid">health_voip24h.action_voip_call_log</field>
+        <field name="match_action_xmlids">health_voip24h.action_voip_call_log,health_voip24h.action_voip_call_log_missed</field>
+        <field name="match_models">voip.call.log</field>
+    </record>
+
+    <record id="item_phone_recordings" model="cms.sidebar.item">
+        <field name="name">Recordings</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="parent_id" ref="item_phone"/>
+        <field name="sequence">40</field>
+        <field name="icon">fa fa-microphone</field>
+        <field name="action_xmlid">health_voip24h.action_voip_call_recording</field>
+        <field name="match_action_xmlids">health_voip24h.action_voip_call_recording</field>
+        <field name="match_models">voip.call.recording</field>
+    </record>
+
+    <record id="item_phone_extensions" model="cms.sidebar.item">
+        <field name="name">Extensions</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="parent_id" ref="item_phone"/>
+        <field name="sequence">50</field>
+        <field name="icon">fa fa-id-badge</field>
+        <field name="action_xmlid">health_voip24h.action_voip_extension</field>
+        <field name="match_action_xmlids">health_voip24h.action_voip_extension</field>
+        <field name="match_models">voip.extension</field>
+    </record>
+
+    <record id="item_phone_settings" model="cms.sidebar.item">
+        <field name="name">Phone system</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="parent_id" ref="item_phone"/>
+        <field name="sequence">60</field>
+        <field name="icon">fa fa-sliders</field>
+        <field name="action_xmlid">health_voip24h.action_voip_config</field>
+        <field name="match_action_xmlids">health_voip24h.action_voip_config</field>
+        <field name="match_models">voip.config</field>
+    </record>
+
+</odoo>
