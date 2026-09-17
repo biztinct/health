@@ -208,3 +208,23 @@ lost. Ledger §5.197.
   the platform's.
 * `biz_platform_voip_relay` has no `i18n/vi.po` yet. Its screens are
   administrator-only and English-only by design for now.
+
+## 9. Deliberately NOT done — catchment area on call records
+
+**Owner decision, 2026-09-17. Do not implement this without asking again.**
+
+Call records are scoped by company and by whose extension answered
+(`rule_voip_call_session_own` / `_supervisor` in
+`health_voip24h/security/voip24h_security.xml`). They are **not** scoped by
+catchment area, and there is no catchment field on any phone model.
+
+This was raised as an inconsistency, because a conversation created FROM a call
+*is* catchment-scoped (`care.conversation`), so a supervisor can see a raw call
+record for an area whose conversation they cannot open.
+
+The owner's ruling is to leave it: **the two clinics hold two separate VoIP24h
+accounts**, so the traffic is already separated upstream and an area filter
+would be a second lock on the same door. Revisit only if one account ever
+serves more than one area — which is also the case the relay's `hotline`
+routing exists for.
+
