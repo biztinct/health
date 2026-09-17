@@ -3,6 +3,10 @@
 import { registry } from "@web/core/registry";
 import { reactive } from "@odoo/owl";
 import { _t } from "@web/core/l10n/translation";
+// `rpc` is a plain FUNCTION on this version, not a service. Naming it as a
+// dependency makes this service fail to start, and one service that cannot
+// start takes the WHOLE application down — every screen, not only the phone.
+import { rpc } from "@web/core/network/rpc";
 
 /**
  * The phone runtime. One instance per application shell, mounted as a service
@@ -36,7 +40,7 @@ export class Voip24hPhone {
     constructor(env, services) {
         this.env = env;
         this.orm = services.orm;
-        this.rpc = services.rpc;
+        this.rpc = rpc;
         this.notification = services.notification;
         this.busService = services.bus_service;
         this.action = services.action;
@@ -721,7 +725,7 @@ export class Voip24hPhone {
 }
 
 export const voip24hPhoneService = {
-    dependencies: ["orm", "rpc", "notification", "bus_service", "action"],
+    dependencies: ["orm", "notification", "bus_service", "action"],
     start(env, services) {
         const phone = new Voip24hPhone(env, services);
         // Started lazily and quietly: a user with no extension and no alerts
