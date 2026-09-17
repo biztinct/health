@@ -758,11 +758,45 @@ class VoIP24hConfig(models.Model):
             'confirm it once a real call arrives.'))
 
     def action_delete_cdr_webhook(self):
+        """Withdraw the completed-call callback (V2).
+
+        TWO CALLS, NOT ONE, AND THE FIRST IS NOT OPTIONAL. The supplier
+        refuses a DELETE while the subscription is switched on:
+
+            403 "The webhook call log service is currently active. Please
+                 disable the service before performing the delete function"
+
+        No supplied document says so — it was found on 2026-09-17 moving the
+        live connection off the demo database, where the withdrawal failed and
+        left the supplier still posting to a clinic that had moved. So the
+        deactivation is part of the operation rather than a note in a runbook:
+        a half-withdrawn callback is precisely the state that sends a real
+        patient's call to the wrong database.
+
+        The deactivation is a `register` with ``active=False`` — the same
+        endpoint, which is what the supplier's own contract offers. It is
+        tolerated if it fails, because a subscription that is ALREADY off
+        refuses it the same way, and the DELETE below is the real test.
+        """
         self.ensure_one()
         me = self.sudo()
         if not me.subscription_url:
             raise UserError(_('No call-back address is registered.'))
-        self._get_api_client().delete_call_log_webhook(me.subscription_url)
+        auth_value = ''
+        if me.callback_auth_profile == 'url_token_param_auth':
+            auth_value = me._voip_secret_read('callback_param_auth') or ''
+        api = self._get_api_client()
+        try:
+            api.register_call_log_webhook(
+                url=me.subscription_url,
+                method=me.subscription_method or 'POST',
+                active=False,
+                auth_token=auth_value,
+            )
+        except Exception as exc:  # noqa: BLE001 — the DELETE is the real test
+            _logger.info('VoIP24h: could not switch the callback off before '
+                         'removing it (config %s): %s', me.id, exc)
+        api.delete_call_log_webhook(me.subscription_url)
         me.write({'subscription_active': False})
         me.message_post(body=_('The completed-call call-back was removed.'))
         return self._notify(_('Call-back removed'), _(

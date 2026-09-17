@@ -1008,3 +1008,75 @@ class TestLiveAuthContract(VoipCommon):
         self.assertTrue(raised)
         self.config.invalidate_recordset()
         self.assertEqual(self.config.state, 'error')
+
+
+@tagged('post_install', '-at_install')
+class TestLiveWebhookWithdrawal(VoipCommon):
+    """The supplier will not DELETE a callback that is still switched on.
+
+        403 "The webhook call log service is currently active. Please disable
+             the service before performing the delete function"
+
+    Found live on 2026-09-17 withdrawing the demo registration while moving the
+    connection to the customer database: the removal failed and the supplier
+    went on posting real calls at demo data. The deactivation is therefore part
+    of the removal, and this pins the ORDER — deactivate, then delete.
+    """
+
+    def _armed_config(self):
+        cfg = self.config.sudo()
+        cfg.write({'api_key': 'k', 'api_secret': 's'})
+        cfg._ensure_receiver()
+        cfg.write({'subscription_url': cfg.cdr_webhook_url,
+                   'subscription_active': True})
+        return cfg
+
+    def test_113_removal_switches_the_callback_off_first(self):
+        from ..services.voip24h_api import VoIP24hAPI
+        cfg = self._armed_config()
+        seen = []
+
+        # A stub that behaves the way the supplier actually behaved: it holds
+        # an on/off flag and refuses a DELETE while that flag is on. Get the
+        # order wrong and this fails on the refusal, not on an assertion.
+        supplier = {'active': True}
+
+        def _fake(api_self, method, path, **kwargs):
+            payload = kwargs.get('payload') or {}
+            seen.append((method, payload.get('active')))
+            if method == 'POST':
+                supplier['active'] = bool(payload.get('active'))
+                return {'status': 200, 'message': 'Success'}
+            if supplier['active']:
+                return {'status': 403, 'message': 'The webhook call log '
+                        'service is currently active. Please disable the '
+                        'service before performing the delete function'}
+            return {'status': 200, 'message': 'Success'}
+
+        with patch.object(VoIP24hAPI, '_request', _fake):
+            cfg.action_delete_cdr_webhook()
+
+        self.assertEqual(seen[0][0], 'POST', 'the switch-off must come first')
+        self.assertIs(seen[0][1], False, 'and it must switch it OFF')
+        self.assertEqual(seen[1][0], 'DELETE', 'then the removal')
+        cfg.invalidate_recordset()
+        self.assertFalse(cfg.subscription_active)
+
+    def test_114_a_refused_switch_off_does_not_stop_the_removal(self):
+        """An already-off subscription refuses the deactivation too."""
+        from ..services.voip24h_api import VoIP24hAPI, VoIP24hError
+        cfg = self._armed_config()
+        seen = []
+
+        def _fake(api_self, method, path, **kwargs):
+            seen.append(method)
+            if method == 'POST':
+                raise VoIP24hError('already off')
+            return {'status': 200, 'message': 'Success'}
+
+        with patch.object(VoIP24hAPI, '_request', _fake):
+            cfg.action_delete_cdr_webhook()
+
+        self.assertEqual(seen, ['POST', 'DELETE'])
+        cfg.invalidate_recordset()
+        self.assertFalse(cfg.subscription_active)
