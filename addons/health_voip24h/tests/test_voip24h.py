@@ -11,6 +11,7 @@ a real handset.
 
 import json
 from datetime import datetime, timedelta
+from unittest.mock import patch
 
 from odoo import fields
 from odoo.exceptions import AccessError, UserError
@@ -937,3 +938,73 @@ class TestFinalisation(VoipCommon):
         self.assertEqual(session.outcome, 'unknown')
         self.assertEqual(session.data_quality_state, 'incomplete')
         self.assertNotEqual(session.outcome, 'answered')
+
+
+@tagged('post_install', '-at_install')
+class TestLiveAuthContract(VoipCommon):
+    """G01 — the shape the LIVE service really answers with.
+
+    Captured from `https://api.voip24h.vn/v3/authentication` on 2026-09-17 and
+    pinned here, because it differs from `Authorization.docx` in three places
+    and the document's version made this module refuse a SUCCESSFUL login:
+
+        document : status 1000, data.expried,  data.isLonglive
+        live     : status  200, data.expired,  data.isLongLive
+
+    An operator hit this with real credentials and got nothing but a screen
+    message. Both shapes are accepted now; these tests fail if either is
+    dropped.
+    """
+
+    def _auth_with(self, body):
+        from ..services.voip24h_api import VoIP24hAPI
+        self.config.sudo().write({'api_key': 'k', 'api_secret': 's'})
+
+        def _fake(api_self, method, path, **kwargs):
+            self.assertIn('authentication', path)
+            return body
+
+        with patch.object(VoIP24hAPI, '_request', _fake):
+            return VoIP24hAPI(self.config.sudo()).authenticate()
+
+    def test_110_the_live_success_shape_is_accepted(self):
+        """status 200, `expired`, `isLongLive` — what they actually send."""
+        self._auth_with({
+            'message': 'Success', 'status': 200,
+            'data': {'token': 'live-token',
+                     'createAt': '2026-09-17 10:39:53',
+                     'expired': '2026-09-18 10:39:53',
+                     'isLongLive': False}})
+        self.config.invalidate_recordset()
+        self.assertEqual(self.config.state, 'connected',
+                         'a live-shaped success must not read as a failure')
+        self.assertEqual(self.config.token_expiry_quality, 'ok',
+                         '`expired` must be read, not just `expried`')
+        self.assertTrue(self.config.token_expires_at)
+
+    def test_111_the_documented_success_shape_still_works(self):
+        """status 1000, `expried`, `isLonglive` — what they published."""
+        self._auth_with({
+            'message': 'Success', 'status': 1000,
+            'data': {'token': 'doc-token',
+                     'createAt': '2026-09-17 10:39:53',
+                     'expried': '2026-09-24 10:39:53',
+                     'isLonglive': True}})
+        self.config.invalidate_recordset()
+        self.assertEqual(self.config.state, 'connected')
+        self.assertEqual(self.config.token_expiry_quality, 'ok')
+        self.assertTrue(self.config.token_longlive,
+                        '`isLonglive` must still be read')
+
+    def test_112_an_unknown_status_is_still_a_refusal(self):
+        """Accepting two evidenced values is not accepting anything."""
+        from ..services.voip24h_api import VoIP24hError
+        raised = False
+        try:
+            self._auth_with({'message': 'Nope', 'status': 4321,
+                             'data': {'token': 'x'}})
+        except (VoIP24hError, UserError):
+            raised = True
+        self.assertTrue(raised)
+        self.config.invalidate_recordset()
+        self.assertEqual(self.config.state, 'error')

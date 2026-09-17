@@ -17,8 +17,12 @@ Vendor contracts implemented here
 
 V1  ``POST https://api.voip24h.vn/v3/authentication``
     body ``{"apiKey", "apiSecret", "isLonglive"}``
-    success body ``{"message": "Success", "status": 1000, "data": {
+    documented success ``{"message": "Success", "status": 1000, "data": {
         "token", "createAt", "expried", "isLonglive"}}``
+    OBSERVED success, 2026-09-17 ``{"message": "Success", "status": 200,
+        "data": {"token", "createAt", "expired", "isLongLive"}}``
+    An unknown key answers HTTP 401 ``{"status": 401,
+        "message": "Account does not exist"}``.
 
 V2  ``POST https://api.voip24h.vn/v3/webhook-call-log/``   (trailing slash!)
     ``DELETE https://api.voip24h.vn/v3/webhook-call-log/`` (JSON body ``url``)
@@ -34,9 +38,15 @@ Known contradictions, and how they are handled rather than papered over:
   request while its cURL sample sends only ``Content-Type``. Bootstrap here
   sends no Authorization header. There is no such thing as a bootstrap token
   and inventing one would be a fiction, not a fallback.
-* The vendor spells the expiry field ``expried``. The parser preserves that
-  spelling and reads ``expires``/``expiry`` only as additional candidates.
-* ``expried`` carries no timezone. It is read in the config's declared
+* **The live service does not match the document, and the document lost.**
+  Captured 2026-09-17: success is ``status: 200``, not ``1000``; the expiry is
+  ``expired``, not ``expried``; the flag is ``isLongLive``, not ``isLonglive``.
+  Built from the document alone this module REFUSED a successful login. Both
+  status values and every spelling are accepted now (``AUTH_OK_STATUSES``,
+  ``AUTH_EXPIRY_KEYS``, ``AUTH_LONGLIVE_KEYS``) — the document is what the
+  supplier may go back to, the capture is what works today, and neither is
+  guessed.
+* The expiry carries no timezone. It is read in the config's declared
   provider timezone (``Asia/Ho_Chi_Minh`` for the Vietnamese pilot) and stored
   naive UTC, with the profile used recorded alongside it. A missing or
   unparsable expiry produces a VISIBLE degraded state — never an assumed
@@ -66,10 +76,31 @@ ALLOWED_API_HOSTS = ('api.voip24h.vn',)
 
 DEFAULT_API_BASE_URL = 'https://api.voip24h.vn/v3'
 
-# V1/V2 documented body success values. HTTP 200 with one of these absent is a
+# V1/V2 body success values. HTTP 200 with one of these absent is a
 # provider-level FAILURE, not a success (acceptance A02).
+#
+# GATE G01 CLOSED 2026-09-17 BY CAPTURING THE LIVE SERVICE, and it does not
+# match the document. `Authorization.docx` says a successful authentication
+# answers `status: 1000`. The live service answers `status: 200`:
+#
+#     {"message":"Success","status":200,
+#      "data":{"token":"…","createAt":"2026-09-17 10:39:53",
+#              "expired":"2026-09-18 10:39:53","isLongLive":false}}
+#
+# Built from the document alone, this module refused a SUCCESSFUL login. Both
+# values are accepted now — 1000 because the supplier published it, 200 because
+# it is what they actually send. Neither is a guess; both are evidenced.
 AUTH_OK_STATUS = 1000
+AUTH_OK_STATUSES = (1000, 200)
 WEBHOOK_OK_STATUS = 200
+
+# The same capture showed two field names spelled differently on the wire than
+# in the document. Read every spelling rather than picking a side: the document
+# is what the supplier may go back to, the capture is what works today.
+#   expiry   — documented `expried` (sic), live `expired`
+#   longlive — documented `isLonglive`, live `isLongLive`
+AUTH_EXPIRY_KEYS = ('expired', 'expried', 'expires', 'expiry')
+AUTH_LONGLIVE_KEYS = ('isLongLive', 'isLonglive', 'islonglive')
 
 CONNECT_TIMEOUT = 5.0
 READ_TIMEOUT = 15.0
@@ -83,6 +114,21 @@ class VoIP24hError(UserError):
     gets a class of failure and a diagnostic code, and the full detail goes to
     the log at debug level with the credentials already stripped.
     """
+
+
+def _first(body, keys):
+    """The first of ``keys`` the provider actually sent, or ''.
+
+    The supplier spells two response fields differently in their document and
+    on the wire (`expried`/`expired`, `isLonglive`/`isLongLive`). Reading every
+    spelling costs nothing and means a correction on either side — theirs or
+    the document's — does not silently stop the token being understood.
+    """
+    for key in keys:
+        value = (body or {}).get(key)
+        if value not in (None, ''):
+            return value
+    return ''
 
 
 def _sanitise(text, limit=200):
@@ -203,6 +249,14 @@ class VoIP24hAPI:
                 'The phone system sent a reply this server could not read.'))
 
         if response.status_code >= 400:
+            # LOGGED, because the alternative is what happened on 2026-09-17:
+            # an operator saw "Account does not exist" on screen and the server
+            # log held nothing at all to tell them whether the credential was
+            # wrong, the endpoint was wrong, or we were sending the wrong shape.
+            # The message is sanitised and the credentials never appear.
+            _logger.warning('VoIP24h refused %s %s: HTTP %s %r',
+                            method, path, response.status_code,
+                            _sanitise(data.get('message')))
             raise VoIP24hError(_(
                 'The phone system refused the request (%(code)s): %(msg)s',
                 code=response.status_code,
@@ -259,10 +313,13 @@ class VoIP24hAPI:
                              with_auth=False, allow_reauth=False)
 
         status = data.get('status')
-        if status != AUTH_OK_STATUS:
+        if status not in AUTH_OK_STATUSES:
             message = _sanitise(data.get('message'))
             self.config._note_auth_failure(
                 'status_%s' % status, message)
+            _logger.warning('VoIP24h authentication refused for config %s: '
+                            'body status %r, message %r', self.config.id,
+                            status, message)
             raise VoIP24hError(_(
                 'The phone system did not accept these credentials '
                 '(%(code)s). %(msg)s', code=status, msg=message))
@@ -276,13 +333,13 @@ class VoIP24hAPI:
                 'access token.'))
 
         expires_at, expiry_quality = self.config._parse_provider_expiry(
-            body.get('expried') or body.get('expires') or body.get('expiry'))
+            _first(body, AUTH_EXPIRY_KEYS))
 
         self.config._store_token(
             token,
             expires_at=expires_at,
             expiry_quality=expiry_quality,
-            longlive=bool(body.get('isLonglive')),
+            longlive=bool(_first(body, AUTH_LONGLIVE_KEYS)),
             created_at_raw=body.get('createAt') or '',
         )
         _logger.info('VoIP24h authentication succeeded for config %s '
