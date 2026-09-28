@@ -91,8 +91,10 @@ scroll instead of reducing body text to unreadable slide-scale sizes.
 - Facebook is sourced from the client's membership form:
   `https://www.facebook.com/TaupoHospitalHealthSociety`.
 - The constitution was not supplied. The deck's Givealittle URL is its account
-  homepage, not a confirmed Society donation page. These two links must be
-  configured before the production import can commit.
+  homepage, not a confirmed Society donation page. A final import requires both
+  links. The user has requested a live review deployment with these outstanding;
+  `THHS_CLIENT_REVIEW=1` explicitly permits Contact Us as their temporary
+  destination and records the pending links in configuration.
 - Aptos is specified using local font sources with Calibri/Arial fallbacks.
   This does not guarantee Aptos on devices without it. Supply licensed webfont
   files or agree the fallback before final sign-off. No Office font files are
@@ -126,7 +128,8 @@ of this entire module, preserving other repository changes.
 5. Deploy the complete module, upgrade `website_bilingual_menu` with
    `--stop-after-init --no-http`, and restart `odoo-server`.
 6. Run `scripts/apply_client_refresh.py` in Odoo shell with
-   `THHS_CLIENT_APPLY=1`, without dry-run variables. The importer will refuse
+   `THHS_CLIENT_APPLY=1`, without dry-run variables. For the user-authorized live
+   review, also set `THHS_CLIENT_REVIEW=1`; otherwise the importer will refuse
    to commit while either required link is missing. It is an explicit content
    replacement, never an automatic module-upgrade hook; do not rerun it after
    client edits without reconciling those edits first.
@@ -136,6 +139,6 @@ of this entire module, preserving other repository changes.
 
 Preparation checks passed on 28 September 2026: native server Sass compiler;
 local content/XML/checksum validation; local Chrome desktop/mobile previews;
-and a full Odoo importer/snippet dry run, rolled back successfully. Production
-publication and the deployed Chrome/editor checks remain pending the missing
-inputs above.
+and a full Odoo importer/snippet dry run, rolled back successfully. The live
+review deployment uses the local Aptos stack and temporary Contact Us
+destinations. Missing final inputs do not block this requested review.

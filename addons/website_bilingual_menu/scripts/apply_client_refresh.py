@@ -20,6 +20,7 @@ if env.cr.dbname != 'thhs':
     raise RuntimeError('This client import is scoped to database thhs.')
 
 dryrun = os.environ.get('THHS_CLIENT_DRYRUN') == '1'
+review = os.environ.get('THHS_CLIENT_REVIEW') == '1'
 module = Path(os.environ.get('THHS_CLIENT_MODULE') or get_module_path('website_bilingual_menu'))
 payload = json.loads((module/'data/client_refresh_2026.json').read_text())
 website = env['website'].browse(1).exists()
@@ -45,10 +46,11 @@ params = env['ir.config_parameter'].sudo()
 links = {key:params.get_param('thhs.client_2026.'+key,'') for key in ['constitution','facebook','givealittle']}
 links['facebook'] = links['facebook'] or 'https://www.facebook.com/TaupoHospitalHealthSociety'
 missing = [key for key,value in links.items() if not value]
-if missing and not dryrun:
+if missing and not (dryrun or review):
     raise RuntimeError('Missing approved link configuration: '+', '.join(missing))
-if dryrun:
+if dryrun or review:
     links = {key:value or '/contactus' for key,value in links.items()}
+if dryrun:
     from odoo.tools.convert import convert_xml_import
     with (module/'views/client_snippets.xml').open('rb') as source:
         convert_xml_import(env,'website_bilingual_menu',source,{},mode='update',noupdate=False)
@@ -90,6 +92,8 @@ for index,(name,children) in enumerate(payload['menus']):
         menu.unlink()
 website.write({'social_facebook':links['facebook']})
 params.set_param('thhs.client_2026.imported','2026-09-28')
+params.set_param('thhs.client_2026.pending_links', ','.join(missing))
+params.set_param('thhs.client_2026.review', '1' if review else '0')
 if dryrun:
     env.flush_all()
     env.cr.rollback()
