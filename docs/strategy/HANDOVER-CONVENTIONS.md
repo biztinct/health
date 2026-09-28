@@ -3242,3 +3242,64 @@ a no-op.
     refused on click. Whenever a sidebar block is added for a group-gated
     model, check the role on EVERY database, not on the one that was being
     worked in.
+
+- **§5.209 — `biz_access`'s end-of-day job comes back ON after every `-u` of
+    a clone.** `data/ir_cron.xml` is not `noupdate`, so each upgrade rewrites
+    `active` from the file. H78 says "switch the clone's jobs off after the
+    upgrade"; on this module it is after EVERY upgrade, including each test
+    run with `-u` — the AR-1 clone had it back on after three separate runs.
+    Put `UPDATE ir_cron SET active=false WHERE active` at the end of the test
+    script itself, not in your memory. (Access AR-1.)
+- **§5.210 — `sudo()` keeps the uid, so "who is asking" is `env.uid`, never
+    `env.su`.** Half the callers of the access facade arrive through
+    `.sudo()` (the new-person form, the job on a staff record, provisioning).
+    A rule about the ACTOR ("not to yourself", "only its holders may give it")
+    that exempted `env.su` would exempt every one of them — an Admin could
+    make somebody Owner through the new-person form. The exemption is the
+    superuser uid itself or `base.group_system`; an explicit context key
+    (`biz_access_system_apply`) is honoured only alongside `su`/system and is
+    REFUSED, not ignored, for anybody else. (Access AR-1.)
+- **§5.211 — the hand-over table's "two different people" rule also covers
+    the roles board's own audit rows.** A grant is a `biz.access.delegation`
+    with `origin='board'`, and `_check_two_people` refuses delegator ==
+    delegate on every row. So a self-grant was already impossible by accident
+    — and the one legitimate case (the system giving a role to the account it
+    runs as) cannot be written with the actor as the giver. The audit row
+    names the system instead (`_audit_giver`). (Access AR-1.)
+- **§5.212 — a transient wizard with no access line can be opened by anyone
+    and saved by nobody but the superuser, and a test that uses `.sudo()`
+    never notices.** "Change their job" on a person's passport had shipped
+    that way: the button drew, the dialog opened, Save answered "No group
+    currently allows this operation". Found in the browser, not by the suite,
+    because the suite created the wizard under sudo. Every transient wizard
+    gets an ACL row (`base.group_user` + a manage check in the action, the
+    new-person form's shape), and its test creates it `with_user(...)`
+    WITHOUT sudo. (Access AR-1.)
+- **§5.213 — a new Boolean column is NULL on every existing row.** The ORM
+    reads NULL as False and `('guarded', '=', False)` matches it, so the
+    screens are right; raw SQL `WHERE NOT guarded` matches NOTHING on those
+    rows. In a `psql` check or a migration, write `COALESCE(guarded, false)`.
+    (Access AR-1.)
+- **§5.214 — a "holders only" flag is a two-step detour unless the flag and
+    the thing it guards are protected too.** Untick the guard, then give the
+    role; or add an ability to the guarded role from the ABILITY's side. Both
+    are refused for a non-holder (`biz.access.role._check_may_change_guarded`,
+    `biz.access.ability.write`). What the flag cannot see is a DIFFERENT role
+    that carries most of the same permissions: on the master "Operations
+    Manager" carries "Healthcare: Owner" and is not guarded — an owner
+    decision, not a code one. (Access AR-1.)
+- **§5.215 — the chrome-devtools tools need a Chrome started for them.** With
+    no browser listening on 9222 every call fails "Could not connect to
+    Chrome". Start one with `--remote-debugging-port=9222
+    --user-data-dir=<scratch dir>` (a separate profile, so nothing of the
+    user's is touched), tunnel the clone's port, and sign in with a `fetch`
+    to `/web/session/authenticate` from the page. (Access AR-1.)
+- **§5.216 — a browser tab left open on the clone's port keeps a test run
+    alive after its last test.** Browser QA and the suite share the spare
+    port (8199). With the QA tab still open, the next `--stop-after-init`
+    test run finished its 789 tests at 17:02 and then sat serving that tab's
+    websocket and `/biz_tenancy/state` polls for seventeen minutes; it exited
+    the moment the tab was navigated away. H77's outage in miniature — on a
+    clone it only wastes time, on the live port it is the outage. Close (or
+    `about:blank`) every QA tab before starting a run, or give QA and tests
+    different ports. (Access AR-1.)
