@@ -72,7 +72,7 @@ class ResUsers(models.Model):
         going rather than the one that arrived.
         """
         if 'job_role_id' in vals:
-            self._check_may_set_job()
+            self._check_may_set_job(vals.get('job_role_id'))
             before = {user.id: user.job_role_id for user in self}
             result = super().write(vals)
             self._apply_job_role(before)
@@ -88,17 +88,29 @@ class ResUsers(models.Model):
                                for user in users})
         return users
 
-    def _check_may_set_job(self):
+    def _check_may_set_job(self, role_id=None):
         """Who may say what somebody's job is.
 
         THE SERVER SAYS NO, NOT THE FORM. The field is on a staff record that
         plenty of people can edit, and hiding it from them would leave the
         write open to anything that is not the form. Refused in plain words,
         naming the screen where the same thing is done properly.
+
+        AND THE ROLE THE JOB GIVES IS CHECKED HERE, BEFORE THE WRITE. Setting a
+        job grants its role, and that grant's refusals ("not to yourself",
+        "only its holders may give it") are swallowed on the way through —
+        they mean "already true" there. So they are asked first, where a no is
+        still a no.
         """
         if self.env.su or self.env.is_superuser():
             return
         if self.env['biz.access'].can_manage():
+            if role_id:
+                role = self.env['biz.access.role'].sudo().browse(
+                    int(role_id)).exists()
+                for user in self:
+                    if role and user.job_role_id != role:
+                        self.env['biz.access']._assert_may_give(role, user)
             return
         raise AccessError(_(
             "Saying what somebody's job is also gives them that role, so it "

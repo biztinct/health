@@ -31,9 +31,10 @@ module cannot afford to lose be walked around by one level of indirection.
 import logging
 
 from odoo import _, api, fields, models
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 
-from .access_common import default_area, forbidden_in_closure, profile_areas
+from .access_common import (actor_exempt, default_area, forbidden_in_closure,
+                            holds_all, profile_areas)
 
 _logger = logging.getLogger(__name__)
 
@@ -109,6 +110,35 @@ class BizAccessAbility(models.Model):
                     bad=', '.join(
                         '"%s"' % (g.display_name or g.name or '')
                         for g in bad)))
+
+    # --------------------------------------------- the guarded roles, again
+    def write(self, vals):
+        """A guarded role cannot be widened from the ability's side either.
+
+        "Only people who hold it may give it" is kept on the role; an ability
+        that is part of a guarded role is the same role reached from the other
+        end. Changing what such an ability carries, or adding an ability to (or
+        taking one off) a guarded role, needs the person doing it to hold that
+        role. Checked AFTER the write so the list of roles it now belongs to is
+        the real one — a refusal rolls the whole write back.
+        """
+        watch = ('group_ids', 'profile_ids', 'active')
+        if actor_exempt(self.env) or not any(k in vals for k in watch):
+            return super().write(vals)
+        before = self.sudo().with_context(active_test=False).profile_ids
+        res = super().write(vals)
+        after = self.sudo().with_context(active_test=False).profile_ids
+        if 'group_ids' in vals or 'active' in vals:
+            touched = before | after
+        else:
+            touched = (before - after) | (after - before)
+        actor = self.env.user
+        for role in touched.filtered('guarded'):
+            if not holds_all(actor, role.group_ids):
+                raise UserError(_(
+                    "Only somebody who holds \"%s\" can change what it is "
+                    "made of.", role.name or ''))
+        return res
 
     # ------------------------------------------------------------------ lookup
     @api.model

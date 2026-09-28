@@ -42,7 +42,7 @@ from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tools import format_date
 
 from .access_common import (DELEGATION_KINDS, DELEGATION_STATES, counted, flag,
-                            forbidden_in_closure, param_int)
+                            forbidden_in_closure, param_int, user_can_manage)
 
 _logger = logging.getLogger(__name__)
 
@@ -111,6 +111,14 @@ class BizAccessDelegation(models.Model):
         'res.company', string='Company', index=True,
         default=lambda self: self.env.company)
 
+    #: WHO PRESSED THE BUTTON, WHEN IT WAS NOT THE LENDER. A manager can start a
+    #: hand-over on behalf of somebody who is already away; the record then
+    #: says "lent by Lan" about something Lan never did, and the card has to
+    #: say who did. Worked out from `create_uid` — the one column that already
+    #: records it — rather than stored a second time.
+    started_by_note = fields.Char(
+        string='Started by', compute='_compute_started_by_note')
+
     # ---------------------------------------------------------------- computes
     @api.depends('delegator_user_id', 'delegate_user_id', 'date_start')
     def _compute_name(self):
@@ -124,6 +132,17 @@ class BizAccessDelegation(models.Model):
     def _compute_display_name(self):
         for rec in self:
             rec.display_name = rec.name or _('Delegation')
+
+    @api.depends('create_uid', 'delegator_user_id', 'origin')
+    def _compute_started_by_note(self):
+        for rec in self:
+            starter = rec.sudo().create_uid
+            lender = rec.sudo().delegator_user_id
+            if (rec.origin == 'delegation' and starter and lender
+                    and starter != lender):
+                rec.started_by_note = _("Started by %s", starter.name or '')
+            else:
+                rec.started_by_note = ''
 
     # ------------------------------------------------------------------- rails
     @api.constrains('kind', 'date_start', 'date_end')
@@ -454,16 +473,21 @@ class BizAccessDelegation(models.Model):
         ELSE'S access unless they run the access board."""
         if delegator == self.env.user:
             return
-        if self.env.user.has_group('base.group_system'):
+        # THE SAME QUESTION THE BOARD'S OWN GATE ASKS (`user_can_manage`), so
+        # an application's administrator tier registered there is honoured
+        # here too. Naming one group by hand was how the board came to offer
+        # "hand over on their behalf" to people this line then refused.
+        if user_can_manage(self.env.user):
             return
-        for xmlid in ('biz_access.group_access_manager',):
-            group = self.env.ref(xmlid, raise_if_not_found=False)
-            if group and self.env.user.has_group(xmlid):
-                return
         raise AccessError(_(
             "You can hand over your own access. Handing over somebody else's "
             "is something the access team does."))
 
     @api.model
     def default_end_days(self):
-        return param_int(self.env, 'biz_access.default_window_days', 14)
+        """How long a hand-over runs when nobody says otherwise.
+
+        Read from the setting on every call, and never less than a day: a
+        default of zero would propose a hand-over that ends before it starts.
+        """
+        return max(1, param_int(self.env, 'biz_access.default_window_days', 14))

@@ -62,6 +62,12 @@ class HealthAccessSetJob(models.TransientModel):
                 "%(who)s is already employed as %(what)s.",
                 who=target.name or '',
                 what=self.job_role_id.name or _('nothing in particular')))
+        # A job gives its role, and the role's own refusals are asked FIRST —
+        # the write below is made as the system and would otherwise say "and
+        # holds it" about a role the grant quietly refused.
+        if self.job_role_id:
+            self.env['biz.access']._assert_may_give(
+                self.job_role_id, self.user_id)
         was = target.job_role_id
         target.job_role_id = self.job_role_id
         if self.job_role_id:

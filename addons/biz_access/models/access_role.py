@@ -45,10 +45,10 @@ constraint on it is still the thing stopping two rows quietly meaning the same.
 import logging
 
 from odoo import _, api, fields, models
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 
-from .access_common import (default_area, forbidden_group_ids,
-                            forbidden_in_closure, profile_areas)
+from .access_common import (actor_exempt, default_area, forbidden_group_ids,
+                            forbidden_in_closure, holds_all, profile_areas)
 
 _logger = logging.getLogger(__name__)
 
@@ -94,6 +94,19 @@ class BizAccessRole(models.Model):
         help='Leave empty and everybody who can open this board sees the '
              'profile. Set it and only people in that group do — for the '
              'roles that are nobody else\'s business.')
+
+    #: A ROLE THAT ONLY ITS OWN HOLDERS MAY HAND ON. Some roles are the keys to
+    #: a whole business — everything, every colleague, every setting the
+    #: business itself owns — and "anybody who manages access may give it"
+    #: would let a manager make somebody the owner. With this on, giving the
+    #: role (or lending it) needs the person doing it to hold ALL of it
+    #: themselves. The platform administrator is the one exception.
+    guarded = fields.Boolean(
+        string='Only people who hold this role may give it or lend it',
+        default=False,
+        help='Only people who hold this role may give it or lend it. Somebody '
+             'who manages access but does not hold it can still see who has '
+             'it, and cannot hand it to anybody.')
 
     #: THE TOP BAR, AND WHY IT IS A LIST OF WHAT IS *NOT* SEEN.
     #:
@@ -280,13 +293,37 @@ class BizAccessRole(models.Model):
     # nobody can reproduce.
     _CACHED_INPUTS = ('hidden_menu_ids', 'ability_ids', 'active')
 
+    #: WHAT A NON-HOLDER MAY NOT CHANGE ON A GUARDED ROLE. Unticking "holders
+    #: only" and then giving the role would make the rule a two-step detour;
+    #: changing what the role is made of, or putting it away and bringing it
+    #: back, is the same detour by a longer road. The order on the list and the
+    #: sentence on the card stay editable by anybody who manages access.
+    _GUARDED_FIELDS = ('guarded', 'ability_ids', 'active', 'group_id',
+                       'visible_group_id')
+
     @api.model_create_multi
     def create(self, vals_list):
         records = super().create(vals_list)
         self.env['ir.ui.menu']._biz_access_forget()
         return records
 
+    def _check_may_change_guarded(self, vals):
+        """Only somebody who holds a guarded role may change what guards it."""
+        if not any(name in vals for name in self._GUARDED_FIELDS):
+            return
+        if actor_exempt(self.env):
+            return
+        actor = self.env.user
+        for rec in self.sudo():
+            if not rec.guarded:
+                continue
+            if not holds_all(actor, rec.group_ids):
+                raise UserError(_(
+                    "Only somebody who holds \"%s\" can change what it is "
+                    "made of or who may give it.", rec.name or ''))
+
     def write(self, vals):
+        self._check_may_change_guarded(vals)
         res = super().write(vals)
         if any(name in vals for name in self._CACHED_INPUTS):
             self.env['ir.ui.menu']._biz_access_forget()

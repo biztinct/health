@@ -40,13 +40,20 @@ the transitive set.
 
 import logging
 
-from odoo import _, api, fields, models
+from odoo import SUPERUSER_ID, _, api, fields, models
 from odoo.exceptions import AccessError, UserError
 
 from .access_common import (BOARD_GROUPS, DELEGATION_ROW_CAP, HOLDER_CAP,
-                            MANAGE_GROUPS, PEOPLE_CAP, PICKER_CAP, area_label,
+                            MANAGE_GROUPS, PEOPLE_CAP, PICKER_CAP,
+                            SYSTEM_APPLY_KEY, actor_exempt, area_label,
                             counted, flag, fold, forbidden_in_closure,
-                            implied_closure, profile_areas, safe)
+                            hidden_logins, holds_all, implied_closure,
+                            is_hidden_user, may_see_hidden, profile_areas,
+                            safe, user_can_manage, visible_people)
+
+#: How many roles one "give several" may carry. A cap that no real person
+#: reaches and that stops a runaway browser loop from writing a thousand.
+GRANT_MANY_CAP = 100
 
 _logger = logging.getLogger(__name__)
 
@@ -99,19 +106,112 @@ class BizAccess(models.AbstractModel):
     def can_manage(self):
         return bool(self._is_admin() or self._has(MANAGE_GROUPS))
 
+    # ===================================================== who may give what
+    #
+    # TWO RULES ON TOP OF "MAY MANAGE", and both are about the person at the
+    # keyboard, never about whose screen they are looking at.
+    #
+    #   * NOBODY GIVES A ROLE TO THEMSELVES. Somebody who manages access can
+    #     give anybody anything they are allowed to give — except themselves,
+    #     because a rule that only holds while nobody tests it is not a rule.
+    #   * A GUARDED ROLE IS GIVEN (OR LENT) ONLY BY ITS HOLDERS. Some roles
+    #     are the keys to the whole business; managing access is not the same
+    #     job as owning it.
+    #
+    # THE ACTOR IS `self.env.uid` EVEN UNDER `sudo()`. Plenty of callers reach
+    # this facade through `.sudo()` so it can write what the person could not
+    # write by hand; `sudo()` keeps the uid, and that uid is who is asking. Only
+    # the superuser itself and the system administrator are exempt, plus the
+    # explicit system-apply context key, which is honoured only for them.
+
+    def _system_apply(self):
+        """Is this call the platform's own, said out loud?
+
+        The context key is REFUSED — not ignored — when anybody else sends it,
+        because a key that quietly did nothing for an ordinary caller would be
+        a key somebody one day wires to a button and believes in.
+        """
+        if not self.env.context.get(SYSTEM_APPLY_KEY):
+            return False
+        if self.env.su or self._is_admin():
+            return True
+        raise AccessError(_(
+            "That can only be done by the system itself, not from this "
+            "screen."))
+
+    def _exempt(self):
+        return bool(self._system_apply() or actor_exempt(self.env))
+
+    def _self_grant_message(self):
+        """The refusal, in words. An application overrides it to name the
+        roles its own people should ask."""
+        return _("You cannot give a role to yourself. Ask somebody else who "
+                 "manages access here.")
+
+    def _check_not_self(self, user):
+        if user.id == self.env.uid and not self._exempt():
+            raise UserError(self._self_grant_message())
+
+    def _guarded_out_of_reach(self, profiles):
+        """The guarded roles among these that the person asking does not hold."""
+        if self._exempt():
+            return self.env['biz.access.role'].browse()
+        actor = self.env.user
+        return profiles.sudo().filtered(
+            lambda p: p.guarded and not holds_all(actor, p.group_ids))
+
+    def _check_guarded(self, profiles, lend=False):
+        bad = self._guarded_out_of_reach(profiles)
+        if not bad:
+            return
+        name = bad[0].name or ''
+        if lend:
+            raise UserError(_(
+                "Only somebody who holds \"%s\" can lend it.", name))
+        raise UserError(_(
+            "Only somebody who holds \"%s\" can give it.", name))
+
+    def _can_give(self, profile):
+        """Would the person asking be allowed to give this role at all?"""
+        return not self._guarded_out_of_reach(profile)
+
+    def _assert_may_give(self, profiles, user):
+        """Every refusal a grant would make, without writing anything.
+
+        For an application's own screens that give a role as a side effect —
+        a job on a staff record, say — and have to refuse BEFORE they change
+        anything else rather than swallow the grant's refusal afterwards.
+        """
+        self._require_manage()
+        user = self._internal_user(user.id if hasattr(user, 'id') else user)
+        self._check_not_self(user)
+        self._check_guarded(profiles)
+        return True
+
     # ================================================================ the board
     @api.model
     def get_board(self, area=None, search=None):
         self._require()
         manage = self.can_manage()
         profiles = self._profiles(area, search)
+        handovers = self.handovers('running')
         return {
             'can_manage': manage,
             'me': {'id': self.env.uid, 'name': self.env.user.name or ''},
             'profiles': profiles,
             'areas': self._areas(profiles),
             'mine': self._mine(),
-            'delegations': self._delegations(),
+            'delegations': handovers['rows'],
+            'handovers': handovers,
+            # How long a new hand-over runs unless somebody changes it — the
+            # setting, read here so the dialog never carries a number of its
+            # own that could disagree with it.
+            'default_window_days': self.env[
+                'biz.access.delegation'].default_end_days(),
+            # The note a passport shows in place of "Give a role" on the
+            # person's own page, in the application's words.
+            'self_grant_note': ('' if self._exempt()
+                                else self._self_grant_message()),
             'kpis': self._kpis(profiles),
             'headline': self._headline(profiles),
             # The doors a product puts on the People lens ("Add a person"), read
@@ -138,8 +238,9 @@ class BizAccess(models.AbstractModel):
             if needle and needle not in fold(
                     '%s %s' % (profile.name or '', profile.description or '')):
                 continue
-            holders = profile.holders(cap=HOLDER_CAP)
-            total = profile.holder_count
+            everyone = visible_people(profile.holders(), self.env)
+            holders = everyone[:HOLDER_CAP]
+            total = len(everyone)
             # THE SHAPE OF THIS ROW DOES NOT CHANGE. `group` was one permission
             # name and is now the names of everything the bundle carries — one
             # of them, for every role on this database today, so the board reads
@@ -163,6 +264,8 @@ class BizAccess(models.AbstractModel):
                 'i_hold': bool(bundle) and set(bundle.ids) <= set(
                     self.env.user.all_group_ids.ids),
                 'restricted': bool(profile.visible_group_id),
+                'guarded': bool(profile.guarded),
+                'can_give': self._can_give(profile),
             })
         return out
 
@@ -178,25 +281,104 @@ class BizAccess(models.AbstractModel):
     def _mine(self):
         """What I hold, so the hand-over dialog can be honest about what I have
         to lend before I open it."""
-        held = set(self.env.user.all_group_ids.ids)
+        return self._held_rows(self.env.user)
+
+    def _held_rows(self, user):
+        """The active roles somebody fully holds, in board order."""
+        held = set(user.sudo().all_group_ids.ids)
         return [{'id': p.id, 'name': p.name or '',
                  'description': p.description or '',
-                 'area_label': area_label(p.area, self.env)}
+                 'area_label': area_label(p.area, self.env),
+                 'guarded': bool(p.guarded)}
                 for p in self.env['biz.access.role'].search(
                     [('active', '=', True)], order='area, sequence, name')
                 if p.group_ids and set(p.group_ids.ids) <= held]
 
-    def _delegations(self, limit=DELEGATION_ROW_CAP):
+    #: The chips on the Hand-overs lens, and the states each one means.
+    HANDOVER_CHIPS = (
+        ('running', ('active',)),
+        ('ended', ('expired',)),
+        ('taken_back', ('revoked',)),
+        ('all', None),
+    )
+
+    def _handover_domain(self, search=None):
+        """Hand-overs only, narrowed to a name, never showing an account that
+        is not a person. The record rule does the rest: an ordinary person
+        sees their own, the access team sees everybody's."""
+        domain = [('origin', '=', 'delegation')]
+        needle = fold(search)
+        if needle:
+            users = self.env['res.users'].sudo().with_context(
+                active_test=False).search_read([], ['name', 'login'])
+            ids = [u['id'] for u in users
+                   if needle in fold('%s %s' % (u['name'] or '',
+                                                u['login'] or ''))]
+            domain += ['|', ('delegator_user_id', 'in', ids),
+                       ('delegate_user_id', 'in', ids)]
+        hidden = hidden_logins(self.env)
+        if hidden and not may_see_hidden(self.env, hidden):
+            gone = self.env['res.users'].sudo().with_context(
+                active_test=False).search([('login', 'in', list(hidden))]).ids
+            if gone:
+                domain += [('delegator_user_id', 'not in', gone),
+                           ('delegate_user_id', 'not in', gone)]
+        return domain
+
+    def _delegations(self, state=None, search=None, limit=DELEGATION_ROW_CAP):
         """Hand-overs only — the roles board's grants are audit rows in the
         same table and belong in the audit export, not on this tab.
 
-        The record rule already limits an ordinary person to their own; the
-        access team sees everybody's.
+        `state` is a chip key (`running`, `ended`, `taken_back`, `all`); the
+        default is running, because what is happening NOW is what somebody
+        opens this tab to see. The cap applies AFTER the filter, so a search
+        for one name is never cut short by everybody else's history.
         """
+        domain = self._handover_domain(search)
+        states = dict(self.HANDOVER_CHIPS).get(state or 'running', ('active',))
+        if states:
+            domain = domain + [('state', 'in', list(states))]
         rows = self.env['biz.access.delegation'].search(
-            [('origin', '=', 'delegation')], limit=limit or None,
-            order='date_start desc, id desc')
+            domain, limit=limit or None, order='date_start desc, id desc')
         return [self._delegation_row(d) for d in rows]
+
+    @api.model
+    def handovers(self, state='running', search=None):
+        """The Hand-overs lens: its rows, the count behind every chip, and the
+        line above them — all asked about the same narrowed set."""
+        self._require()
+        chips = dict(self.HANDOVER_CHIPS)
+        state = state if state in chips else 'running'
+        domain = self._handover_domain(search)
+        Deleg = self.env['biz.access.delegation']
+        counts = {}
+        for key, states in self.HANDOVER_CHIPS:
+            dom = domain + ([('state', 'in', list(states))] if states else [])
+            counts[key] = safe(lambda d=dom: Deleg.search_count(d), 0,
+                               'a hand-over count')
+        rows = self._delegations(state, search)
+        return {
+            'state': state,
+            'search': search or '',
+            'rows': rows,
+            'counts': counts,
+            'capped': len(rows) >= DELEGATION_ROW_CAP,
+            'headline': self._handover_headline(counts, bool(fold(search))),
+        }
+
+    def _handover_headline(self, counts, searched):
+        """"2 running, 5 ended." — ONE expression per sentence."""
+        running, ended = counts.get('running', 0), counts.get('ended', 0)
+        back = counts.get('taken_back', 0)
+        if not counts.get('all'):
+            if searched:
+                return _("No hand-over matches that name.")
+            return _("Nobody has handed anything over yet.")
+        line = _("%(r)s running, %(e)s ended.",
+                 r=running, e=ended)
+        if back:
+            line = _("%(line)s %(b)s taken back early.", line=line, b=back)
+        return line
 
     def _delegation_row(self, d):
         s = d.sudo()                            # names only (R56)
@@ -219,6 +401,7 @@ class BizAccess(models.AbstractModel):
             'ended_note': s.ended_note or '',
             'mine': s.delegator_user_id.id == self.env.uid,
             'to_me': s.delegate_user_id.id == self.env.uid,
+            'started_by': s.started_by_note or '',
             'days_left': ((s.date_end - fields.Date.context_today(self)).days
                           if s.date_end and s.state == 'active' else 0),
         }
@@ -239,7 +422,8 @@ class BizAccess(models.AbstractModel):
             0, 'the running hand-over count')
         return {
             'profiles': len(profiles),
-            'people': len({h['id'] for p in profiles for h in p['holders']}),
+            'people': safe(lambda: self._people_holding(profiles), 0,
+                           'how many people hold a role'),
             'active': active,
             'mine': len([p for p in profiles if p['i_hold']]),
             # The fifth number, and the one that turns a list of roles into a
@@ -247,6 +431,21 @@ class BizAccess(models.AbstractModel):
             'entries': safe(lambda: len(self._rail_skeleton_items()), 0,
                             'the left-menu entry count'),
         }
+
+    def _people_holding(self, profiles):
+        """Distinct people with a login who hold at least one of these roles.
+
+        Counted over the FULL holder sets — the same intersection behind each
+        card's own number — never over the faces drawn on the cards, which
+        stop at forty. A role held by forty-four people is held by forty-four.
+        """
+        roles = self.env['biz.access.role'].browse(
+            [p['id'] for p in profiles])
+        people = self.env['res.users'].browse()
+        for role in roles:
+            people |= role._holder_users()
+        people = people.sudo().filtered(lambda u: u.active and not u.share)
+        return len(visible_people(people, self.env))
 
     def _headline(self, profiles):
         if not profiles:
@@ -275,12 +474,14 @@ class BizAccess(models.AbstractModel):
         self._require_manage()
         profile = self._safe_profile(profile_id)
         user = self._internal_user(user_id)
+        self._check_not_self(user)
         bundle = profile.group_ids
         held = set(user.sudo().all_group_ids.ids)
         if set(bundle.ids) <= held:
             raise UserError(_(
                 "%(who)s already has \"%(what)s\".",
                 who=user.sudo().name or '', what=profile.name))
+        self._check_guarded(profile)
 
         target = user.sudo()
         before = set(target.group_ids.ids)
@@ -290,7 +491,7 @@ class BizAccess(models.AbstractModel):
         added = sorted(set(target.group_ids.ids) - before)
 
         self.env['biz.access.delegation'].sudo().create({
-            'delegator_user_id': self.env.uid,
+            'delegator_user_id': self._audit_giver(user),
             'delegate_user_id': user.id,
             'profile_ids': [(6, 0, [profile.id])],
             'kind': 'permanent',
@@ -304,6 +505,198 @@ class BizAccess(models.AbstractModel):
         return {'ok': True, 'message': _(
             "%(who)s now has \"%(what)s\".",
             who=target.name or '', what=profile.name)}
+
+    @api.model
+    def grant_many(self, profile_ids, user_id, reason=None):
+        """Give several roles in ONE write and ONE line of history.
+
+        Roles the person already fully holds are skipped rather than refused —
+        ticking three boxes where one was already theirs is not a mistake — and
+        the call is refused only when NOTHING would change. Every role is put
+        through the same checks as a single grant first: the administrator
+        permission, "not to yourself", and "only its holders may give it".
+        """
+        self._require_manage()
+        user = self._internal_user(user_id)
+        self._check_not_self(user)
+        ids = list(dict.fromkeys(int(pid or 0) for pid in (profile_ids or [])
+                                 if pid))
+        if not ids:
+            raise UserError(_("Choose at least one role."))
+        if len(ids) > GRANT_MANY_CAP:
+            raise UserError(_(
+                "Choose no more than %s roles at a time.", GRANT_MANY_CAP))
+
+        profiles = self.env['biz.access.role'].browse()
+        for profile_id in ids:
+            profiles |= self._safe_profile(profile_id)
+
+        target = user.sudo()
+        held = set(target.all_group_ids.ids)
+        missing = profiles.filtered(
+            lambda p: not set(p.group_ids.ids) <= held)
+        if not missing:
+            raise UserError(_(
+                "%s already has all of those roles.", target.name or ''))
+        self._check_guarded(missing)
+
+        before = set(target.group_ids.ids)
+        wanted = missing.mapped('group_ids').filtered(
+            lambda g: g.id not in held)
+        target.write({'group_ids': [(4, g.id) for g in wanted]})
+        target.invalidate_recordset(['group_ids'])
+        added = sorted(set(target.group_ids.ids) - before)
+        self.env['biz.access.delegation'].sudo().create({
+            'delegator_user_id': self._audit_giver(user),
+            'delegate_user_id': user.id,
+            'profile_ids': [(6, 0, missing.ids)],
+            'kind': 'permanent',
+            'date_start': fields.Date.context_today(self),
+            'reason': (reason or '').strip() or _(
+                "Given together on the roles board."),
+            'state': 'active',
+            'origin': 'board',
+            'applied_group_ids': [(6, 0, added)],
+            'applied_on': fields.Datetime.now(),
+        })
+        names = self._names(missing)
+        if len(missing) == 1:
+            message = _("Gave %(who)s 1 role: %(what)s.",
+                        who=target.name or '', what=names)
+        else:
+            message = _("Gave %(who)s %(n)s roles: %(what)s.",
+                        who=target.name or '', n=len(missing), what=names)
+        skipped = profiles - missing
+        if skipped:
+            message = _("%(message)s %(already)s already theirs.",
+                        message=message,
+                        already=counted(len(skipped), _("1 was"),
+                                        _("%s were")))
+        return {'ok': True, 'count': len(missing),
+                'profile_ids': missing.ids, 'message': message}
+
+    def _audit_giver(self, user):
+        """Who the history says gave it.
+
+        The person at the keyboard — except in the one case the rules allow a
+        role to reach the account doing the giving (the system, said out loud),
+        where the history names the system: a line reading "Lan gave Lan" is
+        refused by the hand-over's own two-people rule, and would be a line
+        nobody could believe anyway.
+        """
+        return SUPERUSER_ID if user.id == self.env.uid else self.env.uid
+
+    def _names(self, profiles):
+        """"A", "A and B", "A, B and C" — quoted, in board order."""
+        names = ['"%s"' % (p.name or '') for p in profiles]
+        if len(names) <= 1:
+            return names[0] if names else ''
+        return _("%(most)s and %(last)s",
+                 most=', '.join(names[:-1]), last=names[-1])
+
+    # ------------------------------------------------ copying from a colleague
+    def _copy_plan(self, source, target):
+        """What "copy from another person" would give, and what it leaves out.
+
+        (to_copy, dropped_guarded, lent_skipped) — as recordsets.
+
+          * only the roles the source holds PERMANENTLY. Something lent to them
+            for a fortnight is not part of their job, and copying it would give
+            the new person a permanent role that was never meant to last;
+          * only roles this reader may see listed;
+          * minus what the target already has;
+          * minus guarded roles the person asking could not give by hand —
+            left out and SAID, never quietly dropped.
+        """
+        held = set(source.sudo().all_group_ids.ids)
+        target_held = set(target.sudo().all_group_ids.ids)
+        loaned = set(self._loans_to(source))
+        Role = self.env['biz.access.role']
+        source_roles = Role.browse()
+        lent = Role.browse()
+        for profile in Role.visible():
+            if not profile.group_ids or not set(profile.group_ids.ids) <= held:
+                continue
+            if profile.id in loaned:
+                lent |= profile
+                continue
+            if forbidden_in_closure(profile.group_ids | profile.group_id,
+                                    self.env):
+                continue
+            source_roles |= profile
+        new = source_roles.filtered(
+            lambda p: not set(p.group_ids.ids) <= target_held)
+        dropped = self._guarded_out_of_reach(new)
+        dropped = Role.browse(dropped.ids)
+        return new - dropped, dropped, lent
+
+    def _dropped_note(self, dropped):
+        if not dropped:
+            return ''
+        if len(dropped) == 1:
+            return _("%s was left out — only somebody who holds it can give "
+                     "it.", self._names(dropped))
+        return _("%s were left out — only somebody who holds them can give "
+                 "them.", self._names(dropped))
+
+    @api.model
+    def copy_preview(self, source_user_id, target_user_id):
+        """What pressing "Copy roles" would do, before anybody presses it.
+
+        Worked out by the SAME plan the copy runs, so the list in the dialog
+        and the roles that arrive cannot disagree.
+        """
+        self._require_manage()
+        source = self._internal_user(source_user_id)
+        target = self._internal_user(target_user_id)
+        if source.id == target.id:
+            raise UserError(_("Choose a different person to copy from."))
+        to_copy, dropped, lent = self._copy_plan(source, target)
+        return {
+            'source': {'id': source.id, 'name': source.sudo().name or ''},
+            'roles': [{'id': p.id, 'name': p.name or '',
+                       'description': p.description or '',
+                       'area_label': area_label(p.area, self.env)}
+                      for p in to_copy],
+            'dropped': [p.name or '' for p in dropped],
+            'dropped_note': self._dropped_note(dropped),
+            'lent_skipped': len(lent),
+        }
+
+    @api.model
+    def copy_roles(self, source_user_id, target_user_id, reason=None):
+        """Give somebody the permanent roles another person holds.
+
+        It is `grant_many` underneath, so it writes once, leaves one line of
+        history, and refuses everything a grant refuses.
+        """
+        self._require_manage()
+        source = self._internal_user(source_user_id)
+        target = self._internal_user(target_user_id)
+        if source.id == target.id:
+            raise UserError(_("Choose a different person to copy from."))
+        self._check_not_self(target)
+        to_copy, dropped, lent = self._copy_plan(source, target)
+        if not to_copy:
+            note = self._dropped_note(dropped)
+            if note:
+                raise UserError(_(
+                    "There is nothing from %(who)s that you can copy. "
+                    "%(note)s", who=source.sudo().name or '', note=note))
+            raise UserError(_(
+                "There is nothing to copy: %(target)s already has every "
+                "permanent role %(who)s holds. Anything lent to %(who)s for a "
+                "while is never copied.",
+                target=target.sudo().name or '',
+                who=source.sudo().name or ''))
+        result = self.grant_many(to_copy.ids, target.id, reason or _(
+            "Copied from %s on the roles board.", source.sudo().name or ''))
+        note = self._dropped_note(dropped)
+        if note:
+            result['message'] = '%s %s' % (result['message'], note)
+        result['source_name'] = source.sudo().name or ''
+        result['dropped'] = dropped.mapped('name')
+        return result
 
     @api.model
     def remove(self, profile_id, user_id, reason=None):
@@ -447,6 +840,14 @@ class BizAccess(models.AbstractModel):
             raise UserError(_(
                 "%s has an employee login only. Roles are for people who work "
                 "inside this application.", user.sudo().name or ''))
+        # AN ACCOUNT THAT IS NOT A PERSON IS NOT ON THIS BOARD AT ALL — not in
+        # a list, not in a picker, and not as the target of anything. The same
+        # sentence as a login that does not exist, because to everybody but the
+        # account itself, it does not.
+        # The superuser itself is the one caller exempt: it is the platform's
+        # own code (provisioning, a migration), not somebody reading a list.
+        if self.env.uid != SUPERUSER_ID and is_hidden_user(user, self.env):
+            raise UserError(_("That person does not have a login here."))
         return user
 
     # ================================================================ hand-over
@@ -465,13 +866,24 @@ class BizAccess(models.AbstractModel):
         delegator_id = int(vals.get('delegator_user_id') or self.env.uid)
         delegator = self.env['res.users'].browse(delegator_id)
         self.env['biz.access.delegation']._assert_can_delegate(delegator)
+        on_behalf = delegator_id != self.env.uid
+        if on_behalf:
+            # The lender has to be somebody on this board too — an account
+            # that is not a person cannot be "handing over" anything.
+            delegator = self._internal_user(delegator_id)
 
         delegate_user = self._internal_user(vals.get('delegate_user_id'))
         profile_ids = [int(p) for p in (vals.get('profile_ids') or []) if p]
         if not profile_ids:
             raise UserError(_("Choose at least one thing to hand over."))
+        profiles = self.env['biz.access.role'].browse()
         for pid in profile_ids:
-            self._safe_profile(pid)
+            profiles |= self._safe_profile(pid)
+        if on_behalf:
+            # ON SOMEBODY ELSE'S BEHALF, the one who pressed the button must be
+            # allowed to hand a guarded role on as well. Lending your OWN is
+            # already bounded by holding it (`_groups_to_hand`).
+            self._check_guarded(profiles, lend=True)
 
         kind = vals.get('kind') or 'temporary'
         date_start = vals.get('date_start') or fields.Date.context_today(self)
@@ -492,10 +904,31 @@ class BizAccess(models.AbstractModel):
             'origin': 'delegation',
         })
         rec.action_activate()
+        until = (_(" until %s", date_end) if date_end else '')
+        if on_behalf:
+            return {'ok': True, 'id': rec.id, 'message': _(
+                "%(who)s can now do it on %(whose)s's behalf%(until)s.",
+                who=delegate_user.sudo().name or '',
+                whose=delegator.sudo().name or '', until=until)}
         return {'ok': True, 'id': rec.id, 'message': _(
             "%(who)s can now do it on your behalf%(until)s.",
-            who=delegate_user.sudo().name or '',
-            until=(_(" until %s", date_end) if date_end else ''))}
+            who=delegate_user.sudo().name or '', until=until)}
+
+    @api.model
+    def held_roles_of(self, user_id=None):
+        """What somebody could hand over — the roles they fully hold.
+
+        The hand-over dialog asks this when a manager starts one on somebody
+        else's behalf: the list it offers has to be THAT person's, because
+        `_groups_to_hand` will refuse anything they do not hold. Anybody may
+        ask about themselves; asking about somebody else is the access team's.
+        """
+        self._require()
+        uid = int(user_id or 0) or self.env.uid
+        if uid != self.env.uid:
+            self._require_manage()
+        user = self._internal_user(uid)
+        return self._held_rows(user)
 
     @api.model
     def revoke(self, delegation_id, reason=None):
@@ -817,8 +1250,9 @@ class BizAccess(models.AbstractModel):
         profile.check_access('read')
 
         lent = self._lent_until(profile)
-        holders = profile.holders(cap=HOLDER_CAP)
-        total = profile.holder_count
+        everyone = visible_people(profile.holders(), self.env)
+        holders = everyone[:HOLDER_CAP]
+        total = len(everyone)
         hidden = self._hidden_menus(profile)
         return {
             'id': profile.id,
@@ -1297,8 +1731,8 @@ class BizAccess(models.AbstractModel):
                 self._lent_counts(), self._job_titles(me))]
 
         needle = fold(search)
-        users = self.env['res.users'].sudo().search(
-            [('active', '=', True), ('share', '=', False)])
+        users = visible_people(self.env['res.users'].sudo().search(
+            [('active', '=', True), ('share', '=', False)]), self.env)
         if needle:
             users = users.filtered(
                 lambda u: needle in fold('%s %s' % (u.name or '', u.login or '')))
@@ -1598,14 +2032,24 @@ class BizAccess(models.AbstractModel):
 
     # =============================================================== the picker
     @api.model
-    def user_options(self, term=None):
+    def user_options(self, term=None, include_me=False):
         """Folded in Python over `search_read` of two columns (R78/R56).
 
-        SHAPE FROZEN. Three dialogs read it; the People lens does not — it
+        SHAPE FROZEN. Every dialog reads it; the People lens does not — it
         needs the person's roles counted and their own row included, which is a
         different question and gets its own method rather than a flag here.
+
+        YOU ARE LEFT OUT unless `include_me` is asked for, and it is asked for
+        by exactly two pickers: "copy roles from" (copying your own roles to a
+        colleague is an ordinary thing to do) and "handing over for" on a
+        manager's hand-over. Nothing that GIVES passes it — the server refuses a
+        role given to yourself anyway, and a picker that offered it would be a
+        screen setting somebody up to be told no.
         """
+        self._require()
         needle = fold(term)
+        hidden = hidden_logins(self.env)
+        see_hidden = may_see_hidden(self.env, hidden)
         rows = self.env['res.users'].sudo().search_read(
             [('active', '=', True), ('share', '=', False)],
             ['name', 'login'], limit=600, order='name')
@@ -1613,7 +2057,9 @@ class BizAccess(models.AbstractModel):
                 'login': r['login'] or '',
                 'avatar': '/web/image/res.users/%s/avatar_128' % r['id']}
                for r in rows
-               if r['id'] != self.env.uid
+               if (include_me or r['id'] != self.env.uid)
+               and (see_hidden
+                    or (r['login'] or '').strip().lower() not in hidden)
                and (not needle or needle in fold(r['name'])
                     or needle in fold(r['login']))]
         return out[:PICKER_CAP]
@@ -1948,8 +2394,8 @@ class BizAccess(models.AbstractModel):
             'who the administrators are') or [])
 
         everybody = set(by_role) | by_group | admins
-        users = self.env['res.users'].sudo().browse(
-            sorted(everybody)).exists().filtered('active')
+        users = visible_people(self.env['res.users'].sudo().browse(
+            sorted(everybody)).exists().filtered('active'), self.env)
         users = users.sorted(lambda u: (not bool(by_role.get(u.id)),
                                         fold(u.name)))
         rows = []

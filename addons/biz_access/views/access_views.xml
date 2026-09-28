@@ -53,6 +53,8 @@
                        optional="hide"/>
                 <field name="group_id" optional="hide" readonly="1"/>
                 <field name="visible_group_id" width="170px" optional="show"/>
+                <field name="guarded" string="Holders only" width="110px"
+                       optional="show"/>
                 <field name="active" column_invisible="1"/>
             </list>
         </field>
@@ -123,6 +125,7 @@
                         <group>
                             <field name="holder_count"/>
                             <field name="visible_group_id"/>
+                            <field name="guarded"/>
                         </group>
                     </group>
                     <group string="What this lets someone do">

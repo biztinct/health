@@ -20,8 +20,17 @@
         <field name="name">Healthcare: Clinic administrator</field>
         <field name="privilege_id"
                ref="health_base.res_groups_privilege_healthcare"/>
+        <!-- AND THE ACCESS TEAM, BECAUSE THIS IS THE TIER THAT DOES THAT JOB.
+             The Access home already OFFERED this group every manager action
+             (it is registered in the manage gate), while the lists and rules
+             underneath only knew the access team — so a clinic administrator
+             saw their own hand-overs only, could not take anybody else's back,
+             and opened a list of roles they could not change. Implying the
+             access team closes that in one line and keeps ONE set of rules.
+             The access team implies nothing but a login; it stays outside the
+             forbidden closure (TestRailB). -->
         <field name="implied_ids"
-               eval="[(4, ref('health_base.group_healthcare_admin'))]"/>
+               eval="[(4, ref('health_base.group_healthcare_admin')), (4, ref('biz_access.group_access_manager'))]"/>
         <field name="comment">Adds colleagues, switches them off and says which
 role each of them holds, and keeps the clinic's own reference lists right.
 It never opens the settings for the box itself, never installs anything, and

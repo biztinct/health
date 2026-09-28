@@ -78,8 +78,11 @@ class TestTheTenantRingCannotReachThePlatformRing(RingCase):
     def test_a_clinic_administrator_may_give_out_a_role(self):
         """The tenant ring is not a smaller platform ring — it is the tier that
         actually does this job, and it has to be able to."""
+        # Not a guarded one (AR-1): Owner is given only by an Owner, and this
+        # administrator holds the clinic tier and nothing else.
         role = self.env['biz.access.role'].search(
-            [('active', '=', True), ('group_ids', '!=', False)], limit=1)
+            [('active', '=', True), ('group_ids', '!=', False),
+             ('guarded', '=', False)], limit=1)
         if not role:
             self.skipTest('this database has no role with a permission in it')
         facade = self.env['biz.access'].with_user(self.tenant_admin)

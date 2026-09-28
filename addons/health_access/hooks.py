@@ -52,8 +52,8 @@ from odoo.exceptions import UserError
 
 from odoo.addons.biz_access.hooks import (ensure_catalogue,  # noqa: F401
                                           register_catalogue)
-from odoo.addons.biz_access.models.access_common import (register_areas,
-                                                         register_manager_groups)
+from odoo.addons.biz_access.models.access_common import (
+    register_areas, register_hidden_login_source, register_manager_groups)
 
 _logger = logging.getLogger(__name__)
 
@@ -412,6 +412,47 @@ register_areas(AREAS, default=DEFAULT_AREA)
 # privilege it carries and the name on their screen are unchanged.
 register_manager_groups(CLINIC_ADMIN_GROUP)
 
+#: THE ROLES ONLY THEIR OWN HOLDERS MAY GIVE OR LEND. The owner of a clinic
+#: holds everything; an administrator who manages colleagues is not thereby
+#: allowed to make somebody the owner. Set on the fresh seed and by the
+#: 19.0.1.3.0 migration, and never again: an upgrade does not flip it back if
+#: somebody who holds the role has deliberately switched it off.
+GUARDED_ROLES = ('Owner',)
+GUARDED_ROLE_XMLIDS = ('health_access.role_owner',)
+
+#: THE PLATFORM'S WAY BACK IN, WHICH IS NOT ONE OF THE CLINIC'S PEOPLE.
+#: Provisioning creates it on every customer's system under this login, and the
+#: platform mirrors the login it actually uses onto the customer as a setting.
+#: Both are kept off every list on the Access home.
+RECOVERY_LOGIN_PARAM = 'biz_tenancy.recovery_login'
+RECOVERY_LOGIN_DEFAULT = 'platform.recovery@carejiox.com'
+
+
+def _recovery_logins(env):
+    out = [RECOVERY_LOGIN_DEFAULT]
+    mirrored = env['ir.config_parameter'].sudo().get_param(RECOVERY_LOGIN_PARAM)
+    if mirrored and mirrored.strip():
+        out.append(mirrored.strip())
+    return out
+
+
+register_hidden_login_source(_recovery_logins)
+
+
+def ensure_guarded(env):
+    """Mark the guarded roles as guarded. Called ONCE per path — the day the
+    module lands and by the 19.0.1.3.0 migration — never on every upgrade."""
+    marked = []
+    for xmlid in GUARDED_ROLE_XMLIDS:
+        role = env.ref(xmlid, raise_if_not_found=False)
+        if role and not role.guarded:
+            role.sudo().write({'guarded': True})
+            marked.append(role.name)
+    if marked:
+        _logger.info('health_access: only holders may now give %s',
+                     ', '.join(marked))
+    return marked
+
 
 def _seed(env):
     """Everything this clinic's board needs to exist. Create-only."""
@@ -533,6 +574,7 @@ def _carry_roles(env):
             'area': notes.get('area') or _dominant_area(abilities),
             'sequence': (made + 1) * 10,
             'ability_ids': [(6, 0, abilities.ids)],
+            'guarded': name in GUARDED_ROLES,
         })
         # A ROLE OF NOTHING BUT SIGNING IN IS HELD BY EVERY COLLEAGUE IN THE
         # BUILDING, and would therefore open every left-menu entry it is put on
@@ -1383,6 +1425,7 @@ def post_init_hook(env):
     _gate_admin_item(env)
     _gate_new_items(env)
     _release_borrowed_matches(env)
+    ensure_guarded(env)
     # Belt and braces beside `data/config.xml`, which has already written both
     # on a fresh install. This is what makes the pair reachable from the hook
     # path as well as the migration one — see the note above.

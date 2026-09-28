@@ -28,6 +28,8 @@ import logging
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
+from .access_common import hidden_logins, may_see_hidden
+
 _logger = logging.getLogger(__name__)
 
 HEAD_FILL = '6355C7'
@@ -126,6 +128,17 @@ class BizAccessExport(models.AbstractModel):
         removals, because they are the same table and the same question."""
         rows = self.env['biz.access.delegation'].search(
             [], order='date_start desc, id desc')
+        # An account that is not a person is not in this history either —
+        # the same rule every list on the board follows.
+        hidden = hidden_logins(self.env)
+        if hidden and not may_see_hidden(self.env, hidden):
+            # Which accounts those are is the one thing asked as the system:
+            # it reads logins, never a row of the history itself.
+            gone = set(self.env['res.users'].sudo().with_context(
+                active_test=False).search([('login', 'in', list(hidden))]).ids)
+            rows = rows.filtered(
+                lambda d: d.delegator_user_id.id not in gone
+                and d.delegate_user_id.id not in gone)
         openpyxl, Alignment, Font, PatternFill, get_column_letter = self._wb()
         wb = openpyxl.Workbook()
         ws = wb.active
@@ -135,7 +148,7 @@ class BizAccessExport(models.AbstractModel):
                 _('What'), _('For how long'), _('From'), _('Until'),
                 _('Where it is'), _('Why'), _('Permissions moved'),
                 _('Handed over at'), _('Taken back at'),
-                _('What happened at the end')]
+                _('What happened at the end'), _('Started by')]
         self._header(ws, cols, Font, PatternFill, Alignment)
         origin = dict(self.env['biz.access.delegation']
                       ._fields['origin'].selection)
@@ -158,11 +171,12 @@ class BizAccessExport(models.AbstractModel):
                     ', '.join(d.applied_group_ids.mapped('display_name')),
                     fields.Datetime.to_string(d.applied_on) or '',
                     fields.Datetime.to_string(d.ended_on) or '',
-                    d.ended_note or ''], start=1):
+                    d.ended_note or '',
+                    d.started_by_note or ''], start=1):
                 ws.cell(row=row, column=i, value=v)
             row += 1
         self._widths(ws, [14, 24, 24, 24, 34, 16, 14, 14, 16, 40, 40, 20, 20,
-                          34], get_column_letter)
+                          34, 26], get_column_letter)
         ws.freeze_panes = 'A2'
         return self._file(
             wb, _('Access history %s.xlsx',

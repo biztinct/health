@@ -32,6 +32,12 @@ _logger = logging.getLogger(__name__)
 class BizAccess(models.AbstractModel):
     _inherit = 'biz.access'
 
+    # =================================================== "not to yourself"
+    def _self_grant_message(self):
+        """The refusal in this clinic's words: the two roles that can help."""
+        return _("You cannot give a role to yourself. Ask another Owner or "
+                 "Admin.")
+
     # ====================================================== the re-run doors
     #
     # A HOOK DOES NOT FIRE ON AN UPGRADE. The carry-over runs the day this

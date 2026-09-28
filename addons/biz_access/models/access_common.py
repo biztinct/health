@@ -24,6 +24,8 @@ Two rules carried over from the module this was extracted from:
 import logging
 import unicodedata
 
+from odoo import SUPERUSER_ID
+
 _logger = logging.getLogger(__name__)
 
 # =============================================================================
@@ -119,6 +121,126 @@ def register_board_groups(*xmlids):
         if xmlid and xmlid not in BOARD_GROUPS:
             BOARD_GROUPS.append(xmlid)
     return list(BOARD_GROUPS)
+
+
+def user_can_manage(user):
+    """May this person give and take roles on somebody else's behalf?
+
+    THE ONE ANSWER, asked by the facade's gate AND by the hand-over model's
+    backstop. They used to ask two different questions — the facade read the
+    registry above, the backstop named this module's own group by hand — and
+    the day an application registered its administrator tier, the board
+    offered "lend on their behalf" to people the backstop then refused.
+    """
+    if not user:
+        return False
+    for xmlid in ['base.group_system'] + list(MANAGE_GROUPS):
+        try:
+            if user.has_group(xmlid):
+                return True
+        except (ValueError, KeyError):
+            continue
+    return False
+
+
+def actor_exempt(env):
+    """The platform itself — the superuser, or the system administrator.
+
+    The only callers the "holders only" and "not to yourself" rules do not bind:
+    provisioning a customer's first administrator runs as the superuser and
+    has to give a guarded role to somebody who holds nothing yet, and the
+    platform administrator holds the keys to the whole system already.
+    """
+    if env.uid == SUPERUSER_ID:
+        return True
+    try:
+        return bool(env.user.has_group('base.group_system'))
+    except (ValueError, KeyError):
+        return False
+
+
+def holds_all(user, groups):
+    """Does this person hold EVERY one of these permissions, transitively?"""
+    if not user or not groups:
+        return False
+    return set(groups.ids) <= set(user.sudo().all_group_ids.ids)
+
+
+# =============================================================================
+# ACCOUNTS THAT ARE NOT PEOPLE — A SETTING AND A REGISTRY.
+#
+# A platform that runs this system for somebody else keeps a way back in: an
+# account with no password that only the platform can open. It is
+# infrastructure, not a colleague, and a People lens that listed it would invite
+# somebody to give it a role, switch it off, or wonder who it is.
+#
+# This module cannot know its login — every platform names it differently — so
+# it reads two places and hides the union:
+#   * the setting `biz_access.hidden_logins` (comma-separated), and
+#   * whatever a platform or product module registers with
+#     `register_hidden_login_source(fn)`, where `fn(env)` returns logins.
+#
+# The account still sees ITSELF: whoever is signed in as it gets the ordinary
+# board, because a screen that hid somebody from themselves would be a screen
+# that cannot explain what they hold.
+# =============================================================================
+HIDDEN_LOGINS_PARAM = 'biz_access.hidden_logins'
+
+_HIDDEN_LOGIN_SOURCES = []
+
+
+def register_hidden_login_source(fn):
+    """A module says where to find a login that must not be listed."""
+    if fn and fn not in _HIDDEN_LOGIN_SOURCES:
+        _HIDDEN_LOGIN_SOURCES.append(fn)
+    return list(_HIDDEN_LOGIN_SOURCES)
+
+
+def hidden_logins(env):
+    """Every login kept off the lists here, lower-cased."""
+    out = set()
+    raw = env['ir.config_parameter'].sudo().get_param(HIDDEN_LOGINS_PARAM) or ''
+    for part in str(raw).replace('\n', ',').split(','):
+        if part.strip():
+            out.add(part.strip().lower())
+    for source in list(_HIDDEN_LOGIN_SOURCES):
+        found = safe(lambda s=source: list(s(env) or ()), [],
+                     'a registered hidden login')
+        for login in found or ():
+            if login and str(login).strip():
+                out.add(str(login).strip().lower())
+    return out
+
+
+def may_see_hidden(env, hidden=None):
+    """The hidden account itself sees itself; nobody else sees it."""
+    hidden = hidden_logins(env) if hidden is None else hidden
+    return (env.user.sudo().login or '').strip().lower() in hidden
+
+
+def is_hidden_user(user, env, hidden=None):
+    """Is this one account kept off the lists for the person asking?"""
+    hidden = hidden_logins(env) if hidden is None else hidden
+    if not hidden or may_see_hidden(env, hidden):
+        return False
+    return (user.sudo().login or '').strip().lower() in hidden
+
+
+def visible_people(users, env):
+    """`users` without the accounts that are not people — for this reader."""
+    hidden = hidden_logins(env)
+    if not hidden or may_see_hidden(env, hidden):
+        return users
+    return users.filtered(
+        lambda u: (u.sudo().login or '').strip().lower() not in hidden)
+
+
+#: THE ONE DOOR PAST "NOBODY GIVES THEMSELVES A ROLE". Provisioning and install
+#: hooks sometimes have to write a role onto the account they are running as.
+#: They say so with this context key, and the facade honours it ONLY when the
+#: call is also made as the superuser or by the system administrator — a key a
+#: browser could send on its own would be no rule at all.
+SYSTEM_APPLY_KEY = 'biz_access_system_apply'
 
 
 # ------------------------------------------------------------------ the words
