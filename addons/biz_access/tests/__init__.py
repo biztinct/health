@@ -9,3 +9,4 @@ from . import test_access_p4
 from . import test_top_bar
 from . import test_person_actions
 from . import test_debug_block
+from . import test_access_ar1

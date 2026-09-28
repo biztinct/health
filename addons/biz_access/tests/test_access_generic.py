@@ -256,7 +256,8 @@ class TestNoProductNameInTheGenericLayer(TransactionCase):
     #: the products this core has to be liftable BETWEEN — a generic module that
     #: names either is a generic module in name only.
     BANNED = ('Payobook', 'payobook', 'pb_', 'pbim', 'pbva',
-              'Viet Uc', 'Việt Úc', 'health_', 'Odoo', 'odoo.com')
+              'Viet Uc', 'Việt Úc', 'health_', 'Odoo', 'odoo.com',
+              'Carejiox', 'carejiox')
 
     #: ONE INDUSTRY'S VOCABULARY IS AS WRONG AS ONE PRODUCT'S NAME. A generic
     #: core whose placeholder says "Payroll approver" has been lifted out of a
@@ -265,7 +266,9 @@ class TestNoProductNameInTheGenericLayer(TransactionCase):
     #: pass MISSED three of these — a placeholder, an empty state and two field
     #: helps — and they only came to light in a browser.
     DOMAIN_WORDS = ('payroll', 'Payroll', 'pay run', 'Pay Run', 'payslip',
-                    'Payslip')
+                    'Payslip',
+                    # AR-1: and the clinic's, now that this core serves one.
+                    'clinic', 'Clinic', 'patient', 'Patient')
 
     #: Technical identifiers that legitimately contain the framework's name.
     ALLOWED = ('from odoo', 'import odoo', 'odoo.addons', 'odoo.exceptions',
