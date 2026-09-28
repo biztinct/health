@@ -69,7 +69,7 @@ class TestItIsRegisteredAndDescribesThisMenu(ProviderCase):
         for row in self.rail.entries():
             for key in ('id', 'section_id', 'parent_id', 'name', 'icon',
                         'sequence', 'active', 'group_ids', 'restricted',
-                        'role_ids', 'legacy_note'):
+                        'role_ids'):
                 self.assertIn(key, row)
 
     def test_it_names_the_plain_table_and_the_reload_event(self):
@@ -178,17 +178,18 @@ class TestTheProtocolStillCarriesTheNote(ProviderCase):
 
     While the clinic had two, every entry the older gate opened wider carried a
     quiet sentence saying so. The older gate has gone with the application that
-    owned it, so the sentence is always empty — but the KEY stays on every row,
-    because the Screens lens reads it and a provider that dropped it would work
-    by accident rather than by agreement.
+    owned it, so there is nothing to say — and since AR-1 the key is not sent
+    at all: the protocol names it OPTIONAL (`access_common.RailProvider.entries`)
+    and the lens draws the note only when there is one.
     """
 
-    def test_every_entry_carries_the_key_and_it_is_empty(self):
+    def test_no_entry_carries_an_older_gate_note(self):
+        # AR-1: the key is OPTIONAL in the protocol and this menu has one lane,
+        # so it is no longer sent at all — and the lens draws no note.
         rows = self.rail.entries()
         self.assertTrue(rows, 'the menu has no entries at all')
         for row in rows:
-            self.assertIn('legacy_note', row)
-            self.assertEqual(row['legacy_note'], '')
+            self.assertFalse(row.get('legacy_note'))
 
 
 @tagged('post_install', '-at_install')

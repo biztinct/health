@@ -303,25 +303,10 @@ class HealthCmsRail(RailProvider):
                 # What is WRITTEN on the entry, archived roles included — "is it
                 # gated at all" and "who gets through" are different questions.
                 'role_ids': item.biz_role_ids.ids,
-                'legacy_note': self._legacy_note(env, item),
+                # No `legacy_note`: it is an OPTIONAL key of the protocol, for a
+                # menu part-way between two kinds of gate. This one has one.
             })
         return rows
-
-    def _legacy_note(self, env, item):
-        """Always empty, and kept rather than deleted.
-
-        While this clinic had two gates on one menu, this said "also opened by
-        the older gate: Owner, CRM" wherever the two disagreed — so somebody
-        editing a gate could see that an entry was wider than the chips in
-        front of them. There is one gate now, so there is nothing it could
-        honestly say, and the Screens lens draws no note.
-
-        The method stays because the protocol has the key and the lens reads
-        it: a provider that dropped it would work by accident rather than by
-        agreement, and the next product to write one would have to find out
-        from a traceback that the key is optional.
-        """
-        return ''
 
     def visibility_for(self, env, user):
         items, sections = env['cms.sidebar.item']._biz_visible_map(user)

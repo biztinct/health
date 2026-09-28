@@ -27,10 +27,9 @@ as a doctor — not when its name contains the word "doctor". A role called
 "Doctor's assistant" would have matched the substring and not the job, and a
 role called "Bác sĩ" would have matched neither.
 
-BOTH LANES, WHILE THERE ARE TWO. The person is given the new bundle AND, where
-the previous access application is still installed and has a role of the same
-name, that role too — so somebody added today looks exactly like somebody added
-last week to every screen that has not moved across yet.
+ONE LANE. The person is given the role's bundle through the Access home and
+nothing else: the previous access application has gone, and with it the second
+place a role used to be written down.
 """
 
 import logging
@@ -272,7 +271,6 @@ class HealthAccessNewPerson(models.TransientModel):
             # and the second attempt is quietly a no-op rather than a duplicate
             # row in the history.
             user.sudo().write({'job_role_id': role.id})
-            self._also_write_the_older_lane(user, role)
 
         employee_vals = {
             'name': (self.name or '').strip(),
@@ -344,29 +342,3 @@ class HealthAccessNewPerson(models.TransientModel):
             raise UserError(_(
                 "\"%s\" does not hand out anything yet, so giving it to "
                 "somebody would give them nothing.", role.name or ''))
-
-    def _also_write_the_older_lane(self, user, role):
-        """Keep the two lanes in step while there are two.
-
-        Somebody added today has to look exactly like somebody added last week
-        to every screen that has not moved across yet — the left menu's older
-        gate, and the top-bar rule the previous application still enforces.
-        Guarded, so the day that application is uninstalled this simply does
-        nothing.
-        """
-        if 'access.role' not in self.env:
-            return False
-        if 'access_role_id' not in self.env['res.users']._fields:
-            return False
-        old = self.env['access.role'].sudo().with_context(
-            active_test=False).search([('name', '=', role.name)], limit=1)
-        if not old:
-            return False
-        try:
-            user.sudo().write({'access_role_id': old.id})
-        except Exception:                               # noqa: BLE001
-            _logger.warning(
-                'health_access: %s was added but the older access app could '
-                'not be told about their role', user.login, exc_info=True)
-            return False
-        return True

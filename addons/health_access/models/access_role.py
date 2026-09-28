@@ -67,10 +67,3 @@ class BizAccessRole(models.Model):
              'has nothing to do with what the role lets them open; that is the '
              'list of abilities above.')
 
-    def counts_as_line(self):
-        """"Counts as: a nurse" — one line for the role card."""
-        self.ensure_one()
-        labels = dict(CLINICAL_KINDS)
-        if self.clinical_kind in (False, 'other'):
-            return ''
-        return labels.get(self.clinical_kind, '')
