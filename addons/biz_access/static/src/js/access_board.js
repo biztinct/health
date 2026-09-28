@@ -119,6 +119,9 @@ export class BizAccessHome extends Component {
         this.peopleSeq = 0;
         this.passportSeq = 0;
         this.searchTimer = null;
+        //: And again for the Hand-overs lens's own search and chips.
+        this.handoverSeq = 0;
+        this.handoverTimer = null;
 
         // CAPTURE, NOT BUBBLE. Escape is a hotkey the web client already
         // handles, and its own handler stops the event before it ever reaches
@@ -202,7 +205,19 @@ export class BizAccessHome extends Component {
             hand: {
                 delegate_user_id: 0, delegate: "", profile_ids: [],
                 kind: "temporary", date_start: "", date_end: "", reason: "",
+                // WHOSE access is being handed over. 0 means "mine"; a
+                // manager can pick somebody who is away, and the offered roles
+                // then become theirs (`held_roles_of`).
+                for_id: 0, for_name: "", for_search: "",
             },
+            handPeople: [],            // the "handing over for" picker
+            handRoles: null,           // that person's roles, or null for mine
+            handRolesBusy: false,
+
+            // the hand-overs lens
+            hvState: "running",        // running | ended | taken_back | all
+            hvSearch: "",
+            handovers: null,           // { rows, counts, headline } or null
 
             busy: false,
         });
@@ -240,6 +255,13 @@ export class BizAccessHome extends Component {
                 this.state.area || null, this.state.search || null,
             ]);
             this.state.failed = "";
+            // A chip or a search on the Hand-overs lens is kept across a
+            // reload: re-read it, rather than snapping back to "Running".
+            if (this.state.hvState !== "running" || this.state.hvSearch) {
+                await this.loadHandovers();
+            } else {
+                this.state.handovers = null;
+            }
         } catch (e) {
             this.state.board = null;
             this.state.failed = this._msg(
@@ -270,7 +292,13 @@ export class BizAccessHome extends Component {
 
     get board() { return this.state.board || {}; }
     get profiles() { return this.board.profiles || []; }
-    get delegations() { return this.board.delegations || []; }
+    /** The Hand-overs lens reads its OWN answer once somebody has pressed a
+     *  chip or typed a name; until then the board's (running, unfiltered). */
+    get handoverView() {
+        return this.state.handovers || this.board.handovers
+            || { rows: [], counts: {}, headline: "" };
+    }
+    get delegations() { return this.handoverView.rows || []; }
     get kpis() { return this.board.kpis || {}; }
     get canManage() { return Boolean(this.board.can_manage); }
     get mine() { return this.board.mine || []; }
@@ -528,23 +556,141 @@ export class BizAccessHome extends Component {
         this.state.granting = {
             profile: null, mode: "grant",
             person: { id: head.id, name: head.name },
+            // SEVERAL AT ONCE, or copied from a colleague. Nothing changes
+            // until the button; both go through one write and one line of
+            // history on the server.
+            selectedIds: [], copyMode: false, copySource: null,
+            copyPeople: [], copyPreview: null, copyBusy: false,
         };
         this.state.grantTarget = { id: head.id, name: head.name };
         this.state.grantReason = "";
         this.state.people = [];
     }
 
-    pickRoleToGive(profile) {
-        if (this.state.granting) { this.state.granting.profile = profile; }
+    toggleRoleToGive(profile) {
+        const g = this.state.granting;
+        if (!g) { return; }
+        g.selectedIds = g.selectedIds.includes(profile.id)
+            ? g.selectedIds.filter((id) => id !== profile.id)
+            : [...g.selectedIds, profile.id];
     }
 
-    /** The roles this person does not already hold — offering one they have is
-     *  offering a refusal. */
+    roleIsSelected(id) {
+        return Boolean(this.state.granting
+            && (this.state.granting.selectedIds || []).includes(id));
+    }
+
+    showCopyRoles() {
+        const g = this.state.granting;
+        if (!g) { return; }
+        g.copyMode = true;
+        g.copySource = null;
+        g.copyPeople = [];
+        g.copyPreview = null;
+    }
+
+    showChooseRoles() {
+        const g = this.state.granting;
+        if (g) { g.copyMode = false; }
+    }
+
+    async onCopyPersonSearch(ev) {
+        const g = this.state.granting;
+        if (!g) { return; }
+        const term = ev.target.value;
+        g.copySource = null;
+        g.copyPreview = null;
+        if (!term || term.length < 2) { g.copyPeople = []; return; }
+        try {
+            // YOU are a fair source to copy from; the person receiving is not.
+            g.copyPeople = (await this.orm.call(
+                "biz.access", "user_options", [term, true]))
+                .filter((person) => person.id !== g.person.id);
+        } catch (e) {
+            g.copyPeople = [];
+        }
+    }
+
+    /** The preview is the SERVER'S plan — the same one the copy runs — so the
+     *  list above the button and what arrives cannot disagree. */
+    async pickCopyPerson(person) {
+        const g = this.state.granting;
+        if (!g) { return; }
+        g.copyBusy = true;
+        g.copyPeople = [];
+        g.copySource = person;
+        try {
+            g.copyPreview = await this.orm.call(
+                "biz.access", "copy_preview", [person.id, g.person.id]);
+        } catch (e) {
+            g.copyPreview = null;
+            this.notif.add(this._msg(e, _t("Those roles could not be read.")),
+                           { type: "danger" });
+        } finally {
+            g.copyBusy = false;
+        }
+    }
+
+    get copyRoles() {
+        const g = this.state.granting;
+        return (g && g.copyPreview && g.copyPreview.roles) || [];
+    }
+
+    /** "Lan has 3 permanent roles that can be added." — ONE expression each. */
+    copyLine() {
+        const g = this.state.granting;
+        if (!g || !g.copyPreview) { return ""; }
+        const who = g.copyPreview.source.name;
+        const n = this.copyRoles.length;
+        if (!n) { return _t("%s has no new permanent roles to add.", who); }
+        if (n === 1) {
+            return _t("%s has 1 permanent role that can be added.", who);
+        }
+        return _t("%s has %s permanent roles that can be added.", who, n);
+    }
+
+    lentSkippedLine() {
+        const g = this.state.granting;
+        const n = (g && g.copyPreview && g.copyPreview.lent_skipped) || 0;
+        if (!n) { return ""; }
+        if (n === 1) {
+            return _t("1 role lent to them for a while is not copied.");
+        }
+        return _t("%s roles lent to them for a while are not copied.", n);
+    }
+
+    /** The roles this person does not already hold AND the person asking is
+     *  allowed to give — offering one they have, or one only its holders may
+     *  give, is offering a refusal. */
     get givableRoles() {
         const held = new Set(
             ((this.state.passport && this.state.passport.roles) || [])
                 .map((r) => r.profile_id));
-        return this.profiles.filter((p) => !held.has(p.id));
+        return this.profiles.filter((p) => !held.has(p.id) && p.can_give);
+    }
+
+    get grantButtonLabel() {
+        const g = this.state.granting;
+        if (!g) { return ""; }
+        if (g.mode === "remove") { return _t("Take it away"); }
+        if (g.person && g.copyMode) { return _t("Copy roles"); }
+        if (g.person) {
+            const n = (g.selectedIds || []).length;
+            if (n > 1) { return _t("Give these %s roles", n); }
+            return _t("Give it to them");
+        }
+        return _t("Give it to them");
+    }
+
+    get grantBlocked() {
+        const g = this.state.granting;
+        if (!g || this.state.busy) { return true; }
+        if (g.mode === "remove") { return !g.profile; }
+        if (g.person && g.copyMode) {
+            return !g.copySource || !this.copyRoles.length || g.copyBusy;
+        }
+        if (g.person) { return !(g.selectedIds || []).length; }
+        return !g.profile;
     }
 
     takeBackRole(row) {
@@ -1120,7 +1266,18 @@ export class BizAccessHome extends Component {
     async confirmGrant() {
         const g = this.state.granting;
         if (!g) { return; }
-        if (!g.profile) {
+        const fromPassport = Boolean(g.person && g.mode === "grant");
+        if (fromPassport && g.copyMode && !g.copySource) {
+            this.notif.add(_t("Choose whose roles to copy."),
+                           { type: "warning" });
+            return;
+        }
+        if (fromPassport && !g.copyMode && !g.selectedIds.length) {
+            this.notif.add(_t("Choose at least one role."),
+                           { type: "warning" });
+            return;
+        }
+        if (!fromPassport && !g.profile) {
             this.notif.add(_t("Choose which role to give them."),
                            { type: "warning" });
             return;
@@ -1129,12 +1286,22 @@ export class BizAccessHome extends Component {
             this.notif.add(_t("Choose who it is for."), { type: "warning" });
             return;
         }
+        let method = g.mode === "remove" ? "remove" : "grant";
+        let args = g.profile
+            ? [g.profile.id, this.state.grantTarget.id, this.state.grantReason]
+            : [];
+        if (fromPassport && g.copyMode) {
+            method = "copy_roles";
+            args = [g.copySource.id, this.state.grantTarget.id,
+                    this.state.grantReason];
+        } else if (fromPassport) {
+            method = "grant_many";
+            args = [g.selectedIds, this.state.grantTarget.id,
+                    this.state.grantReason];
+        }
         this.state.busy = true;
         try {
-            const res = await this.orm.call(
-                "biz.access", g.mode === "remove" ? "remove" : "grant",
-                [g.profile.id, this.state.grantTarget.id,
-                 this.state.grantReason]);
+            const res = await this.orm.call("biz.access", method, args);
             this.state.granting = null;
             this.notif.add(res.message, { type: "success", sticky: true });
             await this.reload();
@@ -1182,18 +1349,93 @@ export class BizAccessHome extends Component {
     }
 
     // ----------------------------------------------------------- hand it over
+    /** How long a new hand-over runs unless somebody changes it: the
+     *  setting, as the server read it. Never a number of this file's own. */
+    get defaultWindowDays() {
+        const n = parseInt(this.board.default_window_days, 10);
+        return n > 0 ? n : 14;
+    }
+
     openDelegate() {
         const today = new Date();
-        const end = new Date(today.getTime() + 14 * 86400000);
+        const end = new Date(today.getTime() + this.defaultWindowDays * 86400000);
         this.state.hand = {
             delegate_user_id: 0, delegate: "", profile_ids: [],
             kind: "temporary",
             date_start: today.toISOString().slice(0, 10),
             date_end: end.toISOString().slice(0, 10),
             reason: "",
+            for_id: 0, for_name: "", for_search: "",
         };
+        this.state.handPeople = [];
+        this.state.handRoles = null;
         this.state.people = [];
         this.state.delegating = true;
+    }
+
+    /** "Handing over for" — managers only. Picking somebody else swaps the
+     *  list of roles for THEIRS, because only what they hold can be lent. */
+    get handingForOther() { return Boolean(this.state.hand.for_id); }
+
+    get handOffered() {
+        return this.handingForOther ? (this.state.handRoles || []) : this.mine;
+    }
+
+    async onHandForSearch(ev) {
+        const term = ev.target.value;
+        this.state.hand.for_search = term;
+        if (!term || term.length < 2) { this.state.handPeople = []; return; }
+        try {
+            this.state.handPeople = await this.orm.call(
+                "biz.access", "user_options", [term, false]);
+        } catch (e) {
+            this.state.handPeople = [];
+        }
+    }
+
+    async pickHandFor(person) {
+        const h = this.state.hand;
+        this.state.handPeople = [];
+        h.profile_ids.splice(0, h.profile_ids.length);
+        if (!person || person.id === this.board.me.id) {
+            h.for_id = 0; h.for_name = ""; h.for_search = "";
+            this.state.handRoles = null;
+            return;
+        }
+        h.for_id = person.id;
+        h.for_name = person.name;
+        h.for_search = person.name;
+        if (h.delegate_user_id === person.id) {
+            h.delegate_user_id = 0; h.delegate = "";
+        }
+        this.state.handRolesBusy = true;
+        try {
+            this.state.handRoles = await this.orm.call(
+                "biz.access", "held_roles_of", [person.id]);
+        } catch (e) {
+            this.state.handRoles = [];
+            this.notif.add(this._msg(e, _t("Their roles could not be read.")),
+                           { type: "danger" });
+        } finally {
+            this.state.handRolesBusy = false;
+        }
+    }
+
+    handHint() {
+        if (!this.handingForOther) {
+            return _t("You can only hand over what you hold yourself, so this "
+                      + "list is yours. Both of you get an email, and "
+                      + "everything here is written down in a history nobody "
+                      + "can delete.");
+        }
+        return _t("Only what %s holds can be handed over, so this list is "
+                  + "theirs. The history will say that you started it.",
+                  this.state.hand.for_name);
+    }
+
+    handCoverLabel() {
+        if (!this.handingForOther) { return _t("Who is covering for you"); }
+        return _t("Who is covering for %s", this.state.hand.for_name);
     }
 
     closeDelegate() { this.state.delegating = false; }
@@ -1216,8 +1458,12 @@ export class BizAccessHome extends Component {
         this.state.hand.delegate_user_id = 0;
         if (!term || term.length < 2) { this.state.people = []; return; }
         try {
-            this.state.people = await this.orm.call(
-                "biz.access", "user_options", [term]);
+            // On somebody else's behalf YOU may be the one covering; the
+            // person who is away may not cover for themselves.
+            const other = this.state.hand.for_id;
+            const rows = await this.orm.call(
+                "biz.access", "user_options", [term, Boolean(other)]);
+            this.state.people = rows.filter((p) => p.id !== other);
         } catch (e) {
             this.state.people = [];
         }
@@ -1250,16 +1496,19 @@ export class BizAccessHome extends Component {
         }
         this.state.busy = true;
         try {
-            const res = await this.orm.call("biz.access", "delegate", [{
+            const vals = {
                 delegate_user_id: h.delegate_user_id,
                 profile_ids: h.profile_ids,
                 kind: h.kind,
                 date_start: h.date_start,
                 date_end: h.kind === "temporary" ? h.date_end : false,
                 reason: h.reason,
-            }]);
+            };
+            if (h.for_id) { vals.delegator_user_id = h.for_id; }
+            const res = await this.orm.call("biz.access", "delegate", [vals]);
             this.state.delegating = false;
             this.state.lens = "handovers";
+            this.state.hvState = "running";
             this.notif.add(res.message, { type: "success", sticky: true });
             await this.reload();
         } catch (e) {
@@ -1282,6 +1531,60 @@ export class BizAccessHome extends Component {
         } finally {
             this.state.busy = false;
         }
+    }
+
+    // ------------------------------------------------------- the hand-overs lens
+    async loadHandovers() {
+        const seq = ++this.handoverSeq;
+        try {
+            const res = await this.orm.call("biz.access", "handovers", [
+                this.state.hvState, this.state.hvSearch || null]);
+            if (seq !== this.handoverSeq) { return; }
+            this.state.handovers = res;
+        } catch (e) {
+            if (seq !== this.handoverSeq) { return; }
+            this.notif.add(this._msg(e, _t("The hand-overs could not be read.")),
+                           { type: "danger" });
+        }
+    }
+
+    get handoverChips() {
+        const counts = this.handoverView.counts || {};
+        return [
+            { key: "running", label: _t("Running"), n: counts.running || 0 },
+            { key: "ended", label: _t("Ended"), n: counts.ended || 0 },
+            { key: "taken_back", label: _t("Taken back"),
+              n: counts.taken_back || 0 },
+            { key: "all", label: _t("All"), n: counts.all || 0 },
+        ];
+    }
+
+    async setHandoverState(key) {
+        this.state.hvState = key;
+        await this.loadHandovers();
+    }
+
+    onHandoverSearch(ev) {
+        this.state.hvSearch = ev.target.value;
+        clearTimeout(this.handoverTimer);
+        this.handoverTimer = setTimeout(() => this.loadHandovers(), SEARCH_PAUSE);
+    }
+
+    /** The empty state for a chip that has nothing under it, in words that
+     *  say which chip it is — "nobody is covering for anybody" is only true
+     *  of the Running one. */
+    handoverEmptyLine() {
+        if (this.state.hvSearch) {
+            return _t("No hand-over matches that name. Try part of a name, or "
+                      + "clear the box.");
+        }
+        if (this.state.hvState === "ended") {
+            return _t("No hand-over has ended on its own yet.");
+        }
+        if (this.state.hvState === "taken_back") {
+            return _t("Nothing has been taken back early.");
+        }
+        return _t("Nothing has been handed over on this system yet.");
     }
 
     async runRevert() {

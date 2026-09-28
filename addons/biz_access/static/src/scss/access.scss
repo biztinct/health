@@ -2315,3 +2315,99 @@ $bza-areas: (
         margin-top: 2px;
     }
 }
+
+// =========================================================================
+// AR-1 — guarded roles, giving several at once, copying from a colleague,
+// hand-overs on somebody's behalf, and the Hand-overs lens narrowed.
+//
+// Flat tints only, from the same tokens as everything above; every state here
+// carries a WORD as well as its colour.
+// =========================================================================
+.bzk.bza {
+
+    // "Guarded" — only holders may give it. Quieter than "Lent" (which is a
+    // state somebody is in) and louder than "Restricted" (which is about who
+    // sees the card): the accent's own soft tint.
+    .bza-badge.bza-badge--guard {
+        background: var(--bzk-primary-light, #EEECFA);
+        color: var(--bzk-primary-dark, #4A3EA6);
+    }
+
+    // Where "Give this to somebody" would have been, on a guarded role the
+    // reader does not hold.
+    .bza-col-note--guard {
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+        margin-top: 12px;
+
+        svg { flex: 0 0 auto; margin-top: 3px; }
+    }
+
+    // On your own passport, in place of "Give a role".
+    .bza-pass-self {
+        margin: 12px 0 0;
+        align-items: flex-start;
+
+        svg { flex: 0 0 auto; margin-top: 2px; }
+    }
+
+    // The Hand-overs lens: one line above the cards, and a small empty state
+    // for a chip or a search with nothing under it.
+    .bza-hv-head {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--bzk-muted, #64748B);
+        margin: 0 0 12px;
+    }
+
+    .bza-hv-empty { margin-bottom: 12px; }
+
+    .bza-hand-by {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--bzk-primary-dark, #4A3EA6);
+        margin: 8px 0 0;
+    }
+}
+
+.bzk-modal-scrim {
+
+    // "Choose roles" / "Copy from another person" — two chips, one row.
+    .bza-grant-ways {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+
+    .bza-copy-preview { margin-top: 10px; }
+
+    .bza-copy-roles {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin: 4px 0 12px;
+    }
+
+    .bza-copy-role {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--bzk-ink, #1B1733);
+        padding: 7px 10px;
+        border-radius: var(--bzk-r-sm, 8px);
+        background: var(--bzk-bg, #F8F9FC);
+        border: 1px solid var(--bzk-line, #E6E8F0);
+
+        svg { flex: 0 0 auto; color: #15803D; }
+    }
+
+    // "Handing over for": the chip that says whose, above the search.
+    .bza-hand-for { margin-bottom: 8px; }
+}

@@ -232,6 +232,26 @@
               <span t-esc="ar.label"/><b t-esc="ar.n"/>
             </button>
           </div>
+
+          <!-- THE HAND-OVERS, NARROWED. A name — either person's — and which
+               of them: the ones running now (where every visit starts), the
+               ones that ended on their own, the ones taken back early, or all
+               of them. The same chip shape as the areas above. -->
+          <label t-if="state.lens === 'handovers'"
+                 class="bza-field bza-field--search">
+            <span class="bza-in-ic"><t t-out="ic('search',15)"/></span>
+            <input class="bza-in" type="search" t-att-value="state.hvSearch"
+                   t-on-input="onHandoverSearch"
+                   placeholder="Search who lent it, or who has it"/>
+          </label>
+
+          <div t-if="state.lens === 'handovers'" class="bza-chips">
+            <button t-foreach="handoverChips" t-as="hc" t-key="hc.key"
+                    t-attf-class="bza-chip {{ state.hvState === hc.key ? 'is-on' : '' }}"
+                    t-on-click="() => this.setHandoverState(hc.key)">
+              <span t-esc="hc.label"/><b t-esc="hc.n"/>
+            </button>
+          </div>
         </div>
 
         <!-- ============================ the roles ============================ -->
@@ -274,6 +294,11 @@
                           class="bza-badge bza-badge--quiet"
                           title="Only shown to the people this concerns">
                       Restricted
+                    </span>
+                    <span t-if="pf.guarded"
+                          class="bza-badge bza-badge--guard"
+                          title="Only people who hold this role may give it or lend it">
+                      Guarded
                     </span>
                   </span>
                   <!-- THE SENTENCE IS THE HERO. Every mistake this screen
@@ -423,10 +448,18 @@
                       <p t-if="dt.more" class="bza-col-note"
                          t-esc="'and ' + dt.more + ' more — the spreadsheet has the whole list.'"/>
 
-                      <button t-if="canManage" class="bzk-btn ghost bza-grant"
+                      <button t-if="canManage and pf.can_give"
+                              class="bzk-btn ghost bza-grant"
                               t-on-click="() => this.openGrant(pf)">
                         <t t-out="ic('plus',14)"/> Give this to somebody
                       </button>
+                      <!-- A GUARDED ROLE THE READER DOES NOT HOLD. The button is
+                           absent rather than drawn and refused, and the reason
+                           is said where the button would have been. -->
+                      <p t-elif="canManage" class="bza-col-note bza-col-note--guard">
+                        <t t-out="ic('lock',12)"/>
+                        Only people who hold this role may give it or lend it.
+                      </p>
 
                       <!-- PUT IT AWAY — the way out of two roles that have come
                            to mean the same thing (ledger B7). It is offered
@@ -580,12 +613,22 @@
                           t-on-click="() => this.openPersonHistory(ph)">
                     <t t-out="ic('history',14)"/> Their history
                   </button>
-                  <button t-if="passport.can_manage" class="bzk-btn primary"
+                  <button t-if="passport.can_manage and !ph.is_me"
+                          class="bzk-btn primary"
                           t-on-click="() => this.openGiveRole(ph)">
                     <t t-out="ic('plus',14)"/> Give a role
                   </button>
                 </div>
               </div>
+
+              <!-- NOBODY GIVES THEMSELVES A ROLE. On your own passport the
+                   door is not drawn, and the reason is — in the product's own
+                   words, which name who to ask. -->
+              <p t-if="passport.can_manage and ph.is_me and board.self_grant_note"
+                 class="bza-note bza-pass-self">
+                <t t-out="ic('info',14)"/>
+                <span t-esc="board.self_grant_note"/>
+              </p>
 
               <div class="bza-pass-cols">
 
@@ -641,7 +684,8 @@
                       No roles yet. They see only the entries every account
                       gets, and can do only what comes with having a login.
                     </p>
-                    <button t-if="passport.can_manage" class="bzk-btn primary"
+                    <button t-if="passport.can_manage and !ph.is_me"
+                            class="bzk-btn primary"
                             t-on-click="() => this.openGiveRole(ph)">
                       <t t-out="ic('plus',14)"/> Give a role
                     </button>
@@ -1102,7 +1146,20 @@
              lens arrives — which it now has, twice. -->
         <div t-if="state.lens === 'handovers'" class="bza-body">
 
-          <div t-if="!delegations.length" class="bzk-empty bza-empty">
+          <p t-if="handoverView.capped" class="bza-col-note">
+            Only the most recent 500 are shown here. Narrow it with a name, or
+            take the whole history as a spreadsheet.
+          </p>
+          <p t-if="handoverView.headline" class="bza-hv-head"
+             t-esc="handoverView.headline"/>
+
+          <div t-if="!delegations.length and (state.hvState !== 'running' or state.hvSearch)"
+               class="bza-mini-empty bza-hv-empty">
+            <t t-out="ic('arrowLeftRight',22)"/>
+            <p t-esc="handoverEmptyLine()"/>
+          </div>
+
+          <div t-elif="!delegations.length" class="bzk-empty bza-empty">
             <div class="bza-empty-ic"><t t-out="ic('arrowLeftRight',30)"/></div>
             <h3>Nobody is covering for anybody</h3>
             <p>
@@ -1143,6 +1200,12 @@
                 <span class="bza-hand-days" t-esc="daysLine(hv)"/>
               </div>
 
+              <!-- A manager started it for somebody who was away, so "lent by"
+                   is not the whole story: who pressed the button is. -->
+              <p t-if="hv.started_by" class="bza-hand-by">
+                <t t-out="ic('user',12)"/>
+                <span t-esc="hv.started_by"/>
+              </p>
               <p t-if="hv.reason" class="bza-hand-note" t-esc="hv.reason"/>
               <p t-if="hv.ended_note" class="bza-hand-note"
                  t-esc="hv.ended_note"/>
@@ -1183,13 +1246,10 @@
           <!-- THE SENTENCE BEFORE THE BUTTON, ALWAYS. Coming from a person's
                passport the role is not chosen yet, so the list IS the sentences
                — and the one that is picked stays on screen above the button. -->
-          <div t-if="state.granting.profile" class="bza-what">
+          <div t-if="state.granting.profile and !state.granting.person"
+               class="bza-what">
             <h4 t-esc="state.granting.profile.name"/>
             <p t-esc="state.granting.profile.description"/>
-            <button t-if="state.granting.person" class="bza-linkbtn"
-                    t-on-click="() => this.pickRoleToGive(null)">
-              Choose a different role
-            </button>
           </div>
 
           <t t-if="state.granting.mode === 'remove'">
@@ -1197,28 +1257,93 @@
               <t t-esc="state.grantTarget.name + ' will no longer be able to do this. Anything they have already done stays exactly as it is.'"/>
             </p>
           </t>
-          <t t-elif="state.granting.person and !state.granting.profile">
-            <label class="bza-lbl">Which role</label>
-            <div t-if="!givableRoles.length" class="bza-mini-empty">
-              <t t-out="ic('idCard',22)"/>
-              <p>
-                They already hold every role on this board. There is nothing
-                left to give them here.
-              </p>
-            </div>
-            <div t-else="" class="bza-picks bza-picks--tall">
-              <button t-foreach="givableRoles" t-as="gr" t-key="gr.id"
-                      class="bza-pickable"
-                      t-on-click="() => this.pickRoleToGive(gr)">
-                <span class="bza-pickable-go">
-                  <t t-out="ic('idCard',15)"/>
-                </span>
-                <span class="bza-pickable-tx">
-                  <b t-esc="gr.name"/>
-                  <small t-esc="gr.description"/>
-                </span>
+          <t t-elif="state.granting.person">
+            <!-- TWO WAYS TO GIVE FROM A PASSPORT. Tick several roles, or copy
+                 the permanent ones a colleague holds. Both are ONE write and
+                 ONE line in the history; nothing changes until the button. -->
+            <div class="bza-grant-ways" role="tablist">
+              <button t-attf-class="bza-chip {{ state.granting.copyMode ? '' : 'is-on' }}"
+                      role="tab"
+                      t-attf-aria-selected="{{ state.granting.copyMode ? 'false' : 'true' }}"
+                      t-on-click="showChooseRoles">
+                <t t-out="ic('check',13)"/> Choose roles
+              </button>
+              <button t-attf-class="bza-chip {{ state.granting.copyMode ? 'is-on' : '' }}"
+                      role="tab"
+                      t-attf-aria-selected="{{ state.granting.copyMode ? 'true' : 'false' }}"
+                      t-on-click="showCopyRoles">
+                <t t-out="ic('copy',13)"/> Copy from another person
               </button>
             </div>
+
+            <t t-if="!state.granting.copyMode">
+              <label class="bza-lbl">Which roles</label>
+              <p class="bza-hint">
+                Tick one or more. Roles only their holders may give are not
+                listed unless you hold them.
+              </p>
+              <div t-if="!givableRoles.length" class="bza-mini-empty">
+                <t t-out="ic('idCard',22)"/>
+                <p>
+                  There is no role left that you can give them here.
+                </p>
+              </div>
+              <div t-else="" class="bza-picks bza-picks--tall">
+                <button t-foreach="givableRoles" t-as="gr" t-key="gr.id"
+                        t-attf-class="bza-pickable {{ roleIsSelected(gr.id) ? 'is-on' : '' }}"
+                        role="checkbox"
+                        t-attf-aria-checked="{{ roleIsSelected(gr.id) ? 'true' : 'false' }}"
+                        t-on-click="() => this.toggleRoleToGive(gr)">
+                  <span class="bza-pickable-tick">
+                    <t t-out="ic('check',14)"/>
+                  </span>
+                  <span class="bza-pickable-tx">
+                    <b t-esc="gr.name"/>
+                    <small t-esc="gr.description"/>
+                  </span>
+                </button>
+              </div>
+            </t>
+
+            <t t-else="">
+              <label class="bza-lbl">Copy the permanent roles of</label>
+              <input class="bza-in"
+                     t-att-value="state.granting.copySource ? state.granting.copySource.name : ''"
+                     t-on-input="onCopyPersonSearch"
+                     placeholder="Start typing a name"/>
+              <div t-if="state.granting.copyPeople.length" class="bza-picker">
+                <button t-foreach="state.granting.copyPeople" t-as="pp"
+                        t-key="pp.id" class="bza-pick"
+                        t-on-click="() => this.pickCopyPerson(pp)">
+                  <img class="bza-face" t-att-src="pp.avatar" t-att-alt="pp.name"/>
+                  <span t-esc="pp.name"/><small t-esc="pp.login"/>
+                </button>
+              </div>
+              <div t-if="state.granting.copyBusy" class="bzk-busy">
+                <div class="bzk-spin"/><span>Reading their roles…</span>
+              </div>
+              <div t-elif="state.granting.copyPreview" class="bza-copy-preview">
+                <p class="bza-note bza-note--shield">
+                  <t t-out="ic('shieldCheck',14)"/>
+                  <span>
+                    <b t-esc="copyLine()"/>
+                    <t t-if="lentSkippedLine()"> <t t-esc="lentSkippedLine()"/></t>
+                  </span>
+                </p>
+                <div t-if="copyRoles.length" class="bza-copy-roles">
+                  <div t-foreach="copyRoles" t-as="cr" t-key="cr.id"
+                       class="bza-copy-role">
+                    <t t-out="ic('check',14)"/>
+                    <span t-esc="cr.name"/>
+                  </div>
+                </div>
+                <p t-if="state.granting.copyPreview.dropped_note"
+                   class="bza-note bza-note--warn">
+                  <t t-out="ic('lock',14)"/>
+                  <span t-esc="state.granting.copyPreview.dropped_note"/>
+                </p>
+              </div>
+            </t>
           </t>
           <t t-elif="!state.granting.person">
             <label class="bza-lbl">Who is it for</label>
@@ -1233,11 +1358,6 @@
               </button>
             </div>
           </t>
-          <t t-else="">
-            <p class="bza-hint bza-hint--lead">
-              <t t-esc="state.granting.person.name + ' will be able to do this from the moment you press the button, and it goes in the history.'"/>
-            </p>
-          </t>
 
           <label class="bza-lbl">Why</label>
           <textarea class="bza-in bza-area" rows="2"
@@ -1248,8 +1368,8 @@
         <div class="bza-modal-f">
           <button class="bzk-btn ghost" t-on-click="closeGrant">Cancel</button>
           <button class="bzk-btn primary" t-on-click="confirmGrant"
-                  t-att-disabled="state.busy or !state.granting.profile"
-                  t-esc="state.granting.mode === 'remove' ? 'Take it away' : 'Give it to them'"/>
+                  t-att-disabled="grantBlocked"
+                  t-esc="grantButtonLabel"/>
         </div>
       </div>
       </div>
@@ -1433,19 +1553,45 @@
       <div t-if="state.delegating" class="bzk-modal-scrim" t-on-click="closeDelegate">
         <div class="bzk-modal bza-modal" t-on-click.stop="">
         <div class="bza-modal-h">
-          <h3>Hand your access over</h3>
+          <h3 t-if="handingForOther"
+              t-esc="'Hand over ' + state.hand.for_name + '\'s access'"/>
+          <h3 t-else="">Hand your access over</h3>
           <button class="bzk-btn ghost" t-on-click="closeDelegate">
             <t t-out="ic('x',16)"/>
           </button>
         </div>
         <div class="bza-modal-b">
-          <p class="bza-hint bza-hint--lead">
-            You can only hand over what you hold yourself, so this list is
-            yours. Both of you get an email, and everything here is written down
-            in a history nobody can delete.
-          </p>
+          <p class="bza-hint bza-hint--lead" t-esc="handHint()"/>
 
-          <label class="bza-lbl">Who is covering for you</label>
+          <!-- ON SOMEBODY'S BEHALF — the access team only. Somebody already
+               away cannot press the button themselves, so a manager can start
+               it for them. The list of roles below then becomes THEIRS,
+               because only what they hold can be lent. -->
+          <t t-if="canManage">
+            <label class="bza-lbl">Handing over for</label>
+            <div class="bza-chips bza-chips--wrap bza-hand-for">
+              <button t-attf-class="bza-chip {{ handingForOther ? '' : 'is-on' }}"
+                      t-on-click="() => this.pickHandFor(null)">
+                <t t-out="ic('user',13)"/> Me
+              </button>
+              <span t-if="handingForOther" class="bza-chip is-on">
+                <t t-out="ic('users',13)"/>
+                <t t-esc="state.hand.for_name"/>
+              </span>
+            </div>
+            <input class="bza-in" t-att-value="state.hand.for_search"
+                   t-on-input="onHandForSearch"
+                   placeholder="Or start typing the name of somebody who is away"/>
+            <div t-if="state.handPeople.length" class="bza-picker">
+              <button t-foreach="state.handPeople" t-as="hp" t-key="hp.id"
+                      class="bza-pick" t-on-click="() => this.pickHandFor(hp)">
+                <img class="bza-face" t-att-src="hp.avatar" t-att-alt="hp.name"/>
+                <span t-esc="hp.name"/><small t-esc="hp.login"/>
+              </button>
+            </div>
+          </t>
+
+          <label class="bza-lbl" t-esc="handCoverLabel()"/>
           <input class="bza-in" t-att-value="state.hand.delegate"
                  t-on-input="onDelegateSearch"
                  placeholder="Start typing a name"/>
@@ -1458,7 +1604,15 @@
           </div>
 
           <label class="bza-lbl">What they should be able to do</label>
-          <div t-if="!mine.length" class="bza-mini-empty">
+          <div t-if="state.handRolesBusy" class="bzk-busy">
+            <div class="bzk-spin"/><span>Reading what they hold…</span>
+          </div>
+          <div t-elif="!handOffered.length and handingForOther"
+               class="bza-mini-empty">
+            <t t-out="ic('idCard',22)"/>
+            <p t-esc="state.hand.for_name + ' does not hold any of the roles on this board, so there is nothing of theirs to hand over.'"/>
+          </div>
+          <div t-elif="!handOffered.length" class="bza-mini-empty">
             <t t-out="ic('idCard',22)"/>
             <p>
               You do not hold any of the roles on this board, so there is
@@ -1467,7 +1621,7 @@
             </p>
           </div>
           <div t-else="" class="bza-picks">
-            <button t-foreach="mine" t-as="mp" t-key="mp.id"
+            <button t-foreach="handOffered" t-as="mp" t-key="mp.id"
                     t-attf-class="bza-pickable {{ hasProfile(mp.id) ? 'is-on' : '' }}"
                     t-on-click="() => this.toggleProfile(mp.id)">
               <span class="bza-pickable-tick">
