@@ -1,0 +1,5 @@
+# Preserve the client's original PDF bytes; do not treat PDF streams as text.
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary

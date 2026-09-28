@@ -1,0 +1,181 @@
+// Client's September 2026 PowerPoint. Scoped to imported pages, preserving menu design.
+// Local Aptos is used until licensed webfont files are supplied.
+@font-face {
+    font-family: "THHS Aptos";
+    src: local("Aptos"), local("Aptos-Regular");
+    font-weight: 400;
+    font-display: swap;
+}
+@font-face {
+    font-family: "THHS Aptos";
+    src: local("Aptos Bold"), local("Aptos-Bold");
+    font-weight: 700;
+    font-display: swap;
+}
+
+#wrap.thhs26, #wrap:has([data-snippet^="s_thhs_"]) {
+    font-family: "THHS Aptos", Aptos, Calibri, Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+    color: #141414;
+    background: #fff;
+
+    h1, h2, h3, h4, h5, h6, p, a, li, td, th, span, strong {
+        font-family: inherit;
+        letter-spacing: normal;
+    }
+    h1, h2, h3, h4 { font-weight: 700; }
+    h1 { font-size: clamp(26px, 2.7vw, 38px); }
+    h2 { font-size: 25px; }
+    h3 { font-size: 20px; }
+    h4 { font-size: 18px; }
+    p { margin-bottom: 12px; }
+    li { margin-bottom: 12px; }
+    .container { max-width: 1320px; }
+    .thhs26-label { color: #005e76; font-size: 20px; font-weight: 700; }
+    .thhs26-button {
+        border: 1px solid #548434;
+        border-radius: 10px;
+        background: #92d050;
+        color: #163d4a;
+        font-size: 18px;
+        font-weight: 700;
+        padding: 14px 30px;
+        &:hover, &:focus { background: #b0e47c; color: #163d4a; }
+    }
+    .thhs26-title {
+        background-size: 100% 100%;
+        background-position: center;
+        color: #fff;
+        text-align: center;
+        h1 { margin: 0; color: #fff; text-shadow: 0 1px 3px rgba(0, 40, 70, .25); }
+        .thhs26-maori { color: rgba(255,255,255,.5); }
+    }
+    .thhs26-watermark-section {
+        position: relative;
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center bottom;
+        .thhs26-copy { position: relative; }
+    }
+    .thhs26-history h3 { color: #268291; margin-top: 23px; }
+    .thhs26-history p { font-size: 17px; }
+    .thhs26-vision { min-height: 390px; }
+    .thhs26-vision { background-position: 75% bottom; }
+    .thhs26-vision .thhs26-copy p { max-width: 1100px; padding-top: 18px; font-size: 20px; }
+    .thhs26-purpose { min-height: 440px; }
+    .thhs26-welcome { background: #087abe; }
+    .thhs26-welcome-frame {
+        position: relative;
+        width: 100%;
+        margin: auto;
+    }
+    // The reference slide presents the complete photo in this panoramic frame.
+    .thhs26-welcome-photo { width: 100%; aspect-ratio: 2.235; display: block; object-fit: fill; }
+    .thhs26-welcome-copy {
+        position: absolute;
+        top: 10%;
+        left: 4%;
+        width: 46%;
+        color: #fff;
+        text-shadow: 0 1px 4px rgba(0, 24, 52, .8);
+        h1 { color: #fff; font-size: clamp(34px, 4.5vw, 68px); line-height: 1.05; margin: 0; }
+        h2 { color: rgba(255,255,255,.5); font-size: clamp(25px, 2.8vw, 40px); margin-bottom: 12px; line-height: 1.08; }
+        p { font-size: clamp(15px, 1.45vw, 21px); line-height: 1.3; }
+        .thhs26-button { margin-top: 10px; text-shadow: none; }
+    }
+    .thhs26-profiles {
+        .carousel-content { width: 100%; }
+        h2 { color: #e97132; font-size: 25px; margin-bottom: 8px; }
+        p { font-size: 16px; line-height: 1.45; }
+        .thhs26-role { font-weight: 700; font-size: 18px; }
+        .thhs26-skills { font-weight: 700; }
+        .thhs26-profile-photo { width: 100%; max-height: 260px; object-fit: contain; object-position: top; }
+        .carousel-control-prev, .carousel-control-next {
+            top: auto; bottom: 12px; height: 36px; width: 42px; background: #005e76;
+            border: 0; opacity: 1; border-radius: 4px;
+        }
+        .carousel-control-prev { left: 20px; }
+        .carousel-control-next { right: 20px; }
+        .carousel-indicators { bottom: 9px; margin-bottom: 10px; }
+        .carousel-indicators button { background: #005e76; height: 6px; width: 22px; }
+    }
+    .thhs26-incorporated { opacity: .65; width: 100%; max-height: 450px; object-fit: contain; }
+    .thhs26-rule-icon { max-height: 155px; width: auto; }
+    .thhs26-news-item { border: 1px solid #53616a; box-shadow: 3px 3px 0 #e5e7e8; padding: 14px 18px; margin-bottom: 22px; }
+    .thhs26-news-meta { display: flex; gap: 15px; justify-content: space-between; border-bottom: 1px solid #dce1e4; padding-bottom: 8px; margin-bottom: 10px; font-size: 14px; color: #005e76; }
+    .thhs26-news-item h3 { color: #141414; font-size: 21px; }
+    .thhs26-read-more { background: #18313e; color: #fff; padding: 4px 12px; font-size: 12px; font-weight: 700; text-decoration: none; }
+    .thhs26-reports {
+        h2 { margin-bottom: 56px; }
+        .col-md img { width: 100%; max-height: 150px; object-fit: contain; }
+        a:focus-visible { outline: 3px solid #005e76; }
+    }
+    .thhs26-social-icon { width: 155px; margin: 35px; }
+    .thhs26-thermometer { max-height: 680px; display: block; margin: auto; }
+    .thhs26-grants { font-size: 14px; line-height: 1.3; }
+    .thhs26-grants th { background: #0c3855; color: #fff; }
+    .thhs26-grants td { padding: 8px; }
+    .thhs26-grants td:nth-child(2) { font-weight: 700; white-space: nowrap; }
+    .thhs26-grants tr:nth-child(odd) td { background: #edf3f6; }
+    .thhs26-grants td:first-child { font-weight: 700; background: #a7d4f0; }
+    .thhs26-grants tr:nth-child(3n) td:first-child { background: #92d050; }
+    .thhs26-grants tr:nth-child(4n) td:first-child { background: #e97132; }
+    .thhs26-cheque { max-height: 680px; object-fit: contain; }
+    .thhs26-testimonial-head { position: relative; width: 100%; max-width: 850px; margin: 0 auto 36px; text-align: center; }
+    .thhs26-testimonial-head img { width: 100%; opacity: .45; max-height: 270px; object-fit: contain; }
+    .thhs26-testimonial-head h2 { position: absolute; top: 8%; left: 10%; right: 10%; color: #709d42; }
+    .thhs26-testimonials .row img { width: 100%; height: 150px; object-fit: contain; }
+    .thhs26-calendar h3 { font-size: 18px; margin: 22px 0 8px; color: #141414; }
+    .thhs26-date { display: flex; gap: 24px; border: 1px solid #b6bdc0; padding: 14px 20px; margin-bottom: 10px; align-items: center; }
+    .thhs26-date > div:first-child { min-width: 58px; text-align: center; border-right: 1px solid #ddd; padding-right: 20px; }
+    .thhs26-date strong { display: block; font-size: 29px; line-height: 1; }
+    .thhs26-date span { font-size: 13px; }
+    .thhs26-date h4, .thhs26-date p { margin: 0; }
+    .thhs26-date p { font-size: 14px; }
+    .thhs26-support { max-width: 1050px; margin: auto; }
+    .thhs26-support h2 { margin-bottom: 36px; }
+    .thhs26-support img { max-height: 155px; max-width: 230px; width: 100%; object-fit: contain; }
+    .thhs26-contact { max-width: 1280px; margin: auto; }
+    .thhs26-contact-heading h1 { color: #163d4a; margin-bottom: 6px; }
+    .thhs26-contact-heading > p:first-child { font-size: 15px; margin-bottom: 4px; }
+    .thhs26-contact h2 { font-size: 22px; color: #163d4a; margin: 16px 0 5px; }
+    .thhs26-contact-intro { background: #eaf2f4; padding: 12px 20px; border: 1px solid #72868e; }
+    .thhs26-contact-intro h2 { margin: 0; }
+    .thhs26-contact-intro p { margin: 0; font-size: 15px; }
+    .thhs26-contact-details { margin-top: 6px; }
+    .thhs26-contact-details p { display: flex; align-items: center; border: 1px solid #dbe3e5; height: 100%; font-size: 15px; }
+    .thhs26-contact-details strong { background: #163d4a; color: white; font-size: 12px; padding: 16px; margin-right: 15px; }
+    .thhs26-contact-details a { color: #268291; font-weight: 700; }
+    .thhs26-contact-reasons > div > div { border: 1px solid #dbe3e5; background: #f2f6f7; padding: 14px; height: 100%; }
+    .thhs26-contact-reasons h3 { font-size: 18px; color: #268291; }
+    .thhs26-contact-reasons p, .thhs26-contact li { font-size: 14px; }
+    .thhs26-contact ul { padding-left: 20px; }
+    .thhs26-hospital-details { width: 100%; }
+    .thhs26-hospital-photo { border: 1px solid #c2d0d4; border-radius: 8px; padding: 12px; max-height: 390px; object-fit: contain; }
+}
+
+// Keep the bilingual menu geometry and colours; use the client's type family.
+body:has(#wrap.thhs26) header#top {
+    #top_menu > .nav-item > .nav-link,
+    .dropdown-menu .dropdown-item {
+        font-family: "THHS Aptos", Aptos, Calibri, Arial, sans-serif;
+    }
+}
+
+@media (max-width: 767.98px) {
+    #wrap.thhs26, #wrap:has([data-snippet^="s_thhs_"]) {
+        font-size: 16px;
+        .thhs26-title h1 { font-size: 26px; }
+        .thhs26-title .thhs26-maori { display: block; font-size: 22px; }
+        .thhs26-welcome-frame { width: 100%; }
+        .thhs26-welcome-photo { aspect-ratio: 4 / 3; }
+        .thhs26-welcome-copy { position: relative; top: auto; left: auto; width: auto; padding: 22px; background: #005e76; }
+        .thhs26-welcome-copy p { font-size: 17px; }
+        .thhs26-profiles .thhs26-profile-photo { max-height: 200px; width: auto; display: block; margin: auto; }
+        .thhs26-profiles p { font-size: 16px; }
+        .thhs26-thermometer { max-height: 300px; }
+        .thhs26-contact-details strong { min-width: 112px; }
+        .thhs26-news-meta { font-size: 12px; }
+    }
+}

@@ -177,8 +177,8 @@ header#top {
 }
 
 .thhs-page-hero,
-#wrap > .s_title:first-child,
-#wrap > .s_text_block:first-child.oe_img_bg {
+#wrap:not(.thhs26):not(:has([data-snippet^="s_thhs_"])) > .s_title:first-child,
+#wrap:not(.thhs26):not(:has([data-snippet^="s_thhs_"])) > .s_text_block:first-child.oe_img_bg {
     position: relative;
     min-height: 0;
     // These are defaults only. Odoo's editor applies inline padding while the
@@ -1118,8 +1118,8 @@ footer.o_footer {
     }
 
     .thhs-page-hero,
-    #wrap > .s_title:first-child,
-    #wrap > .s_text_block:first-child.oe_img_bg {
+    #wrap:not(.thhs26):not(:has([data-snippet^="s_thhs_"])) > .s_title:first-child,
+    #wrap:not(.thhs26):not(:has([data-snippet^="s_thhs_"])) > .s_text_block:first-child.oe_img_bg {
         min-height: 0;
         padding-top: 60px;
         padding-bottom: 60px;

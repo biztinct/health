@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="s_thhs_lake_title" name="Taupō Lake Title">
+        <section class="s_title thhs26-title o_colored_level oe_img_bg o_bg_img_center pt24 pb24" data-vcss="001" style="background-image:url('/website_bilingual_menu/static/client_2026/lake-title.png')">
+            <div class="container s_allow_columns"><h1>Page title<span class="thhs26-maori"> / Māori title</span></h1></div>
+        </section>
+    </template>
+    <template id="s_thhs_news" name="Taupō News Item">
+        <section class="s_text_block thhs26-news o_colored_level pt16 pb16">
+            <div class="container"><div class="thhs26-news-item">
+                <div class="thhs26-news-meta"><span>News update</span><span>Publication date</span></div>
+                <h3>News headline</h3><p class="text-end"><a class="thhs26-read-more" href="/contactus">READ MORE</a></p>
+            </div></div>
+        </section>
+    </template>
+    <template id="s_thhs_calendar" name="Taupō Calendar Date">
+        <section class="s_text_block thhs26-calendar o_colored_level pt16 pb16"><div class="container">
+            <h3>Month and year</h3><div class="thhs26-date"><div><strong>18</strong><span>NOV</span></div><div><h4>Event name</h4><p>Event details</p></div></div>
+        </div></section>
+    </template>
+    <template id="s_thhs_document" name="Taupō Document Link">
+        <section class="s_text_image thhs26-reports o_colored_level pt24 pb24"><div class="container"><div class="row align-items-center g-4">
+            <div class="col-md-3 o_colored_level"><a href="/contactus"><img class="img img-fluid" src="/website_bilingual_menu/static/client_2026/2025.png" alt="Report cover" loading="lazy"/></a></div>
+            <div class="col-md-9 o_colored_level"><h2>Report or testimonial title</h2><p>Describe this document.</p><p><a href="/contactus" target="_blank">Open document</a></p></div>
+        </div></div></section>
+    </template>
+    <template id="thhs_client_snippets" inherit_id="website.snippets" name="Taupō editable client blocks">
+        <xpath expr="//snippets[@id='snippet_groups']" position="inside">
+            <t snippet-group="thhs" t-snippet="website.s_snippet_group" string="Taupō Health" t-thumbnail="/website/static/src/img/snippets_thumbs/s_text_image.svg"/>
+        </xpath>
+        <xpath expr="//snippets[@id='snippet_structure']" position="inside">
+            <t t-snippet="website_bilingual_menu.s_thhs_lake_title" string="Lake page title" group="thhs" t-thumbnail="/website/static/src/img/snippets_thumbs/s_title.svg"/>
+            <t t-snippet="website_bilingual_menu.s_thhs_news" string="News item" group="thhs" t-thumbnail="/website/static/src/img/snippets_thumbs/s_text_block.svg"/>
+            <t t-snippet="website_bilingual_menu.s_thhs_calendar" string="Calendar date" group="thhs" t-thumbnail="/website/static/src/img/snippets_thumbs/s_text_block.svg"/>
+            <t t-snippet="website_bilingual_menu.s_thhs_document" string="Report or testimonial" group="thhs" t-thumbnail="/website/static/src/img/snippets_thumbs/s_text_image.svg"/>
+        </xpath>
+    </template>
+</odoo>

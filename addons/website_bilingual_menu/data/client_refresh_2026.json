@@ -1,0 +1,484 @@
+{
+  "source": "THHS mockup website Deb 010926.pptx",
+  "assets": {
+    "lake-title.png": {
+      "file": "lake-title.png",
+      "sha256": "1b995ef793d03116a660eab1c96202f05b04f1f94ec1bda2715682539a62383f"
+    },
+    "welcome-lake.jpeg": {
+      "file": "welcome-lake.jpeg",
+      "sha256": "88f0f6c241bbee8e09d580142572014110e752f196dca04741619fced30c08ca"
+    },
+    "hospital-history.jpg": {
+      "file": "hospital-history.jpg",
+      "sha256": "e3fe44f75bfb29fe22a3dae9bcb2c7eb80971a6cbec75b32d82e986809170e70"
+    },
+    "vision.jpg": {
+      "file": "vision.jpg",
+      "sha256": "bf331a1a2d3eedb7ad3960e3936aa41742de05c9a89463aa5d1025f8087e2bb7"
+    },
+    "purpose.png": {
+      "file": "purpose.png",
+      "sha256": "4d6956cd12ea072d734ec7efa08c0efdcb008576d288c66854270c262c091418"
+    },
+    "lil2.jpeg": {
+      "file": "lil2.jpeg",
+      "sha256": "8bcd4a684233b882459188cc23d8da28246bdd8601d953a1d7b1970c78efb10e"
+    },
+    "gilma2.jpeg": {
+      "file": "gilma2.jpeg",
+      "sha256": "08867600ee6451fb2a94693833f5b43abae3d1f8ef2e7470868bdb0ad4d883fb"
+    },
+    "deb.jpeg": {
+      "file": "deb.jpeg",
+      "sha256": "06214ae43d1b6e1554724f9875037ad2f41d702a394ad56db415a9bb82692d08"
+    },
+    "trent2.jpeg": {
+      "file": "trent2.jpeg",
+      "sha256": "1ca88338f1bf0a5ba407c5c3eaa8555b6b6214ce3398dce0fc11e705776ef836"
+    },
+    "mark2.jpeg": {
+      "file": "mark2.jpeg",
+      "sha256": "2967e904cf2d5f4fe0b53af831d1a2593922adbfdb0994f464114dee8422f18f"
+    },
+    "sandra-david.jpeg": {
+      "file": "sandra-david.jpeg",
+      "sha256": "b835dc71e5cf2075a6b3b7e4df358c8ac1798eaa2613a879e073eb3f70aa9896"
+    },
+    "john2.jpeg": {
+      "file": "john2.jpeg",
+      "sha256": "56dc618193a8323d390e942f9b9f183ef99418e6f6dcf72da6ce00c253ef32c3"
+    },
+    "aruna2.jpeg": {
+      "file": "aruna2.jpeg",
+      "sha256": "edf6cb4bee8201d42011b41cf4feb1935b82f4b5b13bd31e4d2cde036cb6d55f"
+    },
+    "laurie3.jpeg": {
+      "file": "laurie3.jpeg",
+      "sha256": "7aa0f25720d19c6f2e5d760940377e4d0bb295650793d36e004b6b128e1f9f9b"
+    },
+    "les-winslade.png": {
+      "file": "les-winslade.png",
+      "sha256": "c1ff26d13ae6834ffd497a5738786aa77ea1b3a849d71960f6e4db62711dfb02"
+    },
+    "kathryn3.jpeg": {
+      "file": "kathryn3.jpeg",
+      "sha256": "e4f4841f500df8ebf2b59bfd8a6407f9f6fe7264ee20d67ae01334fdae097d18"
+    },
+    "rhondaf.png": {
+      "file": "rhondaf.png",
+      "sha256": "4ebe226bd6927c394a230ccc54e612c37d4c71ccf75b3c2e29e548ea98a8b9b3"
+    },
+    "incorporated-image1.png": {
+      "file": "incorporated-image1.png",
+      "sha256": "d9fe382615962854087034523a8e897ab2cac812778d13a6d7cb956aaa446aa7"
+    },
+    "rules-icon.png": {
+      "file": "rules-icon.png",
+      "sha256": "d55ee961c5a451f9a756420b88bf04e40ee6e191a637eb69a4fd9a11fb82fb00"
+    },
+    "noda-news-update.pdf": {
+      "file": "noda-news-update.pdf",
+      "sha256": "4998e116e91e36ac7136aaa61e7c174cbf33ce4274e0f9792e334486ccac1e43"
+    },
+    "flu-season-healthcare-options-media-news-19-august-2026.pdf": {
+      "file": "flu-season-healthcare-options-media-news-19-august-2026.pdf",
+      "sha256": "c14eb8590bd11a6f21aa47b50ef1fb39e09dd2487a27a188c56e284d307a6f76"
+    },
+    "lucy-harrison-news-update-6-august-2026.pdf": {
+      "file": "lucy-harrison-news-update-6-august-2026.pdf",
+      "sha256": "78f85081a2dbda8ec84f0585778b1f621e4c39fe0f406b1d52a8870f8a3eeb14"
+    },
+    "gm-taupo-news-update-24-july-2026.pdf": {
+      "file": "gm-taupo-news-update-24-july-2026.pdf",
+      "sha256": "b232e26366a6a58eef54371d7636787e96d99a1f1711aa47c4eb5910a297a8e6"
+    },
+    "pgy1-rural-medicine-news-update-24-july-2026.pdf": {
+      "file": "pgy1-rural-medicine-news-update-24-july-2026.pdf",
+      "sha256": "253466b01bf059aacdc9e8d69f9f5b65bdcc664a8b0130f7b8146b16df0a3354"
+    },
+    "co-response-teams-media-news-30-june-2026.pdf": {
+      "file": "co-response-teams-media-news-30-june-2026.pdf",
+      "sha256": "4b0bcc1857d262bec957a6ee2ffdffd45bfd9d7bb49d1a72fe26b28d2a55e48a"
+    },
+    "rural-medical-programme-expands-to-taupo-2027.pdf": {
+      "file": "rural-medical-programme-expands-to-taupo-2027.pdf",
+      "sha256": "9962733a84a543b019055bbbbbc8fbc0c9a774e8dcbdd0e0d08525c933a17f4d"
+    },
+    "resident-doctors-day-felicity-williams-23-june-2026.pdf": {
+      "file": "resident-doctors-day-felicity-williams-23-june-2026.pdf",
+      "sha256": "04c4e6f9f37d6eee17f59c2fdb11f1f47aed4c8ef634376efa1c54343faeee24"
+    },
+    "taupo-doctor-returns-news-update-22-april-2026.pdf": {
+      "file": "taupo-doctor-returns-news-update-22-april-2026.pdf",
+      "sha256": "6851bfe6119c3fedc7932e1aad07ce53cca2cd4f5de3ad16a54014ce1ba2459c"
+    },
+    "2019.png": {
+      "file": "2019.png",
+      "sha256": "f30770e35853d523ffd011b9ec1f62dd521cb4727c9573d14e5820d62c0f3fd4"
+    },
+    "thhs-agm-booklet-2019.pdf": {
+      "file": "thhs-agm-booklet-2019.pdf",
+      "sha256": "7baf9dd8bc59513f5385bedade35e9c1e731ce2d43a452cf6cbd4e8d2c0c7128"
+    },
+    "2020.png": {
+      "file": "2020.png",
+      "sha256": "43ba05b1330f0c33ef1e8a28c642745236253cf4210625b94cb4947468a03c31"
+    },
+    "thhs-agm-booklet-2020.pdf": {
+      "file": "thhs-agm-booklet-2020.pdf",
+      "sha256": "1f784b7bcb27504aaf56514347c8d34379c77caedea7869099f85030199ea497"
+    },
+    "2021.png": {
+      "file": "2021.png",
+      "sha256": "18fc630a877f995ad88475b3d36fb0764a3f839fab0d1d1dbe5e88c3eef1b656"
+    },
+    "thhs-agm-booklet-2021.pdf": {
+      "file": "thhs-agm-booklet-2021.pdf",
+      "sha256": "77e424c42ff26205fd0c1956e5de17b5e0f4210b6e8f4c046b8f30f6ca02a6fd"
+    },
+    "2022.png": {
+      "file": "2022.png",
+      "sha256": "ef918ed4f3bb1026e375821a0dcb8bb353077fc0d63f4a05ebef2367d7218653"
+    },
+    "thhs-agm-booklet-2022.pdf": {
+      "file": "thhs-agm-booklet-2022.pdf",
+      "sha256": "f50f1bd8f69e59f19ee27b874373b810bd7dd2fa15fe0987541f910c42e0b9ae"
+    },
+    "2023.png": {
+      "file": "2023.png",
+      "sha256": "3f9878c3e0e801e8375f8365080e1c5a5dcd7fce507029d3aa84023be0f8fc1a"
+    },
+    "thhs-agm-booklet-2023.pdf": {
+      "file": "thhs-agm-booklet-2023.pdf",
+      "sha256": "b924d271922ed25e99af05c2c0ffd1d9b42f67af2538ce85ff48282e8f8a0971"
+    },
+    "2024.png": {
+      "file": "2024.png",
+      "sha256": "5cb23722fdd2ddfb4b0faaa8d4d34ac5f12358d5b06d674e0f5dd1520f146932"
+    },
+    "thhs-agm-booklet-2024.pdf": {
+      "file": "thhs-agm-booklet-2024.pdf",
+      "sha256": "3d4770d177bd57c904f163c83e5ddc3b093bf259093f094fb84f6684babcd05d"
+    },
+    "2025.png": {
+      "file": "2025.png",
+      "sha256": "dc4da337532dbd66701ef9ba45e5f1e2f591d778f4f2f19b0f4cff318971952a"
+    },
+    "thhs-agm-booklet-2025.pdf": {
+      "file": "thhs-agm-booklet-2025.pdf",
+      "sha256": "4a158193fbaf0f357a3c508b850ea79dfa380ef6332a551be37a304a45ea0fda"
+    },
+    "2026.png": {
+      "file": "2026.png",
+      "sha256": "cb420a94896ebd20ae35ac9681a7ec2d7d9b2d3782137d4d7cc8d2ac2fdd50c8"
+    },
+    "annual-reports-illustration.png": {
+      "file": "annual-reports-illustration.png",
+      "sha256": "564a2db68fad15a85d802ff5da742749ba1ecc610bcb4dbf8488bfe3fd6ea1bc"
+    },
+    "facebook.png": {
+      "file": "facebook.png",
+      "sha256": "9b4fb706fa4f80eabbb1300deee0c4ca8b39ab7a1f4a3288c7e2c926b66d1521"
+    },
+    "grants-thermometer.png": {
+      "file": "grants-thermometer.png",
+      "sha256": "81e67fbde53a090e355bfef18d0ced19c788847d9f6563860c34ad916db9ae45"
+    },
+    "cheque-handover.jpg": {
+      "file": "cheque-handover.jpg",
+      "sha256": "4c54acac2699919f357efe4b513aa30f31af519b9773df0dc697a92eea12ca6a"
+    },
+    "testimonial-cheque.png": {
+      "file": "testimonial-cheque.png",
+      "sha256": "e15c082dc252b62a4f8da190543a9fcf17e3645bf937c7b256203de39516ce14"
+    },
+    "testimonial-37.png": {
+      "file": "testimonial-37.png",
+      "sha256": "c14a23ec58e378974022df68074ce070534e49f12723e45a6e4a436e177a4092"
+    },
+    "testimonial---echocardiogram.pdf": {
+      "file": "testimonial---echocardiogram.pdf",
+      "sha256": "8a096be23041508a553407ac81cf4e21c5c004efe22772769699caafe4df642b"
+    },
+    "testimonial-38.png": {
+      "file": "testimonial-38.png",
+      "sha256": "457ac31890163b881ea793c81e4eb3f8af487492de9ebd58581605768a07c6f8"
+    },
+    "thanking-our-hospital-staff-testimonial.pdf": {
+      "file": "thanking-our-hospital-staff-testimonial.pdf",
+      "sha256": "ff656a1f81af37799f5049a48deafbfd936c369ea5763e50d17cac3bccacdafc"
+    },
+    "testimonial-40.png": {
+      "file": "testimonial-40.png",
+      "sha256": "e89d96fb7ac611feded75686bdfa42d40e3d0b0134a01d8dd1d4422e241359c8"
+    },
+    "risc-trauma-course-testimonial.pdf": {
+      "file": "risc-trauma-course-testimonial.pdf",
+      "sha256": "107d88ec23372d8863ec93f553560a1df4bcf239653c45a8fc705829166ebdab"
+    },
+    "testimonial-41.png": {
+      "file": "testimonial-41.png",
+      "sha256": "7501222a657c060161d0ef1f08212166575197e4afa938ab0d3c95aaa25d18aa"
+    },
+    "paediatric-murals-testimonial.pdf": {
+      "file": "paediatric-murals-testimonial.pdf",
+      "sha256": "d650cc5e62ff465cbf961459610e4af8da5b7934183fd3e545a8ecb4e17303a1"
+    },
+    "testimonial-42.png": {
+      "file": "testimonial-42.png",
+      "sha256": "3c1a05e992800676a8d6eaa3469f73291345b35bad78a1fdce3b22e0e0571223"
+    },
+    "ct-scanner-closer-to-home-testimonial.pdf": {
+      "file": "ct-scanner-closer-to-home-testimonial.pdf",
+      "sha256": "026783e2e946906c92582b87ba95f6ea36857081047f2b15346e4705531c22ae"
+    },
+    "testimonial-43.png": {
+      "file": "testimonial-43.png",
+      "sha256": "6a46bfabf8a6fc65c4ace083aa10e2bc33dc928553d7b7ad099563cca9e8ebd0"
+    },
+    "chemo-chairs-testimonial.pdf": {
+      "file": "chemo-chairs-testimonial.pdf",
+      "sha256": "b2218809bf9776d1eeeee3a486bdb0f213f1f3e73afd10d9b7badd07f67285e7"
+    },
+    "testimonial-44.png": {
+      "file": "testimonial-44.png",
+      "sha256": "b1b88134564a228126ea3a557a5ed5d3c64796342727476b636181132bdaf61e"
+    },
+    "cancer-care-closer-to-home-testimonial.pdf": {
+      "file": "cancer-care-closer-to-home-testimonial.pdf",
+      "sha256": "264c284411402a3cb8a27294544e40f4a009d968c14089919ad0e37f700ea4df"
+    },
+    "testimonial-39.png": {
+      "file": "testimonial-39.png",
+      "sha256": "c9bba27671dedfa0adc88b8bcdc69e59051e59fe3f341eba43210d2785532f8f"
+    },
+    "testimonial---accuvein-500.pdf": {
+      "file": "testimonial---accuvein-500.pdf",
+      "sha256": "00f290ccd83c8cd4baeb1c3363ea5d9318b046efc8e48e16c320ed8b11861530"
+    },
+    "calendar-icon.png": {
+      "file": "calendar-icon.png",
+      "sha256": "24cbcea9341470b6c3ff84264df4eaaf8f7824f4c1bd238bbee74731dddf3b79"
+    },
+    "membership-and-donation-form.pdf": {
+      "file": "membership-and-donation-form.pdf",
+      "sha256": "7bb85bccae9ddfce3c79b175ac7347fce01d35aaf44a52ccfc48e02f1ac212cf"
+    },
+    "become-a-member.png": {
+      "file": "become-a-member.png",
+      "sha256": "beade3e9523cb0d23011d8cf0599d5eada9c85c17dce68ff59b91c9125383fb9"
+    },
+    "donate.png": {
+      "file": "donate.png",
+      "sha256": "3bdfacf05e126fde7e73430ea922dfe173f5895c5eec71d60efafc5b1e14faef"
+    },
+    "givealittle-icon.png": {
+      "file": "givealittle-icon.png",
+      "sha256": "8828df0e5800e98b9e68b5e32c24eefe46c9e1ff1d967ac70b2e016c89a56713"
+    },
+    "philanthrophy.png": {
+      "file": "philanthrophy.png",
+      "sha256": "6fc41c265fce6fdc586c83f4e8ab801a07bb3067e34c3082463359813a67b9ca"
+    },
+    "volunteer.png": {
+      "file": "volunteer.png",
+      "sha256": "09f786ff074ff504ef098f03415a6c9c087f7ff8828e9930bb20d0d57acaffd9"
+    },
+    "hospital-now.jpg": {
+      "file": "hospital-now.jpg",
+      "sha256": "aeda4ebd52fb0fa4269eb623c2ce176d1f3494173f0f6ca1903a07badc4a7eae"
+    },
+    "hospital-icon.png": {
+      "file": "hospital-icon.png",
+      "sha256": "260625d8f4260e6b15e708e02f15d644eba181be7b7b7e97dba484d9a8f674c0"
+    }
+  },
+  "pages": [
+    {
+      "url": "/",
+      "name": "Home",
+      "content": "<section class=\"s_cover thhs26-welcome o_colored_level pt0 pb0\" data-snippet=\"s_cover\" data-name=\"Welcome lake photograph\"><div class=\"thhs26-welcome-frame\"><img src=\"@@ASSET:welcome-lake.jpeg@@\" alt=\"Lake Taupō and the maunga\" class=\"img img-fluid thhs26-welcome-photo\" style=\"\" loading=\"lazy\"/><div class=\"thhs26-welcome-copy\"><h1>Welcome</h1><h2>Nau mai haere mai</h2><p><strong>Taupō Hospital &amp; Health Society<br/>Supporting the Taupō–Tūrangi &amp; Mangakino region by strengthening and supporting our local hospital and the health services it provides to our community.</strong></p><p><a href=\"/contactus\" class=\"btn btn-primary thhs26-button\">Get in Touch</a></p></div></div></section>"
+    },
+    {
+      "url": "/background",
+      "name": "History",
+      "content": "<section class=\"s_title thhs26-title o_colored_level oe_img_bg o_bg_img_center pt24 pb24\" data-vcss=\"001\" data-snippet=\"s_title\" data-name=\"Lake page title\" style=\"background-image:url('@@ASSET:lake-title.png@@');\"><div class=\"container s_allow_columns\"><h1>Background<span class=\"thhs26-maori\"> / Horopaki</span></h1></div></section><section class=\"s_text_block o_colored_level oe_img_bg o_bg_img_center thhs26-watermark-section thhs26-history pt32 pb32\" data-snippet=\"s_text_block\" data-name=\"Editable illustrated content\" style=\"background-image:url('@@ASSET:hospital-history.jpg@@');\"><div class=\"o_we_bg_filter\" style=\"background-color:rgba(255,255,255,0.8);\"/><div class=\"container thhs26-copy\"><h2 class=\"thhs26-label\">OUR HISTORY</h2><p>Taupō Hospital &amp; Health Society</p><p>A community-led commitment to protecting and strengthening local health services since 1992</p><h3>Community beginnings</h3><p>The Taupō Hospital &amp; Health Society grew from a major community meeting held more than 30 years ago, when rumours emerged that Taupō Hospital might close. More than 1,000 businesspeople, councillors, health professionals and community members attended. Together, they agreed to establish an independent society that would work alongside the hospital, raise funds for essential equipment and help safeguard local health services.</p><p>The Society was formally incorporated in 1992 and has been governed by a voluntary Board ever since.</p><h3>Community leadership</h3><p>The Society’s leadership has included prominent local businesspeople, councillors and health professionals. Early and long-serving contributors included the late Mayor Joan Williamson, Joan Gartner, Bruce Hodgkinson, Eileen Clapperton.  Laurie Burdett, Joan Gartner, and Les Winslade have also supported the Society as patrons. Their collective service helped establish the Society as a trusted and enduring Taupō community organisation.</p><h3>Fundraising and community support</h3><p>Funding has been generated through membership subscriptions, corporate contributions, Life in Perpetuity memberships, community fundraising, philanthropic gifts and generous bequests. A notable campaign raised more than $100,000 for the Pihanga Health Centre.</p><p>While Taupō Hospital remains the Society’s primary focus, support has also been provided to organisations contributing to local health and wellbeing, including Taupō Hospice, Anamata, Taupō Bowling Club and other eligible community agencies.</p><h3>Our district and ongoing partnership</h3><p>The Society serves the wider Taupō District, including Taupō, Tūrangi and Mangakino. It maintains a strong relationship with Taupō Hospital and Health New Zealand. For over 30 years, the Society has worked closely with the hospital and Lakes health service management, supported by a formal Memorandum of Understanding.</p><p>Today, the Society continues the vision of its founders by bringing the community together to improve healthcare services, facilities and wellbeing throughout the district.</p></div></section>"
+    },
+    {
+      "url": "/our-vision",
+      "name": "Mission/Vision",
+      "content": "<section class=\"s_title thhs26-title o_colored_level oe_img_bg o_bg_img_center pt24 pb24\" data-vcss=\"001\" data-snippet=\"s_title\" data-name=\"Lake page title\" style=\"background-image:url('@@ASSET:lake-title.png@@');\"><div class=\"container s_allow_columns\"><h1>Our Vision<span class=\"thhs26-maori\"> / Tō mātou tirohanga</span></h1></div></section><section class=\"s_text_block o_colored_level oe_img_bg o_bg_img_center thhs26-watermark-section thhs26-vision pt32 pb32\" data-snippet=\"s_text_block\" data-name=\"Editable illustrated content\" style=\"background-image:url('@@ASSET:vision.jpg@@');\"><div class=\"o_we_bg_filter\" style=\"background-color:rgba(255,255,255,0.8);\"/><div class=\"container thhs26-copy\"><h2 class=\"thhs26-label\">MISSION/VISION</h2><p>The Society is committed to supporting and improving health and hospital services in the Taupo region. We strive to create a healthier, more vibrant community through dedicated support and strategic initiatives.</p></div></section>"
+    },
+    {
+      "url": "/what-we-do",
+      "name": "What we do",
+      "content": "<section class=\"s_title thhs26-title o_colored_level oe_img_bg o_bg_img_center pt24 pb24\" data-vcss=\"001\" data-snippet=\"s_title\" data-name=\"Lake page title\" style=\"background-image:url('@@ASSET:lake-title.png@@');\"><div class=\"container s_allow_columns\"><h1>What we do?<span class=\"thhs26-maori\"> / Ā mātou mahi</span></h1></div></section><section class=\"s_text_block o_colored_level oe_img_bg o_bg_img_center thhs26-watermark-section thhs26-purpose pt32 pb32\" data-snippet=\"s_text_block\" data-name=\"Editable illustrated content\" style=\"background-image:url('@@ASSET:purpose.png@@');\"><div class=\"o_we_bg_filter\" style=\"background-color:rgba(255,255,255,0.8);\"/><div class=\"container thhs26-copy\"><h2 class=\"thhs26-label\">PURPOSE</h2><p>The <strong>Taupō Hospital &amp; Health Society</strong> is established and operated exclusively for charitable purposes. Our objectives are to:</p><ul><li>Support the continuation and development of healthcare services for people throughout the Taupō region.</li><li>Promote initiatives that support people in need of physical, mental or spiritual healthcare, regardless of race, culture, beliefs or religious affiliation.</li><li>Use the Society’s funds to support and assist Taupō Hospital through financial contributions, gifts, loans or other forms of assistance considered appropriate by the Committee.</li><li>Support the advancement, education, promotion or benefit of other organisations whose work aligns with the Society’s charitable aims and purposes.</li><li>Work collaboratively with incorporated and unincorporated organisations that share aims and purposes similar to those of the Society.</li></ul></div></section>"
+    },
+    {
+      "url": "/our-board",
+      "name": "Our Board",
+      "content": "<section class=\"s_title thhs26-title o_colored_level oe_img_bg o_bg_img_center pt24 pb24\" data-vcss=\"001\" data-snippet=\"s_title\" data-name=\"Lake page title\" style=\"background-image:url('@@ASSET:lake-title.png@@');\"><div class=\"container s_allow_columns\"><h1>Our Board<span class=\"thhs26-maori\"> / Mana whakahaere</span></h1></div></section><section class=\"s_carousel_wrapper thhs26-profiles p-0\" data-snippet=\"s_carousel\" data-name=\"Editable board profiles\" data-vxml=\"001\" data-vcss=\"001\"><div id=\"thhsBoard\" class=\"s_carousel s_carousel_default carousel slide\" data-bs-interval=\"false\"><div class=\"carousel-inner\"><div class=\"carousel-item active pt24 pb64 o_colored_level\" data-name=\"Lil Hancock\"><div class=\"container oe_unremovable\"><div class=\"carousel-content\"><div class=\"row g-4\"><div class=\"col-md-2 o_colored_level\"><img src=\"@@ASSET:lil2.jpeg@@\" alt=\"Lil Hancock\" class=\"img img-fluid thhs26-profile-photo\" style=\"\" loading=\"lazy\"/></div><div class=\"col-md-10 o_colored_level\"><h2>Lil Hancock</h2><p class=\"thhs26-role\">CHAIR</p><p class=\"thhs26-skills\">Key Skills: –  Strategic Leadership, Financial &amp; Accounting,  Health &amp; Community, Fundraising, Board &amp; Committee Governance, Stakeholder Engagement, Community Advocacy, Strategic Planning &amp; Oversight, Accountability &amp; Decision-Making,  Community Wellbeing &amp; Equity</p><p class=\"\">Lil has been a committee member of the Society since 2011 and Chairperson since 2017, bringing more than 45 years of leadership and governance experience across the not-for-profit, health, and community sectors. Under her leadership, the Society successfully raised $350,000 for an echocardiogram machine for Taupo Hospital, strengthening cardiac services for the local community.</p><p class=\"\">With qualifications in Business Management and Accounting, Lil brings strong financial and strategic expertise and a deep commitment to community wellbeing. She has held leadership roles with COGS and received the Lake Taupō District Sports Awards Supreme Award for her outstanding service to the community. Her dedication to equitable access to health and community services continues to shape the Society’s vision and impact across the region.</p></div></div></div></div></div><div class=\"carousel-item  pt24 pb64 o_colored_level\" data-name=\"GILMA OROZCO\"><div class=\"container oe_unremovable\"><div class=\"carousel-content\"><div class=\"row g-4\"><div class=\"col-md-2 o_colored_level\"><img src=\"@@ASSET:gilma2.jpeg@@\" alt=\"GILMA OROZCO\" class=\"img img-fluid thhs26-profile-photo\" style=\"\" loading=\"lazy\"/></div><div class=\"col-md-10 o_colored_level\"><h2>GILMA OROZCO</h2><p class=\"thhs26-role\">DEPUTY CHAIR</p><p class=\"thhs26-skills\">Key Skills:– Strategic thinking, research and analytical skills, Organisational development,  collaborative leadership. Strong understanding of community wellbeing, empowerment and not-for-profit sustainability,</p><p class=\"\">Gilma has been a valued member since 2011, commencing her involvement as Administrator and playing a key role in supporting the Society’s ongoing impact within the Taupō community. With qualifications in social research psychology and more than 18 years’ experience across the public and private sectors in NZ and internationally, she brings extensive expertise in research, community engagement, and organisational development. Passionate about empowering communities and strengthening wellbeing outcomes, Gilma contributes strategic insight and a strong commitment to the growth and sustainability of not-for-profit initiatives.</p></div></div></div></div></div><div class=\"carousel-item  pt24 pb64 o_colored_level\" data-name=\"DEBBIE DAVIES\"><div class=\"container oe_unremovable\"><div class=\"carousel-content\"><div class=\"row g-4\"><div class=\"col-md-2 o_colored_level\"><img src=\"@@ASSET:deb.jpeg@@\" alt=\"DEBBIE DAVIES\" class=\"img img-fluid thhs26-profile-photo\" style=\"\" loading=\"lazy\"/></div><div class=\"col-md-10 o_colored_level\"><h2>DEBBIE DAVIES</h2><p class=\"thhs26-role\">BOARD MEMBER</p><p class=\"thhs26-skills\">Key Skills: Strategic Leadership, Financial Governance &amp; Oversight,   Audit &amp; Risk Management, Compliance &amp; Accountability, Iwi &amp; Community,  Collaborative Leadership.</p><p class=\"\">Deb is an experienced governance, finance, and administration professional with more than 20 years of experience across iwi, not-for-profit, commercial, and public-sector organisations. She brings a strategic, values-driven approach, grounded in strong relationships with iwi, hapū, and community, alongside deep expertise in financial management, compliance, and stakeholder engagement.</p><p class=\"\">Deb holds multiple governance roles within Raukawa Group, including Audit &amp; Risk Chair and Deputy Chair of the Raukawa Charitable Trust. She is recognised for her collaborative leadership, clear communication, and ability to bridge governance and operational delivery. Her experience enables her to provide sound strategic oversight while maintaining a strong focus on accountability, risk, and sustainable outcomes.</p></div></div></div></div></div><div class=\"carousel-item  pt24 pb64 o_colored_level\" data-name=\"TRENT HANCOCK\"><div class=\"container oe_unremovable\"><div class=\"carousel-content\"><div class=\"row g-4\"><div class=\"col-md-2 o_colored_level\"><img src=\"@@ASSET:trent2.jpeg@@\" alt=\"TRENT HANCOCK\" class=\"img img-fluid thhs26-profile-photo\" style=\"\" loading=\"lazy\"/></div><div class=\"col-md-10 o_colored_level\"><h2>TRENT HANCOCK</h2><p class=\"thhs26-role\">BOARD MEMBER</p><p class=\"thhs26-skills\">Key Skills: Financial administration and management, financial stewardship, governance, budgeting and reporting, treasury management, organisational administration, compliance, risk awareness, extensive community organisation experience.</p><p class=\"\">Trent is a retired office manager with extensive experience in financial administration and governance. He has served as Treasurer of the Lake Taupō Sports Advisory Council and the Lake Taupō Sports Foundation for more than 25 years, and as Treasurer of the Society for five years. He has also been Treasurer of the golf section of the Taupō Cosmopolitan Club. Trent brings proven financial stewardship, reliability, and a strong commitment to supporting community organisations.</p></div></div></div></div></div><div class=\"carousel-item  pt24 pb64 o_colored_level\" data-name=\"Mark O’Callaghan\"><div class=\"container oe_unremovable\"><div class=\"carousel-content\"><div class=\"row g-4\"><div class=\"col-md-2 o_colored_level\"><img src=\"@@ASSET:mark2.jpeg@@\" alt=\"Mark O’Callaghan\" class=\"img img-fluid thhs26-profile-photo\" style=\"\" loading=\"lazy\"/></div><div class=\"col-md-10 o_colored_level\"><h2>Mark O’Callaghan</h2><p class=\"thhs26-role\">BOARD MEMBER</p><p class=\"thhs26-skills\">Key Skills: Community leadership, volunteer management, sports administration, governance, relationship building, community engagement, strategic leadership, organisational support, fundraising, and a strong commitment to serving the Taupō community.</p><p class=\"\">Mark has been a valued part of the Taupō community since 1976, bringing a lifelong commitment to service, leadership, and local sport. With deep roots in farming and decades of involvement in rugby administration and volunteering, he was recognised with the New Zealand Order of Merit in 2003 for his contributions to the sport. Mark continues to support the community through his roles with Red Cross Taupō, the Lake Taupo Sports Advisory Council, and our society, where his experience and dedication continue to make a lasting impact.</p></div></div></div></div></div><div class=\"carousel-item  pt24 pb64 o_colored_level\" data-name=\"David &amp; Sandra Foss\"><div class=\"container oe_unremovable\"><div class=\"carousel-content\"><div class=\"row g-4\"><div class=\"col-md-2 o_colored_level\"><img src=\"@@ASSET:sandra-david.jpeg@@\" alt=\"David &amp; Sandra Foss\" class=\"img img-fluid thhs26-profile-photo\" style=\"\" loading=\"lazy\"/></div><div class=\"col-md-10 o_colored_level\"><h2>David &amp; Sandra Foss</h2><p class=\"thhs26-role\">BOARD MEMBERS</p><p class=\"thhs26-skills\">Key Skills: Community leadership, healthcare and wellbeing, nursing and clinical experience, volunteer coordination, community engagement, local knowledge, practical problem-solving.</p><p class=\"\">David and Sandra are long-standing Taupō locals whose lives and careers have been closely connected to the wellbeing of their community. Together, they bring more than five decades of service, leadership, and volunteer experience, along with deep local knowledge, practical insight, and a shared commitment to supporting quality, equitable health services in Taupō.</p><p class=\"\">David’s background spans the boating and trucking supply industries, alongside years of community involvement through scouting, boating, and volunteer work. Sandra is a retired registered nurse with extensive experience at Taupō Hospital. She has dedicated her career to healthcare and community wellbeing, including more than 20 years supporting Ironman medical services.</p><p class=\"\">Together, they remain active contributors to the community and are united by a shared vision of a healthy, connected, and thriving Taupō.</p></div></div></div></div></div><div class=\"carousel-item  pt24 pb64 o_colored_level\" data-name=\"John Williamson\"><div class=\"container oe_unremovable\"><div class=\"carousel-content\"><div class=\"row g-4\"><div class=\"col-md-2 o_colored_level\"><img src=\"@@ASSET:john2.jpeg@@\" alt=\"John Williamson\" class=\"img img-fluid thhs26-profile-photo\" style=\"\" loading=\"lazy\"/></div><div class=\"col-md-10 o_colored_level\"><h2>John Williamson</h2><p class=\"thhs26-role\">BOARD MEMBER</p><p class=\"thhs26-skills\">Key Skills: Community leadership, governance, public service, strategic decision-making, stakeholder engagement, advocacy, policy development, organisational leadership, community development, arts and cultural sector knowledge, environmental awareness, infrastructure oversight, education and health sector engagement, extensive knowledge of the Taupō community.</p><p class=\"\">A proud Taupō local for more than 60 years, John has built a lifelong legacy of community leadership, governance, and public service. With more than 20 years of involvement in the Rotary Club of Taupō and with experience across community, health, arts, and education organisations, he has contributed to a wide range of initiatives that strengthen the Taupō district. He currently serves as President of Grey Power Taupō and has held governance roles with the Taupō School of Music, Life Education Trust Central Plateau, and our Society. From 2013 to 2025, he served four terms as a Taupō District Councillor, providing leadership across the arts, environmental, infrastructure, and community portfolios. His commitment to community wellbeing also extends to organisations including the Lake Taupō Cycle Challenge, Friends of the Museum and Art Gallery, and the Waipahihi Botanical Society.</p></div></div></div></div></div><div class=\"carousel-item  pt24 pb64 o_colored_level\" data-name=\"Aruna Singh\"><div class=\"container oe_unremovable\"><div class=\"carousel-content\"><div class=\"row g-4\"><div class=\"col-md-2 o_colored_level\"><img src=\"@@ASSET:aruna2.jpeg@@\" alt=\"Aruna Singh\" class=\"img img-fluid thhs26-profile-photo\" style=\"\" loading=\"lazy\"/></div><div class=\"col-md-10 o_colored_level\"><h2>Aruna Singh</h2><p class=\"thhs26-role\">BOARD MEMBER</p><p class=\"thhs26-skills\">Key Skills: Community leadership, volunteer coordination, fundraising, event management, relationship building, community engagement, cross-cultural communication, partnership development, advocacy, teamwork, and a strong commitment to supporting diverse and connected communities.</p><p class=\"\">Aruna has been a valued member of the Society for several years and a respected community leader with more than 30 years of volunteer service in Taupō. As Chair and President of the Kiwanis Club of Taupō, she helps mobilise volunteers, support major local events, and lead fundraising initiatives that make a meaningful impact locally and internationally. Proud of her Tongan and Fijian Indian heritage, Aruna brings a people-first approach and a passion for building connections across cultures and communities.</p></div></div></div></div></div></div><button class=\"carousel-control-prev o_not_editable\" contenteditable=\"false\" data-bs-target=\"#thhsBoard\" data-bs-slide=\"prev\" aria-label=\"Previous profile\"><span class=\"carousel-control-prev-icon\" aria-hidden=\"true\"/><span class=\"visually-hidden\">Previous</span></button><button class=\"carousel-control-next o_not_editable\" contenteditable=\"false\" data-bs-target=\"#thhsBoard\" data-bs-slide=\"next\" aria-label=\"Next profile\"><span class=\"carousel-control-next-icon\" aria-hidden=\"true\"/><span class=\"visually-hidden\">Next</span></button><div class=\"carousel-indicators o_not_editable\"><button type=\"button\" data-bs-target=\"#thhsBoard\" data-bs-slide-to=\"0\" class=\"active\" aria-label=\"Lil Hancock\" title=\"Lil Hancock\"/><button type=\"button\" data-bs-target=\"#thhsBoard\" data-bs-slide-to=\"1\" class=\"\" aria-label=\"GILMA OROZCO\" title=\"GILMA OROZCO\"/><button type=\"button\" data-bs-target=\"#thhsBoard\" data-bs-slide-to=\"2\" class=\"\" aria-label=\"DEBBIE DAVIES\" title=\"DEBBIE DAVIES\"/><button type=\"button\" data-bs-target=\"#thhsBoard\" data-bs-slide-to=\"3\" class=\"\" aria-label=\"TRENT HANCOCK\" title=\"TRENT HANCOCK\"/><button type=\"button\" data-bs-target=\"#thhsBoard\" data-bs-slide-to=\"4\" class=\"\" aria-label=\"Mark O’Callaghan\" title=\"Mark O’Callaghan\"/><button type=\"button\" data-bs-target=\"#thhsBoard\" data-bs-slide-to=\"5\" class=\"\" aria-label=\"David &amp; Sandra Foss\" title=\"David &amp; Sandra Foss\"/><button type=\"button\" data-bs-target=\"#thhsBoard\" data-bs-slide-to=\"6\" class=\"\" aria-label=\"John Williamson\" title=\"John Williamson\"/><button type=\"button\" data-bs-target=\"#thhsBoard\" data-bs-slide-to=\"7\" class=\"\" aria-label=\"Aruna Singh\" title=\"Aruna Singh\"/></div></div></section>"
+    },
+    {
+      "url": "/our-patrons",
+      "name": "Our Patrons",
+      "content": "<section class=\"s_title thhs26-title o_colored_level oe_img_bg o_bg_img_center pt24 pb24\" data-vcss=\"001\" data-snippet=\"s_title\" data-name=\"Lake page title\" style=\"background-image:url('@@ASSET:lake-title.png@@');\"><div class=\"container s_allow_columns\"><h1>Our Patrons<span class=\"thhs26-maori\"> / Kaitautoko</span></h1></div></section><section class=\"s_carousel_wrapper thhs26-profiles p-0\" data-snippet=\"s_carousel\" data-name=\"Editable board profiles\" data-vxml=\"001\" data-vcss=\"001\"><div id=\"thhsPatrons\" class=\"s_carousel s_carousel_default carousel slide\" data-bs-interval=\"false\"><div class=\"carousel-inner\"><div class=\"carousel-item active pt24 pb64 o_colored_level\" data-name=\"LAURIE BURDETT QSM\"><div class=\"container oe_unremovable\"><div class=\"carousel-content\"><div class=\"row g-4\"><div class=\"col-md-2 o_colored_level\"><img src=\"@@ASSET:laurie3.jpeg@@\" alt=\"LAURIE BURDETT QSM\" class=\"img img-fluid thhs26-profile-photo\" style=\"\" loading=\"lazy\"/></div><div class=\"col-md-10 o_colored_level\"><h2>LAURIE BURDETT QSM</h2><p class=\"thhs26-role\">PATRON</p><p class=\"thhs26-skills\">Key Skills:  Health Governance, Strategic Leadership, Public Sector Governance, Community Leadership, Risk &amp; Decision-Making, Regional Governance, Stakeholder Engagement, Conservation Governance.</p><p class=\"\">Laurie has served as Patroness of the Society since 2017, bringing decades of leadership across healthcare, governance, conservation, and community service. A registered nurse and midwife, she held senior clinical and management roles at Taupō Hospital for 23 years, including Charge Nurse, Principal Nurse, and Manager, before moving into regional health leadership with the Regional Health Funding Authority.</p><p class=\"\">Her extensive governance experience includes elected service on both the Hospital Board and Waikato Regional Council, along with appointments to the Tongariro Taupō Conservation Board and Regional Lottery Welfare Committee. Lauri also served with distinction in the Territorial Army, retiring with the rank of Major after overseas deployments in Tonga and the Solomon Islands.</p></div></div></div></div></div><div class=\"carousel-item  pt24 pb64 o_colored_level\" data-name=\"LES WINSLADE\"><div class=\"container oe_unremovable\"><div class=\"carousel-content\"><div class=\"row g-4\"><div class=\"col-md-2 o_colored_level\"><img src=\"@@ASSET:les-winslade.png@@\" alt=\"LES WINSLADE\" class=\"img img-fluid thhs26-profile-photo\" style=\"\" loading=\"lazy\"/></div><div class=\"col-md-10 o_colored_level\"><h2>LES WINSLADE</h2><p class=\"thhs26-role\">RETIRED PATRON</p><p class=\"\">Leslie ‘Les’ Winslade QSM celebrated his 105th birthday surrounded by family, friends and memories of a remarkable life of service.</p><p class=\"\">Born in England, Les migrated to New Zealand in 1926. He served as an RNZAF wireless operator during the Second World War, including time in Guadalcanal, before building a long career with National Mutual.</p><p class=\"\">Community service has been central to Les’ life. After moving to Taupō in 1983, he became involved with Lions, established the local Neighbourhood Watch and raised more than $2 million for health and medical improvements across the Taupō and Tūrangi districts. He also strongly advocated for geothermal heating at Taupō Hospital.</p><p class=\"\">Les received the Queen’s Service Medal in 2009 and has been recognised with both Rotary International’s Paul Harris Award and Lions International’s Melvin Jones Fellowship—a rare achievement. Believed to be the region’s oldest surviving veteran, Les remains an inspiring example of service, generosity and commitment to his community</p></div></div></div></div></div></div><button class=\"carousel-control-prev o_not_editable\" contenteditable=\"false\" data-bs-target=\"#thhsPatrons\" data-bs-slide=\"prev\" aria-label=\"Previous profile\"><span class=\"carousel-control-prev-icon\" aria-hidden=\"true\"/><span class=\"visually-hidden\">Previous</span></button><button class=\"carousel-control-next o_not_editable\" contenteditable=\"false\" data-bs-target=\"#thhsPatrons\" data-bs-slide=\"next\" aria-label=\"Next profile\"><span class=\"carousel-control-next-icon\" aria-hidden=\"true\"/><span class=\"visually-hidden\">Next</span></button><div class=\"carousel-indicators o_not_editable\"><button type=\"button\" data-bs-target=\"#thhsPatrons\" data-bs-slide-to=\"0\" class=\"active\" aria-label=\"LAURIE BURDETT QSM\" title=\"LAURIE BURDETT QSM\"/><button type=\"button\" data-bs-target=\"#thhsPatrons\" data-bs-slide-to=\"1\" class=\"\" aria-label=\"LES WINSLADE\" title=\"LES WINSLADE\"/></div></div></section>"
+    },
+    {
+      "url": "/associate-members",
+      "name": "Associate members",
+      "content": "<section class=\"s_title thhs26-title o_colored_level oe_img_bg o_bg_img_center pt24 pb24\" data-vcss=\"001\" data-snippet=\"s_title\" data-name=\"Lake page title\" style=\"background-image:url('@@ASSET:lake-title.png@@');\"><div class=\"container s_allow_columns\"><h1>Associate members<span class=\"thhs26-maori\"> / Mema hono</span></h1></div></section><section class=\"s_carousel_wrapper thhs26-profiles p-0\" data-snippet=\"s_carousel\" data-name=\"Editable board profiles\" data-vxml=\"001\" data-vcss=\"001\"><div id=\"thhsAssociates\" class=\"s_carousel s_carousel_default carousel slide\" data-bs-interval=\"false\"><div class=\"carousel-inner\"><div class=\"carousel-item active pt24 pb64 o_colored_level\" data-name=\"KATHRYN UVHAGEN\"><div class=\"container oe_unremovable\"><div class=\"carousel-content\"><div class=\"row g-4\"><div class=\"col-md-2 o_colored_level\"><img src=\"@@ASSET:kathryn3.jpeg@@\" alt=\"KATHRYN UVHAGEN\" class=\"img img-fluid thhs26-profile-photo\" style=\"\" loading=\"lazy\"/></div><div class=\"col-md-10 o_colored_level\"><h2>KATHRYN UVHAGEN</h2><p class=\"thhs26-role\">ASSOCIATE MEMBER</p><p class=\"thhs26-skills\">Key Skills:– strong skills in governance, strategic leadership, public-sector management, community engagement, environmental stewardship, and local-government decision-making. Her experience also demonstrates strengths in relationship building, teamwork, communication, event facilitation, resource recovery initiatives, arts advocacy, and supporting positive outcomes for the Taupō community.</p><p class=\"\">Kathryn is a respected Taupō community leader with extensive experience in local government, public service, and community development. A former Taupō District Councillor, she served the district for multiple terms and contributed to environmental, resource recovery, arts, and community initiatives. Kathryn has also served on the Tongariro/Taupō Conservation Board and supported local arts organisations, memorial scholarships, and community events. In her professional role as a Team Leader with Stats NZ, she brings strong leadership, organisational expertise, and a commitment to serving people and communities.</p></div></div></div></div></div><div class=\"carousel-item  pt24 pb64 o_colored_level\" data-name=\"Rhonda Tawhai\"><div class=\"container oe_unremovable\"><div class=\"carousel-content\"><div class=\"row g-4\"><div class=\"col-md-2 o_colored_level\"><img src=\"@@ASSET:rhondaf.png@@\" alt=\"Rhonda Tawhai\" class=\"img img-fluid thhs26-profile-photo\" style=\"\" loading=\"lazy\"/></div><div class=\"col-md-10 o_colored_level\"><h2>Rhonda Tawhai</h2><p class=\"thhs26-role\">ASSOCIATE MEMBER</p><p class=\"thhs26-skills\">Key Skills:– Administration, Board Support, Minute-Taking, Community Service, Mirimiri.  Waka Ama.</p><p class=\"\">After many years of travelling, Rhonda has returned home, bringing with her a wealth of knowledge, experience and practical skills. A true jack of all trades, she has experience in administration, minute-taking, board coordination, massage and mirimiri.</p><p class=\"\">Rhonda has generously volunteered her time and skills to numerous organisations, assisting with administration, organising board activities and providing reliable support wherever it is needed.</p><p class=\"\">Her greatest passion is waka ama. Rhonda has contributed to Waka Ama New Zealand for many years, undertaking a variety of roles and competing as a paddler. Her versatility, dedication and strong commitment to her community make her a valued addition to any organisation fortunate enough to have her support.</p></div></div></div></div></div></div><button class=\"carousel-control-prev o_not_editable\" contenteditable=\"false\" data-bs-target=\"#thhsAssociates\" data-bs-slide=\"prev\" aria-label=\"Previous profile\"><span class=\"carousel-control-prev-icon\" aria-hidden=\"true\"/><span class=\"visually-hidden\">Previous</span></button><button class=\"carousel-control-next o_not_editable\" contenteditable=\"false\" data-bs-target=\"#thhsAssociates\" data-bs-slide=\"next\" aria-label=\"Next profile\"><span class=\"carousel-control-next-icon\" aria-hidden=\"true\"/><span class=\"visually-hidden\">Next</span></button><div class=\"carousel-indicators o_not_editable\"><button type=\"button\" data-bs-target=\"#thhsAssociates\" data-bs-slide-to=\"0\" class=\"active\" aria-label=\"KATHRYN UVHAGEN\" title=\"KATHRYN UVHAGEN\"/><button type=\"button\" data-bs-target=\"#thhsAssociates\" data-bs-slide-to=\"1\" class=\"\" aria-label=\"Rhonda Tawhai\" title=\"Rhonda Tawhai\"/></div></div></section>"
+    },
+    {
+      "url": "/incorporated-society",
+      "name": "Incorporated Society",
+      "content": "<section class=\"s_title thhs26-title o_colored_level oe_img_bg o_bg_img_center pt24 pb24\" data-vcss=\"001\" data-snippet=\"s_title\" data-name=\"Lake page title\" style=\"background-image:url('@@ASSET:lake-title.png@@');\"><div class=\"container s_allow_columns\"><h1>Rules<span class=\"thhs26-maori\"> / Ngā ture</span></h1></div></section><section class=\"s_image_text o_colored_level  pt32 pb32\" data-snippet=\"s_image_text\" data-name=\"Taupō \"><div class=\"container\"><div class=\"row align-items-center g-5\"><div class=\"col-md-8 o_colored_level\"><img src=\"@@ASSET:incorporated-image1.png@@\" alt=\"Community working together\" class=\"img img-fluid thhs26-incorporated\" style=\"\" loading=\"lazy\"/></div><div class=\"col-md-4 text-center o_colored_level\"><h2 class=\"thhs26-label\">INCORPORATED SOCIETY</h2><p><a href=\"@@CONSTITUTION@@\" aria-label=\"Read the Society constitution\"><img src=\"@@ASSET:rules-icon.png@@\" alt=\"Read the Society constitution\" class=\"img img-fluid thhs26-rule-icon\" style=\"\" loading=\"lazy\"/></a></p></div></div></div></section>"
+    },
+    {
+      "url": "/news",
+      "name": "Latest News",
+      "content": "<section class=\"s_title thhs26-title o_colored_level oe_img_bg o_bg_img_center pt24 pb24\" data-vcss=\"001\" data-snippet=\"s_title\" data-name=\"Lake page title\" style=\"background-image:url('@@ASSET:lake-title.png@@');\"><div class=\"container s_allow_columns\"><h1>News<span class=\"thhs26-maori\"> / Ngā Kārere</span></h1></div></section><section class=\"s_text_block o_colored_level thhs26-news pt16 pb0\" data-snippet=\"s_text_block\" data-name=\"Taupō news\"><div class=\"container\"><div class=\"row g-4\"><div class=\"col-md-2 o_colored_level\"><h2 class=\"thhs26-label\">LATEST NEWS</h2></div><div class=\"col-md-10 o_colored_level\"><div class=\"thhs26-news-item\"><div class=\"thhs26-news-meta\"><span>News update</span><time datetime=\"2026-09-04\">4 September 2026</time></div><h3>No One Dies Alone Taupō marks its first year</h3><p class=\"text-end\"><a class=\"thhs26-read-more\" href=\"@@ASSET:noda-news-update.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Read No One Dies Alone Taupō marks its first year\">READ MORE</a></p></div></div></div></div></section><section class=\"s_text_block o_colored_level thhs26-news pt16 pb0\" data-snippet=\"s_text_block\" data-name=\"Taupō news\"><div class=\"container\"><div class=\"row g-4\"><div class=\"col-md-2 o_colored_level\"></div><div class=\"col-md-10 o_colored_level\"><div class=\"thhs26-news-item\"><div class=\"thhs26-news-meta\"><span>Media news</span><time datetime=\"2026-08-19\">19 August 2026</time></div><h3>Surge in flu season sickness a reminder of alternative healthcare options for non-urgent cases</h3><p class=\"text-end\"><a class=\"thhs26-read-more\" href=\"@@ASSET:flu-season-healthcare-options-media-news-19-august-2026.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Read Surge in flu season sickness a reminder of alternative healthcare options for non-urgent cases\">READ MORE</a></p></div></div></div></div></section><section class=\"s_text_block o_colored_level thhs26-news pt16 pb0\" data-snippet=\"s_text_block\" data-name=\"Taupō news\"><div class=\"container\"><div class=\"row g-4\"><div class=\"col-md-2 o_colored_level\"></div><div class=\"col-md-10 o_colored_level\"><div class=\"thhs26-news-item\"><div class=\"thhs26-news-meta\"><span>News – Lucy Harrison</span><time datetime=\"2026-08-06\">6 August 2026</time></div><h3>Lactation consultants make a big difference for first-time mothers</h3><p class=\"text-end\"><a class=\"thhs26-read-more\" href=\"@@ASSET:lucy-harrison-news-update-6-august-2026.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Read Lactation consultants make a big difference for first-time mothers\">READ MORE</a></p></div></div></div></div></section><section class=\"s_text_block o_colored_level thhs26-news pt16 pb0\" data-snippet=\"s_text_block\" data-name=\"Taupō news\"><div class=\"container\"><div class=\"row g-4\"><div class=\"col-md-2 o_colored_level\"></div><div class=\"col-md-10 o_colored_level\"><div class=\"thhs26-news-item\"><div class=\"thhs26-news-meta\"><span>News update</span><time datetime=\"2026-07-24\">24 July 2026</time></div><h3>Ten months on in Taupō</h3><p class=\"text-end\"><a class=\"thhs26-read-more\" href=\"@@ASSET:gm-taupo-news-update-24-july-2026.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Read Ten months on in Taupō\">READ MORE</a></p></div></div></div></div></section><section class=\"s_text_block o_colored_level thhs26-news pt16 pb0\" data-snippet=\"s_text_block\" data-name=\"Taupō news\"><div class=\"container\"><div class=\"row g-4\"><div class=\"col-md-2 o_colored_level\"></div><div class=\"col-md-10 o_colored_level\"><div class=\"thhs26-news-item\"><div class=\"thhs26-news-meta\"><span>News update</span><time datetime=\"2026-07-24\">24 July 2026</time></div><h3>Taupō experience leads PGY1 to rural medicine</h3><p class=\"text-end\"><a class=\"thhs26-read-more\" href=\"@@ASSET:pgy1-rural-medicine-news-update-24-july-2026.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Read Taupō experience leads PGY1 to rural medicine\">READ MORE</a></p></div></div></div></div></section><section class=\"s_text_block o_colored_level thhs26-news pt16 pb0\" data-snippet=\"s_text_block\" data-name=\"Taupō news\"><div class=\"container\"><div class=\"row g-4\"><div class=\"col-md-2 o_colored_level\"></div><div class=\"col-md-10 o_colored_level\"><div class=\"thhs26-news-item\"><div class=\"thhs26-news-meta\"><span>Media news</span><time datetime=\"2026-06-30\">30 June 2026</time></div><h3>Six new Co-Response Team locations announced to strengthen support for people in mental distress</h3><p class=\"text-end\"><a class=\"thhs26-read-more\" href=\"@@ASSET:co-response-teams-media-news-30-june-2026.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Read Six new Co-Response Team locations announced to strengthen support for people in mental distress\">READ MORE</a></p></div></div></div></div></section><section class=\"s_text_block o_colored_level thhs26-news pt16 pb0\" data-snippet=\"s_text_block\" data-name=\"Taupō news\"><div class=\"container\"><div class=\"row g-4\"><div class=\"col-md-2 o_colored_level\"></div><div class=\"col-md-10 o_colored_level\"><div class=\"thhs26-news-item\"><div class=\"thhs26-news-meta\"><span>News update</span><time datetime=\"2026-06-24\">24 June 2026</time></div><h3>Rural medical programme expands to Taupō in 2027</h3><p class=\"text-end\"><a class=\"thhs26-read-more\" href=\"@@ASSET:rural-medical-programme-expands-to-taupo-2027.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Read Rural medical programme expands to Taupō in 2027\">READ MORE</a></p></div></div></div></div></section><section class=\"s_text_block o_colored_level thhs26-news pt16 pb0\" data-snippet=\"s_text_block\" data-name=\"Taupō news\"><div class=\"container\"><div class=\"row g-4\"><div class=\"col-md-2 o_colored_level\"></div><div class=\"col-md-10 o_colored_level\"><div class=\"thhs26-news-item\"><div class=\"thhs26-news-meta\"><span>News update</span><time datetime=\"2026-06-23\">23 June 2026</time></div><h3>Resident Doctors’ Day 2026: Felicity Williams – Taupō</h3><p class=\"text-end\"><a class=\"thhs26-read-more\" href=\"@@ASSET:resident-doctors-day-felicity-williams-23-june-2026.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Read Resident Doctors’ Day 2026: Felicity Williams – Taupō\">READ MORE</a></p></div></div></div></div></section><section class=\"s_text_block o_colored_level thhs26-news pt16 pb0\" data-snippet=\"s_text_block\" data-name=\"Taupō news\"><div class=\"container\"><div class=\"row g-4\"><div class=\"col-md-2 o_colored_level\"></div><div class=\"col-md-10 o_colored_level\"><div class=\"thhs26-news-item\"><div class=\"thhs26-news-meta\"><span>News update</span><time datetime=\"2026-04-22\">22 April 2026</time></div><h3>Taupō doctor returns home as a specialist</h3><p class=\"text-end\"><a class=\"thhs26-read-more\" href=\"@@ASSET:taupo-doctor-returns-news-update-22-april-2026.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Read Taupō doctor returns home as a specialist\">READ MORE</a></p></div></div></div></div></section>"
+    },
+    {
+      "url": "/archive-news",
+      "name": "Archived News",
+      "content": "<section class=\"s_title thhs26-title o_colored_level oe_img_bg o_bg_img_center pt24 pb24\" data-vcss=\"001\" data-snippet=\"s_title\" data-name=\"Lake page title\" style=\"background-image:url('@@ASSET:lake-title.png@@');\"><div class=\"container s_allow_columns\"><h1>News<span class=\"thhs26-maori\"> / Ngā Kārere</span></h1></div></section><section class=\"s_text_block o_colored_level thhs26-news pt32 pb32\" data-snippet=\"s_text_block\" data-name=\"Taupō news\"><div class=\"container\"><div class=\"row\"><div class=\"col-md-2 o_colored_level\"><h2 class=\"thhs26-label\">ARCHIVED NEWS</h2></div><div class=\"col-md-10 o_colored_level\"><p>There are no archived news items yet.</p><p><a href=\"/news\">Read the latest news</a></p></div></div></div></section>"
+    },
+    {
+      "url": "/annual-report",
+      "name": "Annual Reports",
+      "content": "<section class=\"s_title thhs26-title o_colored_level oe_img_bg o_bg_img_center pt24 pb24\" data-vcss=\"001\" data-snippet=\"s_title\" data-name=\"Lake page title\" style=\"background-image:url('@@ASSET:lake-title.png@@');\"><div class=\"container s_allow_columns\"><h1>News<span class=\"thhs26-maori\"> / Ngā Kārere</span></h1></div></section><section class=\"s_text_block o_colored_level thhs26-reports pt32 pb32\" data-snippet=\"s_text_block\" data-name=\"Taupō reports\"><div class=\"container\"><h2 class=\"thhs26-label text-center\">ANNUAL REPORTS</h2><div class=\"row align-items-center g-4\"><div class=\"col-lg-9\"><div class=\"row g-3 align-items-end\"><div class=\"col-4 col-md o_colored_level\"><a href=\"@@ASSET:thhs-agm-booklet-2019.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Open 2019 Annual Report\"><img src=\"@@ASSET:2019.png@@\" alt=\"2019 Annual Report\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/></a></div><div class=\"col-4 col-md o_colored_level\"><a href=\"@@ASSET:thhs-agm-booklet-2020.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Open 2020 Annual Report\"><img src=\"@@ASSET:2020.png@@\" alt=\"2020 Annual Report\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/></a></div><div class=\"col-4 col-md o_colored_level\"><a href=\"@@ASSET:thhs-agm-booklet-2021.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Open 2021 Annual Report\"><img src=\"@@ASSET:2021.png@@\" alt=\"2021 Annual Report\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/></a></div><div class=\"col-4 col-md o_colored_level\"><a href=\"@@ASSET:thhs-agm-booklet-2022.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Open 2022 Annual Report\"><img src=\"@@ASSET:2022.png@@\" alt=\"2022 Annual Report\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/></a></div><div class=\"col-4 col-md o_colored_level\"><a href=\"@@ASSET:thhs-agm-booklet-2023.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Open 2023 Annual Report\"><img src=\"@@ASSET:2023.png@@\" alt=\"2023 Annual Report\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/></a></div><div class=\"col-4 col-md o_colored_level\"><a href=\"@@ASSET:thhs-agm-booklet-2024.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Open 2024 Annual Report\"><img src=\"@@ASSET:2024.png@@\" alt=\"2024 Annual Report\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/></a></div><div class=\"col-4 col-md o_colored_level\"><a href=\"@@ASSET:thhs-agm-booklet-2025.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Open 2025 Annual Report\"><img src=\"@@ASSET:2025.png@@\" alt=\"2025 Annual Report\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/></a></div><div class=\"col-4 col-md o_colored_level\"><img src=\"@@ASSET:2026.png@@\" alt=\"2026 Annual Report\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/><span class=\"small d-block\">Report not yet available</span></div></div></div><div class=\"col-lg-3\"><img src=\"@@ASSET:annual-reports-illustration.png@@\" alt=\"Annual reports and accountability\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/></div></div></div></section>"
+    },
+    {
+      "url": "/social-media",
+      "name": "Social Media",
+      "content": "<section class=\"s_title thhs26-title o_colored_level oe_img_bg o_bg_img_center pt24 pb24\" data-vcss=\"001\" data-snippet=\"s_title\" data-name=\"Lake page title\" style=\"background-image:url('@@ASSET:lake-title.png@@');\"><div class=\"container s_allow_columns\"><h1>News<span class=\"thhs26-maori\"> / Ngā Kārere</span></h1></div></section><section class=\"s_text_block o_colored_level thhs26-social pt32 pb32\" data-snippet=\"s_text_block\" data-name=\"Taupō social\"><div class=\"container\"><h2 class=\"thhs26-label text-center\">SOCIAL MEDIA</h2><p class=\"text-center\"><a href=\"@@FACEBOOK@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Visit our Facebook page\"><img src=\"@@ASSET:facebook.png@@\" alt=\"Facebook\" class=\"img img-fluid thhs26-social-icon\" style=\"\" loading=\"lazy\"/></a></p></div></section>"
+    },
+    {
+      "url": "/successes",
+      "name": "Successes",
+      "content": "<section class=\"s_text_block o_colored_level thhs26-successes pt32 pb32\" data-snippet=\"s_text_block\" data-name=\"Taupō successes\"><div class=\"container\"><h1 class=\"text-center\">SUCCESSES</h1><p class=\"text-center thhs26-label\">Selected grants and purchases supported since 1993<br/>Latest recorded cumulative value: $2,074,136</p><div class=\"row g-4\"><div class=\"col-md-2\"><img src=\"@@ASSET:grants-thermometer.png@@\" alt=\"Cumulative value of grants: $2,074,136\" class=\"img img-fluid thhs26-thermometer\" style=\"\" loading=\"lazy\"/></div><div class=\"col-md-10\"><div class=\"table-responsive\"><table class=\"table thhs26-grants\"><thead><tr><th>YEAR</th><th>TOTAL</th><th>EXAMPLES OF GRANTS AND PURCHASES</th></tr></thead><tbody><tr><td>2024</td><td>$2,074,136</td><td>Anamata Cafe: clinic bed, blood-pressure monitors and otoscope; RN emergency and trauma training; television wiring</td></tr><tr><td>2023</td><td>$2,066,257</td><td>Replacement of 16 televisions in Taupo Hospital&#x27;s Inpatient Unit</td></tr><tr><td>2022</td><td>$2,049,362</td><td>Chemotherapy chairs; AccuVein 500; paediatric assessment and treatment-room artwork</td></tr><tr><td>2019</td><td>$2,023,250</td><td>Echocardiogram for Taupo Hospital</td></tr><tr><td>2018</td><td>$1,740,141</td><td>Taupo Bowling Club - defibrillator</td></tr><tr><td>2016</td><td>$1,739,194</td><td>Chaplaincy training; emergency toiletry bags; youth aid equipment; two hospice syringe drivers</td></tr><tr><td>2014</td><td>$1,728,155</td><td>Hospital redevelopment; two heat pumps; youth support; Tiny Tots gear; immunisation fridge</td></tr><tr><td>2013</td><td>$851,528</td><td>Care-pack materials for the Taupo Volunteer Transport Group</td></tr><tr><td>2012</td><td>$846,528</td><td>Care toiletry packs; Volunteer Transport Group; Community Gardens; insulin pump</td></tr><tr><td>2011</td><td>$826,519</td><td>Dental X-ray viewers; youth health; insulin pump; care packs; tracking kits; cancer lodge; senior exercise</td></tr><tr><td>2010</td><td>$771,253</td><td>Taupo Volunteer Transport Group; hospital reclining lift chairs</td></tr><tr><td>2009</td><td>$743,975</td><td>Diabetes consumables; glucose monitor; rescue helicopter defibrillator</td></tr><tr><td>2008</td><td>$718,563</td><td>Rescue bag and blanket; two hospice Archimedes bath lifters</td></tr><tr><td>2007</td><td>$705,741</td><td>Total value of equipment and grants since 1993</td></tr></tbody></table></div></div></div></div></section><section class=\"s_picture o_colored_level thhs26-success-photo pt32 pb32\" data-snippet=\"s_picture\" data-name=\"Taupō success-photo\"><div class=\"container\"><h2 class=\"text-center\">SUCCESSES</h2><img src=\"@@ASSET:cheque-handover.jpg@@\" alt=\"Community cheque presentation for the cardiac heart scanner\" class=\"img img-fluid d-block mx-auto thhs26-cheque\" style=\"\" loading=\"lazy\"/></div></section>"
+    },
+    {
+      "url": "/projects",
+      "name": "Testimonials",
+      "content": "<section class=\"s_title thhs26-title o_colored_level oe_img_bg o_bg_img_center pt24 pb24\" data-vcss=\"001\" data-snippet=\"s_title\" data-name=\"Lake page title\" style=\"background-image:url('@@ASSET:lake-title.png@@');\"><div class=\"container s_allow_columns\"><h1>Our Projects<span class=\"thhs26-maori\"> / Ā mātou kaupapa</span></h1></div></section><section class=\"s_three_columns o_colored_level thhs26-testimonials pt32 pb32\" data-snippet=\"s_three_columns\" data-name=\"Taupō testimonials\"><div class=\"container\"><div class=\"thhs26-testimonial-head\"><img src=\"@@ASSET:testimonial-cheque.png@@\" alt=\"Community support for cardiac care\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/><h2>TESTIMONIALS</h2></div><div class=\"row g-3\"><div class=\"col-6 col-md-3 col-xl o_colored_level\"><a href=\"@@ASSET:testimonial---echocardiogram.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Read Echocardiogram testimonial\"><img src=\"@@ASSET:testimonial-37.png@@\" alt=\"Echocardiogram\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/></a></div><div class=\"col-6 col-md-3 col-xl o_colored_level\"><a href=\"@@ASSET:thanking-our-hospital-staff-testimonial.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Read Hospital Staff testimonial\"><img src=\"@@ASSET:testimonial-38.png@@\" alt=\"Hospital Staff\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/></a></div><div class=\"col-6 col-md-3 col-xl o_colored_level\"><a href=\"@@ASSET:risc-trauma-course-testimonial.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Read RISC Trauma testimonial\"><img src=\"@@ASSET:testimonial-40.png@@\" alt=\"RISC Trauma\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/></a></div><div class=\"col-6 col-md-3 col-xl o_colored_level\"><a href=\"@@ASSET:paediatric-murals-testimonial.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Read Paediatric Room Murals testimonial\"><img src=\"@@ASSET:testimonial-41.png@@\" alt=\"Paediatric Room Murals\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/></a></div><div class=\"col-6 col-md-3 col-xl o_colored_level\"><a href=\"@@ASSET:ct-scanner-closer-to-home-testimonial.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Read CT Scanning testimonial\"><img src=\"@@ASSET:testimonial-42.png@@\" alt=\"CT Scanning\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/></a></div><div class=\"col-6 col-md-3 col-xl o_colored_level\"><a href=\"@@ASSET:chemo-chairs-testimonial.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Read Chemo Chairs testimonial\"><img src=\"@@ASSET:testimonial-43.png@@\" alt=\"Chemo Chairs\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/></a></div><div class=\"col-6 col-md-3 col-xl o_colored_level\"><a href=\"@@ASSET:cancer-care-closer-to-home-testimonial.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Read Cancer Care testimonial\"><img src=\"@@ASSET:testimonial-44.png@@\" alt=\"Cancer Care\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/></a></div><div class=\"col-6 col-md-3 col-xl o_colored_level\"><a href=\"@@ASSET:testimonial---accuvein-500.pdf@@\" target=\"_blank\" rel=\"noopener\" aria-label=\"Read AccuVein 500 testimonial\"><img src=\"@@ASSET:testimonial-39.png@@\" alt=\"AccuVein 500\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/></a></div></div></div></section>"
+    },
+    {
+      "url": "/calendar",
+      "name": "Key Calendar Dates",
+      "content": "<section class=\"s_title thhs26-title o_colored_level oe_img_bg o_bg_img_center pt24 pb24\" data-vcss=\"001\" data-snippet=\"s_title\" data-name=\"Lake page title\" style=\"background-image:url('@@ASSET:lake-title.png@@');\"><div class=\"container s_allow_columns\"><h1>Events<span class=\"thhs26-maori\"> / Takahanga</span></h1></div></section><section class=\"s_text_block o_colored_level thhs26-calendar pt32 pb32\" data-snippet=\"s_text_block\" data-name=\"Taupō calendar\"><div class=\"container\"><div class=\"row align-items-center g-5\"><div class=\"col-md-9 o_colored_level\"><h2 class=\"thhs26-label\">Taupō Hospital &amp; Health Society</h2><p>Key Dates Calendar</p><h3>November 2026</h3><div class=\"thhs26-date\"><div><strong>18</strong><span>NOV</span></div><div><h4>Annual General Meeting (AGM)</h4><p>Taupō Hospital &amp; Health Society</p></div></div><div class=\"thhs26-date\"><div><strong>18</strong><span>NOV</span></div><div><h4>Next Society Meeting</h4><p>Scheduled meeting date</p></div></div><h3>December 2026</h3><div class=\"thhs26-date\"><div><strong>31</strong><span>DEC</span></div><div><h4>Charities Commission Filing</h4><p>Annual accounts filing deadline</p></div></div><h3>December 2028</h3><div class=\"thhs26-date\"><div><strong>31</strong><span>DEC</span></div><div><h4>Charities Three-Year Review</h4><p>Three-year review due date</p></div></div></div><div class=\"col-md-3 text-center o_colored_level\"><h2 class=\"thhs26-label\">KEY CALENDAR DATES</h2><img src=\"@@ASSET:calendar-icon.png@@\" alt=\"Calendar\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/></div></div></div></section>"
+    },
+    {
+      "url": "/how-can-i-help",
+      "name": "Get Involved",
+      "content": "<section class=\"s_title thhs26-title o_colored_level oe_img_bg o_bg_img_center pt24 pb24\" data-vcss=\"001\" data-snippet=\"s_title\" data-name=\"Lake page title\" style=\"background-image:url('@@ASSET:lake-title.png@@');\"><div class=\"container s_allow_columns\"><h1>Get Involved<span class=\"thhs26-maori\"> / Whai wāhi mai</span></h1></div></section><section class=\"s_three_columns o_colored_level thhs26-support pt32 pb32\" data-snippet=\"s_three_columns\" data-name=\"Taupō support\"><div class=\"container\"><h2 class=\"thhs26-label\">HOW CAN YOU SUPPORT US – CLICK ON THE RELEVANT ICON</h2><div class=\"row g-5 align-items-center text-center\"><div class=\"col-6 col-md-4 o_colored_level\"><a href=\"@@ASSET:membership-and-donation-form.pdf@@\" aria-label=\"Become a member\"><img src=\"@@ASSET:become-a-member.png@@\" alt=\"Become a member\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/></a></div><div class=\"col-6 col-md-4 o_colored_level\"><a href=\"@@ASSET:membership-and-donation-form.pdf@@\" aria-label=\"Donate\"><img src=\"@@ASSET:donate.png@@\" alt=\"Donate\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/></a></div><div class=\"col-6 col-md-4 o_colored_level\"><a href=\"@@GIVEALITTLE@@\" aria-label=\"Givealittle\"><img src=\"@@ASSET:givealittle-icon.png@@\" alt=\"Givealittle\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/></a></div><div class=\"col-6 col-md-4 o_colored_level\"><a href=\"/contactus\" aria-label=\"Philanthropy\"><img src=\"@@ASSET:philanthrophy.png@@\" alt=\"Philanthropy\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/></a></div><div class=\"col-6 col-md-4 o_colored_level\"><a href=\"/contactus\" aria-label=\"Volunteer\"><img src=\"@@ASSET:volunteer.png@@\" alt=\"Volunteer\" class=\"img img-fluid \" style=\"\" loading=\"lazy\"/></a></div><div class=\"col-6 col-md-4 o_colored_level\"><a href=\"/contactus\" class=\"btn btn-primary thhs26-button\">Contact Us</a></div></div></div></section>"
+    },
+    {
+      "url": "/contactus",
+      "name": "Contact Us",
+      "content": "<section class=\"s_text_block o_colored_level thhs26-contact pt32 pb32\" data-snippet=\"s_text_block\" data-name=\"Taupō contact\"><div class=\"container\"><div class=\"thhs26-contact-heading text-center\"><p class=\"thhs26-label\">TAUPŌ HOSPITAL &amp; HEALTH SOCIETY</p><h1>Contact the Society</h1><p>We welcome enquiries from members of our community, organisations and supporters.</p></div><div class=\"thhs26-contact-intro\"><h2>How to contact us</h2><p>Email the Society or speak directly with our Chairperson or Secretary.</p></div><div class=\"row g-2 thhs26-contact-details\"><div class=\"col-lg-4 o_colored_level\"><p><strong>EMAIL</strong> <a href=\"mailto:admin@thhs.org.nz\">admin@thhs.org.nz</a></p></div><div class=\"col-lg-4 o_colored_level\"><p><strong>CHAIR</strong> <a href=\"tel:+64273030642\">027 303 0642</a></p></div><div class=\"col-lg-4 o_colored_level\"><p><strong>SECRETARY</strong> <a href=\"tel:+64273374804\">027 337 4804</a></p></div></div><h2 class=\"text-center\">Tell us why you are contacting the Society</h2><p class=\"text-center\">Please state the reason in your email subject line or at the beginning of your message.</p><div class=\"row g-3 thhs26-contact-reasons\"><div class=\"col-md-3 o_colored_level\"><div><h3><a href=\"mailto:admin@thhs.org.nz?subject=Donation\">Donation</a></h3><p>Make a donation or discuss supporting the Society.</p></div></div><div class=\"col-md-3 o_colored_level\"><div><h3><a href=\"mailto:admin@thhs.org.nz?subject=Funding request\">Funding request</a></h3><p>Ask about funding or submit a request for support.</p></div></div><div class=\"col-md-3 o_colored_level\"><div><h3><a href=\"mailto:admin@thhs.org.nz?subject=General enquiry\">General enquiry</a></h3><p>Ask about the Society, its work or getting involved.</p></div></div><div class=\"col-md-3 o_colored_level\"><div><h3><a href=\"mailto:admin@thhs.org.nz?subject=Philanthropy\">Philanthropy</a></h3><p>Discuss supporting the Society.</p></div></div></div><div class=\"row g-4 mt-2\"><div class=\"col-md-9 o_colored_level\"><h2>Please include</h2><div class=\"row\"><div class=\"col-md-6\"><ul><li>Your full name and preferred contact details</li><li>A brief summary of your enquiry or request</li></ul></div><div class=\"col-md-6\"><ul><li>The reason for your email or call</li><li>Any relevant organisation or supporting information</li></ul></div></div></div><div class=\"col-md-3 o_colored_level text-center\"><a class=\"btn btn-primary thhs26-button\" href=\"mailto:admin@thhs.org.nz\">Contact us</a></div></div></div></section>"
+    },
+    {
+      "url": "/our-hospital",
+      "name": "Our Hospital",
+      "content": "<section class=\"s_title thhs26-title o_colored_level oe_img_bg o_bg_img_center pt24 pb24\" data-vcss=\"001\" data-snippet=\"s_title\" data-name=\"Lake page title\" style=\"background-image:url('@@ASSET:lake-title.png@@');\"><div class=\"container s_allow_columns\"><h1>Our Hospital<span class=\"thhs26-maori\"> / Ā mātou Hōhipera</span></h1></div></section><section class=\"s_image_text o_colored_level thhs26-hospital pt32 pb32\" data-snippet=\"s_image_text\" data-name=\"Taupō hospital\"><div class=\"container\"><div class=\"row g-5 align-items-center\"><div class=\"col-md-6 o_colored_level\"><img src=\"@@ASSET:hospital-icon.png@@\" alt=\"Health New Zealand | Te Whatu Ora – Taupō Hospital\" class=\"img img-fluid thhs26-hospital-details\" style=\"\" loading=\"lazy\"/></div><div class=\"col-md-6 o_colored_level\"><img src=\"@@ASSET:hospital-now.jpg@@\" alt=\"Taupō Hospital entrance\" class=\"img img-fluid thhs26-hospital-photo\" style=\"\" loading=\"lazy\"/></div></div></div></section>"
+    }
+  ],
+  "menus": [
+    [
+      "About Us|Ā mātou tangata",
+      [
+        [
+          "History",
+          "/background"
+        ],
+        [
+          "Mission/Vision",
+          "/our-vision"
+        ],
+        [
+          "What we do?",
+          "/what-we-do"
+        ],
+        [
+          "Our Board",
+          "/our-board"
+        ],
+        [
+          "Our Patrons",
+          "/our-patrons"
+        ],
+        [
+          "Associate members",
+          "/associate-members"
+        ],
+        [
+          "Incorporated Society",
+          "/incorporated-society"
+        ]
+      ]
+    ],
+    [
+      "News|Ngā Kārere",
+      [
+        [
+          "Latest News",
+          "/news"
+        ],
+        [
+          "Archived News",
+          "/archive-news"
+        ],
+        [
+          "Annual reports",
+          "/annual-report"
+        ],
+        [
+          "Social Media",
+          "/social-media"
+        ]
+      ]
+    ],
+    [
+      "Projects|Kaupapa",
+      [
+        [
+          "Successes",
+          "/successes"
+        ],
+        [
+          "Testimonials",
+          "/projects"
+        ]
+      ]
+    ],
+    [
+      "Events|Takahanga",
+      [
+        [
+          "Calendar dates",
+          "/calendar"
+        ],
+        [
+          "Get Involved",
+          "/how-can-i-help"
+        ],
+        [
+          "Contact Us",
+          "/contactus"
+        ]
+      ]
+    ],
+    [
+      "Our Hospital|Ā mātou Hōhipera",
+      [
+        [
+          "History",
+          "/our-hospital"
+        ]
+      ]
+    ]
+  ]
+}
