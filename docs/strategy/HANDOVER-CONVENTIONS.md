@@ -3606,3 +3606,40 @@ a no-op.
     Operations Manager with "Failed to write field …assigned_staff_ids / not
     allowed to access Employee" — that surface is not reachable for that role at
     all. (WORKSPACE WS-1.)
+- **§5.249 — an OWL `t-set` named like one of the component's getters kills the
+    whole form.** `<t t-set="card" t-value="card"/>` in a widget whose class has
+    `get card()` throws `Cannot set property card of #<WsClientNext> which has only a
+    getter` during render; the form renderer dies with it and the user gets "Something
+    went wrong" on opening ANY client. Name template locals so they cannot collide
+    (`nextCard`). (WORKSPACE WS-2.)
+- **§5.250 — a module-level memo keyed on an object read through OWL props misses
+    for every component, because each component gets its OWN reactive proxy.** The
+    shared client loader used a `WeakMap` keyed on `props.record.model`; four panels
+    produced four different proxy objects, so four tags and four RPCs (six with a tab
+    switch). Key on `toRaw(record.model)`: one call per record load, measured with
+    `performance.getEntriesByType('resource')`. Same trap for any cache, Set or
+    identity comparison across components. (WORKSPACE WS-2.)
+- **§5.251 — the Workspace kit's tab row clips its own underline once it
+    overflows.** `.o_notebook_headers` scrolls sideways (`overflow-x: auto`), which
+    forces `overflow-y` to clip; the active tab's 2 px underline overlaps the row's
+    hairline by 1 px (`margin-bottom: -1px`) and vanishes when there are enough tabs to
+    scroll (the client has 18; the booking's 8 fit, so WS-1 never saw it). One pixel of
+    `padding-bottom` on the header row gives it room (client + booking scope,
+    `ops_client_profile_form.scss`). A kit fix belongs in `ws_workspace.scss` on next
+    touch. (WORKSPACE WS-2.)
+- **§5.252 — `grep -w ph-avatar` also matches `crm-ph-avatar`: a hyphen is a word
+    boundary.** The WS-2 handover warned that the CRM contact screen shares the
+    client's `ph-*` classes; it does not — it uses its own `crm-ph-*` prefix — but a
+    word grep says it does. Anchor a class grep on the attribute boundary
+    (`["' ]ph-[a-z]`) before deciding a rule is shared or dead. (WORKSPACE WS-2.)
+- **§5.253 — the chrome-devtools window cannot be taller than the screen; use
+    `emulate` for the viewport.** `resize_page 1440×1000` silently left a 1440×608
+    viewport (DPR 2) on a laptop screen, so "full page" shots showed half a form and
+    the inner scroller reported 470 px. `emulate viewport=1440x1000x1` gives the real
+    size; re-assert it after each `new_page`. (WORKSPACE WS-2.)
+- **§5.254 — the rich package dialog is not a `.modal`.** health_invoicing's
+    `PackageWizardDialog` draws its own `.pw-overlay` over the whole page; Escape does
+    not close it and a `document.querySelector('.modal')` check says "closed" while the
+    overlay still swallows every later click (a Recent-visits row "did nothing").
+    Close it with its Cancel/✕ and check `.pw-overlay`. Pre-existing, unchanged.
+    (WORKSPACE WS-2.)
