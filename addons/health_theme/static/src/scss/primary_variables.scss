@@ -303,7 +303,13 @@ $font-weight-extrabold: 800;
     --vu-navbar-bg: #{$vu-navbar-bg};
     --vu-navbar-text: #{$vu-navbar-text};
 
-    --vu-sidebar-width: 220px;
+    /* The menu shell (MENU M1): an icon rail that widens into a drawer, and
+       the white column of tabs beside it. `--vu-sidebar-width` is kept as the
+       drawer's width for anything older that still reads it. */
+    --vu-rail-w: 60px;
+    --vu-drawer-w: 240px;
+    --vu-tabcol-w: 76px;
+    --vu-sidebar-width: var(--vu-drawer-w);
     --vu-sidebar-bg: #0D356B;             // current CMS sidebar navy
     --vu-sidebar-text: #{$vu-white};
     --vu-sidebar-hover: #{rgba($vu-white, 0.08)};

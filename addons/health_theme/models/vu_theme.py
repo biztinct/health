@@ -33,6 +33,7 @@ COLOR_KEYS = {
 DIMENSION_KEYS = {
     "vu-radius-sm", "vu-radius-md", "vu-radius-lg",
     "vu-navbar-height", "vu-sidebar-width", "vu-table-row-py",
+    "vu-rail-w", "vu-drawer-w", "vu-tabcol-w",
     "vu-font-size-base",
 }
 NUMBER_KEYS = {"vu-density", "vu-radius-scale", "vu-shadow-depth", "vu-motion-scale"}

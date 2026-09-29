@@ -1,124 +1,726 @@
-.cms-sidebar {
-    background: #0D356B !important;
+// =============================================================================
+// THE MENU SHELL (MENU M1) — rail ⇄ drawer, tab column, page header.
+//
+// The grid that places these three next to the action lives with the wrapper
+// that owns the action, in health_fieldservice/static/src/scss/
+// ops_sidebar_global.scss. This file draws the pieces.
+//
+// ⚠ THE DROPDOWN RULE (ledger §5.96). Nothing here may declare transform,
+// filter, backdrop-filter, perspective, contain, container-type, will-change,
+// isolation or an opacity below 1 — not on these pieces, not anywhere in this
+// file. Motion is `width` only; "muted" is a colour, never an opacity.
+// `health_cms_sidebar/tests/test_menu_shell.py` scans for it.
+//
+// Flat single colours from the `--vu-*` tokens; the fallbacks are today's.
+// =============================================================================
 
-    .cms-section-header {
-        padding: 14px 16px 6px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        cursor: pointer;
-        user-select: none;
-        transition: opacity 0.15s;
+$vu-shell-motion: 160ms ease;
 
-        &:hover {
-            opacity: 0.8;
-        }
+// ------------------------------------------------------------------ the rail
+.vu-rail {
+    position: relative;
+    flex: none;
+    width: var(--vu-rail-w, 60px);
+    height: 100%;
+    min-height: 0;
+    transition: width $vu-shell-motion;
 
-        .cms-section-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            opacity: 0.5;
-            font-weight: 600;
-            color: white;
-        }
-
-        .cms-chevron {
-            font-size: 9px;
-            opacity: 0.35;
-            transition: transform 0.2s;
-            color: white;
-        }
+    &.is-drawer {
+        width: var(--vu-drawer-w, 240px);
     }
 }
 
-/* Expandable parent items + sub-menus */
-.cms-sidebar {
-    .ops-nav-item.cms-has-children {
-        display: flex;
-        align-items: center;
+.vu-rail-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 5;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: none;
+    background: var(--vu-sidebar-bg, #0D356B);
+    color: var(--vu-sidebar-text, #FFFFFF);
+    transition: width $vu-shell-motion, box-shadow $vu-shell-motion;
 
-        .cms-item-label { flex: 1; }
-        .cms-item-chevron {
-            font-size: 9px;
-            opacity: 0.45;
-            color: white;
-            margin-left: 6px;
-        }
-    }
-
-    .ops-nav-item.cms-subitem {
-        padding-left: 38px;
-        font-size: 12.5px;
-        opacity: 0.82;
-
-        &.active { opacity: 1; }
-        &:hover { opacity: 1; }
+    &::-webkit-scrollbar {
+        display: none;
     }
 }
 
-/* Catchment scope pill / picker.
+// Hover (or keyboard focus) on the icon rail widens it OVER the page: the
+// cell stays 60px, only the panel grows, so nothing beside it reflows.
+.vu-rail.is-peek .vu-rail-panel {
+    z-index: 20;
+    width: var(--vu-drawer-w, 240px);
+    box-shadow: 6px 0 24px rgba(0, 0, 0, 0.28);
+}
 
-   Flat single colours only — no gradients. The select is a plain native
-   control on purpose: it must not be wrapped in anything that clips or
-   over-paints its popup (the repo-wide autocomplete containment trap). */
-.cms-sidebar {
-    .cms-catchment {
-        padding: 10px 16px 12px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.10);
-    }
+// Icons only: every piece of text is hidden, the icons do not move.
+.vu-rail.is-collapsed:not(.is-peek) .vu-rail-label {
+    display: none;
+}
 
-    .cms-catchment-label {
-        font-size: 10px;
-        text-transform: uppercase;
-        letter-spacing: 1.2px;
-        font-weight: 600;
-        opacity: 0.45;
-        color: white;
-        margin-bottom: 6px;
-    }
+.vu-rail-brand {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 64px;
+    padding: 0 8px 0 calc((var(--vu-rail-w, 60px) - 36px) / 2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    white-space: nowrap;
+}
 
-    .cms-catchment-pill {
-        display: flex;
-        align-items: center;
-        gap: 7px;
-        padding: 7px 10px;
-        border-radius: 6px;
-        background: rgba(255, 255, 255, 0.10);
-        color: white;
-        font-size: 12.5px;
-        font-weight: 600;
-        line-height: 1.2;
+// White plate so the hibiscus reads on every sidebar colour (as before).
+.vu-rail-logo {
+    flex: none;
+    width: 36px;
+    height: 36px;
+    padding: 5px;
+    border: 0;
+    border-radius: 8px;
+    background: #FFFFFF;
+    cursor: pointer;
 
-        .fa {
-            font-size: 11px;
-            opacity: 0.7;
-        }
-    }
-
-    .cms-catchment-select {
+    img {
+        display: block;
         width: 100%;
-        padding: 7px 10px;
-        border-radius: 6px;
-        border: 1px solid rgba(255, 255, 255, 0.22);
-        background: rgba(255, 255, 255, 0.10);
-        color: white;
-        font-size: 12.5px;
-        font-weight: 600;
-        line-height: 1.2;
-        cursor: pointer;
-        appearance: none;
+        height: 100%;
+        object-fit: contain;
+    }
 
-        &:focus {
-            outline: none;
-            border-color: rgba(255, 255, 255, 0.55);
+    &:focus-visible {
+        outline: 2px solid var(--vu-brand-secondary, #42A5F5);
+        outline-offset: 2px;
+    }
+}
+
+.vu-rail-brandtext {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.vu-rail-brandname {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+}
+
+.vu-rail-brandsub {
+    font-size: 11px;
+    line-height: 1.3;
+    color: rgba(255, 255, 255, 0.6);
+    color: color-mix(in srgb, var(--vu-sidebar-text, #FFFFFF) 60%, transparent);
+}
+
+.vu-rail-toggle {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.72);
+    color: color-mix(in srgb, var(--vu-sidebar-text, #FFFFFF) 72%, transparent);
+    font-size: 16px;
+    cursor: pointer;
+
+    &:hover {
+        background: var(--vu-sidebar-hover, rgba(255, 255, 255, 0.08));
+        color: var(--vu-sidebar-text, #FFFFFF);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--vu-brand-secondary, #42A5F5);
+        outline-offset: -2px;
+    }
+}
+
+.vu-rail-nav {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 8px 0;
+}
+
+.vu-rail-spacer {
+    flex: 1 1 auto;
+    min-height: 8px;
+}
+
+// One entry per section. The icon sits at the same x in both states — the
+// left padding centres a 20px icon in the rail's width — so widening the rail
+// only reveals the label, it never slides the icons.
+.vu-rail-entry {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: calc(100% - 16px);
+    height: 44px;
+    margin: 1px 8px;
+    padding: 0 10px 0 calc((var(--vu-rail-w, 60px) - 16px - 20px) / 2);
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.72);
+    color: color-mix(in srgb, var(--vu-sidebar-text, #FFFFFF) 72%, transparent);
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1.2;
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 120ms ease, color 120ms ease;
+
+    &:hover {
+        background: var(--vu-sidebar-hover, rgba(255, 255, 255, 0.08));
+        color: var(--vu-sidebar-text, #FFFFFF);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--vu-brand-secondary, #42A5F5);
+        outline-offset: -2px;
+    }
+
+    &.is-active {
+        background: rgba(255, 255, 255, 0.14);
+        color: var(--vu-sidebar-text, #FFFFFF);
+        font-weight: 600;
+        box-shadow: inset 3px 0 0 var(--vu-brand-secondary, #42A5F5);
+    }
+}
+
+.vu-rail-icon {
+    flex: none;
+    width: 20px;
+    font-size: 17px;
+    line-height: 1;
+    text-align: center;
+}
+
+.vu-rail-text {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.vu-rail-user {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 56px;
+    padding: 0 12px 0 calc((var(--vu-rail-w, 60px) - 32px) / 2);
+    border-top: 1px solid rgba(255, 255, 255, 0.10);
+    white-space: nowrap;
+}
+
+.vu-rail-avatar {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.vu-rail-usertext {
+    min-width: 0;
+}
+
+.vu-rail-username {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.vu-rail-userrole {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    color: color-mix(in srgb, var(--vu-sidebar-text, #FFFFFF) 60%, transparent);
+}
+
+// ------------------------------------------------------------ the tab column
+.vu-tabcol {
+    flex: none;
+    width: var(--vu-tabcol-w, 76px);
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    // No scrollbar: on a system that always draws one it takes 12px of a
+    // 76px column. The column still scrolls with the wheel, the keyboard and
+    // a finger.
+    scrollbar-width: none;
+    background: var(--vu-surface-card, #FFFFFF);
+    border-right: 1px solid var(--vu-border-soft, #E2E8F0);
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.vu-tab {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    width: calc(var(--vu-tabcol-w, 76px) - 6px);
+    padding: 9px 2px 8px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--vu-text-secondary, #5F6B7A);
+    font: inherit;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 120ms ease, color 120ms ease;
+
+    &:hover {
+        background: var(--vu-surface-panel, #F4F6F8);
+        color: var(--vu-text-primary, #1F2937);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--vu-brand-secondary, #42A5F5);
+        outline-offset: -2px;
+    }
+
+    &.is-active {
+        background: var(--vu-surface-hover, #E4F4FD);
+        color: var(--vu-tab-active, var(--vu-brand-primary, #1565C0));
+    }
+}
+
+.vu-tab-icon {
+    font-size: 17px;
+    line-height: 1;
+}
+
+// Two lines at most, then an ellipsis; the full name is the button's title.
+// A word too wide for the column is set smaller by `_fitTabLabels` (never below
+// 7.5px), and one too wide even then is a single line ending in "…". The
+// DATA is never shortened here — M2 renames what does not fit.
+.vu-tab-label {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    max-width: 100%;
+    overflow: hidden;
+    overflow-wrap: normal;
+
+    // A word too wide even at 7.5px: one line and an ellipsis (JS decides).
+    &.is-long {
+        display: block;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+}
+
+// ----------------------------------------------------------- the page header
+.vu-pagehead {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 40px;
+    min-width: 0;
+    padding: 0 16px;
+    background: var(--vu-surface-card, #FFFFFF);
+    border-bottom: 1px solid var(--vu-border-soft, #E2E8F0);
+    color: var(--vu-text-secondary, #5F6B7A);
+    font-size: 12.5px;
+    white-space: nowrap;
+}
+
+.vu-pagehead-menu {
+    display: none;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--vu-text-primary, #1F2937);
+    font-size: 16px;
+    cursor: pointer;
+
+    &:hover {
+        background: var(--vu-surface-panel, #F4F6F8);
+    }
+}
+
+.vu-catchment {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vu-catchment-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--vu-text-secondary, #5F6B7A);
+}
+
+.vu-catchment-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: var(--vu-surface-panel, #F4F6F8);
+    color: var(--vu-text-primary, #1F2937);
+    font-weight: 600;
+
+    .fa {
+        color: var(--vu-brand-primary, #1565C0);
+    }
+}
+
+// A plain native control on purpose: its popup is drawn by the browser, so
+// nothing around it can clip or over-paint it (§5.96).
+.vu-catchment-select {
+    height: 28px;
+    max-width: 220px;
+    padding: 0 28px 0 12px;
+    border: 1px solid var(--vu-border-soft, #E2E8F0);
+    border-radius: 999px;
+    background-color: var(--vu-surface-card, #FFFFFF);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%235F6B7A' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 11px center;
+    color: var(--vu-text-primary, #1F2937);
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    appearance: none;
+
+    &:hover {
+        border-color: var(--vu-border-strong, #C9D1DB);
+    }
+
+    &:focus {
+        outline: none;
+        border-color: var(--vu-brand-primary, #1565C0);
+    }
+
+    option {
+        color: var(--vu-text-primary, #1F2937);
+        background: var(--vu-surface-card, #FFFFFF);
+    }
+}
+
+.vu-crumbs {
+    flex: 0 1 auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.vu-crumb {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &.is-last {
+        color: var(--vu-text-primary, #1F2937);
+        font-weight: 600;
+    }
+}
+
+.vu-crumb-sep {
+    flex: none;
+    color: var(--vu-border-strong, #C9D1DB);
+}
+
+.vu-segments {
+    flex: 0 1 auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    padding-left: 12px;
+    border-left: 1px solid var(--vu-border-soft, #E2E8F0);
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.vu-segment {
+    flex: none;
+    height: 28px;
+    padding: 0 12px;
+    border: 1px solid var(--vu-border-soft, #E2E8F0);
+    border-radius: 999px;
+    background: var(--vu-surface-card, #FFFFFF);
+    color: var(--vu-text-secondary, #5F6B7A);
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
+
+    &:hover {
+        background: var(--vu-surface-panel, #F4F6F8);
+        color: var(--vu-text-primary, #1F2937);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--vu-brand-secondary, #42A5F5);
+        outline-offset: 1px;
+    }
+
+    &.is-active {
+        background: var(--vu-surface-hover, #E4F4FD);
+        border-color: var(--vu-brand-primary, #1565C0);
+        color: var(--vu-brand-primary, #1565C0);
+    }
+}
+
+// ------------------------------------------------ phone: the tap-to-open list
+.vu-sheet-scrim {
+    position: fixed;
+    top: var(--vu-navbar-height, 46px);
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 19;
+    background: rgba(0, 0, 0, 0.32);
+}
+
+.vu-sheet {
+    position: fixed;
+    top: var(--vu-navbar-height, 46px);
+    left: 0;
+    bottom: 0;
+    z-index: 20;
+    width: 0;
+    overflow: hidden;
+    background: var(--vu-sidebar-bg, #0D356B);
+    color: var(--vu-sidebar-text, #FFFFFF);
+    transition: width $vu-shell-motion;
+
+    &.is-open {
+        width: 280px;
+        max-width: 85vw;
+        box-shadow: 6px 0 24px rgba(0, 0, 0, 0.28);
+    }
+}
+
+.vu-sheet-nav {
+    display: flex;
+    flex-direction: column;
+    width: 280px;
+    max-width: 85vw;
+    padding: 8px 0;
+}
+
+.vu-sheet-entry {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 48px;
+    margin: 1px 8px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--vu-sidebar-text, #FFFFFF);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+
+    i {
+        width: 20px;
+        font-size: 17px;
+        text-align: center;
+    }
+
+    &.is-active {
+        background: rgba(255, 255, 255, 0.14);
+        font-weight: 600;
+        box-shadow: inset 3px 0 0 var(--vu-brand-secondary, #42A5F5);
+    }
+}
+
+// =============================================================================
+// BREAKPOINTS
+//   ≥1920  the drawer by default ("auto"); « pins either state, per person
+//   <1920  the icon rail by default, widening over the page on hover
+//   ≤1024  rail 56px, tab column 56px with its labels hidden, no «
+//   ≤768   the rail becomes a bottom bar of icons; the tab column a scroll
+//          strip under the page header; ☰ opens the full list
+// =============================================================================
+@media (max-width: 1024px) {
+    .vu-rail {
+        --vu-rail-w: 56px;
+    }
+
+    .vu-rail-toggle {
+        display: none !important;
+    }
+
+    .vu-tabcol {
+        width: 56px;
+    }
+
+    .vu-tab {
+        width: 44px;
+        padding: 11px 0;
+    }
+
+    .vu-tab-label,
+    .vu-catchment-label {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .vu-rail {
+        --vu-rail-w: 52px;
+        width: auto;
+        height: 56px;
+    }
+
+    .vu-rail-panel {
+        position: static;
+        width: auto;
+        height: 100%;
+        flex-direction: row;
+        overflow: hidden;
+    }
+
+    .vu-rail-brand,
+    .vu-rail-user,
+    .vu-rail-spacer,
+    .vu-rail .vu-rail-label {
+        display: none;
+    }
+
+    .vu-rail-nav {
+        flex-direction: row;
+        align-items: center;
+        padding: 0 4px;
+    }
+
+    .vu-rail-entry {
+        flex: 1 1 0;
+        justify-content: center;
+        width: auto;
+        min-width: 0;
+        height: 44px;
+        margin: 0 1px;
+        padding: 0;
+        gap: 0;
+
+        &.is-active {
+            box-shadow: inset 0 3px 0 var(--vu-brand-secondary, #42A5F5);
+        }
+    }
+
+    .vu-tabcol {
+        width: auto;
+        height: auto;
+        flex-direction: row;
+        align-items: stretch;
+        gap: 4px;
+        padding: 6px 8px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        border-right: 0;
+        border-bottom: 1px solid var(--vu-border-soft, #E2E8F0);
+    }
+
+    .vu-tab {
+        width: auto;
+        min-width: 64px;
+        max-width: 128px;
+        padding: 6px 10px;
+    }
+
+    .vu-tab-label {
+        display: block;
+        max-width: 108px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .vu-pagehead {
+        gap: 8px;
+        padding: 0 8px;
+    }
+
+    .vu-pagehead-menu {
+        display: inline-flex;
+    }
+
+    .vu-crumbs {
+        display: none;
+    }
+
+    .vu-catchment-select {
+        max-width: 150px;
+    }
+}
+
+// ≤768 the rail is a 56px bar along the bottom, which is where three floating
+// buttons live (the Coach, the Zalo chat hub, the chat bubbles). Lift them
+// above the bar — only while the menu shell is on screen.
+@media (max-width: 768px) {
+    body:has(.ops-layout-wrapper > .vu-rail) {
+        .lrn-fab {
+            bottom: 78px !important;
         }
 
-        /* The popup renders in the OS layer, which does not inherit the
-           sidebar's dark background — force readable option text. */
-        option {
-            color: #0D356B;
-            background: white;
+        .zalo-chat-hub,
+        .o-mail-ChatHub-bubbles {
+            bottom: 66px !important;
         }
     }
 }

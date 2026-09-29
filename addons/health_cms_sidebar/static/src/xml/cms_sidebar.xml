@@ -1,22 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
 
+<!-- THE MENU SHELL (MENU M1). Three siblings of the action, laid out by
+     `.ops-layout-wrapper` as a grid: the rail (sections), the tab column (the
+     active section's root entries) and the page header (catchment, where you
+     are, and the active tab's children as segments). -->
 <t t-name="health_cms_sidebar.CmsSidebar">
-    <aside class="ops-global-sidebar cms-sidebar">
-        <div class="ops-sidebar-logo" t-on-click="navigateHome" style="cursor:pointer">
-            <div class="ops-logo-icon cms-logo-icon"><img class="ops-logo-img" src="/health_fieldservice/static/img/vu-hibiscus.png" alt="Viet UC"/></div>
-            <div>
-                <div class="ops-logo-text">VIET UC</div>
-                <div class="ops-logo-sub">CMS</div>
+    <!-- ================================================================ rail -->
+    <aside t-att-class="railClass"
+           t-on-mouseenter="onRailEnter"
+           t-on-mouseleave="onRailLeave"
+           t-on-focusin="onRailFocusIn"
+           t-on-focusout="onRailFocusOut">
+        <div class="vu-rail-panel">
+            <div class="vu-rail-brand">
+                <button type="button" class="vu-rail-logo" title="Home" t-on-click="openHome">
+                    <img src="/health_fieldservice/static/img/vu-hibiscus.png" alt="Viet UC"/>
+                </button>
+                <div class="vu-rail-brandtext vu-rail-label">
+                    <div class="vu-rail-brandname">VIET UC</div>
+                    <div class="vu-rail-brandsub">CMS</div>
+                </div>
+                <button type="button" class="vu-rail-toggle vu-rail-label"
+                        t-att-title="isCollapsed ? 'Keep the menu open' : 'Show icons only'"
+                        t-att-aria-label="isCollapsed ? 'Keep the menu open' : 'Show icons only'"
+                        t-att-aria-pressed="isCollapsed ? 'false' : 'true'"
+                        t-on-click.stop="toggleRail">
+                    <i t-attf-class="fa #{isCollapsed ? 'fa-angle-double-right' : 'fa-angle-double-left'}"/>
+                </button>
+            </div>
+
+            <nav class="vu-rail-nav" aria-label="Areas" t-if="state.loaded"
+                 t-on-keydown="onListKeydown">
+                <t t-foreach="mainEntries" t-as="section" t-key="section.key">
+                    <t t-call="health_cms_sidebar.RailEntry"/>
+                </t>
+                <div class="vu-rail-spacer"/>
+                <t t-foreach="footEntries" t-as="section" t-key="section.key">
+                    <t t-call="health_cms_sidebar.RailEntry"/>
+                </t>
+            </nav>
+
+            <div class="vu-rail-user" t-att-title="currentUserName">
+                <div class="vu-rail-avatar" t-esc="currentUserInitials"/>
+                <div class="vu-rail-usertext vu-rail-label">
+                    <div class="vu-rail-username" t-esc="currentUserName"/>
+                    <div class="vu-rail-userrole">Viet UC CMS</div>
+                </div>
             </div>
         </div>
+    </aside>
+
+    <!-- ========================================================== tab column -->
+    <nav class="vu-tabcol" t-ref="tabcol" t-if="state.loaded and activeSection"
+         t-att-aria-label="railLabel(activeSection.name)"
+         t-att-data-section="activeSection.key"
+         t-att-lang="langTag"
+         t-on-keydown="onListKeydown">
+        <t t-foreach="activeSection.items" t-as="item" t-key="item.id">
+            <button type="button" data-nav="1"
+                    t-att-class="{'vu-tab': true, 'is-active': isTabActive(item), 'has-children': item.children.length}"
+                    t-att-data-item-id="item.id"
+                    t-att-data-action="item.action_xmlid or item.action_tag"
+                    t-att-title="item.name"
+                    t-att-aria-current="isTabActive(item) ? 'page' : undefined"
+                    t-on-click="() => this.openTab(item)">
+                <i t-att-class="'vu-tab-icon ' + (item.icon or 'fa fa-circle-o')" aria-hidden="true"/>
+                <span class="vu-tab-label" t-esc="item.name"/>
+            </button>
+        </t>
+    </nav>
+
+    <!-- ========================================================= page header -->
+    <header class="vu-pagehead" t-if="state.loaded">
+        <button type="button" class="vu-pagehead-menu" title="Menu" aria-label="Menu"
+                t-att-aria-expanded="state.sheetOpen ? 'true' : 'false'"
+                t-on-click="toggleSheet">
+            <i class="fa fa-bars" aria-hidden="true"/>
+        </button>
 
         <!-- Catchment scope. A label for staff, a picker for owners — the
-             server decides which by never sending options to anyone else. -->
-        <div class="cms-catchment" t-if="state.loaded">
-            <div class="cms-catchment-label">Catchment Area</div>
+             server decides which by never sending options to anyone else. The
+             picker stays a plain native select on purpose (§5.96). -->
+        <div class="vu-catchment" title="Catchment Area">
+            <span class="vu-catchment-label">Catchment Area</span>
             <t t-if="state.catchment.can_switch">
-                <select class="cms-catchment-select"
+                <select class="vu-catchment-select" aria-label="Catchment Area"
                         t-on-change="onCatchmentChange">
                     <option value="" t-att-selected="isCatchmentPicked('') or undefined">
                         My area (<t t-esc="state.catchment.current_name"/>)
@@ -32,49 +101,64 @@
                 </select>
             </t>
             <t t-else="">
-                <div class="cms-catchment-pill">
-                    <i class="fa fa-map-marker"/> <t t-esc="state.catchment.current_name"/>
-                </div>
+                <span class="vu-catchment-pill">
+                    <i class="fa fa-map-marker" aria-hidden="true"/> <t t-esc="state.catchment.current_name"/>
+                </span>
             </t>
         </div>
 
-        <nav class="ops-sidebar-nav" t-if="state.loaded">
-            <t t-foreach="state.sections" t-as="section" t-key="section.id">
-                <div class="cms-section-header"
-                     t-on-click="() => this.toggleSection(section.key)">
-                    <span class="cms-section-label" t-esc="section.name"/>
-                    <i t-attf-class="fa #{isSectionCollapsed(section.key) ? 'fa-chevron-right' : 'fa-chevron-down'} cms-chevron"/>
-                </div>
+        <div class="vu-crumbs" t-if="crumbs.length" aria-label="You are here">
+            <t t-foreach="crumbs" t-as="crumb" t-key="crumb_index">
+                <span t-if="crumb_index" class="vu-crumb-sep" aria-hidden="true">›</span>
+                <span t-att-class="{'vu-crumb': true, 'is-last': crumb_last}" t-esc="crumb"/>
+            </t>
+        </div>
 
-                <t t-if="!isSectionCollapsed(section.key)">
-                    <t t-foreach="section.items" t-as="item" t-key="item.id">
-                        <a t-attf-class="ops-nav-item #{isActive(item.id) ? 'active' : ''} #{item.children.length ? 'cms-has-children' : ''}"
-                           t-on-click="() => this.onItemClick(item)">
-                            <i t-att-class="item.icon"/> <span class="cms-item-label" t-esc="item.name"/>
-                            <i t-if="item.children.length"
-                               t-attf-class="fa #{isExpanded(item.id) ? 'fa-chevron-down' : 'fa-chevron-right'} cms-item-chevron"/>
-                        </a>
-                        <t t-if="item.children.length and isExpanded(item.id)">
-                            <t t-foreach="item.children" t-as="child" t-key="child.id">
-                                <a t-attf-class="ops-nav-item cms-subitem #{isActive(child.id) ? 'active' : ''}"
-                                   t-on-click="() => this.navigateTo(child)">
-                                    <i t-att-class="child.icon"/> <t t-esc="child.name"/>
-                                </a>
-                            </t>
-                        </t>
-                    </t>
-                </t>
+        <nav class="vu-segments" t-if="segments.length"
+             t-att-aria-label="activeRoot.name"
+             t-on-keydown="onListKeydown">
+            <t t-foreach="segments" t-as="child" t-key="child.id">
+                <button type="button" data-nav="1"
+                        t-att-class="{'vu-segment': true, 'is-active': isSegmentActive(child)}"
+                        t-att-data-item-id="child.id"
+                        t-att-data-action="child.action_xmlid or child.action_tag"
+                        t-att-aria-current="isSegmentActive(child) ? 'page' : undefined"
+                        t-on-click="() => this.navigateTo(child)">
+                    <t t-esc="child.name"/>
+                </button>
             </t>
         </nav>
+    </header>
 
-        <div class="ops-sidebar-user">
-            <div class="ops-user-avatar" t-esc="currentUserInitials"/>
-            <div class="ops-user-info">
-                <div class="ops-user-name" t-esc="currentUserName"/>
-                <div class="ops-user-role">Viet UC CMS</div>
-            </div>
-        </div>
-    </aside>
+    <!-- ============================================= phone: the tap-to-open list -->
+    <div t-if="state.phone and state.sheetOpen" class="vu-sheet-scrim" t-on-click="closeSheet"/>
+    <div t-if="state.phone" t-att-class="{'vu-sheet': true, 'is-open': state.sheetOpen}"
+         t-att-aria-hidden="state.sheetOpen ? 'false' : 'true'">
+        <nav class="vu-sheet-nav" aria-label="Areas" t-on-keydown="onListKeydown">
+            <t t-foreach="railEntries" t-as="section" t-key="section.key">
+                <button type="button" data-nav="1"
+                        t-att-class="{'vu-sheet-entry': true, 'is-active': isRailActive(section)}"
+                        t-att-aria-current="isRailActive(section) ? 'page' : undefined"
+                        t-att-tabindex="state.sheetOpen ? undefined : '-1'"
+                        t-on-click="() => this.onRailClick(section)">
+                    <i t-att-class="section.icon or 'fa fa-circle-o'" aria-hidden="true"/>
+                    <span t-esc="railLabel(section.name)"/>
+                </button>
+            </t>
+        </nav>
+    </div>
+</t>
+
+<t t-name="health_cms_sidebar.RailEntry">
+    <button type="button" data-nav="1"
+            t-att-class="{'vu-rail-entry': true, 'is-active': isRailActive(section), 'is-settings': section.key === 'admin'}"
+            t-att-data-section="section.key"
+            t-att-title="railTitle(section)"
+            t-att-aria-current="isRailActive(section) ? 'page' : undefined"
+            t-on-click="() => this.onRailClick(section)">
+        <i t-att-class="'vu-rail-icon ' + (section.icon or 'fa fa-circle-o')" aria-hidden="true"/>
+        <span class="vu-rail-label vu-rail-text" t-esc="railLabel(section.name)"/>
+    </button>
 </t>
 
 </templates>

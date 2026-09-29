@@ -44,203 +44,65 @@ body.has-custom-sidebar {
     }
 }
 
-.ops-global-sidebar {
-    width: var(--vu-sidebar-width, 220px);
-    background: var(--vu-sidebar-bg, #0D356B);
-    color: white;
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    height: 100%;
-    z-index: 10;
-    overflow-y: auto;
-    scrollbar-width: none;
-    &::-webkit-scrollbar { display: none; }
+// =============================================================================
+// THE MENU SHELL'S GRID (MENU M1)
+// =============================================================================
+// The CMS menu (health_cms_sidebar's CmsSidebar) renders three siblings of the
+// action inside this wrapper: the rail, the tab column and the page header.
+// The wrapper places them as a grid; the action keeps being the wrapper's
+// direct child, so the layout-restore rules above still hold.
+//
+//   ┌──────┬────────┬───────────────────────────┐
+//   │ rail │  tabs  │ page header (catchment,   │
+//   │      │        │ Section › Tab, segments)  │
+//   │      │        ├───────────────────────────┤
+//   │      │        │ the action                │
+//   └──────┴────────┴───────────────────────────┘
+//
+// ⚠ §5.96. Nothing here may put transform, filter, contain, container-type,
+// will-change, isolation or an opacity below 1 on this wrapper — it is an
+// ancestor of every form field in the product. The one stacking context is
+// the ACTION's own `z-index: 0` (a grid item needs no `position` for it and
+// does not become a containing block): it keeps the form cards that the
+// dropdown guard lifts to z-index 20 underneath the rail when the rail widens
+// over the page, and nothing is painted after the action inside the wrapper.
+// Scoped with `:has(> .vu-rail)` so a screen without the menu is untouched.
+.ops-layout-wrapper:has(> .vu-rail) {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+        "rail tabs head"
+        "rail tabs main";
 
-    .ops-sidebar-logo {
-        padding: 20px 16px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        border-bottom: 1px solid rgba(white, 0.1);
+    > .vu-rail {
+        grid-area: rail;
     }
 
-    // See ops_shared.scss — white plate so the hibiscus reads on every shell.
-    .ops-logo-icon {
-        width: 36px;
-        height: 36px;
-        background: #FFFFFF;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 18px;
-        padding: 5px;
+    > .vu-tabcol {
+        grid-area: tabs;
     }
 
-    .ops-logo-img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        display: block;
+    > .vu-pagehead {
+        grid-area: head;
     }
 
-    .ops-logo-text {
-        font-weight: 700;
-        font-size: 15px;
-        letter-spacing: 0.5px;
-    }
-
-    .ops-logo-sub {
-        font-size: 11px;
-        opacity: 0.6;
-    }
-
-    .ops-sidebar-nav {
-        padding: 12px 0;
-        flex: 1;
-        overflow-y: auto;
-        scrollbar-width: none;
-        &::-webkit-scrollbar { display: none; }
-    }
-
-    .ops-nav-section-label {
-        padding: 16px 16px 6px;
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 1.2px;
-        opacity: 0.4;
-        font-weight: 600;
-    }
-
-    .ops-nav-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 16px;
-        font-size: 13px;
-        color: rgba(white, 0.7);
-        cursor: pointer;
-        transition: all 0.15s;
-        text-decoration: none;
-        border-left: 3px solid transparent;
-
-        &:hover {
-            background: rgba(white, 0.08);
-            color: white;
-            text-decoration: none;
-        }
-
-        &.active {
-            background: rgba(white, 0.12);
-            color: white;
-            border-left-color: #42A5F5;
-            font-weight: 600;
-        }
-
-        i {
-            width: 18px;
-            text-align: center;
-            font-size: 14px;
-        }
-    }
-
-    .ops-sidebar-user {
-        padding: 16px;
-        border-top: 1px solid rgba(white, 0.1);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .ops-user-avatar {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        background: rgba(white, 0.15);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        font-weight: 600;
-    }
-
-    .ops-user-name {
-        font-size: 12px;
-        font-weight: 600;
-    }
-
-    .ops-user-role {
-        font-size: 11px;
-        opacity: 0.5;
+    > .o_action_manager {
+        grid-area: main;
+        min-height: 0;
+        z-index: 0;
     }
 }
 
-// =============================================================================
-// RESPONSIVE — collapse to icon rail ≤1024px, expand as overlay on hover
-// =============================================================================
-// Below tablet-landscape the fixed 220px sidebar crushed content (calendar
-// day cells shrank to ~30px). Collapsed rail keeps one-click navigation;
-// hovering expands it OVER the content (no reflow) with a shadow.
-@media (max-width: 1024px) {
-    .ops-layout-wrapper {
-        position: relative;
-        padding-left: 56px;
-    }
-
-    .ops-global-sidebar {
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        height: auto;
-        width: 56px;
-        overflow-x: hidden;
-        transition: width 160ms ease, box-shadow 160ms ease;
-
-        &:hover {
-            width: var(--vu-sidebar-width, 220px);
-            box-shadow: 6px 0 24px rgba(0, 0, 0, 0.28);
-        }
-
-        // Collapsed state: icons only, everything textual hidden
-        &:not(:hover) {
-            .ops-sidebar-logo {
-                justify-content: center;
-                padding: 16px 8px;
-
-                > *:not(.ops-logo-icon) {
-                    display: none;
-                }
-            }
-
-            .ops-nav-section-label,
-            .cms-section-header,
-            .cms-item-label,
-            .cms-item-chevron,
-            .ops-nav-item.cms-subitem {
-                display: none;
-            }
-
-            .ops-nav-item {
-                font-size: 0;          // hides the raw text node next to the icon
-                gap: 0;
-                justify-content: center;
-                padding: 12px 0;
-
-                i {
-                    font-size: 15px;
-                }
-            }
-
-            .ops-sidebar-user {
-                justify-content: center;
-                padding: 12px 8px;
-
-                > *:not(.ops-user-avatar) {
-                    display: none;
-                }
-            }
-        }
+// ≤768: page header, tab strip, the action, and the rail as a bottom bar.
+@media (max-width: 768px) {
+    .ops-layout-wrapper:has(> .vu-rail) {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto auto minmax(0, 1fr) auto;
+        grid-template-areas:
+            "head"
+            "tabs"
+            "main"
+            "rail";
     }
 }
