@@ -1,7 +1,11 @@
 // CRM Contact Form — OWL header + native form with progressive disclosure
 
-// (WS-3: the rule that hid the notes feed on this screen is gone — the feed
-// sits at the bottom, full width, like the booking and client screens.)
+.crm-contact-form-page {
+    .o-mail-Form-chatter,
+    .o-mail-ChatterContainer {
+        display: none !important;
+    }
+}
 
 .crm-contact-form-page {
     display: flex !important;

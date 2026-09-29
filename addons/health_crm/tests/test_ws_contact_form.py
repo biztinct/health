@@ -261,11 +261,9 @@ class TestWsContactForm(TransactionCase):
         timelines = self.own.xpath("//widget[@name='contact_timeline']")
         self.assertEqual(len(timelines), 1)
         self.assertFalse(timelines[0].xpath("ancestor::div[contains(concat(' ', @class, ' '), ' ws-page ')]"))
-        # the notes feed: the form's last child, after the sheet (the timeline
-        # shows no notes and is refused for most people — see the arch)
-        self.assertEqual(self.own.xpath('/form/*')[-1].tag, 'chatter')
-        hide = re.compile(r'\.o-mail-(Form-chatter|ChatterContainer)[^{]*\{\s*display:\s*none', re.S)
-        self.assertFalse(hide.search(_read('health_crm', 'static/src/scss/crm_contact_form.scss')))
+        # no chatter: the timeline is this screen's history, and a chatter is
+        # refused for CRM staff (followers read, found live in WS-3)
+        self.assertFalse(self.own.xpath('//chatter'))
         # first tab Overview, then the four old pages, same order
         pages = [p.get('name') for p in self.own.iter('page')]
         self.assertEqual(pages, ['overview'] + PAGES_BEFORE)

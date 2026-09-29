@@ -350,18 +350,17 @@
                         </div><!-- /ws-rail -->
                     </div><!-- /ws-page -->
 
-                    <!-- CONTACT HISTORY — full width under the page. It lists
-                         status changes, activities, escalations and bookings but
-                         no notes or messages (and its status-change read is
-                         refused for everyone but a system administrator, so most
-                         people see "No history yet"), hence the notes feed below
-                         it, as on the booking and client screens (WS-3). -->
+                    <!-- CONTACT HISTORY — full width under the page (where the
+                         notes feed sits on the booking and client screens). It
+                         lists status changes, activities (planned and done),
+                         escalations and bookings, so no chatter is added — and a
+                         chatter here is refused for CRM staff (their record rules
+                         deny the followers read: "Failed to write field
+                         crm.lead.message_partner_ids"), found on live in WS-3. -->
                     <div class="ws-history" name="contact_history">
                         <widget name="contact_timeline"/>
                     </div>
                 </sheet>
-
-                <chatter/>
             </form>
         </field>
     </record>
