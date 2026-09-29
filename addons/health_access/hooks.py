@@ -1533,3 +1533,63 @@ def _release_borrowed_matches(env):
         'health_access: "%s" no longer answers for %s — each has its own '
         'entry now', host.name, ', '.join(set(declared) - set(kept)))
     return len(declared) - len(kept)
+
+
+# =============================================================================
+# MENU M1 — THE TRAINING SCREENS MOVE TO THEIR OWN RAIL ENTRY.
+#
+# The Training heading and its five screens were written into ADMIN (seq 200)
+# and Learn is now its own block (`health_cms_sidebar.section_learn`). The seed
+# file is `noupdate="1"`, so an upgrade does not move rows that already exist:
+# this does, once, from the 19.0.1.5.0 migration.
+#
+# ONLY ROWS STILL WHERE THE SEED PUT THEM. A heading somebody has since moved
+# to another block by hand stays where they put it.
+#
+# NOBODY LOSES THE HEADING BY THE MOVE. A block's gate flows down, so a heading
+# in a gated block is opened by its own roles PLUS the block's. Leaving a gated
+# block for an ungated one would drop the block's half; the block's roles are
+# written onto the heading itself first, so the union is unchanged.
+# =============================================================================
+TRAINING_XMLIDS = (
+    'health_access.item_admin_training',
+    'health_access.item_admin_training_lessons',
+    'health_access.item_admin_training_stations',
+    'health_access.item_admin_training_progress',
+    'health_access.item_admin_training_events',
+    'health_access.item_admin_training_wording',
+)
+TRAINING_HEADING_XMLID = 'health_access.item_admin_training'
+TRAINING_OLD_SEQUENCE = 200
+TRAINING_NEW_SEQUENCE = 20
+
+
+def rehome_training(env):
+    """Move the Training heading and its screens from ADMIN into Learn.
+
+    Idempotent: a second run finds nothing in ADMIN and changes nothing.
+    Returns the number of rows moved.
+    """
+    admin = env.ref('health_cms_sidebar.section_admin', raise_if_not_found=False)
+    learn = env.ref('health_cms_sidebar.section_learn', raise_if_not_found=False)
+    heading = env.ref(TRAINING_HEADING_XMLID, raise_if_not_found=False)
+    if not (admin and learn and heading):
+        return 0
+    heading = heading.sudo().with_context(active_test=False)
+    if heading.section_id != admin:
+        return 0
+    rows = heading | env['cms.sidebar.item'].sudo().with_context(
+        active_test=False).search([('parent_id', '=', heading.id),
+                                   ('section_id', '=', admin.id)])
+    block_roles = admin.sudo().biz_role_ids
+    if block_roles - heading.biz_role_ids:
+        heading.write({'biz_role_ids': [(4, r.id) for r in block_roles]})
+    vals = {'section_id': learn.id}
+    rows.write(vals)
+    if heading.sequence == TRAINING_OLD_SEQUENCE:
+        heading.write({'sequence': TRAINING_NEW_SEQUENCE})
+    env['cms.sidebar.item'].invalidate_model(['effective_biz_role_ids'])
+    _logger.info('health_access: %s Training row(s) moved from ADMIN to Learn '
+                 '(the ADMIN block\'s roles kept on the heading: %s)',
+                 len(rows), ', '.join(block_roles.mapped('name')) or 'none')
+    return len(rows)

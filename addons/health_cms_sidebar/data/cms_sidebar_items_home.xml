@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- THE HOME ENTRY.
+
+     One entry, no gate, and it claims no dashboard's xml-id: each dashboard
+     belongs to its own section's Dashboard entry, so after Home has landed the
+     rail lights the section the person is actually in. It matches its own
+     client action tag and nothing else.
+
+     `noupdate="1"` like every other row on this rail. -->
+<odoo noupdate="1">
+
+    <record id="item_home" model="cms.sidebar.item">
+        <field name="name">Home</field>
+        <field name="section_id" ref="section_home"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">10</field>
+        <field name="icon">fa fa-home</field>
+        <field name="action_tag">cms_home</field>
+        <field name="match_action_tags">cms_home</field>
+    </record>
+
+</odoo>

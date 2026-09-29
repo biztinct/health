@@ -94,6 +94,48 @@ class CmsSidebarItem(models.Model):
             'models': sorted(models),
         }
 
+    #: Where "Home" lands when nothing more specific is known about the person
+    #: asking: the Operations dashboard, which is also what `menu_cms_root`
+    #: opens. `health_access` overrides `home_action` with the role rule.
+    HOME_FALLBACK = 'health_fieldservice.action_ops_command_center'
+
+    @api.model
+    def home_action(self):
+        """The xml-id of the screen the Home entry opens for this person.
+
+        THE SEAM, AND ON ITS OWN IT HAS NO OPINION. This module owns the menu
+        and knows nothing about roles, so it answers with the one landing every
+        account already had. The module that knows what somebody's job is
+        (`health_access`) overrides this and picks that job's own dashboard.
+
+        Resolved on the server, per call, rather than written into the Home
+        entry: a person's roles change while they are signed in, and an entry
+        that remembered one landing would keep sending a promoted nurse to the
+        wrong place until somebody edited a menu row.
+        """
+        return self.HOME_FALLBACK
+
+    @api.model
+    def item_id_for_xmlid(self, xmlid):
+        """The id of the menu entry with this xml-id, or `False`.
+
+        For the `cms_tab` deep link: an action can name the tab it belongs to
+        by the entry's xml-id, which is stable across databases where the id is
+        not. Answers only for an entry this person's own menu draws, so the
+        call can never be used to learn about a row they cannot see.
+        """
+        if not isinstance(xmlid, str) or '.' not in xmlid:
+            return False
+        record = self.env.ref(xmlid, raise_if_not_found=False)
+        if not record or record._name != self._name:
+            return False
+        drawn = set()
+        for section in self.get_sidebar_data():
+            for item in section['items']:
+                drawn.add(item['id'])
+                drawn.update(child['id'] for child in item['children'])
+        return record.id if record.id in drawn else False
+
     @api.model
     def get_catchment_scope(self):
         """What the sidebar's scope pill draws.

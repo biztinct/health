@@ -22,6 +22,27 @@
         <field name="icon">fa fa-university</field>
     </record>
 
+    <!-- HOME. First on the rail, never gated, never hidden. Its one entry
+         opens the `cms_home` client action, which asks the server where this
+         person's own dashboard is (cms.sidebar.item.home_action). -->
+    <record id="section_home" model="cms.sidebar.section">
+        <field name="name">Home</field>
+        <field name="technical_key">home</field>
+        <field name="sequence">0</field>
+        <field name="icon">fa fa-home</field>
+    </record>
+
+    <!-- LEARN. Its own rail entry (owner ruling, MENU IA Q3), between
+         ANALYTICS (37) and ADMIN (40), so ANALYTICS still sits between FINANCE
+         and ADMIN. The Training journey (health_learn) and the Training
+         admin expander (health_access) move into it. -->
+    <record id="section_learn" model="cms.sidebar.section">
+        <field name="name">Learn</field>
+        <field name="technical_key">learn</field>
+        <field name="sequence">38</field>
+        <field name="icon">fa fa-graduation-cap</field>
+    </record>
+
     <record id="section_admin" model="cms.sidebar.section">
         <field name="name">ADMIN</field>
         <field name="technical_key">admin</field>

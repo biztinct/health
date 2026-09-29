@@ -195,18 +195,23 @@
         <field name="action_tag">bfsi_coaching_workspace</field>
     </record>
 
-    <!-- ================================================== ADMIN: the training -->
+    <!-- ======================================================= LEARN: the training
+         Written in ADMIN (seq 200) until MENU M1, which gave Learn its own
+         rail entry; `migrations/19.0.1.5.0` re-homes the rows on a database
+         that already has them (this file is noupdate, so the upgrade alone
+         would not), and keeps the ADMIN block's gate on the heading so nobody
+         who opened it there loses it. -->
     <record id="item_admin_training" model="cms.sidebar.item">
         <field name="name">Training</field>
-        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <field name="section_id" ref="health_cms_sidebar.section_learn"/>
         <field name="parent_id" eval="False"/>
-        <field name="sequence">200</field>
+        <field name="sequence">20</field>
         <field name="icon">fa fa-book</field>
     </record>
 
     <record id="item_admin_training_lessons" model="cms.sidebar.item">
         <field name="name">Lessons</field>
-        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <field name="section_id" ref="health_cms_sidebar.section_learn"/>
         <field name="parent_id" ref="item_admin_training"/>
         <field name="sequence">10</field>
         <field name="icon">fa fa-file-text-o</field>
@@ -215,7 +220,7 @@
 
     <record id="item_admin_training_stations" model="cms.sidebar.item">
         <field name="name">Stations</field>
-        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <field name="section_id" ref="health_cms_sidebar.section_learn"/>
         <field name="parent_id" ref="item_admin_training"/>
         <field name="sequence">20</field>
         <field name="icon">fa fa-map-signs</field>
@@ -224,7 +229,7 @@
 
     <record id="item_admin_training_progress" model="cms.sidebar.item">
         <field name="name">Learner progress</field>
-        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <field name="section_id" ref="health_cms_sidebar.section_learn"/>
         <field name="parent_id" ref="item_admin_training"/>
         <field name="sequence">30</field>
         <field name="icon">fa fa-line-chart</field>
@@ -233,7 +238,7 @@
 
     <record id="item_admin_training_events" model="cms.sidebar.item">
         <field name="name">Learning events</field>
-        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <field name="section_id" ref="health_cms_sidebar.section_learn"/>
         <field name="parent_id" ref="item_admin_training"/>
         <field name="sequence">40</field>
         <field name="icon">fa fa-bell-o</field>
@@ -242,7 +247,7 @@
 
     <record id="item_admin_training_wording" model="cms.sidebar.item">
         <field name="name">Training wording</field>
-        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <field name="section_id" ref="health_cms_sidebar.section_learn"/>
         <field name="parent_id" ref="item_admin_training"/>
         <field name="sequence">50</field>
         <field name="icon">fa fa-language</field>

@@ -69,6 +69,24 @@ ADMIN_GROUPS = ('base.group_system',)
 #: not offer to undo a decision it knows nothing about.
 GATE_MANAGED_MODULES = ('health_access', 'biz_bi_cms')
 
+#: WHERE HOME LANDS, BY THE AREA OF THE PERSON'S ROLES (owner ruling, MENU IA
+#: Q1). Tried in order within an area; the first screen that can open here
+#: wins. An Operations Manager, a Branch Manager, an Admin and an Owner all land
+#: on the Operations dashboard; the front desk on Care Command, or the CRM
+#: dashboard where Care Command is switched off; an Accountant on the Finance
+#: dashboard; a nurse or a doctor on Observations.
+HOME_BY_AREA = {
+    'admin': ('health_fieldservice.action_ops_command_center',),
+    'operations': ('health_fieldservice.action_ops_command_center',),
+    'front_desk': ('health_care_command.action_care_command',
+                   'health_crm.action_crm_dashboard'),
+    'finance': ('health_invoicing.action_fin_dashboard',),
+    'clinical': ('health_vitals.action_health_observation',),
+}
+
+#: Somebody with roles in several areas lands in the first of these they hold.
+HOME_AREA_ORDER = ('admin', 'operations', 'front_desk', 'finance', 'clinical')
+
 
 def _model_behind(env, item):
     """The model an entry's screen opens, or `''` when it opens no records."""
@@ -246,6 +264,67 @@ class CmsSidebarItem(models.Model):
             except (ValueError, KeyError):          # pragma: no cover
                 continue
         return False
+
+    # ================================================================ home
+    @api.model
+    def home_action(self):
+        """Home is each role's own dashboard (owner ruling, MENU IA Q1).
+
+        THE AREAS OF THE ROLES THIS PERSON HOLDS IN FULL, and the first of
+        `HOME_BY_AREA` among them wins — so somebody who is both an Owner and a
+        Nurse lands where an Owner lands. Held "in full" is the same rule the
+        menu itself reads (`_held_rows`): a role whose permissions they only
+        partly carry is not their job.
+
+        A landing that cannot open here — its module is not installed, or its
+        part of the product is switched off — falls to the next thing that can:
+        the front desk to the CRM dashboard, everything else to what the menu
+        module answers (the Operations dashboard). Nobody is ever sent to a
+        screen that answers "switched off".
+        """
+        fallback = super().home_action()
+        area = self._home_area(self.env.user)
+        if not area:
+            return fallback
+        for xmlid in HOME_BY_AREA.get(area, ()):
+            if self._home_opens(xmlid):
+                return xmlid
+        return fallback
+
+    @api.model
+    def _home_area(self, user):
+        """The highest-precedence area among the roles `user` fully holds."""
+        held = set(user.sudo().all_group_ids.ids)
+        areas = set()
+        for role in self.env['biz.access.role'].sudo().search(
+                [('active', '=', True)]):
+            groups = set(role.group_ids.ids)
+            if groups and groups <= held:
+                areas.add(role.area)
+        for area in HOME_AREA_ORDER:
+            if area in areas:
+                return area
+        return ''
+
+    @api.model
+    def _home_opens(self, xmlid):
+        """Does this screen exist here, with its part of the product on?"""
+        if not self.env.ref(xmlid, raise_if_not_found=False):
+            return False
+        if 'biz.tenancy' not in self.env:
+            return True
+        Tenancy = self.env['biz.tenancy'].sudo()
+        try:
+            off = Tenancy.features_off()
+            if not off:
+                return True
+            key = Tenancy.feature_of_action(xmlid)
+        except Exception:                                    # noqa: BLE001
+            _logger.warning('health_access: could not tell whether %s is '
+                            'switched on; Home falls back.', xmlid,
+                            exc_info=True)
+            return False
+        return not (key and ('*' in off or key in off))
 
     # ------------------------------------------------ the same answer, by id
     @api.model

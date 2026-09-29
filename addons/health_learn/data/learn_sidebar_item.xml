@@ -10,13 +10,13 @@
          asking for access. The Journey itself marks each station the learner
          cannot see as "not in your sidebar" rather than hiding it.
 
-         Sits last in CRM for Phase 1. When OPS/CLINICAL/FINANCE lines exist it
-         moves to its own section — a one-line change, which is why it is not
-         worth designing for now. -->
+         Sat last in CRM (seq 90) until MENU M1 gave Learn its own rail entry
+         (owner ruling, MENU IA Q3); it now opens that block. This file is NOT
+         noupdate, so the upgrade itself moves the row. -->
     <record id="item_learn_journey" model="cms.sidebar.item">
         <field name="name">Training</field>
-        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
-        <field name="sequence">90</field>
+        <field name="section_id" ref="health_cms_sidebar.section_learn"/>
+        <field name="sequence">10</field>
         <field name="icon">fa fa-graduation-cap</field>
         <field name="action_xmlid">health_learn.action_learn_journey</field>
         <field name="action_tag">learn_journey</field>
