@@ -33,3 +33,7 @@ Chatter stays at the bottom, full width (standing rule).
 
 Later polish (owner saw it in the concept; not scheduled): one-line plain-English summary
 at the top of the record, and a Ctrl K command box.
+
+**Programme closed 2026-09-29.** Open follow-ups: the Contacts list access error when a
+contact's linked client is in another area (list screen); remaining weak Vietnamese
+(Reschedule, View Quote, Clinical tab, "I am the" choices, list Book/Log Activity).
