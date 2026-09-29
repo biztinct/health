@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- At a glance / the client's own People row / Needs attention -->
+    <t t-name="health_fieldservice.WsClientGlance">
+        <t t-if="mode === 'attention'">
+            <t t-set="list" t-value="alerts"/>
+            <div t-ref="root" t-if="list.length" class="ws-panel ws-panel--attention">
+                <div class="ws-panel__head">Needs attention</div>
+                <div class="ws-alerts">
+                    <t t-foreach="list" t-as="alert" t-key="alert.key">
+                        <div t-attf-class="ws-alert ws-alert--#{alert.tone}" t-att-data-alert="alert.key">
+                            <span class="ws-ico" data-icon="alert-triangle"/>
+                            <span class="ws-alert__text" t-esc="alert.text"/>
+                        </div>
+                    </t>
+                </div>
+            </div>
+            <span t-else="" t-ref="root" class="d-none"/>
+        </t>
+        <t t-elif="mode === 'contact'">
+            <t t-set="c" t-value="contact"/>
+            <div t-ref="root" class="ws-person">
+                <div class="ws-person__body">
+                    <div class="ws-person__role">Client</div>
+                    <div class="ws-person__name" t-esc="c.name"/>
+                    <div class="ws-person__sub" t-if="c.phone" t-esc="c.phone"/>
+                </div>
+                <div class="ws-person__acts">
+                    <a t-if="c.tel" class="ws-icon-btn" t-att-href="c.tel" title="Call" aria-label="Call">
+                        <span class="ws-ico" data-icon="phone"/>
+                    </a>
+                    <a t-if="c.sms" class="ws-icon-btn" t-att-href="c.sms" title="SMS" aria-label="SMS">
+                        <span class="ws-ico" data-icon="message-square"/>
+                    </a>
+                    <a t-if="c.mail" class="ws-icon-btn" t-att-href="c.mail" title="Email" aria-label="Email">
+                        <span class="ws-ico" data-icon="mail"/>
+                    </a>
+                </div>
+            </div>
+        </t>
+        <t t-else="">
+            <div t-ref="root" class="ws-panel ws-panel--glance">
+                <div class="ws-glance">
+                    <div class="ws-panel__head">At a glance</div>
+                    <t t-foreach="rows" t-as="row" t-key="row.key">
+                        <div t-attf-class="ws-row #{row.cls} #{loaded ? '' : 'is-loading'}" t-att-data-row="row.key">
+                            <span class="ws-row__label" t-esc="row.label"/>
+                            <span class="ws-row__value" t-esc="loaded or row.key === 'since' ? row.value : '…'"/>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </t>
+
+    <!-- Next step: one card, the same look as the booking banner -->
+    <t t-name="health_fieldservice.WsClientNext">
+        <t t-set="nextCard" t-value="card"/>
+        <div t-if="nextCard" t-attf-class="vu-action-card vu-action-card--primary ws-client-next ws-client-next--#{nextCard.kind}">
+            <div class="vu-action-card__supertitle">Next step</div>
+            <div class="vu-action-card__title" t-esc="nextCard.title"/>
+            <div t-if="nextCard.hint" class="vu-action-card__subtitle" t-esc="nextCard.hint"/>
+            <div t-if="nextCard.buttons.length" class="vu-action-card__actions">
+                <t t-foreach="nextCard.buttons" t-as="btn" t-key="btn.key">
+                    <button type="button"
+                            t-attf-class="vu-action-btn #{btn.primary ? 'vu-action-btn--primary' : 'vu-action-btn--secondary'}"
+                            t-att-data-action="btn.key"
+                            t-on-click="() => btn.run()"
+                            t-esc="btn.label"/>
+                </t>
+            </div>
+        </div>
+    </t>
+
+    <!-- Recent visits: an Overview card -->
+    <t t-name="health_fieldservice.WsClientVisits">
+        <div t-ref="root" class="vu-detail-card ws-card ws-visits" name="recent_visits_card">
+            <div class="ws-visits__head">
+                <div class="vu-card__title">
+                    <span class="vu-section__icon" data-icon="calendar"/>
+                    <span>Recent visits</span>
+                </div>
+                <button t-if="visits.length" type="button" class="ws-link" t-on-click="() => this.allBookings()">All bookings</button>
+            </div>
+            <t t-if="!loaded">
+                <div class="ws-visits__empty">…</div>
+            </t>
+            <t t-elif="visits.length">
+                <div class="ws-visits__list">
+                    <t t-foreach="visits" t-as="visit" t-key="visit.id">
+                        <button type="button" class="ws-visit" t-att-data-id="visit.id" t-on-click="() => this.open(visit)">
+                            <span class="ws-visit__name" t-esc="visit.name"/>
+                            <span class="ws-visit__date" t-esc="visit.date"/>
+                            <span class="ws-visit__service" t-esc="visit.service"/>
+                            <span t-attf-class="ws-state ws-state--#{visit.tone}" t-esc="visit.state"/>
+                        </button>
+                    </t>
+                </div>
+            </t>
+            <t t-else="">
+                <div class="ws-visits__empty">
+                    <span>No visits yet.</span>
+                    <button type="button" class="ws-link" t-on-click="() => this.newBooking()">New booking</button>
+                </div>
+            </t>
+        </div>
+    </t>
+
+    <!-- Shortcuts: one row per registered entry -->
+    <t t-name="health_fieldservice.WsClientShortcuts">
+        <div class="ws-panel ws-panel--links ws-panel--shortcuts">
+            <div class="ws-panel__head">Shortcuts</div>
+            <t t-foreach="entries" t-as="entry" t-key="entry.key">
+                <button type="button" class="vu-action-item ws-shortcut" t-att-data-shortcut="entry.key"
+                        t-on-click="() => this.run(entry)">
+                    <span class="ws-ico" t-att-data-icon="entry.icon"/>
+                    <span class="ws-shortcut__label" t-esc="entry.label"/>
+                </button>
+            </t>
+        </div>
+    </t>
+
+</templates>

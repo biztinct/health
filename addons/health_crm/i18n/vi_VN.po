@@ -5119,8 +5119,6 @@ msgid "Main"
 msgstr "Chính"
 
 #. module: health_crm
-#. odoo-javascript
-#: code:addons/health_crm/static/src/xml/ops_client_profile_header.xml:0
 #: model:ir.model.fields,field_description:health_crm.field_res_partner__main_contact_id
 #: model:ir.model.fields,field_description:health_crm.field_res_users__main_contact_id
 msgid "Main Contact"
@@ -9352,3 +9350,8 @@ msgstr "Người có quyền quyết định y tế"
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_search
 msgid "Current"
 msgstr "Hiện hành"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_health_patient_form_ops_crm_maincontact
+msgid "Main contact"
+msgstr "Liên hệ chính"

@@ -22,26 +22,28 @@
 
     <!-- ===================================================================
          Client PROFILE (health_fieldservice.view_health_patient_form_ops):
-         Load the Main Contact fields onto the form record so the custom
-         profile header (OWL) can render an editable Main Contact + phone in
-         the identity row. The fields are invisible here — the visible,
-         editable widget lives in the header (see ops_client_profile_header.*).
+         the editable Main Contact (+ its phone) sits in the Workspace rail's
+         People panel, under the client's own row (WS-2). It used to be drawn
+         by a controller-template extension in the old identity header; that
+         header is gone, and so is the extension.
          =================================================================== -->
     <record id="view_health_patient_form_ops_crm_maincontact" model="ir.ui.view">
         <field name="name">res.partner.form.ops.client.main-contact</field>
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="health_fieldservice.view_health_patient_form_ops"/>
         <field name="arch" type="xml">
-            <xpath expr="//sheet/div[@class='alert alert-danger']" position="before">
-                <!-- Kept as real (not invisible) fields so the m2o display_name
-                     loads for the header widget; hidden in the body via CSS.
-                     An `invisible` m2o would only load its id -> "Unnamed". -->
-                <div class="d-none">
-                    <field name="allowed_main_contact_ids"/>
-                    <field name="main_contact_phone"/>
-                    <field name="main_contact_id" nolabel="1"
-                           domain="[('id', 'in', allowed_main_contact_ids)]"
-                           options="{'no_create': True}"/>
+            <xpath expr="//div[@name='people_panel']" position="inside">
+                <field name="allowed_main_contact_ids" invisible="1"/>
+                <div class="ws-person ws-person--main-contact">
+                    <div class="ws-person__body">
+                        <div class="ws-person__role">Main contact</div>
+                        <field name="main_contact_id" nolabel="1" class="ws-person__field"
+                               domain="[('id', 'in', allowed_main_contact_ids)]"
+                               options="{'no_create': True}"/>
+                        <div class="ws-person__sub" invisible="not main_contact_phone">
+                            <field name="main_contact_phone" readonly="1"/>
+                        </div>
+                    </div>
                 </div>
             </xpath>
         </field>

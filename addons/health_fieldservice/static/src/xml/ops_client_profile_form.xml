@@ -23,100 +23,9 @@
                 </div>
             </header>
 
-            <!-- PROFILE HEADER (avatar + stats) -->
-            <t t-if="profileState.isLoaded">
-                <div class="ph-header">
-                    <!-- White Identity -->
-                    <div class="ph-identity">
-                        <div class="ph-avatar" t-esc="profileState.profile.initials || '??'"/>
-                        <div class="ph-details">
-                            <div class="ph-name-row">
-                                <span class="ph-name" t-esc="profileState.profile.name || model.root.data.display_name"/>
-                                <span class="ph-code" t-esc="profileState.profile.patient_code"/>
-                            </div>
-                            <div class="ph-tags">
-                                <t t-if="profileState.profile.patient_status === 'active'">
-                                    <span class="ph-tag active"><i class="fa fa-circle" style="font-size:5px"/> Active</span>
-                                </t>
-                                <t t-if="profileState.profile.patient_status === 'inactive'">
-                                    <span class="ph-tag regular"><i class="fa fa-pause-circle" style="font-size:9px"/> Inactive</span>
-                                </t>
-                                <t t-if="profileState.profile.category_name and !profileState.profile.is_vip">
-                                    <span class="ph-tag regular"><i class="fa fa-user" style="font-size:9px"/> <t t-esc="profileState.profile.category_name"/></span>
-                                </t>
-                                <t t-if="profileState.profile.is_vip">
-                                    <span class="ph-tag vip"><i class="fa fa-star" style="font-size:9px"/> VIP</span>
-                                </t>
-                                <t t-if="profileState.profile.is_referrer">
-                                    <span class="ph-tag regular"><i class="fa fa-share-alt" style="font-size:9px"/> Referrer</span>
-                                </t>
-                            </div>
-                            <div class="ph-contact">
-                                <t t-if="profileState.profile.phone"><span><i class="fa fa-phone"/> <t t-esc="profileState.profile.phone"/></span></t>
-                                <t t-if="profileState.profile.address"><span><i class="fa fa-map-marker"/> <t t-esc="profileState.profile.address"/></span></t>
-                                <t t-if="profileState.profile.email"><span><i class="fa fa-envelope-o"/> <t t-esc="profileState.profile.email"/></span></t>
-                                <t t-if="profileState.profile.age_gender"><span><i class="fa fa-user-o"/> <t t-esc="profileState.profile.age_gender"/></span></t>
-                            </div>
-                        </div>
-                        <div class="ph-actions">
-                            <button class="ph-action-btn primary" title="Call" t-on-click="onCallClient"><i class="fa fa-phone"/></button>
-                            <button class="ph-action-btn secondary" title="SMS" t-on-click="onSmsClient"><i class="fa fa-comment"/></button>
-                            <button class="ph-action-btn secondary" title="Email" t-on-click="onEmailClient"><i class="fa fa-envelope"/></button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- KPI STAT CARDS -->
-                <div class="ph-kpis">
-                    <div class="ph-kpi ph-kpi--bookings">
-                        <span class="ph-kpi__icon" data-kpi="bookings"/>
-                        <div class="ph-kpi__body">
-                            <div class="ph-kpi__value" t-esc="profileState.stats.total_visits || 0"/>
-                            <div class="ph-kpi__label">Total Bookings</div>
-                        </div>
-                    </div>
-                    <div class="ph-kpi ph-kpi--packages">
-                        <span class="ph-kpi__icon" data-kpi="packages"/>
-                        <div class="ph-kpi__body">
-                            <div class="ph-kpi__value" t-esc="profileState.stats.active_packages || 0"/>
-                            <div class="ph-kpi__label">Active Packages</div>
-                        </div>
-                    </div>
-                    <div class="ph-kpi ph-kpi--spent">
-                        <span class="ph-kpi__icon" data-kpi="spent"/>
-                        <div class="ph-kpi__body">
-                            <div class="ph-kpi__value" t-esc="formatCurrency(profileState.stats.total_spent)"/>
-                            <div class="ph-kpi__label">Total Spent</div>
-                        </div>
-                    </div>
-                    <div class="ph-kpi ph-kpi--outstanding">
-                        <span class="ph-kpi__icon" data-kpi="outstanding"/>
-                        <div class="ph-kpi__body">
-                            <div class="ph-kpi__value" t-esc="formatCurrency(profileState.stats.outstanding)"/>
-                            <div class="ph-kpi__label">Outstanding</div>
-                        </div>
-                    </div>
-                    <div class="ph-kpi ph-kpi--satis">
-                        <span class="ph-kpi__icon" data-kpi="satis"/>
-                        <div class="ph-kpi__body">
-                            <div class="ph-kpi__value" t-esc="profileState.stats.satisfaction || '—'"/>
-                            <div class="ph-kpi__label">Satisfaction</div>
-                        </div>
-                    </div>
-                    <div class="ph-kpi ph-kpi--refer">
-                        <span class="ph-kpi__icon" data-kpi="refer"/>
-                        <div class="ph-kpi__body">
-                            <div class="ph-kpi__value" t-esc="profileState.stats.referrals || 0"/>
-                            <div class="ph-kpi__label">Referrals Made</div>
-                        </div>
-                    </div>
-                </div>
-            </t>
-
-            <!-- FORM + SIDEBAR CONTAINER -->
-            <div class="ops-content-with-sidebar">
-
-            <!-- FORM VIEW CONTAINER -->
+            <!-- FORM VIEW CONTAINER — the arch draws the whole workspace (hero,
+                 Next step, tabs, rail); this chrome keeps only the breadcrumb
+                 bar and the save indicator (WS-2) -->
             <div class="o_form_view_container">
                 <Layout className="model.useSampleModel ? 'o_view_sample_data' : ''" display="display">
                     <t t-set-slot="control-panel-create-button"/>
@@ -155,51 +64,6 @@
                 </Layout>
             </div>
 
-            <!-- SIDEBAR PANEL -->
-            <aside class="ops-cp-sidebar">
-                <div class="ops-cp-sidebar__card ops-cp-sidebar__card--primary">
-                    <div class="ops-cp-sidebar__card-title">
-                        <i class="fa fa-calendar-plus-o"/> Create Booking
-                    </div>
-                    <div class="ops-cp-sidebar__card-subtitle">
-                        Schedule a new service visit for this client.
-                    </div>
-                    <button class="ops-cp-sidebar__btn ops-cp-sidebar__btn--primary" t-on-click="openCreateBooking">
-                        <i class="fa fa-plus"/> New Booking
-                    </button>
-                </div>
-
-                <div class="ops-cp-sidebar__section-title">
-                    <i class="fa fa-th-list"/> Quick Actions
-                </div>
-
-                <button class="ops-cp-sidebar__action" t-on-click="() => this.doPartnerAction('action_view_appointments')">
-                    <i class="fa fa-calendar"/> View Bookings
-                </button>
-                <button class="ops-cp-sidebar__action" t-on-click="() => this.doPartnerAction('action_open_recurring_booking')">
-                    <i class="fa fa-repeat"/> Create Recurring Booking
-                </button>
-
-                <div class="ops-cp-sidebar__separator"/>
-
-                <button class="ops-cp-sidebar__action" t-on-click="() => this.openPackagePurchase()">
-                    <i class="fa fa-gift"/> Quick Package Purchase
-                </button>
-                <button class="ops-cp-sidebar__action" t-on-click="() => this.doPartnerAction('action_create_standard_invoice')">
-                    <i class="fa fa-file-text"/> Create Invoice
-                </button>
-                <button class="ops-cp-sidebar__action" t-on-click="() => this.doPartnerAction('action_view_invoices')">
-                    <i class="fa fa-list-alt"/> View Invoices
-                </button>
-                <button class="ops-cp-sidebar__action" t-on-click="() => this.doPartnerAction('action_view_service_packages')">
-                    <i class="fa fa-gift"/> Purchased Packages
-                </button>
-                <button class="ops-cp-sidebar__action" t-on-click="() => this.doPartnerAction('action_view_payment_transactions')">
-                    <i class="fa fa-credit-card"/> View Payments
-                </button>
-            </aside>
-
-            </div>
         </div>
     </div>
 </t>

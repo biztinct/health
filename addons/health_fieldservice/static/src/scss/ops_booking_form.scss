@@ -4,14 +4,11 @@
 // =============================================================================
 
 // ─────────────────────────────────────────────────────────────────────────────
-// CHATTER — Hidden in ops form (not needed, steals width in XXL mode)
+// CHATTER — the notes & history feed shows at the bottom, full width (WS-2;
+// it was hidden here in May 2026 only because it then sat in a side column).
+// Its card is styled by the client/booking workspace rules at the end of
+// ops_client_profile_form.scss.
 // ─────────────────────────────────────────────────────────────────────────────
-.ops-booking-form-page {
-    .o-mail-Form-chatter,
-    .o-mail-ChatterContainer {
-        display: none !important;
-    }
-}
 
 
 // ─────────────────────────────────────────────────────────────────────────────

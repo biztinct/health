@@ -8,7 +8,7 @@
         <field name="priority">0</field>
         <field name="arch" type="xml">
             <form string="Client Profile" js_class="ops_client_profile_form"
-                  class="ops-client-profile-form">
+                  class="ops-client-profile-form ws-workspace">
 
                 <field name="active" invisible="1"/>
                 <field name="deleted" invisible="1"/>
@@ -16,21 +16,26 @@
                 <!-- Record lifecycle: Delete is a user function, Archive a
                      custodian function (client data-governance spec). This
                      form hides the native control panel, so the buttons must
-                     live in the arch. -->
+                     live in the arch. Workspace kit (health_theme, WS-1):
+                     buttons carrying `ws-more` render inside one "More" menu. -->
                 <header>
                     <button name="action_open_delete_wizard" type="object"
                             string="Delete" icon="fa-trash"
+                            class="ws-more"
                             invisible="deleted"/>
                     <button name="action_open_restore_wizard" type="object"
                             string="Restore" icon="fa-undo"
+                            class="ws-more"
                             groups="health_base.group_healthcare_custodian"
                             invisible="not deleted"/>
                     <button name="action_open_archive_wizard" type="object"
                             string="Archive" icon="fa-archive"
+                            class="ws-more"
                             groups="health_base.group_healthcare_custodian"
                             invisible="deleted or not active"/>
                     <button name="action_open_unarchive_wizard" type="object"
                             string="Unarchive" icon="fa-archive"
+                            class="ws-more"
                             groups="health_base.group_healthcare_custodian"
                             invisible="active"/>
                 </header>
@@ -42,77 +47,188 @@
                     <field name="name" invisible="1"/>
                     <field name="patient_code_display" invisible="1"/>
                     <field name="age_display" invisible="1"/>
+                    <field name="patient_code" invisible="1"/>
+                    <field name="age" invisible="1"/>
+                    <field name="is_referrer" invisible="1"/>
 
-                    <!-- Lifecycle banner (this form has no header/ribbon seam) -->
-                    <div class="alert alert-danger" role="alert" invisible="not deleted">
-                        <strong><i class="fa fa-trash"/> DELETED:</strong>
-                        this client record is a Delete request — it stays visible here
-                        but no longer counts in reports.
-                        <field name="deleted_reason_id" readonly="1" class="d-inline ms-1"/>
-                    </div>
-                    <div class="alert alert-secondary" role="alert" invisible="active or deleted">
-                        <strong><i class="fa fa-archive"/> ARCHIVED:</strong>
-                        hidden from normal views, still counted in reports.
-                    </div>
+                    <!-- ========================================================
+                         WORKSPACE (WS-2) — main column (identity, notices, Next
+                         step, tabs) + a pinned right rail (glance, people,
+                         alerts, shortcuts). Layout + skin: health_theme
+                         ws_workspace.scss; client rules: ops_client_profile_form.scss
+                         ======================================================== -->
+                    <div class="ws-page">
+                        <div class="ws-main">
 
-                    <!-- Allergies Alert -->
-                    <div class="alert alert-danger" role="alert" invisible="not allergies">
-                        <strong><i class="fa fa-exclamation-triangle"/> ALLERGIES:</strong>
-                        <field name="allergies" readonly="1"/>
-                    </div>
-
-                    <notebook>
-                        <!-- ===== 1. PROFILE OVERVIEW ===== -->
-                        <page string="Profile Overview" name="profile_overview">
-                            <div class="vu-section">
-                                <div class="vu-section-grid">
-                                    <div class="vu-detail-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="id-card"/>
-                                            <span>Personal Information</span>
-                                        </div>
-                                        <group col="2">
-                                            <field name="title"/>
-                                            <field name="first_name"/>
-                                            <field name="last_name"/>
-                                            <field name="middle_name"/>
-                                            <field name="vietnamese_name" placeholder="Tên tiếng Việt"/>
-                                            <field name="phone" widget="phone" required="1"/>
-                                            <field name="mobile" widget="phone" invisible="1"/>
-                                            <field name="email" widget="email"/>
-                                            <field name="birth_date"/>
-                                            <field name="deceased"/>
-                                            <field name="gender_id"/>
-                                        </group>
+                            <!-- HERO — who the client is, how to reach them -->
+                            <div class="ws-hero">
+                                <div class="ws-hero__avatar">
+                                    <field name="avatar_128" widget="image" readonly="1" nolabel="1"
+                                           class="ws-hero__avatar-img"/>
+                                </div>
+                                <div class="ws-hero__main">
+                                    <div class="ws-hero__title">
+                                        <h1 class="ws-hero__name">
+                                            <field name="name" readonly="1" class="d-inline"/>
+                                        </h1>
+                                        <field name="patient_code_display" readonly="1"
+                                               class="ws-chip ws-chip--code"
+                                               invisible="not patient_code"/>
+                                        <!-- chips are block elements with a CSS icon, so each
+                                             one is its own translation term (ledger §5.246) -->
+                                        <div class="ws-chip ws-chip--ok ws-chip--dot"
+                                             invisible="patient_status != 'active'">Active</div>
+                                        <div class="ws-chip ws-chip--dot"
+                                             invisible="patient_status != 'inactive'">Inactive</div>
+                                        <field name="patient_category_id" readonly="1"
+                                               options="{'no_open': True}"
+                                               class="ws-chip ws-chip--category"
+                                               invisible="not patient_category_id"/>
+                                        <div class="ws-chip ws-chip--info" data-icon="users"
+                                             invisible="not is_referrer">Referrer</div>
+                                        <div class="ws-chip ws-chip--quiet" data-icon="history"
+                                             invisible="not deceased">Deceased</div>
                                     </div>
-
-                                    <div class="vu-detail-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="users-group"/>
-                                            <span>Other Information</span>
-                                        </div>
-                                        <group col="2">
-                                            <field name="patient_category_id"/>
-                                            <field name="catchment_province_id" required="1"/>
-                                            <field name="primary_facility_id"
-                                                   domain="[('catchment_province_id', '=', catchment_province_id)]"/>
-                                            <field name="intake_referring_doctor_id"
-                                                   string="Referring Doctor"
-                                                   options="{'no_create': True}"/>
-                                            <field name="source_type"/>
-                                            <field name="source_details" placeholder="Specific source details"
-                                                   invisible="not source_type"/>
-                                            <field name="referral_source"
-                                                   invisible="source_type != 'referral'"/>
-                                            <field name="national_id"/>
-                                            <field name="profession" string="Occupation"/>
-                                            <field name="ethnicity"/>
-                                            <field name="commission_due_to" string="Commission Duration"/>
-                                        </group>
+                                    <div class="ws-hero__facts">
+                                        <span class="ws-fact" invisible="not phone">
+                                            <span class="ws-ico" data-icon="phone"/>
+                                            <field name="phone" readonly="1"/>
+                                        </span>
+                                        <span class="ws-fact ws-fact--address" invisible="not vietnamese_address">
+                                            <span class="ws-ico" data-icon="map-pin"/>
+                                            <field name="vietnamese_address" readonly="1"/>
+                                        </span>
+                                        <span class="ws-fact" invisible="not email">
+                                            <span class="ws-ico" data-icon="mail"/>
+                                            <field name="email" readonly="1"/>
+                                        </span>
+                                        <span class="ws-fact ws-fact--person" invisible="not age and not gender_id">
+                                            <span class="ws-ico" data-icon="user"/>
+                                            <field name="age_display" readonly="1" invisible="not age"/>
+                                            <span class="ws-fact__sep" invisible="not age or not gender_id">·</span>
+                                            <field name="gender_id" readonly="1" options="{'no_open': True}"
+                                                   invisible="not gender_id"/>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
-                        </page>
+
+                            <!-- Lifecycle notices (this form has no ribbon seam). Their text
+                                 keeps its old indentation on purpose: whitespace is part of
+                                 the translation term (ledger §5.246). -->
+                            <div class="alert alert-danger ws-banner ws-banner--danger" role="alert" invisible="not deleted">
+                                <strong><i class="fa fa-trash"/> DELETED:</strong>
+                        this client record is a Delete request — it stays visible here
+                        but no longer counts in reports.
+                                <field name="deleted_reason_id" readonly="1" class="d-inline ms-1"/>
+                            </div>
+                            <div class="alert alert-secondary ws-banner ws-banner--muted" role="alert" invisible="active or deleted">
+                                <strong><i class="fa fa-archive"/> ARCHIVED:</strong>
+                        hidden from normal views, still counted in reports.
+                            </div>
+
+                            <!-- Allergies — clinical safety: always shown, never folded,
+                                 always above the fold -->
+                            <div class="alert alert-danger ws-banner ws-banner--allergy" role="alert" invisible="not allergies">
+                                <strong><i class="fa fa-exclamation-triangle"/> ALLERGIES:</strong>
+                                <field name="allergies" readonly="1"/>
+                            </div>
+
+                            <!-- NEXT STEP — one sentence, one button -->
+                            <div class="ws-next">
+                                <widget name="ws_client_next"/>
+                            </div>
+
+                    <!-- ================================================
+                         TABS — Overview first; every other page unchanged
+                         ================================================ -->
+                    <notebook>
+                        <!-- ===== 1. OVERVIEW ===== cards pack tightly (masonry);
+                             cards whose fields are ALL empty fold into the
+                             "Not filled yet" tray below them. -->
+                        <page string="Overview" name="profile_overview">
+                            <div class="ws-pack">
+
+                                <div class="vu-detail-card ws-card" name="personal_card">
+                                    <div class="vu-card__title">
+                                        <div class="vu-section__icon" data-icon="id-card"/>
+                                        <div>Personal</div>
+                                    </div>
+                                    <group>
+                                        <field name="title" placeholder="—"/>
+                                        <field name="first_name" placeholder="—"/>
+                                        <field name="middle_name" placeholder="—"/>
+                                        <field name="last_name" placeholder="—"/>
+                                        <field name="vietnamese_name" placeholder="Tên tiếng Việt"/>
+                                        <field name="birth_date" placeholder="—"/>
+                                        <field name="gender_id" placeholder="—"/>
+                                        <field name="deceased"/>
+                                    </group>
+                                </div>
+
+                                <div class="vu-detail-card ws-card" name="contact_card">
+                                    <div class="vu-card__title">
+                                        <div class="vu-section__icon" data-icon="phone"/>
+                                        <div>Contact</div>
+                                    </div>
+                                    <group>
+                                        <field name="phone" widget="phone" required="1"/>
+                                        <field name="mobile" widget="phone" invisible="1"/>
+                                        <field name="email" widget="email" placeholder="—"/>
+                                    </group>
+                                </div>
+
+                                <div class="vu-detail-card ws-card" name="care_card">
+                                    <div class="vu-card__title">
+                                        <div class="vu-section__icon" data-icon="heart-pulse"/>
+                                        <div>Care</div>
+                                    </div>
+                                    <group>
+                                        <field name="patient_category_id" placeholder="—"/>
+                                        <field name="catchment_province_id" required="1"/>
+                                        <field name="primary_facility_id" placeholder="—"
+                                               domain="[('catchment_province_id', '=', catchment_province_id)]"/>
+                                        <field name="intake_referring_doctor_id"
+                                               string="Referring Doctor" placeholder="—"
+                                               options="{'no_create': True}"/>
+                                        <field name="source_type" placeholder="—"/>
+                                        <field name="source_details" placeholder="Specific source details"
+                                               invisible="not source_type"/>
+                                        <field name="referral_source"
+                                               invisible="source_type != 'referral'"/>
+                                    </group>
+                                </div>
+
+                                <div class="vu-detail-card ws-card" name="identity_card">
+                                    <div class="vu-card__title">
+                                        <div class="vu-section__icon" data-icon="shield-check"/>
+                                        <div>Identity</div>
+                                    </div>
+                                    <group>
+                                        <field name="national_id" placeholder="—"/>
+                                        <field name="profession" string="Occupation" placeholder="—"/>
+                                        <field name="ethnicity" placeholder="—"/>
+                                    </group>
+                                </div>
+
+                                <div class="vu-detail-card ws-card" name="commission_card">
+                                    <div class="vu-card__title">
+                                        <div class="vu-section__icon" data-icon="credit-card"/>
+                                        <div>Commission</div>
+                                    </div>
+                                    <group>
+                                        <field name="commission_due_to" placeholder="—"/>
+                                    </group>
+                                </div>
+
+                                <!-- Recent visits (the five newest bookings) -->
+                                <widget name="ws_client_visits"/>
+                            </div>
+
+                            <widget name="ws_fold_tray" options="{'cards': {
+                                'identity_card': ['national_id', 'profession', 'ethnicity'],
+                                'commission_card': ['commission_due_to']}}"/>
+                        </page><!-- /Overview -->
 
                         <!-- ===== 2. BOOKINGS & JOURNEY ===== -->
                         <page string="Bookings" name="bookings_journey">
@@ -469,7 +585,27 @@
                         </page>
 
                     </notebook>
+                        </div><!-- /ws-main -->
+
+                        <!-- RAIL — pinned while the main column scrolls -->
+                        <div class="ws-rail">
+                            <widget name="ws_client_glance" mode="glance"/>
+
+                            <!-- People: the client, then (health_crm) the main contact -->
+                            <div class="ws-panel ws-panel--people" name="people_panel">
+                                <div class="ws-panel__head">People</div>
+                                <widget name="ws_client_glance" mode="contact"/>
+                            </div>
+
+                            <!-- Needs attention: draws its own panel, or nothing -->
+                            <widget name="ws_client_glance" mode="attention"/>
+
+                            <widget name="ws_client_shortcuts"/>
+                        </div><!-- /ws-rail -->
+                    </div><!-- /ws-page -->
                 </sheet>
+
+                <chatter/>
             </form>
         </field>
     </record>

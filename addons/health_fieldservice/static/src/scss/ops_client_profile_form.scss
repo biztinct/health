@@ -5,15 +5,7 @@
 
 // Brand accent tokens (Việt Úc official palette)
 $crm-primary: #1565C0 !default;  // Deep Blue (brand primary)
-$crm-accent:  #FB8C00 !default;  // Hibiscus Orange (brand accent)
 $crm-danger:  #E53935 !default;  // Hibiscus Red
-
-.ops-client-profile-form-page {
-    .o-mail-Form-chatter,
-    .o-mail-ChatterContainer {
-        display: none !important;
-    }
-}
 
 .ops-client-profile-form-page {
     display: flex !important;
@@ -133,313 +125,6 @@ $crm-danger:  #E53935 !default;  // Hibiscus Red
     .bd-current {
         color: $vu-text-primary;
         font-weight: 600;
-    }
-
-    // ===== PROFILE HEADER (identity card) =====
-    .ph-header {
-        margin: 16px 24px 0;
-    }
-
-    .ph-identity {
-        background: #fff;
-        padding: 18px 22px;
-        display: flex;
-        align-items: center;
-        gap: 18px;
-        border: 1px solid var(--vu-border-soft, #e6e9f1);
-        border-left: 4px solid $crm-primary;
-        border-radius: var(--vu-radius-lg, 12px);
-        box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06);
-        flex-wrap: wrap;
-    }
-
-    .ph-avatar {
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, $vu-deep-blue-darkest, $vu-deep-blue);
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 23px;
-        font-weight: 800;
-        font-family: $font-family-headings;
-        flex-shrink: 0;
-        border: 3px solid #fff;
-        outline: 2px solid #e8ecfb;
-        box-shadow: 0 4px 12px rgba(21, 101, 192, 0.35);
-    }
-
-    .ph-details { flex: 1; min-width: 0; }
-
-    .ph-name-row {
-        display: flex;
-        align-items: baseline;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-
-    .ph-name {
-        font-size: 20px;
-        font-weight: 700;
-        font-family: $font-family-headings;
-        color: $vu-text-primary;
-        line-height: 1.2;
-    }
-
-    .ph-code {
-        font-family: ui-monospace, Menlo, Consolas, monospace;
-        font-size: 12px;
-        font-weight: 700;
-        color: $crm-primary;
-        background: #eef0fb;
-        padding: 3px 9px;
-        border-radius: 6px;
-    }
-
-    .ph-tags {
-        display: flex;
-        gap: 6px;
-        margin-top: 6px;
-    }
-
-    .ph-tag {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        padding: 3px 10px;
-        border-radius: 50px;
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.02em;
-
-        &.active { background: $vu-leaf-green-lightest; color: $vu-leaf-green; }
-        &.regular { background: $vu-deep-blue-lightest; color: $vu-deep-blue; }
-        &.vip { background: $vu-hibiscus-orange-lightest; color: $vu-hibiscus-orange; }
-    }
-
-    .ph-contact {
-        display: flex;
-        gap: 16px;
-        margin-top: 6px;
-        font-size: 13px;
-        color: $vu-text-secondary;
-        flex-wrap: wrap;
-
-        span {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        i {
-            font-size: 12px;
-            color: $vu-deep-blue;
-            width: 14px;
-            text-align: center;
-        }
-    }
-
-    .ph-actions {
-        display: flex;
-        gap: 8px;
-        flex-shrink: 0;
-    }
-
-    .ph-action-btn {
-        width: 38px;
-        height: 38px;
-        border: none;
-        border-radius: 50%;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 15px;
-        transition: all 150ms ease;
-
-        &.secondary {
-            background: $vu-deep-blue-lightest;
-            color: $vu-deep-blue;
-            &:hover {
-                background: $vu-deep-blue;
-                color: #fff;
-                box-shadow: 0 2px 8px rgba(21, 101, 192, 0.35);
-            }
-        }
-        &.primary {
-            background: $crm-primary;
-            color: #fff;
-            box-shadow: 0 3px 10px rgba(21, 101, 192, 0.35);
-            &:hover {
-                background: darken($crm-primary, 6%);
-                transform: translateY(-1px);
-            }
-        }
-    }
-
-    // ===== KPI STAT CARDS =====
-    .ph-kpis {
-        display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        gap: 14px;
-        margin: 16px 24px 0;
-    }
-
-    .ph-kpi {
-        position: relative;
-        background: #fff;
-        border: 1px solid var(--vu-border-soft, #e6e9f1);
-        border-radius: var(--vu-radius-lg, 12px);
-        padding: 14px 16px;
-        box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06);
-        overflow: hidden;
-        transition: transform 150ms, box-shadow 150ms;
-
-        &:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(16, 24, 40, 0.12);
-        }
-
-        // left accent bar (per-metric color via --c)
-        &::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 4px;
-            background: var(--c, #{$crm-primary});
-        }
-    }
-
-    .ph-kpi__icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 11px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--cb, #{$vu-deep-blue-lightest});
-        color: var(--c, #{$crm-primary});
-        margin-bottom: 10px;
-
-        &::after {
-            content: '';
-            width: 20px;
-            height: 20px;
-            background-color: currentColor;
-            mask-repeat: no-repeat;
-            mask-position: center;
-            mask-size: contain;
-            -webkit-mask-repeat: no-repeat;
-            -webkit-mask-position: center;
-            -webkit-mask-size: contain;
-        }
-    }
-
-    .ph-kpi__icon[data-kpi="bookings"]::after {
-        mask-image: url('/health_base/static/src/img/lucide/calendar.svg');
-        -webkit-mask-image: url('/health_base/static/src/img/lucide/calendar.svg');
-    }
-    .ph-kpi__icon[data-kpi="packages"]::after {
-        mask-image: url('/health_base/static/src/img/lucide/package.svg');
-        -webkit-mask-image: url('/health_base/static/src/img/lucide/package.svg');
-    }
-    .ph-kpi__icon[data-kpi="spent"]::after {
-        mask-image: url('/health_base/static/src/img/lucide/credit-card.svg');
-        -webkit-mask-image: url('/health_base/static/src/img/lucide/credit-card.svg');
-    }
-    .ph-kpi__icon[data-kpi="outstanding"]::after {
-        mask-image: url('/health_base/static/src/img/lucide/alert-triangle.svg');
-        -webkit-mask-image: url('/health_base/static/src/img/lucide/alert-triangle.svg');
-    }
-    .ph-kpi__icon[data-kpi="satis"]::after {
-        mask-image: url('/health_base/static/src/img/lucide/activity.svg');
-        -webkit-mask-image: url('/health_base/static/src/img/lucide/activity.svg');
-    }
-    .ph-kpi__icon[data-kpi="refer"]::after {
-        mask-image: url('/health_base/static/src/img/lucide/users-group.svg');
-        -webkit-mask-image: url('/health_base/static/src/img/lucide/users-group.svg');
-    }
-
-    // per-metric colors — Việt Úc brand palette only (blue / green / orange / red)
-    .ph-kpi--bookings    { --c: #1565C0; --cb: #E4F4FD; } // Deep Blue
-    .ph-kpi--packages    { --c: #42A5F5; --cb: #E4F4FD; } // Accent Blue
-    .ph-kpi--spent       { --c: #43A047; --cb: #DBF0DB; } // Leaf Green
-    .ph-kpi--outstanding { --c: #E53935; --cb: #FBE3E1; } // Hibiscus Red (alert)
-    .ph-kpi--satis       { --c: #FB8C00; --cb: #FEE8C9; } // Hibiscus Orange
-    .ph-kpi--refer       { --c: #1356A9; --cb: #E4F4FD; } // Deep Blue (darker)
-
-    .ph-kpi__value {
-        font-size: 24px;
-        font-weight: 800;
-        font-family: $font-family-headings;
-        color: #0f172a;
-        line-height: 1.1;
-
-        .o_field_widget { display: inline; font-size: inherit; font-weight: inherit; }
-    }
-
-    .ph-kpi__label {
-        font-size: 11px;
-        color: $vu-text-secondary;
-        text-transform: uppercase;
-        letter-spacing: 0.4px;
-        font-weight: 700;
-        margin-top: 3px;
-    }
-
-    // ===== Title area =====
-    .oe_title h1 {
-        font-size: 20px;
-        font-weight: 700;
-        font-family: $font-family-headings;
-        margin-bottom: 12px;
-    }
-
-    .patient-badges {
-        display: flex;
-        gap: 6px;
-        .badge {
-            font-size: 11px;
-            font-weight: 600;
-            padding: 4px 10px;
-        }
-    }
-
-    // ===== Notebook tabs =====
-    .o_notebook {
-        .nav-tabs {
-            border-bottom: 2px solid var(--vu-border-soft, #e2e8f0);
-            gap: 0;
-            flex-wrap: wrap;
-
-            .nav-item .nav-link {
-                padding: 10px 18px;
-                font-size: 13px;
-                font-weight: 600;
-                color: $vu-text-secondary;
-                border: none;
-                border-bottom: 2px solid transparent;
-                margin-bottom: -2px;
-                border-radius: 0;
-                transition: all 150ms;
-
-                &:hover {
-                    color: $vu-deep-blue;
-                    background: transparent;
-                }
-
-                &.active {
-                    color: $crm-primary;
-                    border-bottom-color: $crm-accent;
-                    background: transparent;
-                }
-            }
-        }
-
-        .tab-content {
-            padding-top: 16px;
-        }
     }
 
     // ===== VU Section cards =====
@@ -710,189 +395,510 @@ $crm-danger:  #E53935 !default;  // Hibiscus Red
 }
 
 // ─────────────────────────────────────────────────────────────────────
-// CONTENT + SIDEBAR LAYOUT
+// RESPONSIVE — reflow for laptop / tablet widths (the other tabs' cards)
 // ─────────────────────────────────────────────────────────────────────
-.ops-client-profile-form-page {
-    .ops-content-with-sidebar {
-        display: flex;
-        flex: 1;
-        min-height: 0;
-        overflow: hidden;
-
-        > .o_form_view_container {
-            flex: 1;
-            min-width: 0;
-        }
-    }
-
-    .ops-cp-sidebar {
-        width: 260px;
-        flex-shrink: 0;
-        background: #fff;
-        border-left: 1px solid #e2e8f0;
-        padding: 20px 16px;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    .ops-cp-sidebar__card {
-        border-radius: 10px;
-        padding: 16px;
-        margin-bottom: 12px;
-
-        &--primary {
-            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-            border: 1px solid #bfdbfe;
-        }
-    }
-
-    .ops-cp-sidebar__card-title {
-        font-size: 0.9375rem;
-        font-weight: 700;
-        color: #1e40af;
-        margin-bottom: 6px;
-
-        .fa { margin-right: 6px; }
-    }
-
-    .ops-cp-sidebar__card-subtitle {
-        font-size: 0.8125rem;
-        color: #475569;
-        margin-bottom: 12px;
-        line-height: 1.4;
-    }
-
-    .ops-cp-sidebar__btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 8px 16px;
-        border-radius: 8px;
-        font-size: 0.8125rem;
-        font-weight: 600;
-        cursor: pointer;
-        border: none;
-        transition: all 0.15s;
-
-        &--primary {
-            background: $crm-primary;
-            color: #fff;
-            box-shadow: 0 3px 10px rgba(21, 101, 192, 0.30);
-            &:hover { background: darken($crm-primary, 6%); }
-        }
-    }
-
-    .ops-cp-sidebar__section-title {
-        font-size: 0.75rem;
-        font-weight: 700;
-        color: #64748b;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        padding: 8px 10px 6px;
-
-        .fa { margin-right: 4px; font-size: 0.7rem; }
-    }
-
-    .ops-cp-sidebar__action {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 9px 10px;
-        border: none;
-        background: none;
-        border-radius: 8px;
-        font-size: 0.8125rem;
-        font-weight: 500;
-        color: #334155;
-        cursor: pointer;
-        text-align: left;
-        width: 100%;
-        transition: all 0.12s;
-
-        &:hover {
-            background: #f1f5f9;
-            color: #1565C0;
-        }
-
-        .fa {
-            width: 18px;
-            text-align: center;
-            color: #64748b;
-            font-size: 0.875rem;
-        }
-
-        &:hover .fa {
-            color: #1565C0;
-        }
-    }
-
-    .ops-cp-sidebar__separator {
-        height: 1px;
-        background: #e2e8f0;
-        margin: 6px 10px;
-    }
-}
-
-// ─────────────────────────────────────────────────────────────────────
-// RESPONSIVE — reflow for laptop / tablet widths
-// ─────────────────────────────────────────────────────────────────────
-
-// Laptop: KPI cards from 6 → 3 columns
-@media (max-width: 1366px) {
-    .ops-client-profile-form-page .ph-kpis {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-// Narrow laptop: sidebar docks below the form as an action bar
-@media (max-width: 1180px) {
-    .ops-client-profile-form-page {
-        .ops-content-with-sidebar {
-            flex-direction: column;
-            overflow: visible;
-        }
-        .ops-cp-sidebar {
-            width: 100%;
-            flex: 1 1 auto;
-            flex-direction: row;
-            flex-wrap: wrap;
-            align-items: stretch;
-            gap: 8px;
-            border-left: none;
-            border-top: 1px solid #e2e8f0;
-        }
-        .ops-cp-sidebar__card { flex: 1 1 100%; margin-bottom: 0; }
-        .ops-cp-sidebar__section-title { display: none; }
-        .ops-cp-sidebar__separator { display: none; }
-        .ops-cp-sidebar__action {
-            width: auto;
-            flex: 1 1 calc(33.33% - 8px);
-            background: #fff;
-            border: 1px solid var(--vu-border-soft, #e6e9f1);
-        }
-    }
-}
 
 // Tablet: detail cards & field grid go single-column
 @media (max-width: 980px) {
     .ops-client-profile-form-page {
         .vu-section-grid { grid-template-columns: 1fr; }
-        .ops-cp-sidebar__action { flex: 1 1 calc(50% - 8px); }
     }
 }
 
-// Small: KPI 2-col, fields 1-col, header wraps
+// Small: fields 1-col
 @media (max-width: 680px) {
     .ops-client-profile-form-page {
-        .ph-kpis { grid-template-columns: repeat(2, 1fr); }
-        .ph-header { margin: 12px 14px 0; }
-        .ph-kpis { margin: 12px 14px 0; }
         .o_form_sheet { padding: 12px 14px; }
         .vu-detail-card .o_inner_group { grid-template-columns: 1fr; }
-        .ph-identity { flex-wrap: wrap; }
-        .ph-actions { width: 100%; justify-content: flex-end; }
-        .ops-cp-sidebar__action { flex: 1 1 100%; }
+    }
+}
+
+
+// =============================================================================
+// WORKSPACE (WS-2) — client-only rules on top of the health_theme kit
+// (ws_workspace.scss). The form arch carries class="ws-workspace"; the class
+// lands on the SAME root element as .ops-client-profile-form-page (the view
+// controller), so the scope is a compound selector (ledger §5.245), one class
+// more than the kit's own scope so it wins whatever order the bundles load in.
+// Flat mono colours from --vuf-* tokens only; CSS-mask icons.
+// =============================================================================
+
+// ── Icons the kit does not ship (CSS masks, currentColor) ─────────────────
+$ws2-theme-icons: ("phone", "package", "shield-check", "heart-pulse", "tag");
+$ws2-own-icons: ("mail", "message-square", "gift", "repeat", "list", "receipt",
+                 "banknote", "calendar-plus", "wallet");
+
+@each $name in $ws2-theme-icons {
+    .ws-ico[data-icon="#{$name}"],
+    .ws-chip[data-icon="#{$name}"] {
+        --ws-ico: url("/health_theme/static/src/img/lucide/#{$name}.svg");
+    }
+}
+@each $name in $ws2-own-icons {
+    .ws-ico[data-icon="#{$name}"],
+    .ws-chip[data-icon="#{$name}"] {
+        --ws-ico: url("/health_fieldservice/static/src/img/ws/#{$name}.svg");
+    }
+}
+
+// the Contact card's title icon (the section-icon set has no phone)
+.vu-section__icon[data-icon="phone"]::after {
+    mask-image: url("/health_theme/static/src/img/lucide/phone.svg");
+    -webkit-mask-image: url("/health_theme/static/src/img/lucide/phone.svg");
+}
+
+.o_form_view.ops-client-profile-form-page.ws-workspace .o_form_renderer.vu-form {
+
+    // ── Hero: the client's avatar as a 48px circle ────────────────────────
+    .ws-hero__avatar-img {
+        display: block;
+        width: 48px;
+        height: 48px;
+        line-height: 0;
+
+        img,
+        .o_field_image > img {
+            width: 48px !important;
+            height: 48px !important;
+            max-width: none !important;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: none !important;
+        }
+        .o_form_image_controls { display: none !important; }
+    }
+
+    // ── Hero: chips, one height; field chips read as plain text inside ────
+    .ws-hero__title {
+        .ws-chip.o_field_widget {
+            width: auto !important;
+            flex: 0 0 auto;
+            display: inline-flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            margin: 0 !important;
+
+            > span, > div, a {
+                display: block;
+                line-height: 1;
+                color: inherit;
+                font-weight: inherit;
+                text-decoration: none;
+            }
+        }
+
+        .ws-chip--code {
+            font-family: ui-monospace, Menlo, Consolas, monospace;
+            letter-spacing: .02em;
+            background: var(--vuf-bg);
+            color: var(--vuf-muted);
+        }
+        .ws-chip--ok { background: var(--vuf-ok-bg); color: var(--vuf-ok); }
+        .ws-chip--info { background: var(--vuf-info-bg); color: var(--vuf-info); }
+        .ws-chip--quiet { background: var(--vuf-bg); color: var(--vuf-muted); }
+        .ws-chip--category { background: var(--vuf-primary-soft); color: var(--vuf-primary); }
+
+        .ws-chip--dot::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+    }
+
+    // ── Hero: facts line — the address is one line with an ellipsis ───────
+    .ws-hero__facts {
+        .ws-fact--address {
+            min-width: 0;
+            max-width: 440px;
+
+            .o_field_widget,
+            .o_field_widget > span {
+                display: block;
+                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+
+        .ws-fact--person .ws-fact__sep { color: var(--vuf-faint); }
+    }
+
+    // ── Notices: deleted / archived / allergies — soft strips, one line ───
+    .ws-banner {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 4px 8px;
+        margin: 0;
+        padding: 12px 14px;
+        border: none;
+        border-radius: var(--vuf-r-md);
+        font-size: 13.5px;
+        font-weight: 500;
+        line-height: 1.45;
+
+        strong { font-weight: 700; }
+        strong > .fa { display: none; }   // the icon comes from the mask below
+
+        &::before {
+            content: "";
+            flex: 0 0 auto;
+            align-self: center;
+            width: 18px;
+            height: 18px;
+            background-color: currentColor;
+            -webkit-mask-image: var(--ws-banner-ico);
+            mask-image: var(--ws-banner-ico);
+            -webkit-mask-size: contain;
+            mask-size: contain;
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+            -webkit-mask-position: center;
+            mask-position: center;
+        }
+
+        .o_field_widget { width: auto !important; display: inline; color: inherit; }
+    }
+    .ws-banner--danger {
+        --ws-banner-ico: url("/health_theme/static/src/img/lucide/trash.svg");
+        background: var(--vuf-danger-bg);
+        color: var(--vuf-danger);
+    }
+    .ws-banner--muted {
+        --ws-banner-ico: url("/health_theme/static/src/img/lucide/archive.svg");
+        background: var(--vuf-surface);
+        border: 1px solid var(--vuf-line);
+        color: var(--vuf-muted);
+    }
+    // clinical safety: the strongest strip on the page
+    .ws-banner--allergy {
+        --ws-banner-ico: url("/health_theme/static/src/img/lucide/alert-triangle.svg");
+        background: var(--vuf-danger-bg);
+        color: var(--vuf-danger);
+        border-left: 4px solid var(--vuf-danger);
+        font-weight: 600;
+
+        .o_field_widget { font-weight: 600; white-space: pre-line; }
+    }
+
+    // ── Next step: the widget draws one card, or nothing ──────────────────
+    .ws-next:not(:has(.vu-action-card)) { display: none; }
+    .ws-next > .o_widget { display: block; }
+    .ws-client-next--money { --ws-next-ico: url("/health_fieldservice/static/src/img/ws/banknote.svg"); }
+    .ws-client-next--calendar { --ws-next-ico: url("/health_theme/static/src/img/lucide/calendar.svg"); }
+    .ws-client-next--user { --ws-next-ico: url("/health_theme/static/src/img/lucide/user.svg"); }
+
+    // ── Tabs: text only (the old pill bar's glyphs keyed by page name) ────
+    .ws-main .o_notebook .nav-link::before {
+        content: none !important;
+        display: none !important;
+    }
+
+
+    // ── Overview: the Recent visits card (a widget inside the pack) ───────
+    .ws-pack > .o_widget_ws_client_visits { display: block; }
+
+    .ws-visits {
+        .ws-visits__head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin: 0 0 6px;
+
+            // the same title as the pack's other cards (the kit styles only a
+            // card's DIRECT title child)
+            .vu-card__title {
+                display: flex !important;
+                align-items: center;
+                gap: 8px;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: none !important;
+                font-size: 12px !important;
+                font-weight: 600 !important;
+                letter-spacing: .08em !important;
+                text-transform: uppercase;
+                color: var(--vuf-muted) !important;
+
+                .vu-section__icon {
+                    width: 16px;
+                    height: 16px;
+                    border-radius: 0;
+                    background: transparent !important;
+                    color: var(--vuf-muted) !important;
+
+                    &::after { width: 15px; height: 15px; }
+                }
+            }
+        }
+
+        .ws-visits__list { display: flex; flex-direction: column; }
+
+        .ws-visit {
+            display: grid;
+            grid-template-columns: auto 52px minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 8px 6px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            text-align: left;
+            font-size: 13.5px;
+            color: var(--vuf-ink);
+            cursor: pointer;
+
+            & + .ws-visit { border-top: 1px solid var(--vuf-line); border-radius: 0; }
+            &:hover { background: var(--vuf-bg); }
+        }
+
+        .ws-visit__name {
+            white-space: nowrap;
+            font-family: ui-monospace, Menlo, Consolas, monospace;
+            font-size: 12.5px;
+            font-weight: 600;
+        }
+        .ws-visit__date { color: var(--vuf-muted); font-variant-numeric: tabular-nums; }
+        .ws-visit__service {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .ws-visits__empty {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 0 2px;
+            font-size: 13.5px;
+            color: var(--vuf-muted);
+        }
+    }
+
+    .ws-state {
+        display: inline-flex;
+        align-items: center;
+        height: 22px;
+        padding: 0 8px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    .ws-state--ok { background: var(--vuf-ok-bg); color: var(--vuf-ok); }
+    .ws-state--primary { background: var(--vuf-primary-soft); color: var(--vuf-primary); }
+    .ws-state--warn { background: var(--vuf-warn-bg); color: var(--vuf-warn); }
+    .ws-state--danger { background: var(--vuf-danger-bg); color: var(--vuf-danger); }
+    .ws-state--muted { background: var(--vuf-bg); color: var(--vuf-muted); }
+
+    .ws-link {
+        padding: 2px 6px;
+        border: none;
+        border-radius: 6px;
+        background: transparent;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--vuf-primary);
+        cursor: pointer;
+
+        &:hover { background: var(--vuf-primary-soft); }
+    }
+
+    // ── Rail: People (the client, then the main contact) ──────────────────
+    .ws-panel--people > .o_widget { display: block; }
+
+    .ws-person {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 0;
+    }
+    .ws-panel--people .ws-person--main-contact { border-top: 1px solid var(--vuf-line); }
+
+    .ws-person__body { flex: 1 1 auto; min-width: 0; }
+
+    .ws-person__role {
+        font-size: 12px;
+        color: var(--vuf-muted);
+        line-height: 1.4;
+    }
+
+    .ws-person__name {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--vuf-ink);
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+    }
+
+    .ws-person__sub {
+        font-size: 12.5px;
+        color: var(--vuf-muted);
+        font-variant-numeric: tabular-nums;
+        line-height: 1.4;
+
+        .o_field_widget { padding: 0 !important; min-height: 0 !important; }
+    }
+
+    // the main-contact picker reads as a name until it is used: no box at
+    // rest, a tint on hover, the engine's one ring on focus (ledger §5.97)
+    .ws-person__field {
+        width: 100%;
+        margin: 0;
+
+        .o_field_many2one_selection,
+        .o_input_dropdown,
+        .o_input {
+            background: transparent !important;
+            border-color: transparent !important;
+            box-shadow: none !important;
+        }
+        input.o_input {
+            padding: 2px 4px !important;
+            margin-left: -4px;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            color: var(--vuf-ink) !important;
+            border-radius: 6px;
+        }
+        &:hover input.o_input { background: var(--vuf-bg) !important; }
+        input.o_input:focus {
+            background: var(--vuf-surface) !important;
+            box-shadow: var(--vuf-sh-ring) !important;
+        }
+        .o_dropdown_button { opacity: 0; }
+        &:hover .o_dropdown_button,
+        &:focus-within .o_dropdown_button { opacity: 1; }
+    }
+
+    .ws-person__acts {
+        display: flex;
+        flex: 0 0 auto;
+        gap: 6px;
+    }
+
+    .ws-icon-btn {
+        display: inline-grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        border: 1px solid var(--vuf-line);
+        border-radius: var(--vuf-r-sm);
+        background: var(--vuf-surface);
+        color: var(--vuf-muted);
+        text-decoration: none;
+
+        &:hover { border-color: var(--vuf-primary); color: var(--vuf-primary); }
+    }
+
+    // ── Rail: the glance draws its own panel; keep it out of the loading jump
+    .ws-row.is-loading .ws-row__value { color: var(--vuf-faint); font-weight: 400; }
+
+    // ── Rail: Shortcuts — the kit blanks a row's first span background (it
+    //    was a font-awesome slot); a mask icon needs its colour back
+    .ws-rail .ws-panel--links .vu-action-item.ws-shortcut > span.ws-ico[data-icon] {
+        width: 16px !important;
+        height: 16px !important;
+        flex: 0 0 16px;
+        background-color: currentColor !important;
+        color: var(--vuf-muted) !important;
+    }
+    .ws-rail .ws-panel--links .vu-action-item.ws-shortcut:hover > span.ws-ico[data-icon] {
+        color: var(--vuf-primary) !important;
+    }
+
+    // ── Bookings / Financial tabs: the four big tiles become one slim line
+    //    (label over value, hairline separators, no big icons). CSS only —
+    //    the invoicing xpath needs the bj-* markup untouched.
+    .bj-journey-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0;
+        margin: 0 0 var(--vuf-sp-4);
+        padding: 10px 0;
+        background: var(--vuf-surface);
+        border: 1px solid var(--vuf-line);
+        border-radius: var(--vuf-r-md);
+    }
+
+    .bj-jstat {
+        flex: 1 1 140px;
+        min-width: 0;
+        display: block;
+        padding: 2px 18px;
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        transition: none;
+
+        & + .bj-jstat { border-left: 1px solid var(--vuf-line); }
+        &:hover { box-shadow: none; border-color: var(--vuf-line); }
+
+        > i { display: none !important; }
+    }
+
+    .bj-jstat-info {
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 2px;
+    }
+
+    .bj-jstat-lbl {
+        font-size: 12px;
+        font-weight: 400;
+        text-transform: none;
+        letter-spacing: 0;
+        color: var(--vuf-muted);
+    }
+
+    .bj-jstat-val {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--vuf-ink);
+        font-variant-numeric: tabular-nums;
+
+        // editable values in the line read as text, like the rest of it
+        .o_input,
+        select.o_input,
+        input.o_input {
+            width: auto !important;
+            min-height: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            font: inherit !important;
+            color: inherit !important;
+        }
+        .o_field_empty input.o_input::placeholder { color: var(--vuf-faint); }
+    }
+}
+
+// ── Shared by the client AND the booking screen ────────────────────────────
+.o_form_view:is(.ops-client-profile-form-page, .ops-booking-form-page).ws-workspace .o_form_renderer.vu-form {
+    // Tabs: the header row clips vertically once it scrolls sideways (the
+    // client has 18 tabs); give the active tab's 2px underline, which overlaps
+    // the row's hairline by 1px, the room it needs
+    .ws-main .o_notebook .o_notebook_headers { padding-bottom: 1px; }
+
+    // Notes & history feed (C0): bottom, full width of the page's content,
+    // one flat card under .ws-page
+    .o-mail-Form-chatter {
+        width: auto !important;
+        max-width: none !important;
+        // line up with .ws-page: the sheet's own inset (16px) + its padding
+        margin: 0 calc(var(--vuf-sp-6) + 16px) var(--vuf-sp-6) !important;
+        padding: var(--vuf-sp-2) var(--vuf-sp-3);
+        border: 1px solid var(--vuf-line) !important;
+        border-radius: var(--vuf-r-md) !important;
+        box-shadow: none !important;
+        background: var(--vuf-surface);
     }
 }

@@ -2837,6 +2837,7 @@ msgstr "Mẫu các bước hành động"
 #. module: health_fieldservice
 #. odoo-javascript
 #: code:addons/health_fieldservice/static/src/js/ops_client_profile_form.js:0
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
 msgid "Action not available. The required module may not be installed."
 msgstr "Động tác không có sẵn. Mô-đun yêu cầu không thể được cài đặt."
 
@@ -2879,6 +2880,7 @@ msgstr "Các hành động được thực hiện"
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_staff_skill__is_active
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__hr_employee__employment_status__active
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__hr_employee_public__employment_status__active
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
 msgid "Active"
 msgstr "Đang hoạt động"
 
@@ -4573,6 +4575,7 @@ msgstr "Cần chuẩn hóa"
 #. module: health_fieldservice
 #. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/ops_client_profile_form.xml:0
+#: code:addons/health_fieldservice/static/src/xml/ws_client_panels.xml:0
 msgid "Call"
 msgstr "Gọi"
 
@@ -5002,6 +5005,7 @@ msgstr "Nhấp để mở chi tiết, kéo để di chuyển"
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_search
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_list_ops
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_quick_booking_wizard_form
+#: code:addons/health_fieldservice/static/src/xml/ws_client_panels.xml:0
 msgid "Client"
 msgstr "Khách hàng"
 
@@ -5673,6 +5677,7 @@ msgstr "Tư vấn"
 
 #. module: health_fieldservice
 #: model:ir.model,name:health_fieldservice.model_res_partner
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
 msgid "Contact"
 msgstr "Liên hệ"
 
@@ -6660,6 +6665,7 @@ msgstr "Thời gian trôi qua"
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_communication__communication_channel__email
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_order__confirmation_method__email
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_client_list_ops
+#: code:addons/health_fieldservice/static/src/xml/ws_client_panels.xml:0
 msgid "Email"
 msgstr "Thư điện tử"
 
@@ -8153,6 +8159,7 @@ msgstr "ĐANG THỰC HIỆN"
 #: code:addons/health_fieldservice/static/src/xml/ops_client_list.xml:0
 #: code:addons/health_fieldservice/static/src/xml/ops_client_profile_form.xml:0
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__hr_employee__duty_status__inactive
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
 msgid "Inactive"
 msgstr "Không hoạt động"
 
@@ -8564,8 +8571,9 @@ msgstr "Chuyến thăm cuối cùng"
 #. module: health_fieldservice
 #. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/ops_client_list_view.xml:0
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
 msgid "Last visit"
-msgstr "Chuyến thăm cuối cùng"
+msgstr "Lượt thăm gần nhất"
 
 #. module: health_fieldservice
 #. odoo-javascript
@@ -10321,6 +10329,7 @@ msgstr "Ngoài %s'giờ làm việc."
 #. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/ops_client_profile_form.xml:0
 #: code:addons/health_fieldservice/static/src/js/ws_booking_glance.js:0
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
 msgid "Outstanding"
 msgstr "Còn nợ"
 
@@ -10350,6 +10359,7 @@ msgstr "Nên quá tải"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
 msgid "Overview"
 msgstr "Tổng quan"
 
@@ -11484,8 +11494,9 @@ msgstr "Các giới thiệu được thực hiện"
 #. module: health_fieldservice
 #. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/ops_client_profile_form.xml:0
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
 msgid "Referrer"
-msgstr "Đề xuất"
+msgstr "Người giới thiệu"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__referring_doctor_id
@@ -11892,6 +11903,7 @@ msgstr "Sự lựa chọn dịch vụ"
 #: code:addons/health_fieldservice/static/src/xml/ops_client_profile_form.xml:0
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_communication__communication_channel__sms
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_order__confirmation_method__sms
+#: code:addons/health_fieldservice/static/src/xml/ws_client_panels.xml:0
 msgid "SMS"
 msgstr "SMS"
 
@@ -15761,7 +15773,9 @@ msgid "and reschedule"
 msgstr "và sắp xếp lại"
 
 #. module: health_fieldservice
+#. odoo-javascript
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
+#: code:addons/health_fieldservice/static/src/xml/ws_client_panels.xml:0
 msgid "Next step"
 msgstr "Bước tiếp theo"
 
@@ -15773,23 +15787,28 @@ msgstr "Lượt thăm"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
 msgid "People"
 msgstr "Người liên quan"
 
 #. module: health_fieldservice
+#. odoo-javascript
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
+#: code:addons/health_fieldservice/static/src/xml/ws_client_panels.xml:0
 msgid "Shortcuts"
 msgstr "Lối tắt"
 
 #. module: health_fieldservice
 #. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/ws_booking_glance.xml:0
+#: code:addons/health_fieldservice/static/src/xml/ws_client_panels.xml:0
 msgid "At a glance"
 msgstr "Tổng quan nhanh"
 
 #. module: health_fieldservice
 #. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/ws_booking_glance.xml:0
+#: code:addons/health_fieldservice/static/src/xml/ws_client_panels.xml:0
 msgid "Needs attention"
 msgstr "Cần chú ý"
 
@@ -15862,6 +15881,7 @@ msgstr "Giá đang là %s. Hãy kiểm tra báo giá trước lượt thăm."
 #. module: health_fieldservice
 #. odoo-javascript
 #: code:addons/health_fieldservice/static/src/js/ws_booking_glance.js:0
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
 msgid "%s is unpaid."
 msgstr "Còn %s chưa thanh toán."
 
@@ -16021,3 +16041,169 @@ msgstr "<span class=\"vu-section__icon\" data-icon=\"id-card\"/> Khách hàng"
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
 msgid "View full profile <i class=\"fa fa-external-link\"/>"
 msgstr "Xem hồ sơ đầy đủ <i class=\"fa fa-external-link\"/>"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
+msgid "Visits"
+msgstr "Lượt thăm"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
+msgid "None yet"
+msgstr "Chưa có"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
+msgid "Next visit"
+msgstr "Lượt thăm tiếp theo"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
+msgid "None booked"
+msgstr "Chưa đặt lịch"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
+msgid "Client since"
+msgstr "Khách hàng từ"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
+msgid "Spent"
+msgstr "Đã chi"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
+msgid "Packages"
+msgstr "Gói dịch vụ"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
+msgid "Referrals"
+msgstr "Giới thiệu"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
+msgid "Has allergies: %s"
+msgstr "Có dị ứng: %s"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
+msgid "Insurance expired on %s."
+msgstr "Bảo hiểm hết hạn ngày %s."
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
+msgid "No phone number."
+msgstr "Chưa có số điện thoại."
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
+#: code:addons/health_fieldservice/static/src/xml/ws_client_panels.xml:0
+msgid "New booking"
+msgstr "Đặt lịch mới"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
+msgid "View invoices"
+msgstr "Xem hóa đơn"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
+msgid "Across past visits."
+msgstr "Từ các lượt thăm trước."
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
+msgid "No visit is booked."
+msgstr "Chưa có lịch hẹn."
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
+msgid "Last visit %s."
+msgstr "Lượt thăm gần nhất: %s."
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
+#: code:addons/health_fieldservice/static/src/xml/ws_client_panels.xml:0
+msgid "No visits yet."
+msgstr "Chưa có lượt thăm."
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
+msgid "Next visit %s."
+msgstr "Lượt thăm tiếp theo %s."
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
+msgid "Open booking"
+msgstr "Mở lịch hẹn"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
+msgid "This client is inactive."
+msgstr "Khách hàng không còn hoạt động."
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
+msgid "Recurring booking"
+msgstr "Lịch hẹn định kỳ"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
+#: code:addons/health_fieldservice/static/src/xml/ws_client_panels.xml:0
+msgid "All bookings"
+msgstr "Tất cả lịch hẹn"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/xml/ws_client_panels.xml:0
+msgid "Recent visits"
+msgstr "Lượt thăm gần đây"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
+msgid "Deceased"
+msgstr "Đã mất"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
+msgid "Personal"
+msgstr "Cá nhân"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
+msgid "Care"
+msgstr "Chăm sóc"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
+msgid "Identity"
+msgstr "Giấy tờ"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
+msgid "Commission"
+msgstr "Hoa hồng"

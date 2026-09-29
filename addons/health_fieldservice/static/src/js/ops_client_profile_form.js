@@ -5,6 +5,7 @@ import { registry } from "@web/core/registry";
 import { _t } from "@web/core/l10n/translation";
 import { useState, onMounted, onPatched, useRef } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
+import { loadClientProfile } from "@health_fieldservice/js/ws_client_panels";
 
 export class OpsClientProfileFormController extends FormController {
     static template = "health_fieldservice.OpsClientProfileFormView";
@@ -21,9 +22,11 @@ export class OpsClientProfileFormController extends FormController {
             isLoaded: false,
         });
 
+        // The workspace panels in the arch fetch the profile data through the
+        // shared loader (ws_client_panels.js) — once per record load — so the
+        // controller no longer fetches it on mount (WS-2).
         onMounted(() => {
             this._adjustLayout();
-            this._loadProfileData();
         });
         onPatched(() => {
             this._adjustLayout();
@@ -34,11 +37,10 @@ export class OpsClientProfileFormController extends FormController {
         const resId = this.model.root.resId;
         if (!resId) return;
         try {
-            const data = await this.orm.call(
-                "res.partner",
-                "get_client_profile_data",
-                [resId]
-            );
+            // shared, memoised by record + write_date: after a save the panels
+            // and this call reuse ONE request
+            const data = await loadClientProfile(this.orm, this.model.root);
+            if (!data) return;
             this.profileState.profile = data.profile || {};
             this.profileState.stats = data.stats || {};
             this.profileState.isLoaded = true;

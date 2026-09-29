@@ -3337,6 +3337,7 @@ msgstr "Lập hóa đơn"
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_invoice_search
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_ar_transaction_log_search
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_partner_patient_form_invoicing
+#: code:addons/health_invoicing/static/src/js/client_package_patch.js:0
 msgid "Invoices"
 msgstr "Tài khoản hóa đơn"
 
@@ -4764,7 +4765,9 @@ msgid "Package(s) Assigned"
 msgstr "Các gói đã được gán"
 
 #. module: health_invoicing
+#. odoo-javascript
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_partner_patient_form_invoicing
+#: code:addons/health_invoicing/static/src/js/client_package_patch.js:0
 msgid "Packages"
 msgstr "Các gói"
 
@@ -5240,6 +5243,7 @@ msgstr "Các giao dịch thanh toán sẽ hiển thị tại đây."
 #: model:ir.ui.menu,name:health_invoicing.menu_fin_payments
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_ar_transaction_log_search
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_partner_patient_form_invoicing
+#: code:addons/health_invoicing/static/src/js/client_package_patch.js:0
 msgid "Payments"
 msgstr "Các khoản thanh toán"
 
@@ -8172,3 +8176,15 @@ msgstr "✅ Chọn gói hiện có"
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_service_package_wizard_form
 msgid "🛒 Purchase and Select"
 msgstr "🛒 Mua và chọn"
+
+#. module: health_invoicing
+#. odoo-javascript
+#: code:addons/health_invoicing/static/src/js/client_package_patch.js:0
+msgid "Buy a package"
+msgstr "Mua gói dịch vụ"
+
+#. module: health_invoicing
+#. odoo-javascript
+#: code:addons/health_invoicing/static/src/js/client_package_patch.js:0
+msgid "Create invoice"
+msgstr "Tạo hóa đơn"

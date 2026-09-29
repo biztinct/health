@@ -337,6 +337,36 @@ class ResPartner(models.Model):
         except Exception:
             pass
 
+        # Workspace client screen (WS-2): the soonest upcoming visit, the
+        # latest finished one, and the five newest bookings with their state.
+        # Read-only; datetimes go out as UTC strings for the browser to localise.
+        def _visit(fso):
+            if not fso:
+                return False
+            return {
+                'id': fso.id,
+                'name': fso.name or '',
+                'scheduled_datetime': fields.Datetime.to_string(fso.scheduled_datetime) or False,
+            }
+
+        next_fso = FSO.search(fso_domain + [
+            ('state', 'in', ('confirmed', 'assigned')),
+            ('scheduled_datetime', '>=', fields.Datetime.now()),
+        ], order='scheduled_datetime asc, id asc', limit=1)
+        last_fso = FSO.search(fso_domain + [
+            ('state', 'in', ('completed', 'completed_pending_invoice', 'closed')),
+        ], order='scheduled_datetime desc, id desc', limit=1)
+        state_labels = _selection_labels(FSO, 'state')
+        service_labels = _selection_labels(FSO, 'service_type')
+        recent_visits = [{
+            'id': f.id,
+            'name': f.name or '',
+            'scheduled_datetime': fields.Datetime.to_string(f.scheduled_datetime) or False,
+            'service_type_label': service_labels.get(f.service_type, f.service_type or ''),
+            'state': f.state or 'draft',
+            'state_label': state_labels.get(f.state, f.state or ''),
+        } for f in fsos[:5]]
+
         return {
             'profile': profile,
             'stats': stats,
@@ -344,6 +374,9 @@ class ResPartner(models.Model):
             'packages': packages,
             'payments': payments,
             'timeline': timeline,
+            'next_visit': _visit(next_fso),
+            'last_visit': _visit(last_fso),
+            'recent_visits': recent_visits,
             'total_bookings': FSO.search_count(fso_domain),
             'total_packages': Package.search_count([('patient_id', '=', partner.id)]),
             'total_payments': len(payments),
