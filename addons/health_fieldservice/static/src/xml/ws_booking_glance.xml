@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_fieldservice.WsBookingGlance">
+        <t t-if="isAttention">
+            <t t-set="list" t-value="alerts"/>
+            <div t-if="list.length" class="ws-panel ws-panel--attention">
+                <div class="ws-panel__head">Needs attention</div>
+                <div class="ws-alerts">
+                    <t t-foreach="list" t-as="alert" t-key="alert.key">
+                        <div t-attf-class="ws-alert ws-alert--#{alert.tone}" t-att-data-alert="alert.key">
+                            <span class="ws-ico" data-icon="alert-triangle"/>
+                            <span class="ws-alert__text" t-esc="alert.text"/>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+        <t t-else="">
+            <div class="ws-glance">
+                <div class="ws-panel__head">At a glance</div>
+                <t t-foreach="rows" t-as="row" t-key="row.key">
+                    <div t-attf-class="ws-row #{row.cls}" t-att-data-row="row.key">
+                        <span class="ws-row__label" t-esc="row.label"/>
+                        <span class="ws-row__value" t-esc="row.value"/>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </t>
+
+    <t t-name="health_fieldservice.WsBookingHint">
+        <t t-set="hint" t-value="text"/>
+        <div t-if="hint" class="ws-next__hint" t-esc="hint"/>
+    </t>
+
+</templates>

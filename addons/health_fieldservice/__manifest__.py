@@ -1,6 +1,6 @@
 {
     'name': 'VAFHS Healthcare Field Service & Staff Assignment',
-    'version': '19.0.2.8.2',
+    'version': '19.0.2.9.0',
     'category': 'Healthcare/Field Service',
     'summary': 'Unified field service management and AI staff assignment for healthcare home visits',
     'description': """
@@ -190,6 +190,9 @@
             'health_fieldservice/static/src/scss/ops_booking_form.scss',
             'health_fieldservice/static/src/js/ops_booking_form.js',
             'health_fieldservice/static/src/xml/ops_booking_form.xml',
+            # Booking workspace (WS-1): At a glance / Needs attention / Next step hint
+            'health_fieldservice/static/src/js/ws_booking_glance.js',
+            'health_fieldservice/static/src/xml/ws_booking_glance.xml',
             'health_fieldservice/static/src/scss/ops_payment_collection.scss',
             'health_fieldservice/static/src/js/ops_payment_collection.js',
             'health_fieldservice/static/src/xml/ops_payment_collection.xml',

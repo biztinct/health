@@ -168,48 +168,8 @@
     }
 
     // ─────────────────────────────────────────────────────────────────────
-    // HERO HEADER — Booking ID + State + Tags
+    // HERO BADGES — state, urgency, service type
     // ─────────────────────────────────────────────────────────────────────
-    .vu-booking-hero {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 18px;
-        flex-wrap: wrap;
-        background: var(--vu-surface-card, #fff);
-        border: 1px solid var(--vu-border-soft, #e6e9f1);
-        border-left: 4px solid #1565C0;
-        border-radius: 12px;
-        box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06);
-        padding: 16px 22px;
-        margin-bottom: 14px;
-    }
-
-    .vu-hero-left {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .vu-hero-title-row {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-    }
-
-    .vu-hero-title {
-        font-size: 1.75rem !important;
-        font-weight: 700 !important;
-        color: #0f172a;
-        margin: 0 !important;
-        line-height: 1.2;
-
-        .o_field_widget {
-            font-size: inherit !important;
-            font-weight: inherit !important;
-        }
-    }
-
     .vu-hero-state-badge {
         .badge {
             font-size: 0.75rem;
@@ -237,13 +197,6 @@
         background: #fee2e2;
         color: #E53935;
         border: 1px solid #fca5a5;
-    }
-
-    .vu-hero-tags {
-        display: flex;
-        gap: 6px;
-        margin-top: 4px;
-        flex-wrap: wrap;
     }
 
     .vu-service-tag {
@@ -291,11 +244,6 @@
         border: 1px solid #fdba74;
     }
 
-    .vu-hero-right {
-        text-align: right;
-        flex-shrink: 0;
-    }
-
     // Created <date> by <user> — all on a single line
     .vu-hero-meta {
         display: block;
@@ -312,103 +260,9 @@
         }
     }
 
-    .vu-hero-meta__label {
-        font-weight: 500;
-        margin-right: 4px;
-    }
-
-    .vu-hero-meta__by {
-        color: #94a3b8;
-        margin-left: 4px;
-    }
-
     .vu-hero-timer {
         .vu-timer-display {
             font-size: 1.25rem;
-        }
-    }
-
-    // ─────────────────────────────────────────────────────────────────────
-    // QUICK INFO BAR — At-a-glance booking details
-    // ─────────────────────────────────────────────────────────────────────
-    .vu-quick-info {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 14px;
-        margin: 4px 0 14px;
-        background: transparent;
-        border: none;
-        box-shadow: none;
-        padding: 0;
-        overflow: visible;
-    }
-
-    .vu-quick-info__item {
-        position: relative;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 14px 16px;
-        min-width: 0;
-        background: var(--vu-surface-card, #fff);
-        border: 1px solid var(--vu-border-soft, #e6e9f1);
-        border-radius: 12px;
-        box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06);
-        overflow: hidden;
-        transition: transform 150ms, box-shadow 150ms;
-
-        &:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(16, 24, 40, 0.12);
-        }
-
-        // left accent bar (per-metric colour set below via :has)
-        &::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 4px;
-            background: var(--vu-brand-primary, #1565C0);
-        }
-    }
-    // per-metric accent colour — Việt Úc brand palette only
-    .vu-quick-info__item:has(.vu-qi-scheduled)::before { background: #1565C0; } // Deep Blue
-    .vu-quick-info__item:has(.vu-qi-service)::before   { background: #42A5F5; } // Accent Blue
-    .vu-quick-info__item:has(.vu-qi-duration)::before  { background: #FB8C00; } // Hibiscus Orange
-    .vu-quick-info__item:has(.vu-qi-facility)::before  { background: #43A047; } // Leaf Green
-    .vu-quick-info__item:has(.vu-qi-catchment)::before { background: #1356A9; } // Deep Blue (darker)
-
-    .vu-quick-info__icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 11px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        font-size: 1.05rem;
-        background: #E3F2FD;
-        color: #1565C0;
-    }
-
-    .vu-quick-info__label {
-        font-size: 0.6875rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        color: #94a3b8;
-        margin-bottom: 2px;
-    }
-
-    .vu-quick-info__value {
-        font-size: 15px;
-        font-weight: 800;
-        color: #0f172a;
-        line-height: 1.25;
-
-        .o_field_widget {
-            font-size: inherit !important;
-            font-weight: inherit !important;
         }
     }
 
@@ -421,14 +275,6 @@
         grid-template-columns: 1fr 1fr 340px;
         gap: 16px;
         width: 100%;
-    }
-
-    .vu-col-1,
-    .vu-col-2 {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        min-width: 0;
     }
 
     .vu-col-actions {
@@ -652,73 +498,6 @@
     }
 
     // ─────────────────────────────────────────────────────────────────────
-    // SIDE CARDS — Staff Assignment, Financial Summary
-    // ─────────────────────────────────────────────────────────────────────
-    .vu-side-card {
-        background: var(--vu-surface-card, #fff);
-        border: 1px solid var(--vu-border-soft, #e2e8f0);
-        border-radius: 10px;
-        padding: 16px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-    }
-
-    .vu-side-card__header {
-        font-size: 0.8125rem;
-        font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-
-        .fa {
-            color: #64748b;
-        }
-    }
-
-    .vu-side-card__body {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .vu-side-card__row {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 8px;
-        padding: 4px 0;
-
-        &:not(:last-child) {
-            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-        }
-    }
-
-    .vu-side-card__label {
-        font-size: 0.75rem;
-        color: #64748b;
-        flex-shrink: 0;
-        min-width: 60px;
-        font-weight: 500;
-    }
-
-    .vu-side-card__empty {
-        text-align: center;
-        padding: 16px 8px;
-        color: #94a3b8;
-        font-size: 0.8125rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .vu-side-card__empty-icon {
-        font-size: 1.5rem;
-        color: #cbd5e1;
-    }
-
-    // ─────────────────────────────────────────────────────────────────────
     // NOTEBOOK TABS — Borderless bar (clean bottom line only), prototype-style
     // ─────────────────────────────────────────────────────────────────────
     .o_notebook {
@@ -821,15 +600,6 @@
         margin: 8px 0;
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // QUICK INFO BAR — Color-coded icons
-    // ─────────────────────────────────────────────────────────────────────
-    .vu-qi-scheduled { background: #E4F4FD !important; color: #1565C0 !important; }
-    .vu-qi-service   { background: #E4F4FD !important; color: #42A5F5 !important; }
-    .vu-qi-duration  { background: #FEE8C9 !important; color: #FB8C00 !important; }
-    .vu-qi-facility  { background: #DBF0DB !important; color: #43A047 !important; }
-    .vu-qi-catchment { background: #E4F4FD !important; color: #1356A9 !important; }
-
     // Field inputs use the GLOBAL rounded-border treatment from health_theme
     // (backend.scss / field_indicators.scss) — no per-card override here.
 
@@ -867,11 +637,6 @@
         gap: 6px;
     }
 
-    .vu-action-star {
-        color: #FB8C00 !important;
-        font-size: 0.75rem;
-    }
-
     // Quick Actions → icon-chip rows (matches the client profile sidebar)
     .vu-action-item {
         > .fa,
@@ -893,29 +658,6 @@
         &:hover > i.fa {
             background: #1565C0;
             color: #fff;
-        }
-    }
-
-    // ─────────────────────────────────────────────────────────────────────
-    // SIDE CARD VALUES — Right-aligned bold values
-    // ─────────────────────────────────────────────────────────────────────
-    .vu-side-card__value {
-        font-size: 0.8125rem;
-        font-weight: 600;
-        color: #1e293b;
-
-        .o_field_widget {
-            font-size: inherit !important;
-            font-weight: inherit !important;
-            display: inline !important;
-        }
-    }
-
-    .vu-fin-header-badge {
-        .badge {
-            font-size: 0.6875rem;
-            padding: 2px 8px;
-            border-radius: 4px;
         }
     }
 
@@ -966,115 +708,11 @@
             }
         }
     }
-
-    // ─────────────────────────────────────────────────────────────────────
-    // FINANCIAL SUMMARY — Line items, total, actions
-    // ─────────────────────────────────────────────────────────────────────
-    .vu-fin-line {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 6px 0;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-
-        &:last-of-type {
-            border-bottom: none;
-        }
-    }
-
-    .vu-fin-label {
-        font-size: 0.75rem;
-        color: #424242;
-    }
-
-    .vu-fin-amount {
-        font-size: 0.8125rem;
-        font-weight: 600;
-
-        .o_field_widget {
-            font-size: inherit !important;
-            font-weight: inherit !important;
-            display: inline !important;
-        }
-    }
-
-    .vu-fin-total {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding-top: 10px;
-        margin-top: 4px;
-        border-top: 2px solid #212121;
-    }
-
-    .vu-fin-total-label {
-        font-size: 0.875rem;
-        font-weight: 700;
-        color: #212121;
-    }
-
-    .vu-fin-total-amount {
-        font-size: 0.9375rem;
-        font-weight: 700;
-        color: var(--vu-brand-primary, #1565C0);
-
-        .o_field_widget {
-            font-size: inherit !important;
-            font-weight: inherit !important;
-            display: inline !important;
-        }
-    }
-
-    .vu-fin-status-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 6px 0;
-        margin-top: 8px;
-    }
-
-    .vu-fin-actions {
-        display: flex;
-        gap: 8px;
-        margin-top: 12px;
-    }
-
-    .vu-fin-btn {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        padding: 8px;
-        border-radius: 8px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 150ms;
-        border: none;
-        background: none;
-    }
-
-    .vu-fin-btn--outline {
-        border: 1px solid var(--vu-border-soft, #e2e8f0);
-        color: #424242;
-
-        &:hover {
-            border-color: var(--vu-brand-primary, #1565C0);
-            color: var(--vu-brand-primary, #1565C0);
-            background: #eff6ff;
-        }
-    }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // RESPONSIVE — Mobile: hide sidebar, stack columns
 // ─────────────────────────────────────────────────────────────────────────────
-// Laptop: KPI cards 5 → 3
-@media (max-width: 1280px) {
-    .ops-booking-form-page .vu-quick-info { grid-template-columns: repeat(3, 1fr); }
-}
-
 @media (max-width: 1100px) {
     .ops-booking-form-page {
         .vu-three-col {
@@ -1092,8 +730,6 @@
             flex-wrap: wrap;
             align-items: stretch;
         }
-
-        .vu-quick-info { grid-template-columns: repeat(3, 1fr); }
     }
 }
 
@@ -1110,16 +746,7 @@
             overflow: visible;
             flex-direction: column;
         }
-
-        .vu-booking-hero { flex-direction: column; gap: 12px; }
-        .vu-hero-right { text-align: left; align-items: flex-start; }
-
-        .vu-quick-info { grid-template-columns: repeat(2, 1fr); }
     }
-}
-
-@media (max-width: 560px) {
-    .ops-booking-form-page .vu-quick-info { grid-template-columns: 1fr; }
 }
 
 
@@ -1288,4 +915,236 @@
         cursor: pointer; transition: all 150ms;
         &:hover { background: #eff6ff; border-color: #93c5fd; }
     }
+}
+
+
+// =============================================================================
+// WORKSPACE (WS-1) — booking-only rules on top of the health_theme kit
+// (ws_workspace.scss). The form arch carries class="ws-workspace"; the class
+// lands on the SAME root element as .ops-booking-form-page (the view
+// controller), so the scope is a compound selector, not a descendant one.
+// One class more than the kit's own scope, so these win whatever order the two
+// modules' stylesheets load in (health_fieldservice does not depend on
+// health_theme). Flat mono colours from --vuf-* tokens only.
+// =============================================================================
+.o_form_view.ops-booking-form-page.ws-workspace .o_form_renderer.vu-form {
+
+    // ── Hero: client avatar as a 48px circle, no name beside it ──────────
+    .ws-hero__avatar-widget {
+        display: block;
+        width: 48px;
+        height: 48px;
+        line-height: 0;
+
+        .o_m2o_avatar ~ *,
+        .o_m2o_avatar + a,
+        .o_m2o_avatar + span { display: none !important; }
+
+        .o_m2o_avatar,
+        .o_m2o_avatar > img,
+        .o_m2o_avatar_empty {
+            width: 48px !important;
+            height: 48px !important;
+            margin: 0 !important;
+            border-radius: 50% !important;
+            object-fit: cover;
+        }
+    }
+
+    // ── Hero: state + urgency + lifecycle chips, one height ──────────────
+    .ws-hero__title {
+        .ws-hero__state .badge,
+        .vu-urgency-badge,
+        .vu-lifecycle-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            height: 24px;
+            padding: 0 9px !important;
+            border-radius: 7px !important;
+            border: none !important;
+            font-size: 12px !important;
+            font-weight: 600 !important;
+            letter-spacing: 0 !important;
+            line-height: 1;
+        }
+
+        .ws-hero__state .badge {
+            background: var(--vuf-bg) !important;
+            color: var(--vuf-muted) !important;
+
+            &::before {
+                content: "";
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: currentColor;
+            }
+            &.text-bg-info { background: var(--vuf-bg) !important; color: var(--vuf-state-draft) !important; }
+            &.text-bg-primary { background: var(--vuf-primary-soft) !important; color: var(--vuf-primary) !important; }
+            &.text-bg-success { background: var(--vuf-ok-bg) !important; color: var(--vuf-ok) !important; }
+            &.text-bg-warning { background: var(--vuf-warn-bg) !important; color: var(--vuf-warn) !important; }
+            &.text-bg-danger { background: var(--vuf-danger-bg) !important; color: var(--vuf-danger) !important; }
+        }
+
+        .vu-urgency--urgent { background: var(--vuf-warn-bg) !important; color: var(--vuf-warn) !important; }
+        .vu-urgency--emergency { background: var(--vuf-danger-bg) !important; color: var(--vuf-danger) !important; }
+        .vu-lifecycle-badge { background: var(--vuf-bg) !important; color: var(--vuf-muted) !important; }
+
+        // service-type tags: flat token pairs, no borders
+        .vu-service-tag { border: none !important; }
+        .vu-service-tag--home-visit { background: var(--vuf-ok-bg); color: var(--vuf-ok); }
+        .vu-service-tag--clinic,
+        .vu-service-tag--hospital,
+        .vu-service-tag--lab { background: var(--vuf-info-bg); color: var(--vuf-info); }
+        .vu-service-tag--telehealth { background: var(--vuf-primary-soft); color: var(--vuf-primary); }
+        .vu-service-tag--rescheduled { background: var(--vuf-warn-bg); color: var(--vuf-warn); }
+
+        .o_priority { margin-left: -2px; }
+    }
+
+    .ws-hero__timer .vu-timer-display { font-size: 1.125rem; }
+
+    // ── Next step: one glyph per card ─────────────────────────────────────
+    .ws-next {
+        [name="draft_create_quote_card"] { --ws-next-ico: url("/health_theme/static/src/img/lucide/file-text.svg"); }
+        [name="draft_confirm_client_card"] { --ws-next-ico: url("/health_theme/static/src/img/lucide/check.svg"); }
+        .vu-show-on-confirmed { --ws-next-ico: url("/health_theme/static/src/img/lucide/user-plus.svg"); }
+        .vu-show-on-assigned { --ws-next-ico: url("/health_theme/static/src/img/lucide/play.svg"); }
+        .vu-show-on-active { --ws-next-ico: url("/health_theme/static/src/img/lucide/activity.svg"); }
+        .vu-show-on-completed { --ws-next-ico: url("/health_theme/static/src/img/lucide/check.svg"); }
+
+        // cancelled: the same banner in the danger pair; the title icon (fa)
+        // is redundant beside the glyph square
+        .vu-show-on-cancelled {
+            --ws-next-ico: url("/health_theme/static/src/img/lucide/x-circle.svg");
+            background: var(--vuf-danger-bg) !important;
+            border-color: var(--vuf-danger-bg) !important;
+
+            &::before { background: var(--vuf-danger); }
+            .vu-action-card__title { color: var(--vuf-danger); }
+            .vu-action-card__title > .fa { display: none; }
+        }
+    }
+
+    // ── Tabs: text only (the legacy font-awesome glyphs keyed by page name
+    //    above belong to the old pill bar) ──────────────────────────────────
+    .ws-main .o_notebook .nav-link::before {
+        content: none !important;
+        display: none !important;
+    }
+
+    // ── Services & packages widget sits in the pack as a plain card ──────
+    .ws-pack .vu-svc-card {
+        margin: 0 0 var(--vuf-sp-4);
+        border: 1px solid var(--vuf-line);
+        border-radius: var(--vuf-r-md);
+        box-shadow: none;
+    }
+    .ws-pack .vu-svc-section--quote,
+    .ws-pack .vu-svc-section--packages { background: var(--vuf-surface); }
+    .ws-pack .vu-svc-header__title {
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: .08em;
+        color: var(--vuf-muted);
+    }
+    .ws-pack .vu-svc-pkg__fill--green { background: var(--vuf-ok); }
+    .ws-pack .vu-svc-pkg__fill--amber { background: var(--vuf-warn); }
+    .ws-pack .vu-svc-pkg__fill--red { background: var(--vuf-danger); }
+
+    // ── People: the client card, compact, inside its rail panel ──────────
+    .ws-panel--people .vu-client-card {
+        padding: 0;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        background: transparent;
+        overflow: visible;
+
+        &::before { content: none; display: none; }   // was a gradient bar
+
+        .vu-client-card__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin: 0 0 6px;
+        }
+
+        .vu-client-card__title {
+            font-size: 12.5px;
+            font-weight: 500;
+            color: var(--vuf-muted);
+            gap: 0;
+
+            .vu-section__icon { display: none; }
+        }
+
+        .vu-client-card__link {
+            padding: 2px 6px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--vuf-primary);
+            border-radius: 6px;
+
+            &:hover { background: var(--vuf-primary-soft); color: var(--vuf-primary); }
+        }
+
+        .vu-client-card__body { gap: 10px; align-items: flex-start; }
+
+        .vu-client-card__avatar .vu-client-avatar-widget .o_m2o_avatar,
+        .vu-client-card__avatar .vu-client-avatar-widget .o_m2o_avatar > img,
+        .vu-client-card__avatar .vu-client-avatar-widget .o_m2o_avatar .o_m2o_avatar_empty {
+            width: 34px !important;
+            height: 34px !important;
+            border-radius: 50% !important;
+            box-shadow: none !important;
+            background: var(--vuf-hero);
+            font-size: 13px;
+        }
+
+        .vu-client-card__name {
+            margin: 0 0 4px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--vuf-ink);
+
+            a { color: var(--vuf-ink); }
+            a:hover { color: var(--vuf-primary); text-decoration: none; }
+        }
+
+        .vu-client-card__contact,
+        .vu-client-card__address {
+            margin: 0 0 4px;
+            gap: 4px 12px;
+            font-size: 12.5px;
+            color: var(--vuf-muted);
+
+            .fa { color: var(--vuf-faint); }
+        }
+
+        .vu-client-card__meta { gap: 6px; margin-top: 6px; }
+
+        .vu-client-card__meta-item {
+            background: var(--vuf-bg);
+            color: var(--vuf-muted);
+            border-radius: 6px;
+            font-size: 11.5px;
+        }
+    }
+
+    // ── Shortcuts: the quick-action rows keep their glyphs, flat ─────────
+    .ws-panel--links .vu-action-item > .fa {
+        width: 16px !important;
+        height: auto !important;
+        background: transparent !important;
+    }
+}
+
+// More menu: the two actions that undo work read as destructive
+.ws-more-menu .ws-more-item > .btn:is([name="action_cancel_booking"], [name="action_open_delete_wizard"]) {
+    color: var(--vuf-danger) !important;
+
+    .fa, i { color: var(--vuf-danger) !important; }
 }
