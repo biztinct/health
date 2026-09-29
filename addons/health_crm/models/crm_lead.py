@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.addons.health_base.models.phone_utils import normalize_vn_phone
 
 
@@ -2500,7 +2500,12 @@ class HealthLead(models.Model):
 
         status_field = self.env['ir.model.fields']._get('crm.lead', 'contact_status')
         if status_field:
-            trackings = self.env['mail.tracking.value'].search([
+            # mail.tracking.value is readable by system administrators only, so
+            # without sudo every other user got an AccessError and "No history
+            # yet". The caller must be able to read this contact; the sudo'd
+            # search is pinned to this one record and this one field.
+            self.check_access('read')
+            trackings = self.env['mail.tracking.value'].sudo().search([
                 ('field_id', '=', status_field.id),
                 ('mail_message_id.model', '=', 'crm.lead'),
                 ('mail_message_id.res_id', '=', self.id),
@@ -2578,7 +2583,12 @@ class HealthLead(models.Model):
         else:
             fso_domain = [('id', '=', 0)]
 
-        bookings = self.env['health.fieldservice.order'].search(fso_domain, order='create_date asc')
+        # A CRM-desk user may have no access to bookings at all; leave the
+        # booking lines out for them instead of failing the whole history.
+        try:
+            bookings = self.env['health.fieldservice.order'].search(fso_domain, order='create_date asc')
+        except AccessError:
+            bookings = self.env['health.fieldservice.order']
         booking_model = self.env['health.fieldservice.order']
         state_labels = dict(
             booking_model._fields['state']._description_selection(self.env)

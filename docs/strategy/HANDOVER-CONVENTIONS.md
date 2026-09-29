@@ -3657,7 +3657,11 @@ a no-op.
     which only a system administrator may read, so every other user sees "No
     history yet" (console: "Timeline load error"). Fixing it is a one-line `sudo()`
     on that search — a Python change no Workspace phase was sanctioned to make.
-    (WORKSPACE WS-3.)
+    (WORKSPACE WS-3.) **Fixed in review the same day:** `check_access('read')` on
+    the contact, then a sudo'd tracking search pinned to that record and field; and
+    the booking lines are dropped on `AccessError` (§5.47 pattern) because a CRM
+    desk user with no booking access failed the WHOLE history on that search too.
+    Verified on live as four non-admin CRM users: 6 of 6 status lines each.
 - **§5.256 — a corrected Vietnamese string needs a targeted overwrite, not
     `--i18n-overwrite`.** §5.244 says a re-worded msgstr never reaches a database
     whose row already holds the old Vietnamese. The narrow fix that touches nothing
