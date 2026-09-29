@@ -992,7 +992,8 @@
                       </span>
                       <span class="bza-scrstate is-gone">
                         <t t-out="ic('eyeOff',13)"/>
-                        <span>Nobody can open it yet</span>
+                        <span t-if="it.could_be_opened_by.length">Ready to switch on</span>
+                        <span t-else="">Nobody can open it yet</span>
                       </span>
                     </div>
                   </t>
