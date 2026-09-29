@@ -36,6 +36,9 @@ for label,children in payload['menus']:
 assert len(roots['/our-board'].xpath('.//*[contains(concat(" ",@class," ")," carousel-item ")]')) == 8
 assert len(roots['/our-patrons'].xpath('.//*[contains(concat(" ",@class," ")," carousel-item ")]')) == 2
 assert len(roots['/associate-members'].xpath('.//*[contains(concat(" ",@class," ")," carousel-item ")]')) == 2
+assert len(roots['/successes'].xpath('.//*[contains(concat(" ",@class," ")," carousel-item ")]')) == 2
+for url in ('/successes', '/our-board', '/our-patrons', '/associate-members'):
+    assert not roots[url].xpath('.//*[contains(concat(" ",@class," ")," slide ")]'), url
 assert 'QSM' in ''.join(roots['/our-patrons'].itertext())
 dates = roots['/news'].xpath('.//time/@datetime')
 assert len(dates)==9 and dates==sorted(dates,reverse=True)

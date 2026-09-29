@@ -11,6 +11,7 @@ import re
 import shutil
 import xml.etree.ElementTree as ET
 import zipfile
+from carousel_markup import carousel
 
 MODULE = Path(__file__).resolve().parents[1]
 SOURCE = MODULE.parents[1] / "Taupo Website"
@@ -113,12 +114,6 @@ def profile(slide, filename):
     return name, f'<div class="row g-4"><div class="col-md-2 o_colored_level">{image(photo,name,"thhs26-profile-photo")}</div><div class="col-md-10 o_colored_level"><h2>{esc(name)}</h2><p class="thhs26-role">{esc(role)}</p>{copy}</div></div>'
 
 
-def carousel(profiles, identifier):
-    slides = ''.join(f'<div class="carousel-item {"active" if i == 0 else ""} pt24 pb64 o_colored_level" data-name="{esc(name)}"><div class="container oe_unremovable"><div class="carousel-content">{content}</div></div></div>' for i,(name,content) in enumerate(profiles))
-    indicators = ''.join(f'<button type="button" data-bs-target="#{identifier}" data-bs-slide-to="{i}" class="{"active" if i == 0 else ""}" aria-label="{esc(name)}" title="{esc(name)}"/>' for i,(name,_) in enumerate(profiles))
-    return f'''<section class="s_carousel_wrapper thhs26-profiles p-0" data-snippet="s_carousel" data-name="Editable board profiles" data-vxml="001" data-vcss="001"><div id="{identifier}" class="s_carousel s_carousel_default carousel slide" data-bs-interval="false"><div class="carousel-inner">{slides}</div><button class="carousel-control-prev o_not_editable" contenteditable="false" data-bs-target="#{identifier}" data-bs-slide="prev" aria-label="Previous profile"><span class="carousel-control-prev-icon" aria-hidden="true"/><span class="visually-hidden">Previous</span></button><button class="carousel-control-next o_not_editable" contenteditable="false" data-bs-target="#{identifier}" data-bs-slide="next" aria-label="Next profile"><span class="carousel-control-next-icon" aria-hidden="true"/><span class="visually-hidden">Next</span></button><div class="carousel-indicators o_not_editable">{indicators}</div></div></section>'''
-
-
 board = [(11,'Lil2.jpeg'),(13,'Gilma2.jpeg'),(14,'Deb.jpeg'),(15,'trent2.jpeg'),(16,'mark2.jpeg'),(17,'Sandra & David.jpeg'),(18,'John2.jpeg'),(19,'Aruna2.jpeg')]
 add('/our-board','Our Board',title('Our Board','Mana whakahaere')+carousel([profile(n,'Board/Board photos/'+f) for n,f in board],'thhsBoard'))
 add('/our-patrons','Our Patrons',title('Our Patrons','Kaitautoko')+carousel([profile(20,'Board/Board photos/Laurie3.jpeg'),profile(21,'Board/Les winslade.png')],'thhsPatrons'))
@@ -176,7 +171,10 @@ for i in range(0,len(values),3):
 table+='</tbody></table></div>'
 thermometer=embedded(34,'grants-thermometer')
 cheque=asset(SOURCE/'Photos/Cheque handover (1).jpg','cheque-handover.jpg')
-add('/successes','Successes',section('<h1 class="text-center">SUCCESSES</h1><p class="text-center thhs26-label">Selected grants and purchases supported since 1993<br/>Latest recorded cumulative value: $2,074,136</p><div class="row g-4"><div class="col-md-2">'+image(thermometer,'Cumulative value of grants: $2,074,136','thhs26-thermometer')+'</div><div class="col-md-10">'+table+'</div></div>','thhs26-successes')+section('<h2 class="text-center">SUCCESSES</h2>'+image(cheque,'Community cheque presentation for the cardiac heart scanner','d-block mx-auto thhs26-cheque'),'thhs26-success-photo',snippet='s_picture'))
+add('/successes','Successes',carousel([
+    ('Grants and purchases', section('<h1 class="text-center">SUCCESSES</h1><p class="text-center thhs26-label">Selected grants and purchases supported since 1993<br/>Latest recorded cumulative value: $2,074,136</p><div class="row g-4"><div class="col-md-2">'+image(thermometer,'Cumulative value of grants: $2,074,136','thhs26-thermometer')+'</div><div class="col-md-10">'+table+'</div></div>','thhs26-successes')),
+    ('Cheque presentation', section('<h2 class="text-center">SUCCESSES</h2>'+image(cheque,'Community cheque presentation for the cardiac heart scanner','d-block mx-auto thhs26-cheque'),'thhs26-success-photo',snippet='s_picture')),
+], 'thhsSuccesses', successes=True))
 
 testimonials = [
  (37,'Testimonial - Echocardiogram.pdf','Echocardiogram'),
