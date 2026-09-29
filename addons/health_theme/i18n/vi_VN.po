@@ -55,6 +55,7 @@ msgstr "Đã lưu trữ"
 #. odoo-javascript
 #: code:addons/health_theme/static/src/js/vu_progress_rail.js:0
 #: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+#: code:addons/health_theme/static/src/js/ws_journey.js:0
 msgid "Assigned"
 msgstr "Đã phân công"
 
@@ -110,6 +111,7 @@ msgstr "Hủy"
 #. odoo-javascript
 #: code:addons/health_theme/static/src/studio/theme_studio.xml:0
 #: code:addons/health_theme/static/src/xml/vu_progress_rail.xml:0
+#: code:addons/health_theme/static/src/xml/ws_journey.xml:0
 msgid "Cancelled"
 msgstr "Đã hủy"
 
@@ -148,6 +150,7 @@ msgstr "Tiêm nghiệm lâm sàng"
 #. module: health_theme
 #. odoo-javascript
 #: code:addons/health_theme/static/src/js/vu_progress_rail.js:0
+#: code:addons/health_theme/static/src/js/ws_journey.js:0
 msgid "Closed"
 msgstr "Đã đóng"
 
@@ -166,6 +169,7 @@ msgstr "Công ty"
 #. odoo-javascript
 #: code:addons/health_theme/static/src/js/vu_progress_rail.js:0
 #: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+#: code:addons/health_theme/static/src/js/ws_journey.js:0
 msgid "Completed"
 msgstr "Hoàn thành"
 
@@ -179,12 +183,14 @@ msgstr "Xác nhận"
 #. odoo-javascript
 #: code:addons/health_theme/static/src/js/vu_progress_rail.js:0
 #: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+#: code:addons/health_theme/static/src/js/ws_journey.js:0
 msgid "Confirmed"
 msgstr "Đã xác nhận"
 
 #. module: health_theme
 #. odoo-javascript
 #: code:addons/health_theme/static/src/js/vu_progress_rail.js:0
+#: code:addons/health_theme/static/src/js/ws_journey.js:0
 msgid "Created"
 msgstr "Đã tạo"
 
@@ -809,3 +815,45 @@ msgstr "Văn bản"
 #: code:addons/health_theme/static/src/studio/theme_studio_action.js:0
 msgid "Workflow states"
 msgstr "Trạng thái quy trình"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/js/ws_journey.js:0
+msgid "In progress"
+msgstr "Đang thực hiện"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/js/ws_journey.js:0
+msgid "Next"
+msgstr "Tiếp theo"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/js/ws_journey.js:0
+msgid "Step %s of %s"
+msgstr "Bước %s / %s"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/xml/ws_fold_tray.xml:0
+msgid "Not filled yet"
+msgstr "Chưa điền"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/js/ws_fold_tray.js:0
+msgid "1 field"
+msgstr "1 trường"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/js/ws_fold_tray.js:0
+msgid "%s fields"
+msgstr "%s trường"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/xml/ws_statusbar_more.xml:0
+msgid "More"
+msgstr "Thêm"

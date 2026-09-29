@@ -900,7 +900,7 @@
 // fields compact and naked there. Covers both naming generations:
 // vu-col-summary/vu-col-actions (engine layout) and vu-col-1/vu-col-3
 // (ops booking cockpit arch).
-.o_form_renderer.vu-form :is(.vu-col-summary, .vu-col-actions, .vu-col-1, .vu-col-3) {
+.o_form_renderer.vu-form :is(.vu-col-summary, .vu-col-actions, .vu-col-1, .vu-col-3, .ws-rail) {
     .o_field_widget input.o_input,
     .o_field_widget select.o_input,
     .o_field_widget textarea.o_input,
@@ -995,7 +995,7 @@
     // long unbreakable-ish values (timezones, addresses, ids) wrap by WORD,
     // never one character/word per line — the core anti-collapse guard
     .vu-col-summary, .vu-col-content, .vu-col-actions,
-    .vu-col-1, .vu-col-2, .vu-col-3 {
+    .vu-col-1, .vu-col-2, .vu-col-3, .ws-rail {
         .o_cell, .o_field_widget, .vu-summary-row__value { min-width: 0; }
         .o_field_widget, .o_field_char, .o_field_text, .vu-summary-row__value {
             overflow-wrap: break-word;

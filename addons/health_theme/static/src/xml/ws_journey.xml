@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_theme.WsJourney">
+        <div t-attf-class="ws-journey #{isCancelled ? 'ws-journey--cancelled' : ''}">
+            <ol class="ws-journey__row">
+                <t t-foreach="segments" t-as="seg" t-key="seg.key">
+                    <li t-attf-class="ws-journey__seg ws-journey__seg--#{seg.status}">
+                        <span class="ws-journey__bar"/>
+                        <span class="ws-journey__label" t-esc="seg.label"/>
+                        <span class="ws-journey__sub" t-esc="seg.sub or '&#160;'"/>
+                    </li>
+                </t>
+            </ol>
+            <div class="ws-journey__aside">
+                <span t-if="isCancelled" class="ws-journey__chip">Cancelled</span>
+                <span t-elif="stepText" class="ws-journey__count" t-esc="stepText"/>
+            </div>
+        </div>
+    </t>
+
+</templates>

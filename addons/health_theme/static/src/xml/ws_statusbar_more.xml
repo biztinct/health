@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Desktop branch only. With no `ws-more` slot, inlineSlotNames equals
+         visibleSlotNames and the dropdown is not drawn: the output is the same
+         DOM core renders. -->
+    <t t-inherit="web.StatusBarButtons" t-inherit-mode="extension">
+        <xpath expr="//t[@t-foreach='visibleSlotNames']" position="replace">
+            <t t-foreach="inlineSlotNames" t-as="slot" t-key="slot">
+                <t t-slot="{{ slot }}" />
+            </t>
+            <Dropdown t-if="moreSlotNames.length" position="'bottom-end'" menuClass="'ws-more-menu'">
+                <button type="button" class="btn btn-secondary ws-more-toggle">
+                    <span class="ws-ico" data-icon="more-horizontal"/>
+                    <span>More</span>
+                </button>
+                <t t-set-slot="content">
+                    <t t-foreach="moreSlotNames" t-as="slot" t-key="slot">
+                        <DropdownItem class="'o-dropdown-item-unstyled-button ws-more-item'">
+                            <t t-slot="{{ slot }}" />
+                        </DropdownItem>
+                    </t>
+                </t>
+            </Dropdown>
+        </xpath>
+    </t>
+
+</templates>

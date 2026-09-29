@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_theme.WsFoldTray">
+        <div t-ref="root" t-attf-class="ws-fold-tray #{chips.length ? '' : 'ws-fold-tray--empty'}">
+            <t t-if="chips.length">
+                <span class="ws-fold-tray__label">Not filled yet</span>
+                <t t-foreach="chips" t-as="chip" t-key="chip.name">
+                    <button type="button" class="ws-fold-tray__chip"
+                            t-att-data-card="chip.name"
+                            t-on-click="() => this.onChipClick(chip.name)">
+                        <span class="ws-ico" data-icon="plus"/>
+                        <span class="ws-fold-tray__title" t-esc="chip.title"/>
+                        <em class="ws-fold-tray__count" t-esc="chip.fields"/>
+                    </button>
+                </t>
+            </t>
+        </div>
+    </t>
+
+</templates>

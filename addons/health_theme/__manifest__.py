@@ -45,7 +45,7 @@
         - Modern pill-shaped badges for healthcare workflows
         - Custom navbar and control panel styling
     ''',
-    'version': '19.0.5.3.0',
+    'version': '19.0.5.4.0',
     'category': 'Themes/Backend',
     'license': 'LGPL-3',
     'author': 'VAFHS Healthcare System - Vietnam-Australia Family Health Service',
@@ -103,6 +103,9 @@
             'health_theme/static/src/scss/inline_edit.scss',
             'health_theme/static/src/scss/field_indicators.scss',
             'health_theme/static/src/scss/side_sheet.scss',
+            # Workspace kit (WS-1) — opt-in record layout: class="ws-workspace"
+            # on the <form>; header buttons with class "ws-more" go under More
+            'health_theme/static/src/scss/ws_workspace.scss',
             # Cross-cutting guard: keeps the inline-rendered AutoComplete
             # dropdown above later-painted content on EVERY form. Loads last so
             # it wins on equal specificity — see the file header for the
@@ -113,9 +116,15 @@
             'health_theme/static/src/js/vu_progress_rail.js',
             'health_theme/static/src/js/vu_side_sheet.js',
             'health_theme/static/src/js/vi_translation_terms.js',
+            'health_theme/static/src/js/ws_journey.js',
+            'health_theme/static/src/js/ws_fold_tray.js',
+            'health_theme/static/src/js/ws_statusbar_more.js',
             # OWL components — Templates
             'health_theme/static/src/xml/vu_progress_rail.xml',
             'health_theme/static/src/xml/vu_side_sheet.xml',
+            'health_theme/static/src/xml/ws_journey.xml',
+            'health_theme/static/src/xml/ws_fold_tray.xml',
+            'health_theme/static/src/xml/ws_statusbar_more.xml',
             # Theme Studio (admin-only client action)
             'health_theme/static/src/studio/theme_studio_action.js',
             'health_theme/static/src/studio/theme_studio.scss',
