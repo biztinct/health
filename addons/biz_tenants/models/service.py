@@ -2055,8 +2055,10 @@ class BizTenants(models.AbstractModel):
                 except Exception:                            # noqa: BLE001
                     _logger.warning("biz_tenants: catalogue re-read failed on "
                                     "%s", dbname, exc_info=True)
-                    say("The who-can-do-what list could not be re-read. Open "
-                        "the access home on that system and press Re-read.",
+                    say("The who-can-do-what list could not be re-read. Sign "
+                        "in to that system as the platform administrator, "
+                        "open the Access home, and choose \"Re-read the role "
+                        "catalogue\" from the menu at the top right.",
                         'warn')
 
         # ---- 6. was anything skipped? ------------------------------------

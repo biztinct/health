@@ -45,7 +45,7 @@ home checks again before it writes. Adding a colleague goes through the same
 refusals: an administrator of this clinic can give somebody a job, and cannot
 give anybody the keys to the box.
 """,
-    'version': '19.0.1.3.0',
+    'version': '19.0.1.4.0',
     'category': 'Administration',
     'license': 'LGPL-3',
     'author': 'Biztinct',
@@ -81,6 +81,7 @@ give anybody the keys to the box.
     'assets': {
         'web.assets_backend': [
             'health_access/static/src/js/health_access_palette.js',
+            'health_access/static/src/js/admin_tabs.js',
         ],
     },
     # Seeds the clinic's vocabulary and carries the old app's data across. Both

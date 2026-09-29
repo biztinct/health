@@ -53,7 +53,9 @@ from odoo.exceptions import UserError
 from odoo.addons.biz_access.hooks import (ensure_catalogue,  # noqa: F401
                                           register_catalogue)
 from odoo.addons.biz_access.models.access_common import (
-    register_areas, register_hidden_login_source, register_manager_groups)
+    groups_can_read, register_areas, register_hidden_login_source,
+    register_manager_groups)
+from odoo.addons.health_access.models.cms_sidebar import _model_behind
 
 _logger = logging.getLogger(__name__)
 
@@ -253,7 +255,48 @@ ABILITIES = [
      'and dashboards from the data this clinic already has. It changes no '
      'record it reports on.',
      ('biz_bi.group_bi_creator',)),
+
+    # THE DARK SCREENS (AR-2). Fifteen entries on the left menu are switched
+    # off because no role on this clinic can open the screens behind them —
+    # the Zalo channel, the phone system and the reporting set-up. Each ability
+    # below wraps the permission those screens actually ask for, so an Owner
+    # can tick one onto a role and then switch the screens on from the Screens
+    # lens. They are written down and GIVEN TO NOBODY: no role carries them
+    # until somebody decides it should. Each wraps exactly one permission that
+    # no other ability wraps, so the one-ability-per-permission rule above
+    # still holds.
+    ('zalo-work', 'front_desk', 310, 'Work the Zalo channel',
+     'Read and answer the conversations and messages that arrive through '
+     'Zalo. It does not include setting the channel up.',
+     ('health_zalo.group_zalo_user',)),
+
+    ('zalo-setup', 'front_desk', 320, 'Set up the Zalo channel',
+     'Everything working the Zalo channel involves, plus the Zalo settings — '
+     'the account it is connected to and how messages are handled.',
+     ('health_zalo.group_zalo_manager',)),
+
+    ('calls-handle', 'operations', 330, 'Handle calls',
+     'See every call, every missed call and the list of call recordings. It '
+     'does not include setting the phone system up.',
+     ('health_voip24h.group_voip_user',)),
+
+    ('phone-setup', 'operations', 340, 'Set up the phone system',
+     'Everything handling calls involves, plus the extensions, bringing the '
+     'call history across from the phone provider, and the voice settings.',
+     ('health_voip24h.group_voip_manager',)),
+
+    ('reporting-setup', 'operations', 350, 'Set up reporting',
+     'Everything building reports involves, plus importing data, the '
+     'reporting settings, who sees which numbers, and the AI providers the '
+     'reports use. It changes no record it reports on.',
+     ('biz_bi.group_bi_modeler',)),
 ]
+
+#: The five abilities AR-2 adds. Named once so the migration, the tests and the
+#: report all mean the same five — and so "granted to nobody" can be proven by
+#: asking which roles carry any of them.
+DARK_SCREEN_ABILITIES = ('zalo-work', 'zalo-setup', 'calls-handle',
+                         'phone-setup', 'reporting-setup')
 
 # =============================================================================
 # THE ROLES. Named EXACTLY as the previous application named them, because the
@@ -1223,38 +1266,24 @@ def _carry_analytics(env):
 
 
 def model_behind(env, item):
-    """The model an entry's screen opens, or `''` when it opens no records."""
-    if not item.action_xmlid:
-        return ''
-    action = env.ref(item.action_xmlid, raise_if_not_found=False)
-    if not action:
-        return ''
-    return getattr(action.sudo(), 'res_model', '') or ''
+    """The model an entry's screen opens, or `''` when it opens no records.
+
+    Kept here under its old name because `biz_bi_cms` imports it; the one
+    implementation now lives beside the menu adapter that also needs it.
+    """
+    return _model_behind(env, item)
 
 
 def role_can_read(env, role, model_name):
     """Could somebody holding this role open that screen at all?
 
-    ASKED OF THE PERMISSIONS TABLE, not by making a person and trying. A door
-    on a menu that answers "you are not allowed to access this" is a dead end,
-    and the whole promise of putting these entries here was that everything a
-    role needs is on the menu — not that everything is on the menu.
-
-    A permission row with no group on it is open to everybody with a login, so
-    it settles the question on its own. Otherwise the role opens the screen
-    when any row's group is one it carries, over the whole implication closure
-    — a role that carries a manager tier reaches what the officer tier opens.
+    THE SHARED ANSWER (AR-2). The question is asked in three places now — the
+    two gate hooks here and in `biz_bi_cms`, and the Screens lens's "could be
+    opened by" — so it lives once, in `biz_access` (`groups_can_read`), asked
+    of the permissions table over the whole implication closure. This name is
+    kept because `biz_bi_cms` imports it.
     """
-    if not model_name or model_name not in env:
-        return True                     # opens no records; nothing to refuse
-    acls = env['ir.model.access'].sudo().search(
-        [('model_id.model', '=', model_name), ('perm_read', '=', True)])
-    if not acls:
-        return True                     # ungoverned; the framework lets it by
-    if any(not acl.group_id for acl in acls):
-        return True
-    closure = role.group_ids | role.group_ids.all_implied_ids
-    return any(acl.group_id in closure for acl in acls)
+    return groups_can_read(env, role.group_ids, model_name)
 
 
 def _gate_new_items(env):
@@ -1276,16 +1305,28 @@ def _gate_new_items(env):
     it, the entry is switched off entirely and the fact is logged — the screen
     is still there for the platform administrator, who keeps the bar.
 
-    All three are re-decided on every run, so the day somebody gives a role the
-    permission behind one of these screens, the next run puts the door back.
+    ONCE PER ENTRY, NEVER AGAIN (AR-2). This used to be re-decided on every
+    run, which was right while nobody could change these entries by hand and
+    wrong the moment the Screens lens could: an Owner who switched the voice
+    screens on for a role that can open them would have had them switched off
+    again by the next run of this hook — narrowed back to a gate that role is
+    not on. So every entry this touches is written down as HANDLED
+    (`health_access.gated_items_handled`), and a handled entry is left exactly
+    as whoever last changed it left it. A NEW entry added to `NEW_ITEM_ROLES`
+    by a later release is not on the list, and is decided the first time.
+    Putting a door back for a role that has since gained the permission is now
+    the Screens lens's "Switch on for …", done by a person, on purpose.
     """
     Item = env['cms.sidebar.item'].sudo().with_context(active_test=False)
+    handled = _gate_handled(env)
+    touched = set()
     gated = switched_off = narrowed = 0
     no_audience = []
     for xmlid, names in NEW_ITEM_ROLES.items():
         item = env.ref(xmlid, raise_if_not_found=False)
-        if not item:
+        if not item or item.id in handled:
             continue
+        touched.add(item.id)
         roles = env['biz.access.role'].sudo().browse()
         for name in names:
             roles |= role_by_name(env, name)
@@ -1323,7 +1364,9 @@ def _gate_new_items(env):
     # Every entry this module ships, its children included. CHILDREN FIRST,
     # because a heading is alive exactly when something under it is, and a
     # heading judged before its children would be judged on yesterday's answer.
-    ours = Item.search([('id', 'in', _our_new_item_ids(env))])
+    ours = Item.search([('id', 'in', _our_new_item_ids(env)),
+                        ('id', 'not in', list(handled))])
+    touched |= set(ours.ids)
     leaves = ours.filtered(lambda i: i.action_xmlid)
     headings = ours - leaves
     for item in leaves:
@@ -1352,7 +1395,44 @@ def _gate_new_items(env):
         'database can open them%s',
         gated, narrowed, switched_off,
         (' — ' + '; '.join(no_audience)) if no_audience else '')
+    _mark_gate_handled(env, touched)
     return gated
+
+
+#: The entries `_gate_new_items` has already decided. Not a "this ran" stamp:
+#: it is the list of individual entries whose gate and on/off are now somebody's
+#: to change by hand, which is the fact the hook needs in order to leave them be.
+GATE_HANDLED_PARAM = 'health_access.gated_items_handled'
+
+
+def _gate_handled(env):
+    raw = env['ir.config_parameter'].sudo().get_param(GATE_HANDLED_PARAM) or ''
+    return {int(x) for x in raw.split(',') if x.strip().isdigit()}
+
+
+def _mark_gate_handled(env, ids):
+    ids = {int(i) for i in (ids or ()) if i}
+    if not ids:
+        return 0
+    already = _gate_handled(env)
+    if ids <= already:
+        return 0
+    env['ir.config_parameter'].sudo().set_param(
+        GATE_HANDLED_PARAM, ','.join(str(i) for i in sorted(already | ids)))
+    return len(ids - already)
+
+
+def mark_gate_handled(env):
+    """Write down, WITHOUT deciding anything, every entry the hook has already
+    decided on a live database — the 19.0.1.4.0 migration's job, so the first
+    run of the create-only hook after it cannot re-decide yesterday's."""
+    ids = set()
+    for xmlid in NEW_ITEM_ROLES:
+        item = env.ref(xmlid, raise_if_not_found=False)
+        if item:
+            ids.add(item.id)
+    ids |= set(_our_new_item_ids(env))
+    return _mark_gate_handled(env, ids)
 
 
 def _our_new_item_ids(env):

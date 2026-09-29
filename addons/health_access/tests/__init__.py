@@ -9,3 +9,4 @@ from . import test_rings
 from . import test_retirement
 from . import test_topbar_settings
 from . import test_ar1_clinic_admin
+from . import test_ar2_screens

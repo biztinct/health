@@ -134,11 +134,13 @@ const TAB_GROUPS = [
         tabs: [
             { id: "users", label: _t("Users"), icon: "fa-users",
               model: "res.users", action: "health_landing.action_admin_users" },
-            // NOT a list of rows: it opens the Access home, which is a screen
-            // rather than a table. The tab strip is where somebody looking
-            // after people already is, so this is where the door belongs.
-            { id: "access", label: _t("Access & roles"), icon: "fa-key",
-              model: false, action: "biz_access.action_biz_access_home" },
+            // "Access & roles" sits beside Users, and it is CONTRIBUTED —
+            // `health_access/static/src/js/admin_tabs.js` adds it through
+            // `health_landing.admin_tabs` like every other tab this strip does
+            // not own. It opens a screen of that module's, so the door belongs
+            // to that module too: a hard-coded tab here named an action this
+            // module does not depend on having. Who may SEE it is still decided
+            // here, by `ACCESS_TAB_IDS` below.
         ],
     },
     {

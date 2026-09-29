@@ -58,6 +58,54 @@ ADVANCED_ACTION = 'health_cms_sidebar.action_cms_sidebar_item'
 #: it: one rule, and no privilege that quietly opens the whole menu.
 ADMIN_GROUPS = ('base.group_system',)
 
+#: THE MODULES WHOSE OWN HOOKS SWITCH AN ENTRY OFF FOR WANT OF A ROLE.
+#:
+#: `health_access._gate_new_items` and `biz_bi_cms.apply_role_gates` both put
+#: an entry on the menu, ask the permissions table whether any role could open
+#: the screen behind it, and switch it off when none can. Those — and only
+#: those — are "waiting for a role" on the Screens lens. Everything else that is
+#: off (the consolidated staff screens, a feature that is not bought, the
+#: switched-off-feature page) was switched off by a DECISION, and the lens must
+#: not offer to undo a decision it knows nothing about.
+GATE_MANAGED_MODULES = ('health_access', 'biz_bi_cms')
+
+
+def _model_behind(env, item):
+    """The model an entry's screen opens, or `''` when it opens no records."""
+    if not item.action_xmlid:
+        return ''
+    action = env.ref(item.action_xmlid, raise_if_not_found=False)
+    if not action:
+        return ''
+    return getattr(action.sudo(), 'res_model', '') or ''
+
+
+def _awaiting_ids(env, items, models_):
+    """The ids of the switched-off entries that are only waiting for a role.
+
+    A LEAF qualifies when it belongs to one of the gate-managed modules, is
+    off, and its screen exists and opens records — so "switch it on for a role
+    that can read those" is a real offer. A HEADING qualifies when a leaf under
+    it does. A leaf whose screen is simply not installed on this database is
+    NOT waiting for a role; no role will ever open it here.
+    """
+    off = items.filtered(lambda i: not i.active)
+    if not off:
+        return set()
+    rows = env['ir.model.data'].sudo().search([
+        ('model', '=', 'cms.sidebar.item'),
+        ('module', 'in', list(GATE_MANAGED_MODULES)),
+        ('res_id', 'in', off.ids)])
+    managed = set(rows.mapped('res_id'))
+    leaves = {i.id for i in off
+              if i.id in managed and i.action_xmlid and models_.get(i.id)}
+    headings = {i.id for i in off
+                if i.id in managed and not i.action_xmlid
+                and any(c.id in leaves for c in env['cms.sidebar.item'].sudo(
+                ).with_context(active_test=False).search(
+                    [('parent_id', '=', i.id)]))}
+    return leaves | headings
+
 
 class CmsSidebarSection(models.Model):
     _inherit = 'cms.sidebar.section'
@@ -277,11 +325,25 @@ class HealthCmsRail(RailProvider):
             })
         return rows
 
+    def supports_section_gates(self, env):
+        # `cms.sidebar.section.biz_role_ids` — a block's roles flow down.
+        return True
+
+    def supports_restricted(self, env):
+        # This menu shows an entry or hides it; it has no locked teaser, so the
+        # Screens lens must not offer one (owner decision, AR-2: Carejiox's
+        # menu hides, it never teases).
+        return False
+
     def entries(self, env, include_inactive=False):
         Item = env['cms.sidebar.item'].sudo().with_context(active_test=False)
         domain = [] if include_inactive else [('active', '=', True)]
+        items = Item.search(domain, order='section_id, sequence, id')
+        models_ = {item.id: _model_behind(env, item) for item in items}
+        awaiting = (_awaiting_ids(env, items, models_) if include_inactive
+                    else set())
         rows = []
-        for item in Item.search(domain, order='section_id, sequence, id'):
+        for item in items:
             rows.append({
                 'id': item.id,
                 'section_id': item.section_id.id,
@@ -303,6 +365,15 @@ class HealthCmsRail(RailProvider):
                 # What is WRITTEN on the entry, archived roles included — "is it
                 # gated at all" and "who gets through" are different questions.
                 'role_ids': item.biz_role_ids.ids,
+                # What ACTUALLY gates it — own ∪ block ∪ the entries above it,
+                # archived roles kept — from the same computed field the real
+                # menu reads, so the lens and the menu cannot disagree about
+                # inheritance.
+                'effective_role_ids': item.effective_biz_role_ids.ids,
+                # The records the screen behind it opens, for "who could open
+                # it if it were switched on". Decides nothing about who sees it.
+                'model': models_.get(item.id) or '',
+                'awaiting_role': item.id in awaiting,
                 # No `legacy_note`: it is an OPTIONAL key of the protocol, for a
                 # menu part-way between two kinds of gate. This one has one.
             })
@@ -329,6 +400,19 @@ class HealthCmsRail(RailProvider):
         is a screen nobody can trust.
         """
         self._entry(env, entry_id).write({'biz_role_ids': [(6, 0, role_ids)]})
+
+    def set_section_roles(self, env, section_id, role_ids):
+        """The roles on a whole block — `biz_role_ids` on the section, which
+        every entry inside it inherits (`effective_biz_role_ids`)."""
+        section = env['cms.sidebar.section'].sudo().with_context(
+            active_test=False).browse(int(section_id or 0)).exists()
+        if not section:
+            raise UserError(_("That block of the left menu is not here."))
+        section.write({'biz_role_ids': [(6, 0, role_ids)]})
+        # The inherited gate is a non-stored compute over the section's roles;
+        # drop what this transaction already read so the answer handed back
+        # to the lens is the new one.
+        env['cms.sidebar.item'].invalidate_model(['effective_biz_role_ids'])
 
     def set_active(self, env, entry_id, active):
         self._entry(env, entry_id).write({'active': bool(active)})

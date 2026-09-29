@@ -105,12 +105,21 @@ class ResUsers(models.Model):
         if self.env.su or self.env.is_superuser():
             return
         if self.env['biz.access'].can_manage():
-            if role_id:
-                role = self.env['biz.access.role'].sudo().browse(
-                    int(role_id)).exists()
-                for user in self:
-                    if role and user.job_role_id != role:
-                        self.env['biz.access']._assert_may_give(role, user)
+            role = self.env['biz.access.role'].sudo().browse(
+                int(role_id)).exists() if role_id else None
+            for user in self:
+                if role and user.job_role_id != role:
+                    self.env['biz.access']._assert_may_give(role, user)
+                # CHANGING THE JOB ALSO TAKES THE OLD ONE'S ROLE AWAY, and a
+                # guarded role is taken away only by its holders (AR-2, item
+                # I). Asked here, before the write, because the removal itself
+                # runs quietly afterwards and its refusal would be swallowed —
+                # leaving the job changed and the old role still in place.
+                was = user.sudo().job_role_id
+                if (was and was != role and was.guarded
+                        and was.group_ids and set(was.group_ids.ids)
+                        <= set(user.sudo().all_group_ids.ids)):
+                    self.env['biz.access']._assert_may_take(was, user)
             return
         raise AccessError(_(
             "Saying what somebody's job is also gives them that role, so it "

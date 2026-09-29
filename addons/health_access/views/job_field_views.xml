@@ -79,4 +79,23 @@
         </field>
     </record>
 
+    <!-- ============================================== the role's own form ===
+         WHAT A ROLE COUNTS AS, where the role is edited (AR-2). The field has
+         been on the model since the job was split from the permissions, and
+         it was only ever set by a one-off reading of the role's name — so a
+         clinic that added a tenth role had no way to say it is a nursing job.
+         Writing it recomputes the job flags of everybody employed as it
+         (`res.users._compute_user_role_flags` depends on it). -->
+    <record id="view_biz_access_role_form_clinical_kind" model="ir.ui.view">
+        <field name="name">biz.access.role.form.clinical.kind</field>
+        <field name="model">biz.access.role</field>
+        <field name="inherit_id" ref="biz_access.view_biz_access_role_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='area']" position="after">
+                <field name="clinical_kind"
+                       help="Which job flags the people whose job is this role get: whether the roster, the staff pickers and the reports count them as a doctor, a nurse or an operations manager."/>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>

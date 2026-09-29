@@ -69,6 +69,13 @@ class HealthAccessSetJob(models.TransientModel):
             self.env['biz.access']._assert_may_give(
                 self.job_role_id, self.user_id)
         was = target.job_role_id
+        # AND THE ROLE THE OLD JOB GAVE IS TAKEN AWAY — a guarded one only by
+        # its holders (AR-2, item I). Asked here for the same reason as the
+        # grant above: the write runs as the system, and the removal's refusal
+        # would be swallowed, leaving the job changed and the role in place.
+        if (was and was != self.job_role_id and was.guarded and was.group_ids
+                and set(was.group_ids.ids) <= set(target.all_group_ids.ids)):
+            self.env['biz.access']._assert_may_take(was, self.user_id)
         target.job_role_id = self.job_role_id
         if self.job_role_id:
             message = _(
