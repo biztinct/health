@@ -3643,3 +3643,53 @@ a no-op.
     overlay still swallows every later click (a Recent-visits row "did nothing").
     Close it with its Cancel/✕ and check `.pw-overlay`. Pre-existing, unchanged.
     (WORKSPACE WS-2.)
+- **§5.255 — a `<chatter/>` on a `crm.lead` screen is refused for CRM staff, and
+    an owner persona never sees it.** WS-3 added the notes feed under the contact
+    screen; on the practice copy (Owner) it worked. On live, with an account built
+    from the real CRM desk's groups, opening a contact raised "Failed to write field
+    crm.lead.message_partner_ids … doesn't have 'read' access to Contact
+    (res.partner)": the feed loads the followers, and the catchment rules on
+    `res.partner` deny some of them. Reverted within the hour (`7fb8805f`). Two
+    rules: a screen change is QA'd with the role that uses it (§5.127, again), and
+    adding a feed to a record of a catchment-ruled model needs the followers read
+    proven for that role first. Sibling, pre-existing and still open: the contact
+    history widget (`crm.lead.get_contact_timeline`) reads `mail.tracking.value`,
+    which only a system administrator may read, so every other user sees "No
+    history yet" (console: "Timeline load error"). Fixing it is a one-line `sudo()`
+    on that search — a Python change no Workspace phase was sanctioned to make.
+    (WORKSPACE WS-3.)
+- **§5.256 — a corrected Vietnamese string needs a targeted overwrite, not
+    `--i18n-overwrite`.** §5.244 says a re-worded msgstr never reaches a database
+    whose row already holds the old Vietnamese. The narrow fix that touches nothing
+    else: `TranslationImporter(env.cr).load_file(<po>, 'vi_VN')`, then delete from
+    `model_terms_translations[model][field][xmlid]` every source term you are not
+    fixing (and from `model_translations[...][xmlid]` every field xmlid you are not
+    fixing), then `save(overwrite=True)`. Run it through `carejiox-deploy -D <db> -x`
+    after the upgrade, on every database (`docs/handovers/workspace_ws3_shots/
+    ws3_i18n_fix.py`). A catalogue file changed in a module you do NOT upgrade
+    (health_base here) must still reach the addons tree for the script to read it.
+    Also: after a Selection→lookup conversion the catalogue's occurrence still
+    names the OLD field (`field_crm_lead__mode_of_contact`), so the new
+    `…_mode_of_contact_id` label stayed English; add the new xmlid's occurrence.
+    (WORKSPACE WS-3.)
+- **§5.257 — the three Workspace screens each painted their own canvas grey, and a
+    neutral chip on the canvas vanished.** Booking `#f4f6fb`, client
+    `--vu-surface-muted`, contact `#F5F6FA`; the kit's neutral chip used `--vuf-bg`,
+    which IS the booking canvas, so a code chip read as bare text once the contact
+    sat on the same colour. The kit now owns the canvas
+    (`.o_form_view.ws-workspace` + its `.o_form_sheet_bg` → `--vuf-bg`) and neutral
+    chips use `--vuf-line`. Measure a side-by-side of all screens on the kit
+    (header, hero, journey, Next step, first card, rail tops) after any kit change —
+    the contact's breadcrumb bar was 4 px shorter too. (WORKSPACE WS-3.)
+- **§5.258 — the Contacts list raises an access error for a contact whose linked
+    client is in another area.** A TPHCM persona searching "Client Jun25" (lead 524,
+    TPHCM) got "doesn't have 'read' access to Contact (res.partner)": the list reads
+    the linked client (partner 856, Hà Nội). Pre-existing, list only (the contacts
+    LIST was a WS-3 non-goal); the old and new contact FORMS read the same client in
+    the Client Details tab, so they share it. (WORKSPACE WS-3.)
+- **§5.259 — the rail's area button opens a fly-out on the first click; drive QA
+    as hover → click area → click the tab.** A click on an area entry right after
+    load opened its fly-out, and the next click on "Contacts" landed on whatever the
+    fly-out covered (twice it opened Clinical › Observations). Hovering the area,
+    clicking it (the area's first screen opens) and then clicking the tab in the tab
+    column worked every time. (WORKSPACE WS-3.)

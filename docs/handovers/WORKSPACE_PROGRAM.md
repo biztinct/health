@@ -29,7 +29,7 @@ Chatter stays at the bottom, full width (standing rule).
 |---|---|---|---|
 | WS-1 | Booking (`health.fieldservice.order` ops form) + the reusable Workspace kit in `health_theme` | `WORKSPACE_WS1_BOOKING.md` | **DONE 2026-09-29** — live on carejiox, carejiox_template, hhh; report `WORKSPACE_WS1_REPORT.md` |
 | WS-2 | Client (ops client profile, `res.partner`) on the kit + notes feed shown on booking and client | `WORKSPACE_WS2_CLIENT.md` | **DONE 2026-09-29** — live on carejiox, carejiox_template, hhh; report `WORKSPACE_WS2_REPORT.md` |
-| WS-3 | Contact (CRM contact form, `crm.lead`) on the kit + kit fixes + known Vietnamese errors on the three screens | `WORKSPACE_WS3_CONTACT.md` | handed over 2026-09-29 |
+| WS-3 | Contact (CRM contact form, `crm.lead`) on the kit + kit fixes + known Vietnamese errors on the three screens | `WORKSPACE_WS3_CONTACT.md` | **DONE 2026-09-29** — live on carejiox, carejiox_template, hhh; report `WORKSPACE_WS3_REPORT.md`. Programme closed. |
 
 Later polish (owner saw it in the concept; not scheduled): one-line plain-English summary
 at the top of the record, and a Ctrl K command box.
