@@ -640,7 +640,7 @@ $ws2-own-icons: ("mail", "message-square", "gift", "repeat", "list", "receipt",
 
         .ws-visit {
             display: grid;
-            grid-template-columns: auto 52px minmax(0, 1fr) auto;
+            grid-template-columns: auto auto minmax(0, 1fr) auto;
             align-items: center;
             gap: 10px;
             width: 100%;
@@ -663,7 +663,13 @@ $ws2-own-icons: ("mail", "message-square", "gift", "repeat", "list", "receipt",
             font-size: 12.5px;
             font-weight: 600;
         }
-        .ws-visit__date { color: var(--vuf-muted); font-variant-numeric: tabular-nums; }
+        // one line in every language ("3 Apr" / "3 thg 4")
+        .ws-visit__date {
+            min-width: 44px;
+            white-space: nowrap;
+            color: var(--vuf-muted);
+            font-variant-numeric: tabular-nums;
+        }
         .ws-visit__service {
             min-width: 0;
             overflow: hidden;

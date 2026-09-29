@@ -489,7 +489,8 @@ export class WsClientVisits extends WsClientPanel {
             return {
                 id: v.id,
                 name: v.name,
-                date: dt ? dt.toFormat("d LLL") : "—",
+                // the locale's own short day + month ("3 Apr", "3 thg 4")
+                date: dt ? dt.toLocaleString({ day: "numeric", month: "short" }) : "—",
                 service: v.service_type_label || "",
                 state: v.state_label || "",
                 tone: STATE_TONE[v.state] || "muted",
