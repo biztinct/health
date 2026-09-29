@@ -115,11 +115,65 @@ export class BizMiniRail extends Component {
         // state. The builder's preview leaves this off and keeps every
         // sub-entry drawn, because there the point is to watch them light up.
         expandable: { type: Boolean, optional: true },
+        // THE SHELL LAYOUT (MENU M2). The product's menu is drawn as a rail of
+        // areas, a column of the chosen area's tabs, and the chosen tab's
+        // screens as a strip — so the passport draws it the same way: press an
+        // area, then a tab, and read what is inside. Read-only, like the rest.
+        shell: { type: Boolean, optional: true },
     };
-    static defaultProps = { legend: true, expandable: false };
+    static defaultProps = { legend: true, expandable: false, shell: false };
 
     setup() {
-        this.state = useState({ open: {} });
+        this.state = useState({ open: {}, sec: null, tab: null });
+    }
+
+    // ------------------------------------------------------- shell layout
+    /** An area is "on" when anything in it opens for them. */
+    sectionState(sec) {
+        const any = (sec.items || []).some((i) => i.state === "on"
+            || (i.children || []).some((c) => c.state === "on"));
+        return any ? "on" : "off";
+    }
+
+    /** A tab is "on" when it, or any screen inside it, opens for them. */
+    tabState(item) {
+        if ((item.children || []).length) {
+            return item.children.some((c) => c.state === "on") ? "on"
+                : (item.children.some((c) => c.state === "locked") ? "locked" : "off");
+        }
+        return item.state;
+    }
+
+    get activeSection() {
+        const sections = this.props.sections || [];
+        return sections.find((s) => (s.key || s.label) === this.state.sec)
+            // Home is a door, not an area: start on the first real area
+            // somebody opens something in.
+            || sections.find((s) => s.key !== "home" && this.sectionState(s) === "on")
+            || sections.find((s) => this.sectionState(s) === "on")
+            || sections[0] || null;
+    }
+
+    get activeTab() {
+        const sec = this.activeSection;
+        const items = (sec && sec.items) || [];
+        return items.find((i) => i.id === this.state.tab)
+            || items.find((i) => this.tabState(i) === "on")
+            || items[0] || null;
+    }
+
+    pickSection(sec) {
+        this.state.sec = sec.key || sec.label;
+        this.state.tab = null;
+    }
+
+    pickTab(item) {
+        this.state.tab = item.id;
+    }
+
+    isActiveSection(sec) {
+        const active = this.activeSection;
+        return Boolean(active) && (active.key || active.label) === (sec.key || sec.label);
     }
 
     ic(n, s = 13) { return ic(n, s); }

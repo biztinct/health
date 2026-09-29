@@ -82,6 +82,15 @@ SIDEBAR_KEYS = {
     'fin_bhyt':           'health_cms_coverage.item_fin_bhyt_claims',
 }
 
+# A STATION teaches a place on the map, and since the consolidated menu (MENU
+# M2) the AR Management launcher is retired: its three cards are three screens
+# of Finance › Payments. So the STATION points at that tab (a heading of
+# `health_cms_ia`), which is what a learner can see on their menu — while the
+# Coach's SCREEN keeps the old entry, whose action it still recognises when
+# the screen is opened (the Payments tab answers for it).
+STATION_SIDEBAR_KEYS = dict(
+    SIDEBAR_KEYS, fin_ar_management='health_cms_ia.parent_fin_payments')
+
 # Which morph / chain each visual step pulls its rows from is declared in the
 # content as moment.which / moment.chain; these just name the source tables.
 MORPH_SRC, CHAIN_SRC = 'morphs', 'chains'
@@ -289,7 +298,7 @@ def gen_stations(data, tr):
                   ('summary', en_of(st.get('desc'))),
                   ('icon', st.get('icon') or 'circle'),
                   ('kind', kind),
-                  ('sidebar_key', SIDEBAR_KEYS.get(sid, '')),
+                  ('sidebar_key', STATION_SIDEBAR_KEYS.get(sid, '')),
                   ('duration_min', st.get('mins') or 5),
                   ('required', bool(st.get('required'))),
                   ('star', bool(st.get('star'))),

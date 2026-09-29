@@ -87,6 +87,16 @@ HOME_BY_AREA = {
 #: Somebody with roles in several areas lands in the first of these they hold.
 HOME_AREA_ORDER = ('admin', 'operations', 'front_desk', 'finance', 'clinical')
 
+#: INSIDE THE CLINICAL AREA, THE JOB DECIDES (owner ruling, MENU M2): a doctor
+#: lands on Observations, a nurse on Bookings — the list of the visits she is
+#: going out to. Tried in this order, so somebody who is both lands where a
+#: doctor lands. Keyed by the role's fixed name.
+HOME_BY_CLINICAL_ROLE = (
+    ('health_access.role_doctor', 'health_vitals.action_health_observation'),
+    ('health_access.role_nurse',
+     'health_fieldservice.action_ops_booking_list_native'),
+)
+
 
 def _model_behind(env, item):
     """The model an entry's screen opens, or `''` when it opens no records."""
@@ -152,20 +162,44 @@ class CmsSidebarItem(models.Model):
         compute='_compute_effective_biz_role_ids', compute_sudo=True,
         help='What actually gates this entry: its own roles PLUS everything '
              'inherited from its block and from the entries above it. Empty '
-             'means no gate at all — everybody with a login opens it.')
+             'means no gate at all — everybody with a login opens it. A '
+             'heading with no screen and no roles of its own is opened by '
+             'whoever opens something inside it.')
+
+    #: The entries directly under this one. Not a column — the inverse of
+    #: `parent_id` — declared so a heading's derived gate below is recomputed
+    #: when a gate inside it changes.
+    child_ids = fields.One2many('cms.sidebar.item', 'parent_id',
+                                string='Entries inside it')
 
     # Depends on the parent's RAW roles rather than on its computed effective
     # ones: a field that depended on its own value through `parent_id` would
     # need the ORM's cycle machinery, and the loop below already walks the
     # whole chain.
     @api.depends('biz_role_ids', 'section_id.biz_role_ids',
-                 'parent_id.biz_role_ids', 'parent_id.section_id.biz_role_ids')
+                 'parent_id.biz_role_ids', 'parent_id.section_id.biz_role_ids',
+                 'action_xmlid', 'action_tag',
+                 'child_ids.biz_role_ids', 'child_ids.active',
+                 'child_ids.section_id.biz_role_ids')
     def _compute_effective_biz_role_ids(self):
         """A gate on a block, or on an entry above, flows down.
 
         The union, never an override: a leaf can widen who opens it by naming
         a role of its own without being cut off from the people who own the
         block it sits in.
+
+        A HEADING WITH NOTHING WRITTEN ON IT IS OPENED BY WHOEVER OPENS
+        SOMETHING INSIDE IT (MENU M2). The consolidated menu has tabs holding
+        screens for different people — Settings › Connections holds the front
+        desk's channel set-up beside the owner's phone set-up. A gate written
+        ON such a heading would flow down and open every screen inside to
+        everybody it names; no gate at all would draw the heading for
+        everybody. So a heading (no screen of its own) with no roles of its
+        own takes the union of what gates the screens inside it, and nothing
+        of that flows back down — a child reads its parent's WRITTEN roles,
+        which are none. If anything inside it is open to everybody, so is the
+        heading. Headings that DO carry roles of their own (Voice, Zalo, Care
+        Intelligence…) are unchanged: their gate flows down as before.
         """
         # ARCHIVED ROLES STAY ON THE GATE, and that is the whole reason for
         # the context. A relational read drops inactive records by default, so
@@ -177,14 +211,38 @@ class CmsSidebarItem(models.Model):
         records = self.with_context(active_test=False)
         # Parents before children so a child reads a settled parent value.
         for item in records.sorted(lambda i: bool(i.parent_id)):
-            roles = item.biz_role_ids | item.section_id.biz_role_ids
-            parent = item.parent_id
-            seen = set()
-            while parent and parent.id not in seen:
-                seen.add(parent.id)
-                roles |= parent.biz_role_ids | parent.section_id.biz_role_ids
-                parent = parent.parent_id
+            roles = item._chain_biz_roles()
+            if item._derives_gate_from_children():
+                kids = self.env['cms.sidebar.item'].sudo().with_context(
+                    active_test=False).search(
+                    [('parent_id', '=', item.id), ('active', '=', True)])
+                kid_roles = [kid._chain_biz_roles() for kid in kids]
+                if kid_roles and all(kid_roles):
+                    for kid_role in kid_roles:
+                        roles |= kid_role
+                elif kid_roles:
+                    # Something inside is open to everybody: so is the tab.
+                    roles = roles.browse()
             item.effective_biz_role_ids = roles
+
+    def _chain_biz_roles(self):
+        """Own roles, the block's, and every entry above's WRITTEN roles."""
+        self.ensure_one()
+        item = self.with_context(active_test=False)
+        roles = item.biz_role_ids | item.section_id.biz_role_ids
+        parent = item.parent_id
+        seen = set()
+        while parent and parent.id not in seen:
+            seen.add(parent.id)
+            roles |= parent.biz_role_ids | parent.section_id.biz_role_ids
+            parent = parent.parent_id
+        return roles
+
+    def _derives_gate_from_children(self):
+        """A heading — no screen of its own — with no roles written on it."""
+        self.ensure_one()
+        return (not self.action_xmlid and not self.action_tag
+                and not self.biz_role_ids)
 
     # ================================================================ the rule
     @api.model
@@ -281,19 +339,71 @@ class CmsSidebarItem(models.Model):
         the front desk to the CRM dashboard, everything else to what the menu
         module answers (the Operations dashboard). Nobody is ever sent to a
         screen that answers "switched off".
+
+        MENU M2: inside the clinical area a doctor lands on Observations and a
+        nurse on Bookings (`HOME_BY_CLINICAL_ROLE`); every area the person
+        holds is tried in order, not only the first; and the answer is always
+        a screen this person's own menu draws — failing everything, the first
+        one it does.
         """
         fallback = super().home_action()
-        area = self._home_area(self.env.user)
-        if not area:
-            return fallback
-        for xmlid in HOME_BY_AREA.get(area, ()):
+        user = self.env.user
+        # Every area this person holds, highest first: when the first one's
+        # landing is not on their menu (a Branch Manager who is also a doctor
+        # has no Operations dashboard), the next area's is tried before the
+        # generic guard below.
+        wanted = []
+        for area in self._home_areas(user):
+            if area == 'clinical':
+                wanted += [action for role, action in HOME_BY_CLINICAL_ROLE
+                           if self._holds_role(user, role)]
+            wanted += list(HOME_BY_AREA.get(area, ()))
+        wanted.append(fallback)
+        # NEVER A SCREEN THEY CANNOT FIND AGAIN (MENU M2). A landing that is
+        # not on this person's own menu would put them on a page with nothing
+        # lit and no way back to it, so the landing must be drawn for them;
+        # failing every choice above, the first screen their menu does draw.
+        drawn = self._home_drawn_actions()
+        for xmlid in wanted:
+            if xmlid in drawn and self._home_opens(xmlid):
+                return xmlid
+        for xmlid in drawn:
             if self._home_opens(xmlid):
                 return xmlid
         return fallback
 
     @api.model
+    def _holds_role(self, user, role_xmlid):
+        """Does `user` hold every permission of the role with this name?"""
+        role = self.env.ref(role_xmlid, raise_if_not_found=False)
+        if not role or not role.active or not role.group_ids:
+            return False
+        return set(role.sudo().group_ids.ids) <= set(user.sudo().all_group_ids.ids)
+
+    @api.model
+    def _home_drawn_actions(self):
+        """The screens this person's menu draws, in the order it draws them —
+        Home itself left out. Asked of `get_sidebar_data`, the one answer."""
+        out = []
+        for section in self.get_sidebar_data():
+            if section.get('key') == 'home':
+                continue
+            for item in section.get('items') or []:
+                for node in [item] + list(item.get('children') or []):
+                    xmlid = node.get('action_xmlid')
+                    if xmlid and xmlid not in out:
+                        out.append(xmlid)
+        return out
+
+    @api.model
     def _home_area(self, user):
         """The highest-precedence area among the roles `user` fully holds."""
+        areas = self._home_areas(user)
+        return areas[0] if areas else ''
+
+    @api.model
+    def _home_areas(self, user):
+        """Every area among the roles `user` fully holds, highest first."""
         held = set(user.sudo().all_group_ids.ids)
         areas = set()
         for role in self.env['biz.access.role'].sudo().search(
@@ -301,10 +411,7 @@ class CmsSidebarItem(models.Model):
             groups = set(role.group_ids.ids)
             if groups and groups <= held:
                 areas.add(role.area)
-        for area in HOME_AREA_ORDER:
-            if area in areas:
-                return area
-        return ''
+        return [area for area in HOME_AREA_ORDER if area in areas]
 
     @api.model
     def _home_opens(self, xmlid):
@@ -397,12 +504,30 @@ class HealthCmsRail(RailProvider):
                 'sequence': section.sequence or 0,
                 'active': bool(section.active),
                 'show_label': True,
+                # Optional in the protocol: the block's own icon, so the
+                # Access home's miniature can draw it as the rail draws it
+                # (MENU M2 — one rail entry per block).
+                'icon': section.icon or '',
                 # Optional in the protocol: what is written on the BLOCK, so a
                 # lens can say a whole block is gated instead of repeating one
                 # chip on fourteen rows. Nothing decides visibility from it.
                 'role_ids': section.biz_role_ids.ids,
             })
         return rows
+
+    def labels(self, env=None):
+        """What this menu calls its three levels (MENU M2).
+
+        Since the consolidated menu, a block is drawn as an AREA on the rail,
+        a root entry as a TAB in the tab column, and a child as a screen
+        INSIDE THE TAB. The Access home's generic words ("block", "entry",
+        "sub-entry") stay generic in `biz_access`, which exposes no vocabulary
+        hook of its own; these are the words to use wherever this product's
+        own code talks about its menu, and the ones a future hook would read.
+        """
+        return {'section': 'Area', 'sections': 'Areas',
+                'entry': 'Tab', 'entries': 'Tabs',
+                'child': 'Inside the tab'}
 
     def supports_section_gates(self, env):
         # `cms.sidebar.section.biz_role_ids` — a block's roles flow down.

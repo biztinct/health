@@ -830,15 +830,16 @@ Object.assign(SCREENS, {
             <div class="lrn-tabs"><button aria-selected="true">${esc(tx(B("Receivables", "Công nợ phải thu")))}</button>
                 <span class="lrn-chip b lrn-push">${esc(money(FIN.invoices.outstanding))}</span></div>
             <div class="lrn-panel" data-a="fam-tools">
-                <h3>${ic("clipboard-check")}${esc(tx(B("The working screen, and what sits under it", "Màn hình làm việc, và những gì nằm dưới nó")))}</h3>
+                <h3>${ic("clipboard-check")}${esc(tx(B("One tab, four screens side by side", "Một thẻ, bốn màn hình cạnh nhau")))}</h3>
                 <div class="lrn-strip">
+                    <button class="lrn-btn sm" data-nav="fin_payments">${ic("check-circle")}${esc(tx(B("All payments", "Tất cả thanh toán")))}</button>
                     <button class="lrn-btn sm" data-nav="fin_account_payment">${ic("check-circle")}${esc(tx(B("Account Payment", "Thanh toán tài khoản")))}</button>
                     <button class="lrn-btn sm" data-nav="fin_cash_transit">${ic("receipt")}${esc(tx(B("Cash In Transit", "Tiền đang chuyển")))}</button>
                     <button class="lrn-btn sm" data-nav="fin_refund">${ic("rotate-ccw")}${esc(tx(B("Refund / Credit", "Hoàn tiền / Điều chỉnh")))}</button>
                 </div>
                 <p class="lrn-note">${esc(tx(B(
-                    "These three are children of this leaf in the sidebar, so opening one keeps AR Management highlighted. That is the menu being helpful and it is also how people lose track of which screen they are actually on — and the refund routes are exactly where that matters.",
-                    "Ba mục này là mục con của nhánh này trên thanh điều hướng, nên khi mở một trong số đó thì Quản lý công nợ vẫn được tô sáng. Đó là sự trợ giúp của menu, và cũng là lý do người dùng mất dấu màn hình mình đang thật sự mở — mà các lối hoàn tiền lại chính là chỗ điều đó gây hậu quả.")))}</p>
+                    "These four are the screens of one tab, Payments, so the tab stays lit whichever of them is open. That is the menu being helpful and it is also how people lose track of which screen they are actually on — the strip at the top of the page says which, and the refund routes are exactly where that matters.",
+                    "Bốn mục này là các màn hình của cùng một thẻ, Thanh toán, nên thẻ vẫn sáng dù đang mở màn hình nào. Đó là sự trợ giúp của menu, và cũng là lý do người dùng mất dấu màn hình mình đang thật sự mở — dải phía trên trang cho biết màn hình nào, mà các lối hoàn tiền lại chính là chỗ điều đó gây hậu quả.")))}</p>
             </div>`;
     },
 
@@ -948,6 +949,11 @@ export function shellHTML(screen, opts) {
 
     const owner = ownerSection(screen);
     const secs = MENU.map((sec) => {
+        // THE CONSOLIDATED MENU (MENU M2): a screen that lives inside a tab
+        // carries the tab's label and is drawn indented under it. The tab's
+        // name is drawn once, above its first screen — or IS the row, when
+        // the tab has a practice screen of its own (`head`).
+        let lastTab = "";
         const items = sec.items.map((it) => {
             const inScope = sec === owner;
             const seen = !inScope || visible.has(it.id);
@@ -956,7 +962,14 @@ export function shellHTML(screen, opts) {
             // it is before asking for access.
             const off = !inScope || (!seen && !o.guided);
             const on = it.id === screen;
-            return `<button class="lrn-item ${on ? "on" : ""}${SP}${off ? "off" : ""}" data-nav="${esc(it.id)}"
+            const tab = it.tab ? tx(it.tab) : "";
+            let head = "";
+            if (tab && tab !== lastTab && !it.head) {
+                head = `<div class="lrn-tabh">${esc(tab)}</div>`;
+            }
+            lastTab = tab;
+            const sub = tab && !it.head ? " sub" : "";
+            return `${head}<button class="lrn-item ${on ? "on" : ""}${SP}${off ? "off" : ""}${sub}" data-nav="${esc(it.id)}"
                 ${off ? 'tabindex="-1" aria-disabled="true"' : ""}>${ic(it.icon)}
                 <span>${esc(tx(it.label))}</span></button>`;
         }).join("");

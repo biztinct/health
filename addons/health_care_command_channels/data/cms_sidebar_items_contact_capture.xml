@@ -11,16 +11,20 @@
      into a non-navigating accordion (cms_sidebar.js:124). That regression
      already happened once to the Channel Center item.
 
-     No noupdate, ungated (no role_ids), matching the two sibling items. -->
+     No noupdate, ungated (no role_ids), matching the two sibling items.
+     MENU M2 (consolidated menu): the second screen of CRM › Channels. `parent_id` is NOT named here any
+     more — the tab it sits under is a heading of `health_cms_ia`, which
+     loads after this module and so cannot be pointed at. That module's
+     hook writes the parent; because this record no longer names the
+     field, an upgrade of this module leaves it where the hook put it
+     (an omitted field is not an unset one). The sequence below is the
+     final one, the same value the hook writes. -->
 <odoo>
 
     <record id="item_contact_capture" model="cms.sidebar.item">
         <field name="name">Unrouted Contacts</field>
         <field name="section_id" ref="health_cms_sidebar.section_crm"/>
-        <!-- Explicitly FALSE, not merely absent: an XML data update only
-             writes the fields it names. -->
-        <field name="parent_id" eval="False"/>
-        <field name="sequence">13</field>
+        <field name="sequence">20</field>
         <field name="icon">fa fa-inbox</field>
         <field name="action_xmlid">health_care_command_channels.action_care_contact_capture</field>
     </record>

@@ -16,7 +16,8 @@
        faint, with the word for it beside them.
        ==================================================================== -->
   <t t-name="biz_access.MiniRail">
-    <div class="bzmr">
+    <t t-if="props.shell" t-call="biz_access.MiniRailShell"/>
+    <div t-else="" class="bzmr">
       <!-- A picture when nothing in it can be pressed; a group of buttons when
            its parents unfold, or a screen reader would skip the buttons. -->
       <div class="bzmr-rail" t-att-role="props.expandable ? 'group' : 'img'"
@@ -87,6 +88,75 @@
         <span t-if="props.expandable" class="bzmr-legend-hint">
           <t t-out="ic('chevronDown',12)"/> press an entry with a number on it to see the screens inside
         </span>
+      </div>
+    </div>
+  </t>
+
+  <!-- ====================================================================
+       THE SHELL LAYOUT (MENU M2): a rail of areas, the chosen area's tabs,
+       and the chosen tab's screens — the product's own menu, drawn small.
+       Nothing here is a link into the product; pressing an area or a tab
+       only chooses what the miniature shows. Loops: area `ma`, tab `mt`,
+       screen `mg` (R1).
+       ==================================================================== -->
+  <t t-name="biz_access.MiniRailShell">
+    <div class="bzmr bzmr--shell">
+      <div class="bzmr-shell" role="group"
+           aria-label="A miniature of the left menu, showing which areas, tabs and screens this person opens">
+        <div class="bzmr-srail">
+          <t t-foreach="props.sections" t-as="ma" t-key="ma.key or ma.label">
+            <button type="button"
+                    t-attf-class="bzmr-sarea is-{{ sectionState(ma) }} {{ isActiveSection(ma) ? 'is-active' : '' }}"
+                    t-att-title="ma.label"
+                    t-att-aria-pressed="isActiveSection(ma) ? 'true' : 'false'"
+                    t-on-click="() => this.pickSection(ma)">
+              <span class="bzmr-sarea-ic">
+                <i t-if="isFontIcon(ma.icon)" t-att-class="ma.icon"/>
+                <t t-else="" t-out="railIcon(ma.icon, 15)"/>
+              </span>
+              <span class="bzmr-sarea-dot"/>
+            </button>
+          </t>
+        </div>
+        <div class="bzmr-stabs" t-if="activeSection">
+          <t t-foreach="activeSection.items" t-as="mt" t-key="mt.id">
+            <button type="button"
+                    t-attf-class="bzmr-stab is-{{ tabState(mt) }} {{ activeTab and activeTab.id === mt.id ? 'is-active' : '' }} {{ mt.newly_lit ? 'is-new' : '' }}"
+                    t-att-title="title({state: tabState(mt)})"
+                    t-on-click="() => this.pickTab(mt)">
+              <span class="bzmr-stab-ic">
+                <i t-if="isFontIcon(mt.icon)" t-att-class="mt.icon"/>
+                <t t-else="" t-out="railIcon(mt.icon, 14)"/>
+              </span>
+              <span class="bzmr-stab-n" t-esc="mt.label"/>
+              <span class="bzmr-stab-st"><t t-out="stateIcon({state: tabState(mt)})"/></span>
+            </button>
+          </t>
+        </div>
+        <div class="bzmr-spage" t-if="activeSection">
+          <div class="bzmr-spage-head">
+            <span class="bzmr-spage-area" t-esc="activeSection.label"/>
+            <span t-if="activeTab" class="bzmr-spage-tab" t-esc="activeTab.label"/>
+          </div>
+          <t t-if="activeTab and (activeTab.children or []).length">
+            <p class="bzmr-spage-note">Inside the tab</p>
+            <div class="bzmr-ssegs">
+              <span t-foreach="activeTab.children" t-as="mg" t-key="mg.id"
+                    t-attf-class="bzmr-sseg is-{{mg.state}} {{ mg.newly_lit ? 'is-new' : '' }}"
+                    t-att-title="title(mg)">
+                <t t-out="stateIcon(mg)"/>
+                <span t-esc="mg.label"/>
+              </span>
+            </div>
+          </t>
+          <p t-elif="activeTab" class="bzmr-spage-note" t-esc="title(activeTab)"/>
+        </div>
+      </div>
+      <div t-if="props.legend" class="bzmr-legend">
+        <span><t t-out="ic('check',12)"/> they see it</span>
+        <span t-if="hasLocked"><t t-out="ic('lock',12)"/> locked, with a note</span>
+        <span><t t-out="ic('eyeOff',12)"/> not on their menu</span>
+        <span class="bzmr-legend-hint">press an area, then a tab, to see what is inside</span>
       </div>
     </div>
   </t>

@@ -663,7 +663,7 @@
 
                   <BizMiniRail t-if="passport.rail.length"
                               sections="passport.rail" legend="true"
-                              expandable="true"/>
+                              expandable="true" shell="true"/>
 
                   <p t-else="" class="bza-col-empty">
                     There is no left menu written down on this system, so there

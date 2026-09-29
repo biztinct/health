@@ -77,7 +77,7 @@ Handovers: docs/strategy/handovers/web-leads-phaseW1.md, …-phaseW2.md,
 …-phaseW2_5.md, …-phaseW3.md,
 docs/strategy/handovers/google-ads-phaseGA1.md
 """,
-    'version': '19.0.5.0.0',
+    'version': '19.0.5.0.1',
     'category': 'Healthcare',
     'author': 'Biztinct',
     'website': 'https://carejiox.com',

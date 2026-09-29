@@ -547,31 +547,35 @@ const FIN = {
    Contract id: `crm-sidebar-items` (xml-ids + sequences + EN labels) and
    `crm-sidebar-labels-vi` (the shipped Vietnamese strings).
 
-   Sources (sequence · xml-id · file):
-     10 · health_cms_sidebar.item_crm_dashboard        data/cms_sidebar_items_crm.xml
-     11 · health_care_command.item_care_command        data/cms_sidebar_items_care_command.xml
-     12 · ..._channels.item_channel_center             data/cms_sidebar_items_channel_center.xml
-     13 · ..._channels.item_contact_capture            data/cms_sidebar_items_contact_capture.xml
-     20 · health_cms_sidebar.item_crm_contacts         data/cms_sidebar_items_crm.xml
-     21 · health_web_leads.item_web_touchpoints        data/cms_sidebar_items_web_leads.xml
-     23 · health_web_leads.item_lead_analysis          data/cms_sidebar_items_web_leads.xml
-     50 · health_cms_sidebar.item_crm_activities       data/cms_sidebar_items_crm.xml
+   Sources (tab › screen · sequence · xml-id), after MENU M2:
+     10 · health_cms_sidebar.item_crm_dashboard
+     20 · health_care_command.item_care_command
+     Channels (30) › 10 · ..._channels.item_channel_center
+     Channels (30) › 20 · ..._channels.item_contact_capture
+     Contacts (50) › 10 · health_cms_sidebar.item_crm_contacts ("All contacts")
+     60 · health_cms_sidebar.item_crm_activities
+     Web & Ads (70) › 10 · health_web_leads.item_web_touchpoints
+     Web & Ads (70) › 20 · health_web_leads.item_lead_analysis
 
    `roles` is the DB role gate (role bundles, `health_access.role_*` — see
    health_cms_coverage/hooks.py). Contract id: `crm-role-gate`.
    ========================================================================== */
 const MENU = [
+  /* THE CONSOLIDATED MENU (MENU M2, health_cms_ia/hooks.py MOVE). Each area
+     is a list of TABS; a screen that lives INSIDE a tab carries `tab`, the
+     tab's label, and is drawn indented under it. A row with `head: true` IS
+     the tab (its own practice screen). Sequences are the product's. */
   {
     key: "crm", label: B("CRM", "CRM"),
     items: [
       { id: "dashboard", icon: "grid", seq: 10, label: B("Dashboard", "Bảng điều khiển"), roles: ["owner", "crm"] },
-      { id: "carecommand", icon: "zap", seq: 11, label: B("Care Command", "Care Command"), roles: ["owner", "crm"] },
-      { id: "channelcenter", icon: "plug", seq: 12, label: B("Channel Center", "Trung tâm kênh"), roles: null },
-      { id: "unrouted", icon: "inbox", seq: 13, label: B("Unrouted Contacts", "Danh bạ chưa được định tuyến"), roles: null },
-      { id: "contacts", icon: "phone", seq: 20, label: B("Contacts", "Liên hệ"), roles: ["owner", "crm"] },
-      { id: "touchpoints", icon: "crosshair", seq: 21, label: B("Web Touchpoints", "Điểm chạm web"), roles: null },
-      { id: "leadanalysis", icon: "bar-chart", seq: 23, label: B("Lead Analysis", "Phân tích khách tiềm năng"), roles: null },
-      { id: "activities", icon: "list-checks", seq: 50, label: B("Activities", "Hoạt động"), roles: ["owner", "crm"] },
+      { id: "carecommand", icon: "zap", seq: 20, label: B("Care Command", "Care Command"), roles: ["owner", "crm"] },
+      { id: "channelcenter", icon: "plug", seq: 10, tab: B("Channels", "Kênh"), label: B("Channel Center", "Trung tâm kênh"), roles: ["owner", "crm", "operations_manager"] },
+      { id: "unrouted", icon: "inbox", seq: 20, tab: B("Channels", "Kênh"), label: B("Unrouted Contacts", "Danh bạ chưa được định tuyến"), roles: ["owner", "crm", "operations_manager"] },
+      { id: "contacts", icon: "phone", seq: 10, tab: B("Contacts", "Liên hệ"), label: B("All contacts", "Tất cả liên hệ"), roles: ["owner", "crm"] },
+      { id: "activities", icon: "list-checks", seq: 60, label: B("Activities", "Hoạt động"), roles: ["owner", "crm"] },
+      { id: "touchpoints", icon: "crosshair", seq: 10, tab: B("Web & Ads", "Web & Quảng cáo"), label: B("Web Touchpoints", "Điểm chạm web"), roles: ["owner", "crm"] },
+      { id: "leadanalysis", icon: "bar-chart", seq: 20, tab: B("Web & Ads", "Web & Quảng cáo"), label: B("Lead Analysis", "Phân tích khách tiềm năng"), roles: ["owner", "crm"] },
     ],
   },
   /* The other two sections carry their REAL leaves, with ids that are station
@@ -583,33 +587,33 @@ const MENU = [
         screen on display, not by a flag frozen at authoring time — so one
         MENU serves a CRM lesson, an OPS mission and a FINANCE mission. */
   {
-    key: "ops", label: B("OPERATIONS MANAGER", "QUẢN LÝ VẬN HÀNH"),
+    key: "ops", label: B("Operations", "Vận hành"),
     items: [
       { id: "ops_dashboard", icon: "grid", label: B("Dashboard", "Bảng điều khiển") },
       { id: "ops_bookings", icon: "calendar", label: B("Bookings", "Lịch hẹn") },
       { id: "ops_clients", icon: "users", label: B("Clients", "Khách hàng") },
-      { id: "ops_timeoff", icon: "clock", label: B("Time Off", "Nghỉ phép") },
-      { id: "ops_schedule", icon: "users", label: B("Staff Schedule", "Lịch nhân sự") },
+      { id: "ops_schedule", icon: "users", tab: B("Schedule", "Lịch"), label: B("Staff Schedule", "Lịch nhân sự") },
+      { id: "ops_timeoff", icon: "clock", tab: B("Schedule", "Lịch"), label: B("Time Off", "Nghỉ phép") },
+      { id: "ops_workload", icon: "bar-chart", tab: B("Schedule", "Lịch"), label: B("Workload", "Khối lượng công việc") },
       { id: "ops_collections", icon: "receipt", label: B("Collections", "Thu tiền mặt") },
-      { id: "ops_workload", icon: "bar-chart", label: B("Workload", "Khối lượng công việc") },
       { id: "ops_family", icon: "message-circle", label: B("Family Inbox", "Hộp thư người nhà") },
-      { id: "ops_routes", icon: "map", label: B("Route Feasibility", "Khả năng di chuyển") },
+      { id: "ops_routes", icon: "map", label: B("Routes", "Tuyến đường") },
     ],
   },
   {
-    key: "fin", label: B("FINANCE", "TÀI CHÍNH"),
+    key: "fin", label: B("Finance", "Tài chính"),
     items: [
       { id: "fin_dashboard", icon: "grid", label: B("Dashboard", "Bảng điều khiển") },
       { id: "fin_invoices", icon: "receipt", label: B("Invoices", "Hóa đơn") },
-      { id: "fin_account_payment", icon: "check-circle", label: B("Account Payment", "Thanh toán tài khoản") },
-      { id: "fin_cash_transit", icon: "receipt", label: B("Cash In Transit", "Tiền đang chuyển") },
-      { id: "fin_refund", icon: "rotate-ccw", label: B("Refund / Credit", "Hoàn tiền / Điều chỉnh") },
-      { id: "fin_ar_dashboard", icon: "bar-chart", label: B("AR Dashboard", "Bảng công nợ") },
-      { id: "fin_ar_management", icon: "clipboard-check", label: B("AR Management", "Quản lý công nợ") },
-      { id: "fin_payments", icon: "check-circle", label: B("Payments", "Thanh toán") },
-      { id: "fin_overdue", icon: "alert-triangle", label: B("Overdue Clients", "Khách hàng quá hạn") },
+      { id: "fin_ar_dashboard", icon: "bar-chart", tab: B("Receivables", "Công nợ phải thu"), label: B("AR Dashboard", "Bảng công nợ") },
+      { id: "fin_ar_transactions", icon: "list-checks", tab: B("Receivables", "Công nợ phải thu"), label: B("AR Transactions", "Giao dịch công nợ") },
+      { id: "fin_overdue", icon: "alert-triangle", tab: B("Receivables", "Công nợ phải thu"), label: B("Overdue Clients", "Khách hàng quá hạn") },
+      { id: "fin_ar_management", icon: "clipboard-check", head: true, tab: B("Payments", "Thanh toán"), label: B("Payments", "Thanh toán") },
+      { id: "fin_payments", icon: "check-circle", tab: B("Payments", "Thanh toán"), label: B("All payments", "Tất cả thanh toán") },
+      { id: "fin_account_payment", icon: "check-circle", tab: B("Payments", "Thanh toán"), label: B("Account Payment", "Thanh toán tài khoản") },
+      { id: "fin_cash_transit", icon: "receipt", tab: B("Payments", "Thanh toán"), label: B("Cash In Transit", "Tiền đang chuyển") },
+      { id: "fin_refund", icon: "rotate-ccw", tab: B("Payments", "Thanh toán"), label: B("Refund / Credit", "Hoàn tiền / Điều chỉnh") },
       { id: "fin_vat_log", icon: "file-text", label: B("VAT Log", "Nhật ký hóa đơn VAT") },
-      { id: "fin_ar_transactions", icon: "list-checks", label: B("AR Transactions", "Giao dịch công nợ") },
       { id: "fin_bhyt", icon: "clipboard-check", label: B("BHYT Claims", "Hồ sơ BHYT") },
       { id: "fin_packages", icon: "list-checks", label: B("Service Packages", "Gói dịch vụ") },
       { id: "fin_red_invoice", icon: "shield-check", label: B("Red Invoice Log", "Nhật ký hóa đơn đỏ") },
@@ -618,15 +622,16 @@ const MENU = [
 ];
 
 /* Leaves that USED to be in CRM and no longer are — the 19.0.1.2.0 menu
-   consolidation (health_cms_coverage/hooks.py RETIRE / RELOCATE_TO_ADMIN).
+   consolidation (health_cms_coverage/hooks.py RETIRE / RELOCATE_TO_ADMIN),
+   and where the consolidated menu (MENU M2) put them.
    Contract id: `crm-retired`. */
 const RETIRED = [
   { label: B("Follow-up Calendar", "Lịch theo dõi"), now: B("a calendar view mode on Contacts", "một chế độ xem lịch trên màn hình Liên hệ") },
-  { label: B("Relationships", "Quan hệ"), now: B("the Client › Healthcare Relationships tab", "thẻ Khách hàng › Quan hệ chăm sóc") },
+  { label: B("Relationships", "Quan hệ"), now: B("a screen of the CRM › Contacts tab", "một màn hình trong thẻ CRM › Liên hệ") },
   { label: B("Campaign Review", "Duyệt chiến dịch"), now: B("the “Unmatched campaigns” chip on Web Touchpoints", "chip “Chiến dịch chưa khớp” trên Điểm chạm web") },
-  { label: B("Channels (setup)", "Kênh (thiết lập)"), now: B("moved to ADMIN", "đã chuyển sang QUẢN TRỊ") },
-  { label: B("Reply Templates", "Mẫu trả lời"), now: B("moved to ADMIN", "đã chuyển sang QUẢN TRỊ") },
-  { label: B("Website Connector", "Kết nối website"), now: B("moved to ADMIN", "đã chuyển sang QUẢN TRỊ") },
+  { label: B("Channels (setup)", "Kênh (thiết lập)"), now: B("moved to Settings › Connections", "đã chuyển sang Cài đặt › Kết nối") },
+  { label: B("Reply Templates", "Mẫu trả lời"), now: B("moved to Settings › Connections", "đã chuyển sang Cài đặt › Kết nối") },
+  { label: B("Website Connector", "Kết nối website"), now: B("moved to Settings › Connections", "đã chuyển sang Cài đặt › Kết nối") },
 ];
 
 /* Status/state → chip label + tone, so a renamed selection is one edit here.

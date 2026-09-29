@@ -2628,7 +2628,7 @@
         <field name="sequence">30</field>
         <field name="capability">any</field>
         <field name="kind">warn</field>
-        <field name="body">All three move money the same direction and for the same client, so a wrong route still balances the cash and not the books. AR Management stays highlighted for all three of its children — the menu will not tell you which screen you are on.</field>
+        <field name="body">All three move money the same direction and for the same client, so a wrong route still balances the cash and not the books. The Payments tab stays lit for all of them — only the strip at the top of the page says which screen you are on.</field>
     </record>
 
     <record id="intent_fin_refund_route_b040" model="learn.intent.block">

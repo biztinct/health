@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    THE NEW TABS — the headings the consolidation groups existing screens under.
+
+    Each one is a tab in the shell M1 drew: it has NO screen of its own, so it
+    opens the first screen inside it (ledger §5.225), and the screens inside it
+    are the segments. The hook (`hooks.py`) moves the existing rows under them,
+    writes the actions they answer for, and switches off any that ends up with
+    nothing inside it on a database where a module is missing.
+
+    noupdate="1" ON PURPOSE. Once a heading exists it belongs to the clinic:
+    somebody may rename it or reorder it from the Menu screen, and an upgrade
+    must not undo that. The same rule is why the hook writes the rows it moves
+    rather than a data file (ledger §5.116).
+
+    NO GATE IS WRITTEN HERE. A heading with no roles of its own and no screen
+    of its own is opened by whoever opens something inside it
+    (`health_access` `_compute_effective_biz_role_ids`), which is the only way
+    one heading can hold screens for different people without widening any of
+    them. `parent_id` is written explicitly False (ledger §5.69b).
+-->
+<odoo noupdate="1">
+
+    <!-- ============================== CRM ============================== -->
+    <record id="parent_crm_channels" model="cms.sidebar.item">
+        <field name="name">Channels</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">30</field>
+        <field name="icon">fa fa-comments-o</field>
+    </record>
+    <record id="parent_crm_contacts" model="cms.sidebar.item">
+        <field name="name">Contacts</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">50</field>
+        <field name="icon">fa fa-address-book</field>
+    </record>
+    <record id="parent_crm_web" model="cms.sidebar.item">
+        <field name="name">Web &amp; Ads</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">70</field>
+        <field name="icon">fa fa-globe</field>
+    </record>
+
+    <!-- =========================== Operations =========================== -->
+    <record id="parent_ops_schedule" model="cms.sidebar.item">
+        <field name="name">Schedule</field>
+        <field name="section_id" ref="health_cms_sidebar.section_ops"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">40</field>
+        <field name="icon">fa fa-calendar</field>
+    </record>
+    <record id="parent_ops_exceptions" model="cms.sidebar.item">
+        <field name="name">Exceptions</field>
+        <field name="section_id" ref="health_cms_sidebar.section_ops"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">80</field>
+        <field name="icon">fa fa-exclamation-circle</field>
+    </record>
+    <record id="parent_ops_development" model="cms.sidebar.item">
+        <field name="name">Development</field>
+        <field name="section_id" ref="health_cms_sidebar.section_ops"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">90</field>
+        <field name="icon">fa fa-line-chart</field>
+    </record>
+
+    <!-- ============================ Clinical ============================ -->
+    <record id="parent_clin_notes" model="cms.sidebar.item">
+        <field name="name">Notes</field>
+        <field name="section_id" ref="health_cms_sidebar.section_clinical"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">70</field>
+        <field name="icon">fa fa-file-text-o</field>
+    </record>
+
+    <!-- ============================= Finance ============================ -->
+    <record id="parent_fin_receivables" model="cms.sidebar.item">
+        <field name="name">Receivables</field>
+        <field name="section_id" ref="health_cms_sidebar.section_finance"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">30</field>
+        <field name="icon">fa fa-money</field>
+    </record>
+    <record id="parent_fin_payments" model="cms.sidebar.item">
+        <field name="name">Payments</field>
+        <field name="section_id" ref="health_cms_sidebar.section_finance"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">40</field>
+        <field name="icon">fa fa-credit-card</field>
+    </record>
+
+    <!-- =========================== Compliance =========================== -->
+    <record id="parent_int_emr" model="cms.sidebar.item">
+        <field name="name">EMR (VN)</field>
+        <field name="section_id" ref="health_cms_sidebar.section_interop"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">20</field>
+        <field name="icon">fa fa-exchange</field>
+    </record>
+
+    <!-- ============================ Settings ============================ -->
+    <record id="parent_admin_people" model="cms.sidebar.item">
+        <field name="name">People</field>
+        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">20</field>
+        <field name="icon">fa fa-users</field>
+    </record>
+    <record id="parent_admin_master" model="cms.sidebar.item">
+        <field name="name">Master data</field>
+        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">30</field>
+        <field name="icon">fa fa-database</field>
+    </record>
+    <record id="parent_admin_connections" model="cms.sidebar.item">
+        <field name="name">Connections</field>
+        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">40</field>
+        <field name="icon">fa fa-plug</field>
+    </record>
+    <record id="parent_admin_records" model="cms.sidebar.item">
+        <field name="name">Records</field>
+        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">50</field>
+        <field name="icon">fa fa-archive</field>
+    </record>
+
+</odoo>

@@ -503,12 +503,6 @@ msgid "AR Dashboard"
 msgstr "Bảng công nợ"
 
 #. module: health_learn
-#: model:learn.screen,name:health_learn.screen_fin_ar_management
-#: model:learn.station,name:health_learn.station_fin_ar_management
-msgid "AR Management"
-msgstr "Quản lý công nợ"
-
-#. module: health_learn
 #: model:learn.screen,name:health_learn.screen_fin_ar_transactions
 #: model:learn.station,name:health_learn.station_fin_ar_transactions
 msgid "AR Transactions"
@@ -638,6 +632,12 @@ msgid "All areas"
 msgstr "Tất cả các khu vực"
 
 #. module: health_learn
+#: model:learn.screen,name:health_learn.screen_fin_payments
+#: model:learn.station,name:health_learn.station_fin_payments
+msgid "All payments"
+msgstr "Tất cả thanh toán"
+
+#. module: health_learn
 #: model:learn.screen,next_step:health_learn.screen_carecommand
 #: model:learn.station,outline_when:health_learn.station_carecommand
 msgid "All shift. It is where a CRM operator lives; the other screens are what you open from it."
@@ -652,9 +652,9 @@ msgstr "Tất cả bề mặt"
 #. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_fin_refund_route_b030
 msgid ""
-"All three move money the same direction and for the same client, so a wrong route still balances the cash and not the books. AR Management stays highlighted for all three of its children — the menu will not tell you which screen you are on."
+"All three move money the same direction and for the same client, so a wrong route still balances the cash and not the books. The Payments tab stays lit for all of them — only the strip at the top of the page says which screen you are on."
 msgstr ""
-"Cả ba đều làm tiền đi cùng một hướng và cho cùng một khách hàng, nên chọn sai lối vẫn khớp tiền mặt nhưng không khớp sổ sách. Quản lý công nợ vẫn được tô sáng cho cả ba mục con — thanh menu sẽ không cho bạn biết bạn đang ở màn hình nào."
+"Cả ba đều làm tiền đi cùng một hướng và cho cùng một khách hàng, nên chọn sai lối vẫn khớp tiền mặt nhưng không khớp sổ sách. Thẻ Thanh toán vẫn sáng cho tất cả — chỉ dải phía trên trang cho biết bạn đang ở màn hình nào."
 
 #. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_catchmentq_b010
@@ -3657,9 +3657,9 @@ msgstr ""
 #. module: health_learn
 #: model:learn.mission.note,body:health_learn.mission_fm1_check_03
 msgid ""
-"Never choose the route from the screen you are standing on. AR Management stays highlighted for all three of its children."
+"Never choose the route from the screen you are standing on. The Payments tab stays lit for all four screens inside it — read the strip at the top of the page to see which one you are on."
 msgstr ""
-"Đừng bao giờ chọn lối xử lý dựa trên màn hình bạn đang đứng. Quản lý công nợ vẫn được tô sáng cho cả ba mục con của nó."
+"Đừng bao giờ chọn lối xử lý dựa trên màn hình bạn đang đứng. Thẻ Thanh toán vẫn sáng cho cả bốn màn hình bên trong — hãy đọc dải phía trên trang để biết bạn đang ở màn hình nào."
 
 #. module: health_learn
 #: model:learn.column,body:health_learn.col_ops_bookings_state
@@ -3961,6 +3961,13 @@ msgstr ""
 #: model:learn.step,title:health_learn.lesson_l2_step_03
 msgid "One setting decides whose wall it lands on"
 msgstr "Một thiết lập quyết định tin rơi vào bảng của ai"
+
+#. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_fin_ar_management
+msgid ""
+"One tab in Finance holding four screens side by side: All payments, Account Payment, Cash In Transit and Refund / Credit. It replaces the old AR Management launcher."
+msgstr ""
+"Một thẻ trong Tài chính gồm bốn màn hình cạnh nhau: Tất cả thanh toán, Thanh toán tài khoản, Tiền đang chuyển và Hoàn tiền / Điều chỉnh. Thẻ này thay cho màn hình Quản lý công nợ trước đây."
 
 #. module: health_learn
 #: model:learn.step,title:health_learn.lesson_l1_step_00
@@ -4367,8 +4374,8 @@ msgid "Payment status"
 msgstr "Tình trạng thanh toán"
 
 #. module: health_learn
-#: model:learn.screen,name:health_learn.screen_fin_payments
-#: model:learn.station,name:health_learn.station_fin_payments
+#: model:learn.screen,name:health_learn.screen_fin_ar_management
+#: model:learn.station,name:health_learn.station_fin_ar_management
 msgid "Payments"
 msgstr "Thanh toán"
 
@@ -5010,8 +5017,8 @@ msgstr "Tiếp tục"
 #. module: health_learn
 #: model:learn.screen,name:health_learn.screen_ops_routes
 #: model:learn.station,name:health_learn.station_ops_routes
-msgid "Route Feasibility"
-msgstr "Khả năng di chuyển"
+msgid "Routes"
+msgstr "Tuyến đường"
 
 #. module: health_learn
 #: model:learn.mission.step,instruction:health_learn.mission_m2_step_03
@@ -5656,6 +5663,13 @@ msgid "The Operations Dashboard's unassigned count and the booking list behind i
 msgstr "Số Chưa phân công trên Bảng điều hành và danh sách lịch hẹn phía sau nó."
 
 #. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_fin_ar_management
+msgid ""
+"The Payments tab: the payments list with the payment, cash-in-transit and refund tools beside it."
+msgstr ""
+"Thẻ Thanh toán: danh sách thanh toán cùng các công cụ thanh toán, tiền đang chuyển và hoàn tiền bên cạnh."
+
+#. module: health_learn
 #: model:learn.step,body:health_learn.lesson_l2_step_06
 msgid ""
 "The TPHCM account's grant dies in <b>6 days</b>. It is deliberately still allowed to send — refusing to reply to patients today would be a worse failure than the warning. That is exactly why this state gets ignored until the morning it becomes <b>Action required</b> and the inbox goes silent."
@@ -5991,13 +6005,6 @@ msgstr ""
 "Bảng tổng hợp: yêu cầu theo nguồn, trạng thái, dịch vụ và khu vực — toàn bộ phễu trong một lưới."
 
 #. module: health_learn
-#: model:learn.station,outline_what:health_learn.station_fin_ar_management
-msgid ""
-"The place receivables are actually worked, with Account Payment, Cash In Transit and Refund / Credit grouped beneath it."
-msgstr ""
-"Nơi công nợ thật sự được xử lý, với Thanh toán, Tiền đang chuyển và Hoàn tiền / Điều chỉnh nhóm bên dưới."
-
-#. module: health_learn
 #: model:learn.mission,anomaly_body:health_learn.mission_m2
 msgid ""
 "The provider returns both of the clinic's Official Accounts and lists them by creation date, so TPHCM comes first. Pick it and every readiness check still passes — the connection would be perfectly healthy and pointed at the wrong city. Nothing errors; the Hà Nội desk just has a quiet week."
@@ -6101,6 +6108,11 @@ msgstr ""
 "Sáu định nghĩa KPI trên Bảng điều khiển CRM, và số liệu tháng 8 của dữ liệu thực hành này."
 
 #. module: health_learn
+#: model:learn.station,summary:health_learn.station_fin_ar_management
+msgid "The tab where receivables are worked: the payments list and three tools beside it."
+msgstr "Thẻ nơi công nợ được xử lý: danh sách thanh toán và ba công cụ bên cạnh."
+
+#. module: health_learn
 #: model:learn.lesson,goal:health_learn.lesson_l5
 #: model:learn.station,summary:health_learn.station_activities
 msgid "The team's shared follow-up board — every scheduled call, meeting, email and task."
@@ -6181,18 +6193,6 @@ msgid ""
 "The wizard offers plausible matches before it creates anything. Confirming the wrong suggested client writes the visit — and later the clinical note — into <b>another person's record</b>."
 msgstr ""
 "Trình đặt lịch đưa ra các kết quả khớp hợp lý trước khi tạo bất cứ thứ gì. Xác nhận nhầm khách hàng được gợi ý sẽ ghi lịch hẹn — và sau đó là hồ sơ lâm sàng — vào <b>hồ sơ của người khác</b>."
-
-#. module: health_learn
-#: model:learn.screen,blurb:health_learn.screen_fin_ar_management
-msgid ""
-"The working screen for receivables, with payment, cash-in-transit and refund tools under it."
-msgstr ""
-"Màn hình làm việc cho công nợ, với các công cụ thanh toán, tiền đang chuyển và hoàn tiền bên dưới."
-
-#. module: health_learn
-#: model:learn.station,summary:health_learn.station_fin_ar_management
-msgid "The working screen for receivables, with three tools under it."
-msgstr "Màn hình làm việc cho công nợ, với ba công cụ bên dưới."
 
 #. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_ops_capacity_b010
@@ -6580,9 +6580,9 @@ msgstr ""
 #. module: health_learn
 #: model:learn.station.mistake,name:health_learn.station_fin_ar_management_mistake_0
 msgid ""
-"Treating its three children as separate screens. They are three answers to one question — money that has not settled."
+"Treating its four screens as unrelated. They are four answers to one question — money that has not settled."
 msgstr ""
-"Coi ba mục con là ba màn hình riêng biệt. Chúng là ba câu trả lời cho cùng một câu hỏi — khoản tiền chưa được tất toán."
+"Coi bốn màn hình của thẻ là không liên quan. Chúng là bốn câu trả lời cho cùng một câu hỏi — khoản tiền chưa được tất toán."
 
 #. module: health_learn
 #: model:learn.station.mistake,name:health_learn.station_ops_routes_mistake_1

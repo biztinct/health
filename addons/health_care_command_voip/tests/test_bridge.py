@@ -204,11 +204,25 @@ class TestCareCommandVoipBridge(TransactionCase):
             parent.section_id,
             self.env.ref("health_cms_sidebar.section_crm"))
 
+    #: The two SET-UP screens live in Settings › Connections on the
+    #: consolidated menu (MENU M2, `health_cms_ia`); the other four stay the
+    #: Phone tab's.
+    SETUP_LEAVES = ("item_phone_extensions", "item_phone_settings")
+
     def test_24_phone_sidebar_leaves_open_real_actions(self):
         parent = self.env.ref("health_care_command_voip.item_phone")
+        connections = self.env.ref("health_cms_ia.parent_admin_connections",
+                                   raise_if_not_found=False)
         for item_id, action_xmlid in self.LEAVES:
             item = self.env.ref("health_care_command_voip.%s" % item_id)
-            self.assertEqual(item.parent_id, parent, item_id)
+            if item_id in self.SETUP_LEAVES:
+                self.assertEqual(item.section_id,
+                                 self.env.ref("health_cms_sidebar.section_admin"),
+                                 item_id)
+                self.assertIn(item.parent_id, (connections, parent) if connections
+                              else (parent, self.env["cms.sidebar.item"]), item_id)
+            else:
+                self.assertEqual(item.parent_id, parent, item_id)
             self.assertEqual(item.action_xmlid, action_xmlid, item_id)
             # The whole point: the action it names must actually exist.
             action = self.env.ref(action_xmlid, raise_if_not_found=False)

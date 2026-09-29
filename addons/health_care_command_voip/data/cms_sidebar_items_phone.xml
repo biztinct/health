@@ -14,8 +14,16 @@
      non-navigating accordion (cms_sidebar.js:124); that regression already hit
      Care Command once.
 
-     Placed at 14: immediately after Unrouted Contacts (13) and before Contacts
-     (20), keeping the whole "somebody is trying to reach us" group together.
+     MENU M2 (the consolidated menu): Phone is the fourth tab of the CRM area
+     (sequence 40), holding the four screens somebody who handles calls works
+     in — Calls, Call backs, Recordings, Records from the phone system. The
+     two SET-UP screens, Extensions and Phone system, moved to Settings ›
+     Connections, beside the other connections. They name `section_admin`
+     here and NO `parent_id`: their tab is a heading of `health_cms_ia`, which
+     loads after this module and cannot be pointed at; that module's hook
+     writes the parent, and because these records no longer name the field an
+     upgrade of this module leaves it where the hook put it. Every value this
+     file still names is the final one, the same the hook writes.
 
      Ungated (no biz_role_ids), matching every other item in the product. The
      phone models are themselves group-gated (health_voip24h/security), so a
@@ -31,7 +39,7 @@
         <!-- Explicitly FALSE, not merely absent: an XML data update only
              writes the fields it names. -->
         <field name="parent_id" eval="False"/>
-        <field name="sequence">14</field>
+        <field name="sequence">40</field>
         <field name="icon">fa fa-headphones</field>
         <field name="action_xmlid"></field>
         <field name="action_tag"></field>
@@ -43,7 +51,7 @@
         <field name="name">Call backs</field>
         <field name="section_id" ref="health_cms_sidebar.section_crm"/>
         <field name="parent_id" ref="item_phone"/>
-        <field name="sequence">10</field>
+        <field name="sequence">20</field>
         <field name="icon">fa fa-reply</field>
         <field name="action_xmlid">health_voip24h.action_voip_callbacks</field>
         <field name="match_action_xmlids">health_voip24h.action_voip_callbacks</field>
@@ -53,7 +61,7 @@
         <field name="name">Calls</field>
         <field name="section_id" ref="health_cms_sidebar.section_crm"/>
         <field name="parent_id" ref="item_phone"/>
-        <field name="sequence">20</field>
+        <field name="sequence">10</field>
         <field name="icon">fa fa-phone</field>
         <field name="action_xmlid">health_voip24h.action_voip_call_session</field>
         <field name="match_action_xmlids">health_voip24h.action_voip_call_session</field>
@@ -64,7 +72,7 @@
         <field name="name">Records from the phone system</field>
         <field name="section_id" ref="health_cms_sidebar.section_crm"/>
         <field name="parent_id" ref="item_phone"/>
-        <field name="sequence">30</field>
+        <field name="sequence">40</field>
         <field name="icon">fa fa-list</field>
         <field name="action_xmlid">health_voip24h.action_voip_call_log</field>
         <field name="match_action_xmlids">health_voip24h.action_voip_call_log,health_voip24h.action_voip_call_log_missed</field>
@@ -75,7 +83,7 @@
         <field name="name">Recordings</field>
         <field name="section_id" ref="health_cms_sidebar.section_crm"/>
         <field name="parent_id" ref="item_phone"/>
-        <field name="sequence">40</field>
+        <field name="sequence">30</field>
         <field name="icon">fa fa-microphone</field>
         <field name="action_xmlid">health_voip24h.action_voip_call_recording</field>
         <field name="match_action_xmlids">health_voip24h.action_voip_call_recording</field>
@@ -84,9 +92,8 @@
 
     <record id="item_phone_extensions" model="cms.sidebar.item">
         <field name="name">Extensions</field>
-        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
-        <field name="parent_id" ref="item_phone"/>
-        <field name="sequence">50</field>
+        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <field name="sequence">70</field>
         <field name="icon">fa fa-id-badge</field>
         <field name="action_xmlid">health_voip24h.action_voip_extension</field>
         <field name="match_action_xmlids">health_voip24h.action_voip_extension</field>
@@ -95,8 +102,7 @@
 
     <record id="item_phone_settings" model="cms.sidebar.item">
         <field name="name">Phone system</field>
-        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
-        <field name="parent_id" ref="item_phone"/>
+        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
         <field name="sequence">60</field>
         <field name="icon">fa fa-sliders</field>
         <field name="action_xmlid">health_voip24h.action_voip_config</field>

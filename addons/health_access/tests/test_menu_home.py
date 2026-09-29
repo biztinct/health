@@ -21,6 +21,7 @@ CRM_DASHBOARD = 'health_crm.action_crm_dashboard'
 OPERATIONS = 'health_fieldservice.action_ops_command_center'
 FINANCE = 'health_invoicing.action_fin_dashboard'
 OBSERVATIONS = 'health_vitals.action_health_observation'
+BOOKINGS = 'health_fieldservice.action_ops_booking_list_native'
 
 
 @tagged('post_install', '-at_install')
@@ -69,10 +70,31 @@ class TestMenuHome(TransactionCase):
         self.assertEqual(self.Item.sudo()._home_area(accountant), 'finance')
         self.assertEqual(self._home(accountant), FINANCE)
 
-    def test_04_a_nurse_lands_on_observations(self):
+    def test_04_a_nurse_lands_on_bookings(self):
+        """MENU M2 ruling: a nurse lands on the visits she is going out to."""
         nurse = self._person('m1nurse', 'health_access.role_nurse')
         self.assertEqual(self.Item.sudo()._home_area(nurse), 'clinical')
-        self.assertEqual(self._home(nurse), OBSERVATIONS)
+        self.assertEqual(self._home(nurse), BOOKINGS)
+
+    def test_04b_a_doctor_lands_on_observations(self):
+        doctor = self._person('m2doctor', 'health_access.role_doctor')
+        self.assertEqual(self.Item.sudo()._home_area(doctor), 'clinical')
+        self.assertEqual(self._home(doctor), OBSERVATIONS)
+
+    def test_04c_home_never_lands_off_the_persons_menu(self):
+        """The guard (MENU M2): whatever Home answers is a screen this
+        person's own menu draws — for every one of the nine roles."""
+        for xmlid in ('health_access.role_owner', 'health_access.role_admin',
+                      'health_access.role_nurse', 'health_access.role_doctor',
+                      'health_access.role_accountant', 'health_access.role_crm',
+                      'health_access.role_operations_manager',
+                      'health_access.role_branch_manager'):
+            if not self.env.ref(xmlid, raise_if_not_found=False):
+                continue
+            person = self._person('m2g_%s' % xmlid.split('_', 2)[-1], xmlid)
+            drawn = self.Item.with_user(person)._home_drawn_actions()
+            if drawn:
+                self.assertIn(self._home(person), drawn, xmlid)
 
     def test_05_care_command_switched_off_sends_the_desk_to_the_crm_dashboard(self):
         if 'biz.tenancy' not in self.env:
@@ -93,10 +115,14 @@ class TestMenuHome(TransactionCase):
             self._set_features('')
         self.assertEqual(self._home(crm), CARE_COMMAND)
 
-    def test_06_nobody_with_a_role_lands_on_operations(self):
+    def test_06_nobody_with_a_role_lands_on_the_first_screen_they_have(self):
+        """No role: the Operations dashboard where their menu draws it, and
+        otherwise the first screen it does draw (MENU M2 guard)."""
         loner = self._person('m1loner')
         self.assertEqual(self.Item.sudo()._home_area(loner), '')
-        self.assertEqual(self._home(loner), OPERATIONS)
+        drawn = self.Item.with_user(loner)._home_drawn_actions()
+        expected = OPERATIONS if (OPERATIONS in drawn or not drawn) else drawn[0]
+        self.assertEqual(self._home(loner), expected)
 
     def test_07_two_roles_the_higher_area_wins(self):
         both = self._person('m1both', 'health_access.role_nurse',

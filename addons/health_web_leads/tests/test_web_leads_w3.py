@@ -519,13 +519,17 @@ class TestWebLeadsW3(TransactionCase):
         siblings = self.env['cms.sidebar.item'].search(
             [('section_id', '=', section.id)])
         for item in [self.env.ref('%s.item_lead_analysis' % MODULE)]:
-            self.assertFalse(item.parent_id, 'the leaf must be a sibling')
+            self.assertIn(item.parent_id, (
+                self.env['cms.sidebar.item'],
+                self.env.ref('health_cms_ia.parent_crm_web', raise_if_not_found=False) or self.env['cms.sidebar.item']),
+                'the leaf must not sit under a screen')
             self.assertFalse(self.env['cms.sidebar.item'].search_count(
                 [('parent_id', '=', item.id)]))
             self.assertEqual(item.section_id, section)
             self.assertEqual(
                 len(siblings.filtered(lambda s, i=item:
-                                      s.sequence == i.sequence)), 1,
+                                      s.sequence == i.sequence
+                                      and s.parent_id == i.parent_id)), 1,
                 'sequence %s is shared with another sidebar leaf'
                 % item.sequence)
             # `match_models` would land in a LAST-WINS index and steal the

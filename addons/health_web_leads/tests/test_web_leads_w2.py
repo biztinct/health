@@ -515,8 +515,13 @@ class TestWebLeadsW2(TransactionCase):
         # and a sidebar item WITH children stops navigating (and breaks its
         # parent). Assert both properties, not just existence.
         item = self.env.ref('%s.item_web_touchpoints' % MODULE)
-        self.assertFalse(item.parent_id, 'the sidebar item must be a leaf '
-                                         'sibling, never a child')
+        # A root — or, on the consolidated menu (MENU M2), a screen inside
+        # CRM › Web & Ads, a tab with no screen of its own, so nothing stops
+        # navigating.
+        self.assertIn(item.parent_id, (
+            self.env['cms.sidebar.item'],
+            self.env.ref('health_cms_ia.parent_crm_web', raise_if_not_found=False) or self.env['cms.sidebar.item']),
+            'the sidebar item must not be a child of a screen')
         self.assertFalse(
             self.env['cms.sidebar.item'].search_count(
                 [('parent_id', '=', item.id)]),

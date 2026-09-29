@@ -437,6 +437,16 @@
 
         &.on { background: rgba(255, 255, 255, .16); font-weight: 700; }
         &.off { opacity: .38; }
+        // A screen inside a tab (MENU M2), indented under the tab's name.
+        &.sub { padding-left: calc(var(--vuf-sp-3, 12px) + 12px); font-size: 12px; }
+    }
+    // The name of a tab, above the screens it holds. Not a button: in the real
+    // menu a tab opens its first screen, and here that screen is the next row.
+    .lrn-tabh {
+        padding: 6px var(--vuf-sp-3, 12px) 2px;
+        font-size: 11.5px;
+        font-weight: 700;
+        opacity: .8;
     }
     .lrn-foot {
         margin-top: var(--vuf-sp-4, 16px);

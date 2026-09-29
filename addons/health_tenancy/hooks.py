@@ -118,6 +118,10 @@ FEATURE_ENTRIES = {
         'health_access.item_crm_watch_phrases',
         'health_cms_coverage.item_crm_channels_setup',
         'health_cms_coverage.item_crm_reply_templates',
+        # MENU M2: the CRM › Channels tab. Every screen inside it is already
+        # Care Command's; the heading says so too, so that with the part
+        # switched off the TAB goes, not just its contents.
+        'health_cms_ia.parent_crm_channels',
     ),
     'telehealth': (
         'health_cms_coverage.item_ops_telehealth',
@@ -168,6 +172,12 @@ FEATURE_ENTRIES = {
         'health_access.item_ops_voice_extensions',
         'health_access.item_ops_voice_sync',
         'health_access.item_ops_voice_config',
+        # MENU M2: the CRM › Phone tab (its four screens inherit it), and the
+        # two set-up screens that moved to Settings › Connections, which no
+        # longer sit under the Phone heading and so no longer inherit it.
+        'health_care_command_voip.item_phone',
+        'health_care_command_voip.item_phone_settings',
+        'health_care_command_voip.item_phone_extensions',
     ),
     'learn': (
         'health_learn.item_learn_journey',

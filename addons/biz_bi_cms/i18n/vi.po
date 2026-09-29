@@ -57,8 +57,8 @@ msgstr "%s trường được gợi ý không có trong tập dữ liệu này v
 
 #. module: biz_bi_cms
 #: model:cms.sidebar.section,name:biz_bi_cms.section_analytics
-msgid "ANALYTICS"
-msgstr "PHÂN TÍCH"
+msgid "Analytics"
+msgstr "Phân tích"
 
 #. module: biz_bi_cms
 #. odoo-javascript

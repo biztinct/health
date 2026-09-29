@@ -568,7 +568,7 @@
 
     <record id="station_ops_routes" model="learn.station">
         <field name="key">ops_routes</field>
-        <field name="name">Route Feasibility</field>
+        <field name="name">Routes</field>
         <field name="line">ops_people</field>
         <field name="section">ops</field>
         <field name="sequence">170</field>
@@ -661,7 +661,7 @@
 
     <record id="station_fin_payments" model="learn.station">
         <field name="key">fin_payments</field>
-        <field name="name">Payments</field>
+        <field name="name">All payments</field>
         <field name="line">fin_money</field>
         <field name="section">finance</field>
         <field name="sequence">200</field>
@@ -736,18 +736,18 @@
 
     <record id="station_fin_ar_management" model="learn.station">
         <field name="key">fin_ar_management</field>
-        <field name="name">AR Management</field>
+        <field name="name">Payments</field>
         <field name="line">fin_owed</field>
         <field name="section">finance</field>
         <field name="sequence">230</field>
-        <field name="summary">The working screen for receivables, with three tools under it.</field>
+        <field name="summary">The tab where receivables are worked: the payments list and three tools beside it.</field>
         <field name="icon">clipboard-check</field>
         <field name="kind">outline</field>
-        <field name="sidebar_key">health_cms_sidebar.item_fin_ar_management</field>
+        <field name="sidebar_key">health_cms_ia.parent_fin_payments</field>
         <field name="duration_min">5</field>
         <field name="required" eval="False"/>
         <field name="star" eval="False"/>
-        <field name="outline_what">The place receivables are actually worked, with Account Payment, Cash In Transit and Refund / Credit grouped beneath it.</field>
+        <field name="outline_what">One tab in Finance holding four screens side by side: All payments, Account Payment, Cash In Transit and Refund / Credit. It replaces the old AR Management launcher.</field>
         <field name="outline_why">The dashboard tells you the shape; this is where something happens about it.</field>
         <field name="outline_when">Whenever the AR Dashboard shows something that needs a decision rather than a look.</field>
         <field name="outline_prereq">Accountant or Owner.</field>
@@ -756,7 +756,7 @@
     <record id="station_fin_ar_management_mistake_0" model="learn.station.mistake">
         <field name="station_id" ref="station_fin_ar_management"/>
         <field name="sequence">10</field>
-        <field name="name">Treating its three children as separate screens. They are three answers to one question — money that has not settled.</field>
+        <field name="name">Treating its four screens as unrelated. They are four answers to one question — money that has not settled.</field>
     </record>
 
     <record id="station_fin_overdue" model="learn.station">

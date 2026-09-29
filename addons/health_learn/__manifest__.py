@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Health Learn — CareJioX in-app learning',
-    'version': '19.0.5.2.0',
+    'version': '19.0.5.3.0',
     'category': 'Healthcare',
     'summary': 'Guided Journey, bilingual lesson spine and anchor registry for the CRM desk',
     'author': 'Biztinct',

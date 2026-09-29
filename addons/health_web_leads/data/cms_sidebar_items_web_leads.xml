@@ -16,13 +16,22 @@
 
      NO noupdate: the item stays updatable on upgrade. Ungated (no
      `role_ids`) like the sibling Contacts / Care Command items — the
-     `health.lead.touchpoint` ACLs are what actually govern the rows. -->
+     `health.lead.touchpoint` ACLs are what actually govern the rows.
+
+     MENU M2 (the consolidated menu): Web Touchpoints and Lead Analysis are the
+     first two screens of CRM › Web & Ads, and Website Connector the fourth of
+     Settings › Connections. Those two tabs are headings of `health_cms_ia`,
+     which loads after this module and cannot be pointed at, so its hook
+     writes the parent — and because these records still name NO `parent_id`
+     (trap (b) above), an upgrade of this module leaves it where the hook put
+     it. Every value this file names is the final one, the same the hook
+     writes. -->
 <odoo>
 
     <record id="item_web_touchpoints" model="cms.sidebar.item">
         <field name="name">Web Touchpoints</field>
         <field name="section_id" ref="health_cms_sidebar.section_crm"/>
-        <field name="sequence">21</field>
+        <field name="sequence">10</field>
         <field name="icon">fa fa-crosshairs</field>
         <field name="action_xmlid">health_web_leads.action_health_lead_touchpoint</field>
         <!-- Campaign Review was retired by the 19.0.1.2.0 menu consolidation —
@@ -60,7 +69,7 @@
     <record id="item_web_leads_connector" model="cms.sidebar.item">
         <field name="name">Website Connector</field>
         <field name="section_id" ref="health_cms_sidebar.section_admin"/>
-        <field name="sequence">112</field>
+        <field name="sequence">40</field>
         <field name="icon">fa fa-globe</field>
         <field name="action_xmlid">health_web_leads.action_web_leads_connector</field>
         <field name="match_action_xmlids">health_web_leads.action_web_leads_connector</field>
@@ -111,7 +120,7 @@
     <record id="item_lead_analysis" model="cms.sidebar.item">
         <field name="name">Lead Analysis</field>
         <field name="section_id" ref="health_cms_sidebar.section_crm"/>
-        <field name="sequence">23</field>
+        <field name="sequence">20</field>
         <field name="icon">fa fa-bar-chart</field>
         <field name="action_xmlid">health_web_leads.action_web_leads_funnel</field>
         <field name="match_action_xmlids">health_web_leads.action_web_leads_funnel</field>

@@ -511,6 +511,143 @@ $bza-states: (
             font-weight: 600;
         }
     }
+
+    // ============================================================ the shell
+    // MENU M2: the product's own three columns, drawn small — a dark rail of
+    // areas, a white column of the chosen area's tabs, and the chosen tab's
+    // screens as a strip. Flat single colours, like the menu it pictures.
+    .bzmr-shell {
+        display: grid;
+        grid-template-columns: 38px 84px minmax(0, 1fr);
+        min-height: 220px;
+        border: 1px solid var(--bzk-line, #E4E2EE);
+        border-radius: var(--bzk-r, 12px);
+        overflow: hidden;
+        background: var(--bzk-surface, #FFFFFF);
+    }
+    .bzmr-srail {
+        background: var(--bzmr-chrome);
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding: 6px 4px;
+    }
+    .bzmr-sarea {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 30px;
+        border: 0;
+        border-radius: 7px;
+        background: transparent;
+        color: var(--bzmr-text);
+        cursor: pointer;
+        font-size: 14px;
+
+        &.is-off { opacity: .35; }
+        &.is-active { background: rgba(255, 255, 255, .16); }
+        &:focus-visible { outline: 2px solid var(--bzmr-on); outline-offset: 1px; }
+    }
+    .bzmr-sarea-dot {
+        position: absolute;
+        right: 3px;
+        top: 4px;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+    }
+    .bzmr-sarea.is-on .bzmr-sarea-dot { background: var(--bzmr-on); }
+    .bzmr-stabs {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding: 6px 4px;
+        border-right: 1px solid var(--bzk-line, #E4E2EE);
+        background: var(--bzk-surface, #FFFFFF);
+        overflow-y: auto;
+    }
+    .bzmr-stab {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        padding: 5px 3px;
+        border: 0;
+        border-radius: 7px;
+        background: transparent;
+        color: var(--bzk-ink, #1F1B33);
+        cursor: pointer;
+
+        &.is-active { background: #EDEAF8; color: #5A4BB0; }
+        &.is-off { opacity: .38; }
+        &.is-new { box-shadow: inset 0 0 0 1.5px var(--bzmr-on); }
+        &:focus-visible { outline: 2px solid var(--bzk-primary, #6355C7); outline-offset: 1px; }
+    }
+    .bzmr-stab-ic { font-size: 13px; line-height: 1; }
+    .bzmr-stab-n {
+        font-size: 8.5px;
+        font-weight: 800;
+        letter-spacing: .03em;
+        text-transform: uppercase;
+        text-align: center;
+        line-height: 1.15;
+        overflow-wrap: normal;
+        word-break: normal;
+        max-width: 100%;
+    }
+    .bzmr-stab-st {
+        position: absolute;
+        right: 3px;
+        top: 3px;
+        font-size: 9px;
+        line-height: 1;
+        svg { width: 9px; height: 9px; }
+    }
+    .bzmr-stab.is-on .bzmr-stab-st { color: var(--bzmr-on); }
+    .bzmr-stab.is-locked .bzmr-stab-st { color: var(--bzmr-locked); }
+    .bzmr-spage {
+        padding: 10px 12px;
+        min-width: 0;
+    }
+    .bzmr-spage-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 6px;
+        font-size: 12px;
+        margin-bottom: 8px;
+    }
+    .bzmr-spage-area { color: var(--bzk-muted, #64748B); }
+    .bzmr-spage-area::after { content: "›"; margin-left: 6px; }
+    .bzmr-spage-tab { font-weight: 700; color: var(--bzk-ink, #1F1B33); }
+    .bzmr-spage-note {
+        margin: 0 0 6px;
+        font-size: 11px;
+        color: var(--bzk-muted, #64748B);
+    }
+    .bzmr-ssegs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    .bzmr-sseg {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--bzk-line, #E4E2EE);
+        font-size: 11px;
+        color: var(--bzk-ink, #1F1B33);
+        svg { width: 11px; height: 11px; }
+
+        &.is-on { border-color: var(--bzmr-on); svg { color: #2F8F6C; } }
+        &.is-off { opacity: .45; }
+        &.is-locked svg { color: var(--bzmr-locked); }
+        &.is-new { background: #E9F7F1; }
+    }
 }
 
 // =========================================================================

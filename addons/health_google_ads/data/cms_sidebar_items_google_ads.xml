@@ -11,8 +11,15 @@
        (a) seeded as a SIBLING leaf, never as a child — `cms_sidebar.js:124`
            turns any item WITH children into a non-navigating expandable
            group, which would break the parent;
-       (b) `parent_id` written EXPLICITLY as False — an omitted field is not
-           an unset field on a data update.
+       (b) `parent_id` is NOT named (MENU M2). It used to be written
+           explicitly False; since the consolidated menu, this leaf is the
+           third screen of CRM › Web & Ads and the platform leaf below the
+           fifth of Settings › Connections — both headings of
+           `health_cms_ia`, which loads after this module and cannot be
+           pointed at. That module's hook writes the parent, and because
+           these records no longer name the field, an upgrade of this module
+           leaves it where the hook put it. The sequences are the final ones,
+           the same the hook writes.
 
      `match_models` IS declared here, unlike health_web_leads' satellite
      leaves (§5.94): `google.ads.account` is a NEW model whose ONE primary
@@ -28,9 +35,8 @@
     <record id="item_google_ads" model="cms.sidebar.item">
         <field name="name">Google Ads</field>
         <field name="section_id" ref="health_cms_sidebar.section_crm"/>
-        <field name="sequence">22</field>
+        <field name="sequence">30</field>
         <field name="icon">fa fa-google</field>
-        <field name="parent_id" eval="False"/>
         <field name="action_xmlid">health_google_ads.action_google_ads_accounts</field>
         <field name="match_action_xmlids">health_google_ads.action_google_ads_accounts,health_google_ads.action_google_ads_leads,health_google_ads.action_google_ads_campaign_stat,health_google_ads.action_google_ads_sync_runs,health_google_ads.action_google_ads_campaign_days</field>
         <field name="match_models">google.ads.account,google.ads.campaign.stat,google.ads.sync.run,google.ads.campaign.day</field>
@@ -45,9 +51,8 @@
     <record id="item_google_ads_platform" model="cms.sidebar.item">
         <field name="name">Google Ads application</field>
         <field name="section_id" ref="health_cms_sidebar.section_admin"/>
-        <field name="sequence">94</field>
+        <field name="sequence">50</field>
         <field name="icon">fa fa-google</field>
-        <field name="parent_id" eval="False"/>
         <field name="action_xmlid">health_google_ads.action_google_ads_platform_config</field>
         <field name="match_action_xmlids">health_google_ads.action_google_ads_platform_config</field>
         <field name="match_models">google.ads.platform.config</field>

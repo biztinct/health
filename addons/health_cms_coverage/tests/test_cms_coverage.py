@@ -15,6 +15,27 @@ from odoo.tests import TransactionCase, tagged
 
 from odoo.addons.health_cms_coverage.hooks import ROLE_GATES
 
+
+def consolidated(env):
+    """Is the consolidated menu (MENU M2, `health_cms_ia`) on this database?
+
+    It regroups these leaves under tabs of its own, renumbers every area and
+    widens the gates on the owner's ruling. What THIS module promises — every
+    leaf exists, opens a real action, claims no model, never steals a
+    highlight — still holds; where it sits and who else opens it is then the
+    consolidation's, asserted in `health_cms_ia`'s own tests.
+    """
+    return bool(env.ref('health_cms_ia.parent_crm_channels',
+                        raise_if_not_found=False))
+
+
+def ia_heading(env, item):
+    """Is `item` one of the consolidated menu's own tabs?"""
+    if not item:
+        return False
+    return (item.get_external_id().get(item.id) or '').startswith(
+        'health_cms_ia.')
+
 # leaf xml-id -> (section xml-id, action xml-id, every action it must match)
 EXPECTED = {
     # --- CRM -----------------------------------------------------------
@@ -30,8 +51,7 @@ EXPECTED = {
     'item_crm_reply_templates': (
         'section_crm',
         'health_care_command.action_care_reply_template',
-        ('health_care_command.action_care_reply_template',
-         'health_care_command.action_care_watch_phrase')),
+        ('health_care_command.action_care_reply_template',)),
     'item_crm_followup_calendar': (
         'section_crm', 'health_crm.action_crm_followup_calendar',
         ('health_crm.action_crm_followup_calendar',)),
@@ -172,6 +192,11 @@ class TestCmsCoverage(TransactionCase):
             # stops the leaf highlighting when the user is on that screen.
             declared = {v.strip() for v in (item.match_action_xmlids or '').split(',')
                         if v.strip()}
+            if key == 'item_crm_reply_templates':
+                # Watchlist phrases has had its own entry since the Access
+                # overlay; the consolidated menu hands the borrowed screen
+                # back (`health_cms_ia` RELEASE).
+                declared.discard('health_care_command.action_care_watch_phrase')
             self.assertEqual(declared, set(matches), key)
             for xmlid in declared:
                 self.assertTrue(
@@ -185,6 +210,13 @@ class TestCmsCoverage(TransactionCase):
         Item = self.env['cms.sidebar.item']
         for key in EXPECTED:
             item = self._item(key)
+            if ia_heading(self.env, item.parent_id):
+                # A screen INSIDE one of the consolidated menu's tabs, which
+                # has no screen of its own — so nothing stops navigating.
+                self.assertFalse(item.parent_id.action_xmlid, key)
+                self.assertFalse(Item.search([('parent_id', '=', item.id)]), key)
+                self.assertFalse(item.match_models, key)
+                continue
             self.assertFalse(item.parent_id,
                              '%s must be a root leaf — an item with a parent '
                              'turns that parent into a non-navigating '
@@ -226,6 +258,11 @@ class TestCmsCoverage(TransactionCase):
             'ADMIN must hold exactly the config leaves consolidation moved '
             'there — no more, no less')
 
+        if consolidated(self.env):
+            # The consolidated menu renumbers every area in tens by design
+            # (MENU M2); "append, never interleave" was this module's promise
+            # to the menu as it stood, and M2's own tests pin the new order.
+            return
         # (b) In every section we DID touch, our sequences are strictly above
         #     the pre-existing ones, so no existing item moves. Leaves that
         #     consolidation relocated are no longer in these sections, and
@@ -345,14 +382,24 @@ class TestCmsCoverage(TransactionCase):
                     present |= role
             if not present:
                 continue                      # nothing to assert on this DB
-            self.assertEqual(
-                set(item.biz_role_ids.ids), set(present.ids),
-                '%s: expected roles %s' % (key, list(role_xmlids)))
+            if consolidated(self.env):
+                # Widened on the owner's ruling (Admin everywhere, Doctor
+                # across Clinical) — never narrowed below this module's set.
+                self.assertLessEqual(
+                    set(present.ids), set(item.biz_role_ids.ids),
+                    '%s: expected at least roles %s' % (key, list(role_xmlids)))
+            else:
+                self.assertEqual(
+                    set(item.biz_role_ids.ids), set(present.ids),
+                    '%s: expected roles %s' % (key, list(role_xmlids)))
             self.assertTrue(item.biz_role_ids,
                             '%s must never be gated to no role at all' % key)
 
         # The six CLINICAL leaves outside the map stay ungated, as their
-        # siblings are.
+        # siblings are — until the consolidated menu gates the Clinical area
+        # (owner ruling Q6: Doctor, Owner, Admin).
+        if consolidated(self.env):
+            return
         for key in ('item_clin_diagnoses', 'item_clin_unsigned_notes',
                     'item_clin_coding_review', 'item_clin_visit_tasks',
                     'item_clin_patient_portal', 'item_clin_consent_log'):
@@ -447,5 +494,8 @@ class TestRelationshipSidebarOwnership(TransactionCase):
             role = self.env.ref(xmlid, raise_if_not_found=False)
             if role:
                 expected_roles |= role
-        if expected_roles:
+        if expected_roles and consolidated(self.env):
+            # MENU M2 adds Admin ("Owner and Admin keep everything").
+            self.assertLessEqual(expected_roles, relationship.biz_role_ids)
+        elif expected_roles:
             self.assertEqual(relationship.biz_role_ids, expected_roles)

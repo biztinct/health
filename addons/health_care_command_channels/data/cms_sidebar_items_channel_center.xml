@@ -23,18 +23,20 @@
      noupdate-seed-cutover). Ungated (no role_ids) like the sibling Care
      Command item — `center_overview` group-gates the data server-side and the
      component renders that refusal as an honest inline message rather than an
-     error dialog. -->
+     error dialog.
+     MENU M2 (consolidated menu): the first screen of CRM › Channels. `parent_id` is NOT named here any
+     more — the tab it sits under is a heading of `health_cms_ia`, which
+     loads after this module and so cannot be pointed at. That module's
+     hook writes the parent; because this record no longer names the
+     field, an upgrade of this module leaves it where the hook put it
+     (an omitted field is not an unset one). The sequence below is the
+     final one, the same value the hook writes. -->
 <odoo>
 
     <record id="item_channel_center" model="cms.sidebar.item">
         <field name="name">Channel Center</field>
         <field name="section_id" ref="health_cms_sidebar.section_crm"/>
-        <!-- Explicitly FALSE, not merely absent: an XML data update only
-             writes the fields it names, so dropping `parent_id` from this
-             record would have left an earlier value in place (it did — the
-             item stayed a hidden child of Care Command through one deploy). -->
-        <field name="parent_id" eval="False"/>
-        <field name="sequence">12</field>
+        <field name="sequence">10</field>
         <field name="icon">fa fa-plug</field>
         <field name="action_xmlid">health_care_command_channels.action_channel_center</field>
         <field name="action_tag">channel_center</field>

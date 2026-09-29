@@ -171,6 +171,13 @@ class TestCmsConsolidation(TransactionCase):
             self.assertEqual(item.section_id, admin, xmlid)
             self.assertTrue(item.active,
                             '%s is relocated, not retired' % xmlid)
+            parent = item.parent_id
+            if parent and (parent.get_external_id().get(parent.id) or ''
+                           ).startswith('health_cms_ia.'):
+                # MENU M2 put it inside a Settings tab; the tab is in ADMIN
+                # too, so it is not stranded in its old section.
+                self.assertEqual(parent.section_id, admin, xmlid)
+                continue
             # Four of these are seeded as children of a clinical expander.
             # Moving only section_id would mis-nest them AND keep them counting
             # as that expander's children, silently blocking its collapse.
@@ -233,10 +240,17 @@ class TestCmsConsolidation(TransactionCase):
                     'item with children never navigates, so this costs a '
                     'click for nothing' % (expander_xmlid, len(children)))
                 continue
-            self.assertFalse(
-                survivor.parent_id,
-                '%s must be promoted to a root leaf when its expander is '
-                'collapsed' % survivor_xmlid)
+            parent = survivor.parent_id
+            if parent and (parent.get_external_id().get(parent.id) or ''
+                           ).startswith('health_cms_ia.'):
+                # MENU M2 regrouped it inside a new tab; the old expander is
+                # still gone, which is what this test is about.
+                self.assertNotEqual(parent, expander, survivor_xmlid)
+            else:
+                self.assertFalse(
+                    survivor.parent_id,
+                    '%s must be promoted to a root leaf when its expander is '
+                    'collapsed' % survivor_xmlid)
             self.assertTrue(survivor.active, survivor_xmlid)
 
     def test_07_no_active_expander_is_childless(self):

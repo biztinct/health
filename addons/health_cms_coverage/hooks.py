@@ -99,8 +99,14 @@ def apply_role_gates(env):
                 'database — leaving %s visible to every role rather than '
                 'hiding it from everyone', list(role_xmlids), xmlid)
             continue
-        if set(item.biz_role_ids.ids) != set(roles.ids):
-            item.sudo().write({'biz_role_ids': [(6, 0, roles.ids)]})
+        # ADDITIVE, NEVER A REPLACEMENT (MENU M2). The consolidated menu
+        # (`health_cms_ia`) widened several of these gates on the owner's
+        # ruling — Admin everywhere, Doctor across Clinical — and a later
+        # migration of this module re-running the old exact set would take
+        # those roles away again. So this only ever ADDS a missing role.
+        missing = roles - item.biz_role_ids
+        if missing:
+            item.sudo().write({'biz_role_ids': [(4, r.id) for r in missing]})
         gated += 1
     _logger.info('health_cms_coverage: role-gated %s sidebar leaves '
                  '(%s left ungated for want of a role)', gated, skipped)
@@ -338,6 +344,13 @@ def consolidate_sidebar(env):
         for xmlid, sequence in RELOCATE_TO_ADMIN:
             item = _get(env, xmlid)
             if not item:
+                continue
+            if item.section_id == admin:
+                # Already in ADMIN, where the consolidated menu (MENU M2,
+                # `health_cms_ia`) may have put it inside a Settings tab
+                # (Master data, Connections, Records). Clearing its parent
+                # again would undo that; the move this step exists for is
+                # done.
                 continue
             # parent_id MUST be cleared, not just section_id — see the comment
             # on RELOCATE_TO_ADMIN. Leaving it set both mis-nests the leaf and

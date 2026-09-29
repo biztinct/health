@@ -104,7 +104,7 @@ Handovers: docs/strategy/handovers/google-ads-phaseGA1.md,
 docs/strategy/handovers/google-ads-phaseGA2.md,
 docs/strategy/handovers/google-ads-phaseGA3.md
 """,
-    'version': '19.0.3.0.0',
+    'version': '19.0.3.0.1',
     'category': 'Sales/CRM',
     'author': 'Biztinct',
     'website': 'https://carejiox.com',

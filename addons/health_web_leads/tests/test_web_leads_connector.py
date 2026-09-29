@@ -606,7 +606,12 @@ class TestWebLeadsConnector(ConnectorCaseMixin, TransactionCase):
         # Ledger §5.69 — a sidebar item WITH children stops navigating and
         # breaks its parent; and no `parent_id` may be written at all.
         item = self.env.ref('%s.item_web_leads_connector' % MODULE)
-        self.assertFalse(item.parent_id)
+        # A root — or, on the consolidated menu (MENU M2), a screen inside
+        # Settings › Connections, a tab that has no screen of its own.
+        self.assertIn(item.parent_id, (
+            self.env['cms.sidebar.item'],
+            self.env.ref('health_cms_ia.parent_admin_connections', raise_if_not_found=False) or
+            self.env['cms.sidebar.item']))
         self.assertFalse(self.env['cms.sidebar.item'].search_count(
             [('parent_id', '=', item.id)]))
         self.assertEqual(item.action_xmlid,
@@ -623,6 +628,7 @@ class TestWebLeadsConnector(ConnectorCaseMixin, TransactionCase):
                             'two sidebar leaves must not share a sequence')
         siblings = self.env['cms.sidebar.item'].search(
             [('section_id', '=', item.section_id.id),
+             ('parent_id', '=', item.parent_id.id),
              ('sequence', '=', item.sequence), ('id', '!=', item.id)])
         self.assertFalse(siblings,
                          'sequence %s is shared in ADMIN' % item.sequence)

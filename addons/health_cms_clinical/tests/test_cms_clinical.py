@@ -45,9 +45,13 @@ class TestCmsClinical(TransactionCase):
         self.assertEqual(devices.section_id,
                          self.env.ref('health_cms_sidebar.section_admin'),
                          'Monitoring Devices is relocated to ADMIN')
-        self.assertFalse(devices.parent_id,
-                         'a relocated leaf must be detached from its old '
-                         'expander')
+        self.assertNotEqual(
+            devices.parent_id,
+            self.env.ref('health_cms_clinical.item_clin_care_intel'),
+            'a relocated leaf must be detached from its old expander')
+        if devices.parent_id:
+            # MENU M2: inside Settings › Master data, a tab in ADMIN too.
+            self.assertEqual(devices.parent_id.section_id, devices.section_id)
         self.assertEqual(devices.action_xmlid,
                          'health_telemonitoring.action_health_monitor_device')
 
@@ -57,9 +61,16 @@ class TestCmsClinical(TransactionCase):
         data = self.env['cms.sidebar.item'].get_sidebar_data()
         # Flatten every item across whatever shape the payload uses.
         blob = str(data)
-        for name in ('Care Intelligence', 'Deterioration Worklist',
-                     'Deterioration Alerts', 'Monitoring Devices',
-                     'NEWS2 Scores'):
+        # MENU M2 shortened the three screens inside the tab (the tab already
+        # says what they are about); either spelling is this module's leaf.
+        m2 = bool(self.env.ref('health_cms_ia.parent_crm_channels',
+                               raise_if_not_found=False))
+        names = (('Care Intelligence', 'Worklist', 'Alerts',
+                  'Monitoring Devices', 'NEWS2') if m2 else
+                 ('Care Intelligence', 'Deterioration Worklist',
+                  'Deterioration Alerts', 'Monitoring Devices',
+                  'NEWS2 Scores'))
+        for name in names:
             self.assertIn(name, blob,
                           "%r must be present in the sidebar payload" % name)
 

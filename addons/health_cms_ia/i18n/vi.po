@@ -1,0 +1,16 @@
+# Vietnamese translation for health_cms_ia
+# The tab names this module adds are translated by the MENU IA phase AR-3,
+# which covers every label of the consolidated menu in one pass.
+msgid ""
+msgstr ""
+"Project-Id-Version: 19.0 health_cms_ia\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-29 00:00+0000\n"
+"PO-Revision-Date: 2026-09-29 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"

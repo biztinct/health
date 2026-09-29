@@ -287,10 +287,24 @@ class TestAr2DarkScreens(Ar2Case):
             others = Ability.search([('id', '!=', ability.id),
                                      ('group_ids', 'in', ability.group_ids.ids)])
             self.assertFalse(others, ability.technical_key)
-        carriers = self.env['biz.access.role'].with_context(
-            active_test=False).search([('ability_ids', 'in', found.ids)])
-        self.assertFalse(carriers, 'a role was given a dark-screen ability: %s'
-                         % ', '.join(carriers.mapped('name')))
+        # MENU M2 (owner ruling): the two PHONE abilities are written onto
+        # the roles that work the phone and set it up. Every other one is
+        # still given to nobody.
+        ruled = {}
+        try:
+            from odoo.addons.health_cms_ia.hooks import PHONE_ABILITIES
+            for key, role_xmlids in PHONE_ABILITIES.items():
+                ruled[key] = {self.env.ref(x).id for x in role_xmlids
+                              if self.env.ref(x, raise_if_not_found=False)}
+        except ImportError:
+            pass
+        for ability in found:
+            carriers = self.env['biz.access.role'].with_context(
+                active_test=False).search([('ability_ids', 'in', ability.ids)])
+            self.assertLessEqual(
+                set(carriers.ids), ruled.get(ability.technical_key, set()),
+                'a role was given "%s": %s' % (
+                    ability.technical_key, ', '.join(carriers.mapped('name'))))
 
     def test_7_the_dark_screens_sit_under_switched_off(self):
         dark = self.dark()
@@ -306,6 +320,12 @@ class TestAr2DarkScreens(Ar2Case):
         for item in dark:
             self.assertIn(item.id, listed, item.name)
             self.assertTrue(listed[item.id]['awaiting'], item.name)
+            if (item.feature_key == 'voice'
+                    or (item.action_xmlid or '').startswith('health_voip24h.')):
+                # Since MENU M2 the roles that handle calls can open these —
+                # the same screens are on the menu as CRM › Phone — so "could
+                # be opened by" is honestly no longer empty.
+                continue
             self.assertEqual(listed[item.id]['could_be_opened_by'], [],
                              '%s: somebody can already open it' % item.name)
         self.assertGreaterEqual(board['counts']['switched_off'], 15)

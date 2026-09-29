@@ -733,7 +733,7 @@
         <field name="mission_id" ref="mission_fm1"/>
         <field name="sequence">40</field>
         <field name="kind">check</field>
-        <field name="body">Never choose the route from the screen you are standing on. AR Management stays highlighted for all three of its children.</field>
+        <field name="body">Never choose the route from the screen you are standing on. The Payments tab stays lit for all four screens inside it — read the strip at the top of the page to see which one you are on.</field>
     </record>
 
     <record id="mission_fm1_check_04" model="learn.mission.note">

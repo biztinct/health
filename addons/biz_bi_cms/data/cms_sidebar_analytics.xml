@@ -28,6 +28,14 @@
        * NO `match_models`: the frontend model index is last-wins, so a leaf
          declaring a model another leaf already owns steals its highlight for
          every action without an xml_id (§5.94). Tags only.
+
+     MENU M2 (the consolidated menu): the block reads "Analytics" rather than
+     "ANALYTICS" and the heading "Data" rather than "Where the numbers come
+     from" (too long for a tab); the screens inside it are numbered in tens
+     with no gap, and "Import data" — switched off while nobody can open it —
+     is last (70), so it cannot share a number with Refresh jobs if it comes
+     back. `health_cms_ia` writes the same values, so an upgrade of either
+     module leaves the other's work alone.
      -->
 <odoo>
 
@@ -36,7 +44,7 @@
          37 is the only slot that is both after FINANCE and before ADMIN
          without reordering anything that already exists. -->
     <record id="section_analytics" model="cms.sidebar.section">
-        <field name="name">ANALYTICS</field>
+        <field name="name">Analytics</field>
         <field name="technical_key">analytics</field>
         <field name="sequence">37</field>
         <field name="icon">fa fa-area-chart</field>
@@ -91,7 +99,7 @@
     </record>
 
     <record id="item_analytics_data" model="cms.sidebar.item">
-        <field name="name">Where the numbers come from</field>
+        <field name="name">Data</field>
         <field name="section_id" ref="section_analytics"/>
         <field name="parent_id" eval="False"/>
         <field name="sequence">40</field>
@@ -120,7 +128,7 @@
         <field name="name">Import data</field>
         <field name="section_id" ref="section_analytics"/>
         <field name="parent_id" ref="item_analytics_data"/>
-        <field name="sequence">30</field>
+        <field name="sequence">70</field>
         <field name="icon">fa fa-upload</field>
         <field name="action_xmlid">biz_bi.action_bi_csv_import</field>
     </record>
@@ -129,7 +137,7 @@
         <field name="name">Refresh jobs</field>
         <field name="section_id" ref="section_analytics"/>
         <field name="parent_id" ref="item_analytics_data"/>
-        <field name="sequence">40</field>
+        <field name="sequence">30</field>
         <field name="icon">fa fa-refresh</field>
         <field name="action_xmlid">biz_bi.action_bi_refresh_job</field>
     </record>
@@ -138,7 +146,7 @@
         <field name="name">Pipelines</field>
         <field name="section_id" ref="section_analytics"/>
         <field name="parent_id" ref="item_analytics_data"/>
-        <field name="sequence">50</field>
+        <field name="sequence">40</field>
         <field name="icon">fa fa-sitemap</field>
         <field name="action_xmlid">biz_bi.action_bi_pipeline_editor</field>
         <field name="action_tag">biz_bi.pipeline</field>
@@ -148,7 +156,7 @@
         <field name="name">Semantic model</field>
         <field name="section_id" ref="section_analytics"/>
         <field name="parent_id" ref="item_analytics_data"/>
-        <field name="sequence">60</field>
+        <field name="sequence">50</field>
         <field name="icon">fa fa-cubes</field>
         <field name="action_xmlid">biz_bi.action_bi_modeler</field>
         <field name="action_tag">biz_bi.modeler</field>
@@ -158,7 +166,7 @@
         <field name="name">Glossary</field>
         <field name="section_id" ref="section_analytics"/>
         <field name="parent_id" ref="item_analytics_data"/>
-        <field name="sequence">70</field>
+        <field name="sequence">60</field>
         <field name="icon">fa fa-book</field>
         <field name="action_xmlid">biz_bi.action_bi_glossary</field>
     </record>

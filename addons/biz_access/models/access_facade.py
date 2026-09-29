@@ -1311,6 +1311,7 @@ class BizAccess(models.AbstractModel):
             if rows:
                 out.append({'key': section.get('key') or '',
                             'label': section.get('name') or '',
+                            'icon': section.get('icon') or '',
                             'show_label': bool(section.get('show_label', True)),
                             'items': rows})
         return out, lit
@@ -1899,6 +1900,7 @@ class BizAccess(models.AbstractModel):
                 out.append({
                     'key': section.get('key') or '',
                     'label': section.get('name') or '',
+                    'icon': section.get('icon') or '',
                     'show_label': bool(section.get('show_label', True)),
                     'restricted': sec_states.get(section['id']) == 'locked',
                     'items': rows,

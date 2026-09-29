@@ -1135,8 +1135,15 @@ class TestGoliveStudioUi(ChannelHubCase):
         self.assertEqual(item.section_id,
                          self.env.ref('health_cms_sidebar.section_admin'))
         # §5.69(a): a leaf with a parent turns that parent into a
-        # non-navigating accordion. This one is a sibling, explicitly.
-        self.assertFalse(item.parent_id)
+        # non-navigating accordion. This one is a root — or, on the
+        # consolidated menu (MENU M2), a screen inside Settings › Connections,
+        # a tab with no screen of its own, so nothing stops navigating.
+        if item.parent_id:
+            self.assertEqual(
+                item.parent_id,
+                self.env.ref('health_cms_ia.parent_admin_connections',
+                             raise_if_not_found=False))
+            self.assertFalse(item.parent_id.action_xmlid)
         # `cms.sidebar.item` declares no inverse One2many, so "has children"
         # is a search, not a field — and it is the thing that matters here.
         self.assertFalse(self.env['cms.sidebar.item'].with_context(
