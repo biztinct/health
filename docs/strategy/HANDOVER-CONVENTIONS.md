@@ -3303,3 +3303,44 @@ a no-op.
     clone it only wastes time, on the live port it is the outage. Close (or
     `about:blank`) every QA tab before starting a run, or give QA and tests
     different ports. (Access AR-1.)
+- **§5.217 — a guard in a model's `write` that returns early under `su` is
+    skipped by every dialog that writes as the system.** `res.users.
+    _check_may_set_job` asks "may this person give the new job's role / take
+    the old one away" and returns at once for `env.su`. The "Change their job"
+    dialog writes `target = user.sudo()`, so it never reached that check — and
+    the removal that followed runs through `_quietly`, which swallows every
+    `UserError`. Net effect before the fix: a clinic Admin could change an
+    Owner's job, the job field changed, the Owner role quietly stayed. Every
+    caller that writes under sudo must ask the facade's `_assert_may_give` /
+    `_assert_may_take` ITSELF before the write (the dialog now does both).
+    Precedent for §5.210: the uid is kept, the guard still has to be called.
+    (Access AR-2.)
+- **§5.218 — dropping a clone does not drop its filestore, and the next clone
+    of the same name is then copied INSIDE it.** `dropdb carejiox_ar2` leaves
+    `/odoo/.local/share/Odoo/filestore/carejiox_ar2/`; `cp -a …/carejiox
+    …/carejiox_ar2` onto an existing directory makes
+    `carejiox_ar2/carejiox/…`, and the clone serves broken attachments and
+    assets. `rm -rf` the clone's filestore when you drop it, and again before
+    you copy. (Access AR-2.)
+- **§5.219 — "the health_landing suite is green" means zero tests.** The
+    module has no `tests/` package; `--test-tags /health_landing` runs nothing
+    and prints no stats line for it. Its behaviour (the Settings tab strip)
+    is proven by a source assertion in `health_access` plus a browser DOM
+    check, and a report must say "0 tests" rather than "green". (Access AR-2.)
+- **§5.220 — `carejiox-deploy -D <db> -m <mod>` WITHOUT `-d` copies nothing.**
+    It upgrades whatever is already in `/odoo/odoo-server/addons/`. A fix
+    unpacked into `/tmp/<mod>` and then pushed with three `-D` runs was
+    upgraded three times with the OLD code — exit 0, http 200, no change on
+    screen. The code folder is shared by every database, so the order is:
+    `-d -m <mod>` ONCE (copy + master), then `-D <other db> -m <mod>` for the
+    rest. Check with a `grep` of the new string in the server's copy before
+    believing any "exit=0". (Access AR-2.)
+- **§5.221 — the "switch the jobs off" line is for the TEMPLATE and clones,
+    never a loop that includes the master.** After the §5.209 re-enable, a
+    loop over `carejiox carejiox_template` switched off `biz_access`'s
+    end-of-day take-back job on the LIVE master too (96 → 95 active). Caught
+    by counting active jobs before and after on every database, restored
+    within minutes, before its next run. Write the template's cron-off as a
+    single command naming `carejiox_template` alone, and count
+    `ir_cron WHERE active` on every database before and after every deploy.
+    (Access AR-2.)
