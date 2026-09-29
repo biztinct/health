@@ -143,6 +143,28 @@
                     t-on-click="() => this.openComposer(null)">
               <t t-out="ic('plus',15)"/> New role
             </button>
+            <!-- THE PLATFORM ADMINISTRATOR'S "MORE" MENU. Absent for everybody
+                 else, and the server refuses them anyway. It holds the one
+                 door the provisioning tooling tells an operator to press when
+                 a new system's role catalogue came up short. -->
+            <div t-if="board.can_reseed" class="bza-more">
+              <button class="bzk-btn ghost" t-on-click="toggleMore"
+                      t-attf-aria-expanded="{{ state.moreOpen ? 'true' : 'false' }}"
+                      title="More">
+                <t t-out="ic('moreVertical',15)"/>
+              </button>
+              <div t-if="state.moreOpen" class="bza-simscrim" t-on-click="toggleMore"/>
+              <div t-if="state.moreOpen"
+                   t-attf-class="bza-simmenu bza-moremenu {{ state.moreLeft ? 'is-left' : '' }}"
+                   role="menu">
+                <button class="bza-pick" role="menuitem"
+                        t-att-disabled="state.busy"
+                        t-on-click="reseedCatalogue">
+                  <span><t t-out="ic('refresh',14)"/> Re-read the role catalogue</span>
+                  <small>Writes down any role or ability an application added since it was installed. Gives nothing to anybody.</small>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -297,7 +319,7 @@
                     </span>
                     <span t-if="pf.guarded"
                           class="bza-badge bza-badge--guard"
-                          title="Only people who hold this role may give it or lend it">
+                          title="Only people who hold this role may give, lend or take it away">
                       Guarded
                     </span>
                   </span>
@@ -458,7 +480,7 @@
                            is said where the button would have been. -->
                       <p t-elif="canManage" class="bza-col-note bza-col-note--guard">
                         <t t-out="ic('lock',12)"/>
-                        Only people who hold this role may give it or lend it.
+                        Only people who hold this role may give, lend or take it away.
                       </p>
 
                       <!-- PUT IT AWAY — the way out of two roles that have come
@@ -640,7 +662,8 @@
                   </p>
 
                   <BizMiniRail t-if="passport.rail.length"
-                              sections="passport.rail" legend="true"/>
+                              sections="passport.rail" legend="true"
+                              expandable="true"/>
 
                   <p t-else="" class="bza-col-empty">
                     There is no left menu written down on this system, so there
@@ -817,10 +840,41 @@
                   </span>
                 </p>
 
-                <div t-foreach="sc.items" t-as="it" t-key="it.id"
-                     t-attf-class="bza-scrrow {{ state.screenId === it.id ? 'is-on' : '' }} {{ it.active ? '' : 'is-off' }} {{ state.dragOver === it.id ? 'is-over' : '' }}"
+                <!-- ======================== the block itself ========================
+                     A BLOCK CAN CARRY A GATE OF ITS OWN, and it flows down to
+                     every entry inside it. It is a row like the entries, so it
+                     can be opened out and its roles edited in the same place —
+                     but it has no switch and no grip: switching a whole block
+                     off, or moving one, is not a question about who sees it. -->
+                <div t-if="sc.block and (sc.block.editable or sc.block.gated)"
+                     t-attf-class="bza-scrrow bza-scrrow--block {{ isBlockOpen(sc) ? 'is-on' : '' }}"
                      role="button" tabindex="0"
-                     t-attf-aria-selected="{{ state.screenId === it.id ? 'true' : 'false' }}"
+                     t-attf-aria-selected="{{ isBlockOpen(sc) ? 'true' : 'false' }}"
+                     t-on-click="() => this.loadBlock(sc.id)"
+                     t-on-keydown="(ev) => this.onBlockKey(ev, sc)">
+                  <span class="bza-scrico bza-scrico--block">
+                    <t t-out="ic('layers',15)"/>
+                  </span>
+                  <span class="bza-scrtx">
+                    <b t-esc="'The whole ' + sc.label + ' block'"/>
+                    <span class="bza-scrgates">
+                      <span t-foreach="sc.block.gates.slice(0,3)" t-as="ga"
+                            t-key="ga.id"
+                            t-attf-class="bza-gate bza-area--{{ga.area}} {{ ga.archived ? 'is-gone' : '' }}"
+                            t-att-title="ga.description">
+                        <t t-esc="ga.name"/>
+                      </span>
+                      <span t-if="sc.block.gates.length > 3" class="bza-gate"
+                            t-esc="'+' + (sc.block.gates.length - 3)"/>
+                      <span class="bza-scrblock-note" t-esc="blockLine(sc.block)"/>
+                    </span>
+                  </span>
+                </div>
+
+                <div t-foreach="sc.items" t-as="it" t-key="it.id"
+                     t-attf-class="bza-scrrow {{ isEntryOpen(it) ? 'is-on' : '' }} {{ it.active ? '' : 'is-off' }} {{ state.dragOver === it.id ? 'is-over' : '' }}"
+                     role="button" tabindex="0"
+                     t-attf-aria-selected="{{ isEntryOpen(it) ? 'true' : 'false' }}"
                      t-att-draggable="screensCanManage ? 'true' : 'false'"
                      t-on-click="() => this.loadScreen(it.id)"
                      t-on-keydown="(ev) => this.onScreenKey(ev, sc, it)"
@@ -856,6 +910,16 @@
                       </span>
                       <span t-if="it.gates.length > 2" class="bza-gate"
                             t-esc="'+' + (it.gates.length - 2)"/>
+                      <!-- AN INHERITED GATE IS SAID, NOT DRAWN AS EMPTY. An
+                           entry gated only by its block used to read
+                           "everyone with a login"; it is opened by the
+                           block's roles, and the tag says where they are
+                           written. -->
+                      <span t-if="viaLine(it)" class="bza-gate bza-gate--via"
+                            t-att-title="viaTitle(it)">
+                        <t t-out="ic('layers',10)"/>
+                        <t t-esc="viaLine(it)"/>
+                      </span>
                       <span t-if="it.restricted" class="bza-gate bza-gate--lock"
                             title="People who cannot open it still see it, locked, with a note.">
                         <t t-out="ic('lock',10)"/> teaser
@@ -885,6 +949,54 @@
                           t-att-title="it.active ? 'On the left menu — press to take it off' : 'Off the left menu — press to put it back'"
                           t-on-click.stop="() => this.setScreenActive(it, !it.active)"/>
                 </div>
+
+                <!-- ========================== switched off ==========================
+                     THE DARK SCREENS. Entries the product switched off because
+                     nobody on this system could open the screen behind them —
+                     folded away under one line with the count, so they do not
+                     crowd the menu they are not on. Opened, each says who COULD
+                     open it, and offers to switch it on for that role in one
+                     press. Entries switched off on purpose are not here: they
+                     keep their own row and their own switch above. -->
+                <t t-if="sc.switched_off and sc.switched_off.length">
+                  <button type="button" class="bza-scroff-h"
+                          t-attf-aria-expanded="{{ isOffOpen(sc) ? 'true' : 'false' }}"
+                          t-on-click="() => this.toggleOffBlock(sc)">
+                    <t t-out="ic('eyeOff',13)"/>
+                    <span>Switched off</span>
+                    <span class="bza-scroff-n" t-esc="offCountLine(sc)"/>
+                    <span t-attf-class="bza-scroff-chev {{ isOffOpen(sc) ? 'is-open' : '' }}">
+                      <t t-out="ic('chevronDown',13)"/>
+                    </span>
+                  </button>
+                  <t t-if="isOffOpen(sc)">
+                    <div t-foreach="sc.switched_off" t-as="it" t-key="it.id"
+                         t-attf-class="bza-scrrow bza-scrrow--dark {{ isEntryOpen(it) ? 'is-on' : '' }}"
+                         role="button" tabindex="0"
+                         t-attf-aria-selected="{{ isEntryOpen(it) ? 'true' : 'false' }}"
+                         t-on-click="() => this.loadScreen(it.id)"
+                         t-on-keydown="(ev) => this.onScreenKey(ev, sc, it)">
+                      <span class="bza-scrico">
+                        <i t-if="isFontIcon(it.icon)" t-att-class="it.icon"/>
+                        <t t-else="" t-out="railIcon(it.icon,15)"/>
+                      </span>
+                      <span class="bza-scrtx">
+                        <b>
+                          <t t-esc="it.label"/>
+                          <small t-if="it.parent_label" class="bza-scrdark-in"
+                                 t-esc="'inside ' + it.parent_label"/>
+                        </b>
+                        <small class="bza-scrdark-tx" t-esc="couldOpenLine(it)"/>
+                        <small t-if="it.children.length" class="bza-scrdark-tx"
+                               t-esc="'With ' + it.children.map((k) => k.label).join(', ')"/>
+                      </span>
+                      <span class="bza-scrstate is-gone">
+                        <t t-out="ic('eyeOff',13)"/>
+                        <span>Nobody can open it yet</span>
+                      </span>
+                    </div>
+                  </t>
+                </t>
               </div>
 
               <!-- The quiet link to the product's own plain table, drawn only
@@ -903,6 +1015,141 @@
               <div t-if="state.screenBusy" class="bzk-busy">
                 <div class="bzk-spin"/><span>Working out who can open it…</span>
               </div>
+
+              <t t-elif="state.screen and state.screen.kind === 'block'">
+                <t t-set="dt" t-value="state.screen"/>
+
+                <!-- ====================== a block, opened out ======================
+                     THE ROLES ON A WHOLE BLOCK, and who that lets in. No switch
+                     and no order here — those belong to the entries. Taking the
+                     last role off asks first, and says what it means: the block
+                     stops gating and each entry inside decides for itself. -->
+                <div class="bza-scrdet-h">
+                  <span class="bza-scrico bza-scrico--big bza-scrico--block">
+                    <t t-out="ic('layers',19)"/>
+                  </span>
+                  <div class="bza-scrdet-id">
+                    <h3 t-esc="'The whole ' + dt.label + ' block'"/>
+                    <p class="bza-scrdet-sub">
+                      <span t-esc="blockLine(dt)"/>
+                      <t t-if="dt.gated">
+                        <span class="bza-dot">·</span>
+                        <span t-esc="seenByLine(dt)"/>
+                      </t>
+                    </p>
+                  </div>
+                </div>
+
+                <p class="bza-colhead"><t t-out="ic('key',13)"/> Unlocked by</p>
+
+                <div t-if="!dt.gates.length" class="bza-scrempty">
+                  The block asks for nothing, so each entry inside it is decided
+                  by its own gate. Put a role on the block and everybody who
+                  holds it opens every entry in it.
+                </div>
+                <div t-else="" class="bza-scrgates bza-scrgates--big">
+                  <div t-foreach="dt.gates" t-as="ga" t-key="ga.id"
+                       t-attf-class="bza-gaterow bza-area--{{ga.area}} {{ ga.archived ? 'is-gone' : '' }}">
+                    <span class="bza-gaterow-ic"><t t-out="ic('idCard',15)"/></span>
+                    <span class="bza-gaterow-tx">
+                      <b>
+                        <t t-esc="ga.name"/>
+                        <span t-if="ga.archived"
+                              class="bza-badge bza-badge--quiet">Put away</span>
+                      </b>
+                      <small t-if="ga.description" t-esc="ga.description"/>
+                      <small t-if="!ga.holders" class="bza-gaterow-none">
+                        Nobody holds this yet.
+                      </small>
+                    </span>
+                    <button t-if="dt.editable" class="bza-linkbtn"
+                            t-att-disabled="state.busy"
+                            t-on-click="() => this.toggleGate(ga)">
+                      Take it off
+                    </button>
+                  </div>
+                </div>
+
+                <div t-if="dt.editable" class="bza-scradd">
+                  <button class="bzk-btn ghost" t-on-click="togglePicker">
+                    <t t-out="ic('plus',14)"/>
+                    <t t-if="state.picking">Never mind</t>
+                    <t t-else="">Let another role into the whole block</t>
+                  </button>
+                  <div t-if="state.picking" class="bza-scrpick">
+                    <label class="bza-field bza-field--search">
+                      <span class="bza-in-ic"><t t-out="ic('search',14)"/></span>
+                      <input class="bza-in" type="search"
+                             t-att-value="state.pickSearch"
+                             t-on-input="onPickSearch"
+                             placeholder="Search a role"/>
+                    </label>
+                    <div t-if="!gateOptions.length" class="bza-scrempty">
+                      Every role on the board already opens this block.
+                    </div>
+                    <div t-else="" class="bza-picks bza-picks--tall">
+                      <button t-foreach="gateOptions" t-as="ga" t-key="ga.id"
+                              class="bza-pickable"
+                              t-att-disabled="state.busy"
+                              t-on-click="() => this.toggleGate(ga)">
+                        <span class="bza-pickable-go">
+                          <t t-out="ic('idCard',15)"/>
+                        </span>
+                        <span class="bza-pickable-tx">
+                          <b t-esc="ga.name"/>
+                          <small t-esc="ga.description"/>
+                        </span>
+                        <small class="bza-cap-opens">
+                          <t t-if="ga.holders === 1">1 person holds it</t>
+                          <t t-elif="ga.holders" t-esc="ga.holders + ' people hold it'"/>
+                          <t t-else="">nobody holds it yet</t>
+                        </small>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <t t-if="dt.entries.length">
+                  <p class="bza-colhead">
+                    <t t-out="ic('layers',13)"/>
+                    <t t-esc="'Inside the ' + dt.label + ' block'"/>
+                  </p>
+                  <div t-foreach="dt.entries" t-as="kd" t-key="kd.id"
+                       class="bza-subgate">
+                    <b t-esc="kd.label"/>
+                    <span class="bza-scrgates">
+                      <span t-if="!kd.own.length" class="bza-gate bza-gate--via"
+                            t-esc="dt.gated ? 'the block decides' : 'everyone with a login'"/>
+                      <span t-foreach="kd.own" t-as="ga" t-key="ga.id"
+                            t-attf-class="bza-gate bza-area--{{ga.area}}"
+                            t-esc="ga.name"/>
+                    </span>
+                  </div>
+                </t>
+
+                <t t-if="dt.gated">
+                  <p class="bza-colhead">
+                    <t t-out="ic('users',13)"/> Who opens the whole block today
+                  </p>
+                  <div t-if="!dt.who.rows.length" class="bza-scrempty">
+                    Nobody. Not one person on this system holds a role on this
+                    block, so only an administrator opens all of it.
+                  </div>
+                  <t t-else="">
+                    <div t-foreach="dt.who.rows" t-as="ws" t-key="ws.id"
+                         class="bza-prow">
+                      <img class="bza-face" t-att-src="ws.avatar"
+                           t-att-alt="ws.name"/>
+                      <span class="bza-prow-who">
+                        <b t-esc="ws.name"/>
+                        <small t-esc="ws.why"/>
+                      </span>
+                    </div>
+                    <p t-if="dt.who.more" class="bza-col-note"
+                       t-esc="'and ' + dt.who.more + ' more.'"/>
+                  </t>
+                </t>
+              </t>
 
               <t t-elif="state.screen">
                 <t t-set="dt" t-value="state.screen"/>
@@ -928,6 +1175,33 @@
                      mistake, and a gate whose role nobody holds is a role
                      waiting to be given to somebody. Both offer the way out
                      rather than stating the problem and stopping. -->
+                <!-- ======================= switched off, waiting =======================
+                     NOBODY CAN OPEN IT YET — and the way out, in one press, for
+                     a role that could. The button writes the role as the
+                     entry's own gate and switches it on together, so it never
+                     opens for anybody the role does not name. -->
+                <t t-if="dt.awaiting">
+                  <div class="bza-scrwarn is-warn">
+                    <t t-out="ic('eyeOff',15)"/>
+                    <span>
+                      This entry is switched off because nobody could open the
+                      screen behind it. <t t-esc="couldOpenLine(dt)"/>
+                    </span>
+                  </div>
+                  <div t-if="dt.can_manage and dt.could_be_opened_by.length"
+                       class="bza-scrswitchon">
+                    <button t-foreach="dt.could_be_opened_by" t-as="ga" t-key="ga.id"
+                            class="bzk-btn primary"
+                            t-att-disabled="state.busy"
+                            t-on-click="() => this.switchOnFor(dt, ga)">
+                      <t t-out="ic('checkCircle',14)"/>
+                      <t t-esc="'Switch on for ' + ga.name"/>
+                    </button>
+                    <p t-if="dt.also_shown_to.length" class="bza-hint"
+                       t-esc="'It would also show for ' + dt.also_shown_to.join(', ') + ', through the entry above it, and they could not open it.'"/>
+                  </div>
+                </t>
+
                 <div t-if="dt.dead" class="bza-scrwarn is-bad">
                   <t t-out="ic('alert',15)"/>
                   <span>
@@ -955,6 +1229,12 @@
                   will.
                 </div>
 
+                <div t-elif="!dt.gates.length" class="bza-scrempty">
+                  Nothing is written on this entry itself. It is opened by the
+                  gate it inherits, below. Put a role on it to let that role in
+                  as well.
+                </div>
+
                 <div t-else="" class="bza-scrgates bza-scrgates--big">
                   <div t-foreach="dt.gates" t-as="ga" t-key="ga.id"
                        t-attf-class="bza-gaterow bza-area--{{ga.area}} {{ ga.archived ? 'is-gone' : '' }}">
@@ -979,6 +1259,25 @@
                             t-att-disabled="state.busy"
                             t-on-click="() => this.toggleGate(ga)">
                       Take it off
+                    </button>
+                  </div>
+                </div>
+
+                <!-- WHAT IT INHERITS, named and not editable here: the block's
+                     roles are edited on the block, a parent's on the parent. -->
+                <div t-if="dt.inherited.length" class="bza-scrinherit">
+                  <p class="bza-scrnote">
+                    <t t-out="ic('layers',14)"/>
+                    <span t-esc="'Also opened by the gate on ' + dt.via_label + ':'"/>
+                  </p>
+                  <div class="bza-scrgates">
+                    <span t-foreach="dt.inherited" t-as="ga" t-key="ga.id"
+                          t-attf-class="bza-gate bza-area--{{ga.area}} {{ ga.archived ? 'is-gone' : '' }}"
+                          t-att-title="ga.description" t-esc="ga.name"/>
+                    <button t-if="dt.via === 'section' or (dt.via === 'own' and dt.via_label === dt.section_label)"
+                            class="bza-linkbtn"
+                            t-on-click="() => this.loadBlock(dt.section_id)">
+                      Open the block
                     </button>
                   </div>
                 </div>
@@ -1095,7 +1394,10 @@
                      and "shown locked" are both reasonable answers, and the
                      only way somebody picks the right one is by reading what
                      each does to the person who cannot get in. -->
-                <t t-if="dt.can_manage and !dt.everyone">
+                <!-- ONLY WHERE THE MENU CAN DRAW IT. A menu that shows or hides
+                     and never teases has nothing to choose here, and a choice
+                     that changes nothing anybody sees is worse than none. -->
+                <t t-if="dt.can_manage and !dt.everyone and canRestrict">
                   <p class="bza-colhead">
                     <t t-out="ic('lock',13)"/> Everybody else
                   </p>

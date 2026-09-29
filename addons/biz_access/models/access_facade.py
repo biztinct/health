@@ -47,8 +47,8 @@ from .access_common import (BOARD_GROUPS, DELEGATION_ROW_CAP, HOLDER_CAP,
                             MANAGE_GROUPS, PEOPLE_CAP, PICKER_CAP,
                             SYSTEM_APPLY_KEY, actor_exempt, area_label,
                             counted, flag, fold, forbidden_in_closure,
-                            hidden_logins, holds_all, implied_closure,
-                            is_hidden_user, may_see_hidden, profile_areas,
+                            groups_can_read, hidden_logins, holds_all,
+                            implied_closure, is_hidden_user, may_see_hidden, profile_areas,
                             safe, user_can_manage, visible_people)
 
 #: How many roles one "give several" may carry. A cap that no real person
@@ -56,6 +56,24 @@ from .access_common import (BOARD_GROUPS, DELEGATION_ROW_CAP, HOLDER_CAP,
 GRANT_MANY_CAP = 100
 
 _logger = logging.getLogger(__name__)
+
+
+def _own_ids(entry):
+    """The roles written on an entry itself — the half the Screens lens edits."""
+    return [int(r) for r in (entry.get('role_ids') or []) if r]
+
+
+def _eff_ids(entry):
+    """The roles that ACTUALLY gate an entry.
+
+    The product's own answer when it gives one (`effective_role_ids` — own plus
+    everything inherited from the block and the entries above it), otherwise
+    the entry's own. Never re-derived here: the inheritance rule is the menu's,
+    and a copy of it would be the copy that drifts.
+    """
+    if 'effective_role_ids' in entry:
+        return [int(r) for r in (entry.get('effective_role_ids') or []) if r]
+    return _own_ids(entry)
 
 # `BOARD_GROUPS` — everybody with a login, because the "hand my access over"
 # half is for everybody by requirement — and `MANAGE_GROUPS` — who may grant
@@ -160,16 +178,39 @@ class BizAccess(models.AbstractModel):
         return profiles.sudo().filtered(
             lambda p: p.guarded and not holds_all(actor, p.group_ids))
 
-    def _check_guarded(self, profiles, lend=False):
+    def _check_guarded(self, profiles, lend=False, take=False):
+        """GIVING, LENDING AND TAKING AWAY are all the holders' alone.
+
+        Taking a guarded role away is the same power as giving it: somebody who
+        could strip the owner of the business of "Owner" would own the decision
+        of who owns it. Ending a HAND-OVER is not this — a loan is always the
+        lender's or a manager's to end (`revoke`), because it only ever gives
+        back what somebody lent.
+        """
         bad = self._guarded_out_of_reach(profiles)
         if not bad:
             return
         name = bad[0].name or ''
+        if take:
+            raise UserError(_(
+                "Only somebody who holds \"%s\" can take it away.", name))
         if lend:
             raise UserError(_(
                 "Only somebody who holds \"%s\" can lend it.", name))
         raise UserError(_(
             "Only somebody who holds \"%s\" can give it.", name))
+
+    def _assert_may_take(self, profiles, user):
+        """Every refusal a removal would make about the ACTOR, without writing.
+
+        For an application's own screens that take a role away as a side
+        effect — changing somebody's job, say — and have to refuse BEFORE they
+        change anything else rather than swallow the removal's refusal after.
+        """
+        self._require_manage()
+        self._internal_user(user.id if hasattr(user, 'id') else user)
+        self._check_guarded(profiles, take=True)
+        return True
 
     def _can_give(self, profile):
         """Would the person asking be allowed to give this role at all?"""
@@ -208,6 +249,10 @@ class BizAccess(models.AbstractModel):
             # own that could disagree with it.
             'default_window_days': self.env[
                 'biz.access.delegation'].default_end_days(),
+            # The platform administrator's one extra door: re-reading the role
+            # catalogue after something was installed. Absent for everybody
+            # else — the server refuses them anyway.
+            'can_reseed': bool(self._is_admin()),
             # The note a passport shows in place of "Give a role" on the
             # person's own page, in the application's words.
             'self_grant_note': ('' if self._exempt()
@@ -732,6 +777,10 @@ class BizAccess(models.AbstractModel):
             raise UserError(_(
                 "%(who)s does not have \"%(what)s\".",
                 who=target.name or '', what=profile.name))
+        # ONLY ITS HOLDERS MAY TAKE A GUARDED ROLE AWAY — asked once there is
+        # something to take, so somebody told "only an Owner can take it away"
+        # is never told it about a role the person does not even have.
+        self._check_guarded(profile, take=True)
 
         shared = removable.filtered(
             lambda g: g in self._groups_their_other_roles_need(target, profile))
@@ -973,8 +1022,12 @@ class BizAccess(models.AbstractModel):
     # second time cannot widen a role somebody already holds, and running it on
     # a database where nothing is missing changes nothing.
     #
-    # It is deliberately NOT wired to a button. The caller is the platform's own
-    # tooling, straight after it has installed something.
+    # The caller is usually the platform's own tooling, straight after it has
+    # installed something. Since AR-2 it is ALSO a door in the header's "more"
+    # menu, drawn for the system administrator alone ("Re-read the role
+    # catalogue"), because the tooling's own failure message tells the operator
+    # to press it — and a sentence naming a button that does not exist is a
+    # dead end.
     @api.model
     def reseed_catalogue(self):
         """Ask every application on this database to seed its catalogue again."""
@@ -986,13 +1039,37 @@ class BizAccess(models.AbstractModel):
         # Imported here rather than at the top of the file on purpose: this
         # module's `__init__` loads `models` BEFORE `hooks`, and a top-level
         # import would tie the two together for the sake of one call.
+        Role = self.env['biz.access.role'].sudo().with_context(
+            active_test=False)
+        Ability = self.env['biz.access.ability'].sudo().with_context(
+            active_test=False)
+        before = {'roles': Role.search_count([]),
+                  'abilities': Ability.search_count([])}
         res = ensure_catalogue(self.env)
+        after = {'roles': Role.search_count([]),
+                 'abilities': Ability.search_count([])}
+        if before == after:
+            message = _(
+                "The role catalogue was read again. Nothing was missing: "
+                "%(r)s and %(a)s, as before.",
+                r=counted(after['roles'], _("1 role"), _("%s roles")),
+                a=counted(after['abilities'], _("1 ability"),
+                          _("%s abilities")))
+        else:
+            message = _(
+                "The role catalogue was read again: roles %(r0)s → %(r1)s, "
+                "abilities %(a0)s → %(a1)s. Nothing new was given to anybody.",
+                r0=before['roles'], r1=after['roles'],
+                a0=before['abilities'], a1=after['abilities'])
         return {
             'ok': True,
             'providers': res.get('providers', []),
             'linked': res.get('linked', 0),
-            'roles': self.env['biz.access.role'].sudo().search_count([]),
-            'abilities': self.env['biz.access.ability'].sudo().search_count([]),
+            'roles': after['roles'],
+            'abilities': after['abilities'],
+            'before': before,
+            'after': after,
+            'message': message,
         }
 
     # =========================================================== the left menu
@@ -1066,17 +1143,22 @@ class BizAccess(models.AbstractModel):
         _sections, entries = self._rail()
         if not entries:
             return False
-        return any(e.get('group_ids') or e.get('role_ids') for e in entries)
+        return any(e.get('group_ids') or _eff_ids(e) for e in entries)
 
-    def _roles_of_entry(self, entry, active_only=True):
-        """The roles written on ONE entry, as a recordset.
+    def _roles_of_entry(self, entry, active_only=True, own=False):
+        """The roles on ONE entry, as a recordset.
 
-        `active_test=False` on the browse and then a filter by hand, because
-        `role_ids` arrives as a list of ids from the provider and an archived
-        role has to be reachable — the Screens lens NAMES it, so somebody can
-        see why an entry has become unreachable.
+        By default the roles that ACTUALLY gate it — its own plus everything it
+        inherits from its block and from the entries above it, when the product
+        says so (`effective_role_ids`). `own=True` asks for only what is written
+        on the entry itself, which is the half the Screens lens edits.
+
+        `active_test=False` on the browse and then a filter by hand, because the
+        ids arrive as a plain list from the provider and an archived role has to
+        be reachable — the Screens lens NAMES it, so somebody can see why an
+        entry has become unreachable.
         """
-        ids = [int(r) for r in (entry.get('role_ids') or []) if r]
+        ids = _own_ids(entry) if own else _eff_ids(entry)
         if not ids:
             return self.env['biz.access.role'].browse()
         roles = self.env['biz.access.role'].sudo().with_context(
@@ -1084,11 +1166,12 @@ class BizAccess(models.AbstractModel):
         return roles.filtered('active') if active_only else roles
 
     def _gate_roles(self, entry):
-        """The roles that open one entry — archived ones left out."""
+        """The roles that open one entry — inherited included, archived ones
+        left out."""
         return self._roles_of_entry(entry, active_only=True)
 
     def _gate_roles_raw(self, entry):
-        """Every role written on the entry, archived ones INCLUDED.
+        """Every role that gates the entry, archived ones INCLUDED.
 
         "Is this entry gated at all" is a different question from "who gets
         through it", and answering the first with the active list would make
@@ -1165,7 +1248,7 @@ class BizAccess(models.AbstractModel):
             return []
         return [e.get('name') or '' for e in entries
                 if not e.get('parent_id') and not e.get('group_ids')
-                and not e.get('role_ids')]
+                and not _eff_ids(e)]
 
     def _opens_hint(self, groups, rail=None):
         """"opens People and Money" — the one-line version, for a tick box."""
@@ -1184,7 +1267,7 @@ class BizAccess(models.AbstractModel):
         an entry marked as a teaser is SHOWN to people who cannot open it, so
         "off" would be a lie about what they see.
         """
-        if not entry.get('group_ids') and not entry.get('role_ids'):
+        if not entry.get('group_ids') and not _eff_ids(entry):
             return 'on', False
         if self._unlocks(entry, held):
             return 'on', True
@@ -1801,11 +1884,17 @@ class BizAccess(models.AbstractModel):
                          'icon': k.get('icon') or 'circle',
                          'state': state_of(k), 'newly_lit': False}
                         for k in mine if k.get('parent_id') == entry['id']]
+                # "3 of 5" on a parent the passport draws folded. Counted HERE,
+                # off the same states the rows carry, so the number on the
+                # folded row and the rows it unfolds into cannot disagree.
                 rows.append({'id': entry['id'],
                              'label': entry.get('name') or '',
                              'icon': entry.get('icon') or 'circle',
                              'state': state, 'newly_lit': False,
-                             'children': kids})
+                             'children': kids,
+                             'kids_on': len([k for k in kids
+                                             if k['state'] == 'on']),
+                             'kids_total': len(kids)})
             if rows:
                 out.append({
                     'key': section.get('key') or '',
@@ -1843,7 +1932,10 @@ class BizAccess(models.AbstractModel):
                 'lent_by': (loan or {}).get('by', ''),
                 'lent_until': (loan or {}).get('until', ''),
                 'delegation_id': (loan or {}).get('id', 0),
-                'can_take_back': bool(manage and not loan),
+                # A guarded role is taken away only by its holders, so the
+                # button is not drawn for anybody the server would refuse.
+                'can_take_back': bool(manage and not loan
+                                      and self._can_give(profile)),
             })
         return out
 
@@ -2081,14 +2173,28 @@ class BizAccess(models.AbstractModel):
     # registered provider's `visibility_for` — the same method the real menu and
     # the person passport ask. This section decides nothing; it reads, and it
     # writes gates back through the provider.
+    #
+    # A GATE ON A BLOCK FLOWS DOWN (AR-2). On a menu where a whole block can
+    # carry roles, an entry with nothing written on it is NOT open to everybody
+    # — it is opened by the block's roles. So every "who can open this" answer
+    # below is asked of the EFFECTIVE gate (own ∪ block ∪ the entries above it,
+    # as the product reports it), and only the chips a person can edit on the
+    # row are the entry's own. The lens used to say "everyone with a login"
+    # about every entry in the ADMIN block, which only its owners can open.
 
     def _screen_roles(self, entry):
-        """(the roles that open it, the ones that have been put away).
+        """(the roles written ON the entry, the ones of those put away).
 
         Archived roles are read back deliberately: an entry whose only key has
         been archived is reachable by nobody, and a lens that simply showed no
         gate would be describing it as open to everybody.
         """
+        every = self._roles_of_entry(entry, active_only=False, own=True)
+        return every.filtered('active'), every.filtered(lambda r: not r.active)
+
+    def _screen_gate(self, entry):
+        """(the roles that ACTUALLY gate it, the ones of those put away) —
+        inherited included."""
         every = self._gate_roles_raw(entry)
         return every.filtered('active'), every.filtered(lambda r: not r.active)
 
@@ -2141,25 +2247,127 @@ class BizAccess(models.AbstractModel):
                     names.append(name)
         return {'n': len(group_ids), 'roles': names, 'loose': loose}
 
-    def _screen_row(self, entry, states, seen_by, by_group=None):
-        active_roles, archived_roles = self._screen_roles(entry)
+    def _screen_ctx(self, sections, entries):
+        """What every row needs to know about the rest of the menu, read once.
+
+        `{'sections': {id: row}, 'entries': {id: row}, 'readers': {}}` — the
+        last is a memo for "which roles could open this model", because the
+        same screen model sits behind several entries.
+        """
+        return {
+            'sections': {s['id']: s for s in (sections or [])},
+            'entries': {e['id']: e for e in (entries or [])},
+            'readers': {},
+        }
+
+    def _via(self, entry, ctx):
+        """Where an entry's inherited gate comes from — `(kind, label)`.
+
+        `('own', '')` when what is written on the entry is the whole gate or
+        part of it; `('section', 'ADMIN')` when it is gated only through its
+        block; `('parent', 'Voice')` when only through an entry above it; and
+        `('', '')` when nothing gates it at all. Said so the row can carry a
+        small "through ADMIN" tag instead of an empty gate column that reads as
+        "open to everybody".
+        """
+        own = set(_own_ids(entry))
+        eff = set(_eff_ids(entry))
+        inherited = eff - own
+        if not inherited:
+            return ('own', '') if own else ('', '')
+        section = ctx['sections'].get(entry.get('section_id')) or {}
+        sec_roles = set(int(r) for r in (section.get('role_ids') or []) if r)
+        # The nearest entry above it that writes a role of its own.
+        parent_label = ''
+        parent = ctx['entries'].get(entry.get('parent_id') or 0)
+        seen = set()
+        while parent and parent['id'] not in seen:
+            seen.add(parent['id'])
+            if _own_ids(parent):
+                parent_label = parent.get('name') or ''
+                break
+            parent = ctx['entries'].get(parent.get('parent_id') or 0)
+        if own:
+            also = ((section.get('name') or '') if inherited & sec_roles
+                    else parent_label)
+            return 'own', also
+        if inherited & sec_roles:
+            return 'section', section.get('name') or ''
+        return 'parent', parent_label
+
+    def _could_open(self, entry, ctx):
+        """The ACTIVE roles whose holders could open the screen behind an entry.
+
+        Asked of the permissions table through the model the product says the
+        screen opens (`groups_can_read`). A heading opens no records of its
+        own, so it is answered by its children: a role that could open any of
+        them could use the heading.
+        """
+        memo = ctx['readers']
+        models_ = []
+        if entry.get('model'):
+            models_.append(entry['model'])
+        else:
+            models_.extend(
+                k['model'] for k in ctx['entries'].values()
+                if k.get('parent_id') == entry['id'] and k.get('model'))
+        if not models_:
+            return self.env['biz.access.role'].browse()
+        out = self.env['biz.access.role'].browse()
+        for model_name in dict.fromkeys(models_):
+            if model_name not in memo:
+                memo[model_name] = self.env['biz.access.role'].sudo().search(
+                    [('active', '=', True)],
+                    order='area, sequence, name').filtered(
+                        lambda r, m=model_name: r.group_ids
+                        and not forbidden_in_closure(r.group_ids, self.env)
+                        and groups_can_read(self.env, r.group_ids, m))
+            out |= memo[model_name]
+        return out
+
+    def _cannot_open(self, entry, roles, ctx):
+        """Which of these roles could NOT open the screen behind the entry."""
+        able = self._could_open(entry, ctx)
+        return roles.filtered(lambda r: r not in able)
+
+    def _screen_row(self, entry, states, seen_by, by_group=None, ctx=None):
+        ctx = ctx or self._screen_ctx([], [entry])
+        own_active, own_archived = self._screen_roles(entry)
+        eff_active, eff_archived = self._screen_gate(entry)
         legacy = self._legacy_note(entry, by_group=by_group)
-        gated = bool(active_roles or archived_roles or entry.get('group_ids'))
-        chips = ([self._role_chip(r) for r in active_roles]
-                 + [self._role_chip(r, archived=True) for r in archived_roles])
+        gated = bool(eff_active or eff_archived or entry.get('group_ids'))
+        chips = ([self._role_chip(r) for r in own_active]
+                 + [self._role_chip(r, archived=True) for r in own_archived])
+        own_ids = set(own_active.ids) | set(own_archived.ids)
+        inherited = ([self._role_chip(r) for r in eff_active
+                      if r.id not in own_ids]
+                     + [self._role_chip(r, archived=True) for r in eff_archived
+                        if r.id not in own_ids])
+        via, via_label = self._via(entry, ctx)
         active = bool(entry.get('active', True))
         raw = states.get(entry['id'], 'hidden' if active else 'off')
-        return {
+        every_chip = chips + inherited
+        awaiting = bool(entry.get('awaiting_role')) and not active
+        row = {
             'id': entry['id'],
+            'kind': 'entry',
             'label': entry.get('name') or '',
             'icon': entry.get('icon') or 'circle',
             'section_id': entry.get('section_id') or 0,
             'parent_id': entry.get('parent_id') or 0,
+            'parent_label': (ctx['entries'].get(entry.get('parent_id') or 0)
+                             or {}).get('name') or '',
             'sequence': entry.get('sequence') or 0,
             'active': active,
             'restricted': bool(entry.get('restricted')),
             'everyone': not gated,
+            'gated': gated,
             'gates': chips,
+            # WHAT IT INHERITS, drawn but not edited here: the block's gate is
+            # edited on the block's own row, a parent's on the parent's.
+            'inherited': inherited,
+            'via': via,
+            'via_label': via_label,
             'legacy': legacy,
             # A SECOND, OLDER GATE THE PRODUCT STILL READS.
             #
@@ -2177,58 +2385,118 @@ class BizAccess(models.AbstractModel):
             # different sentences: a gate whose roles are all archived is a
             # mistake somebody made, and a gate whose roles are simply unheld is
             # a role waiting to be given to somebody.
-            'dead': bool(archived_roles and not active_roles
+            'dead': bool(eff_archived and not eff_active
                          and not entry.get('group_ids')),
-            'orphan': bool(active_roles and not entry.get('group_ids')
-                           and not any(c['holders'] for c in chips)),
+            'orphan': bool(eff_active and not entry.get('group_ids')
+                           and not any(c['holders'] for c in every_chip
+                                       if not c['archived'])),
             'seen_by': seen_by.get(entry['id'], 0),
             'children': [],
+            # SWITCHED OFF FOR WANT OF A ROLE — the product says which ones.
+            'awaiting': awaiting,
+            'could_be_opened_by': [],
+            'also_shown_to': [],
         }
+        if awaiting:
+            able = self._could_open(entry, ctx)
+            row['could_be_opened_by'] = [self._role_chip(r) for r in able]
+            # Whoever would ALSO see it once it is on, because the entry
+            # inherits them, and who could not open what they would see.
+            inherit_active = eff_active.filtered(lambda r: r.id not in own_ids)
+            row['also_shown_to'] = [
+                r.name or '' for r in inherit_active if r not in able]
+        return row
 
-    def _seen_by_counts(self, entries):
+    def _audience(self, active_roles, group_ids, memo):
+        """The ids of every active person who opens a gate made of these.
+
+        Administrators always; plus the holders of each permission; plus the
+        holders of each role. `memo` is shared across a whole board so the same
+        role is asked once however many entries it gates.
+        """
+        by_group, by_role = memo.setdefault('g', {}), memo.setdefault('r', {})
+        if 'admins' not in memo:
+            admins = safe(
+                lambda: self.env.ref('base.group_system').sudo(
+                ).all_user_ids.filtered('active'),
+                None, 'who the administrators are')
+            memo['admins'] = set(admins.ids) if admins is not None else set()
+        who = set(memo['admins'])
+        for group in self.env['res.groups'].sudo().browse(
+                [int(g) for g in (group_ids or []) if g]).exists():
+            if group.id not in by_group:
+                by_group[group.id] = set(safe(
+                    lambda g=group: g.all_user_ids.filtered('active').ids,
+                    [], 'who holds a permission') or [])
+            who |= by_group[group.id]
+        for profile in active_roles:
+            if profile.id not in by_role:
+                by_role[profile.id] = set(safe(
+                    lambda p=profile: p._holder_users().filtered(
+                        'active').ids, [], 'who holds a role') or [])
+            who |= by_role[profile.id]
+        return who
+
+    def _everybody_count(self):
+        return safe(
+            lambda: self.env['res.users'].sudo().search_count(
+                [('active', '=', True), ('share', '=', False)]),
+            0, 'how many people have a login')
+
+    def _seen_by_counts(self, entries, memo=None):
         """{entry id: how many people with a login can open it}.
 
         Asked the cheap way round: an entry's audience is the union of the
         people who hold each permission on it and the people who hold each of
-        its roles, which is a handful of reads — where asking it per PERSON
-        would be one closure walk per person per entry.
-
-        AND EACH OF THOSE READS IS MADE ONCE. The same permission gates several
-        entries and the same role opens several more, so the two memos below are
-        the difference between a handful of queries and a hundred.
+        the roles that gate it — its own AND inherited — which is a handful of
+        reads, where asking it per PERSON would be one closure walk per person
+        per entry.
         """
+        memo = {} if memo is None else memo
         out = {}
-        admins = safe(
-            lambda: self.env.ref('base.group_system').sudo(
-            ).all_user_ids.filtered('active'),
-            None, 'who the administrators are')
-        admin_ids = set(admins.ids) if admins is not None else set()
-        everybody = safe(
-            lambda: self.env['res.users'].sudo().search_count(
-                [('active', '=', True), ('share', '=', False)]),
-            0, 'how many people have a login')
-        by_group, by_role = {}, {}
+        everybody = None
         for entry in entries:
-            active_roles, _archived = self._screen_roles(entry)
+            active_roles, archived = self._screen_gate(entry)
             group_ids = [int(g) for g in (entry.get('group_ids') or []) if g]
-            if not group_ids and not active_roles:
+            if not group_ids and not active_roles and not archived:
+                if everybody is None:
+                    everybody = self._everybody_count()
                 out[entry['id']] = everybody
                 continue
-            who = set(admin_ids)
-            for group in self.env['res.groups'].sudo().browse(group_ids).exists():
-                if group.id not in by_group:
-                    by_group[group.id] = set(safe(
-                        lambda g=group: g.all_user_ids.filtered('active').ids,
-                        [], 'who holds a permission') or [])
-                who |= by_group[group.id]
-            for profile in active_roles:
-                if profile.id not in by_role:
-                    by_role[profile.id] = set(safe(
-                        lambda p=profile: p._holder_users().filtered(
-                            'active').ids, [], 'who holds a role') or [])
-                who |= by_role[profile.id]
-            out[entry['id']] = len(who)
+            out[entry['id']] = len(self._audience(active_roles, group_ids,
+                                                  memo))
         return out
+
+    def _section_roles(self, section):
+        """(active, archived) roles written on a whole BLOCK."""
+        ids = [int(r) for r in (section.get('role_ids') or []) if r]
+        if not ids:
+            empty = self.env['biz.access.role'].browse()
+            return empty, empty
+        roles = self.env['biz.access.role'].sudo().with_context(
+            active_test=False).browse(ids).exists()
+        return roles.filtered('active'), roles.filtered(lambda r: not r.active)
+
+    def _block_row(self, section, entries, memo, can_edit):
+        """The block itself, as a row above its entries: its own chips, who
+        opens it, and how many entries its gate flows down to."""
+        active_roles, archived = self._section_roles(section)
+        inside = [e for e in entries if e.get('section_id') == section['id']
+                  and e.get('active', True)]
+        gated = bool(active_roles or archived)
+        return {
+            'id': section['id'],
+            'kind': 'block',
+            'label': section.get('name') or '',
+            'gates': ([self._role_chip(r) for r in active_roles]
+                      + [self._role_chip(r, archived=True) for r in archived]),
+            'everyone': not gated,
+            'gated': gated,
+            'seen_by': (len(self._audience(active_roles, [], memo))
+                        if gated else 0),
+            'flows_to': len(inside) if gated else 0,
+            'editable': bool(can_edit),
+        }
 
     @api.model
     def screens_board(self, user_id=None):
@@ -2236,6 +2504,7 @@ class BizAccess(models.AbstractModel):
         self._require()
         person = self._person(user_id)
         sections, entries = self._rail_all()
+        rail = self.env['biz.access.rail']
         if sections is None:
             # NO LEFT MENU ON THIS SYSTEM, AND THE LENS SAYS SO IN WORDS.
             # A product registers a provider (`access_common.register_rail`)
@@ -2244,34 +2513,60 @@ class BizAccess(models.AbstractModel):
             # blank pane, and never a traceback.
             return {'can_manage': self.can_manage(), 'sections': [],
                     'roles': [], 'any_gated': False,
+                    # The shape a menu-less board has always had; the
+                    # "switched off" count only exists where there is a menu.
                     'counts': {'entries': 0, 'gated': 0, 'everyone': 0},
                     'advanced_action': '',
                     'reload_event': False,
+                    'can_restrict': False,
+                    'can_gate_blocks': False,
                     'seeing': {'id': person.id, 'name': person.sudo().name or '',
                                'is_me': person.id == self.env.uid},
                     'headline': _("There is no left menu on this system yet.")}
 
-        states = self.env['biz.access.rail'].visibility_for(person)
-        seen_by = self._seen_by_counts(entries)
+        states = rail.visibility_for(person)
+        memo = {}
+        seen_by = self._seen_by_counts(entries, memo)
         by_group = self._roles_by_group()
         item_states, sec_states = states['items'], states['sections']
+        ctx = self._screen_ctx(sections, entries)
+        manage = self.can_manage()
+        can_gate_blocks = rail.supports_section_gates()
 
-        out, gated, everyone = [], 0, 0
+        out, gated, everyone, switched_off = [], 0, 0, 0
         for section in sections:
             mine = [e for e in entries if e.get('section_id') == section['id']]
-            rows = []
+            rows, off_rows = [], []
             for entry in mine:
-                if entry.get('parent_id'):
+                row = None
+                if not entry.get('parent_id'):
+                    row = self._screen_row(entry, item_states, seen_by,
+                                           by_group, ctx)
+                    row['children'] = [
+                        self._screen_row(kid, item_states, seen_by, by_group,
+                                         ctx)
+                        for kid in mine if kid.get('parent_id') == entry['id']]
+                    if row['awaiting']:
+                        off_rows.append(row)
+                        switched_off += 1 + len(
+                            [k for k in row['children'] if k['awaiting']])
+                        continue
+                    rows.append(row)
+                    if entry.get('active', True):
+                        gated += 0 if row['everyone'] else 1
+                        everyone += 1 if row['everyone'] else 0
                     continue
-                row = self._screen_row(entry, item_states, seen_by, by_group)
-                row['children'] = [
-                    self._screen_row(kid, item_states, seen_by, by_group)
-                    for kid in mine if kid.get('parent_id') == entry['id']]
-                rows.append(row)
-                if entry.get('active', True):
-                    gated += 0 if row['everyone'] else 1
-                    everyone += 1 if row['everyone'] else 0
-            if not rows:
+                # A SUB-ENTRY SWITCHED OFF UNDER A PARENT THAT IS ON. It has
+                # no row of its own on the menu (children are drawn inside
+                # their parent), so it is listed in the block on its own —
+                # otherwise it could only be found by opening its parent.
+                parent = ctx['entries'].get(entry.get('parent_id')) or {}
+                if (entry.get('awaiting_role') and not entry.get('active', True)
+                        and not parent.get('awaiting_role')):
+                    off_rows.append(self._screen_row(
+                        entry, item_states, seen_by, by_group, ctx))
+                    switched_off += 1
+            if not rows and not off_rows:
                 continue
             out.append({
                 'id': section['id'],
@@ -2280,10 +2575,13 @@ class BizAccess(models.AbstractModel):
                 'show_label': bool(section.get('show_label', True)),
                 'active': bool(section.get('active', True)),
                 'restricted': sec_states.get(section['id']) == 'locked',
+                'block': self._block_row(section, entries, memo,
+                                         manage and can_gate_blocks),
                 'items': rows,
+                'switched_off': off_rows,
             })
         return {
-            'can_manage': self.can_manage(),
+            'can_manage': manage,
             'sections': out,
             'roles': [{'id': p.id, 'name': p.name or '',
                        'description': p.description or '',
@@ -2293,15 +2591,20 @@ class BizAccess(models.AbstractModel):
                       for p in self.env['biz.access.role'].visible()],
             'any_gated': self._any_gated(),
             'counts': {'entries': gated + everyone, 'gated': gated,
-                       'everyone': everyone},
+                       'everyone': everyone, 'switched_off': switched_off},
             # The product's own plain table of menu rows, for the administrator
             # who needs the row itself. Empty when the product ships none, and
             # the link is then not drawn at all rather than drawn and inert.
-            'advanced_action': self.env['biz.access.rail'].advanced_action(),
+            'advanced_action': rail.advanced_action(),
             # The bus event that makes the REAL menu re-read itself. Carried on
             # the board as well as on every write, because archiving a role can
             # close a door too and that write knows nothing about a rail.
-            'reload_event': self.env['biz.access.rail'].reload_event(),
+            'reload_event': rail.reload_event(),
+            # WHAT THIS MENU CAN DO. A menu that only ever shows or hides has
+            # no "show it locked" to offer, and a lens that offered it anyway
+            # would be a switch that changes nothing anybody ever sees.
+            'can_restrict': rail.supports_restricted(),
+            'can_gate_blocks': can_gate_blocks,
             'seeing': {'id': person.id, 'name': person.sudo().name or '',
                        'is_me': person.id == self.env.uid},
             'headline': self._screens_headline(gated, everyone),
@@ -2321,6 +2624,15 @@ class BizAccess(models.AbstractModel):
                  v=_("is") if gated == 1 else _("are"),
                  e=counted(everyone, _("1 is"), _("%s are")))
 
+    def _gate_options(self, exclude_ids):
+        return [{'id': p.id, 'name': p.name or '',
+                 'description': p.description or '',
+                 'area': p.area or '',
+                 'area_label': area_label(p.area, self.env),
+                 'holders': p.holder_count}
+                for p in self.env['biz.access.role'].visible()
+                if p.id not in exclude_ids]
+
     @api.model
     def screen_detail(self, item_id, user_id=None):
         """One entry, opened out: who can reach it, through what, and what is
@@ -2328,33 +2640,69 @@ class BizAccess(models.AbstractModel):
         self._require()
         entry = self._screen(item_id)
         person = self._person(user_id)
-        _sections, entries = self._rail_all()
+        sections, entries = self._rail_all()
         entries = entries or []
+        ctx = self._screen_ctx(sections, entries)
         states = self.env['biz.access.rail'].visibility_for(person)
         kids = [k for k in entries if k.get('parent_id') == entry['id']]
-        seen_by = self._seen_by_counts([entry] + kids)
+        memo = {}
+        seen_by = self._seen_by_counts([entry] + kids, memo)
 
         by_group = self._roles_by_group()
-        row = self._screen_row(entry, states['items'], seen_by, by_group)
+        row = self._screen_row(entry, states['items'], seen_by, by_group, ctx)
         row['children'] = [
-            self._screen_row(k, states['items'], seen_by, by_group)
+            self._screen_row(k, states['items'], seen_by, by_group, ctx)
             for k in kids]
-        active_roles, archived_roles = self._screen_roles(entry)
-        held_ids = set(active_roles.ids) | set(archived_roles.ids)
+        eff_active, eff_archived = self._screen_gate(entry)
+        taken = set(eff_active.ids) | set(eff_archived.ids)
         row.update({
             'section_label': self._section_label(entry.get('section_id')),
             'restriction_reason': entry.get('restriction_reason') or '',
-            'who': self._who_sees(entry, active_roles),
-            'options': [{'id': p.id, 'name': p.name or '',
-                         'description': p.description or '',
-                         'area': p.area or '',
-                         'area_label': area_label(p.area, self.env),
-                         'holders': p.holder_count}
-                        for p in self.env['biz.access.role'].visible()
-                        if p.id not in held_ids],
+            'who': self._who_sees(entry, eff_active, memo),
+            'options': self._gate_options(taken),
             'can_manage': self.can_manage(),
+            'can_restrict': self.env['biz.access.rail'].supports_restricted(),
         })
         return row
+
+    @api.model
+    def block_detail(self, section_id, user_id=None):
+        """One BLOCK of the menu, opened out: the roles on it, who that lets
+        in, and the entries its gate flows down to.
+
+        No on/off and no reorder here: switching a whole block off, or moving
+        one, is a different decision from who may open it, and the menu's own
+        settings are where it is made.
+        """
+        self._require()
+        rail = self.env['biz.access.rail']
+        section = rail.section(section_id)
+        person = self._person(user_id)
+        _sections, entries = self._rail_all()
+        entries = entries or []
+        memo = {}
+        active_roles, archived = self._section_roles(section)
+        can_edit = bool(self.can_manage() and rail.supports_section_gates())
+        block = self._block_row(section, entries, memo, can_edit)
+        states = rail.visibility_for(person)['sections']
+        inside = [e for e in entries if e.get('section_id') == section['id']
+                  and e.get('active', True) and not e.get('parent_id')]
+        taken = set(active_roles.ids) | set(archived.ids)
+        block.update({
+            'who': (self._who_sees({'group_ids': [],
+                                    'role_ids': section.get('role_ids') or []},
+                                   active_roles, memo)
+                    if block['gated'] else
+                    {'everyone': True, 'rows': [], 'total': 0, 'more': 0}),
+            'options': self._gate_options(taken),
+            'can_manage': self.can_manage(),
+            'state': 'on' if states.get(section['id']) == 'on' else 'off',
+            'entries': [{'id': e['id'], 'label': e.get('name') or '',
+                         'own': [self._role_chip(r) for r in
+                                 self._screen_roles(e)[0]]}
+                        for e in inside],
+        })
+        return block
 
     def _section_label(self, section_id):
         for section in (self.env['biz.access.rail'].sections(
@@ -2367,31 +2715,33 @@ class BizAccess(models.AbstractModel):
         """One entry of the left menu, or the refusal, in words."""
         return self.env['biz.access.rail'].entry(item_id)
 
-    def _who_sees(self, entry, active_roles):
+    def _who_sees(self, entry, active_roles, memo=None):
         """The people who can open this entry, and WHY each of them can.
+
+        `active_roles` is the EFFECTIVE gate — a person let in by the block's
+        role is let in, and is named with that role.
 
         Capped, because an entry open to everybody is a fact and not a list —
         and the count beside it already says how many.
         """
+        memo = {} if memo is None else memo
         group_ids = [int(g) for g in (entry.get('group_ids') or []) if g]
-        if not group_ids and not active_roles:
+        if not group_ids and not active_roles and not _eff_ids(entry):
             return {'everyone': True, 'rows': [], 'total': 0, 'more': 0}
-
+        # An entry gated only on roles that have been put away falls through
+        # to here with no roles and no permissions: nobody but an
+        # administrator, and the list says so by being short.
+        none = self.env['biz.access.role'].browse()
+        admins = self._audience(none, [], memo)
         by_role = {}
         for profile in active_roles:
-            for uid in safe(
-                    lambda p=profile: p._holder_users().filtered('active').ids,
-                    [], 'who holds a role') or []:
+            self._audience(profile, [], memo)
+            for uid in memo['r'].get(profile.id, set()):
                 by_role.setdefault(uid, []).append(profile.name or '')
         by_group = set()
-        for group in self.env['res.groups'].sudo().browse(group_ids).exists():
-            by_group |= set(safe(
-                lambda g=group: g.all_user_ids.filtered('active').ids, [],
-                'who holds a permission') or [])
-        admins = set(safe(
-            lambda: self.env.ref('base.group_system').sudo(
-            ).all_user_ids.filtered('active').ids, [],
-            'who the administrators are') or [])
+        for gid in group_ids:
+            self._audience(none, [gid], memo)
+            by_group |= memo['g'].get(gid, set())
 
         everybody = set(by_role) | by_group | admins
         users = visible_people(self.env['res.users'].sudo().browse(
@@ -2422,9 +2772,23 @@ class BizAccess(models.AbstractModel):
     # just changed it is the worst kind of stale: the screen contradicting
     # itself. The product names a bus event its own menu listens for; the
     # browser triggers whatever comes back and knows nothing about it.
+    #
+    # AND EVERY WRITE LEAVES A LINE IN THE SERVER LOG naming who changed which
+    # gate from what to what — the gate on a menu is not a hand-over and has
+    # no row in the hand-over history, so the log is where "who opened the
+    # voice screens to Owner, and when" is kept.
     def _written(self, message):
         return {'ok': True, 'message': message,
                 'reload_event': self.env['biz.access.rail'].reload_event()}
+
+    def _log_gate(self, what, name, before, after):
+        Role = self.env['biz.access.role'].sudo().with_context(
+            active_test=False)
+        _logger.info(
+            'biz_access: %s "%s" gate changed by %s (uid %s): [%s] -> [%s]',
+            what, name, self.env.user.login or '', self.env.uid,
+            ', '.join(Role.browse(sorted(before)).exists().mapped('name')),
+            ', '.join(Role.browse(sorted(after)).exists().mapped('name')))
 
     @api.model
     def set_screen_roles(self, item_id, role_ids):
@@ -2444,10 +2808,57 @@ class BizAccess(models.AbstractModel):
         before = set(self._screen_roles(entry)[0].ids)
         self.env['biz.access.rail'].set_roles(entry['id'], wanted.ids)
         after = set(wanted.ids)
+        self._log_gate('entry', entry.get('name') or '', before, after)
         # Re-read: the entry dict in hand was the answer BEFORE the write, and
         # the message says what the entry is now.
         entry = self._screen(item_id)
         return self._written(self._gate_message(entry, before, after))
+
+    @api.model
+    def set_section_roles(self, section_id, role_ids):
+        """Say which roles open a whole BLOCK of the menu.
+
+        TAKING THE LAST ROLE OFF IS ALLOWED, and it does not open the block to
+        everybody: it means the block no longer gates, and each entry inside it
+        is decided by its own gate from then on. The sentence says exactly that,
+        because "open to everybody" would be a lie about every entry that
+        carries a gate of its own.
+        """
+        self._require_manage()
+        rail = self.env['biz.access.rail']
+        section = rail.section(section_id)
+        wanted = self.env['biz.access.role'].sudo().browse(
+            [int(r) for r in (role_ids or []) if r]).exists()
+        for profile in wanted:
+            self._gateable_profile(profile)
+        before = set(self._section_roles(section)[0].ids)
+        rail.set_section_roles(section['id'], wanted.ids)
+        after = set(wanted.ids)
+        name = section.get('name') or ''
+        self._log_gate('block', name, before, after)
+        added, dropped = after - before, before - after
+        if not after and before:
+            message = _(
+                "The %s block no longer asks for a role. Each entry inside it "
+                "is now decided by its own gate — an entry with none is open "
+                "to everybody with a login.", name)
+        elif added and not dropped:
+            message = _(
+                "%(n)s can now open everything in the %(what)s block.",
+                n=counted(len(added), _("One more role"), _("%s more roles")),
+                what=name)
+        elif dropped and not added:
+            message = _(
+                "%(n)s no longer opens the %(what)s block.",
+                n=counted(len(dropped), _("One role"), _("%s roles")),
+                what=name)
+        elif added or dropped:
+            message = _("The roles that open the %s block have been changed.",
+                        name)
+        else:
+            message = _("Nothing changed — those are the roles it already "
+                        "asked for.")
+        return self._written(message)
 
     def _gateable_profile(self, profile):
         """May this role be put on a left-menu gate?
@@ -2485,6 +2896,10 @@ class BizAccess(models.AbstractModel):
                                _("%s more roles")), what=what)
         if dropped and not added:
             if not after and not entry.get('group_ids'):
+                if _eff_ids(entry):
+                    # Its own gate is gone, and the one it inherits is not.
+                    return _("%s now follows the gate above it — the block "
+                             "or entry it sits in.", what)
                 return _("%s is open to everybody with a login again.", what)
             return _("%(n)s no longer opens %(what)s.",
                      n=counted(len(dropped), _("One role"), _("%s roles")),
@@ -2492,6 +2907,93 @@ class BizAccess(models.AbstractModel):
         if added or dropped:
             return _("The roles that open %s have been changed.", what)
         return _("Nothing changed — those are the roles it already asked for.")
+
+    @api.model
+    def switch_on_for(self, item_id, role_id):
+        """"Switch on for Owner" — gate a switched-off entry to one role and
+        put it back on the menu, in one step.
+
+        ONLY AN ENTRY THE PRODUCT SWITCHED OFF FOR WANT OF A ROLE. Something
+        switched off on purpose — a decision, a feature that is not bought —
+        is not this door's to reopen; its own row's switch is.
+
+        ONLY FOR A ROLE THAT COULD OPEN IT. The server asks the permissions
+        table again rather than trusting the button, because a door that opens
+        onto "you are not allowed" is the dead end this whole lens exists to
+        prevent.
+
+        WHAT IT WRITES, in order: the role becomes the entry's own gate (so
+        nobody else is let in by it), the entry goes back on, the sub-entries
+        of a heading that the role could open go back on with it (they inherit
+        its gate), and a heading above a sub-entry is put back on — with the
+        role added to its gate if that role could not otherwise get past it,
+        because a sub-entry under a heading somebody cannot see is not drawn.
+        """
+        self._require_manage()
+        rail = self.env['biz.access.rail']
+        entry = self._screen(item_id)
+        name = entry.get('name') or ''
+        if entry.get('active', True):
+            raise UserError(_("\"%s\" is already on the left menu.", name))
+        if not entry.get('awaiting_role'):
+            raise UserError(_(
+                "\"%s\" was switched off on purpose, not because nobody could "
+                "open it. Switch it back on from its own row if that is what "
+                "you want.", name))
+        role = self.env['biz.access.role'].sudo().browse(
+            int(role_id or 0)).exists()
+        if not role or not role.active:
+            raise UserError(_("That role is not on this system any more."))
+        self._gateable_profile(role)
+        sections, entries = self._rail_all()
+        ctx = self._screen_ctx(sections, entries)
+        if role not in self._could_open(entry, ctx):
+            raise UserError(_(
+                "Nobody holding \"%(role)s\" could open the screen behind "
+                "\"%(what)s\", so switching it on for them would be a door that "
+                "refuses them. Give the role the ability it needs first.",
+                role=role.name or '', what=name))
+
+        before = set(self._screen_roles(entry)[0].ids)
+        rail.set_roles(entry['id'], [role.id])
+        rail.set_active(entry['id'], True)
+        self._log_gate('entry', name, before, {role.id})
+        opened = []
+        # A heading: the sub-entries the role could open come back with it.
+        for kid in [k for k in entries if k.get('parent_id') == entry['id']]:
+            if kid.get('active', True) or not kid.get('awaiting_role'):
+                continue
+            if role in self._could_open(kid, ctx):
+                rail.set_active(kid['id'], True)
+                opened.append(kid.get('name') or '')
+        # A sub-entry: the heading above it has to be drawn for it to be.
+        parent = ctx['entries'].get(entry.get('parent_id') or 0)
+        widened = ''
+        if parent:
+            if not parent.get('active', True):
+                rail.set_active(parent['id'], True)
+            parent_gate = set(_eff_ids(parent))
+            if parent_gate and role.id not in parent_gate:
+                own = _own_ids(parent)
+                rail.set_roles(parent['id'], own + [role.id])
+                self._log_gate('entry', parent.get('name') or '', set(own),
+                               set(own) | {role.id})
+                widened = parent.get('name') or ''
+        _logger.info(
+            'biz_access: "%s" switched on for "%s" by %s (uid %s); also on: %s',
+            name, role.name, self.env.user.login or '', self.env.uid,
+            ', '.join(opened) or 'nothing else')
+
+        message = _("\"%(what)s\" is on the left menu for the people who hold "
+                    "\"%(role)s\".", what=name, role=role.name or '')
+        if opened:
+            message = _("%(said)s Inside it: %(kids)s.", said=message,
+                        kids=', '.join(opened))
+        if widened:
+            message = _("%(said)s \"%(role)s\" was also let into \"%(parent)s\" "
+                        "so the entry can be reached.", said=message,
+                        role=role.name or '', parent=widened)
+        return self._written(message)
 
     @api.model
     def set_screen_flags(self, item_id, active=None, restricted=None):
@@ -2504,11 +3006,20 @@ class BizAccess(models.AbstractModel):
         name = entry.get('name') or ''
         if active is not None:
             rail.set_active(entry['id'], bool(active))
+            _logger.info('biz_access: entry "%s" switched %s by %s (uid %s)',
+                         name, 'on' if active else 'off',
+                         self.env.user.login or '', self.env.uid)
             return self._written(
                 _("\"%s\" is back on the left menu.", name) if active else
                 _("\"%s\" is off the left menu. Nobody sees it, and nothing "
                   "behind it has changed — switch it back on whenever you "
                   "want.", name))
+        if not rail.supports_restricted():
+            # THE MENU CANNOT DRAW IT, SO THE LENS CANNOT OFFER IT. Refused in
+            # a sentence rather than written and never seen.
+            raise UserError(_(
+                "This left menu has no locked preview; an entry is either "
+                "shown or hidden."))
         rail.set_restricted(entry['id'], bool(restricted),
                             entry.get('restriction_reason') or '')
         return self._written(

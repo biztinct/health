@@ -132,7 +132,39 @@ class BizAccessRail(models.AbstractModel):
         return safe(lambda: provider.reload_event(), None,
                     'the left menu reload event') or False
 
+    @api.model
+    def supports_section_gates(self):
+        """Can a whole block carry roles here? False with no provider."""
+        provider = self._provider()
+        if not provider:
+            return False
+        return bool(safe(lambda: provider.supports_section_gates(self.env),
+                         False, 'whether a block of the menu can be gated'))
+
+    @api.model
+    def supports_restricted(self):
+        """Can this menu show an entry locked, with a note?
+
+        With no provider there is no menu to show anything on, so the answer is
+        no — and a provider that cannot say is taken at the protocol's default,
+        which is the answer the menu had before anybody asked.
+        """
+        provider = self._provider()
+        if not provider:
+            return False
+        return bool(safe(lambda: provider.supports_restricted(self.env),
+                         True, 'whether the menu can show an entry locked'))
+
     # --------------------------------------------------------------- helpers
+    @api.model
+    def section(self, section_id, include_inactive=True):
+        """One block, by id — or the refusal, in words."""
+        section_id = int(section_id or 0)
+        for row in self.sections(include_inactive=include_inactive):
+            if row.get('id') == section_id:
+                return row
+        raise UserError(_("That block of the left menu is not here."))
+
     @api.model
     def entry(self, entry_id, include_inactive=True):
         """One row, by id — or the refusal, in words."""
@@ -182,6 +214,21 @@ class BizAccessRail(models.AbstractModel):
         return True
 
     @api.model
+    def set_section_roles(self, section_id, role_ids):
+        """The roles on a whole block. Refused, in words, where the menu has
+        no such thing — never quietly ignored."""
+        provider = self._provider()
+        if not provider:
+            self._no_menu()
+        if not self.supports_section_gates():
+            raise UserError(_(
+                "This left menu does not gate a whole block at once; put the "
+                "roles on the entries inside it instead."))
+        provider.set_section_roles(self.env, int(section_id or 0),
+                                   [int(r) for r in (role_ids or []) if r])
+        return True
+
+    @api.model
     def set_active(self, entry_id, active):
         provider = self._provider()
         if not provider:
@@ -194,6 +241,10 @@ class BizAccessRail(models.AbstractModel):
         provider = self._provider()
         if not provider:
             self._no_menu()
+        if not self.supports_restricted():
+            raise UserError(_(
+                "This left menu has no locked preview; an entry is either "
+                "shown or hidden."))
         provider.set_restricted(self.env, int(entry_id or 0), bool(restricted),
                                 reason or '')
         return True

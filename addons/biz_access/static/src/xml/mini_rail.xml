@@ -17,7 +17,9 @@
        ==================================================================== -->
   <t t-name="biz_access.MiniRail">
     <div class="bzmr">
-      <div class="bzmr-rail" role="img"
+      <!-- A picture when nothing in it can be pressed; a group of buttons when
+           its parents unfold, or a screen reader would skip the buttons. -->
+      <div class="bzmr-rail" t-att-role="props.expandable ? 'group' : 'img'"
            aria-label="A miniature of the left menu, showing which entries this opens">
         <t t-foreach="props.sections" t-as="ms" t-key="ms.key or ms.label">
           <div t-if="ms.show_label !== false" class="bzmr-sec">
@@ -31,7 +33,28 @@
             </span>
           </div>
           <t t-foreach="ms.items" t-as="mi" t-key="mi.id">
-            <div t-attf-class="bzmr-it is-{{mi.state}} {{ mi.newly_lit ? 'is-new' : '' }}"
+            <!-- A FOLDED PARENT is a real button: it unfolds on a click, and
+                 on Enter or Space, and says how many of the screens inside it
+                 they can open before anybody unfolds it. -->
+            <button t-if="canExpand(mi)" type="button"
+                    t-attf-class="bzmr-it bzmr-it--expand is-{{mi.state}} {{ mi.newly_lit ? 'is-new' : '' }}"
+                    t-att-title="summaryTitle(mi)"
+                    t-att-aria-expanded="isOpen(mi) ? 'true' : 'false'"
+                    t-on-click="() => this.toggle(mi)"
+                    t-on-keydown="(ev) => this.onKey(ev, mi)">
+              <span class="bzmr-it-ic">
+                <i t-if="isFontIcon(mi.icon)" t-att-class="mi.icon"/>
+                <t t-else="" t-out="railIcon(mi.icon, 14)"/>
+              </span>
+              <span class="bzmr-it-n" t-esc="mi.label"/>
+              <span class="bzmr-it-count" t-esc="childSummary(mi)"/>
+              <span class="bzmr-it-st"><t t-out="stateIcon(mi)"/></span>
+              <span t-attf-class="bzmr-chevron {{ isOpen(mi) ? 'is-open' : '' }}">
+                <t t-out="ic('chevronDown', 12)"/>
+              </span>
+            </button>
+            <div t-else=""
+                 t-attf-class="bzmr-it is-{{mi.state}} {{ mi.newly_lit ? 'is-new' : '' }}"
                  t-att-title="title(mi)">
               <!-- TWO KINDS OF ICON, because the rail comes across a provider
                    seam and this module does not get to say what a product
@@ -45,20 +68,25 @@
               <span class="bzmr-it-n" t-esc="mi.label"/>
               <span class="bzmr-it-st"><t t-out="stateIcon(mi)"/></span>
             </div>
-            <div t-foreach="mi.children or []" t-as="mk" t-key="mk.id"
-                 t-attf-class="bzmr-it bzmr-it--sub is-{{mk.state}} {{ mk.newly_lit ? 'is-new' : '' }}"
-                 t-att-title="title(mk)">
-              <span class="bzmr-it-n" t-esc="mk.label"/>
-              <span class="bzmr-it-st"><t t-out="stateIcon(mk)"/></span>
-            </div>
+            <t t-if="isOpen(mi)">
+              <div t-foreach="mi.children or []" t-as="mk" t-key="mk.id"
+                   t-attf-class="bzmr-it bzmr-it--sub is-{{mk.state}} {{ mk.newly_lit ? 'is-new' : '' }}"
+                   t-att-title="title(mk)">
+                <span class="bzmr-it-n" t-esc="mk.label"/>
+                <span class="bzmr-it-st"><t t-out="stateIcon(mk)"/></span>
+              </div>
+            </t>
           </t>
         </t>
       </div>
 
       <div t-if="props.legend" class="bzmr-legend">
         <span><t t-out="ic('check',12)"/> they see it</span>
-        <span><t t-out="ic('lock',12)"/> locked, with a note</span>
+        <span t-if="hasLocked"><t t-out="ic('lock',12)"/> locked, with a note</span>
         <span><t t-out="ic('eyeOff',12)"/> not on their menu</span>
+        <span t-if="props.expandable" class="bzmr-legend-hint">
+          <t t-out="ic('chevronDown',12)"/> press an entry with a number on it to see the screens inside
+        </span>
       </div>
     </div>
   </t>

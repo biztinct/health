@@ -181,8 +181,10 @@ export class BizAccessHome extends Component {
             screens: null,             // the menu with its gates, or null
             screensBusy: false,
             screensFailed: "",
-            screenId: 0,               // which entry is opened out
+            screenId: 0,               // which entry (or block) is opened out
+            screenKind: "entry",       // "entry" | "block" — what screenId names
             screen: null,              // that entry, in full
+            offOpen: {},               // section id -> its "Switched off" block is open
             screenBusy: false,
             picking: false,            // the "add a role" picker is open
             pickSearch: "",
@@ -218,6 +220,9 @@ export class BizAccessHome extends Component {
             hvState: "running",        // running | ended | taken_back | all
             hvSearch: "",
             handovers: null,           // { rows, counts, headline } or null
+
+            moreOpen: false,           // the header's "more" menu
+            moreLeft: false,           // ...and whether it opens rightwards
 
             busy: false,
         });
@@ -286,7 +291,7 @@ export class BizAccessHome extends Component {
         if (this.state.peopleList) { await this.loadPeople(); }
         if (this.state.personId) { await this.loadPassport(this.state.personId); }
         if (this.state.screens) { await this.loadScreens(); }
-        if (this.state.screenId) { await this.loadScreen(this.state.screenId); }
+        if (this.state.screenId) { await this.reopenScreen(); }
         if (this.state.seeing) { await this.loadSeeing(this.state.seeing.id); }
     }
 
@@ -824,6 +829,7 @@ export class BizAccessHome extends Component {
     async loadScreen(id) {
         const seq = ++this.screenSeq;
         this.state.screenId = id;
+        this.state.screenKind = "entry";
         this.state.picking = false;
         this.state.screenBusy = true;
         try {
@@ -842,8 +848,139 @@ export class BizAccessHome extends Component {
         }
     }
 
+    /**
+     * A BLOCK OF THE MENU, OPENED OUT. The roles written on the block flow
+     * down to every entry inside it, so the block has a gate of its own and it
+     * is edited here — on/off and order stay with the entries.
+     */
+    async loadBlock(id) {
+        const seq = ++this.screenSeq;
+        this.state.screenId = id;
+        this.state.screenKind = "block";
+        this.state.picking = false;
+        this.state.screenBusy = true;
+        try {
+            const res = await this.orm.call("biz.access", "block_detail", [
+                id, this.state.seeing ? this.state.seeing.id : null,
+            ]);
+            if (seq !== this.screenSeq) { return; }
+            this.state.screen = res;
+        } catch (e) {
+            if (seq !== this.screenSeq) { return; }
+            this.state.screen = null;
+            this.notif.add(this._msg(e, _t("That block could not be opened out.")),
+                           { type: "danger" });
+        } finally {
+            if (seq === this.screenSeq) { this.state.screenBusy = false; }
+        }
+    }
+
+    /** Re-read whatever is opened out, entry or block. */
+    async reopenScreen() {
+        if (!this.state.screenId) { return; }
+        if (this.state.screenKind === "block") {
+            await this.loadBlock(this.state.screenId);
+        } else {
+            await this.loadScreen(this.state.screenId);
+        }
+    }
+
+    onBlockKey(ev, sc) {
+        if (ev.key === "Enter" || ev.key === " ") {
+            ev.preventDefault();
+            this.loadBlock(sc.id);
+        }
+    }
+
+    isBlockOpen(sc) {
+        return this.state.screenKind === "block" && this.state.screenId === sc.id;
+    }
+
+    isEntryOpen(it) {
+        return this.state.screenKind === "entry" && this.state.screenId === it.id;
+    }
+
+    /** ONE expression per sentence (R34). */
+    blockLine(block) {
+        if (!block || block.everyone) {
+            return _t("The block asks for nothing — each entry decides.");
+        }
+        if (block.flows_to === 1) {
+            return _t("Its gate flows down to 1 entry.");
+        }
+        return _t("Its gate flows down to %s entries.", block.flows_to);
+    }
+
+    /** "through ADMIN" — where an entry's inherited gate comes from. */
+    viaLine(row) {
+        if (!row.via_label) { return ""; }
+        if (row.via === "own") { return _t("also through %s", row.via_label); }
+        return _t("through %s", row.via_label);
+    }
+
+    viaTitle(row) {
+        const names = (row.inherited || []).map((g) => g.name);
+        if (!names.length) { return ""; }
+        return _t("Opened by %s, written on %s.", names.join(", "), row.via_label);
+    }
+
+    // ------------------------------------------------------------ switched off
+    toggleOffBlock(sc) {
+        this.state.offOpen[sc.id] = !this.state.offOpen[sc.id];
+    }
+
+    isOffOpen(sc) { return Boolean(this.state.offOpen[sc.id]); }
+
+    /** ONE expression per sentence (R34). */
+    offCountLine(sc) {
+        const n = (sc.switched_off || []).reduce(
+            (acc, r) => acc + 1 + (r.children || []).filter((k) => k.awaiting).length, 0);
+        if (n === 1) { return _t("1 entry switched off"); }
+        return _t("%s entries switched off", n);
+    }
+
+    couldOpenLine(row) {
+        const names = (row.could_be_opened_by || []).map((g) => g.name);
+        if (!names.length) {
+            return _t("Nobody can open it yet: no role carries what the screen "
+                      + "behind it asks for. Give a role that ability first.");
+        }
+        return _t("Could be opened by %s.", names.join(", "));
+    }
+
+    /** "Switch on for Owner" — gate it to that role and put it back, in one
+     *  step, after saying who else would see it and not get in. */
+    async switchOnFor(row, role) {
+        if (!this.screensCanManage || this.state.busy) { return; }
+        const also = row.also_shown_to || [];
+        const ask = also.length
+            ? _t("Switch \"%s\" on for the people who hold %s? It will also show "
+                 + "for %s through the entry above it, and they cannot open the "
+                 + "screen behind it.", row.label, role.name, also.join(", "))
+            : _t("Switch \"%s\" on for the people who hold %s? Nobody else will "
+                 + "see it.", row.label, role.name);
+        if (!window.confirm(ask)) { return; }
+        this.state.busy = true;
+        try {
+            const res = await this.orm.call(
+                "biz.access", "switch_on_for", [row.id, role.id]);
+            this.notif.add(res.message, { type: "success" });
+            await this.afterScreenWrite(res);
+        } catch (e) {
+            this.notif.add(this._msg(e, _t("That entry could not be switched on.")),
+                           { type: "danger" });
+        } finally {
+            this.state.busy = false;
+        }
+    }
+
     get screenSections() {
         return (this.state.screens && this.state.screens.sections) || [];
+    }
+
+    /** Can this menu show an entry locked, with a note? Some menus cannot. */
+    get canRestrict() {
+        return Boolean(this.state.screens && this.state.screens.can_restrict);
     }
 
     /** Every top-level row, in menu order — used to land on the first one. */
@@ -880,6 +1017,11 @@ export class BizAccessHome extends Component {
 
     /** "3 people", and never "3 person" or "1 people" (R46). */
     seenByLine(row) {
+        // AN ENTRY THAT IS OFF IS OPENED BY NOBODY, whatever its gate says —
+        // the count is who WOULD get through once it is back on (AR-2).
+        if (row.kind === "entry" && row.active === false) {
+            return _t("Off the left menu, so nobody sees it");
+        }
         if (row.everyone) { return _t("Everybody with a login"); }
         if (!row.seen_by) { return _t("Nobody can open it"); }
         if (row.seen_by === 1) { return _t("1 person can open it"); }
@@ -923,14 +1065,28 @@ export class BizAccessHome extends Component {
         const next = at >= 0
             ? held.filter((id) => id !== role.id)
             : held.concat([role.id]);
+        if (sc.kind === "block") {
+            // TAKING THE LAST ROLE OFF A BLOCK DOES NOT OPEN IT TO EVERYBODY.
+            // It stops the block gating, and each entry inside it is decided by
+            // its own gate from then on — said before it happens.
+            if (held.length && !next.length && !window.confirm(_t(
+                    "Take the last role off the %s block? The block will no "
+                    + "longer ask for anything, and each entry inside it will be "
+                    + "decided by its own gate. An entry with no gate of its own "
+                    + "will be open to everybody with a login.", sc.label))) {
+                return;
+            }
+            await this._writeGates(sc.id, next, "set_section_roles");
+            return;
+        }
         await this._writeGates(sc.id, next);
     }
 
-    async _writeGates(id, roleIds) {
+    async _writeGates(id, roleIds, method = "set_screen_roles") {
         this.state.busy = true;
         try {
             const res = await this.orm.call(
-                "biz.access", "set_screen_roles", [id, roleIds]);
+                "biz.access", method, [id, roleIds]);
             this.notif.add(res.message, { type: "success" });
             await this.afterScreenWrite(res);
         } catch (e) {
@@ -983,7 +1139,7 @@ export class BizAccessHome extends Component {
      */
     async afterScreenWrite(res) {
         await this.loadScreens();
-        if (this.state.screenId) { await this.loadScreen(this.state.screenId); }
+        await this.reopenScreen();
         // The Roles lens's "opens on the left menu" column was read before this
         // and is now out of date for every role.
         this.state.detail = {};
@@ -1194,7 +1350,7 @@ export class BizAccessHome extends Component {
     async repaintScreens() {
         if (!this.state.screens) { return; }
         await this.loadScreens();
-        if (this.state.screenId) { await this.loadScreen(this.state.screenId); }
+        await this.reopenScreen();
     }
 
     async loadSeeing(id) {
@@ -1876,6 +2032,43 @@ export class BizAccessHome extends Component {
         link.download = res.filename;
         link.click();
         URL.revokeObjectURL(url);
+    }
+
+    // ---------------------------------------------------------- the more menu
+    /**
+     * The menu opens towards the side that has room. The header's buttons
+     * wrap, so this one can sit at the far right of the row or at the start
+     * of a second line — a menu hung from a fixed side is cut off in one of
+     * the two (AR-2 browser pass).
+     */
+    toggleMore(ev) {
+        const opening = !this.state.moreOpen;
+        if (opening && ev && ev.currentTarget && ev.currentTarget.getBoundingClientRect) {
+            const r = ev.currentTarget.getBoundingClientRect();
+            this.state.moreLeft = r.left + 316 <= window.innerWidth;
+        }
+        this.state.moreOpen = opening;
+    }
+
+    /**
+     * "Re-read the role catalogue" — the platform administrator's door. The
+     * provisioning tooling's own failure message sends the operator here, so
+     * it has to exist; for everybody else it is absent and the server refuses.
+     */
+    async reseedCatalogue() {
+        this.state.moreOpen = false;
+        if (!this.board.can_reseed || this.state.busy) { return; }
+        this.state.busy = true;
+        try {
+            const res = await this.orm.call("biz.access", "reseed_catalogue", []);
+            this.notif.add(res.message, { type: "success" });
+            await this.reload();
+        } catch (e) {
+            this.notif.add(this._msg(e, _t("The role catalogue could not be read again.")),
+                           { type: "danger" });
+        } finally {
+            this.state.busy = false;
+        }
     }
 
     openHistory() {

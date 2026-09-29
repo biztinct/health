@@ -559,6 +559,27 @@ class RailProvider:
         edit, and a lens that showed only the half it can change would be
         describing the entry wrongly. Empty on a product with one lane — which
         is every product that never had two.
+
+        Three more OPTIONAL keys, for a menu whose gates flow down and whose
+        entries can be switched off for want of anybody to open them:
+
+          * `'effective_role_ids'` — everything that ACTUALLY gates the entry:
+            its own roles plus whatever it inherits from its block and from the
+            entries above it, archived roles included. The product's own
+            inheritance rule, handed over rather than re-derived here, because a
+            copy of an inheritance rule drifts exactly like a copy of a
+            visibility rule. Absent means "the entry's own roles are the whole
+            gate".
+          * `'model'` — the records the screen behind the entry opens, or `''`.
+            Used only to say WHICH ROLES COULD OPEN IT if it were switched on;
+            it decides nothing about who sees it.
+          * `'awaiting_role'` — True on an entry the product switched off
+            because nobody on this system could open the screen behind it yet.
+            The Screens lens gathers these in a "Switched off" block with a way
+            to switch one on for a role that can. False (or absent) on an entry
+            that is off for any other reason — somebody's decision, a feature
+            that is not bought — because offering to switch THOSE on would be
+            offering to undo a decision this module knows nothing about.
         """
         return []
 
@@ -592,8 +613,33 @@ class RailProvider:
         """
         return None
 
+    # ------------------------------------------------------------ what it can do
+    def supports_section_gates(self, env):
+        """Can a whole BLOCK of this menu carry roles that flow down into it?
+
+        False by default: a menu whose blocks are only headings has nothing to
+        edit there, and the Screens lens then draws the block as a heading and
+        offers no chips on it.
+        """
+        return False
+
+    def supports_restricted(self, env):
+        """Can this menu show an entry LOCKED, with a note, to somebody who
+        cannot open it?
+
+        True by default, because the protocol has always carried
+        `restricted`. A menu that only ever shows or hides says False, and the
+        Screens lens then does not offer a choice the menu could never draw.
+        """
+        return True
+
     # ----------------------------------------------------------------- writes
     def set_roles(self, env, entry_id, role_ids):
+        raise NotImplementedError
+
+    def set_section_roles(self, env, section_id, role_ids):
+        """Write the roles on a whole BLOCK. Only asked when
+        `supports_section_gates` says yes."""
         raise NotImplementedError
 
     def set_active(self, env, entry_id, active):
@@ -664,3 +710,35 @@ def rail_state(entry, is_admin, held_group_ids, role_groups):
     if entry.get('restricted'):
         return True, True
     return False, False
+
+
+def groups_can_read(env, groups, model_name):
+    """Could somebody holding these permissions open that kind of record at all?
+
+    ASKED OF THE PERMISSIONS TABLE, not by making a person and trying. A door on
+    a menu that answers "you are not allowed to access this" is a dead end, and
+    the whole point of asking is to offer a screen only to people it would open
+    for.
+
+    A permission row with no group on it is open to everybody with a login, so
+    it settles the question on its own. Otherwise the answer is yes when any
+    row's group is one these permissions carry, over the whole implied closure —
+    a manager tier reaches what the officer tier opens.
+
+    Nothing here knows which product's screen the model belongs to; the
+    product's own menu says which model an entry opens (`RailProvider.entries`,
+    the optional `model` key) and this answers the one generic question about
+    it. It never decides who SEES an entry.
+    """
+    if not model_name or model_name not in env:
+        return True                     # opens no records; nothing to refuse
+    acls = env['ir.model.access'].sudo().search(
+        [('model_id.model', '=', model_name), ('perm_read', '=', True)])
+    if not acls:
+        return True                     # ungoverned; the framework lets it by
+    if any(not acl.group_id for acl in acls):
+        return True
+    if not groups:
+        return False
+    closure = implied_closure(groups)
+    return any(acl.group_id in closure for acl in acls)

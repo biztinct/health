@@ -35,7 +35,7 @@
  * A miniature drawing a wrong-but-confident icon would be worse than one
  * drawing a dot, so there is no guessing anywhere in here.
  */
-import { Component } from "@odoo/owl";
+import { Component, useState } from "@odoo/owl";
 import { _t } from "@web/core/l10n/translation";
 import { ic, IC } from "@biz_kit/js/kit_icons";
 
@@ -109,8 +109,18 @@ export class BizMiniRail extends Component {
     static props = {
         sections: { type: Array },
         legend: { type: Boolean, optional: true },
+        // FOLDED PARENTS (AR-2). On a person's passport a parent entry is
+        // drawn folded with "3 of 5" on it — how many of the screens inside it
+        // they can open — and unfolds into its sub-entries, each with its own
+        // state. The builder's preview leaves this off and keeps every
+        // sub-entry drawn, because there the point is to watch them light up.
+        expandable: { type: Boolean, optional: true },
     };
-    static defaultProps = { legend: true };
+    static defaultProps = { legend: true, expandable: false };
+
+    setup() {
+        this.state = useState({ open: {} });
+    }
 
     ic(n, s = 13) { return ic(n, s); }
 
@@ -133,5 +143,59 @@ export class BizMiniRail extends Component {
         if (item.state === "on") { return ic("check", 12); }
         if (item.state === "locked") { return ic("lock", 12); }
         return ic("eyeOff", 12);
+    }
+
+    /**
+     * Is anything on this miniature drawn locked? The legend explains only
+     * what is on the picture: a menu that shows or hides and never teases
+     * (AR-2) has no locked entry, and a key for one would describe a state
+     * nobody can ever see.
+     */
+    get hasLocked() {
+        return (this.props.sections || []).some((s) => (s.items || []).some(
+            (i) => i.state === "locked"
+                || (i.children || []).some((c) => c.state === "locked")));
+    }
+
+    canExpand(item) {
+        return this.props.expandable && (item.children || []).length > 0;
+    }
+
+    isOpen(item) {
+        return !this.props.expandable || Boolean(this.state.open[item.id]);
+    }
+
+    toggle(item) {
+        if (!this.canExpand(item)) { return; }
+        this.state.open[item.id] = !this.state.open[item.id];
+    }
+
+    /** Enter and Space unfold a parent, as they would any button. */
+    onKey(ev, item) {
+        if (ev.key === "Enter" || ev.key === " ") {
+            ev.preventDefault();
+            this.toggle(item);
+        }
+    }
+
+    /**
+     * "3 of 5" — how many of the screens inside a parent they can open.
+     *
+     * The server counts it (`kids_on` / `kids_total`) off the same states the
+     * sub-entries carry; the count below is only for a miniature that arrives
+     * without one, and it counts the same thing.
+     */
+    childSummary(item) {
+        const children = item.children || [];
+        const on = item.kids_on !== undefined
+            ? item.kids_on : children.filter((c) => c.state === "on").length;
+        const total = item.kids_total !== undefined
+            ? item.kids_total : children.length;
+        return _t("%s of %s", on, total);
+    }
+
+    summaryTitle(item) {
+        return _t("They can open %s screens inside this. Press to see which.",
+                  this.childSummary(item));
     }
 }

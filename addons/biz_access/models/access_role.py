@@ -99,14 +99,15 @@ class BizAccessRole(models.Model):
     #: a whole business — everything, every colleague, every setting the
     #: business itself owns — and "anybody who manages access may give it"
     #: would let a manager make somebody the owner. With this on, giving the
-    #: role (or lending it) needs the person doing it to hold ALL of it
+    #: role (or lending it, or taking it away — AR-2) needs the person doing it to hold ALL of it
     #: themselves. The platform administrator is the one exception.
     guarded = fields.Boolean(
-        string='Only people who hold this role may give it or lend it',
+        string='Only people who hold this role may give, lend or take it away',
         default=False,
-        help='Only people who hold this role may give it or lend it. Somebody '
-             'who manages access but does not hold it can still see who has '
-             'it, and cannot hand it to anybody.')
+        help='Only people who hold this role may give it, lend it or take it '
+             'away from somebody. Somebody who manages access but does not '
+             'hold it can still see who has it, and can end a hand-over of it, '
+             'but cannot hand it to anybody or remove it.')
 
     #: THE TOP BAR, AND WHY IT IS A LIST OF WHAT IS *NOT* SEEN.
     #:
