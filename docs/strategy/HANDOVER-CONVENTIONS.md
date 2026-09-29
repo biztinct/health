@@ -3412,3 +3412,69 @@ a no-op.
     generator's `--check` was already stale before M1 (a hand edit to
     `fixture.js` that never reached `practice-data.js`); M1 synced the source.
     (MENU M1.)
+- **§5.230 — a gate on a menu BLOCK is a union no entry inside it can narrow,
+    so an "area gate" belongs on the area's tabs, not on the section.** The
+    M2 matrix read "CRM area: CRM, Owner, Admin, Operations Manager" and, in
+    the same table, "Web & Ads → CRM, Owner". Written on `section_crm`, the
+    first would have opened Web & Ads to Operations Managers whatever the tab
+    said (`effective = own ∪ section ∪ parents`); "Admin" on Settings would
+    have opened Customers, "Doctor" on Clinical would have drawn Voice Notes
+    for people the model refuses. `health_cms_ia` writes each area's roles on
+    its tabs one by one; the only section gate left is the one ADMIN already
+    carried on the master (Owner). (MENU M2.)
+- **§5.231 — one heading holding screens for different people needs its gate
+    DERIVED from what is inside it, because a gate written on a heading flows
+    down.** Settings › Connections holds the front desk's channel set-up next
+    to the owner's phone set-up. A gate on the heading widens every screen
+    inside; no gate draws the heading for everybody. `health_access`
+    `_compute_effective_biz_role_ids` now gives a heading with no screen and
+    no roles of its own the union of what gates its active children (empty —
+    open to all — if any child is open to all), and children read only the
+    heading's WRITTEN roles, so nothing flows back down. Headings that carry
+    roles (Voice, Zalo, Care Intelligence) behave exactly as before. Paired
+    with a last-in-chain prune (`health_cms_ia` `_sidebar_visible_items`) of
+    a heading left with no drawn child — a switched-off part of the product
+    can empty a tab the role gate let through. (MENU M2.)
+- **§5.232 — the door check asks the ROLE's permissions, and a person often
+    carries more than their role.** `role_can_read(Admin, crm.lead)` is False;
+    both real Admin accounts on the master read `crm.lead` fine (other groups,
+    and the inverted base edge of §5.88). A strict door check took Lead
+    Analysis away from them on the first clone run. Rule: the check filters
+    roles a phase ADDS to an entry; it never removes what somebody already
+    sees — Owner and Admin keep an entry that was open to everybody without
+    being asked. (MENU M2.)
+- **§5.233 — an updatable seed cannot name a parent from a module that loads
+    after it, so it must stop naming `parent_id` at all.** Channel Center,
+    Unrouted Contacts, Web Touchpoints, Lead Analysis, Google Ads, Go-Live,
+    Website Connector, Phone system and Extensions now sit under
+    `health_cms_ia` headings. Their seeds (noupdate="0") name the final
+    section and sequence and NO `parent_id`; the hook writes the parent, and
+    an upgrade leaves it (an omitted field is not an unset one, §5.69b in
+    reverse). Proved by re-loading every such seed with
+    `odoo.tools.convert.convert_file(env, module, path, {}, mode='update')`
+    inside the test transaction and diffing every row (`health_cms_ia`
+    test_03) — a real upgrade, rolled back. (MENU M2.)
+- **§5.234 — a menu consolidation must be diffed by SCREEN (the action), not
+    by the words on the menu.** `health_access/diff.py` `snapshot()` keys the
+    left menu by "Section / Entry / Child" names, which is right for a gate
+    change and useless for a regrouping: every renamed or moved entry reads as
+    one lost and one gained. M2's per-person diff keys each drawn entry by its
+    `action_xmlid` (`/odoo/m2/m2_reach.py`, kept in the M2 report). And the
+    handover's "nobody but nurses and doctors loses anything" was not true of
+    the live data: the ungated entries were drawn for EVERY role, so closing
+    them is a loss for the Accountant, the CRM desk and five role-less demo
+    accounts too — the owner's ruling, reported person by person. (MENU M2.)
+- **§5.235 — a macOS `tar` smuggles extended attributes the server's `tar`
+    complains about.** `LIBARCHIVE.xattr.com.apple.provenance` warnings on
+    every file. Harmless, noisy; pack with `COPYFILE_DISABLE=1 tar
+    --no-xattrs`. (MENU M2.)
+- **§5.236 — the start page's first paint is titled "Odoo", and nobody reads a
+    tab title while it loads.** Both the clone and the live `carejiox.com`
+    showed `Odoo` as the browser-tab title of `/bizapp` for the second or two
+    before the web client set "Viet Uc Care - …" (seen in the M2 browser pass,
+    listing open tabs). A white-label leak in the served HTML's `<title>`, not
+    in any menu string; it belongs to the start-page owner (`biz_deroute` /
+    the `/bizapp` template), and is left for that fix. Related, also not M2's:
+    the start page still opens the Operations dashboard for everybody, so a
+    nurse lands on a screen her menu no longer draws until she presses Home.
+    (MENU M2.)
