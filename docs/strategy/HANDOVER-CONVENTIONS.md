@@ -3344,3 +3344,71 @@ a no-op.
     single command naming `carejiox_template` alone, and count
     `ir_cron WHERE active` on every database before and after every deploy.
     (Access AR-2.)
+- **§5.222 — no browser tour in this product can run as things stand, for two
+    independent reasons.** (a) The server has no `websocket-client` Python
+    module, so every `start_tour` is SKIPPED (`skipped … websocket-client module
+    is not installed`) — not Chrome, as older notes say. (b) Even in a real
+    browser, the product's own start page (`/odoo` → `/bizapp`, biz_deroute)
+    drops `debug=tests`, so `web.assets_tests` is never delivered and
+    `odoo.startTour` finds no tour. MENU M1 ran its two tours by hand on the
+    clone: sign in, `loadBundle('web.assets_tests')` from
+    `@web/core/assets`, `odoo.startTour(name)`. A tour step that reloads the
+    page cannot resume under that workaround (the bundle is gone after the
+    reload), so those steps were checked by a script instead. Fixing (b) is
+    biz_deroute's; installing the module for (a) is a pip change to flag first
+    (§1). (MENU M1.)
+- **§5.223 — a keyboard shortcut on `window` never sees Escape while a search
+    box is on screen.** The web client's hotkey service listens on the window
+    and calls `stopImmediatePropagation()` whenever a screen has claimed the
+    key — the search view claims Escape — so a component's
+    `useExternalListener(window, "keydown")` registered later is skipped. Listen
+    on `document` with `{ capture: true }`, and take the key only while your own
+    thing is open, so the screen keeps its Escape the rest of the time.
+    (MENU M1, the rail's Esc.)
+- **§5.224 — the browser does not hyphenate words in capitals, and a canvas
+    measure is not what the page draws.** `hyphens: auto` (with a `lang` on the
+    element) did nothing to "OBSERVATIONS" in a `text-transform: uppercase`
+    label; `overflow-wrap: anywhere` then cut it "OBSERVATIO / NS". A canvas
+    `measureText` in the same font said "TOUCHPOINTS" fitted, and the page
+    wrapped its last letter to a third line. The tab column now measures the
+    RENDERED label (`scrollWidth > clientWidth` with `overflow-wrap: normal`),
+    steps the size down a quarter pixel at a time to 7.5px, and only then falls
+    back to one line with "…". Skip labels that are hidden (≤1024px measures 0)
+    or they are marked done and never fitted. (MENU M1.)
+- **§5.225 — "a parent opens its first child" lands on a pop-up when the first
+    child is a wizard.** AR Management's first child, Account Payment, is an
+    `act_window` with `target="new"`; opening it from the tab left the Finance
+    Dashboard behind a dialog. A heading that has a screen of its own
+    (`action_xmlid`/`action_tag`) opens that screen with its children as
+    segments; only a heading without one opens its first child. (MENU M1 D2.)
+- **§5.226 — the dropdown guard lifts form cards to z-index 20, so anything
+    that widens OVER the page must beat 20 without breaking §5.96.** The rail's
+    hover panel is `z-index: 20`; a form card later in the DOM at 20 painted
+    over it. The fix is `z-index: 0` on `.o_action_manager` as a GRID ITEM: it
+    makes the action one stacking context (the lifted cards stay inside it) and,
+    having no `position`/`transform`, is not a containing block for the fixed
+    autocomplete `<ul>` — checked with `elementFromPoint` on an open many2one,
+    3/3 points on the dropdown. Nothing is painted after the action inside the
+    wrapper, so nothing can cover a dropdown. (MENU M1.)
+- **§5.227 — a bottom bar collides with every `position: fixed` corner button.**
+    At ≤768 the rail is a 56px bar at the bottom, where the Coach (`.lrn-fab`,
+    bottom 22px), the Zalo chat hub and the chat bubbles (bottom 10px) live; the
+    Coach sat on the Settings entry. Lifted in `cms_sidebar.scss` under
+    `body:has(.ops-layout-wrapper > .vu-rail)` at ≤768 only. A new floating
+    button needs the same line. (MENU M1.)
+- **§5.228 — a running clone server keeps its asset bundle and every user's
+    groups in memory.** Deleting `/web/assets/%` attachments did not change what
+    it served, and a group given from `odoo-bin shell` was refused by it until
+    the unit was restarted. After any file push or group change on a clone that
+    is being served: restart the unit, then look. (MENU M1.)
+- **§5.229 — a "verified fact" about a seed file is worth one `head` before
+    you plan around it.** The M1 handover said `health_learn/data/
+    learn_sidebar_item.xml` is generated and that `fixture.js` hard-codes
+    Training at seq 90. Neither is true: the file is hand-written and NOT
+    noupdate (so the upgrade itself moved the row), and the generator never
+    touches it; `fixture.js`'s MENU has no Training entry at all. The same
+    handover's "Phone → Calls, 4 children" is the M2 target, not today:
+    Phone's first child is Call backs and an Owner sees six. Separately, the
+    generator's `--check` was already stale before M1 (a hand edit to
+    `fixture.js` that never reached `practice-data.js`); M1 synced the source.
+    (MENU M1.)
