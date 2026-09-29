@@ -3563,3 +3563,46 @@ a no-op.
     content work: `.po` model terms load with overwrite OFF, so re-wording a
     generated Vietnamese string does not reach a database where the row already
     has a Vietnamese value — only new rows, or `--i18n-overwrite`. (ACCESS AR-3.)
+- **§5.245 — a `<form class="…">` lands on the view CONTROLLER's root, the same
+    element that carries a js_class's own class, not on `.o_form_renderer`.**
+    `computeViewClassName` (web/views/utils.js) folds the arch's `class` into the
+    controller's `className`, so on the booking screen one div carries
+    `o_form_view ops-booking-form-page ws-workspace`. A selector written as
+    `.ops-booking-form-page .ws-workspace` (descendant) matches nothing; scope as a
+    compound (`.o_form_view.ops-booking-form-page.ws-workspace .o_form_renderer.vu-form`).
+    And when two modules style the same screen without a `depends` edge between
+    them (health_fieldservice does not depend on health_theme), bundle order is not
+    guaranteed — win by one more class, never by file order. (WORKSPACE WS-1.)
+- **§5.246 — a view's translation term is the whole INLINE RUN of a block, so a
+    plain msgid can silently never match.** `<div><span class="vu-section__icon"/>
+    <span>Visit</span></div>` is ONE term, markup and inner whitespace included; a
+    row of inline badge `<span>`s beside other content becomes one giant term. The
+    `.po` loads, the test for "entry present" passes, and the screen stays English.
+    It hides on existing databases for REWORDED strings, because an arch write
+    re-maps old translations to close new terms by fuzzy match — only brand-new
+    text shows it. Two fixes: make each translatable chip a block element with its
+    icon from CSS (`<div class="ws-chip" data-icon="house">Home Visit</div>`), or
+    ship the exact-markup msgid the way `odoo-bin i18n export` would. Prove it at
+    the DATABASE: `xml_translate(terms.append, en_arch)` + `arch_db` field's
+    `get_translation_dictionary(en, {'vi_VN': vi})` and assert no worded term maps
+    to itself (health_fieldservice `test_ws_booking_form.test_08b`). (WORKSPACE WS-1.)
+- **§5.247 — `.vu-show-on-<state>` cards carry `display: revert !important`
+    (state_system.scss).** Any layout you give such a card (`display: grid`) loses
+    to it; restyling needs `display: grid !important` at higher specificity. Safe
+    only because the arch's `invisible=` already removes the other states' cards —
+    say so next to the rule. Also: OWL template compilation drops whitespace-only
+    text between elements, so `<span>Created</span> <field/>` renders "Created15
+    Sep" — space with CSS (`> * + * { margin-left }`), not with the arch.
+    (WORKSPACE WS-1.)
+- **§5.248 — a live QA persona built from bare groups is not the role, and the
+    running workers will not see it anyway.** An account with only
+    `group_healthcare_operations_manager` had no Operations menu and hit
+    `hr.employee` access errors; copying the real Operations Manager's `group_ids`
+    and `job_role_id` fixed the menu but lists stayed EMPTY until a
+    `carejiox-deploy -s` (record-rule caches, §5.132). A fresh `odoo-bin shell`
+    `with_user(uid).search_count` is the quick proof the data is readable and the
+    workers are stale. Pre-existing, unrelated, recorded: the STANDARD booking
+    action (`action_health_fieldservice_order`, opens in calendar) fails for an
+    Operations Manager with "Failed to write field …assigned_staff_ids / not
+    allowed to access Employee" — that surface is not reachable for that role at
+    all. (WORKSPACE WS-1.)

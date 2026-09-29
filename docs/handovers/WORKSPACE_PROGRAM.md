@@ -27,7 +27,7 @@ Chatter stays at the bottom, full width (standing rule).
 ## Phases
 | Phase | Screen | Doc | Status |
 |---|---|---|---|
-| WS-1 | Booking (`health.fieldservice.order` ops form) + the reusable Workspace kit in `health_theme` | `WORKSPACE_WS1_BOOKING.md` | handed over 2026-09-29 |
+| WS-1 | Booking (`health.fieldservice.order` ops form) + the reusable Workspace kit in `health_theme` | `WORKSPACE_WS1_BOOKING.md` | **DONE 2026-09-29** — live on carejiox, carejiox_template, hhh; report `WORKSPACE_WS1_REPORT.md` |
 | WS-2 | Client (ops client profile, `res.partner`) on the kit | written after WS-1 reports | — |
 | WS-3 | Contact (CRM contact form, `crm.lead`/contact) on the kit | written after WS-2 reports | — |
 
