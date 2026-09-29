@@ -65,55 +65,173 @@
     </record>
 
     <!-- ===== CRM CONTACT FORM VIEW ===== -->
+    <!-- WORKSPACE (WS-3): the contact screen on the health_theme Workspace kit
+         (ws_workspace.scss): identity row, a journey on contact_status, one
+         Next step banner, packed Overview cards and a pinned right rail; the
+         contact history sits full width under the page. The controller
+         template keeps only the breadcrumb bar + save indicator. The four
+         contact actions are header buttons calling the SAME methods the old
+         controller buttons called; buttons carrying `ws-more` render inside
+         one "More" menu. -->
     <record id="view_crm_contact_form_crm_center" model="ir.ui.view">
         <field name="name">crm.lead.form.crm.center</field>
         <field name="model">crm.lead</field>
         <field name="priority">50</field>
         <field name="arch" type="xml">
-            <form string="Contact" js_class="crm_contact_form_view">
+            <form string="Contact" js_class="crm_contact_form_view" class="ws-workspace">
                 <field name="active" invisible="1"/>
                 <field name="deleted" invisible="1"/>
-                <!-- Record lifecycle: Delete (user) / Archive (custodian) -->
                 <header>
+                    <!-- the contact actions (were the controller's Book / Log
+                         Activity / Escalate / Spam buttons; shown for a saved
+                         contact, as before) -->
+                    <button name="action_convert_to_booking" type="object"
+                            string="Book" invisible="not id"/>
+                    <button name="action_log_as_lead" type="object"
+                            string="Log activity" invisible="not id"/>
+                    <button name="action_escalate_contact" type="object"
+                            string="Escalate" invisible="not id"/>
+                    <button name="action_mark_spam" type="object"
+                            string="Mark as spam" class="ws-more" invisible="not id"/>
+                    <!-- Record lifecycle: Delete (user) / Archive (custodian) -->
                     <button name="action_open_delete_wizard" type="object"
-                            string="Delete" icon="fa-trash"
+                            string="Delete" icon="fa-trash" class="ws-more"
                             invisible="deleted"/>
                     <button name="action_open_restore_wizard" type="object"
-                            string="Restore" icon="fa-undo"
+                            string="Restore" icon="fa-undo" class="ws-more"
                             groups="health_base.group_healthcare_custodian"
                             invisible="not deleted"/>
                     <button name="action_open_archive_wizard" type="object"
-                            string="Archive" icon="fa-archive"
+                            string="Archive" icon="fa-archive" class="ws-more"
                             groups="health_base.group_healthcare_custodian"
                             invisible="deleted or not active"/>
                     <button name="action_open_unarchive_wizard" type="object"
-                            string="Unarchive" icon="fa-archive"
+                            string="Unarchive" icon="fa-archive" class="ws-more"
                             groups="health_base.group_healthcare_custodian"
                             invisible="active"/>
                 </header>
                 <sheet>
-                    <widget name="web_ribbon" title="Deleted" bg_color="text-bg-danger"
-                            invisible="not deleted"/>
-                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-secondary"
-                            invisible="active or deleted"/>
-                    <!-- Contact Info Tab (Essential) -->
-                    <group string="Contact Information">
-                        <group>
-                            <field name="name" string="Contact Name" required="1"/>
-                            <field name="phone" widget="phone"/>
-                            <field name="email_from" widget="email" string="Email"/>
-                            <field name="mode_of_contact_id"/>
-                            <field name="contact_datetime"/>
-                        </group>
-                        <group>
-                            <field name="catchment_province_id"/>
-                            <field name="contact_relationship_type"/>
-                            <field name="contact_status" readonly="1"/>
-                            <field name="contact_outcome"/>
-                        </group>
-                    </group>
+                    <field name="unique_contact_code" invisible="1"/>
+                    <field name="last_booking_date" invisible="1"/>
+                    <field name="next_follow_up_date" invisible="1"/>
+                    <field name="patient_id" invisible="1"/>
 
-                    <notebook>
+                    <div class="ws-page">
+                        <div class="ws-main">
+
+                            <!-- HERO — who called, how, and when -->
+                            <div class="ws-hero">
+                                <div class="ws-hero__avatar ws-hero__avatar--initials">
+                                    <widget name="ws_contact_glance" mode="avatar"/>
+                                </div>
+                                <div class="ws-hero__main">
+                                    <div class="ws-hero__title">
+                                        <h1 class="ws-hero__name">
+                                            <field name="name" readonly="1" class="d-inline"/>
+                                        </h1>
+                                        <field name="unique_contact_code" readonly="1"
+                                               class="ws-chip ws-chip--code"
+                                               invisible="not unique_contact_code"/>
+                                        <!-- the status chip reads the field's own label -->
+                                        <field name="contact_status" readonly="1"
+                                               class="ws-chip ws-chip--brand ws-chip--dot"
+                                               invisible="contact_status not in ('active', 'lead', 'thinking', 'recontact')"/>
+                                        <field name="contact_status" readonly="1"
+                                               class="ws-chip ws-chip--ok ws-chip--dot"
+                                               invisible="contact_status not in ('booking', 'service_used', 'existing')"/>
+                                        <field name="contact_status" readonly="1"
+                                               class="ws-chip ws-chip--danger ws-chip--dot"
+                                               invisible="contact_status not in ('lost_booking', 'spam')"/>
+                                        <!-- chips are block elements with a CSS icon, so each
+                                             one is its own translation term (ledger §5.246) -->
+                                        <div class="ws-chip ws-chip--danger" data-icon="trash"
+                                             invisible="not deleted">Deleted</div>
+                                        <div class="ws-chip ws-chip--quiet" data-icon="archive"
+                                             invisible="active or deleted">Archived</div>
+                                    </div>
+                                    <div class="ws-hero__facts">
+                                        <span class="ws-fact" invisible="not phone">
+                                            <span class="ws-ico" data-icon="phone"/>
+                                            <field name="phone" readonly="1"/>
+                                        </span>
+                                        <span class="ws-fact" invisible="not mode_of_contact_id">
+                                            <span class="ws-ico" data-icon="message-square"/>
+                                            <field name="mode_of_contact_id" readonly="1"
+                                                   options="{'no_open': True}"/>
+                                        </span>
+                                        <span class="ws-fact" invisible="not catchment_province_id">
+                                            <span class="ws-ico" data-icon="map-pin"/>
+                                            <field name="catchment_province_id" readonly="1"
+                                                   options="{'no_open': True}"/>
+                                        </span>
+                                        <span class="ws-fact ws-fact--first" invisible="not contact_datetime">
+                                            <span class="ws-ico" data-icon="clock"/>
+                                            <div class="ws-fact__label">First contact</div>
+                                            <field name="contact_datetime" readonly="1"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- JOURNEY — the contact's status as stages -->
+                            <widget name="ws_journey" state_field="contact_status"
+                                    steps="active,lead,booking,existing"
+                                    labels="New,Following up,Booked,Client"
+                                    date_fields="contact_datetime,,last_booking_date,"
+                                    aliases="thinking:lead,recontact:lead,service_used:existing"
+                                    terminal="lost_booking,spam"/>
+
+                            <!-- NEXT STEP — one sentence, one button -->
+                            <div class="ws-next">
+                                <widget name="ws_contact_next"/>
+                            </div>
+
+                            <notebook>
+                                <!-- ===== OVERVIEW ===== what the loose group held,
+                                     as packed cards (none can be fully empty, so
+                                     no "Not filled yet" tray) -->
+                                <page string="Overview" name="overview">
+                                    <div class="ws-pack">
+
+                                        <div class="vu-detail-card ws-card" name="contact_card">
+                                            <div class="vu-card__title">
+                                                <div class="vu-section__icon" data-icon="phone"/>
+                                                <div>Contact</div>
+                                            </div>
+                                            <group>
+                                                <field name="name" string="Contact Name" required="1"/>
+                                                <field name="phone" widget="phone" placeholder="—"/>
+                                                <field name="email_from" widget="email" string="Email" placeholder="—"/>
+                                                <field name="contact_relationship_type"/>
+                                            </group>
+                                        </div>
+
+                                        <div class="vu-detail-card ws-card" name="reached_card">
+                                            <div class="vu-card__title">
+                                                <div class="vu-section__icon" data-icon="message-square"/>
+                                                <div>How they reached us</div>
+                                            </div>
+                                            <group>
+                                                <field name="mode_of_contact_id" placeholder="—"/>
+                                                <field name="contact_datetime"/>
+                                                <field name="catchment_province_id" placeholder="—"/>
+                                            </group>
+                                        </div>
+
+                                        <div class="vu-detail-card ws-card" name="status_card">
+                                            <div class="vu-card__title">
+                                                <div class="vu-section__icon" data-icon="activity"/>
+                                                <div>Status</div>
+                                            </div>
+                                            <group>
+                                                <field name="contact_status" readonly="1"/>
+                                                <field name="contact_outcome" placeholder="—"/>
+                                            </group>
+                                        </div>
+
+                                    </div>
+                                </page>
+
                         <!-- Client Details Tab -->
                         <page string="Client Details" name="client_details">
                             <group>
@@ -194,10 +312,56 @@
                             </group>
                         </page>
                     </notebook>
+                        </div><!-- /ws-main -->
 
-                    <!-- Contact History Timeline -->
-                    <widget name="contact_timeline"/>
+                        <!-- ========================================================
+                             RAIL — pinned: glance, people, needs attention
+                             ======================================================== -->
+                        <div class="ws-rail">
+                            <widget name="ws_contact_glance" mode="glance"/>
+
+                            <div class="ws-panel ws-panel--people" name="people_panel">
+                                <div class="ws-panel__head">People</div>
+                                <div class="ws-person">
+                                    <div class="ws-person__body">
+                                        <div class="ws-person__role">Handled by</div>
+                                        <field name="user_id" readonly="1" class="ws-person__name"
+                                               options="{'no_open': True}" invisible="not user_id"/>
+                                        <div class="ws-person__name ws-person__name--quiet"
+                                             invisible="user_id">Nobody yet</div>
+                                    </div>
+                                </div>
+                                <div class="ws-person ws-person--client">
+                                    <div class="ws-person__body">
+                                        <div class="ws-person__role">Linked client</div>
+                                        <field name="patient_id" readonly="1" class="ws-person__name"
+                                               context="{'form_view_ref': 'health_fieldservice.view_health_patient_form_ops'}"
+                                               invisible="not patient_id"/>
+                                        <div class="ws-person__name ws-person__name--quiet"
+                                             invisible="patient_id">Not linked yet</div>
+                                        <div class="ws-person__sub"
+                                             invisible="patient_id">Created at the first booking.</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Needs attention: draws its own panel, or nothing -->
+                            <widget name="ws_contact_glance" mode="attention"/>
+                        </div><!-- /ws-rail -->
+                    </div><!-- /ws-page -->
+
+                    <!-- CONTACT HISTORY — full width under the page. It lists
+                         status changes, activities, escalations and bookings but
+                         no notes or messages (and its status-change read is
+                         refused for everyone but a system administrator, so most
+                         people see "No history yet"), hence the notes feed below
+                         it, as on the booking and client screens (WS-3). -->
+                    <div class="ws-history" name="contact_history">
+                        <widget name="contact_timeline"/>
+                    </div>
                 </sheet>
+
+                <chatter/>
             </form>
         </field>
     </record>

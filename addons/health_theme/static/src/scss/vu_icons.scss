@@ -27,6 +27,9 @@ $vuf-icons: (
     "award",
     "history",
     "truck",            // delivery / logistics
+    // WS-3: the Workspace screens' icons (moved from health_fieldservice)
+    "mail", "message-square", "gift", "repeat", "list", "receipt",
+    "banknote", "calendar-plus", "wallet",
 );
 
 @each $name in $vuf-icons {

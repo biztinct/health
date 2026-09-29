@@ -37,6 +37,11 @@ $ws-icons: (
     "x-circle", "check", "file-text", "activity", "credit-card", "id-card",
     "house", "video", "flask-conical", "history", "timeline", "stethoscope",
     "trash", "archive", "arrow-up",
+    // WS-3: shared by all three screens (moved from the client screen's own
+    // list, and its nine icons from health_fieldservice/static/src/img/ws/)
+    "phone", "package", "shield-check", "heart-pulse", "tag", "info",
+    "mail", "message-square", "gift", "repeat", "list", "receipt",
+    "banknote", "calendar-plus", "wallet",
 );
 
 .ws-ico {
@@ -63,10 +68,24 @@ $ws-icons: (
     }
 }
 
+// Card-title glyphs the section-icon set (backend_02) does not ship
+@each $name in ("phone", "user", "message-square", "archive") {
+    .vu-section__icon[data-icon="#{$name}"]::after {
+        -webkit-mask-image: url("/health_theme/static/src/img/lucide/#{$name}.svg");
+        mask-image: url("/health_theme/static/src/img/lucide/#{$name}.svg");
+    }
+}
+
 // =========================================================================
 // 1. PAGE — main column + pinned right rail
 // =========================================================================
 .o_form_view.ws-workspace {
+    // one canvas colour on every Workspace screen (the page shells of the
+    // booking, client and contact screens each carried their own grey)
+    background: var(--vuf-bg);
+
+    .o_form_sheet_bg { background: var(--vuf-bg); }
+
     // the sheet is the width reference for the whole ladder below
     .o_form_renderer.vu-form .o_form_sheet {
         max-width: none !important;
@@ -252,6 +271,17 @@ $ws-icons: (
         place-items: center;
     }
 
+    // initials on the brand circle (a record with no picture of its own)
+    .ws-hero__avatar--initials {
+        color: var(--vuf-primary-ink);
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: .02em;
+
+        > .o_widget { display: contents; }
+    }
+    .ws-initials { line-height: 1; }
+
     .ws-hero__main {
         flex: 1 1 320px;
         min-width: 0;
@@ -364,6 +394,25 @@ $ws-icons: (
 
         .ws-ico { width: 14px; height: 14px; }
 
+        // a FIELD used as a chip: its widget wrapper lays out like the chip
+        // and its inner span/link reads as plain text
+        &.o_field_widget {
+            width: auto !important;
+            flex: 0 0 auto;
+            display: inline-flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            margin: 0 !important;
+
+            > span, > div, a {
+                display: block;
+                line-height: 1;
+                color: inherit;
+                font-weight: inherit;
+                text-decoration: none;
+            }
+        }
+
         // a chip's icon comes from its data-icon (so the chip's text is its
         // own translation term — no inline icon element beside it)
         &[data-icon]::before {
@@ -381,6 +430,30 @@ $ws-icons: (
             -webkit-mask-position: center;
             mask-position: center;
         }
+    }
+
+    // chip tones (flat token pairs)
+    // the hero sits on the canvas (--vuf-bg), so a neutral chip takes the
+    // hairline grey to stay visible there
+    .ws-chip--code {
+        font-family: ui-monospace, Menlo, Consolas, monospace;
+        letter-spacing: .02em;
+        background: var(--vuf-line);
+        color: var(--vuf-muted);
+    }
+    .ws-chip--ok { background: var(--vuf-ok-bg); color: var(--vuf-ok); }
+    .ws-chip--info { background: var(--vuf-info-bg); color: var(--vuf-info); }
+    .ws-chip--quiet { background: var(--vuf-line); color: var(--vuf-muted); }
+    .ws-chip--danger { background: var(--vuf-danger-bg); color: var(--vuf-danger); }
+    .ws-chip--category,
+    .ws-chip--brand { background: var(--vuf-primary-soft); color: var(--vuf-primary); }
+
+    .ws-chip--dot::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
     }
 }
 
@@ -498,6 +571,9 @@ $ws-icons: (
     gap: var(--vuf-sp-2);
 
     &:empty { display: none; }
+    // a widget-drawn banner (client, contact): one card, or nothing at all
+    &:not(:has(.vu-action-card)) { display: none; }
+    > .o_widget { display: block; }
 
     // `display` beats state_system.scss's `display: revert !important`
     // (.vu-show-on-*): the arch's invisible= already leaves one card only
@@ -662,6 +738,10 @@ $ws-icons: (
 
     .o_notebook_headers {
         margin: 0 0 var(--vuf-sp-4) !important;
+        // the row clips vertically once it scrolls sideways; the active tab's
+        // 2px underline overlaps the hairline by 1px and needs this room
+        // (ledger §5.251)
+        padding-bottom: 1px;
         overflow-x: auto;
         overflow-y: hidden;
         scrollbar-width: thin;
@@ -749,7 +829,10 @@ $ws-icons: (
     // read-first: the card-level pencil is replaced by field hover states
     .vu-detail-card__edit-trigger { display: none !important; }
 
-    > .vu-card__title {
+    // the card's title, also when it sits in a head row beside a link
+    > .vu-card__title,
+    > .ws-card__head > .vu-card__title,
+    > .ws-visits__head > .vu-card__title {
         display: flex !important;
         align-items: center;
         gap: 8px;
@@ -771,6 +854,18 @@ $ws-icons: (
 
             &::after { width: 15px; height: 15px; }
         }
+    }
+
+    // a head row: title left, a small link right
+    > .ws-card__head,
+    > .ws-visits__head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin: 0 0 6px;
+
+        > .vu-card__title { margin: 0 !important; }
     }
 
     // label | value grid
@@ -1015,6 +1110,81 @@ $ws-icons: (
     }
     .ws-alert--warn { background: var(--vuf-warn-bg); color: var(--vuf-warn); }
     .ws-alert--bad { background: var(--vuf-danger-bg); color: var(--vuf-danger); }
+    // information, not a problem: grey, never red
+    .ws-alert--info { background: var(--vuf-bg); color: var(--vuf-muted); }
+
+    // a row still waiting for its data
+    .ws-row.is-loading .ws-row__value { color: var(--vuf-faint); font-weight: 400; }
+
+    // People: one row per person — role over name, sub line, icon buttons
+    .ws-panel--people > .o_widget { display: block; }
+
+    .ws-person {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 0;
+
+        & + .ws-person { border-top: 1px solid var(--vuf-line); }
+    }
+
+    .ws-person__body { flex: 1 1 auto; min-width: 0; }
+
+    .ws-person__role {
+        font-size: 12px;
+        color: var(--vuf-muted);
+        line-height: 1.4;
+    }
+
+    .ws-person__name {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--vuf-ink);
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+
+        // a (read-only) field used as the name reads as the name
+        &.o_field_widget {
+            display: block;
+            padding: 0 !important;
+            min-height: 0 !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+
+            a { color: var(--vuf-ink); text-decoration: none; }
+            a:hover { color: var(--vuf-primary); }
+        }
+    }
+    .ws-person__name--quiet { color: var(--vuf-faint); font-weight: 500; }
+
+    .ws-person__sub {
+        font-size: 12.5px;
+        color: var(--vuf-muted);
+        font-variant-numeric: tabular-nums;
+        line-height: 1.4;
+
+        .o_field_widget { padding: 0 !important; min-height: 0 !important; }
+    }
+
+    .ws-person__acts {
+        display: flex;
+        flex: 0 0 auto;
+        gap: 6px;
+    }
+
+    .ws-icon-btn {
+        display: inline-grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        border: 1px solid var(--vuf-line);
+        border-radius: var(--vuf-r-sm);
+        background: var(--vuf-surface);
+        color: var(--vuf-muted);
+        text-decoration: none;
+
+        &:hover { border-color: var(--vuf-primary); color: var(--vuf-primary); }
+    }
 
     // shortcuts: quiet link rows
     .ws-panel--links .vu-action-item {
@@ -1032,7 +1202,7 @@ $ws-icons: (
         color: var(--vuf-ink);
         text-align: left;
 
-        > .fa, > i.fa, > span:first-child:not(:only-child) {
+        > .fa, > i.fa, > span:first-child:not(:only-child):not(.ws-ico) {
             width: 16px !important;
             height: auto !important;
             margin: 0 !important;
@@ -1041,10 +1211,83 @@ $ws-icons: (
             font-size: 14px !important;
         }
 
+        // a mask icon keeps its colour (it paints with background-color)
+        > .ws-ico {
+            width: 16px;
+            height: 16px;
+            flex: 0 0 16px;
+            color: var(--vuf-muted);
+        }
+
         &:hover {
             background: var(--vuf-bg);
             color: var(--vuf-primary);
             > .fa, > i.fa { background: transparent !important; color: var(--vuf-primary) !important; }
+            > .ws-ico { color: var(--vuf-primary); }
         }
+    }
+}
+
+// Small shared pieces used in cards and panels
+#{$ws} {
+    // a state chip in a list row (booking states etc.)
+    .ws-state {
+        display: inline-flex;
+        align-items: center;
+        height: 22px;
+        padding: 0 8px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    .ws-state--ok { background: var(--vuf-ok-bg); color: var(--vuf-ok); }
+    .ws-state--primary { background: var(--vuf-primary-soft); color: var(--vuf-primary); }
+    .ws-state--warn { background: var(--vuf-warn-bg); color: var(--vuf-warn); }
+    .ws-state--danger { background: var(--vuf-danger-bg); color: var(--vuf-danger); }
+    .ws-state--muted { background: var(--vuf-bg); color: var(--vuf-muted); }
+
+    // a quiet text link ("All bookings")
+    .ws-link {
+        padding: 2px 6px;
+        border: none;
+        border-radius: 6px;
+        background: transparent;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--vuf-primary);
+        cursor: pointer;
+
+        &:hover { background: var(--vuf-primary-soft); }
+    }
+}
+
+// =========================================================================
+// 10. HISTORY — the notes feed (or a screen's own history block) sits under
+//     .ws-page, full width of the page's content, as one flat card
+// =========================================================================
+#{$ws} {
+    .o-mail-Form-chatter {
+        width: auto !important;
+        max-width: none !important;
+        // line up with .ws-page: the sheet's own inset (16px) + its padding
+        margin: 0 calc(var(--vuf-sp-6) + 16px) var(--vuf-sp-6) !important;
+        padding: var(--vuf-sp-2) var(--vuf-sp-3);
+        border: 1px solid var(--vuf-line) !important;
+        border-radius: var(--vuf-r-md) !important;
+        box-shadow: none !important;
+        background: var(--vuf-surface);
+    }
+
+    // a history block INSIDE the sheet, after .ws-page (already aligned)
+    .ws-history {
+        // the same gap the feed keeps from the page (the sheet's bottom padding)
+        margin-top: var(--vuf-sp-7);
+        padding: var(--vuf-sp-4) 18px;
+        background: var(--vuf-surface);
+        border: 1px solid var(--vuf-line);
+        border-radius: var(--vuf-r-md);
+
+        > .o_widget { display: block; }
     }
 }

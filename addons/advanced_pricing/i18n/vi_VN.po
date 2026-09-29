@@ -3213,3 +3213,8 @@ msgstr "≥ %d loại thuốc"
 #: code:addons/advanced_pricing/models/pricing_rule.py:0
 msgid "≥ %d wounds"
 msgstr "≥ %d vết thương"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_health_fso_form_ops_pricing
+msgid "Pricing"
+msgstr "Giá"

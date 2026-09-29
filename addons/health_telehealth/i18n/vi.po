@@ -461,3 +461,8 @@ msgstr "Không thể mở phòng video."
 #: code:addons/health_telehealth/static/src/js/telehealth.js:0
 msgid "The video room is not ready yet."
 msgstr "Phòng video chưa sẵn sàng."
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.view_fso_form_ops_telehealth
+msgid "Telehealth"
+msgstr "Khám từ xa"

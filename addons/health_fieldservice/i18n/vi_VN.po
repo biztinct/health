@@ -2441,7 +2441,7 @@ msgstr ""
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
 msgid "<strong><i class=\"fa fa-exclamation-triangle\"/> ALLERGIES:</strong>"
-msgstr "<strong><i class=\"fa fa-exclamation-triangle\"/> Tâm dị ứng:</strong>"
+msgstr "<strong><i class=\"fa fa-exclamation-triangle\"/> DỊ ỨNG:</strong>"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
@@ -7544,7 +7544,7 @@ msgstr "Các định vị GPS cho việc điều hướng đến vị trí dịc
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_client_list_ops
 msgid "Gender"
-msgstr "Làn giới"
+msgstr "Giới tính"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.report_moh_document
@@ -16207,3 +16207,14 @@ msgstr "Giấy tờ"
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
 msgid "Commission"
 msgstr "Hoa hồng"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
+msgid "Extra charges total"
+msgstr "Tổng phụ phí"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/xml/booking_side_sheet.xml:0
+msgid "Staff Overview"
+msgstr "Tổng quan nhân viên"

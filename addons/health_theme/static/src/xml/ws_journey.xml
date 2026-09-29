@@ -2,7 +2,7 @@
 <templates xml:space="preserve">
 
     <t t-name="health_theme.WsJourney">
-        <div t-attf-class="ws-journey #{isCancelled ? 'ws-journey--cancelled' : ''}">
+        <div t-attf-class="ws-journey #{isStopped ? 'ws-journey--cancelled' : ''}">
             <ol class="ws-journey__row">
                 <t t-foreach="segments" t-as="seg" t-key="seg.key">
                     <li t-attf-class="ws-journey__seg ws-journey__seg--#{seg.status}">
@@ -14,6 +14,7 @@
             </ol>
             <div class="ws-journey__aside">
                 <span t-if="isCancelled" class="ws-journey__chip">Cancelled</span>
+                <span t-elif="terminalLabel" class="ws-journey__chip" t-esc="terminalLabel"/>
                 <span t-elif="stepText" class="ws-journey__count" t-esc="stepText"/>
             </div>
         </div>

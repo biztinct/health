@@ -4927,7 +4927,7 @@ msgstr "Thanh toán ngay - Thanh khoản khi hoàn thành (Hình thức 1)"
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_fieldservice_order_form_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_fso_form_ops_invoicing
 msgid "Pay Quote"
-msgstr "Thu nhập"
+msgstr "Thanh toán báo giá"
 
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_fieldservice_order_form_invoicing

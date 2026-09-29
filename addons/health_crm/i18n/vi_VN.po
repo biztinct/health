@@ -1809,8 +1809,10 @@ msgstr "Bảng"
 #. odoo-javascript
 #: code:addons/health_crm/static/src/xml/crm_contact_form.xml:0
 #: model_terms:ir.ui.view,arch_db:health_crm.view_crm_contact_list_crm_center
+#: model_terms:ir.ui.view,arch_db:health_crm.view_crm_contact_form_crm_center
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
 msgid "Book"
-msgstr "Cuốn sách"
+msgstr "Đặt lịch"
 
 #. module: health_crm
 #. odoo-javascript
@@ -3837,6 +3839,7 @@ msgstr "Trình điều khiển tải lỗi"
 #: code:addons/health_crm/static/src/xml/crm_contact_form.xml:0
 #: model_terms:ir.ui.view,arch_db:health_crm.view_crm_contact_list_crm_center
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
+#: model_terms:ir.ui.view,arch_db:health_crm.view_crm_contact_form_crm_center
 msgid "Escalate"
 msgstr "Chuyển cấp"
 
@@ -4107,9 +4110,11 @@ msgstr "Tờ để chỉ ra nếu đây là một sự kiện toàn ngày"
 
 #. module: health_crm
 #. odoo-python
+#. odoo-javascript
 #: code:addons/health_crm/models/crm_lead.py:0
 #: model:ir.model.fields.selection,name:health_crm.selection__health_booking_wizard__service_type__follow_up
 #: model:ir.model.fields.selection,name:health_crm.selection__health_recurring_booking_wizard__service_type__follow_up
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
 msgid "Follow-up"
 msgstr "Theo dõi"
 
@@ -5252,6 +5257,7 @@ msgstr "Thiếu thông tin cần thiết"
 #: model:ir.model.fields,field_description:health_crm.field_health_initial_contact_wizard__mode_of_contact
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
 #: model_terms:ir.ui.view,arch_db:health_crm.view_initial_contact_wizard_form
+#: model:ir.model.fields,field_description:health_crm.field_crm_lead__mode_of_contact_id
 msgid "Mode of Contact"
 msgstr "Phương thức liên hệ"
 
@@ -6381,8 +6387,10 @@ msgid "Primary reason why this person contacted us"
 msgstr "Lý do chính khiến người này liên lạc với chúng tôi"
 
 #. module: health_crm
+#. odoo-javascript
 #: model_terms:ir.ui.view,arch_db:health_crm.view_crm_followup_list_crm_center
 #: model_terms:ir.ui.view,arch_db:health_crm.view_crm_followup_search_crm_center
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
 msgid "Priority"
 msgstr "Ưu tiên"
 
@@ -7653,6 +7661,8 @@ msgstr "Ngày bắt đầu"
 #: model_terms:ir.ui.view,arch_db:health_crm.view_crm_contact_search_crm_center
 #: model_terms:ir.ui.view,arch_db:health_crm.view_crm_followup_list_crm_center
 #: model_terms:ir.ui.view,arch_db:health_crm.view_crm_followup_search_crm_center
+#: model_terms:ir.ui.view,arch_db:health_crm.view_crm_contact_form_crm_center
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
 msgid "Status"
 msgstr "Trạng thái"
 
@@ -9355,3 +9365,222 @@ msgstr "Hiện hành"
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_patient_form_ops_crm_maincontact
 msgid "Main contact"
 msgstr "Liên hệ chính"
+
+#. module: health_crm
+#. odoo-javascript
+#: model_terms:ir.ui.view,arch_db:health_crm.view_crm_contact_form_crm_center
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "Log activity"
+msgstr "Ghi hoạt động"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_crm_contact_form_crm_center
+msgid "Mark as spam"
+msgstr "Đánh dấu spam"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_crm_contact_form_crm_center
+msgid "First contact"
+msgstr "Liên hệ đầu tiên"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_crm_contact_form_crm_center
+msgid "Overview"
+msgstr "Tổng quan"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_crm_contact_form_crm_center
+msgid "How they reached us"
+msgstr "Cách liên hệ"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_crm_contact_form_crm_center
+msgid "People"
+msgstr "Người liên quan"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_crm_contact_form_crm_center
+msgid "Handled by"
+msgstr "Người phụ trách"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_crm_contact_form_crm_center
+msgid "Nobody yet"
+msgstr "Chưa có ai"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_crm_contact_form_crm_center
+msgid "Linked client"
+msgstr "Khách hàng liên kết"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_crm_contact_form_crm_center
+msgid "Not linked yet"
+msgstr "Chưa liên kết"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_crm_contact_form_crm_center
+msgid "Created at the first booking."
+msgstr "Được tạo khi đặt lịch lần đầu."
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "1 day"
+msgstr "1 ngày"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "%s days"
+msgstr "%s ngày"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "Since first contact"
+msgstr "Từ lần liên hệ đầu"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "None"
+msgstr "Không có"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "Last booking"
+msgstr "Lần đặt lịch gần nhất"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "Possible duplicates"
+msgstr "Có thể trùng"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "Duplicates"
+msgstr "Trùng lặp"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "No outcome recorded %s after the first contact."
+msgstr "Chưa ghi nhận kết quả sau %s kể từ lần liên hệ đầu."
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "Follow-up was due %s."
+msgstr "Đã quá hạn gọi lại %s."
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "1 other contact has the same name, phone or email."
+msgstr "1 liên hệ khác trùng tên, số điện thoại hoặc email."
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "%s other contacts have the same name, phone or email."
+msgstr "%s liên hệ khác trùng tên, số điện thoại hoặc email."
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "This contact was marked as spam."
+msgstr "Liên hệ này đã bị đánh dấu spam."
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "Open client"
+msgstr "Mở hồ sơ khách hàng"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "No outcome recorded yet."
+msgstr "Chưa ghi nhận kết quả."
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "First contact %s."
+msgstr "Liên hệ đầu tiên %s."
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "Call back, then record what they need."
+msgstr "Gọi lại, rồi ghi nhận nhu cầu của khách."
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "Following up."
+msgstr "Đang theo dõi."
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "Next follow-up %s."
+msgstr "Lần gọi lại tiếp theo: %s."
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "No follow-up date set."
+msgstr "Chưa đặt ngày gọi lại."
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "Appointment scheduled."
+msgstr "Đã đặt lịch hẹn."
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "Last booking %s."
+msgstr "Lần đặt lịch gần nhất: %s."
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "Existing client."
+msgstr "Khách hàng hiện có."
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "Booking cancelled."
+msgstr "Lịch hẹn đã hủy."
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "Marked as spam."
+msgstr "Đã đánh dấu spam."
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/xml/ws_contact_panels.xml:0
+msgid "Needs attention"
+msgstr "Cần chú ý"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/xml/ws_contact_panels.xml:0
+msgid "At a glance"
+msgstr "Tổng quan nhanh"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/xml/ws_contact_panels.xml:0
+msgid "Next step"
+msgstr "Bước tiếp theo"

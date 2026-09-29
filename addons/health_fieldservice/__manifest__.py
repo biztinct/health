@@ -1,6 +1,6 @@
 {
     'name': 'VAFHS Healthcare Field Service & Staff Assignment',
-    'version': '19.0.2.10.0',
+    'version': '19.0.2.10.1',
     'category': 'Healthcare/Field Service',
     'summary': 'Unified field service management and AI staff assignment for healthcare home visits',
     'description': """

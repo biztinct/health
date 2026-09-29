@@ -1,11 +1,7 @@
 // CRM Contact Form — OWL header + native form with progressive disclosure
 
-.crm-contact-form-page {
-    .o-mail-Form-chatter,
-    .o-mail-ChatterContainer {
-        display: none !important;
-    }
-}
+// (WS-3: the rule that hid the notes feed on this screen is gone — the feed
+// sits at the bottom, full width, like the booking and client screens.)
 
 .crm-contact-form-page {
     display: flex !important;
@@ -57,7 +53,9 @@
         padding: 10px 24px;
         background: #fff;
         border-bottom: 1px solid #E8EAF0;
-        min-height: 48px;
+        // WS-3: the same bar height as the booking and client screens, so the
+        // three Workspace pages start at the same line
+        min-height: 52px;
         flex-shrink: 0;
     }
 
@@ -104,147 +102,108 @@
     }
 }
 
-// Profile Header
-.crm-profile-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 24px;
-    background: #fff;
-    border-bottom: 1px solid #E8EAF0;
-}
-
-.crm-ph-identity {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex: 1;
-}
-
-.crm-ph-avatar {
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: #1A237E;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    font-weight: 700;
-    flex-shrink: 0;
-}
-
-.crm-ph-details {
-    flex: 1;
-}
-
-.crm-ph-name-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 6px;
-}
-
-.crm-ph-code {
-    font-size: 12px;
-    font-weight: 700;
-    color: #1A237E;
-    font-family: monospace;
-    background: #E8EAF6;
-    padding: 2px 8px;
-    border-radius: 4px;
-}
-
-.crm-ph-name {
-    font-size: 18px;
-    font-weight: 700;
-    color: #263238;
-}
-
-.crm-ph-status-badge {
-    font-size: 11px;
-    font-weight: 600;
-    padding: 3px 10px;
-    border-radius: 20px;
-}
-
+// (WS-3: the old profile header — .crm-profile-header, .crm-ph-* identity,
+// avatar, code, name, status badge, meta line, action buttons, and the unused
+// .crm-more-toggle — left the controller template; their rules went with it.
+// The status colours below stay while crm_contact_form.js keeps
+// getStatusClass(), one phase for safety.)
 .crm-hdr-status-active { background: #E3F2FD; color: #1565C0; }
 .crm-hdr-status-booking { background: #E8F5E9; color: #2E7D32; }
 .crm-hdr-status-lead { background: #FFF8E1; color: #F57F17; }
 .crm-hdr-status-lost_booking { background: #FFEBEE; color: #C62828; }
 .crm-hdr-status-spam { background: #FAFAFA; color: #757575; }
 
-.crm-ph-meta {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
+// =============================================================================
+// WORKSPACE (WS-3) — contact-only rules on top of the health_theme kit
+// (ws_workspace.scss). The arch carries class="ws-workspace"; it lands on the
+// SAME root element as .crm-contact-form-page (the view controller), so the
+// scope is a compound selector (ledger §5.245), one class more than the kit.
+// Flat mono colours from --vuf-* tokens only; CSS-mask icons.
+// =============================================================================
+.o_form_view.crm-contact-form-page.ws-workspace .o_form_renderer.vu-form {
 
-    span {
-        font-size: 12px;
-        color: #78909C;
+    // ── Hero facts: "First contact <date>" on one line ────────────────────
+    .ws-fact--first {
+        .ws-fact__label { display: inline; }
+        .o_field_widget { display: inline; }
+    }
 
-        i { margin-right: 4px; font-size: 11px; }
+    // ── Next step: one icon per kind of card ──────────────────────────────
+    .ws-contact-next--phone { --ws-next-ico: url("/health_theme/static/src/img/lucide/phone.svg"); }
+    .ws-contact-next--calendar { --ws-next-ico: url("/health_theme/static/src/img/lucide/calendar.svg"); }
+    .ws-contact-next--user { --ws-next-ico: url("/health_theme/static/src/img/lucide/user.svg"); }
+    // a cancelled booking: the booking screen's cancelled banner (danger pair);
+    // spam: information, not a problem — the neutral pair
+    .ws-contact-next--stop,
+    .ws-contact-next--spam { --ws-next-ico: url("/health_theme/static/src/img/lucide/x-circle.svg"); }
+    .ws-next .ws-contact-next--stop {
+        background: var(--vuf-danger-bg) !important;
+        border-color: var(--vuf-danger-bg) !important;
+
+        &::before { background: var(--vuf-danger); }
+        .vu-action-card__title { color: var(--vuf-danger); }
+    }
+    .ws-next .ws-contact-next--spam {
+        background: var(--vuf-surface) !important;
+        border-color: var(--vuf-line) !important;
+
+        &::before { background: var(--vuf-muted); }
+        .vu-action-card__supertitle { color: var(--vuf-muted); }
+    }
+
+    // ── Contact history: the timeline sits inside the kit's history card ──
+    .ws-history .ct-timeline-wrapper {
+        margin: 0;
+        padding: 0;
+    }
+    .ws-history .ct-header {
+        margin-bottom: var(--vuf-sp-3);
+
+        .ct-header__icon { display: none; }
+        .ct-header__title {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--vuf-muted);
+        }
+        // the history glyph as a mask (the timeline's own icon is font-based)
+        &::before {
+            content: "";
+            width: 16px;
+            height: 16px;
+            flex: 0 0 16px;
+            background-color: var(--vuf-muted);
+            -webkit-mask-image: url("/health_theme/static/src/img/lucide/history.svg");
+            -webkit-mask-position: center;
+            -webkit-mask-size: contain;
+            -webkit-mask-repeat: no-repeat;
+            mask-image: url("/health_theme/static/src/img/lucide/history.svg");
+            mask-position: center;
+            mask-size: contain;
+            mask-repeat: no-repeat;
+        }
     }
 }
 
-// Action Buttons
-.crm-ph-actions {
-    display: flex;
-    gap: 8px;
-    flex-shrink: 0;
-}
-
-.crm-ph-action-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
-    font-size: 12px;
-    font-weight: 600;
-    border-radius: 8px;
-    border: 1px solid transparent;
-    cursor: pointer;
-    transition: all 150ms;
-    font-family: inherit;
-
-    &.primary {
-        background: #1A237E;
-        color: #fff;
-        &:hover { background: #283593; }
+// ── Header: the three inline contact actions carry a mask icon ────────────
+.o_form_view.crm-contact-form-page.ws-workspace .o_form_statusbar .o_statusbar_buttons {
+    > .btn:is([name="action_convert_to_booking"], [name="action_log_as_lead"], [name="action_escalate_contact"])::before {
+        content: "";
+        width: 16px;
+        height: 16px;
+        flex: 0 0 16px;
+        background-color: var(--vuf-muted);
+        -webkit-mask-image: var(--ws-btn-ico);
+        -webkit-mask-position: center;
+        -webkit-mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-image: var(--ws-btn-ico);
+        mask-position: center;
+        mask-size: contain;
+        mask-repeat: no-repeat;
     }
-
-    &.secondary {
-        background: #fff;
-        color: #546E7A;
-        border-color: #E0E0E0;
-        &:hover { background: #F5F5F5; color: #263238; }
-    }
-
-    &.danger {
-        background: #fff;
-        color: #C62828;
-        border-color: #FFCDD2;
-        &:hover { background: #FFEBEE; }
-    }
-}
-
-// Progressive disclosure toggle
-.crm-more-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 0;
-    font-size: 12px;
-    font-weight: 600;
-    color: #1A237E;
-    background: none;
-    border: none;
-    cursor: pointer;
-    margin-top: 8px;
-
-    &:hover { color: #3949AB; }
-
-    i { font-size: 10px; transition: transform 200ms; }
-    &.open i { transform: rotate(180deg); }
+    > .btn[name="action_convert_to_booking"] { --ws-btn-ico: url("/health_theme/static/src/img/lucide/calendar-plus.svg"); }
+    > .btn[name="action_log_as_lead"] { --ws-btn-ico: url("/health_theme/static/src/img/lucide/clock.svg"); }
+    > .btn[name="action_escalate_contact"] { --ws-btn-ico: url("/health_theme/static/src/img/lucide/arrow-up.svg"); }
 }

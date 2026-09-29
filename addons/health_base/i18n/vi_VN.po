@@ -2878,6 +2878,8 @@ msgstr "Dáng đi/Di chuyển"
 #: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__gender
 #: model:ir.model.fields,field_description:health_base.field_res_partner__gender
 #: model:ir.model.fields,field_description:health_base.field_res_users__gender
+#: model:ir.model.fields,field_description:health_base.field_res_partner__gender_id
+#: model:ir.model.fields,field_description:health_base.field_res_users__gender_id
 msgid "Gender"
 msgstr "Giới tính"
 

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- At a glance / Needs attention / the hero's initials -->
+    <t t-name="health_crm.WsContactGlance">
+        <t t-if="mode === 'avatar'">
+            <span class="ws-initials" t-esc="initials"/>
+        </t>
+        <t t-elif="mode === 'attention'">
+            <t t-set="list" t-value="alerts"/>
+            <div t-if="list.length" class="ws-panel ws-panel--attention">
+                <div class="ws-panel__head">Needs attention</div>
+                <div class="ws-alerts">
+                    <t t-foreach="list" t-as="alert" t-key="alert.key">
+                        <div t-attf-class="ws-alert ws-alert--#{alert.tone}" t-att-data-alert="alert.key">
+                            <span class="ws-ico" t-att-data-icon="alert.tone === 'info' ? 'info' : 'alert-triangle'"/>
+                            <span class="ws-alert__text" t-esc="alert.text"/>
+                        </div>
+                    </t>
+                </div>
+            </div>
+            <span t-else="" class="d-none"/>
+        </t>
+        <t t-else="">
+            <div class="ws-panel ws-panel--glance">
+                <div class="ws-glance">
+                    <div class="ws-panel__head">At a glance</div>
+                    <t t-foreach="rows" t-as="row" t-key="row.key">
+                        <div t-attf-class="ws-row #{row.cls}" t-att-data-row="row.key">
+                            <span class="ws-row__label" t-esc="row.label"/>
+                            <span class="ws-row__value" t-esc="row.value"/>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </t>
+
+    <!-- Next step: one card, the same look as the booking and client banners -->
+    <t t-name="health_crm.WsContactNext">
+        <t t-set="nextCard" t-value="card"/>
+        <div t-if="nextCard" t-attf-class="vu-action-card vu-action-card--primary ws-contact-next ws-contact-next--#{nextCard.kind}">
+            <div class="vu-action-card__supertitle">Next step</div>
+            <div class="vu-action-card__title" t-esc="nextCard.title"/>
+            <div t-if="nextCard.hint" class="vu-action-card__subtitle" t-esc="nextCard.hint"/>
+            <div t-if="nextCard.buttons.length" class="vu-action-card__actions">
+                <t t-foreach="nextCard.buttons" t-as="btn" t-key="btn.key">
+                    <button type="button"
+                            t-attf-class="vu-action-btn #{btn.primary ? 'vu-action-btn--primary' : 'vu-action-btn--secondary'}"
+                            t-att-data-action="btn.key"
+                            t-on-click="() => btn.run()"
+                            t-esc="btn.label"/>
+                </t>
+            </div>
+        </div>
+    </t>
+
+</templates>

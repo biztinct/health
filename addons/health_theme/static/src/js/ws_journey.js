@@ -13,9 +13,16 @@
 //   catalogue carries them as code terms of this module).
 // - `date_fields` runs parallel to `steps`; an empty entry = no date for it.
 // - `aliases` maps states that have no segment of their own onto one that does
+//   (any number of `from:to` pairs, comma-separated — several states may map to
+//   the same step, e.g. "thinking:lead,recontact:lead,service_used:existing")
 //   (vu_progress_rail's bug: `completed_pending_invoice` matched no step, so
 //   every step read "done" — never copy that).
 // - `cancelled` is not a step: every segment greys and a chip says so.
+// - `terminal` (optional, comma states) names the states that end the journey
+//   off the path (a contact marked spam, a cancelled booking-to-be). They
+//   render like `cancelled` — every segment grey — and the chip reads that
+//   state's own selection label. Without `terminal` the widget behaves exactly
+//   as before (`cancelled` only, chip text "Cancelled").
 // Product-agnostic on purpose: it knows nothing about bookings.
 // =============================================================================
 
@@ -51,6 +58,7 @@ export class WsJourney extends Component {
         dateFields: { type: String, optional: true },
         stateField: { type: String, optional: true },
         aliases: { type: String, optional: true },
+        terminal: { type: String, optional: true },
     };
 
     get stateField() {
@@ -61,8 +69,29 @@ export class WsJourney extends Component {
         return this.props.record.data[this.stateField] || "";
     }
 
+    /** The default stop (no `terminal` attr): a cancelled record. */
     get isCancelled() {
-        return this.rawState === "cancelled";
+        return !this.props.terminal && this.rawState === "cancelled";
+    }
+
+    /** A state listed in `terminal`: its selection label, or "" when the
+     *  record is not in one. */
+    get terminalLabel() {
+        if (!this.props.terminal) {
+            return "";
+        }
+        const state = this.rawState;
+        if (!state || !splitList(this.props.terminal).includes(state)) {
+            return "";
+        }
+        const field = this.props.record.fields[this.stateField];
+        const pair = ((field && field.selection) || []).find(([value]) => value === state);
+        return (pair && pair[1]) || state;
+    }
+
+    /** Off the path: every segment grey, a chip instead of the step count. */
+    get isStopped() {
+        return this.isCancelled || Boolean(this.terminalLabel);
     }
 
     get currentState() {
@@ -83,7 +112,7 @@ export class WsJourney extends Component {
         const dateFields = splitList(this.props.dateFields);
         const data = this.props.record.data;
         const currentIndex = steps.indexOf(this.currentState);
-        const cancelled = this.isCancelled;
+        const cancelled = this.isStopped;
         return steps.map((state, index) => {
             let status = "future";
             if (!cancelled && currentIndex >= 0) {
@@ -112,7 +141,7 @@ export class WsJourney extends Component {
     get stepText() {
         const steps = splitList(this.props.steps).filter(Boolean);
         const index = steps.indexOf(this.currentState);
-        if (this.isCancelled || index < 0) {
+        if (this.isStopped || index < 0) {
             return "";
         }
         return _t("Step %s of %s", index + 1, steps.length);
@@ -127,6 +156,7 @@ export const wsJourney = {
         dateFields: attrs.date_fields,
         stateField: attrs.state_field,
         aliases: attrs.aliases,
+        terminal: attrs.terminal,
     }),
     fieldDependencies: ({ attrs }) => {
         const deps = [{ name: attrs.state_field || "state", type: "selection" }];

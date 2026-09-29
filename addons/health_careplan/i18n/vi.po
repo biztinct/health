@@ -1559,6 +1559,7 @@ msgstr "Truy cập nhiệm vụ"
 #: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_form
 #: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_task_list
 #: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_task_search
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_ops_booking_visit_tasks_tab
 msgid "Visit Tasks"
 msgstr "Nhiệm vụ theo lần khám"
 

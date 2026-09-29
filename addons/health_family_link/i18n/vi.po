@@ -366,3 +366,8 @@ msgstr "Điều dưỡng đã đến"
 #: model_terms:ir.ui.view,arch_db:health_family_link.family_page
 msgid "Điều dưỡng đã đến lúc"
 msgstr "Điều dưỡng đã đến lúc"
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.view_ops_booking_family_tab
+msgid "Family Updates"
+msgstr "Cập nhật cho gia đình"

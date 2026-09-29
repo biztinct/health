@@ -423,29 +423,10 @@ $crm-danger:  #E53935 !default;  // Hibiscus Red
 // Flat mono colours from --vuf-* tokens only; CSS-mask icons.
 // =============================================================================
 
-// ── Icons the kit does not ship (CSS masks, currentColor) ─────────────────
-$ws2-theme-icons: ("phone", "package", "shield-check", "heart-pulse", "tag");
-$ws2-own-icons: ("mail", "message-square", "gift", "repeat", "list", "receipt",
-                 "banknote", "calendar-plus", "wallet");
-
-@each $name in $ws2-theme-icons {
-    .ws-ico[data-icon="#{$name}"],
-    .ws-chip[data-icon="#{$name}"] {
-        --ws-ico: url("/health_theme/static/src/img/lucide/#{$name}.svg");
-    }
-}
-@each $name in $ws2-own-icons {
-    .ws-ico[data-icon="#{$name}"],
-    .ws-chip[data-icon="#{$name}"] {
-        --ws-ico: url("/health_fieldservice/static/src/img/ws/#{$name}.svg");
-    }
-}
-
-// the Contact card's title icon (the section-icon set has no phone)
-.vu-section__icon[data-icon="phone"]::after {
-    mask-image: url("/health_theme/static/src/img/lucide/phone.svg");
-    -webkit-mask-image: url("/health_theme/static/src/img/lucide/phone.svg");
-}
+// (WS-3: the icons, the field-chip and chip-tone rules, the nested card
+// title, People rows, state chips, links, the Shortcuts icon colour, the tab
+// underline room and the notes-feed card moved into the kit —
+// health_theme ws_workspace.scss — so all three screens share them.)
 
 .o_form_view.ops-client-profile-form-page.ws-workspace .o_form_renderer.vu-form {
 
@@ -466,45 +447,6 @@ $ws2-own-icons: ("mail", "message-square", "gift", "repeat", "list", "receipt",
             box-shadow: none !important;
         }
         .o_form_image_controls { display: none !important; }
-    }
-
-    // ── Hero: chips, one height; field chips read as plain text inside ────
-    .ws-hero__title {
-        .ws-chip.o_field_widget {
-            width: auto !important;
-            flex: 0 0 auto;
-            display: inline-flex !important;
-            flex-direction: row !important;
-            align-items: center !important;
-            margin: 0 !important;
-
-            > span, > div, a {
-                display: block;
-                line-height: 1;
-                color: inherit;
-                font-weight: inherit;
-                text-decoration: none;
-            }
-        }
-
-        .ws-chip--code {
-            font-family: ui-monospace, Menlo, Consolas, monospace;
-            letter-spacing: .02em;
-            background: var(--vuf-bg);
-            color: var(--vuf-muted);
-        }
-        .ws-chip--ok { background: var(--vuf-ok-bg); color: var(--vuf-ok); }
-        .ws-chip--info { background: var(--vuf-info-bg); color: var(--vuf-info); }
-        .ws-chip--quiet { background: var(--vuf-bg); color: var(--vuf-muted); }
-        .ws-chip--category { background: var(--vuf-primary-soft); color: var(--vuf-primary); }
-
-        .ws-chip--dot::before {
-            content: "";
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: currentColor;
-        }
     }
 
     // ── Hero: facts line — the address is one line with an ellipsis ───────
@@ -585,9 +527,7 @@ $ws2-own-icons: ("mail", "message-square", "gift", "repeat", "list", "receipt",
     }
 
     // ── Next step: the widget draws one card, or nothing ──────────────────
-    .ws-next:not(:has(.vu-action-card)) { display: none; }
-    .ws-next > .o_widget { display: block; }
-    .ws-client-next--money { --ws-next-ico: url("/health_fieldservice/static/src/img/ws/banknote.svg"); }
+    .ws-client-next--money { --ws-next-ico: url("/health_theme/static/src/img/lucide/banknote.svg"); }
     .ws-client-next--calendar { --ws-next-ico: url("/health_theme/static/src/img/lucide/calendar.svg"); }
     .ws-client-next--user { --ws-next-ico: url("/health_theme/static/src/img/lucide/user.svg"); }
 
@@ -602,40 +542,7 @@ $ws2-own-icons: ("mail", "message-square", "gift", "repeat", "list", "receipt",
     .ws-pack > .o_widget_ws_client_visits { display: block; }
 
     .ws-visits {
-        .ws-visits__head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-            margin: 0 0 6px;
-
-            // the same title as the pack's other cards (the kit styles only a
-            // card's DIRECT title child)
-            .vu-card__title {
-                display: flex !important;
-                align-items: center;
-                gap: 8px;
-                margin: 0 !important;
-                padding: 0 !important;
-                border: none !important;
-                font-size: 12px !important;
-                font-weight: 600 !important;
-                letter-spacing: .08em !important;
-                text-transform: uppercase;
-                color: var(--vuf-muted) !important;
-
-                .vu-section__icon {
-                    width: 16px;
-                    height: 16px;
-                    border-radius: 0;
-                    background: transparent !important;
-                    color: var(--vuf-muted) !important;
-
-                    &::after { width: 15px; height: 15px; }
-                }
-            }
-        }
-
+        // (its head row and title: the kit's card head-row rule)
         .ws-visits__list { display: flex; flex-direction: column; }
 
         .ws-visit {
@@ -687,71 +594,7 @@ $ws2-own-icons: ("mail", "message-square", "gift", "repeat", "list", "receipt",
         }
     }
 
-    .ws-state {
-        display: inline-flex;
-        align-items: center;
-        height: 22px;
-        padding: 0 8px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 600;
-        white-space: nowrap;
-    }
-    .ws-state--ok { background: var(--vuf-ok-bg); color: var(--vuf-ok); }
-    .ws-state--primary { background: var(--vuf-primary-soft); color: var(--vuf-primary); }
-    .ws-state--warn { background: var(--vuf-warn-bg); color: var(--vuf-warn); }
-    .ws-state--danger { background: var(--vuf-danger-bg); color: var(--vuf-danger); }
-    .ws-state--muted { background: var(--vuf-bg); color: var(--vuf-muted); }
-
-    .ws-link {
-        padding: 2px 6px;
-        border: none;
-        border-radius: 6px;
-        background: transparent;
-        font-size: 12.5px;
-        font-weight: 600;
-        color: var(--vuf-primary);
-        cursor: pointer;
-
-        &:hover { background: var(--vuf-primary-soft); }
-    }
-
     // ── Rail: People (the client, then the main contact) ──────────────────
-    .ws-panel--people > .o_widget { display: block; }
-
-    .ws-person {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 8px 0;
-    }
-    .ws-panel--people .ws-person--main-contact { border-top: 1px solid var(--vuf-line); }
-
-    .ws-person__body { flex: 1 1 auto; min-width: 0; }
-
-    .ws-person__role {
-        font-size: 12px;
-        color: var(--vuf-muted);
-        line-height: 1.4;
-    }
-
-    .ws-person__name {
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--vuf-ink);
-        line-height: 1.4;
-        overflow-wrap: anywhere;
-    }
-
-    .ws-person__sub {
-        font-size: 12.5px;
-        color: var(--vuf-muted);
-        font-variant-numeric: tabular-nums;
-        line-height: 1.4;
-
-        .o_field_widget { padding: 0 !important; min-height: 0 !important; }
-    }
-
     // the main-contact picker reads as a name until it is used: no box at
     // rest, a tint on hover, the engine's one ring on focus (ledger §5.97)
     .ws-person__field {
@@ -781,42 +624,6 @@ $ws2-own-icons: ("mail", "message-square", "gift", "repeat", "list", "receipt",
         .o_dropdown_button { opacity: 0; }
         &:hover .o_dropdown_button,
         &:focus-within .o_dropdown_button { opacity: 1; }
-    }
-
-    .ws-person__acts {
-        display: flex;
-        flex: 0 0 auto;
-        gap: 6px;
-    }
-
-    .ws-icon-btn {
-        display: inline-grid;
-        place-items: center;
-        width: 34px;
-        height: 34px;
-        border: 1px solid var(--vuf-line);
-        border-radius: var(--vuf-r-sm);
-        background: var(--vuf-surface);
-        color: var(--vuf-muted);
-        text-decoration: none;
-
-        &:hover { border-color: var(--vuf-primary); color: var(--vuf-primary); }
-    }
-
-    // ── Rail: the glance draws its own panel; keep it out of the loading jump
-    .ws-row.is-loading .ws-row__value { color: var(--vuf-faint); font-weight: 400; }
-
-    // ── Rail: Shortcuts — the kit blanks a row's first span background (it
-    //    was a font-awesome slot); a mask icon needs its colour back
-    .ws-rail .ws-panel--links .vu-action-item.ws-shortcut > span.ws-ico[data-icon] {
-        width: 16px !important;
-        height: 16px !important;
-        flex: 0 0 16px;
-        background-color: currentColor !important;
-        color: var(--vuf-muted) !important;
-    }
-    .ws-rail .ws-panel--links .vu-action-item.ws-shortcut:hover > span.ws-ico[data-icon] {
-        color: var(--vuf-primary) !important;
     }
 
     // ── Bookings / Financial tabs: the four big tiles become one slim line
@@ -884,27 +691,5 @@ $ws2-own-icons: ("mail", "message-square", "gift", "repeat", "list", "receipt",
             color: inherit !important;
         }
         .o_field_empty input.o_input::placeholder { color: var(--vuf-faint); }
-    }
-}
-
-// ── Shared by the client AND the booking screen ────────────────────────────
-.o_form_view:is(.ops-client-profile-form-page, .ops-booking-form-page).ws-workspace .o_form_renderer.vu-form {
-    // Tabs: the header row clips vertically once it scrolls sideways (the
-    // client has 18 tabs); give the active tab's 2px underline, which overlaps
-    // the row's hairline by 1px, the room it needs
-    .ws-main .o_notebook .o_notebook_headers { padding-bottom: 1px; }
-
-    // Notes & history feed (C0): bottom, full width of the page's content,
-    // one flat card under .ws-page
-    .o-mail-Form-chatter {
-        width: auto !important;
-        max-width: none !important;
-        // line up with .ws-page: the sheet's own inset (16px) + its padding
-        margin: 0 calc(var(--vuf-sp-6) + 16px) var(--vuf-sp-6) !important;
-        padding: var(--vuf-sp-2) var(--vuf-sp-3);
-        border: 1px solid var(--vuf-line) !important;
-        border-radius: var(--vuf-r-md) !important;
-        box-shadow: none !important;
-        background: var(--vuf-surface);
     }
 }

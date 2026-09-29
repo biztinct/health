@@ -1410,7 +1410,7 @@
                                         <field name="commission_percentage"/>
                                         <field name="commission_duration" placeholder="—"/>
                                         <field name="commission_amount" readonly="1"/>
-                                        <field name="total_price" readonly="1"/>
+                                        <field name="total_price" readonly="1" string="Extra charges total"/>
                                     </group>
                                 </div>
 

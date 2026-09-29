@@ -28,9 +28,12 @@ export class CrmContactFormController extends FormController {
             isLoaded: false,
         });
 
+        // WS-3: the identity header left this template (the arch draws the
+        // Workspace hero), so nothing reads headerState on mount any more and
+        // the get_contact_header_data call is no longer made. _loadHeaderData
+        // and the action methods below are kept one phase for safety.
         onMounted(() => {
             this._adjustLayout();
-            this._loadHeaderData();
         });
         onPatched(() => {
             this._adjustLayout();
@@ -51,12 +54,6 @@ export class CrmContactFormController extends FormController {
         } catch (e) {
             console.error("Failed to load contact header:", e);
         }
-    }
-
-    async saveButtonClicked(params) {
-        const res = await super.saveButtonClicked(params);
-        await this._loadHeaderData();
-        return res;
     }
 
     _adjustLayout() {

@@ -1,6 +1,6 @@
 {
     'name': 'VAFHS Healthcare CRM Integration',
-    'version': '19.0.1.11.0',
+    'version': '19.0.1.12.0',
     'category': 'Healthcare/CRM',
     'summary': 'Healthcare CRM integration inheriting from standard Odoo CRM',
     'description': """
@@ -134,6 +134,9 @@
             'health_crm/static/src/js/crm_contact_form.js',
             'health_crm/static/src/xml/crm_contact_form.xml',
             'health_crm/static/src/scss/crm_contact_form.scss',
+            # Contact workspace panels (WS-3): Next step, glance, attention
+            'health_crm/static/src/js/ws_contact_panels.js',
+            'health_crm/static/src/xml/ws_contact_panels.xml',
             'health_crm/static/src/js/required_fields_dialog.js',
             'health_crm/static/src/xml/required_fields_dialog.xml',
             'health_crm/static/src/js/crm_new_contact.js',

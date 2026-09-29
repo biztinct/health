@@ -132,6 +132,7 @@ msgstr "Trò chuyện"
 #. module: health_theme
 #. odoo-javascript
 #: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+#: code:addons/health_theme/static/src/js/ws_journey.js:0
 msgid "Client"
 msgstr "Khách hàng"
 
@@ -857,3 +858,21 @@ msgstr "%s trường"
 #: code:addons/health_theme/static/src/xml/ws_statusbar_more.xml:0
 msgid "More"
 msgstr "Thêm"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/js/ws_journey.js:0
+msgid "New"
+msgstr "Mới"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/js/ws_journey.js:0
+msgid "Following up"
+msgstr "Đang theo dõi"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/js/ws_journey.js:0
+msgid "Booked"
+msgstr "Đã đặt lịch"

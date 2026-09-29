@@ -23,53 +23,10 @@
                 </div>
             </header>
 
-            <!-- CONTACT PROFILE HEADER -->
-            <t t-if="headerState.isLoaded">
-                <div class="crm-profile-header">
-                    <div class="crm-ph-identity">
-                        <div class="crm-ph-avatar" t-esc="headerState.header.initials || '??'"/>
-                        <div class="crm-ph-details">
-                            <div class="crm-ph-name-row">
-                                <span class="crm-ph-code" t-esc="headerState.header.code"/>
-                                <span class="crm-ph-name" t-esc="headerState.header.name"/>
-                                <span t-attf-class="crm-ph-status-badge #{getStatusClass(headerState.header.contact_status)}">
-                                    <t t-esc="getStatusLabel(headerState.header.contact_status)"/>
-                                </span>
-                            </div>
-                            <div class="crm-ph-meta">
-                                <t t-if="headerState.header.phone">
-                                    <span><i class="fa fa-phone"/> <t t-esc="headerState.header.phone"/></span>
-                                </t>
-                                <t t-if="headerState.header.email">
-                                    <span><i class="fa fa-envelope-o"/> <t t-esc="headerState.header.email"/></span>
-                                </t>
-                                <t t-if="headerState.header.channel">
-                                    <span><i class="fa fa-hashtag"/> <t t-esc="translateLabel(headerState.header.channel)"/></span>
-                                </t>
-                                <t t-if="headerState.header.province">
-                                    <span><i class="fa fa-map-marker"/> <t t-esc="headerState.header.province"/></span>
-                                </t>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="crm-ph-actions">
-                        <button class="crm-ph-action-btn primary" t-on-click="actionBook" title="Create Booking">
-                            <i class="fa fa-calendar-plus-o"/> Book
-                        </button>
-                        <button class="crm-ph-action-btn secondary" t-on-click="actionLogLead" title="Log Activity">
-                            <i class="fa fa-clock-o"/> Log Activity
-                        </button>
-                        <button class="crm-ph-action-btn secondary" t-on-click="actionEscalate" title="Escalate">
-                            <i class="fa fa-arrow-up"/> Escalate
-                        </button>
-                        <button class="crm-ph-action-btn danger" t-on-click="actionMarkSpam" title="Mark as Spam">
-                            <i class="fa fa-ban"/> Spam
-                        </button>
-                    </div>
-                </div>
-            </t>
-
-            <!-- FORM VIEW CONTAINER -->
+            <!-- FORM VIEW CONTAINER — the arch draws the whole workspace (hero,
+                 journey, Next step, tabs, rail, contact history) and the four
+                 contact actions as header buttons; this chrome keeps only the
+                 breadcrumb bar and the save indicator (WS-3) -->
             <div class="o_form_view_container">
                 <Layout className="model.useSampleModel ? 'o_view_sample_data' : ''" display="display">
                     <t t-set-slot="control-panel-create-button"/>
