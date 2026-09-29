@@ -534,20 +534,17 @@
                                             <span class="bj-jstat-lbl">Total Invoiced</span>
                                         </div>
                                     </div>
-                                    <div class="bj-jstat">
-                                        <i class="fa fa-check-circle text-success"/>
-                                        <div class="bj-jstat-info">
-                                            <span class="bj-jstat-val"><field name="credit" nolabel="1" class="d-inline" widget="monetary"/></span>
-                                            <span class="bj-jstat-lbl">Total Paid</span>
-                                        </div>
-                                    </div>
+                                    <!-- credit is the client's receivable (what they still owe);
+                                         it was labelled "Total Paid" and debit (payable) was shown
+                                         as Outstanding. debit stays loaded for anything reading it. -->
                                     <div class="bj-jstat">
                                         <i class="fa fa-exclamation-circle text-danger"/>
                                         <div class="bj-jstat-info">
-                                            <span class="bj-jstat-val"><field name="debit" nolabel="1" class="d-inline" widget="monetary"/></span>
+                                            <span class="bj-jstat-val"><field name="credit" nolabel="1" class="d-inline" widget="monetary"/></span>
                                             <span class="bj-jstat-lbl">Outstanding</span>
                                         </div>
                                     </div>
+                                    <field name="debit" invisible="1"/>
                                     <div class="bj-jstat">
                                         <i class="fa fa-credit-card"/>
                                         <div class="bj-jstat-info">
