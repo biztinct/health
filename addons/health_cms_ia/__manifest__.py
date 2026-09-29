@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Healthcare CMS — Consolidated Menu',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Healthcare',
     'summary': 'Regroups the left menu into areas, tabs and the screens inside '
                'each tab, and gives every entry the roles that open it. Data '

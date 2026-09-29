@@ -15,6 +15,7 @@
      * both languages switch live, without a reload or a lost place
    ========================================================================== */
 import { Component, markup, onMounted, onPatched, onWillStart, onWillUnmount, useRef, useState } from "@odoo/owl";
+import { user } from "@web/core/user";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 
@@ -94,7 +95,9 @@ export class LearnJourney extends Component {
         // Product can measure completion at all (analysis §6).
         try {
             const p = JSON.parse(window.localStorage.getItem(LOCAL_PREFS) || "{}");
-            const sessionLang = window.odoo?.session_info?.user_context?.lang || "";
+            // AR-3: the person's own language. `odoo.session_info` does not exist in
+            // this build, so a Vietnamese reader always started in English.
+            const sessionLang = user.lang || "";
             this.state.lang = p.lang || (sessionLang.startsWith("vi") ? "vi" : "en");
             this.state.motion = p.motion || "auto";
         } catch {

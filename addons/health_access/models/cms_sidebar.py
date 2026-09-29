@@ -58,6 +58,19 @@ ADVANCED_ACTION = 'health_cms_sidebar.action_cms_sidebar_item'
 #: it: one rule, and no privilege that quietly opens the whole menu.
 ADMIN_GROUPS = ('base.group_system',)
 
+#: THE PLATFORM'S OWN ENTRIES, drawn for the platform administrator and nobody
+#: else (owner ruling 2026-09-29, AR-3 G2). "Google Ads application" is the
+#: platform's one Google Ads developer set-up for every clinic on it; its
+#: screen is readable by the system administrator only, so on a clinic's menu
+#: it was a door that refused everybody who could see it.
+#:
+#: An entry here carries NO role and is still hidden: "no gate" normally means
+#: "everybody", and for these it means "nobody but the administrator short-
+#: circuit above". It inherits nothing from its block or its heading either — a
+#: block's roles would otherwise draw it for them. Roles somebody deliberately
+#: writes on it from the Screens lens still open it, like any other entry.
+PLATFORM_ONLY_ITEMS = ('health_google_ads.item_google_ads_platform',)
+
 #: THE MODULES WHOSE OWN HOOKS SWITCH AN ENTRY OFF FOR WANT OF A ROLE.
 #:
 #: `health_access._gate_new_items` and `biz_bi_cms.apply_role_gates` both put
@@ -209,13 +222,19 @@ class CmsSidebarItem(models.Model):
         # role opens nothing (it is absent from the map the rule builds); the
         # entry stays GATED, which is what hides it.
         records = self.with_context(active_test=False)
+        platform_only = self._platform_only_ids()
         # Parents before children so a child reads a settled parent value.
         for item in records.sorted(lambda i: bool(i.parent_id)):
+            if item.id in platform_only:
+                # Only what is written on it: nothing inherited (AR-3 G2).
+                item.effective_biz_role_ids = item.biz_role_ids
+                continue
             roles = item._chain_biz_roles()
             if item._derives_gate_from_children():
                 kids = self.env['cms.sidebar.item'].sudo().with_context(
                     active_test=False).search(
-                    [('parent_id', '=', item.id), ('active', '=', True)])
+                    [('parent_id', '=', item.id), ('active', '=', True),
+                     ('id', 'not in', list(platform_only))])
                 kid_roles = [kid._chain_biz_roles() for kid in kids]
                 if kid_roles and all(kid_roles):
                     for kid_role in kid_roles:
@@ -237,6 +256,16 @@ class CmsSidebarItem(models.Model):
             roles |= parent.biz_role_ids | parent.section_id.biz_role_ids
             parent = parent.parent_id
         return roles
+
+    @api.model
+    def _platform_only_ids(self):
+        """The ids of `PLATFORM_ONLY_ITEMS` present on this database."""
+        out = set()
+        for xmlid in PLATFORM_ONLY_ITEMS:
+            rec = self.env.ref(xmlid, raise_if_not_found=False)
+            if rec and rec._name == self._name:
+                out.add(rec.id)
+        return out
 
     def _derives_gate_from_children(self):
         """A heading — no screen of its own — with no roles written on it."""
@@ -291,9 +320,12 @@ class CmsSidebarItem(models.Model):
         # IDS, NOT RECORDSETS, because the gate has to be read with archived
         # roles included and the answer has to come back in the caller's own
         # environment. Two recordsets from two contexts do not union.
+        platform_only = self._platform_only_ids()
         drawn = []
         for item in candidates.with_context(active_test=False):
             roles = item.effective_biz_role_ids
+            if item.id in platform_only and not roles:
+                continue                            # the administrator's alone
             if not roles:
                 drawn.append(item.id)               # no gate anywhere above it
                 continue
@@ -546,8 +578,14 @@ class HealthCmsRail(RailProvider):
         models_ = {item.id: _model_behind(env, item) for item in items}
         awaiting = (_awaiting_ids(env, items, models_) if include_inactive
                     else set())
+        platform_only = Item._platform_only_ids()
+        system = env.ref('base.group_system', raise_if_not_found=False)
         rows = []
         for item in items:
+            # A platform-only entry is said to ask for the administrator
+            # permission, which is exactly the rule the menu applies to it —
+            # so the lens draws "nobody" for it rather than "everybody".
+            only = item.id in platform_only and system
             rows.append({
                 'id': item.id,
                 'section_id': item.section_id.id,
@@ -563,7 +601,7 @@ class HealthCmsRail(RailProvider):
                 # honestly rather than approximated: an entry is shown or it is
                 # not, and inventing a middle state the menu cannot draw would
                 # make the Screens lens promise something nobody would ever see.
-                'group_ids': [],
+                'group_ids': [system.id] if only else [],
                 'restricted': False,
                 'restriction_reason': '',
                 # What is WRITTEN on the entry, archived roles included — "is it

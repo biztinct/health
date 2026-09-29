@@ -1381,6 +1381,32 @@ const OPS_STATIONS = {
           ],
         },
       },
+      {
+        // AR-3: the Access home. An OUTLINE station, not a lesson: a lesson
+        // plays on the practice replica and the Access home has none, so the
+        // walkthrough is the Coach's "How do I give somebody access?" answer,
+        // whose six steps point at the LIVE screen (anchors of kind product).
+        id: "admin_access", icon: "shield-check", mins: 5,
+        title: B("Give somebody access", "Cấp quyền cho một người"),
+        desc: B("Roles in plain words, who holds each one, and hand-overs that take themselves back.",
+                "Vai trò bằng lời dễ hiểu, ai đang giữ từng vai trò, và các lần bàn giao quyền tự thu hồi khi hết hạn."),
+        outline: {
+          what: B("The Access home: every role with the sentence saying what it lets somebody do, a passport for every person showing the left menu they see, and the hand-overs running now.",
+                  "Trang Quyền truy cập: mọi vai trò kèm câu mô tả nó cho phép làm gì, một hộ chiếu cho từng người cho thấy menu bên trái mà họ thấy, và các lần bàn giao quyền đang diễn ra."),
+          why: B("Access is given as a role, never as a list of ticks. A role is a job somebody can name out loud — Nurse, Accountant — and holding it means holding all of it, so the menu a person sees is always the menu of their job.",
+                 "Quyền được cấp dưới dạng vai trò, không bao giờ là một danh sách ô đánh dấu. Vai trò là một công việc có thể gọi tên — Y tá, Kế toán — và giữ vai trò nghĩa là giữ trọn vẹn nó, nên menu một người thấy luôn là menu của công việc họ làm."),
+          when: B("When somebody joins, changes job, goes on leave or leaves. Find the person first, then give or take back a role on their passport.",
+                  "Khi có người mới vào, đổi công việc, nghỉ phép hoặc nghỉ việc. Hãy tìm người đó trước, rồi cấp hoặc thu hồi vai trò trên hộ chiếu của họ."),
+          prereq: B("Owner or Admin. Everybody can hand their own access over while they are away.",
+                    "Chủ sở hữu hoặc Quản trị viên. Ai cũng có thể bàn giao quyền của chính mình khi vắng mặt."),
+          mistakes: [
+            B("Giving a bigger role than the job needs because it is quicker. The person then sees screens, and patient records, their work never asks for.",
+              "Cấp một vai trò lớn hơn nhu cầu công việc vì làm vậy nhanh hơn. Khi đó người ấy thấy những màn hình, và cả hồ sơ bệnh nhân, mà công việc của họ không cần đến."),
+            B("Giving your own role to a colleague for your holiday. Hand it over instead — it ends by itself on the day you come back.",
+              "Cấp hẳn vai trò của mình cho đồng nghiệp trong kỳ nghỉ. Hãy bàn giao quyền thay vào đó — nó tự kết thúc vào ngày bạn quay lại."),
+          ],
+        },
+      },
     ],
   },
 };
@@ -2773,6 +2799,120 @@ const OPS_QA = [
   },
 ];
 
+/* AR-3 — the Access home. The first answer is the walkthrough (six steps,
+   each pointing at the live screen); the others answer the questions an
+   administrator asks there. Every anchor is of kind "product", registered in
+   addons/health_learn/static/src/anchors.json. */
+OPS_QA.push(
+  {
+    id: "access_give", screens: ["admin_access"],
+    match: ["give access", "give someone access", "give somebody access", "give a role",
+            "how do i give lan the nurse role", "give lan the nurse role", "add a role",
+            "cấp quyền", "cấp quyền cho", "gán vai trò", "giao vai trò", "cho lan vai trò y tá"],
+    label: B("How do I give somebody access?", "Làm sao để cấp quyền cho một người?"),
+    blocks: [
+      { k: "p", v: B("Access here is a role, given to a person. A role is a set of abilities with a name somebody can say out loud — Nurse, Accountant, Front desk — so you never tick permissions one by one.",
+                     "Quyền ở đây là một vai trò, được cấp cho một người. Vai trò là một nhóm quyền thao tác có tên gọi rõ ràng — Y tá, Kế toán, Lễ tân — nên bạn không bao giờ phải đánh dấu từng quyền một.") },
+      { k: "steps", v: [
+        { t: B("Open the People lens and find the person by name.", "Mở mục Nhân sự và tìm người đó theo tên."), a: "ax-people-search" },
+        { t: B("Press Give a role on their passport, choose the role and say why.", "Bấm Giao vai trò trên hộ chiếu của họ, chọn vai trò và ghi lý do."), a: "ax-give" },
+        { t: B("Read their menu on the passport — it now shows exactly what the role opens.", "Xem menu trên hộ chiếu của họ — giờ nó cho thấy đúng những gì vai trò đó mở ra."), a: "ax-passmenu" },
+        { t: B("Going on leave yourself? Hand my access over lends your roles for set dates, and they come back on their own.", "Bạn sắp nghỉ phép? Bàn giao quyền của tôi sẽ cho mượn vai trò của bạn trong những ngày đã chọn, và tự thu hồi khi hết hạn."), a: "ax-handover" },
+        { t: B("To take a role away, press Take back beside it on the passport.", "Để thu hồi một vai trò, bấm Thu hồi bên cạnh vai trò đó trên hộ chiếu."), a: "ax-takeback" },
+        { t: B("Every grant, hand-over and take-back is written down — Their history shows it.", "Mọi lần cấp, bàn giao và thu hồi đều được ghi lại — Lịch sử của họ cho thấy điều đó."), a: "ax-history" },
+      ] },
+      { k: "warn", v: B("Give the smallest role that does the job. A role is held in full or not at all: somebody missing one of its abilities does not hold it, and its screens stay closed to them.",
+                        "Hãy cấp vai trò nhỏ nhất đủ cho công việc. Vai trò được giữ trọn vẹn hoặc không giữ gì: người thiếu một quyền thao tác của vai trò thì không giữ vai trò đó, và các màn hình của nó vẫn đóng với họ.") },
+      { k: "source", v: B("The People lens and the passport on the Access home.",
+                          "Mục Nhân sự và hộ chiếu trên trang Quyền truy cập.") },
+    ],
+    showMe: ["ax-people-search"],
+  },
+  {
+    id: "access_holders", screens: ["admin_access"],
+    match: ["who holds this role", "who holds", "who has this role", "who has the nurse role",
+            "ai đang giữ vai trò", "ai giữ vai trò", "ai có vai trò"],
+    label: B("Who holds this role?", "Ai đang giữ vai trò này?"),
+    blocks: [
+      { k: "p", v: B("Open the role on the Roles lens. Its card says what it lets somebody do, which screens it opens, and who holds it — including anybody holding it for a while through a hand-over.",
+                     "Mở vai trò trong mục Vai trò. Thẻ của nó cho biết vai trò cho phép làm gì, mở những màn hình nào, và ai đang giữ — kể cả người đang tạm giữ qua một lần bàn giao quyền.") },
+      { k: "steps", v: [
+        { t: B("Choose the Roles lens.", "Chọn mục Vai trò."), a: "ax-tabs" },
+        { t: B("Press the role's card to open it out.", "Bấm vào thẻ của vai trò để mở rộng."), a: "ax-role" },
+      ] },
+      { k: "source", v: B("The role cards on the Access home.", "Các thẻ vai trò trên trang Quyền truy cập.") },
+    ],
+    showMe: ["ax-role"],
+  },
+  {
+    id: "access_handover", screens: ["admin_access"],
+    match: ["hand over my access", "hand over", "handover", "going on leave", "cover for me",
+            "bàn giao quyền", "bàn giao", "nghỉ phép ai thay", "ai làm thay"],
+    label: B("How do I hand my access over while I am away?", "Làm sao để bàn giao quyền khi tôi vắng mặt?"),
+    blocks: [
+      { k: "p", v: B("A hand-over lends your roles to a colleague for set dates. It ends by itself on the last day, and your own access is never taken away.",
+                     "Bàn giao quyền là cho đồng nghiệp mượn vai trò của bạn trong những ngày đã chọn. Nó tự kết thúc vào ngày cuối, và quyền của chính bạn không bao giờ bị lấy đi.") },
+      { k: "steps", v: [
+        { t: B("Press Hand my access over.", "Bấm Bàn giao quyền của tôi."), a: "ax-handover" },
+        { t: B("Choose who covers, which of your roles, and until when.", "Chọn ai làm thay, những vai trò nào của bạn, và đến ngày nào."), a: "ax-handover-dialog" },
+        { t: B("Back early? Press Take it back now on the Hand-overs lens.", "Về sớm? Bấm Thu hồi ngay trong mục Bàn giao."), a: "ax-handover-end" },
+      ] },
+      { k: "warn", v: B("Do not give your role away for a holiday. A role you give stays given; a hand-over comes back on its own.",
+                        "Đừng cấp hẳn vai trò của bạn cho kỳ nghỉ. Vai trò đã cấp thì vẫn còn đó; còn bàn giao quyền thì tự thu hồi.") },
+      { k: "source", v: B("The hand-over dialog and the Hand-overs lens on the Access home.",
+                          "Hộp thoại bàn giao quyền và mục Bàn giao trên trang Quyền truy cập.") },
+    ],
+    showMe: ["ax-handover"],
+  },
+  {
+    id: "access_seeas", screens: ["admin_access"],
+    match: ["see it as", "what does their menu look like", "what can they see", "their menu",
+            "xem như", "họ thấy gì", "menu của họ"],
+    label: B("What does somebody else's menu look like?", "Menu của người khác trông như thế nào?"),
+    blocks: [
+      { k: "p", v: B("Press See it as and choose the person. Every lens is then drawn the way they would see it, and nothing you do changes because of it.",
+                     "Bấm Xem như và chọn người đó. Khi đó mọi mục đều hiển thị như họ nhìn thấy, và không có gì bạn làm bị thay đổi vì điều này.") },
+      { k: "steps", v: [
+        { t: B("Press See it as, then type their name.", "Bấm Xem như, rồi gõ tên của họ."), a: "ax-seeas" },
+        { t: B("Read their menu on the passport.", "Xem menu của họ trên hộ chiếu."), a: "ax-passmenu" },
+      ] },
+      { k: "source", v: B("See it as, on the Access home.", "Chức năng Xem như trên trang Quyền truy cập.") },
+    ],
+    showMe: ["ax-seeas"],
+  },
+  {
+    id: "access_newrole", screens: ["admin_access"],
+    match: ["new role", "create a role", "make a role", "add a new role", "tạo vai trò", "vai trò mới"],
+    label: B("How do I make a new role?", "Làm sao để tạo một vai trò mới?"),
+    blocks: [
+      { k: "p", v: B("Press New role. Give it a name somebody can say out loud, choose its area and tick the abilities it carries. The builder shows the menu a holder of the role would see before you save.",
+                     "Bấm Vai trò mới. Đặt cho nó một cái tên dễ gọi, chọn khu vực và đánh dấu các quyền thao tác mà nó bao gồm. Trình tạo vai trò cho thấy menu mà người giữ vai trò sẽ thấy trước khi bạn lưu.") },
+      { k: "steps", v: [
+        { t: B("Press New role.", "Bấm Vai trò mới."), a: "ax-newrole" },
+        { t: B("Name it, choose its area and tick its abilities.", "Đặt tên, chọn khu vực và đánh dấu các quyền thao tác."), a: "ax-builder" },
+      ] },
+      { k: "warn", v: B("A new role is given to nobody until you give it to somebody.",
+                        "Một vai trò mới chưa được cấp cho ai cho đến khi bạn cấp nó cho một người.") },
+      { k: "source", v: B("The role builder on the Access home.", "Trình tạo vai trò trên trang Quyền truy cập.") },
+    ],
+    showMe: ["ax-newrole"],
+  },
+  {
+    id: "access_ask", screens: "*",
+    match: ["i cannot see a screen", "i can't see a screen", "how do i get access", "ask for access",
+            "request access", "xin quyền", "không thấy màn hình", "làm sao có quyền"],
+    label: B("I cannot see a screen I need — who do I ask?", "Tôi không thấy màn hình mình cần — tôi hỏi ai?"),
+    blocks: [
+      { k: "p", v: B("What you see on the left menu is the menu of the roles you hold. A screen that is not there belongs to a role you do not hold yet.",
+                     "Những gì bạn thấy trên menu bên trái là menu của các vai trò bạn đang giữ. Màn hình không có ở đó thuộc về một vai trò bạn chưa được cấp.") },
+      { k: "how", v: B("Ask {{accessRequestPath}} for the role your work needs, and say which screen and why. If it is only for a few days, a colleague who holds that role can hand it over to you.",
+                       "Hãy hỏi {{accessRequestPath}} để xin vai trò mà công việc của bạn cần, và nói rõ màn hình nào và vì sao. Nếu chỉ cần trong vài ngày, một đồng nghiệp đang giữ vai trò đó có thể bàn giao quyền cho bạn.") },
+      { k: "source", v: B("The role gates on the left menu, set on the Access home.",
+                          "Phân quyền theo vai trò trên menu bên trái, được thiết lập trên trang Quyền truy cập.") },
+    ],
+  },
+);
+
 const OPS_QA_SUGGEST = {
   ops_dashboard: ["ops_unassigned", "ops_capacity", "whatpage", "whatnext"],
   ops_bookings: ["ops_cancel_vs_reschedule", "ops_unassigned", "safeactions", "whatpage"],
@@ -2783,6 +2923,7 @@ const OPS_QA_SUGGEST = {
   ops_routes: ["ops_capacity", "whatpage", "whatnext"],
   ops_family: ["consent", "whatpage", "whatnext"],
   ops_clients: ["whatpage", "whatnext"],
+  admin_access: ["whatpage", "access_give", "access_holders", "access_handover", "access_seeas", "access_newrole"],
 };
 
 /* OPS screen blurbs — what the Coach says it is grounded on. */
@@ -2804,7 +2945,8 @@ const OPS_SCREEN_CTX = {
   ops_family: B("Two-way messages between a family member and the care team, attached to the client.",
                 "Tin nhắn hai chiều giữa người nhà và đội chăm sóc, gắn với hồ sơ khách hàng."),
   ops_routes: B("Travel time between two consecutive visits against the gap between them, with a verdict.",
-                "Thời gian di chuyển giữa hai lượt liên tiếp so với khoảng trống giữa chúng, kèm kết luận."),
+                "Thời gian di chuyển giữa hai lượt liên tiếp so với khoảng trống giữa chúng, kèm kết luận."),  admin_access: B("Who can do what: every role in plain words, who holds it, the left menu each role opens, and the hand-overs running now.",
+                  "Ai được làm gì: mọi vai trò bằng lời dễ hiểu, ai đang giữ, menu bên trái mà mỗi vai trò mở ra, và các lần bàn giao quyền đang diễn ra."),
 };
 
 /* =============================================================================

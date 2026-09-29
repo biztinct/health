@@ -1,0 +1,1062 @@
+# Vietnamese translation of health_access (ACCESS AR-3).
+# Generated from the framework's own export of the module, so every
+# entry carries its `#. module:`, its marker and its occurrence exactly
+# as the loader reads them; filled from the Payobook catalogue where the
+# English is identical, and translated in this product's register
+# otherwise. Role, ability and menu names are data (catalogue_vi.py,
+# health_cms_ia/menu_vi.py), not entries here.
+msgid ""
+msgstr ""
+"Project-Id-Version: Viet Uc Care 19.0 health_access\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: Vietnamese\n"
+"Language: vi_VN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/wizard/new_person.py:0
+msgid ""
+"\"%(role)s\" would carry %(bad)s — the administrator permission for the "
+"whole system. It is never given out from this screen."
+msgstr ""
+"\"%(role)s\" sẽ mang theo %(bad)s — quyền quản trị toàn hệ thống. Quyền này "
+"không bao giờ được trao từ màn hình này."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/wizard/new_person.py:0
+msgid ""
+"\"%s\" does not hand out anything yet, so giving it to somebody would give "
+"them nothing."
+msgstr ""
+"\"%s\" chưa trao quyền gì, nên giao nó cho ai đó cũng không cho họ được gì."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/wizard/new_person.py:0
+msgid "%(who)s can sign in as %(login)s and holds \"%(role)s\"."
+msgstr "%(who)s có thể đăng nhập bằng %(login)s và đang giữ \"%(role)s\"."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/wizard/new_person.py:0
+msgid ""
+"%(who)s can sign in as %(login)s and holds \"%(role)s\". They have no "
+"password yet — send them a reset from their card."
+msgstr ""
+"%(who)s có thể đăng nhập bằng %(login)s và đang giữ \"%(role)s\". Họ chưa có"
+" mật khẩu — hãy gửi cho họ liên kết đặt lại từ thẻ của họ."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/wizard/new_person.py:0
+msgid ""
+"%(who)s can sign in as %(login)s. They hold no role yet — give them one from"
+" their card whenever you are ready."
+msgstr ""
+"%(who)s có thể đăng nhập bằng %(login)s. Họ chưa giữ vai trò nào — hãy giao "
+"cho họ một vai trò từ thẻ của họ khi bạn sẵn sàng."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/wizard/set_job.py:0
+msgid ""
+"%(who)s has no job on their record any more, and \"%(what)s\" was taken "
+"back."
+msgstr ""
+"Hồ sơ của %(who)s không còn công việc nào, và \"%(what)s\" đã được thu hồi."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/wizard/set_job.py:0
+msgid "%(who)s is already employed as %(what)s."
+msgstr "%(who)s đã đang làm %(what)s."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/wizard/set_job.py:0
+msgid "%(who)s is now employed as \"%(what)s\", and holds it."
+msgstr "%(who)s giờ làm \"%(what)s\" và đang giữ vai trò đó."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid "%s can sign in again."
+msgstr "%s có thể đăng nhập lại."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid ""
+"%s has a login but no staff record. Add one from the staff list and it will "
+"open from here afterwards."
+msgstr ""
+"%s có tài khoản đăng nhập nhưng chưa có hồ sơ nhân viên. Hãy thêm hồ sơ từ "
+"danh sách nhân viên, sau đó có thể mở hồ sơ từ đây."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid ""
+"%s has no email address on their record, so there is nowhere to send the "
+"link. Add one first."
+msgstr ""
+"Hồ sơ của %s chưa có địa chỉ email, nên không có nơi nào để gửi liên kết. "
+"Hãy thêm email trước."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid "%s is already able to sign in."
+msgstr "%s đã có thể đăng nhập."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid "%s is already switched off."
+msgstr "%s đã bị tắt rồi."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/res_users.py:0
+msgid "%s is no longer their job."
+msgstr "%s không còn là công việc của họ."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid ""
+"%s is switched off. They cannot sign in, and everything they did is still "
+"here."
+msgstr ""
+"%s đã bị tắt. Họ không thể đăng nhập, và mọi việc họ đã làm vẫn còn ở đây."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid ""
+"%s is the system administrator for this box. Switching them off is not "
+"something this screen does — it would leave the system with nobody able to "
+"fix it."
+msgstr ""
+"%s là quản trị viên hệ thống của máy chủ này. Màn hình này không tắt người "
+"đó — làm vậy sẽ khiến hệ thống không còn ai có thể sửa lỗi."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid ""
+"%s is the system administrator for this box. Their password is reset on "
+"their own record, deliberately."
+msgstr ""
+"%s là quản trị viên hệ thống của máy chủ này. Mật khẩu của người đó chỉ được"
+" đặt lại trên hồ sơ của chính họ, một cách có chủ đích."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid "%s — staff record"
+msgstr "%s — hồ sơ nhân viên"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid "%s — what they are employed as"
+msgstr "%s — công việc của họ"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_form
+msgid "<span>Staff record</span>"
+msgstr "<span>Hồ sơ nhân viên</span>"
+
+#. module: health_access
+#: model:ir.model.fields.selection,name:health_access.selection__biz_access_role__clinical_kind__doctor
+msgid "A doctor"
+msgstr "Bác sĩ"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid "A link to set a new password is on its way to %s."
+msgstr "Liên kết đặt mật khẩu mới đang được gửi tới %s."
+
+#. module: health_access
+#: model:ir.model.fields.selection,name:health_access.selection__biz_access_role__clinical_kind__nurse
+msgid "A nurse"
+msgstr "Y tá"
+
+#. module: health_access
+#: model:ir.model,name:health_access.model_biz_access
+msgid "Access & delegation board — facade"
+msgstr "Bảng quyền truy cập & bàn giao — lớp giao diện"
+
+#. module: health_access
+#. odoo-javascript
+#: code:addons/health_access/static/src/js/admin_tabs.js:0
+msgid "Access & roles"
+msgstr "Quyền truy cập & vai trò"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+#: model:ir.actions.act_window,name:health_access.action_health_access_new_person
+#: model:ir.model,name:health_access.model_health_access_new_person
+#: model_terms:ir.ui.view,arch_db:health_access.view_health_access_new_person_form
+msgid "Add a person"
+msgstr "Thêm người"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_health_access_new_person_form
+msgid "Add them"
+msgstr "Thêm người này"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/wizard/new_person.py:0
+msgid ""
+"Adding a colleague is something the access team does. You can still hand "
+"your own access to somebody for a while — that is the Hand-overs tab."
+msgstr ""
+"Việc thêm đồng nghiệp do đội quản lý quyền truy cập thực hiện. Bạn vẫn có "
+"thể bàn giao quyền của mình cho ai đó trong một thời gian — đó là thẻ Bàn "
+"giao."
+
+#. module: health_access
+#: model:res.groups,comment:health_access.group_clinic_admin
+msgid ""
+"Adds colleagues, switches them off and says which\n"
+"role each of them holds, and keeps the clinic's own reference lists right.\n"
+"It never opens the settings for the box itself, never installs anything, and\n"
+"can never hand out the system administrator permission."
+msgstr ""
+"Thêm đồng nghiệp, tắt tài khoản của họ và xác định vai trò mỗi người đang "
+"giữ, đồng thời giữ cho các danh mục tham chiếu của phòng khám luôn đúng. Vai"
+" trò này không bao giờ mở phần cài đặt của máy chủ, không bao giờ cài đặt "
+"thêm gì, và không bao giờ được trao quyền quản trị hệ thống."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/hooks.py:0
+msgid "Administration"
+msgstr "Quản trị"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/wizard/new_person.py:0
+msgid "An email to sign in with is required."
+msgstr "Cần có email để đăng nhập."
+
+#. module: health_access
+#: model:ir.model.fields.selection,name:health_access.selection__biz_access_role__clinical_kind__operations_manager
+msgid "An operations manager"
+msgstr "Quản lý vận hành"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__catchment_province_id
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_form
+msgid "Area they work in"
+msgstr "Khu vực làm việc"
+
+#. module: health_access
+#: model:ir.model,name:health_access.model_cms_sidebar_item
+msgid "CMS Sidebar Menu Item"
+msgstr "Mục menu thanh bên CMS"
+
+#. module: health_access
+#: model:ir.model,name:health_access.model_cms_sidebar_section
+msgid "CMS Sidebar Section"
+msgstr "Phần thanh bên CMS"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_form
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_search
+msgid "Can sign in"
+msgstr "Có thể đăng nhập"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_health_access_set_job_form
+msgid "Cancel"
+msgstr "Hủy"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_search
+msgid "Catchment Area"
+msgstr "Khu vực phụ trách"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+#: model:ir.actions.act_window,name:health_access.action_health_access_set_job
+#: model:ir.model,name:health_access.model_health_access_set_job
+#: model_terms:ir.ui.view,arch_db:health_access.view_health_access_set_job_form
+msgid "Change their job"
+msgstr "Đổi công việc của họ"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/hooks.py:0
+msgid "Clinical care"
+msgstr "Chăm sóc lâm sàng"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_form
+msgid "Colleague"
+msgstr "Đồng nghiệp"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__company_id
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_form
+msgid "Company"
+msgstr "Công ty"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_set_job__counts_as
+msgid "Counts as"
+msgstr "Được tính là"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__create_uid
+#: model:ir.model.fields,field_description:health_access.field_health_access_set_job__create_uid
+msgid "Created by"
+msgstr "Người tạo"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__create_date
+#: model:ir.model.fields,field_description:health_access.field_health_access_set_job__create_date
+msgid "Created on"
+msgstr "Ngày tạo"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_biz_access__display_name
+#: model:ir.model.fields,field_description:health_access.field_biz_access_role__display_name
+#: model:ir.model.fields,field_description:health_access.field_cms_sidebar_item__display_name
+#: model:ir.model.fields,field_description:health_access.field_cms_sidebar_section__display_name
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__display_name
+#: model:ir.model.fields,field_description:health_access.field_health_access_set_job__display_name
+#: model:ir.model.fields,field_description:health_access.field_hr_employee__display_name
+#: model:ir.model.fields,field_description:health_access.field_res_users__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_form
+msgid "Email"
+msgstr "Email"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid "Email %s a link to set a new password?"
+msgstr "Gửi email cho %s liên kết để đặt mật khẩu mới?"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__login
+msgid "Email they sign in with"
+msgstr "Email dùng để đăng nhập"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_set_job__job_role_id
+#: model:ir.model.fields,field_description:health_access.field_hr_employee__job_role_id
+#: model_terms:ir.ui.view,arch_db:health_access.view_healthcare_staff_form_job
+#: model_terms:ir.ui.view,arch_db:health_access.view_healthcare_staff_list_job
+msgid "Employed as"
+msgstr "Công việc"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_set_job__current_job_id
+msgid "Employed as today"
+msgstr "Công việc hiện tại"
+
+#. module: health_access
+#: model:ir.model,name:health_access.model_hr_employee
+msgid "Employee"
+msgstr "Nhân viên"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_cms_sidebar_item__child_ids
+msgid "Entries inside it"
+msgstr "Các mục bên trong"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_cms_sidebar_section_form_biz
+msgid ""
+"Everything in this block is visible to the people who hold one of these "
+"roles in full. An entry inside it may name roles of its own — those are "
+"added to these, never instead of them."
+msgstr ""
+"Mọi thứ trong khối này hiển thị với những người giữ đầy đủ một trong các vai"
+" trò này. Một mục bên trong có thể có vai trò riêng — các vai trò đó được "
+"cộng thêm vào đây, không bao giờ thay thế."
+
+#. module: health_access
+#: model:ir.model.fields,help:health_access.field_cms_sidebar_section__biz_role_ids
+msgid ""
+"Everything in this block is visible to the people who hold one of these "
+"roles in full. An entry inside it may name roles of its own — those are "
+"added to these, never instead of them. Leave it empty to gate the block "
+"entry by entry."
+msgstr ""
+"Mọi thứ trong khối này hiển thị với những người giữ đầy đủ một trong các vai"
+" trò này. Một mục bên trong có thể có vai trò riêng — các vai trò đó được "
+"cộng thêm vào đây, không bao giờ thay thế. Để trống nếu muốn phân quyền cho "
+"khối theo từng mục."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/hooks.py:0
+msgid "Finance"
+msgstr "Tài chính"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_search
+msgid "Find a colleague"
+msgstr "Tìm đồng nghiệp"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__password
+msgid "First password"
+msgstr "Mật khẩu ban đầu"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/hooks.py:0
+msgid "Front desk & CRM"
+msgstr "Lễ tân & CRM"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/wizard/new_person.py:0
+msgid "Given when %s was added."
+msgstr "Được giao khi thêm %s."
+
+#. module: health_access
+#: model:res.groups,name:health_access.group_clinic_admin
+msgid "Healthcare: Clinic administrator"
+msgstr "Y tế: Quản trị viên phòng khám"
+
+#. module: health_access
+#: model:ir.model.fields,help:health_access.field_cms_sidebar_item__biz_role_ids
+msgid ""
+"Holding one of these roles IN FULL opens this entry. Empty, and the entry is"
+" open to everybody with a login — unless the block it sits in, or the entry "
+"above it, is gated."
+msgstr ""
+"Giữ ĐẦY ĐỦ một trong các vai trò này sẽ mở được mục này. Nếu để trống, mục "
+"này mở cho mọi người có tài khoản đăng nhập — trừ khi khối chứa nó, hoặc mục"
+" phía trên nó, có phân quyền."
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_cms_sidebar_item_form_biz
+msgid ""
+"Holding one of these roles in full opens this entry. Leave it empty and the "
+"entry is open to everybody with a login — unless the block it sits in, or "
+"the entry above it, is gated."
+msgstr ""
+"Giữ đầy đủ một trong các vai trò này sẽ mở được mục này. Nếu để trống, mục "
+"này mở cho mọi người có tài khoản đăng nhập — trừ khi khối chứa nó, hoặc mục"
+" phía trên nó, có phân quyền."
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_form
+#: model_terms:ir.ui.view,arch_db:health_access.view_health_access_new_person_form
+msgid "How they sign in"
+msgstr "Cách họ đăng nhập"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_biz_access__id
+#: model:ir.model.fields,field_description:health_access.field_biz_access_role__id
+#: model:ir.model.fields,field_description:health_access.field_cms_sidebar_item__id
+#: model:ir.model.fields,field_description:health_access.field_cms_sidebar_section__id
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__id
+#: model:ir.model.fields,field_description:health_access.field_health_access_set_job__id
+#: model:ir.model.fields,field_description:health_access.field_hr_employee__id
+#: model:ir.model.fields,field_description:health_access.field_res_users__id
+msgid "ID"
+msgstr "ID"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_cms_sidebar_item_tree_biz
+msgid "Including what it inherits"
+msgstr "Bao gồm cả phần kế thừa"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_hr_employee__is_doctor_role
+#: model:ir.model.fields,field_description:health_access.field_res_users__is_doctor_role
+msgid "Is Doctor Role"
+msgstr "Có vai trò bác sĩ"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_hr_employee__is_nurse_role
+#: model:ir.model.fields,field_description:health_access.field_res_users__is_nurse_role
+msgid "Is Nurse Role"
+msgstr "Có vai trò điều dưỡng"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_hr_employee__is_om_role
+msgid "Is Om Role"
+msgstr "Có vai trò OM"
+
+#. module: health_access
+#: model:ir.model.fields,help:health_access.field_health_access_set_job__job_role_id
+msgid ""
+"It decides what the schedule, the pickers and the reports call them — and it"
+" gives them that role."
+msgstr ""
+"Nó quyết định lịch làm việc, các ô chọn và báo cáo gọi họ là gì — và giao "
+"cho họ vai trò đó."
+
+#. module: health_access
+#: model:ir.model.fields,help:health_access.field_health_access_new_person__login
+msgid "It is both their username and where a password link would go."
+msgstr ""
+"Đây vừa là tên đăng nhập của họ, vừa là nơi nhận liên kết đặt mật khẩu."
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_res_users__job_role_id
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_form
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_list_job
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_search
+msgid "Job"
+msgstr "Công việc"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__employment_type_code
+msgid "Kind of contract"
+msgstr "Loại hợp đồng"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__lang
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_form
+msgid "Language"
+msgstr "Ngôn ngữ"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__write_uid
+#: model:ir.model.fields,field_description:health_access.field_health_access_set_job__write_uid
+msgid "Last Updated by"
+msgstr "Người cập nhật lần cuối"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__write_date
+#: model:ir.model.fields,field_description:health_access.field_health_access_set_job__write_date
+msgid "Last Updated on"
+msgstr "Cập nhật lần cuối"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__is_head_nurse
+msgid "Leads a nursing team"
+msgstr "Phụ trách một nhóm điều dưỡng"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_health_access_new_person_form
+msgid "Leave empty to send them a link"
+msgstr "Để trống để gửi liên kết cho họ"
+
+#. module: health_access
+#: model:ir.model.fields,help:health_access.field_health_access_new_person__password
+msgid ""
+"Leave it empty and they set their own from a link — which needs an outgoing "
+"mail account to be connected."
+msgstr ""
+"Nếu để trống, họ sẽ tự đặt mật khẩu từ một liên kết — việc này cần kết nối "
+"một tài khoản gửi thư."
+
+#. module: health_access
+#: model:ir.model.fields.selection,name:health_access.selection__health_access_new_person__employment_status__terminated
+msgid "Left"
+msgstr "Đã nghỉ việc"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_set_job__user_name
+msgid "Name"
+msgstr "Tên"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_health_access_new_person_form
+msgid "Never mind"
+msgstr "Thôi"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid ""
+"No outgoing mail account is connected yet, so the link would be written and "
+"never sent. Connect one first and this will work as it reads."
+msgstr ""
+"Chưa kết nối tài khoản gửi thư nào, nên liên kết sẽ được tạo nhưng không bao"
+" giờ được gửi. Hãy kết nối một tài khoản trước, khi đó chức năng này sẽ hoạt"
+" động đúng như mô tả."
+
+#. module: health_access
+#: model:ir.model.fields.selection,name:health_access.selection__health_access_new_person__employment_status__on_leave
+msgid "On leave"
+msgstr "Đang nghỉ phép"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__is_duty_doctor
+msgid "On the duty roster"
+msgstr "Có trong lịch trực"
+
+#. module: health_access
+#: model:ir.model.fields,help:health_access.field_health_access_new_person__role_description
+#: model:ir.model.fields,help:health_access.field_health_access_set_job__job_description
+msgid ""
+"One or two sentences, in plain English. It is what the person granting it "
+"reads before they press the button."
+msgstr ""
+"Một hoặc hai câu, bằng ngôn ngữ dễ hiểu. Đây là nội dung người giao vai trò "
+"đọc trước khi bấm nút."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/hooks.py:0
+msgid "Operations"
+msgstr "Vận hành"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__phone
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_form
+msgid "Phone"
+msgstr "Điện thoại"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_health_access_new_person_form
+msgid "Pick the job they are being given"
+msgstr "Chọn công việc giao cho họ"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid "Re-running the carry-over is something a system administrator does."
+msgstr ""
+"Việc chạy lại quá trình chuyển dữ liệu do quản trị viên hệ thống thực hiện."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid ""
+"Retiring the previous access application is something a system administrator"
+" does."
+msgstr ""
+"Việc ngừng ứng dụng quản lý quyền truy cập cũ do quản trị viên hệ thống thực"
+" hiện."
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_hr_employee__access_role_display
+msgid "Role"
+msgstr "Vai trò"
+
+#. module: health_access
+#: model:ir.model,name:health_access.model_biz_access_role
+msgid "Role profile"
+msgstr "Hồ sơ vai trò"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_cms_sidebar_item_tree_biz
+msgid "Roles that open it"
+msgstr "Vai trò mở được mục"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_cms_sidebar_item__effective_biz_role_ids
+#: model_terms:ir.ui.view,arch_db:health_access.view_cms_sidebar_item_form_biz
+msgid "Roles that open it, inherited included"
+msgstr "Vai trò mở được mục, gồm cả phần kế thừa"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_cms_sidebar_item__biz_role_ids
+#: model_terms:ir.ui.view,arch_db:health_access.view_cms_sidebar_item_form_biz
+msgid "Roles that open this entry"
+msgstr "Vai trò mở được mục này"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_cms_sidebar_section__biz_role_ids
+#: model_terms:ir.ui.view,arch_db:health_access.view_cms_sidebar_section_form_biz
+#: model_terms:ir.ui.view,arch_db:health_access.view_cms_sidebar_section_tree_biz
+msgid "Roles that see this block"
+msgstr "Vai trò thấy khối này"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_health_access_set_job_form
+msgid "Save"
+msgstr "Lưu"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_health_access_set_job_form
+msgid ""
+"Saving this changes what the schedule, the staff\n"
+"                        pickers and the reports call them — and gives them that\n"
+"                        role. The one it replaces is taken back, keeping\n"
+"                        anything another role of theirs still needs."
+msgstr ""
+"Khi lưu, lịch làm việc, các ô chọn nhân viên và báo cáo sẽ gọi họ theo công "
+"việc mới — và giao cho họ vai trò đó. Vai trò cũ sẽ được thu hồi, nhưng vẫn "
+"giữ lại những gì một vai trò khác của họ còn cần."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/wizard/set_job.py:0
+msgid ""
+"Saying what somebody's job is also gives them that role, so it is something "
+"the access team does."
+msgstr ""
+"Xác định công việc của một người cũng là giao cho họ vai trò đó, nên việc "
+"này do đội quản lý quyền truy cập thực hiện."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/res_users.py:0
+msgid ""
+"Saying what somebody's job is also gives them that role, so it is something "
+"the access team does. Ask one of them, or open the Access home if that is "
+"you."
+msgstr ""
+"Xác định công việc của một người cũng là giao cho họ vai trò đó, nên việc "
+"này do đội quản lý quyền truy cập thực hiện. Hãy nhờ một người trong đội, "
+"hoặc mở trang Quyền truy cập nếu đó là bạn."
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_form
+msgid "Send a password link"
+msgstr "Gửi liên kết đặt mật khẩu"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid "Send a password reset"
+msgstr "Gửi liên kết đặt lại mật khẩu"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid ""
+"Setting a password by link is not switched on for this system, so there is "
+"nothing to send."
+msgstr ""
+"Hệ thống này chưa bật tính năng đặt mật khẩu qua liên kết, nên không có gì "
+"để gửi."
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__show_duty_doctor
+msgid "Show Duty Doctor"
+msgstr "Hiện Bác sĩ trực"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__show_head_nurse
+msgid "Show Head Nurse"
+msgstr "Hiện Điều dưỡng trưởng"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/wizard/new_person.py:0
+msgid ""
+"Somebody already signs in with %(login)s — %(who)s. Two logins cannot share "
+"an address; use a different one, or switch that account back on if it is the"
+" same person."
+msgstr ""
+"Đã có người đăng nhập bằng %(login)s — %(who)s. Hai tài khoản đăng nhập "
+"không thể dùng chung một địa chỉ; hãy dùng địa chỉ khác, hoặc bật lại tài "
+"khoản đó nếu đó là cùng một người."
+
+#. module: health_access
+#: model:ir.model.fields.selection,name:health_access.selection__biz_access_role__clinical_kind__other
+msgid "Something else"
+msgstr "Khác"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid "Staff records are not part of this system."
+msgstr "Hệ thống này không có hồ sơ nhân viên."
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__employment_status
+msgid "Status"
+msgstr "Tình trạng"
+
+#. module: health_access
+#: model:ir.model.fields.selection,name:health_access.selection__health_access_new_person__employment_status__suspended
+msgid "Suspended"
+msgstr "Tạm đình chỉ"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_form
+msgid "Switch back on"
+msgstr "Bật lại"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_form
+msgid "Switch off"
+msgstr "Tắt"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid ""
+"Switch off %s? They will not be able to sign in, and nothing they have done "
+"is removed. You can switch them back on here whenever you want."
+msgstr ""
+"Tắt %s? Họ sẽ không thể đăng nhập, và không có gì họ đã làm bị xóa. Bạn có "
+"thể bật lại cho họ tại đây bất cứ lúc nào."
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_form
+msgid ""
+"Switch this person off? They will not be able to sign in, and nothing they "
+"have done is removed."
+msgstr ""
+"Tắt người này? Họ sẽ không thể đăng nhập, và không có gì họ đã làm bị xóa."
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_form
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_search
+msgid "Switched off"
+msgstr "Đã tắt"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/cms_sidebar.py:0
+msgid "That block of the left menu is not here."
+msgstr "Khối đó của menu bên trái không có ở đây."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/cms_sidebar.py:0
+msgid "That entry is not on the left menu any more."
+msgstr "Mục đó không còn trên menu bên trái."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid "The before-and-after report is something a system administrator runs."
+msgstr "Báo cáo trước và sau do quản trị viên hệ thống chạy."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid ""
+"The before-and-after snapshot is something a system administrator runs."
+msgstr "Ảnh chụp trước và sau do quản trị viên hệ thống chạy."
+
+#. module: health_access
+#: model:ir.model.fields,help:health_access.field_health_access_new_person__role_id
+msgid ""
+"The job they are being given. What it lets somebody do is on its own card in"
+" the Access home."
+msgstr ""
+"Công việc giao cho họ. Những gì vai trò đó cho phép làm có trên thẻ riêng "
+"của nó ở trang Quyền truy cập."
+
+#. module: health_access
+#: model:ir.model.fields,help:health_access.field_health_access_set_job__current_job_id
+#: model:ir.model.fields,help:health_access.field_hr_employee__job_role_id
+#: model:ir.model.fields,help:health_access.field_res_users__job_role_id
+msgid ""
+"The role this person is employed as. It decides what the schedule, the "
+"pickers and the dashboards call them. Their permissions are the roles they "
+"HOLD, on the Access home."
+msgstr ""
+"Vai trò công việc của người này. Nó quyết định lịch làm việc, các ô chọn và "
+"bảng điều khiển gọi họ là gì. Quyền của họ là các vai trò họ GIỮ, trên trang"
+" Quyền truy cập."
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_health_access_new_person_form
+msgid "Their contract"
+msgstr "Hợp đồng của họ"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_health_access_new_person_form
+msgid "Their full name"
+msgstr "Họ và tên"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__name
+msgid "Their name"
+msgstr "Tên của họ"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_health_access_new_person_form
+msgid "Their settings"
+msgstr "Cài đặt của họ"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid "Their staff record"
+msgstr "Hồ sơ nhân viên của họ"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/cms_sidebar.py:0
+msgid ""
+"This left menu has no locked preview; an entry is either shown or hidden."
+msgstr ""
+"Menu bên trái này không có chế độ hiện dạng khóa; mỗi mục hoặc được hiện, "
+"hoặc bị ẩn."
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__tz
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_form
+msgid "Timezone"
+msgstr "Múi giờ"
+
+#. module: health_access
+#: model:ir.model,name:health_access.model_res_users
+msgid "User"
+msgstr "Người dùng"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_cms_sidebar_item_form_biz
+msgid ""
+"What actually gates this entry on this list: its own roles plus everything "
+"inherited from its block and from the entries above it."
+msgstr ""
+"Điều thực sự phân quyền mục này trong danh sách: các vai trò riêng của nó "
+"cộng với mọi vai trò kế thừa từ khối và từ các mục phía trên."
+
+#. module: health_access
+#: model:ir.model.fields,help:health_access.field_cms_sidebar_item__effective_biz_role_ids
+msgid ""
+"What actually gates this entry: its own roles PLUS everything inherited from"
+" its block and from the entries above it. Empty means no gate at all — "
+"everybody with a login opens it. A heading with no screen and no roles of "
+"its own is opened by whoever opens something inside it."
+msgstr ""
+"Điều thực sự phân quyền mục này: các vai trò riêng của nó CỘNG với mọi vai "
+"trò kế thừa từ khối và từ các mục phía trên. Để trống nghĩa là không phân "
+"quyền — mọi người có tài khoản đăng nhập đều mở được. Một tiêu đề không có "
+"màn hình và không có vai trò riêng sẽ mở được với bất kỳ ai mở được một mục "
+"bên trong nó."
+
+#. module: health_access
+#: model:ir.model.fields,help:health_access.field_biz_access_role__clinical_kind
+#: model:ir.model.fields,help:health_access.field_health_access_set_job__counts_as
+msgid ""
+"What somebody employed in this job COUNTS AS on the rest of the screens — "
+"the duty roster, the staff pickers and the reports. It has nothing to do "
+"with what the role lets them open; that is the list of abilities above."
+msgstr ""
+"Người làm công việc này ĐƯỢC TÍNH LÀ gì trên các màn hình khác — lịch trực, "
+"các ô chọn nhân viên và báo cáo. Điều này không liên quan đến những gì vai "
+"trò cho phép mở; đó là danh sách các quyền thao tác ở trên."
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__role_description
+#: model:ir.model.fields,field_description:health_access.field_health_access_set_job__job_description
+msgid "What that lets them do"
+msgstr "Vai trò này cho phép họ làm gì"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_form
+msgid "What they do"
+msgstr "Công việc của họ"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__role_id
+#: model_terms:ir.ui.view,arch_db:health_access.view_health_access_new_person_form
+msgid "What they will do"
+msgstr "Họ sẽ làm gì"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_healthcare_staff_form_job
+msgid ""
+"What this person is employed as. It decides what the schedule, the staff "
+"pickers and the reports call them — and it gives them that role. It can be "
+"set once they have a login."
+msgstr ""
+"Công việc của người này. Nó quyết định lịch làm việc, các ô chọn nhân viên "
+"và báo cáo gọi họ là gì — và giao cho họ vai trò đó. Chỉ đặt được khi họ đã "
+"có tài khoản đăng nhập."
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_biz_access_role__clinical_kind
+msgid "What this role is, clinically"
+msgstr "Vai trò này về mặt lâm sàng là gì"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_new_person__healthcare_facility_id
+msgid "Where they are based"
+msgstr "Nơi họ làm việc chính"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_health_access_new_person_form
+msgid "Where they work"
+msgstr "Nơi họ làm việc"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_biz_access_role_form_clinical_kind
+msgid ""
+"Which job flags the people whose job is this role get: whether the roster, "
+"the staff pickers and the reports count them as a doctor, a nurse or an "
+"operations manager."
+msgstr ""
+"Người có công việc là vai trò này được gắn nhãn công việc nào: lịch trực, "
+"các ô chọn nhân viên và báo cáo có tính họ là bác sĩ, y tá hay quản lý vận "
+"hành."
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_health_access_set_job__user_id
+msgid "Who"
+msgstr "Ai"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_form
+msgid ""
+"Who can do what is on the Access home, under\n"
+"                        Administration."
+msgstr "Ai được làm gì có trên trang Quyền truy cập, trong mục Quản trị."
+
+#. module: health_access
+#: model:ir.model.fields.selection,name:health_access.selection__health_access_new_person__employment_status__active
+msgid "Working"
+msgstr "Đang làm việc"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid "You cannot give a role to yourself. Ask another Owner or Admin."
+msgstr ""
+"Bạn không thể tự giao vai trò cho mình. Hãy nhờ một Chủ sở hữu hoặc Quản trị"
+" viên khác."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/access_facade.py:0
+msgid "You cannot switch off your own account."
+msgstr "Bạn không thể tắt tài khoản của chính mình."
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_form
+msgid "e.g. Nguyễn Thị Mai"
+msgstr "VD: Nguyễn Thị Mai"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_admin_users_form
+msgid "e.g. mai@vietuccare.com"
+msgstr "VD: mai@vietuccare.com"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/res_users.py:0
+msgid "job set on the staff record"
+msgstr "công việc được đặt trên hồ sơ nhân viên"
+
+#. module: health_access
+#: model_terms:ir.ui.view,arch_db:health_access.view_health_access_new_person_form
+msgid "name@vietuccare.com"
+msgstr "name@vietuccare.com"
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/wizard/set_job.py:0
+msgid "nothing in particular"
+msgstr "không có gì cụ thể"

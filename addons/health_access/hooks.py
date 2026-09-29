@@ -49,6 +49,7 @@ import logging
 
 from odoo import SUPERUSER_ID, api
 from odoo.exceptions import UserError
+from odoo.tools.translate import LazyTranslate
 
 from odoo.addons.biz_access.hooks import (ensure_catalogue,  # noqa: F401
                                           register_catalogue)
@@ -58,6 +59,7 @@ from odoo.addons.biz_access.models.access_common import (
 from odoo.addons.health_access.models.cms_sidebar import _model_behind
 
 _logger = logging.getLogger(__name__)
+_lt = LazyTranslate(__name__)
 
 # =============================================================================
 # THE AREAS. The words on this clinic's own left menu, and nothing invented.
@@ -67,12 +69,21 @@ _logger = logging.getLogger(__name__)
 # about care than about the ledger, and a default that is usually right is one
 # fewer decision on a form.
 # =============================================================================
+#: Lazy translations, so the Access home reads each area in the person's own
+#: language from THIS module's catalogue (`biz_access.area_label`, AR-3).
+#: One constant per label, not `_lt()` inside the tuples: the string extractor
+#: picks up the NEXT tuple's bare key as a second msgid after an in-tuple call.
+AREA_CLINICAL = _lt('Clinical care')
+AREA_FRONT_DESK = _lt('Front desk & CRM')
+AREA_OPERATIONS = _lt('Operations')
+AREA_FINANCE = _lt('Finance')
+AREA_ADMIN = _lt('Administration')
 AREAS = [
-    ('clinical', 'Clinical care'),
-    ('front_desk', 'Front desk & CRM'),
-    ('operations', 'Operations'),
-    ('finance', 'Finance'),
-    ('admin', 'Administration'),
+    ('clinical', AREA_CLINICAL),
+    ('front_desk', AREA_FRONT_DESK),
+    ('operations', AREA_OPERATIONS),
+    ('finance', AREA_FINANCE),
+    ('admin', AREA_ADMIN),
 ]
 DEFAULT_AREA = 'clinical'
 
@@ -405,7 +416,10 @@ FRESH_ROLE_ABILITIES = {
     'Nurse': ('sign-in', 'care-base', 'nursing', 'patient-portal',
               'invoicing-work', 'invoicing-manage', 'misa-sync',
               'accounting-invoices'),
-    'Doctor': ('sign-in', 'doctoring'),
+    # "See the clinic's patients and visits" — owner ruling 2026-09-29 (AR-3
+    # G1), so a doctor opens the Bookings tab. Written onto the live role by
+    # `health_cms_ia.grant_abilities`.
+    'Doctor': ('sign-in', 'care-base', 'doctoring'),
     'Accountant': ('sign-in', 'care-base', 'finance-work', 'ops-manage',
                    'invoicing-work', 'invoicing-manage', 'insurance-claims',
                    'misa-sync', 'tax-compliance', 'red-invoice',
@@ -501,6 +515,10 @@ def _seed(env):
     """Everything this clinic's board needs to exist. Create-only."""
     _ensure_abilities(env)
     _carry_roles(env)
+    # AR-3: the same rows in Vietnamese, where Vietnamese is active. Leaves a
+    # row alone whose words somebody has changed (see `catalogue_vi`).
+    from .catalogue_vi import apply_catalogue_vi          # noqa: PLC0415
+    apply_catalogue_vi(env)
 
 
 register_catalogue(_seed, name='health_access.catalogue')
@@ -1593,3 +1611,33 @@ def rehome_training(env):
                  '(the ADMIN block\'s roles kept on the heading: %s)',
                  len(rows), ', '.join(block_roles.mapped('name')) or 'none')
     return len(rows)
+
+
+# =============================================================================
+# ACCESS AR-3 G3 — SIGN-IN LANDS ON HOME.
+#
+# `menu_cms_root` opens Home now (`health_cms_sidebar.action_cms_home`), so a
+# person with no home screen of their own lands on their role's dashboard. A
+# customer's first administrator was given the admin dashboard as their own
+# home screen by provisioning (`health_tenancy` registered it); that default is
+# moved to Home too. Only that exact default is moved: a home screen somebody
+# chose on purpose stays.
+# =============================================================================
+OLD_PROVISIONED_HOME = 'health_landing.action_admin_dashboard'
+HOME_ACTION = 'health_cms_sidebar.action_cms_home'
+
+
+def move_provisioned_home(env):
+    """Users whose home screen is the old provisioning default land on Home."""
+    old = env.ref(OLD_PROVISIONED_HOME, raise_if_not_found=False)
+    new = env.ref(HOME_ACTION, raise_if_not_found=False)
+    if not (old and new):
+        return 0
+    users = env['res.users'].sudo().with_context(active_test=False).search(
+        [('action_id', '=', old.id)])
+    if users:
+        users.write({'action_id': new.id})
+    _logger.info('health_access: %s person(s) whose home screen was the old '
+                 'provisioning default now land on Home: %s', len(users),
+                 ', '.join(users.mapped('login')) or 'none')
+    return len(users)

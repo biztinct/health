@@ -383,8 +383,10 @@ def _register():
 
     # 5. Where their administrator lands on their first sign-in. Without one
     #    the framework drops somebody into the messaging app, which is a poor
-    #    first impression of a clinical product.
-    common.register_home_action('health_landing.action_admin_dashboard')
+    #    first impression of a clinical product. HOME (AR-3 G3): the same
+    #    screen the Home rail entry opens, which lands each person on their own
+    #    role's dashboard — never one screen for everybody.
+    common.register_home_action('health_cms_sidebar.action_cms_home')
 
     # 6. Which parts of the product can be sold separately, and what a customer
     #    LOSES when one is off (SAAS H4c §3.4).

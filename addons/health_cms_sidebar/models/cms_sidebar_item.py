@@ -95,8 +95,10 @@ class CmsSidebarItem(models.Model):
         }
 
     #: Where "Home" lands when nothing more specific is known about the person
-    #: asking: the Operations dashboard, which is also what `menu_cms_root`
-    #: opens. `health_access` overrides `home_action` with the role rule.
+    #: asking: the Operations dashboard. `menu_cms_root` — the app the web
+    #: client opens on sign-in — opens Home itself (`action_cms_home`, AR-3 G3),
+    #: so sign-in lands where this answers. `health_access` overrides
+    #: `home_action` with the role rule.
     HOME_FALLBACK = 'health_fieldservice.action_ops_command_center'
 
     @api.model

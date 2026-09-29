@@ -1893,8 +1893,65 @@ export class BizAccessHome extends Component {
     listOf(items) {
         const parts = (items || []).filter(Boolean);
         if (parts.length <= 1) { return parts[0] || ""; }
-        return parts.slice(0, -1).join(", ") + _t(" and ")
-            + parts[parts.length - 1];
+        return _t("%(most)s and %(last)s", {
+            most: parts.slice(0, -1).join(", "),
+            last: parts[parts.length - 1],
+        });
+    }
+
+    // ------------------------------------------------------------------------
+    // EVERY SENTENCE WITH A NAME OR A NUMBER IN IT IS ONE TRANSLATABLE SENTENCE
+    // (AR-3 D). The template used to glue English around a value
+    // (`'Give a role to ' + name`), which no catalogue can translate: the
+    // pieces are not strings anybody extracts, and Vietnamese does not put the
+    // name where English does. Each is now a single `_t` with a placeholder,
+    // and the template calls it. `test_access_ar3` fails if a template
+    // expression glues a quoted word to a value again.
+    // ------------------------------------------------------------------------
+    lookingAsLine(name) { return _t("Looking at this as %s", name); }
+    moreInSheetLine(n) {
+        return _t("and %s more — the spreadsheet has the whole list.", n);
+    }
+    menuAsLine(name) { return _t("The menu, as %s sees it", name); }
+    wholeBlockLine(label) { return _t("The whole %s block", label); }
+    switchTitle(on) {
+        return on ? _t("On the left menu — press to take it off")
+            : _t("Off the left menu — press to put it back");
+    }
+    insideLine(label) { return _t("inside %s", label); }
+    withLine(labels) { return _t("With %s", (labels || []).join(", ")); }
+    peopleHoldLine(n) { return _t("%s people hold it", n); }
+    insideBlockLine(label) { return _t("Inside the %s block", label); }
+    kidsDefaultLine(gated) {
+        return gated ? _t("the block decides") : _t("everyone with a login");
+    }
+    andMoreLine(n) { return _t("and %s more.", n); }
+    switchOnForLine(name) { return _t("Switch on for %s", name); }
+    alsoShownLine(names) {
+        return _t("It would also show for %s, through the entry above it, and "
+                  + "they could not open it.", (names || []).join(", "));
+    }
+    alsoOpenedByLine(label) { return _t("Also opened by the gate on %s:", label); }
+    insideEntryLine(label) { return _t("Inside %s", label); }
+    everyoneWhoSeesLine(label) { return _t("everyone who sees %s", label); }
+    handDatesLine(hv) {
+        if (hv.date_end) {
+            return _t("%(from)s to %(to)s", {
+                from: this.day(hv.date_start), to: this.day(hv.date_end),
+            });
+        }
+        return _t("From %s", this.day(hv.date_start));
+    }
+    giveRoleToLine(name) { return _t("Give a role to %s", name); }
+    willNoLongerLine(name) {
+        return _t("%s will no longer be able to do this. Anything they have "
+                  + "already done stays exactly as it is.", name);
+    }
+    workedOutLine(label) { return _t("Worked out — %s", label); }
+    handOverForLine(name) { return _t("Hand over %s's access", name); }
+    nothingToHandLine(name) {
+        return _t("%s does not hold any of the roles on this board, so there "
+                  + "is nothing of theirs to hand over.", name);
     }
 
     /** The abilities on offer, in their areas — an ungrouped list of thirty-five

@@ -597,12 +597,43 @@
         <field name="name">Treating the absence of a warning as a promise. It knows distance, not weather, lifts, or how long a family keeps you at the door.</field>
     </record>
 
+    <record id="station_admin_access" model="learn.station">
+        <field name="key">admin_access</field>
+        <field name="name">Give somebody access</field>
+        <field name="line">ops_people</field>
+        <field name="section">ops</field>
+        <field name="sequence">180</field>
+        <field name="summary">Roles in plain words, who holds each one, and hand-overs that take themselves back.</field>
+        <field name="icon">shield-check</field>
+        <field name="kind">outline</field>
+        <field name="sidebar_key">health_access.item_admin_access</field>
+        <field name="duration_min">5</field>
+        <field name="required" eval="False"/>
+        <field name="star" eval="False"/>
+        <field name="outline_what">The Access home: every role with the sentence saying what it lets somebody do, a passport for every person showing the left menu they see, and the hand-overs running now.</field>
+        <field name="outline_why">Access is given as a role, never as a list of ticks. A role is a job somebody can name out loud — Nurse, Accountant — and holding it means holding all of it, so the menu a person sees is always the menu of their job.</field>
+        <field name="outline_when">When somebody joins, changes job, goes on leave or leaves. Find the person first, then give or take back a role on their passport.</field>
+        <field name="outline_prereq">Owner or Admin. Everybody can hand their own access over while they are away.</field>
+    </record>
+
+    <record id="station_admin_access_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_admin_access"/>
+        <field name="sequence">10</field>
+        <field name="name">Giving a bigger role than the job needs because it is quicker. The person then sees screens, and patient records, their work never asks for.</field>
+    </record>
+
+    <record id="station_admin_access_mistake_1" model="learn.station.mistake">
+        <field name="station_id" ref="station_admin_access"/>
+        <field name="sequence">20</field>
+        <field name="name">Giving your own role to a colleague for your holiday. Hand it over instead — it ends by itself on the day you come back.</field>
+    </record>
+
     <record id="station_fin_dashboard" model="learn.station">
         <field name="key">fin_dashboard</field>
         <field name="name">Finance Dashboard</field>
         <field name="line">fin_money</field>
         <field name="section">finance</field>
-        <field name="sequence">180</field>
+        <field name="sequence">190</field>
         <field name="summary">The month in money: billed, paid, outstanding, and what is overdue.</field>
         <field name="icon">grid</field>
         <field name="kind">outline</field>
@@ -633,7 +664,7 @@
         <field name="name">Invoices</field>
         <field name="line">fin_money</field>
         <field name="section">finance</field>
-        <field name="sequence">190</field>
+        <field name="sequence">200</field>
         <field name="summary">Sixty-three invoices, and the one action on them that cannot be undone.</field>
         <field name="icon">receipt</field>
         <field name="kind">lesson</field>
@@ -664,7 +695,7 @@
         <field name="name">All payments</field>
         <field name="line">fin_money</field>
         <field name="section">finance</field>
-        <field name="sequence">200</field>
+        <field name="sequence">210</field>
         <field name="summary">What has actually arrived, against what was invoiced.</field>
         <field name="icon">check-circle</field>
         <field name="kind">outline</field>
@@ -689,7 +720,7 @@
         <field name="name">VAT Log</field>
         <field name="line">fin_money</field>
         <field name="section">finance</field>
-        <field name="sequence">210</field>
+        <field name="sequence">220</field>
         <field name="summary">A read-only record of what was posted.</field>
         <field name="icon">file-text</field>
         <field name="kind">outline</field>
@@ -714,7 +745,7 @@
         <field name="name">AR Dashboard</field>
         <field name="line">fin_owed</field>
         <field name="section">finance</field>
-        <field name="sequence">220</field>
+        <field name="sequence">230</field>
         <field name="summary">Receivables by age — the shape of what is owed.</field>
         <field name="icon">bar-chart</field>
         <field name="kind">outline</field>
@@ -739,7 +770,7 @@
         <field name="name">Payments</field>
         <field name="line">fin_owed</field>
         <field name="section">finance</field>
-        <field name="sequence">230</field>
+        <field name="sequence">240</field>
         <field name="summary">The tab where receivables are worked: the payments list and three tools beside it.</field>
         <field name="icon">clipboard-check</field>
         <field name="kind">outline</field>
@@ -764,7 +795,7 @@
         <field name="name">Overdue Clients</field>
         <field name="line">fin_owed</field>
         <field name="section">finance</field>
-        <field name="sequence">240</field>
+        <field name="sequence">250</field>
         <field name="summary">The four invoices that have passed their terms.</field>
         <field name="icon">alert-triangle</field>
         <field name="kind">outline</field>
@@ -789,7 +820,7 @@
         <field name="name">AR Transactions</field>
         <field name="line">fin_owed</field>
         <field name="section">finance</field>
-        <field name="sequence">250</field>
+        <field name="sequence">260</field>
         <field name="summary">Every movement on a receivable, in order.</field>
         <field name="icon">list-checks</field>
         <field name="kind">outline</field>
@@ -814,7 +845,7 @@
         <field name="name">Account Payment</field>
         <field name="line">fin_owed</field>
         <field name="section">finance</field>
-        <field name="sequence">260</field>
+        <field name="sequence">270</field>
         <field name="summary">Recording money against the right invoice.</field>
         <field name="icon">check-circle</field>
         <field name="kind">outline</field>
@@ -839,7 +870,7 @@
         <field name="name">Cash In Transit</field>
         <field name="line">fin_owed</field>
         <field name="section">finance</field>
-        <field name="sequence">270</field>
+        <field name="sequence">280</field>
         <field name="summary">Cash collected on a visit that has not reached the bank yet.</field>
         <field name="icon">receipt</field>
         <field name="kind">outline</field>
@@ -864,7 +895,7 @@
         <field name="name">Red Invoice Log</field>
         <field name="line">fin_docs</field>
         <field name="section">finance</field>
-        <field name="sequence">280</field>
+        <field name="sequence">290</field>
         <field name="summary">Vietnamese tax invoices — the most consequential screen in the product.</field>
         <field name="icon">shield-check</field>
         <field name="kind">lesson</field>
@@ -895,7 +926,7 @@
         <field name="name">Refund / Credit</field>
         <field name="line">fin_docs</field>
         <field name="section">finance</field>
-        <field name="sequence">290</field>
+        <field name="sequence">300</field>
         <field name="summary">Three different situations that all look like giving money back.</field>
         <field name="icon">rotate-ccw</field>
         <field name="kind">outline</field>
@@ -926,7 +957,7 @@
         <field name="name">Service Packages</field>
         <field name="line">fin_docs</field>
         <field name="section">finance</field>
-        <field name="sequence">300</field>
+        <field name="sequence">310</field>
         <field name="summary">Courses of visits sold up front.</field>
         <field name="icon">list-checks</field>
         <field name="kind">outline</field>
@@ -951,7 +982,7 @@
         <field name="name">BHYT Claims</field>
         <field name="line">fin_docs</field>
         <field name="section">finance</field>
-        <field name="sequence">310</field>
+        <field name="sequence">320</field>
         <field name="summary">Social health insurance claims — not in use yet.</field>
         <field name="icon">clipboard-check</field>
         <field name="kind">outline</field>

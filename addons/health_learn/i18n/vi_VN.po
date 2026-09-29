@@ -361,6 +361,13 @@ msgstr ""
 "Một gia đình gọi lúc 14:00: bệnh nhân đã vào viện và sẽ không có nhà cho lượt 15:00. Bạn xử lý lịch hẹn B-4474 thế nào?"
 
 #. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_access_handover_b010
+msgid ""
+"A hand-over lends your roles to a colleague for set dates. It ends by itself on the last day, and your own access is never taken away."
+msgstr ""
+"Bàn giao quyền là cho đồng nghiệp mượn vai trò của bạn trong những ngày đã chọn. Nó tự kết thúc vào ngày cuối, và quyền của chính bạn không bao giờ bị lấy đi."
+
+#. module: health_learn
 #: model:learn.step,title:health_learn.lesson_l4_step_05
 msgid "A lost booking without a reason is invisible"
 msgstr "Mất lịch mà không ghi lý do là vô hình"
@@ -371,6 +378,11 @@ msgid ""
 "A missing button is usually the design working rather than a fault to report. Access is granted by the Owner against your role, not per screen."
 msgstr ""
 "Một nút không xuất hiện thường là do thiết kế đang hoạt động đúng, không phải lỗi cần báo. Quyền truy cập do Chủ sở hữu cấp theo vai trò của bạn, không theo từng màn hình."
+
+#. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_access_newrole_b030
+msgid "A new role is given to nobody until you give it to somebody."
+msgstr "Một vai trò mới chưa được cấp cho ai cho đến khi bạn cấp nó cho một người."
 
 #. module: health_learn
 #: model:learn.station,outline_why:health_learn.station_fin_packages
@@ -507,6 +519,20 @@ msgstr "Bảng công nợ"
 #: model:learn.station,name:health_learn.station_fin_ar_transactions
 msgid "AR Transactions"
 msgstr "Giao dịch công nợ"
+
+#. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_access_give_b010
+msgid ""
+"Access here is a role, given to a person. A role is a set of abilities with a name somebody can say out loud — Nurse, Accountant, Front desk — so you never tick permissions one by one."
+msgstr ""
+"Quyền ở đây là một vai trò, được cấp cho một người. Vai trò là một nhóm quyền thao tác có tên gọi rõ ràng — Y tá, Kế toán, Lễ tân — nên bạn không bao giờ phải đánh dấu từng quyền một."
+
+#. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_admin_access
+msgid ""
+"Access is given as a role, never as a list of ticks. A role is a job somebody can name out loud — Nurse, Accountant — and holding it means holding all of it, so the menu a person sees is always the menu of their job."
+msgstr ""
+"Quyền được cấp dưới dạng vai trò, không bao giờ là một danh sách ô đánh dấu. Vai trò là một công việc có thể gọi tên — Y tá, Kế toán — và giữ vai trò nghĩa là giữ trọn vẹn nó, nên menu một người thấy luôn là menu của công việc họ làm."
 
 #. module: health_learn
 #: model:learn.column,label:health_learn.col_channelcenter_account
@@ -872,6 +898,13 @@ msgid "Ask which action can be undone tomorrow if you get it wrong today."
 msgstr "Hãy tự hỏi thao tác nào có thể hoàn tác vào ngày mai nếu hôm nay bạn làm sai."
 
 #. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_access_ask_b020
+msgid ""
+"Ask {{accessRequestPath}} for the role your work needs, and say which screen and why. If it is only for a few days, a colleague who holds that role can hand it over to you."
+msgstr ""
+"Hãy hỏi {{accessRequestPath}} để xin vai trò mà công việc của bạn cần, và nói rõ màn hình nào và vì sao. Nếu chỉ cần trong vài ngày, một đồng nghiệp đang giữ vai trò đó có thể bàn giao quyền cho bạn."
+
+#. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_ops_no_access_b030
 msgid ""
 "Ask {{accessRequestPath}}. If what you actually need is one answer rather than the screen — where a visit is, who is going — the person holding that role can tell you in a sentence."
@@ -1034,6 +1067,11 @@ msgstr "LỚN HƠN VẺ NGOÀI"
 #: model:learn.string,value:health_learn.str_back
 msgid "Back"
 msgstr "Quay lại"
+
+#. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_access_handover_b020_s02
+msgid "Back early? Press Take it back now on the Hand-overs lens."
+msgstr "Về sớm? Bấm Thu hồi ngay trong mục Bàn giao."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_backtomissions
@@ -1653,6 +1691,16 @@ msgstr ""
 "Chỉ nhìn con số mà không nhìn danh sách. Con số cho biết có vấn đề; danh sách bên dưới cho biết đó là vấn đề của ai."
 
 #. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_access_holders_b020_s00
+msgid "Choose the Roles lens."
+msgstr "Chọn mục Vai trò."
+
+#. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_access_handover_b020_s01
+msgid "Choose who covers, which of your roles, and until when."
+msgstr "Chọn ai làm thay, những vai trò nào của bạn, và đến ngày nào."
+
+#. module: health_learn
 #: model:learn.station.mistake,name:health_learn.station_channelcenter_mistake_0
 msgid ""
 "Choosing the wrong Official Account at the “choose what to connect” step. One OA serves one catchment area, so the wrong one routes a whole city's messages into another city's wall."
@@ -2181,6 +2229,13 @@ msgstr ""
 "Đừng so nó với Liên hệ hôm nay, vốn là số liệu ngày. Luôn là hai khoảng thời gian khác nhau. Phân tích khách tiềm năng chỉ khớp với thẻ này khi bạn đặt cùng khoảng thời gian và cùng bộ lọc khu vực."
 
 #. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_access_handover_b030
+msgid ""
+"Do not give your role away for a holiday. A role you give stays given; a hand-over comes back on its own."
+msgstr ""
+"Đừng cấp hẳn vai trò của bạn cho kỳ nghỉ. Vai trò đã cấp thì vẫn còn đó; còn bàn giao quyền thì tự thu hồi."
+
+#. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_ops_unassigned_b030
 msgid ""
 "Do not leave it because it is not urgent yet. The whole cost of this task is measured in how late you start it."
@@ -2384,6 +2439,11 @@ msgstr ""
 #: model:learn.step,title:health_learn.lesson_l3_step_05
 msgid "Every figure opens the records behind it"
 msgstr "Mỗi con số đều mở ra các bản ghi phía sau"
+
+#. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_access_give_b020_s05
+msgid "Every grant, hand-over and take-back is written down — Their history shows it."
+msgstr "Mọi lần cấp, bàn giao và thu hồi đều được ghi lại — Lịch sử của họ cho thấy điều đó."
 
 #. module: health_learn
 #: model:learn.mission,consequence_scope:health_learn.mission_m2
@@ -2691,9 +2751,43 @@ msgid "GO-LIVE"
 msgstr "PHÁT HÀNH"
 
 #. module: health_learn
+#: model:learn.screen,name:health_learn.screen_admin_access
+#: model:learn.station,name:health_learn.station_admin_access
+msgid "Give somebody access"
+msgstr "Cấp quyền cho một người"
+
+#. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_access_give_b030
+msgid ""
+"Give the smallest role that does the job. A role is held in full or not at all: somebody missing one of its abilities does not hold it, and its screens stay closed to them."
+msgstr ""
+"Hãy cấp vai trò nhỏ nhất đủ cho công việc. Vai trò được giữ trọn vẹn hoặc không giữ gì: người thiếu một quyền thao tác của vai trò thì không giữ vai trò đó, và các màn hình của nó vẫn đóng với họ."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_admin_access_mistake_0
+msgid ""
+"Giving a bigger role than the job needs because it is quicker. The person then sees screens, and patient records, their work never asks for."
+msgstr ""
+"Cấp một vai trò lớn hơn nhu cầu công việc vì làm vậy nhanh hơn. Khi đó người ấy thấy những màn hình, và cả hồ sơ bệnh nhân, mà công việc của họ không cần đến."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_admin_access_mistake_1
+msgid ""
+"Giving your own role to a colleague for your holiday. Hand it over instead — it ends by itself on the day you come back."
+msgstr ""
+"Cấp hẳn vai trò của mình cho đồng nghiệp trong kỳ nghỉ. Hãy bàn giao quyền thay vào đó — nó tự kết thúc vào ngày bạn quay lại."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_glossary
 msgid "Glossary"
 msgstr "Thuật ngữ"
+
+#. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_access_give_b020_s03
+msgid ""
+"Going on leave yourself? Hand my access over lends your roles for set dates, and they come back on their own."
+msgstr ""
+"Bạn sắp nghỉ phép? Bàn giao quyền của tôi sẽ cho mượn vai trò của bạn trong những ngày đã chọn, và tự thu hồi khi hết hạn."
 
 #. module: health_learn
 #: model:learn.station.mistake,name:health_learn.station_fin_cash_transit_mistake_0
@@ -2832,6 +2926,21 @@ msgstr ""
 "Khoan đã. Ba lượt hủy là ba bệnh nhân được báo đừng chờ ai, ba khung giờ không tạo ra doanh thu, và ba gia đình phải bắt đầu lại từ một yêu cầu mới — trong khi Lan mai đã đi làm lại. Ở đây hủy là lối cuối cùng, không phải lối đầu tiên: phân công lại giữ được lượt thăm khám, bệnh nhân và cả khoản tiền, và có thể hoàn tác nếu bạn làm sai."
 
 #. module: health_learn
+#: model:learn.intent,label:health_learn.intent_access_give
+msgid "How do I give somebody access?"
+msgstr "Làm sao để cấp quyền cho một người?"
+
+#. module: health_learn
+#: model:learn.intent,label:health_learn.intent_access_handover
+msgid "How do I hand my access over while I am away?"
+msgstr "Làm sao để bàn giao quyền khi tôi vắng mặt?"
+
+#. module: health_learn
+#: model:learn.intent,label:health_learn.intent_access_newrole
+msgid "How do I make a new role?"
+msgstr "Làm sao để tạo một vai trò mới?"
+
+#. module: health_learn
 #: model:learn.intent,label:health_learn.intent_reminder
 msgid "How do I make sure this gets followed up?"
 msgstr "Làm sao để chắc chắn việc này được theo dõi?"
@@ -2932,6 +3041,11 @@ msgid ""
 "Hà has requested the <b>13th</b>; Tuấn is approved for the <b>14th to 16th</b>. Approving a request makes that person unavailable — it does <b>not</b> reassign the visits already booked for those days. Those stay exactly where they are until somebody moves them."
 msgstr ""
 "Hà đã xin nghỉ ngày <b>13</b>; Tuấn đã được duyệt nghỉ từ <b>14 đến 16</b>. Duyệt một đơn sẽ khiến người đó không còn khả dụng — nhưng <b>không</b> phân công lại các lượt đã đặt cho những ngày đó. Chúng vẫn nằm nguyên ở đó cho tới khi có người dời đi."
+
+#. module: health_learn
+#: model:learn.intent,label:health_learn.intent_access_ask
+msgid "I cannot see a screen I need — who do I ask?"
+msgstr "Tôi không thấy màn hình mình cần — tôi hỏi ai?"
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_noanswer
@@ -3631,6 +3745,11 @@ msgid "NOT EVERY INVOICE"
 msgstr "KHÔNG PHẢI HÓA ĐƠN NÀO CŨNG CÓ"
 
 #. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_access_newrole_b020_s01
+msgid "Name it, choose its area and tick its abilities."
+msgstr "Đặt tên, chọn khu vực và đánh dấu các quyền thao tác."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_showhint
 msgid "Need a hint?"
 msgstr "Cần gợi ý?"
@@ -4024,6 +4143,11 @@ msgid "Open the Hà Nội Zalo Official Account connection."
 msgstr "Mở kết nối Zalo Official Account Hà Nội."
 
 #. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_access_give_b020_s00
+msgid "Open the People lens and find the person by name."
+msgstr "Mở mục Nhân sự và tìm người đó theo tên."
+
+#. module: health_learn
 #: model:learn.intent.step,text:health_learn.intent_ops_leave_b020_s00
 msgid "Open the Staff Schedule for every date being requested."
 msgstr "Mở Lịch nhân sự cho từng ngày được xin nghỉ."
@@ -4042,6 +4166,13 @@ msgstr "Mở cuộc hội thoại từ bảng."
 #: model:learn.string,value:health_learn.str_openlesson
 msgid "Open the lesson"
 msgstr "Mở bài học"
+
+#. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_access_holders_b010
+msgid ""
+"Open the role on the Roles lens. Its card says what it lets somebody do, which screens it opens, and who holds it — including anybody holding it for a while through a hand-over."
+msgstr ""
+"Mở vai trò trong mục Vai trò. Thẻ của nó cho biết vai trò cho phép làm gì, mở những màn hình nào, và ai đang giữ — kể cả người đang tạm giữ qua một lần bàn giao quyền."
 
 #. module: health_learn
 #: model:learn.mission.note,body:health_learn.mission_om1_check_00
@@ -4295,6 +4426,11 @@ msgid "Owner"
 msgstr "Chủ sở hữu"
 
 #. module: health_learn
+#: model:learn.station,outline_prereq:health_learn.station_admin_access
+msgid "Owner or Admin. Everybody can hand their own access over while they are away."
+msgstr "Chủ sở hữu hoặc Quản trị viên. Ai cũng có thể bàn giao quyền của chính mình khi vắng mặt."
+
+#. module: health_learn
 #: model:learn.station,outline_prereq:health_learn.station_carecommand
 msgid ""
 "Owner or CRM role, plus at least one connected channel. Taking a conversation off a colleague additionally needs CRM Manager."
@@ -4518,14 +4654,53 @@ msgid "Press Claim on the ownership banner."
 msgstr "Nhấn Nhận xử lý trên dải quyền phụ trách."
 
 #. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_access_give_b020_s01
+msgid "Press Give a role on their passport, choose the role and say why."
+msgstr "Bấm Giao vai trò trên hộ chiếu của họ, chọn vai trò và ghi lý do."
+
+#. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_access_handover_b020_s00
+msgid "Press Hand my access over."
+msgstr "Bấm Bàn giao quyền của tôi."
+
+#. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_access_newrole_b020_s00
+msgid "Press New role."
+msgstr "Bấm Vai trò mới."
+
+#. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_access_newrole_b010
+msgid ""
+"Press New role. Give it a name somebody can say out loud, choose its area and tick the abilities it carries. The builder shows the menu a holder of the role would see before you save."
+msgstr ""
+"Bấm Vai trò mới. Đặt cho nó một cái tên dễ gọi, chọn khu vực và đánh dấu các quyền thao tác mà nó bao gồm. Trình tạo vai trò cho thấy menu mà người giữ vai trò sẽ thấy trước khi bạn lưu."
+
+#. module: health_learn
 #: model:learn.mission.step,hint:health_learn.mission_m2_step_03
 msgid "Press Run checks in the readiness panel."
 msgstr "Nhấn Chạy kiểm tra trong khung kiểm tra sẵn sàng."
 
 #. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_access_seeas_b010
+msgid ""
+"Press See it as and choose the person. Every lens is then drawn the way they would see it, and nothing you do changes because of it."
+msgstr ""
+"Bấm Xem như và chọn người đó. Khi đó mọi mục đều hiển thị như họ nhìn thấy, và không có gì bạn làm bị thay đổi vì điều này."
+
+#. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_access_seeas_b020_s00
+msgid "Press See it as, then type their name."
+msgstr "Bấm Xem như, rồi gõ tên của họ."
+
+#. module: health_learn
 #: model:learn.mission.step,hint:health_learn.mission_m1_step_04
 msgid "Press Send reply. The consequence card appears first — that is the point."
 msgstr "Nhấn Gửi trả lời. Thẻ hệ quả sẽ hiện ra trước — đó là chủ ý."
+
+#. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_access_holders_b020_s01
+msgid "Press the role's card to open it out."
+msgstr "Bấm vào thẻ của vai trò để mở rộng."
 
 #. module: health_learn
 #: model:learn.mission.step,hint:health_learn.mission_fm1_step_03
@@ -4680,6 +4855,16 @@ msgstr "Đọc cả tháng trước khi chuyển bất kỳ khoản nào."
 msgid ""
 "Read the reversibility line twice. The record can be corrected; the money cannot be recalled."
 msgstr "Hãy đọc dòng về khả năng hoàn tác hai lần. Sổ sách có thể sửa; tiền thì không thể gọi về."
+
+#. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_access_give_b020_s02
+msgid "Read their menu on the passport — it now shows exactly what the role opens."
+msgstr "Xem menu trên hộ chiếu của họ — giờ nó cho thấy đúng những gì vai trò đó mở ra."
+
+#. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_access_seeas_b020_s01
+msgid "Read their menu on the passport."
+msgstr "Xem menu của họ trên hộ chiếu."
 
 #. module: health_learn
 #: model:learn.intent.step,text:health_learn.intent_unroutedq_b030_s00
@@ -5015,6 +5200,12 @@ msgid "Resume"
 msgstr "Tiếp tục"
 
 #. module: health_learn
+#: model:learn.station,summary:health_learn.station_admin_access
+msgid "Roles in plain words, who holds each one, and hand-overs that take themselves back."
+msgstr ""
+"Vai trò bằng lời dễ hiểu, ai đang giữ từng vai trò, và các lần bàn giao quyền tự thu hồi khi hết hạn."
+
+#. module: health_learn
 #: model:learn.screen,name:health_learn.screen_ops_routes
 #: model:learn.station,name:health_learn.station_ops_routes
 msgid "Routes"
@@ -5179,6 +5370,11 @@ msgstr ""
 #: model:learn.string,value:health_learn.str_search
 msgid "Search lessons…"
 msgstr "Tìm bài học…"
+
+#. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_access_seeas_b030
+msgid "See it as, on the Access home."
+msgstr "Chức năng Xem như trên trang Quyền truy cập."
 
 #. module: health_learn
 #: model:learn.mission.step,detail:health_learn.mission_m2_step_04
@@ -5616,6 +5812,13 @@ msgid "That's right."
 msgstr "Chính xác."
 
 #. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_admin_access
+msgid ""
+"The Access home: every role with the sentence saying what it lets somebody do, a passport for every person showing the left menu they see, and the hand-overs running now."
+msgstr ""
+"Trang Quyền truy cập: mọi vai trò kèm câu mô tả nó cho phép làm gì, một hộ chiếu cho từng người cho thấy menu bên trái mà họ thấy, và các lần bàn giao quyền đang diễn ra."
+
+#. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_fin_bhyt_notlive_b020
 msgid "The BHYT Claims screen itself, which is empty because nothing has been submitted."
 msgstr "Chính màn hình Hồ sơ BHYT, đang trống vì chưa có hồ sơ nào được nộp."
@@ -5668,6 +5871,11 @@ msgid ""
 "The Payments tab: the payments list with the payment, cash-in-transit and refund tools beside it."
 msgstr ""
 "Thẻ Thanh toán: danh sách thanh toán cùng các công cụ thanh toán, tiền đang chuyển và hoàn tiền bên cạnh."
+
+#. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_access_give_b040
+msgid "The People lens and the passport on the Access home."
+msgstr "Mục Nhân sự và hộ chiếu trên trang Quyền truy cập."
 
 #. module: health_learn
 #: model:learn.step,body:health_learn.lesson_l2_step_06
@@ -5885,6 +6093,11 @@ msgid "The four invoices that have passed their terms."
 msgstr "Bốn hóa đơn đã quá hạn thanh toán."
 
 #. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_access_handover_b040
+msgid "The hand-over dialog and the Hand-overs lens on the Access home."
+msgstr "Hộp thoại bàn giao quyền và mục Bàn giao trên trang Quyền truy cập."
+
+#. module: health_learn
 #: model:learn.step,tip:health_learn.lesson_l8_step_02
 msgid "The interesting column is usually Lost, not Booked: it is where a fixable cause hides."
 msgstr ""
@@ -6030,9 +6243,24 @@ msgstr ""
 "Khả năng hoàn tác của từng thao tác Care Command, theo đúng cách các phương thức xử lý thực hiện."
 
 #. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_access_newrole_b040
+msgid "The role builder on the Access home."
+msgstr "Trình tạo vai trò trên trang Quyền truy cập."
+
+#. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_access_holders_b030
+msgid "The role cards on the Access home."
+msgstr "Các thẻ vai trò trên trang Quyền truy cập."
+
+#. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_ops_no_access_b040
 msgid "The role gate on each Operations sidebar leaf."
 msgstr "Phân quyền vai trò trên từng mục Vận hành trong thanh bên."
+
+#. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_access_ask_b030
+msgid "The role gates on the left menu, set on the Access home."
+msgstr "Phân quyền theo vai trò trên menu bên trái, được thiết lập trên trang Quyền truy cập."
 
 #. module: health_learn
 #: model:learn.station,outline_why:health_learn.station_fin_refund
@@ -6480,6 +6708,11 @@ msgstr "Nghỉ phép"
 #: model:learn.string,value:health_learn.str_tip
 msgid "Tip"
 msgstr "Mẹo"
+
+#. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_access_give_b020_s04
+msgid "To take a role away, press Take back beside it on the passport."
+msgstr "Để thu hồi một vai trò, bấm Thu hồi bên cạnh vai trò đó trên hộ chiếu."
 
 #. module: health_learn
 #: model:learn.column,body:health_learn.col_activities_type
@@ -7082,6 +7315,11 @@ msgid "What does posting an invoice do?"
 msgstr "Ghi sổ hóa đơn có tác dụng gì?"
 
 #. module: health_learn
+#: model:learn.intent,label:health_learn.intent_access_seeas
+msgid "What does somebody else's menu look like?"
+msgstr "Menu của người khác trông như thế nào?"
+
+#. module: health_learn
 #: model:learn.intent,label:health_learn.intent_whatpage
 msgid "What does this screen do?"
 msgstr "Màn hình này dùng để làm gì?"
@@ -7134,6 +7372,13 @@ msgid "What you did"
 msgstr "Bạn đã làm gì"
 
 #. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_access_ask_b010
+msgid ""
+"What you see on the left menu is the menu of the roles you hold. A screen that is not there belongs to a role you do not hold yet."
+msgstr ""
+"Những gì bạn thấy trên menu bên trái là menu của các vai trò bạn đang giữ. Màn hình không có ở đó thuộc về một vai trò bạn chưa được cấp."
+
+#. module: health_learn
 #: model:learn.column,body:health_learn.col_leadanalysis_email
 msgid ""
 "Whatever address arrived with the enquiry. Often blank on Zalo and hotline arrivals, which is normal, not missing data."
@@ -7181,6 +7426,14 @@ msgid ""
 "When somebody asks what was issued in a period, this is the answer, and its read-only nature is the point: the log and the filing cannot disagree."
 msgstr ""
 "Khi có người hỏi trong một kỳ đã phát hành những gì, đây là câu trả lời, và tính chỉ đọc chính là mục đích: nhật ký và tờ khai không thể mâu thuẫn nhau."
+
+#. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_admin_access
+#: model:learn.station,outline_when:health_learn.station_admin_access
+msgid ""
+"When somebody joins, changes job, goes on leave or leaves. Find the person first, then give or take back a role on their passport."
+msgstr ""
+"Khi có người mới vào, đổi công việc, nghỉ phép hoặc nghỉ việc. Hãy tìm người đó trước, rồi cấp hoặc thu hồi vai trò trên hộ chiếu của họ."
 
 #. module: health_learn
 #: model:learn.column,body:health_learn.col_ops_bookings_time
@@ -7381,6 +7634,13 @@ msgid "Who actually has room today?"
 msgstr "Hôm nay ai thật sự còn chỗ trống?"
 
 #. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_admin_access
+msgid ""
+"Who can do what: every role in plain words, who holds it, the left menu each role opens, and the hand-overs running now."
+msgstr ""
+"Ai được làm gì: mọi vai trò bằng lời dễ hiểu, ai đang giữ, menu bên trái mà mỗi vai trò mở ra, và các lần bàn giao quyền đang diễn ra."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_whocan
 msgid "Who can:"
 msgstr "Ai làm được:"
@@ -7391,6 +7651,11 @@ msgid ""
 "Who claimed this conversation. Unclaimed means anyone can take it; claimed means everyone else should leave it alone."
 msgstr ""
 "Ai đã nhận xử lý cuộc hội thoại này. Chưa ai nhận nghĩa là bất kỳ ai cũng có thể nhận; đã có người nhận nghĩa là những người khác nên để yên."
+
+#. module: health_learn
+#: model:learn.intent,label:health_learn.intent_access_holders
+msgid "Who holds this role?"
+msgstr "Ai đang giữ vai trò này?"
 
 #. module: health_learn
 #: model:learn.step,title:health_learn.lesson_l1_step_09

@@ -146,7 +146,7 @@ class TestRegistrations(TransactionCase):
 
     def test_the_administrator_lands_somewhere_that_exists(self):
         xmlid = self.common.home_action()
-        self.assertEqual(xmlid, 'health_landing.action_admin_dashboard')
+        self.assertEqual(xmlid, 'health_cms_sidebar.action_cms_home')
         self.assertTrue(self.env.ref(xmlid, raise_if_not_found=False),
                         'the home screen a new administrator opens on is not '
                         'on this system')

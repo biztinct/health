@@ -80,6 +80,9 @@ SIDEBAR_KEYS = {
     'fin_red_invoice':    'health_cms_coverage.item_fin_red_invoice_log',
     'fin_packages':       'health_cms_coverage.item_fin_service_packages',
     'fin_bhyt':           'health_cms_coverage.item_fin_bhyt_claims',
+    # SETTINGS — the Access home (AR-3). A live screen: its Coach anchors are
+    # of kind "product", on biz_access's own template.
+    'admin_access':       'health_access.item_admin_access',
 }
 
 # A STATION teaches a place on the map, and since the consolidated menu (MENU

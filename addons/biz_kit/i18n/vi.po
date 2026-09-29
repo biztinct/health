@@ -1,4 +1,4 @@
-# Vietnamese translation of health_cms_ia (ACCESS AR-3).
+# Vietnamese translation of biz_kit (ACCESS AR-3).
 # Generated from the framework's own export of the module, so every
 # entry carries its `#. module:`, its marker and its occurrence exactly
 # as the loader reads them; filled from the Payobook catalogue where the
@@ -7,7 +7,7 @@
 # health_cms_ia/menu_vi.py), not entries here.
 msgid ""
 msgstr ""
-"Project-Id-Version: Viet Uc Care 19.0 health_cms_ia\n"
+"Project-Id-Version: Viet Uc Care 19.0 biz_kit\n"
 "Report-Msgid-Bugs-To: \n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
@@ -17,17 +17,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#. module: health_cms_ia
-#: model:ir.model,name:health_cms_ia.model_cms_sidebar_item
-msgid "CMS Sidebar Menu Item"
-msgstr "Mục menu thanh bên CMS"
+#. module: biz_kit
+#. odoo-javascript
+#: code:addons/biz_kit/static/src/js/kit_nav.js:0
+msgid "Back"
+msgstr "Quay lại"
 
-#. module: health_cms_ia
-#: model:ir.model.fields,field_description:health_cms_ia.field_cms_sidebar_item__display_name
-msgid "Display Name"
-msgstr "Tên hiển thị"
+#. module: biz_kit
+#. odoo-javascript
+#: code:addons/biz_kit/static/src/js/kit_nav.js:0
+msgid "Back to %s"
+msgstr "Quay lại %s"
 
-#. module: health_cms_ia
-#: model:ir.model.fields,field_description:health_cms_ia.field_cms_sidebar_item__id
-msgid "ID"
-msgstr "ID"
+#. module: biz_kit
+#. odoo-javascript
+#: code:addons/biz_kit/static/src/js/kit_nav.js:0
+msgid "Go back to the last screen"
+msgstr "Quay lại màn hình trước"

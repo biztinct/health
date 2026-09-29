@@ -42,6 +42,12 @@ NEUTRAL_AREA = ('general', 'General')
 
 _AREAS = []
 _DEFAULT_AREA = None
+#: `{area key: the module whose catalogue translates its label}`. The words are
+#: the APPLICATION's, so their Vietnamese (or any other language) is too: an
+#: application registers each label as a lazy translation (`_lt("Clinical")`)
+#: and the translation is looked up in ITS catalogue, never in this module's —
+#: which has no product words to offer and must not grow any.
+_AREA_MODULES = {}
 
 
 def register_areas(pairs, default=None):
@@ -52,12 +58,22 @@ def register_areas(pairs, default=None):
     application that has said "Clinical, People, Money" does not also want a
     stray "General" on its board. Registering the same key twice keeps the first
     label, so two modules of one product cannot fight over a word.
+
+    A label may be a plain string or a lazy translation made with the
+    application's own `LazyTranslate(__name__)`. The registry keeps the English
+    source (every comparison and export reads that) and remembers which module
+    translates it (`area_label`).
     """
     global _DEFAULT_AREA
     seen = {key for key, _label in _AREAS}
     for key, label in pairs or ():
         if key not in seen:
-            _AREAS.append((key, label))
+            source = getattr(label, '_source', None)
+            module = getattr(label, '_module', None)
+            if isinstance(source, str):
+                _AREA_MODULES[key] = module or ''
+                label = source
+            _AREAS.append((key, str(label)))
             seen.add(key)
     if default and default in seen:
         _DEFAULT_AREA = default
@@ -81,12 +97,26 @@ def area_label(key, env=None):
 
     Module-level `_()` has no language to work in and logs "no translation
     language detected" on every call, so the environment is passed rather than
-    assumed — `env._()` is the framework's own form for exactly this.
+    assumed. An area registered with a lazy translation is translated from the
+    registering application's catalogue (AR-3): `env._()` here would ask THIS
+    module's catalogue, which rightly has no product words in it.
     """
     for k, lbl in profile_areas():
         if k == key:
-            return env._(lbl) if env is not None else lbl
+            if env is None:
+                return lbl
+            module = _AREA_MODULES.get(k)
+            if module:
+                from odoo.tools.translate import get_translation
+                return get_translation(module, env.lang or 'en_US', lbl, ())
+            return env._(lbl)
     return key or ''
+
+
+def area_selection(env=None):
+    """`profile_areas()` with every label translated for `env`'s language —
+    what a Selection field offers on a form."""
+    return [(key, area_label(key, env)) for key, _label in profile_areas()]
 
 
 # =============================================================================

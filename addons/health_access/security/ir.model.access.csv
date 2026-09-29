@@ -4,3 +4,4 @@ access_res_users_clinic_admin,res.users — the clinic administrator manages col
 access_res_groups_clinic_admin,res.groups — read only; permissions are given out as roles,base.model_res_groups,health_access.group_clinic_admin,1,0,0,0
 access_hr_employee_clinic_admin,hr.employee — the clinic administrator keeps the staff records right,hr.model_hr_employee,health_access.group_clinic_admin,1,1,1,0
 access_health_access_set_job,health.access.set.job — anybody with a login may open the form; only the access team may apply it,model_health_access_set_job,base.group_user,1,1,1,1
+access_hfo_doctor_read,health.fieldservice.order — a doctor reads the visits arranged for them (AR-3 G1),health_fieldservice.model_health_fieldservice_order,health_base.group_healthcare_doctor,1,0,0,0

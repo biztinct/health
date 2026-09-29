@@ -85,6 +85,101 @@
       "file": "health_crm/static/src/xml/crm_dashboard.xml",
       "desc": "The period selector every figure on the screen is filtered by.",
       "practice_only_note": "The real selector lives in the dashboard header; declared as product because the tutorial points at it."
+    },
+    "ax-head": {
+      "screen": "admin_access",
+      "file": "biz_access/static/src/xml/access_board.xml",
+      "desc": "The Access home header: what this screen is and the line saying how many roles and people it covers."
+    },
+    "ax-seeas": {
+      "screen": "admin_access",
+      "file": "biz_access/static/src/xml/access_board.xml",
+      "desc": "\"See it as\" — look at every lens as another person would. It changes nothing."
+    },
+    "ax-handover": {
+      "screen": "admin_access",
+      "file": "biz_access/static/src/xml/access_board.xml",
+      "desc": "\"Hand my access over\" — lend your roles to a colleague while you are away."
+    },
+    "ax-newrole": {
+      "screen": "admin_access",
+      "file": "biz_access/static/src/xml/access_board.xml",
+      "desc": "\"New role\" — opens the role builder."
+    },
+    "ax-tabs": {
+      "screen": "admin_access",
+      "file": "biz_access/static/src/xml/access_board.xml",
+      "desc": "The lenses: Roles, People, Screens and Hand-overs."
+    },
+    "ax-role": {
+      "screen": "admin_access",
+      "file": "biz_access/static/src/xml/access_board.xml",
+      "desc": "A role card: its name, its area and the sentence saying what it lets somebody do."
+    },
+    "ax-people-search": {
+      "screen": "admin_access",
+      "file": "biz_access/static/src/xml/access_board.xml",
+      "desc": "The People lens search box — find the person first."
+    },
+    "ax-passport": {
+      "screen": "admin_access",
+      "file": "biz_access/static/src/xml/access_board.xml",
+      "desc": "A person's passport: their roles, their menu and what they can do."
+    },
+    "ax-passmenu": {
+      "screen": "admin_access",
+      "file": "biz_access/static/src/xml/access_board.xml",
+      "desc": "The passport's picture of the left menu exactly as this person sees it."
+    },
+    "ax-give": {
+      "screen": "admin_access",
+      "file": "biz_access/static/src/xml/access_board.xml",
+      "desc": "\"Give a role\" on a passport."
+    },
+    "ax-give-dialog": {
+      "screen": "admin_access",
+      "file": "biz_access/static/src/xml/access_board.xml",
+      "desc": "The dialog that gives (or takes away) a role."
+    },
+    "ax-takeback": {
+      "screen": "admin_access",
+      "file": "biz_access/static/src/xml/access_board.xml",
+      "desc": "\"Take back\" on a role in the passport."
+    },
+    "ax-history": {
+      "screen": "admin_access",
+      "file": "biz_access/static/src/xml/access_board.xml",
+      "desc": "\"Their history\" — every grant, hand-over and removal for this person."
+    },
+    "ax-screens": {
+      "screen": "admin_access",
+      "file": "biz_access/static/src/xml/access_board.xml",
+      "desc": "The Screens lens: the left menu drawn as itself, with who opens each entry."
+    },
+    "ax-block": {
+      "screen": "admin_access",
+      "file": "biz_access/static/src/xml/access_board.xml",
+      "desc": "A menu area row on the Screens lens, with the roles that open the whole area."
+    },
+    "ax-builder": {
+      "screen": "admin_access",
+      "file": "biz_access/static/src/xml/access_board.xml",
+      "desc": "The role builder: name, area and the abilities a new role carries."
+    },
+    "ax-handover-dialog": {
+      "screen": "admin_access",
+      "file": "biz_access/static/src/xml/access_board.xml",
+      "desc": "The hand-over dialog: who covers, which roles, and until when."
+    },
+    "ax-handover-end": {
+      "screen": "admin_access",
+      "file": "biz_access/static/src/xml/access_board.xml",
+      "desc": "\"Take it back now\" on a running hand-over."
+    },
+    "ch-caps": {
+      "screen": "channelcenter",
+      "file": "health_care_command_channels/static/src/center/channel_center.xml",
+      "desc": "The capability chips on a channel card — what the channel can carry."
     }
   },
   "pattern": {
@@ -401,7 +496,8 @@
     "templates": [
       "health_care_command/static/src/xml/care_command.xml",
       "health_care_command_channels/static/src/center/channel_center.xml",
-      "health_crm/static/src/xml/crm_dashboard.xml"
+      "health_crm/static/src/xml/crm_dashboard.xml",
+      "biz_access/static/src/xml/access_board.xml"
     ],
     "replica": [
       "health_learn/static/src/engine/screens.js",

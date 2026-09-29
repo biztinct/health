@@ -34,7 +34,7 @@ from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
 from .access_common import (actor_exempt, default_area, forbidden_in_closure,
-                            holds_all, profile_areas)
+                            holds_all, profile_areas, area_selection)
 
 _logger = logging.getLogger(__name__)
 
@@ -54,7 +54,7 @@ class BizAccessAbility(models.Model):
              'stops short of. It is what the person building a role reads '
              'before they tick the box.')
     area = fields.Selection(
-        selection=lambda self: profile_areas(), string='Area',
+        selection=lambda self: area_selection(self.env), string='Area',
         required=True, default=lambda self: default_area(),
         index=True)
     sequence = fields.Integer(string='Order', default=10)

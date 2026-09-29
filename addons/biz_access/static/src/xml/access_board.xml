@@ -45,7 +45,7 @@
       <div t-else="" class="bzk-wrap bza-wrap">
 
         <!-- ========================== the header ========================== -->
-        <div class="bza-head">
+        <div class="bza-head" data-a="ax-head">
           <div class="bza-head-id">
             <HubBackChip t-if="back" back="back" tone="'light'"/>
             <h2 t-if="!props.embedded" class="bza-h">Access</h2>
@@ -64,6 +64,7 @@
                  courtesy, not the rail. -->
             <div t-if="canManage" class="bza-sim">
               <button t-attf-class="bza-simchip {{ state.seeing ? 'is-on' : '' }}"
+                      data-a="ax-seeas"
                       t-on-click="toggleSim"
                       t-attf-aria-expanded="{{ state.simOpen ? 'true' : 'false' }}"
                       title="Look at these screens as somebody else. It changes nothing.">
@@ -134,12 +135,13 @@
                     title="Add a role, rename one, or change what it says">
               <t t-out="ic('list',15)"/> Edit the list of roles
             </button>
-            <button class="bzk-btn ghost" t-on-click="openDelegate">
+            <button class="bzk-btn ghost" data-a="ax-handover"
+                    t-on-click="openDelegate">
               <t t-out="ic('arrowLeftRight',15)"/> Hand my access over
             </button>
             <!-- ABSENT, NOT DISABLED, for anybody who cannot use it. A greyed
                  button is a promise the screen has no intention of keeping. -->
-            <button t-if="canManage" class="bzk-btn primary"
+            <button t-if="canManage" class="bzk-btn primary" data-a="ax-newrole"
                     t-on-click="() => this.openComposer(null)">
               <t t-out="ic('plus',15)"/> New role
             </button>
@@ -175,7 +177,7 @@
           <img class="bza-face" t-att-src="state.seeing.avatar"
                t-att-alt="state.seeing.name"/>
           <span class="bza-simbar-tx">
-            <b t-esc="'Looking at this as ' + state.seeing.name"/>
+            <b t-esc="lookingAsLine(state.seeing.name)"/>
             <small>
               Roles they hold are tagged, and the People lens is on their
               passport. You still have exactly your own access.
@@ -230,7 +232,7 @@
 
         <!-- ============================ the lenses ============================ -->
         <div class="bza-bar">
-          <div class="bza-tabs" role="tablist">
+          <div class="bza-tabs" role="tablist" data-a="ax-tabs">
             <button t-foreach="lenses" t-as="ln" t-key="ln.key"
                     t-attf-class="bza-tab {{ state.lens === ln.key ? 'is-on' : '' }}"
                     role="tab" t-attf-aria-selected="{{ state.lens === ln.key ? 'true' : 'false' }}"
@@ -292,6 +294,7 @@
 
           <div t-else="" class="bza-roles">
             <div t-foreach="profiles" t-as="pf" t-key="pf.id"
+                 data-a="ax-role"
                  t-attf-class="bza-role {{ state.open === pf.id ? 'is-open' : '' }}"
                  t-attf-style="--bza-i: {{pf_index}}">
 
@@ -468,7 +471,7 @@
                       </div>
 
                       <p t-if="dt.more" class="bza-col-note"
-                         t-esc="'and ' + dt.more + ' more — the spreadsheet has the whole list.'"/>
+                         t-esc="moreInSheetLine(dt.more)"/>
 
                       <button t-if="canManage and pf.can_give"
                               class="bzk-btn ghost bza-grant"
@@ -523,7 +526,8 @@
 
           <!-- ============================ the list ============================ -->
           <aside class="bza-plist">
-            <label class="bza-field bza-field--search bza-plist-search">
+            <label class="bza-field bza-field--search bza-plist-search"
+                   data-a="ax-people-search">
               <span class="bza-in-ic"><t t-out="ic('search',15)"/></span>
               <input class="bza-in" type="search"
                      t-att-value="state.peopleSearch"
@@ -584,7 +588,7 @@
           </aside>
 
           <!-- ========================== the passport ========================== -->
-          <section class="bza-passport">
+          <section class="bza-passport" data-a="ax-passport">
 
             <div t-if="state.passportBusy" class="bzk-busy">
               <div class="bzk-spin"/><span>Working out what they can see…</span>
@@ -631,12 +635,12 @@
                     <t t-out="ic(pa.icon || 'circle',14)"/>
                     <t t-esc="pa.label"/>
                   </button>
-                  <button class="bzk-btn ghost"
+                  <button class="bzk-btn ghost" data-a="ax-history"
                           t-on-click="() => this.openPersonHistory(ph)">
                     <t t-out="ic('history',14)"/> Their history
                   </button>
                   <button t-if="passport.can_manage and !ph.is_me"
-                          class="bzk-btn primary"
+                          class="bzk-btn primary" data-a="ax-give"
                           t-on-click="() => this.openGiveRole(ph)">
                     <t t-out="ic('plus',14)"/> Give a role
                   </button>
@@ -655,10 +659,10 @@
               <div class="bza-pass-cols">
 
                 <!-- ===================== their menu ===================== -->
-                <div class="bza-pass-rail">
+                <div class="bza-pass-rail" data-a="ax-passmenu">
                   <p class="bza-colhead">
                     <t t-out="ic('layers',13)"/>
-                    <t t-esc="'The menu, as ' + callName(ph.name) + ' sees it'"/>
+                    <t t-esc="menuAsLine(callName(ph.name))"/>
                   </p>
 
                   <BizMiniRail t-if="passport.rail.length"
@@ -741,6 +745,7 @@
                         End the hand-over
                       </button>
                       <button t-elif="rl.can_take_back" class="bza-linkbtn"
+                              data-a="ax-takeback"
                               t-on-click="() => this.takeBackRole(rl)">
                         Take back
                       </button>
@@ -818,7 +823,7 @@
           <t t-elif="state.screens">
 
             <!-- ========================= the menu itself ========================= -->
-            <section class="bza-scrlist">
+            <section class="bza-scrlist" data-a="ax-screens">
               <div class="bza-scrlist-h">
                 <span class="bza-scrlist-who">
                   <t t-out="ic('monitor',14)"/>
@@ -847,6 +852,7 @@
                      but it has no switch and no grip: switching a whole block
                      off, or moving one, is not a question about who sees it. -->
                 <div t-if="sc.block and (sc.block.editable or sc.block.gated)"
+                     data-a="ax-block"
                      t-attf-class="bza-scrrow bza-scrrow--block {{ isBlockOpen(sc) ? 'is-on' : '' }}"
                      role="button" tabindex="0"
                      t-attf-aria-selected="{{ isBlockOpen(sc) ? 'true' : 'false' }}"
@@ -856,7 +862,7 @@
                     <t t-out="ic('layers',15)"/>
                   </span>
                   <span class="bza-scrtx">
-                    <b t-esc="'The whole ' + sc.label + ' block'"/>
+                    <b t-esc="wholeBlockLine(sc.label)"/>
                     <span class="bza-scrgates">
                       <span t-foreach="sc.block.gates.slice(0,3)" t-as="ga"
                             t-key="ga.id"
@@ -946,7 +952,7 @@
                           role="switch"
                           t-attf-aria-checked="{{ it.active ? 'true' : 'false' }}"
                           t-att-disabled="state.busy"
-                          t-att-title="it.active ? 'On the left menu — press to take it off' : 'Off the left menu — press to put it back'"
+                          t-att-title="switchTitle(it.active)"
                           t-on-click.stop="() => this.setScreenActive(it, !it.active)"/>
                 </div>
 
@@ -984,11 +990,11 @@
                         <b>
                           <t t-esc="it.label"/>
                           <small t-if="it.parent_label" class="bza-scrdark-in"
-                                 t-esc="'inside ' + it.parent_label"/>
+                                 t-esc="insideLine(it.parent_label)"/>
                         </b>
                         <small class="bza-scrdark-tx" t-esc="couldOpenLine(it)"/>
                         <small t-if="it.children.length" class="bza-scrdark-tx"
-                               t-esc="'With ' + it.children.map((k) => k.label).join(', ')"/>
+                               t-esc="withLine(it.children.map((k) => k.label))"/>
                       </span>
                       <span class="bza-scrstate is-gone">
                         <t t-out="ic('eyeOff',13)"/>
@@ -1030,7 +1036,7 @@
                     <t t-out="ic('layers',19)"/>
                   </span>
                   <div class="bza-scrdet-id">
-                    <h3 t-esc="'The whole ' + dt.label + ' block'"/>
+                    <h3 t-esc="wholeBlockLine(dt.label)"/>
                     <p class="bza-scrdet-sub">
                       <span t-esc="blockLine(dt)"/>
                       <t t-if="dt.gated">
@@ -1102,7 +1108,7 @@
                         </span>
                         <small class="bza-cap-opens">
                           <t t-if="ga.holders === 1">1 person holds it</t>
-                          <t t-elif="ga.holders" t-esc="ga.holders + ' people hold it'"/>
+                          <t t-elif="ga.holders" t-esc="peopleHoldLine(ga.holders)"/>
                           <t t-else="">nobody holds it yet</t>
                         </small>
                       </button>
@@ -1113,14 +1119,14 @@
                 <t t-if="dt.entries.length">
                   <p class="bza-colhead">
                     <t t-out="ic('layers',13)"/>
-                    <t t-esc="'Inside the ' + dt.label + ' block'"/>
+                    <t t-esc="insideBlockLine(dt.label)"/>
                   </p>
                   <div t-foreach="dt.entries" t-as="kd" t-key="kd.id"
                        class="bza-subgate">
                     <b t-esc="kd.label"/>
                     <span class="bza-scrgates">
                       <span t-if="!kd.own.length" class="bza-gate bza-gate--via"
-                            t-esc="dt.gated ? 'the block decides' : 'everyone with a login'"/>
+                            t-esc="kidsDefaultLine(dt.gated)"/>
                       <span t-foreach="kd.own" t-as="ga" t-key="ga.id"
                             t-attf-class="bza-gate bza-area--{{ga.area}}"
                             t-esc="ga.name"/>
@@ -1147,7 +1153,7 @@
                       </span>
                     </div>
                     <p t-if="dt.who.more" class="bza-col-note"
-                       t-esc="'and ' + dt.who.more + ' more.'"/>
+                       t-esc="andMoreLine(dt.who.more)"/>
                   </t>
                 </t>
               </t>
@@ -1196,10 +1202,10 @@
                             t-att-disabled="state.busy"
                             t-on-click="() => this.switchOnFor(dt, ga)">
                       <t t-out="ic('checkCircle',14)"/>
-                      <t t-esc="'Switch on for ' + ga.name"/>
+                      <t t-esc="switchOnForLine(ga.name)"/>
                     </button>
                     <p t-if="dt.also_shown_to.length" class="bza-hint"
-                       t-esc="'It would also show for ' + dt.also_shown_to.join(', ') + ', through the entry above it, and they could not open it.'"/>
+                       t-esc="alsoShownLine(dt.also_shown_to)"/>
                   </div>
                 </t>
 
@@ -1269,7 +1275,7 @@
                 <div t-if="dt.inherited.length" class="bza-scrinherit">
                   <p class="bza-scrnote">
                     <t t-out="ic('layers',14)"/>
-                    <span t-esc="'Also opened by the gate on ' + dt.via_label + ':'"/>
+                    <span t-esc="alsoOpenedByLine(dt.via_label)"/>
                   </p>
                   <div class="bza-scrgates">
                     <span t-foreach="dt.inherited" t-as="ga" t-key="ga.id"
@@ -1334,7 +1340,7 @@
                         </span>
                         <small class="bza-cap-opens">
                           <t t-if="ga.holders === 1">1 person holds it</t>
-                          <t t-elif="ga.holders" t-esc="ga.holders + ' people hold it'"/>
+                          <t t-elif="ga.holders" t-esc="peopleHoldLine(ga.holders)"/>
                           <t t-else="">nobody holds it yet</t>
                         </small>
                       </button>
@@ -1346,14 +1352,14 @@
                 <t t-if="dt.children.length">
                   <p class="bza-colhead">
                     <t t-out="ic('layers',13)"/>
-                    <t t-esc="'Inside ' + dt.label"/>
+                    <t t-esc="insideEntryLine(dt.label)"/>
                   </p>
                   <div t-foreach="dt.children" t-as="kd" t-key="kd.id"
                        class="bza-subgate">
                     <b t-esc="kd.label"/>
                     <span class="bza-scrgates">
                       <span t-if="kd.everyone" class="bza-gate bza-gate--all"
-                            t-esc="'everyone who sees ' + dt.label"/>
+                            t-esc="everyoneWhoSeesLine(dt.label)"/>
                       <span t-foreach="kd.gates" t-as="ga" t-key="ga.id"
                             t-attf-class="bza-gate bza-area--{{ga.area}}"
                             t-esc="ga.name"/>
@@ -1387,7 +1393,7 @@
                     </span>
                   </div>
                   <p t-if="dt.who.more" class="bza-col-note"
-                     t-esc="'and ' + dt.who.more + ' more.'"/>
+                     t-esc="andMoreLine(dt.who.more)"/>
                 </t>
 
                 <!-- ===================== what the others see =====================
@@ -1498,7 +1504,7 @@
               <div class="bza-hand-f">
                 <span class="bza-when">
                   <t t-out="ic('calendar',13)"/>
-                  <t t-esc="hv.date_end ? day(hv.date_start) + ' to ' + day(hv.date_end) : 'From ' + day(hv.date_start)"/>
+                  <t t-esc="handDatesLine(hv)"/>
                 </span>
                 <span class="bza-hand-days" t-esc="daysLine(hv)"/>
               </div>
@@ -1515,7 +1521,7 @@
 
               <div class="bza-hand-actions"
                    t-if="hv.state === 'active' and (hv.mine or canManage)">
-                <button class="bzk-btn ghost"
+                <button class="bzk-btn ghost" data-a="ax-handover-end"
                         t-on-click="() => this.revoke(hv)"
                         t-att-disabled="state.busy">
                   <t t-out="ic('undo',14)"/> Take it back now
@@ -1535,11 +1541,11 @@
 
       <!-- ====================== grant / take away dialog ====================== -->
       <div t-if="state.granting" class="bzk-modal-scrim" t-on-click="closeGrant">
-        <div class="bzk-modal bza-modal" t-on-click.stop="">
+        <div class="bzk-modal bza-modal" data-a="ax-give-dialog" t-on-click.stop="">
         <div class="bza-modal-h">
           <h3 t-if="state.granting.mode === 'remove'">Take this role away</h3>
           <h3 t-elif="state.granting.person"
-              t-esc="'Give a role to ' + state.granting.person.name"/>
+              t-esc="giveRoleToLine(state.granting.person.name)"/>
           <h3 t-else="">Give this role to somebody</h3>
           <button class="bzk-btn ghost" t-on-click="closeGrant">
             <t t-out="ic('x',16)"/>
@@ -1557,7 +1563,7 @@
 
           <t t-if="state.granting.mode === 'remove'">
             <p class="bza-hint bza-hint--lead">
-              <t t-esc="state.grantTarget.name + ' will no longer be able to do this. Anything they have already done stays exactly as it is.'"/>
+              <t t-esc="willNoLongerLine(state.grantTarget.name)"/>
             </p>
           </t>
           <t t-elif="state.granting.person">
@@ -1689,6 +1695,7 @@
       <div t-if="state.composer" class="bzk-modal-scrim"
            t-on-click="closeComposer">
         <div class="bzk-modal bza-modal bza-modal--wide" t-on-click.stop=""
+             data-a="ax-builder"
              role="dialog" aria-modal="true" aria-label="New role">
           <div class="bza-modal-h">
             <div class="bza-modal-ic"><t t-out="ic('plus',17)"/></div>
@@ -1728,7 +1735,7 @@
                 <button t-attf-class="bza-chip {{ !state.composer.area ? 'is-on' : '' }}"
                         t-on-click="() => this.setComposerArea('')">
                   <t t-if="state.preview and state.preview.area_label"
-                     t-esc="'Worked out — ' + state.preview.area_label"/>
+                     t-esc="workedOutLine(state.preview.area_label)"/>
                   <t t-else="">Worked out for you</t>
                 </button>
                 <button t-foreach="state.options.areas or []" t-as="ar"
@@ -1854,10 +1861,10 @@
 
       <!-- ========================= the hand-over dialog ========================= -->
       <div t-if="state.delegating" class="bzk-modal-scrim" t-on-click="closeDelegate">
-        <div class="bzk-modal bza-modal" t-on-click.stop="">
+        <div class="bzk-modal bza-modal" data-a="ax-handover-dialog" t-on-click.stop="">
         <div class="bza-modal-h">
           <h3 t-if="handingForOther"
-              t-esc="'Hand over ' + state.hand.for_name + '\'s access'"/>
+              t-esc="handOverForLine(state.hand.for_name)"/>
           <h3 t-else="">Hand your access over</h3>
           <button class="bzk-btn ghost" t-on-click="closeDelegate">
             <t t-out="ic('x',16)"/>
@@ -1913,7 +1920,7 @@
           <div t-elif="!handOffered.length and handingForOther"
                class="bza-mini-empty">
             <t t-out="ic('idCard',22)"/>
-            <p t-esc="state.hand.for_name + ' does not hold any of the roles on this board, so there is nothing of theirs to hand over.'"/>
+            <p t-esc="nothingToHandLine(state.hand.for_name)"/>
           </div>
           <div t-elif="!handOffered.length" class="bza-mini-empty">
             <t t-out="ic('idCard',22)"/>

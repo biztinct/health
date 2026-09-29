@@ -56,4 +56,32 @@ can never hand out the system administrator permission.</field>
         <field name="perm_unlink">0</field>
     </record>
 
+    <!-- A DOCTOR READS THE VISITS ARRANGED FOR THEM (AR-3 G1, owner ruling
+         2026-09-29). The Doctor role carries "See the clinic's patients and
+         visits", and the Bookings tab is on a doctor's menu — but the bookings
+         model was readable only by the nursing tier and up, so the tab would
+         have opened onto an access error (the door check refused it in M2).
+         READ ONLY, and only the visits in their own area on which they are the
+         primary doctor, the primary nurse or an assigned member of staff: the
+         same rows the nursing rule `rule_fso_healthcare_staff` gives a nurse,
+         without its write or create. Doctors who also hold a wider tier keep
+         what that tier gives them (rules of different groups are an OR). -->
+    <record id="rule_fso_doctor_own_visits" model="ir.rule">
+        <field name="name">Healthcare: a doctor reads the visits arranged for them</field>
+        <field name="model_id" ref="health_fieldservice.model_health_fieldservice_order"/>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_doctor'))]"/>
+        <field name="domain_force">[
+            '&amp;',
+            '&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False),
+            '|', '|',
+            ('assignment_ids.staff_id.user_id', '=', user.id),
+            ('primary_doctor_id.user_id', '=', user.id),
+            ('primary_nurse_id.user_id', '=', user.id)
+        ]</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">0</field>
+        <field name="perm_create">0</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
 </odoo>

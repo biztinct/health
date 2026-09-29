@@ -21,6 +21,7 @@
    what it CAN answer here, by name.
    ========================================================================== */
 import { Component, markup, onMounted, onWillStart, onWillUnmount, useRef, useState } from "@odoo/owl";
+import { user } from "@web/core/user";
 import { useBus, useService } from "@web/core/utils/hooks";
 
 import { RT, T, tx, esc, ic } from "../engine/runtime";
@@ -427,7 +428,9 @@ export class CoachHost extends Component {
     _restoreLang() {
         try {
             const p = JSON.parse(window.localStorage.getItem(LOCAL_PREFS) || "{}");
-            const sessionLang = window.odoo?.session_info?.user_context?.lang || "";
+            // AR-3: the person's own language. `odoo.session_info` does not exist in
+            // this build, so a Vietnamese reader always started in English.
+            const sessionLang = user.lang || "";
             RT.lang = p.lang || (sessionLang.startsWith("vi") ? "vi" : "en");
         } catch {
             RT.lang = "en";

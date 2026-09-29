@@ -22,8 +22,8 @@
                     <div class="vu-rail-brandsub">CMS</div>
                 </div>
                 <button type="button" class="vu-rail-toggle vu-rail-label"
-                        t-att-title="isCollapsed ? 'Keep the menu open' : 'Show icons only'"
-                        t-att-aria-label="isCollapsed ? 'Keep the menu open' : 'Show icons only'"
+                        t-att-title="railToggleLabel"
+                        t-att-aria-label="railToggleLabel"
                         t-att-aria-pressed="isCollapsed ? 'false' : 'true'"
                         t-on-click.stop="toggleRail">
                     <i t-attf-class="fa #{isCollapsed ? 'fa-angle-double-right' : 'fa-angle-double-left'}"/>
@@ -87,9 +87,8 @@
             <t t-if="state.catchment.can_switch">
                 <select class="vu-catchment-select" aria-label="Catchment Area"
                         t-on-change="onCatchmentChange">
-                    <option value="" t-att-selected="isCatchmentPicked('') or undefined">
-                        My area (<t t-esc="state.catchment.current_name"/>)
-                    </option>
+                    <option value="" t-att-selected="isCatchmentPicked('') or undefined"
+                            t-esc="myAreaLabel"/>
                     <t t-foreach="state.catchment.options" t-as="opt" t-key="opt.id">
                         <option t-att-value="opt.id"
                                 t-att-selected="isCatchmentPicked(opt.id) or undefined"

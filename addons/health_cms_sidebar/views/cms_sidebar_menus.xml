@@ -2,10 +2,12 @@
 <odoo>
 
     <!-- Unified CMS root menu in app switcher — sequence 1 so it is the first
-         app and opens by default on login (when the user has access). -->
+         app and opens by default on login (when the user has access).
+         It opens HOME (AR-3 G3): each person's own landing, resolved on the
+         server from their roles, never one dashboard for everybody. -->
     <menuitem id="menu_cms_root"
               name="Viet UC CMS"
-              action="health_fieldservice.action_ops_command_center"
+              action="action_cms_home"
               web_icon="health_cms_sidebar,static/description/icon.png"
               sequence="1"/>
 

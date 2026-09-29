@@ -45,9 +45,9 @@ const RAIL_MODES = ["auto", "rail", "drawer"];
 const SYNTHETIC_HOME = {
     id: "home",
     key: HOME_KEY,
-    name: "Home",
+    name: _t("Home"),
     icon: "fa fa-home",
-    items: [{ id: "home", name: "Home", icon: "fa fa-home", action_tag: HOME_TAG, children: [] }],
+    items: [{ id: "home", name: _t("Home"), icon: "fa fa-home", action_tag: HOME_TAG, children: [] }],
 };
 
 // ---------------------------------------------------------------------------
@@ -358,6 +358,17 @@ export class CmsSidebar extends Component {
 
     railLabel(name) {
         return railLabel(name);
+    }
+
+    /** The « / » button's words (AR-3: one translatable string each, not an
+     *  English ternary inside the template, which no catalogue can reach). */
+    get railToggleLabel() {
+        return this.isCollapsed ? _t("Keep the menu open") : _t("Show icons only");
+    }
+
+    /** "My area (Hà Nội)" as ONE sentence with the area in it. */
+    get myAreaLabel() {
+        return _t("My area (%s)", this.state.catchment.current_name || "");
     }
 
     isRailActive(section) {

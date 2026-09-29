@@ -11,3 +11,4 @@ from . import test_person_actions
 from . import test_debug_block
 from . import test_access_ar1
 from . import test_access_ar2
+from . import test_access_ar3

@@ -368,6 +368,9 @@ class TestConsolidatedMenu(TransactionCase):
                                raise_if_not_found=False)
         if journey:
             allowed.add(journey.id)
+        # AR-3 G2: a platform-only entry carries no role and is drawn for
+        # the platform administrator alone — the opposite of open to all.
+        allowed |= self.Item.sudo()._platform_only_ids()
         open_ = [i.name for i in self.Item.sudo().search([])
                  if i.id not in allowed and not i.effective_biz_role_ids]
         self.assertFalse(open_, 'open to everybody: %s' % open_)

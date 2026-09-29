@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of the Viet Uc Care white-label layer. License LGPL-3. -->
+<odoo>
+    <!-- THE FIRST TITLE THE BROWSER SEES IS THE BRAND'S.
+
+         `web.layout` falls back to the framework's own name when a page passes
+         no title, and `web_debranding`'s override left the tag EMPTY instead,
+         so the web client's start page was untitled until its scripts ran
+         (ledger §5.236). A page that names itself keeps its own title; one that
+         does not reads the brand. Inherits after `web_debranding` (this module
+         depends on it), so this replacement is the one that stands. -->
+    <template id="web_layout_brand_title" inherit_id="web.layout" priority="99">
+        <xpath expr="//title" position="replace">
+            <title t-out="title or (request and request.env['ir.config_parameter'].sudo().get_param('biz_debranding.brand_name')) or 'Viet Uc Care'"/>
+        </xpath>
+    </template>
+</odoo>

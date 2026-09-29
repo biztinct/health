@@ -2206,6 +2206,632 @@
         <field name="body">The role gate on each Operations sidebar leaf.</field>
     </record>
 
+    <record id="intent_access_give" model="learn.intent">
+        <field name="key">access_give</field>
+        <field name="label">How do I give somebody access?</field>
+        <field name="screens">admin_access</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">ax-people-search</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_access_give_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_give"/>
+        <field name="text">give access</field>
+    </record>
+
+    <record id="intent_access_give_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_give"/>
+        <field name="text">give someone access</field>
+    </record>
+
+    <record id="intent_access_give_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_give"/>
+        <field name="text">give somebody access</field>
+    </record>
+
+    <record id="intent_access_give_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_give"/>
+        <field name="text">give a role</field>
+    </record>
+
+    <record id="intent_access_give_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_give"/>
+        <field name="text">how do i give lan the nurse role</field>
+    </record>
+
+    <record id="intent_access_give_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_give"/>
+        <field name="text">give lan the nurse role</field>
+    </record>
+
+    <record id="intent_access_give_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_give"/>
+        <field name="text">add a role</field>
+    </record>
+
+    <record id="intent_access_give_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_give"/>
+        <field name="text">cấp quyền</field>
+    </record>
+
+    <record id="intent_access_give_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_give"/>
+        <field name="text">cấp quyền cho</field>
+    </record>
+
+    <record id="intent_access_give_p09" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_give"/>
+        <field name="text">gán vai trò</field>
+    </record>
+
+    <record id="intent_access_give_p10" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_give"/>
+        <field name="text">giao vai trò</field>
+    </record>
+
+    <record id="intent_access_give_p11" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_give"/>
+        <field name="text">cho lan vai trò y tá</field>
+    </record>
+
+    <record id="intent_access_give_p12" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_give"/>
+        <field name="text">How do I give somebody access?</field>
+    </record>
+
+    <record id="intent_access_give_p13" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_give"/>
+        <field name="text">Làm sao để cấp quyền cho một người?</field>
+    </record>
+
+    <record id="intent_access_give_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_access_give"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Access here is a role, given to a person. A role is a set of abilities with a name somebody can say out loud — Nurse, Accountant, Front desk — so you never tick permissions one by one.</field>
+    </record>
+
+    <record id="intent_access_give_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_access_give"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">steps</field>
+    </record>
+
+    <record id="intent_access_give_b020_s00" model="learn.intent.step">
+        <field name="block_id" ref="intent_access_give_b020"/>
+        <field name="sequence">10</field>
+        <field name="text">Open the People lens and find the person by name.</field>
+        <field name="anchor">ax-people-search</field>
+    </record>
+
+    <record id="intent_access_give_b020_s01" model="learn.intent.step">
+        <field name="block_id" ref="intent_access_give_b020"/>
+        <field name="sequence">20</field>
+        <field name="text">Press Give a role on their passport, choose the role and say why.</field>
+        <field name="anchor">ax-give</field>
+    </record>
+
+    <record id="intent_access_give_b020_s02" model="learn.intent.step">
+        <field name="block_id" ref="intent_access_give_b020"/>
+        <field name="sequence">30</field>
+        <field name="text">Read their menu on the passport — it now shows exactly what the role opens.</field>
+        <field name="anchor">ax-passmenu</field>
+    </record>
+
+    <record id="intent_access_give_b020_s03" model="learn.intent.step">
+        <field name="block_id" ref="intent_access_give_b020"/>
+        <field name="sequence">40</field>
+        <field name="text">Going on leave yourself? Hand my access over lends your roles for set dates, and they come back on their own.</field>
+        <field name="anchor">ax-handover</field>
+    </record>
+
+    <record id="intent_access_give_b020_s04" model="learn.intent.step">
+        <field name="block_id" ref="intent_access_give_b020"/>
+        <field name="sequence">50</field>
+        <field name="text">To take a role away, press Take back beside it on the passport.</field>
+        <field name="anchor">ax-takeback</field>
+    </record>
+
+    <record id="intent_access_give_b020_s05" model="learn.intent.step">
+        <field name="block_id" ref="intent_access_give_b020"/>
+        <field name="sequence">60</field>
+        <field name="text">Every grant, hand-over and take-back is written down — Their history shows it.</field>
+        <field name="anchor">ax-history</field>
+    </record>
+
+    <record id="intent_access_give_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_access_give"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">Give the smallest role that does the job. A role is held in full or not at all: somebody missing one of its abilities does not hold it, and its screens stay closed to them.</field>
+    </record>
+
+    <record id="intent_access_give_b040" model="learn.intent.block">
+        <field name="intent_id" ref="intent_access_give"/>
+        <field name="sequence">40</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">The People lens and the passport on the Access home.</field>
+    </record>
+
+    <record id="intent_access_holders" model="learn.intent">
+        <field name="key">access_holders</field>
+        <field name="label">Who holds this role?</field>
+        <field name="screens">admin_access</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">ax-role</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_access_holders_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_holders"/>
+        <field name="text">who holds this role</field>
+    </record>
+
+    <record id="intent_access_holders_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_holders"/>
+        <field name="text">who holds</field>
+    </record>
+
+    <record id="intent_access_holders_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_holders"/>
+        <field name="text">who has this role</field>
+    </record>
+
+    <record id="intent_access_holders_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_holders"/>
+        <field name="text">who has the nurse role</field>
+    </record>
+
+    <record id="intent_access_holders_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_holders"/>
+        <field name="text">ai đang giữ vai trò</field>
+    </record>
+
+    <record id="intent_access_holders_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_holders"/>
+        <field name="text">ai giữ vai trò</field>
+    </record>
+
+    <record id="intent_access_holders_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_holders"/>
+        <field name="text">ai có vai trò</field>
+    </record>
+
+    <record id="intent_access_holders_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_holders"/>
+        <field name="text">Who holds this role?</field>
+    </record>
+
+    <record id="intent_access_holders_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_holders"/>
+        <field name="text">Ai đang giữ vai trò này?</field>
+    </record>
+
+    <record id="intent_access_holders_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_access_holders"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Open the role on the Roles lens. Its card says what it lets somebody do, which screens it opens, and who holds it — including anybody holding it for a while through a hand-over.</field>
+    </record>
+
+    <record id="intent_access_holders_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_access_holders"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">steps</field>
+    </record>
+
+    <record id="intent_access_holders_b020_s00" model="learn.intent.step">
+        <field name="block_id" ref="intent_access_holders_b020"/>
+        <field name="sequence">10</field>
+        <field name="text">Choose the Roles lens.</field>
+        <field name="anchor">ax-tabs</field>
+    </record>
+
+    <record id="intent_access_holders_b020_s01" model="learn.intent.step">
+        <field name="block_id" ref="intent_access_holders_b020"/>
+        <field name="sequence">20</field>
+        <field name="text">Press the role's card to open it out.</field>
+        <field name="anchor">ax-role</field>
+    </record>
+
+    <record id="intent_access_holders_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_access_holders"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">The role cards on the Access home.</field>
+    </record>
+
+    <record id="intent_access_handover" model="learn.intent">
+        <field name="key">access_handover</field>
+        <field name="label">How do I hand my access over while I am away?</field>
+        <field name="screens">admin_access</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">ax-handover</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_access_handover_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_handover"/>
+        <field name="text">hand over my access</field>
+    </record>
+
+    <record id="intent_access_handover_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_handover"/>
+        <field name="text">hand over</field>
+    </record>
+
+    <record id="intent_access_handover_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_handover"/>
+        <field name="text">handover</field>
+    </record>
+
+    <record id="intent_access_handover_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_handover"/>
+        <field name="text">going on leave</field>
+    </record>
+
+    <record id="intent_access_handover_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_handover"/>
+        <field name="text">cover for me</field>
+    </record>
+
+    <record id="intent_access_handover_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_handover"/>
+        <field name="text">bàn giao quyền</field>
+    </record>
+
+    <record id="intent_access_handover_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_handover"/>
+        <field name="text">bàn giao</field>
+    </record>
+
+    <record id="intent_access_handover_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_handover"/>
+        <field name="text">nghỉ phép ai thay</field>
+    </record>
+
+    <record id="intent_access_handover_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_handover"/>
+        <field name="text">ai làm thay</field>
+    </record>
+
+    <record id="intent_access_handover_p09" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_handover"/>
+        <field name="text">How do I hand my access over while I am away?</field>
+    </record>
+
+    <record id="intent_access_handover_p10" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_handover"/>
+        <field name="text">Làm sao để bàn giao quyền khi tôi vắng mặt?</field>
+    </record>
+
+    <record id="intent_access_handover_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_access_handover"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">A hand-over lends your roles to a colleague for set dates. It ends by itself on the last day, and your own access is never taken away.</field>
+    </record>
+
+    <record id="intent_access_handover_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_access_handover"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">steps</field>
+    </record>
+
+    <record id="intent_access_handover_b020_s00" model="learn.intent.step">
+        <field name="block_id" ref="intent_access_handover_b020"/>
+        <field name="sequence">10</field>
+        <field name="text">Press Hand my access over.</field>
+        <field name="anchor">ax-handover</field>
+    </record>
+
+    <record id="intent_access_handover_b020_s01" model="learn.intent.step">
+        <field name="block_id" ref="intent_access_handover_b020"/>
+        <field name="sequence">20</field>
+        <field name="text">Choose who covers, which of your roles, and until when.</field>
+        <field name="anchor">ax-handover-dialog</field>
+    </record>
+
+    <record id="intent_access_handover_b020_s02" model="learn.intent.step">
+        <field name="block_id" ref="intent_access_handover_b020"/>
+        <field name="sequence">30</field>
+        <field name="text">Back early? Press Take it back now on the Hand-overs lens.</field>
+        <field name="anchor">ax-handover-end</field>
+    </record>
+
+    <record id="intent_access_handover_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_access_handover"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">Do not give your role away for a holiday. A role you give stays given; a hand-over comes back on its own.</field>
+    </record>
+
+    <record id="intent_access_handover_b040" model="learn.intent.block">
+        <field name="intent_id" ref="intent_access_handover"/>
+        <field name="sequence">40</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">The hand-over dialog and the Hand-overs lens on the Access home.</field>
+    </record>
+
+    <record id="intent_access_seeas" model="learn.intent">
+        <field name="key">access_seeas</field>
+        <field name="label">What does somebody else's menu look like?</field>
+        <field name="screens">admin_access</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">ax-seeas</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_access_seeas_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_seeas"/>
+        <field name="text">see it as</field>
+    </record>
+
+    <record id="intent_access_seeas_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_seeas"/>
+        <field name="text">what does their menu look like</field>
+    </record>
+
+    <record id="intent_access_seeas_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_seeas"/>
+        <field name="text">what can they see</field>
+    </record>
+
+    <record id="intent_access_seeas_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_seeas"/>
+        <field name="text">their menu</field>
+    </record>
+
+    <record id="intent_access_seeas_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_seeas"/>
+        <field name="text">xem như</field>
+    </record>
+
+    <record id="intent_access_seeas_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_seeas"/>
+        <field name="text">họ thấy gì</field>
+    </record>
+
+    <record id="intent_access_seeas_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_seeas"/>
+        <field name="text">menu của họ</field>
+    </record>
+
+    <record id="intent_access_seeas_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_seeas"/>
+        <field name="text">What does somebody else's menu look like?</field>
+    </record>
+
+    <record id="intent_access_seeas_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_seeas"/>
+        <field name="text">Menu của người khác trông như thế nào?</field>
+    </record>
+
+    <record id="intent_access_seeas_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_access_seeas"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Press See it as and choose the person. Every lens is then drawn the way they would see it, and nothing you do changes because of it.</field>
+    </record>
+
+    <record id="intent_access_seeas_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_access_seeas"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">steps</field>
+    </record>
+
+    <record id="intent_access_seeas_b020_s00" model="learn.intent.step">
+        <field name="block_id" ref="intent_access_seeas_b020"/>
+        <field name="sequence">10</field>
+        <field name="text">Press See it as, then type their name.</field>
+        <field name="anchor">ax-seeas</field>
+    </record>
+
+    <record id="intent_access_seeas_b020_s01" model="learn.intent.step">
+        <field name="block_id" ref="intent_access_seeas_b020"/>
+        <field name="sequence">20</field>
+        <field name="text">Read their menu on the passport.</field>
+        <field name="anchor">ax-passmenu</field>
+    </record>
+
+    <record id="intent_access_seeas_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_access_seeas"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">See it as, on the Access home.</field>
+    </record>
+
+    <record id="intent_access_newrole" model="learn.intent">
+        <field name="key">access_newrole</field>
+        <field name="label">How do I make a new role?</field>
+        <field name="screens">admin_access</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">ax-newrole</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_access_newrole_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_newrole"/>
+        <field name="text">new role</field>
+    </record>
+
+    <record id="intent_access_newrole_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_newrole"/>
+        <field name="text">create a role</field>
+    </record>
+
+    <record id="intent_access_newrole_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_newrole"/>
+        <field name="text">make a role</field>
+    </record>
+
+    <record id="intent_access_newrole_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_newrole"/>
+        <field name="text">add a new role</field>
+    </record>
+
+    <record id="intent_access_newrole_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_newrole"/>
+        <field name="text">tạo vai trò</field>
+    </record>
+
+    <record id="intent_access_newrole_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_newrole"/>
+        <field name="text">vai trò mới</field>
+    </record>
+
+    <record id="intent_access_newrole_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_newrole"/>
+        <field name="text">How do I make a new role?</field>
+    </record>
+
+    <record id="intent_access_newrole_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_newrole"/>
+        <field name="text">Làm sao để tạo một vai trò mới?</field>
+    </record>
+
+    <record id="intent_access_newrole_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_access_newrole"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Press New role. Give it a name somebody can say out loud, choose its area and tick the abilities it carries. The builder shows the menu a holder of the role would see before you save.</field>
+    </record>
+
+    <record id="intent_access_newrole_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_access_newrole"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">steps</field>
+    </record>
+
+    <record id="intent_access_newrole_b020_s00" model="learn.intent.step">
+        <field name="block_id" ref="intent_access_newrole_b020"/>
+        <field name="sequence">10</field>
+        <field name="text">Press New role.</field>
+        <field name="anchor">ax-newrole</field>
+    </record>
+
+    <record id="intent_access_newrole_b020_s01" model="learn.intent.step">
+        <field name="block_id" ref="intent_access_newrole_b020"/>
+        <field name="sequence">20</field>
+        <field name="text">Name it, choose its area and tick its abilities.</field>
+        <field name="anchor">ax-builder</field>
+    </record>
+
+    <record id="intent_access_newrole_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_access_newrole"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">A new role is given to nobody until you give it to somebody.</field>
+    </record>
+
+    <record id="intent_access_newrole_b040" model="learn.intent.block">
+        <field name="intent_id" ref="intent_access_newrole"/>
+        <field name="sequence">40</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">The role builder on the Access home.</field>
+    </record>
+
+    <record id="intent_access_ask" model="learn.intent">
+        <field name="key">access_ask</field>
+        <field name="label">I cannot see a screen I need — who do I ask?</field>
+        <field name="screens">*</field>
+        <field name="dynamic">none</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_access_ask_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_ask"/>
+        <field name="text">i cannot see a screen</field>
+    </record>
+
+    <record id="intent_access_ask_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_ask"/>
+        <field name="text">i can't see a screen</field>
+    </record>
+
+    <record id="intent_access_ask_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_ask"/>
+        <field name="text">how do i get access</field>
+    </record>
+
+    <record id="intent_access_ask_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_ask"/>
+        <field name="text">ask for access</field>
+    </record>
+
+    <record id="intent_access_ask_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_ask"/>
+        <field name="text">request access</field>
+    </record>
+
+    <record id="intent_access_ask_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_ask"/>
+        <field name="text">xin quyền</field>
+    </record>
+
+    <record id="intent_access_ask_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_ask"/>
+        <field name="text">không thấy màn hình</field>
+    </record>
+
+    <record id="intent_access_ask_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_ask"/>
+        <field name="text">làm sao có quyền</field>
+    </record>
+
+    <record id="intent_access_ask_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_ask"/>
+        <field name="text">I cannot see a screen I need — who do I ask?</field>
+    </record>
+
+    <record id="intent_access_ask_p09" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_access_ask"/>
+        <field name="text">Tôi không thấy màn hình mình cần — tôi hỏi ai?</field>
+    </record>
+
+    <record id="intent_access_ask_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_access_ask"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">What you see on the left menu is the menu of the roles you hold. A screen that is not there belongs to a role you do not hold yet.</field>
+    </record>
+
+    <record id="intent_access_ask_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_access_ask"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">how</field>
+        <field name="body">Ask {{accessRequestPath}} for the role your work needs, and say which screen and why. If it is only for a few days, a colleague who holds that role can hand it over to you.</field>
+    </record>
+
+    <record id="intent_access_ask_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_access_ask"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">The role gates on the left menu, set on the Access home.</field>
+    </record>
+
     <record id="intent_fin_outstanding_vs_overdue" model="learn.intent">
         <field name="key">fin_outstanding_vs_overdue</field>
         <field name="label">What is the difference between outstanding and overdue?</field>

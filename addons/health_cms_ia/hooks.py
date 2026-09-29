@@ -67,6 +67,8 @@ import logging
 
 from odoo import SUPERUSER_ID
 
+from .menu_vi import apply_names_vi
+
 _logger = logging.getLogger(__name__)
 
 M = 'health_cms_ia'
@@ -348,7 +350,6 @@ EXACT = {
     'health_cms_sidebar.item_admin_settings': (OWNER, ADMIN),
     'health_cms_sidebar.item_admin_data_lifecycle': (OWNER, ADMIN),
     'health_care_command_channels.item_golive_studio': (OWNER, ADMIN),
-    'health_google_ads.item_google_ads_platform': (OWNER, ADMIN),
     'health_web_leads.item_web_leads_connector': (OWNER, ADMIN),
 }
 
@@ -361,12 +362,18 @@ EXTRA = {
     'health_cms_sidebar.item_ops_workload': (NURSE,),
 }
 
+PLATFORM_ONLY_GOOGLE_ADS = 'health_google_ads.item_google_ads_platform'
+
 #: Left exactly as they are.
 UNTOUCHED = (
     # "Customers stays Owner-only" — the platform's own list of clinics.
     'health_tenancy.item_admin_customers',
     # The page a switched-off part of the product lands on; never a menu row.
     'health_tenancy.item_feature_off_shell',
+    # The platform's own Google Ads application (owner ruling 2026-09-29,
+    # AR-3 G2): drawn for the platform administrator ONLY, by
+    # `health_access.PLATFORM_ONLY_ITEMS`, so it carries no role at all.
+    PLATFORM_ONLY_GOOGLE_ADS,
 )
 
 #: The records a DASHBOARD reads, for the door check. A client action has no
@@ -402,6 +409,21 @@ PHONE_ABILITIES = {
 }
 PHONE_REASON = ('the phone screens on the consolidated menu (owner ruling, '
                 'menu phase M2)')
+
+# =============================================================================
+# AR-3 — THE M2 FOLLOW-UPS (owner rulings 2026-09-29).
+# =============================================================================
+#: G1: the Doctor role reads the clinic's patients and visits, so the Bookings
+#: tab (EXTRA above) opens for a doctor. The door check refused it in M2: the
+#: bookings model was readable only by the nursing tier and up. `health_access`
+#: now gives the doctor tier read access to the visits arranged for them.
+DOCTOR_ABILITIES = {
+    'care-base': (DOCTOR,),
+}
+DOCTOR_REASON = ('the Bookings tab for doctors (owner ruling 2026-09-29, '
+                 'access phase AR-3)')
+#: G1: the entries a doctor is added to once the door opens, and only then.
+DOCTOR_ENTRIES = ('health_cms_sidebar.item_ops_bookings',)
 
 
 # =============================================================================
@@ -440,7 +462,12 @@ def _xmlid_of(env, record):
 # 1. THE PHONE ABILITIES, onto the roles — nobody stops holding their role.
 # =============================================================================
 def grant_phone_abilities(env):
-    """Write "Handle calls" and "Set up the phone system" onto their roles.
+    """Write "Handle calls" and "Set up the phone system" onto their roles."""
+    return grant_abilities(env, PHONE_ABILITIES, PHONE_REASON)
+
+
+def grant_abilities(env, table, reason):
+    """Write each ability of `table` (`{key: role xml-ids}`) onto its roles.
 
     THE `_carry_analytics` LESSON (health_access): adding an ability makes a
     role BIGGER, and holding a role means holding all of it — so the people who
@@ -457,7 +484,7 @@ def grant_phone_abilities(env):
     facade = env['biz.access'].sudo().with_user(SUPERUSER_ID)
     Users = env['res.users'].sudo()
     report = {'roles': [], 'people': []}
-    for key, role_xmlids in PHONE_ABILITIES.items():
+    for key, role_xmlids in table.items():
         ability = Ability.search([('technical_key', '=', key)], limit=1)
         if not ability or not ability.group_ids:
             _logger.warning('health_cms_ia: the "%s" ability is not on this '
@@ -483,16 +510,16 @@ def grant_phone_abilities(env):
                 if set(role.group_ids.ids) <= set(user.all_group_ids.ids):
                     continue
                 try:
-                    facade.grant(role.id, user.id, reason=PHONE_REASON)
+                    facade.grant(role.id, user.id, reason=reason)
                     user.invalidate_recordset(['group_ids', 'all_group_ids'])
                     report['people'].append('%s (%s)' % (user.login, role.name))
                 except Exception:                               # noqa: BLE001
                     _logger.warning(
                         'health_cms_ia: %s could not be given the rest of '
                         '"%s"', user.login, role.name, exc_info=True)
-    _logger.info('health_cms_ia: phone abilities — %s role change(s): %s; %s '
+    _logger.info('health_cms_ia: abilities (%s) — %s role change(s): %s; %s '
                  'person(s) given the missing permission so as to keep their '
-                 'role: %s', len(report['roles']),
+                 'role: %s', reason, len(report['roles']),
                  ', '.join(report['roles']) or 'none', len(report['people']),
                  ', '.join(report['people']) or 'none')
     return report
@@ -771,6 +798,55 @@ def rewire_features(env, log):
 
 
 # =============================================================================
+# AR-3 G1/G2 — the two M2 follow-ups that touch a gate.
+# =============================================================================
+def apply_followups(env, log):
+    """G1: a doctor opens Bookings. G2: the Google Ads application is the
+    platform's alone. Both idempotent, both run on both paths (post_init and
+    the 19.0.1.1.0 migration), both logged.
+
+    G1 ADDS, NEVER REPLACES: Doctor joins the entry's roles only when a doctor
+    can actually open the screen behind it (the door check — M2 refused it for
+    want of exactly this), and whatever else is written there stays. It is
+    written through `biz_role_ids` like every other gate.
+
+    G2 EMPTIES the entry's roles. An entry with no roles is normally open to
+    everybody; this one is on `health_access.PLATFORM_ONLY_ITEMS`, which draws
+    it for the platform administrator and nobody else, and keeps it active so
+    the administrator still reaches it from the menu.
+    """
+    grant = grant_abilities(env, DOCTOR_ABILITIES, DOCTOR_REASON)
+    log['doctor_roles'] = grant['roles']
+    log['doctor_people'] = grant['people']
+    doctor = _ref(env, DOCTOR)
+    if doctor:
+        for xmlid in DOCTOR_ENTRIES:
+            item = _item(env, xmlid)
+            if not item or doctor in item.biz_role_ids:
+                continue
+            if not can_open(env, doctor, item):
+                log['narrowed'].append('%s: not Doctor (cannot open %s)'
+                                       % (xmlid, door_model(env, item)))
+                continue
+            item.write({'biz_role_ids': [(4, doctor.id)]})
+            log['gates'].append('%s: + Doctor' % xmlid)
+    item = _item(env, PLATFORM_ONLY_GOOGLE_ADS)
+    if item:
+        vals = {}
+        if item.biz_role_ids:
+            vals['biz_role_ids'] = [(5, 0, 0)]
+        if not item.active and env.ref(item.action_xmlid or '',
+                                       raise_if_not_found=False):
+            vals['active'] = True
+        if vals:
+            log['gates'].append('%s: %s -> platform administrator only' % (
+                PLATFORM_ONLY_GOOGLE_ADS,
+                ', '.join(sorted(item.biz_role_ids.mapped('name'))) or 'none'))
+            item.write(vals)
+    env['cms.sidebar.item'].invalidate_model(['effective_biz_role_ids'])
+
+
+# =============================================================================
 # THE WHOLE THING
 # =============================================================================
 def consolidate_ia(env):
@@ -778,7 +854,7 @@ def consolidate_ia(env):
     log = {k: [] for k in ('section_renames', 'renames', 'moves', 'retired',
                            'matches', 'released', 'headings', 'gates',
                            'narrowed', 'refused_everyone', 'missing',
-                           'features')}
+                           'features', 'names_vi')}
     phone = grant_phone_abilities(env)
     apply_names(env, log)
     apply_moves(env, log)
@@ -787,6 +863,8 @@ def consolidate_ia(env):
     settle_headings(env, log)
     rewire_features(env, log)
     apply_gates(env, log)
+    apply_followups(env, log)
+    apply_names_vi(env, log)
     log['phone_roles'] = phone['roles']
     log['phone_people'] = phone['people']
     for key, rows in log.items():

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- THE FIRST SCREEN AFTER SIGNING IN IS EACH PERSON'S OWN (AR-3 G3).
+
+     The app the web client opens on sign-in is `menu_cms_root` (sequence 1),
+     and it used to open the Operations dashboard for everybody — so a nurse or
+     an accountant landed on a screen their own menu does not draw (ledger
+     §5.236). It now opens this client action, the same `cms_home` the Home
+     rail entry opens: `cms_sidebar.js` asks `cms.sidebar.item.home_action()`
+     where this person lands (health_access: by their roles) and goes there.
+
+     Updatable on purpose: the action is plumbing, not a clinic's data. -->
+<odoo>
+    <record id="action_cms_home" model="ir.actions.client">
+        <field name="name">Home</field>
+        <field name="tag">cms_home</field>
+    </record>
+</odoo>
