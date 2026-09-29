@@ -12,3 +12,4 @@ from . import test_ar1_clinic_admin
 from . import test_ar2_screens
 from . import test_menu_home
 from . import test_ar3_vietnamese
+from . import test_doctor_bookings
