@@ -29,6 +29,7 @@ const NATIVE_DEPENDENCIES = [
     { name: "assigned_staff_ids", type: "many2many" },
     { name: "lead_staff_id", type: "many2one" },
     { name: "total_price", type: "monetary" },
+    { name: "service_fee_vnd", type: "monetary" },
     { name: "currency_id", type: "many2one" },
     { name: "sale_order_id", type: "many2one" },
     { name: "invoice_id", type: "many2one" },
@@ -38,6 +39,15 @@ const NATIVE_DEPENDENCIES = [
 ];
 
 const STAFF_EXPECTED = ["confirmed", "assigned"];
+const PRE_VISIT_STATES = ["confirmed", "assigned"];
+
+// What the client pays: the quote total (service_fee_vnd) plus the extra
+// charges. total_price is base_price + charges, and base_price is a legacy
+// field that is 0 on every booking, so total_price alone reads 0 on almost
+// every priced booking.
+function bookingPrice(data) {
+    return (Number(data.service_fee_vnd) || 0) + (Number(data.total_price) || 0);
+}
 const PAID_STATES = ["completed", "completed_pending_invoice", "closed"];
 
 /** Calendar-day difference between `dt` and today, in the browser's calendar
@@ -204,7 +214,7 @@ export class WsBookingGlance extends Component {
         });
 
         // Price
-        const price = Number(f.data.total_price) || 0;
+        const price = bookingPrice(f.data);
         rows.push({
             key: "price",
             label: _t("Price"),
@@ -257,8 +267,8 @@ export class WsBookingGlance extends Component {
             alerts.push({ key: "staff", tone: "warn", text });
         }
 
-        // 2. a price of zero on a live booking
-        if (!["draft", "cancelled"].includes(f.state) && !(Number(f.data.total_price) || 0)) {
+        // 2. a price of zero on a booking whose visit is still ahead
+        if (PRE_VISIT_STATES.includes(f.state) && !bookingPrice(f.data)) {
             alerts.push({
                 key: "price",
                 tone: "warn",
