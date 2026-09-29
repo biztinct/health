@@ -3478,3 +3478,88 @@ a no-op.
     the start page still opens the Operations dashboard for everybody, so a
     nurse lands on a screen her menu no longer draws until she presses Home.
     (MENU M2.)
+- **§5.237 — `odoo-bin i18n export` reads EVERY copy of a module it can find,
+    so a practice copy's export carries strings the release deleted.** With a
+    private `addons_path` (and even with a config naming nothing but a
+    symlinked tree) the export of `biz_access` still listed `" and "` — a
+    `_t()` AR-3 removed from `access_board.js`, still present in the LIVE copy
+    under `/odoo/odoo-server/addons`. The exporter walks the whole addons
+    namespace, not the module's resolved path. Export, then diff the `_t(`
+    literals of the live file against the local one and drop what only the
+    live copy has (AR-3 dropped two: `" and "`, `"My area ("`). Delete the
+    module's own `i18n/*.po` from the copy before exporting as well, or its old
+    entries ride along. The export is still the right source: every entry
+    arrives with its `#. module:`, its marker and its occurrence exactly as the
+    loader reads them (§29/§5.58/§5.67 satisfied by construction). (ACCESS AR-3.)
+- **§5.238 — the string extractor takes the NEXT tuple's bare key as a msgid
+    after an in-tuple `_lt()` call.** `[('clinical', _lt('Clinical care')),
+    ('front_desk', _lt('Front desk & CRM')), …]` exported `front_desk`,
+    `operations`, `finance` and `admin` as four extra `odoo-python` msgids.
+    Harmless in the file, wrong in a catalogue a translator reads. Give each
+    lazy label its own module constant and build the tuples from the
+    constants. (ACCESS AR-3.)
+- **§5.239 — a label an APPLICATION hands to a GENERIC module is translated in
+    the generic module's catalogue, which has no product words, so it never
+    translates.** `biz_access.area_label` called `env._(label)`; `env._` finds
+    its module from the calling frame, i.e. `biz_access`, and the clinic's
+    "Clinical care" lives in `health_access`. Fix without putting product words
+    in the generic module: the application registers `_lt()` labels made with
+    its OWN `LazyTranslate(__name__)`; `register_areas` keeps the English
+    source (every comparison and export reads that) and remembers the
+    registering module; `area_label` translates with `get_translation(module,
+    lang, source)`; the Selection offers `area_selection(env)`. Same trap for
+    any registry of labels — person actions, palette cards, lens names.
+    (ACCESS AR-3.)
+- **§5.240 — "the ability that reads bookings" was not one.** The owner ruled
+    "give the Doctor role *See the clinic's patients and visits* so Bookings
+    appears"; that ability wraps `group_healthcare_base`, which carries NO
+    access to `health.fieldservice.order` (nurse tier and up only), and the
+    doctor tier already implies it — so the grant alone changes nothing and the
+    door check keeps Bookings off a doctor's menu (M2 refused it for exactly
+    this). Ten pure doctors on the master could not read bookings. AR-3 gave
+    the doctor tier a READ-ONLY access line plus a record rule mirroring the
+    nurse rule (own area; primary doctor, primary nurse or assigned), so a
+    doctor sees the visits arranged for them and changes none; then the gate.
+    Before promising a menu entry to a role, ask `role_can_read` for the model
+    behind it — a sentence on an ability is not an ACL. (ACCESS AR-3.)
+- **§5.241 — on this menu "no role" means EVERYBODY, so "gate it to no role
+    and keep it active" needs a rule of its own.** An entry with empty
+    `biz_role_ids` is drawn for everybody (or, inside a gated block, for the
+    block's roles). The Google Ads application (a screen only the system
+    administrator can open) was drawn for Owner and Admin because M2's "Owner
+    and Admin keep what was open to all" rule skips the door check. AR-3 added
+    `health_access.PLATFORM_ONLY_ITEMS`: such an entry inherits nothing (its
+    effective roles are its own written ones), is left out of its heading's
+    derived gate, is drawn only through the administrator short-circuit, and
+    tells the Screens lens it asks for `base.group_system` so the lens says
+    "nobody" rather than "everybody". (ACCESS AR-3.)
+- **§5.242 — the tab read the framework's name from TWO places while the page
+    loaded.** (a) `web.layout`'s `<title t-esc="title or 'Odoo'"/>` —
+    `web_debranding` had replaced it with an EMPTY `t-out="title"`, so the start
+    page was untitled; (b) the title service's own fallback,
+    `Object.values(parts).join(" - ") || "Odoo"`, which `web_debranding` hits
+    on every load by BLANKING its part in `setup()` and filling it after an ORM
+    round trip. `biz_debranding` now overrides the layout title (priority 99,
+    after `web_debranding`) with `title or <brand_name>`, puts `biz_brand_name`
+    in `session_info`, and sets the title part from it synchronously in the
+    same `WebClient.setup` — so no paint ever has an empty part list. The white-
+    label rule covers the browser tab. (ACCESS AR-3 G4.)
+- **§5.243 — sixteen macOS `._*` files were sitting in the LIVE addons tree,
+    and one of them failed the repo-wide catalogue gate.** An earlier deploy's
+    tar (§5.235) left AppleDouble files in `health_fieldservice` (13),
+    `health_theme` (2) and `health_cms_sidebar/i18n/._vi_VN.po` — which G1c
+    reads as a catalogue with an unreadable name and G1/G2 cannot decode
+    (`UnicodeDecodeError 0xa3`). AR-3 deleted them from the live tree (15 left
+    after the upgrade replaced one). Pack with `--exclude='._*'` as well as
+    `COPYFILE_DISABLE=1 --no-xattrs`, and `find <addons> -name '._*'` after
+    every deploy. Note also that the G tests walk the addons dir `health_base`
+    sits in: on a practice copy with a private tree, copy `health_base` into it
+    or the gate reads the live catalogues, not yours. (ACCESS AR-3.)
+- **§5.244 — the Care Coach and the Journey always started in English for a
+    Vietnamese reader.** Both read `window.odoo.session_info.user_context.lang`,
+    which does not exist in this build, so the default was always `en` until
+    the person pressed "Tiếng Việt". They now read `user.lang`
+    (`@web/core/user`); a saved choice in the browser still wins. And note for
+    content work: `.po` model terms load with overwrite OFF, so re-wording a
+    generated Vietnamese string does not reach a database where the row already
+    has a Vietnamese value — only new rows, or `--i18n-overwrite`. (ACCESS AR-3.)
