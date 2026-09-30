@@ -119,17 +119,18 @@ class IdentityService(models.AbstractModel):
     def tenant_brand(self, tenant_id):
         t=self._identity_tenant(tenant_id)
         desired=self._identity_values(t)
-        live={};differences=[];reachable=False
+        live={};differences=[];reachable=False;company_name=t.name
         try:
             with self._tenant_env(t.slug) as env:
                 p=env['ir.config_parameter'].sudo()
                 live=env['ir.http']._tenant_identity()
+                company_name=env['res.company'].sudo().browse(1).name or t.name
                 differences=[k for k,v in desired.items() if (p.get_param('tenant.identity.'+k) or '') != (v or '')]
                 reachable=True
         except Exception:
             pass
         return {'id':t.id,'name':t.name,'values':{k:getattr(t,k) or '' for k in ('brand_level','brand_name','brand_website','brand_color')},
-                'live':live,'reachable':reachable,'differences':differences,'in_step':reachable and not differences,
+                'live':live,'company_name':company_name,'reachable':reachable,'differences':differences,'in_step':reachable and not differences,
                 'pushed_at':str(t.brand_pushed_at or ''),'domains':[{'id':d.id,'hostname':d.hostname,'state':d.state,'note':d.note or '','kind':d.kind} for d in t.domain_ids]}
 
     @api.model

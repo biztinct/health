@@ -38,6 +38,7 @@ class TestCustomerIdentity(TransactionCase):
         with patch.object(type(self.service),'_tenant_env',target):
             result=self.service.tenant_set_brand(self.tenant.id,{'brand_level':'white','brand_name':'Sample Practice'})
             self.assertTrue(result['in_step'])
+            self.assertEqual(result['company_name'],self.env['res.company'].browse(1).name)
             self.assertEqual(result['live']['name'],'Sample Practice')
             self.env['ir.config_parameter'].sudo().set_param('tenant.identity.name','Changed elsewhere')
             self.assertIn('name',self.service.tenant_brand(self.tenant.id)['differences'])
