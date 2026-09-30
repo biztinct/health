@@ -16,7 +16,7 @@ CONF="/etc/nginx/sites-available/${CERT_NAME}.conf"
 LINK="/etc/nginx/sites-enabled/${CERT_NAME}.conf"
 if [[ -e "$CONF" ]]; then
     # A retry after the HTTP request timed out must recover the completed work.
-    if grep -Fxq "# Managed custom domain ${HOSTNAME_ARG} -> ${SLUG_ARG}" "$CONF" && [[ -s "/etc/letsencrypt/live/${CERT_NAME}/fullchain.pem" ]]; then
+    if grep -Fxq "# Managed custom domain ${HOSTNAME_ARG} -> ${SLUG_ARG}" "$CONF" && grep -Eq '^[[:space:]]*listen 443 ssl;' "$CONF" && [[ -s "/etc/letsencrypt/live/${CERT_NAME}/fullchain.pem" ]]; then
         /usr/local/bin/biz-domain-map set "$HOSTNAME_ARG" "$SLUG_ARG"
         nginx -t
         systemctl reload nginx
@@ -44,6 +44,7 @@ server {
     proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto \$scheme;
     proxy_set_header X-Real-IP \$remote_addr;
+    location ^~ /.well-known/acme-challenge/ { root /var/lib/letsencrypt; }
     location ^~ /web/database/ { return 404; }
     location /websocket {
         proxy_pass http://127.0.0.1:8072;
@@ -60,7 +61,20 @@ EOF
 ln -s "$CONF" "$LINK"
 nginx -t
 systemctl reload nginx
-certbot --nginx --non-interactive --agree-tos --register-unsafely-without-email --cert-name "$CERT_NAME" -d "$HOSTNAME_ARG" --redirect --deploy-hook 'systemctl reload nginx'
+# Certbot's nginx installer can prefer an existing wildcard TLS block over
+# this exact HTTP host. Obtain only; write our own exact TLS block so unrelated
+# domains and their certificates never change.
+mkdir -p /var/lib/letsencrypt/.well-known/acme-challenge
+certbot certonly --webroot -w /var/lib/letsencrypt --non-interactive --agree-tos --register-unsafely-without-email --cert-name "$CERT_NAME" -d "$HOSTNAME_ARG" --deploy-hook 'systemctl reload nginx'
+sed -i "s|listen 80;|listen 443 ssl;\\n    ssl_certificate /etc/letsencrypt/live/${CERT_NAME}/fullchain.pem;\\n    ssl_certificate_key /etc/letsencrypt/live/${CERT_NAME}/privkey.pem;\\n    include /etc/letsencrypt/options-ssl-nginx.conf;|" "$CONF"
+cat >> "$CONF" <<EOF
+server {
+    listen 80;
+    server_name ${HOSTNAME_ARG};
+    location ^~ /.well-known/acme-challenge/ { root /var/lib/letsencrypt; }
+    location / { return 301 https://\$host\$request_uri; }
+}
+EOF
 nginx -t
 systemctl reload nginx
 trap - ERR
