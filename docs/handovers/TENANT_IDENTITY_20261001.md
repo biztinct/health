@@ -52,5 +52,34 @@ provisioning locale, accounting guards, manifests/icons, and branded error pages
 Router tests cover exact mapping, missing targets, host normalisation, cache
 invalidation and unsafe file permissions. Shell tests cover input guards.
 
-Deployment and Chrome verification results are recorded with the implementation
-handover after the final run.
+Final verification on 2026-10-01 (Asia/Kolkata):
+
+- 38 Odoo regression tests passed, zero failures/errors, against the deployed
+  addons on the disposable QA database. This includes PWA shell regressions.
+- Five exact-host router tests and 33 shell guard checks passed.
+- Chrome verified creation preview with country/currency and white-label choice;
+  saved branding; logo display, accent colour and tenant navigation; company-name
+  changes flowing into application branding; readable before/after history;
+  saved setup step/notes; master branding editor refresh preserving the customer;
+  existing HHH sign-in screen; and HTTPS on the temporary custom hostname.
+- The browser extension blocked file selection because file-URL access is off.
+  Image validation/persistence was covered by automated tests; the same test
+  logo was applied through the platform service and its rendering checked in
+  Chrome. The browser file-picker upload itself remains unverified.
+- All 365 files in the combined deployed module set matched the workspace
+  checksums, including pre-existing theme/sidebar/icon work excluded from these
+  commits. Original product images were preserved.
+- `carejiox`, `carejiox_template`, and `hhh` upgrades exited zero. Both new modules
+  are installed on all three databases; `biz_tenants` remains master-only for
+  real customers. Template active scheduled jobs: zero.
+- Root domain helpers and server-wide exact-host routing are deployed. A live
+  attach/retry/remove test passed. Existing nginx host configuration checksums
+  matched before and after. Certbot uses webroot certificate issuance only;
+  the helper writes the exact TLS host, avoiding wildcard-host modifications.
+- The temporary domain, certificate, mapping, customer/alert records, QA
+  database/filestore, test images and credential fixtures were removed. No
+  testing screenshots were retained. Production backups remain under
+  `/var/backups/cjx-identity-20261001/` on the server.
+
+Implementation commits: `1bf5494a`, `35841023`, `bc927173`, `b66f1a4a`,
+`9209ec5f`. The three excluded policy changes remain unchanged.
