@@ -1147,19 +1147,21 @@
                                             <span class="ws-ico" data-icon="map-pin"/>
                                             <field name="patient_catchment_province_id" readonly="1" options="{'no_open': True}"/>
                                         </span>
-                                    </div>
-                                </div>
-                                <div class="ws-hero__meta">
-                                    <div class="ws-hero__created">
-                                        <span>Created</span>
-                                        <field name="create_date" readonly="1"/>
-                                        <span invisible="not booking_user_id">
-                                            by <field name="booking_user_id" readonly="1" class="d-inline"
-                                                      options="{'no_open': True}"/>
+                                        <span class="ws-fact ws-fact--quiet ws-hero__created">
+                                            <span class="ws-ico" data-icon="history"/>
+                                            <span>Created</span>
+                                            <field name="create_date" readonly="1"/>
+                                            <span invisible="not booking_user_id">
+                                                by <field name="booking_user_id" readonly="1" class="d-inline"
+                                                          options="{'no_open': True}"/>
+                                            </span>
                                         </span>
                                     </div>
+                                </div>
+                                <!-- only the running timer lives here; "Created … by …" is a fact
+                                     under the name so the buttons keep the right end of the row -->
+                                <div class="ws-hero__meta" invisible="not service_timer_active and state != 'in_progress'">
                                     <field name="actual_duration_display" widget="service_timer" nolabel="1"
-                                           invisible="not service_timer_active and state != 'in_progress'"
                                            class="vu-hero-timer ws-hero__timer"/>
                                 </div>
                             </div>

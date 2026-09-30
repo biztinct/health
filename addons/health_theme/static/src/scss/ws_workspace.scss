@@ -211,6 +211,8 @@ $ws-icons: (
     // lifted into the hero: no row of its own, right end of the identity line
     &.ws-hero__actions {
         margin: 0 0 0 auto !important;
+        // beside a meta block the buttons keep a gap instead of the auto margin
+        .ws-hero__meta ~ & { margin-left: var(--vuf-sp-4) !important; }
         flex: 0 0 auto;
         align-self: flex-start;
         order: 10;
@@ -368,17 +370,23 @@ $ws-icons: (
         > .ws-ico { color: var(--vuf-faint); }
     }
 
-    // "Created <date> by <user>" on one line: field internals render inline
+    .ws-fact--quiet { color: var(--vuf-faint); }
+
+    // "Created <date> by <user>" on one line (a fact under the name): field
+    // internals render inline; the mask icon keeps its box
     .ws-hero__created {
         white-space: nowrap;
 
-        * { display: inline !important; width: auto !important; }
+        *:not(.ws-ico) { display: inline !important; width: auto !important; }
         // the arch's inter-element spaces do not survive template compilation
         > * + * { margin-left: 4px; }
     }
 
+    // right-hand block before the buttons (order 5 < the lifted statusbar's
+    // 10): on the booking it holds only the running service timer
     .ws-hero__meta {
         flex: 0 0 auto;
+        order: 5;
         margin-left: auto;
         display: flex;
         flex-direction: column;
