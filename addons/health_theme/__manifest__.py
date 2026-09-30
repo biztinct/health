@@ -45,7 +45,7 @@
         - Modern pill-shaped badges for healthcare workflows
         - Custom navbar and control panel styling
     ''',
-    'version': '19.0.5.6.0',
+    'version': '19.0.5.7.0',
     'category': 'Themes/Backend',
     'license': 'LGPL-3',
     'author': 'VAFHS Healthcare System - Vietnam-Australia Family Health Service',
@@ -119,6 +119,9 @@
             'health_theme/static/src/js/ws_journey.js',
             'health_theme/static/src/js/ws_fold_tray.js',
             'health_theme/static/src/js/ws_statusbar_more.js',
+            # The "Loading" pill holds for one beat between two bursts of
+            # requests, so opening a screen reads as one load, not two
+            'health_theme/static/src/js/loading_indicator_hold.js',
             # OWL components — Templates
             'health_theme/static/src/xml/vu_progress_rail.xml',
             'health_theme/static/src/xml/vu_side_sheet.xml',

@@ -314,6 +314,35 @@ class TestWsClientForm(TransactionCase):
         self.assertEqual((first.get('name'), first.get('string')), ('profile_overview', 'Overview'))
 
     # 6 ────────────────────────────────────────────────────────────────────
+    def test_06b_the_profile_rides_with_the_record(self):
+        """The panels read `ws_profile_data` WITH the record (the screen
+        paints once; no second request that pushed the tabs down): a json
+        compute, never stored, never exported, empty for an unsaved record."""
+        Partner = self.env['res.partner']
+        field = Partner._fields['ws_profile_data']
+        self.assertEqual(field.type, 'json')
+        self.assertFalse(field.store)
+        self.assertFalse(field.exportable)
+        facility = self.env['health.facility'].search([], limit=1)
+        self.assertTrue(facility, 'a facility is needed for a client with a catchment')
+        client = Partner.create({
+            'name': 'WS2 Ride-along Client', 'is_patient': True,
+            'catchment_province_id': facility.catchment_province_id.id,
+        })
+        data = client.ws_profile_data
+        self.assertEqual(data['stats']['total_visits'], 0)
+        self.assertEqual(data['recent_visits'], [])
+        self.assertIn('next_visit', data)
+        self.assertEqual(data, Partner.get_client_profile_data(client.id))
+        self.assertFalse(Partner.new({'name': 'unsaved'}).ws_profile_data)
+        # what the form's own read brings back
+        row = client.web_read({'ws_profile_data': {}})[0]
+        self.assertEqual(row['ws_profile_data']['stats']['total_visits'], 0)
+        # the JS declares it as a dependency of every panel
+        source = _read('health_fieldservice', 'static/src/js/ws_client_panels.js')
+        self.assertIn('{ name: PROFILE_FIELD, type: "json" }', source)
+        self.assertIn('export const PROFILE_FIELD = "ws_profile_data"', source)
+
     def test_06_profile_data_next_last_recent(self):
         Partner = self.env['res.partner']
         facility = self.env['health.facility'].search([], limit=1)

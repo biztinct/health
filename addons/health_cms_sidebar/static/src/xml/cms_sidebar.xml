@@ -52,12 +52,14 @@
     </aside>
 
     <!-- ========================================================== tab column -->
-    <nav class="vu-tabcol" t-ref="tabcol" t-if="state.loaded and activeSection"
-         t-att-aria-label="railLabel(activeSection.name)"
-         t-att-data-section="activeSection.key"
+    <!-- Drawn as an empty, fixed-width shell for the remembered section until
+         the menu is read, so the page beside it never slides sideways. -->
+    <nav class="vu-tabcol" t-ref="tabcol" t-if="showTabColumn"
+         t-att-aria-label="activeSection ? railLabel(activeSection.name) : undefined"
+         t-att-data-section="state.activeSectionKey"
          t-att-lang="langTag"
          t-on-keydown="onListKeydown">
-        <t t-foreach="activeSection.items" t-as="item" t-key="item.id">
+        <t t-foreach="activeSection ? activeSection.items : []" t-as="item" t-key="item.id">
             <button type="button" data-nav="1"
                     t-att-class="{'vu-tab': true, 'is-active': isTabActive(item), 'has-children': item.children.length}"
                     t-att-data-item-id="item.id"
@@ -72,7 +74,9 @@
     </nav>
 
     <!-- ========================================================= page header -->
-    <header class="vu-pagehead" t-if="state.loaded">
+    <!-- Always drawn (a fixed 40px): the page below it must never move down
+         when the menu is read. Its contents wait for the data. -->
+    <header class="vu-pagehead">
         <button type="button" class="vu-pagehead-menu" title="Menu" aria-label="Menu"
                 t-att-aria-expanded="state.sheetOpen ? 'true' : 'false'"
                 t-on-click="toggleSheet">
@@ -82,7 +86,7 @@
         <!-- Catchment scope. A label for staff, a picker for owners — the
              server decides which by never sending options to anyone else. The
              picker stays a plain native select on purpose (§5.96). -->
-        <div class="vu-catchment" title="Catchment Area">
+        <div class="vu-catchment" title="Catchment Area" t-if="state.loaded">
             <span class="vu-catchment-label">Catchment Area</span>
             <t t-if="state.catchment.can_switch">
                 <select class="vu-catchment-select" aria-label="Catchment Area"

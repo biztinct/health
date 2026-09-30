@@ -16223,3 +16223,18 @@ msgstr "Tổng phụ phí"
 #: code:addons/health_fieldservice/static/src/xml/booking_side_sheet.xml:0
 msgid "Staff Overview"
 msgstr "Tổng quan nhân viên"
+
+#. module: health_fieldservice
+#: model:ir.model.fields,field_description:health_fieldservice.field_res_partner__ws_profile_data
+#: model:ir.model.fields,field_description:health_fieldservice.field_res_users__ws_profile_data
+msgid "Workspace profile data"
+msgstr "Dữ liệu hồ sơ không gian làm việc"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
+msgid ""
+"<span class=\"ws-ico\" data-icon=\"history\"/>\n"
+"                                            <span>Created</span>"
+msgstr ""
+"<span class=\"ws-ico\" data-icon=\"history\"/>\n"
+"                                            <span>Tạo lúc</span>"

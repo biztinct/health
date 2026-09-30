@@ -61,6 +61,11 @@ export function railModeKey(uid) {
 export function tabKey(uid, sectionKey) {
     return `vu.tab.${uid || "anon"}.${sectionKey}`;
 }
+/** The section whose tab column was on screen last: drawn again at once on
+ *  the next boot, so the column's width is there BEFORE the page arrives. */
+export function sectionKey(uid) {
+    return `vu.section.${uid || "anon"}`;
+}
 function readStore(key) {
     try {
         return browser.localStorage.getItem(key);
@@ -109,6 +114,7 @@ export class CmsSidebar extends Component {
     setup() {
         this.actionService = useService("action");
         this.orm = useService("orm");
+        this.keys = useService("cms_sidebar_keys");
         this.uid = user.userId;
 
         const name = user.name || window.odoo?.session_info?.name || "";
@@ -121,7 +127,12 @@ export class CmsSidebar extends Component {
             sections: [],
             loaded: false,
             activeItemId: null,
-            activeSectionKey: null,
+            // ON SCREEN BEFORE THE PAGE. The section is remembered per person,
+            // so the tab column (a fixed-width shell) is drawn in the very
+            // first frame and the page never slides sideways when the menu's
+            // own answer arrives; `_resolveActiveItem` corrects it if the
+            // screen opened belongs elsewhere.
+            activeSectionKey: readStore(sectionKey(this.uid)) || null,
             railMode: RAIL_MODES.includes(storedMode) ? storedMode : "auto",
             peek: false,
             sheetOpen: false,
@@ -185,10 +196,16 @@ export class CmsSidebar extends Component {
 
     // ------------------------------------------------------------------ data
     async _loadSidebarData() {
-        const [data, scope] = await Promise.all([
-            this.orm.call("cms.sidebar.item", "get_sidebar_data", []),
-            this.orm.call("cms.sidebar.item", "get_catchment_scope", []),
-        ]);
+        // The first read was started at boot by the cms_sidebar_keys service,
+        // alongside the web client's own menus — not here, after the page has
+        // already loaded (this component is only mounted once the first
+        // action is on screen). A reload reads afresh.
+        let answer = null;
+        const prefetched = this.keys.takeMenuPrefetch();
+        if (prefetched) {
+            answer = await prefetched.catch(() => null);
+        }
+        const [data, scope] = answer || (await fetchMenu(this.orm));
         this.state.sections = data;
         this.state.catchment = scope;
         if (!scope.can_switch) {
@@ -321,8 +338,16 @@ export class CmsSidebar extends Component {
         }
         if (entry.sectionKey !== HOME_KEY) {
             this.state.activeSectionKey = entry.sectionKey;
+            writeStore(sectionKey(this.uid), entry.sectionKey);
             writeStore(tabKey(this.uid, entry.sectionKey), String(entry.rootId));
         }
+    }
+
+    /** The tab column's shell is drawn for a remembered section even before
+     *  the menu is read: its width is fixed, so the page beside it never moves. */
+    get showTabColumn() {
+        const key = this.state.activeSectionKey;
+        return Boolean(key && key !== HOME_KEY);
     }
 
     // ------------------------------------------------------------- the rail
@@ -436,6 +461,7 @@ export class CmsSidebar extends Component {
             return;
         }
         this.state.activeSectionKey = section.key;
+        writeStore(sectionKey(this.uid), section.key);
         const remembered = parseInt(readStore(tabKey(this.uid, section.key)) || "", 10);
         const tab = section.items.find((i) => i.id === remembered) || section.items[0];
         if (tab) {
@@ -990,6 +1016,15 @@ export function shellClaims(kind, value) {
     return Boolean(set && set.has(value));
 }
 
+/** The two reads the menu shell draws from: the sections and the catchment
+ *  scope. */
+export function fetchMenu(orm) {
+    return Promise.all([
+        orm.call("cms.sidebar.item", "get_sidebar_data", []),
+        orm.call("cms.sidebar.item", "get_catchment_scope", []),
+    ]);
+}
+
 const cmsSidebarKeysService = {
     dependencies: ["orm"],
     start(env, { orm }) {
@@ -998,7 +1033,22 @@ const cmsSidebarKeysService = {
             loadMatchKeys(env, orm);
         });
         loadMatchKeys(env, orm);
-        return { reload: () => loadMatchKeys(env, orm), claims: shellClaims };
+        // THE MENU IS READ AT BOOT, WITH THE WEB CLIENT'S OWN MENUS. The shell
+        // component is only mounted once the first screen is on display, so a
+        // read started by the component itself came back AFTER the page and
+        // pushed it 40px down and 76px right (the page header and the tab
+        // column arriving late). Read once here, handed over once.
+        let menuPrefetch = fetchMenu(orm);
+        menuPrefetch.catch(() => {});
+        return {
+            reload: () => loadMatchKeys(env, orm),
+            claims: shellClaims,
+            takeMenuPrefetch() {
+                const promise = menuPrefetch;
+                menuPrefetch = null;
+                return promise;
+            },
+        };
     },
 };
 registry.category("services").add("cms_sidebar_keys", cmsSidebarKeysService);

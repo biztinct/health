@@ -9,9 +9,14 @@
 //   <widget name="ws_client_visits"/>                   Recent visits (Overview card)
 //   <widget name="ws_client_shortcuts"/>                Shortcuts, from a registry
 //
-// ONE loader: `res.partner.get_client_profile_data` is called once per record
-// load, memoised by resId + write_date and shared by every panel (an in-flight
-// call is shared too). The controller's save hook invalidates it.
+// THE DATA RIDES WITH THE RECORD. Every panel declares `ws_profile_data` (a
+// computed json on res.partner, the same answer as `get_client_profile_data`)
+// as a field dependency, so the form's own read brings it and the screen
+// paints ONCE, complete — the Next step box used to arrive a request later and
+// push the tabs down. A save or `record.load()` re-reads it with the record.
+// The RPC loader below is the fallback for a view that does not load the
+// field: called once per record load, memoised by resId + write_date and
+// shared by every panel (an in-flight call is shared too).
 //
 // Shortcuts come from `registry.category("ws_client_shortcuts")`:
 //   { key, label (_t), icon, sequence, run(env, partnerId, ctx), isAvailable?(env) }
@@ -64,11 +69,29 @@ export function profileKey(record) {
     return bus.version + "/" + formTags.get(model) + ":" + record.resId + "@" + stamp(record.data.write_date);
 }
 
+export const PROFILE_FIELD = "ws_profile_data";
+
+/** The profile as the record carries it (read with the record, no request);
+ *  `undefined` when the view does not load that field. An unsaved record
+ *  carries an empty one. */
+export function recordProfile(record) {
+    const data = record && record.data;
+    if (!data || !(PROFILE_FIELD in data)) {
+        return undefined;
+    }
+    const value = data[PROFILE_FIELD];
+    return value && typeof value === "object" ? value : {};
+}
+
 /** Load (or reuse) the profile data of the client on this record. */
 export function loadClientProfile(orm, record) {
     const resId = record && record.resId;
     if (!resId) {
         return Promise.resolve(null);
+    }
+    const own = recordProfile(record);
+    if (own !== undefined) {
+        return Promise.resolve(own);
     }
     const key = profileKey(record);
     const hit = cache.get(resId);
@@ -104,6 +127,7 @@ export function invalidateClientProfile(resId) {
 
 /** Fields every panel reads from the record itself (no RPC). */
 const RECORD_DEPENDENCIES = [
+    { name: PROFILE_FIELD, type: "json" },
     { name: "write_date", type: "datetime" },
     { name: "patient_status", type: "selection" },
     { name: "registration_date", type: "datetime" },
@@ -212,18 +236,28 @@ class WsClientPanel extends Component {
         return this.props.record.resId;
     }
 
+    /** The record's own copy first; the fetched one only for a view that
+     *  does not load the field. */
+    get profileData() {
+        const own = recordProfile(this.props.record);
+        if (own !== undefined) {
+            return own;
+        }
+        return this.profile.resId === this.resId ? this.profile.data : null;
+    }
+
     get loaded() {
-        return this.profile.data !== null && this.profile.resId === this.resId;
+        return this.profileData !== null;
     }
 
     get stats() {
-        return (this.profile.data && this.profile.data.stats) || {};
+        return (this.profileData && this.profileData.stats) || {};
     }
 
     refresh(props) {
         const record = props.record;
         const resId = record.resId;
-        if (!resId) {
+        if (!resId || recordProfile(record) !== undefined) {
             this._key = null;
             return;
         }
@@ -302,7 +336,7 @@ export class WsClientGlance extends WsClientPanel {
 
     get rows() {
         const s = this.stats;
-        const d = this.profile.data || {};
+        const d = this.profileData || {};
         const rows = [];
         const now = DateTime.local();
 
@@ -406,7 +440,7 @@ export class WsClientNext extends WsClientPanel {
         if (!this.resId || !this.loaded) {
             return null;
         }
-        const d = this.profile.data || {};
+        const d = this.profileData || {};
         const owed = Number(this.stats.outstanding) || 0;
         const active = (this.data.patient_status || "active") === "active";
         const newBooking = { key: "new", label: _t("New booking"), primary: true, run: () => this.newBooking() };
@@ -483,7 +517,7 @@ export class WsClientVisits extends WsClientPanel {
     }
 
     get visits() {
-        const list = (this.profile.data && this.profile.data.recent_visits) || [];
+        const list = (this.profileData && this.profileData.recent_visits) || [];
         return list.map((v) => {
             const dt = parseUtc(v.scheduled_datetime);
             return {

@@ -1,5 +1,9 @@
+import logging
+
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
+
+_logger = logging.getLogger(__name__)
 
 
 def _selection_labels(record, field_name):
@@ -11,6 +15,30 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     last_visit_date = fields.Datetime('Last Visit', compute='_compute_last_visit_date', store=True)
+
+    # The client screen's panels (Next step, At a glance, Recent visits) draw
+    # from this, read WITH the record: the screen paints once, complete,
+    # instead of first without its Next step box and then with it a request
+    # later. Same answer as `get_client_profile_data`; never stored, never
+    # exported, empty for an unsaved record.
+    ws_profile_data = fields.Json(
+        string='Workspace profile data',
+        compute='_compute_ws_profile_data',
+        exportable=False,
+    )
+
+    def _compute_ws_profile_data(self):
+        for partner in self:
+            data = {}
+            if isinstance(partner.id, int):
+                try:
+                    data = self.get_client_profile_data(partner.id) or {}
+                except Exception:  # the screen must still open without its panels
+                    _logger.warning(
+                        "ws_profile_data: the profile of partner %s could not be read",
+                        partner.id, exc_info=True,
+                    )
+            partner.ws_profile_data = data
 
     booking_ids = fields.One2many(
         'health.fieldservice.order', 'patient_id',

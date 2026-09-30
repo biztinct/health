@@ -19,6 +19,7 @@ on the server or in the source:
 import os
 import re
 
+from odoo.modules.module import get_module_path
 from odoo.tests import HttpCase, TransactionCase, tagged
 
 MODULE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -166,6 +167,32 @@ class TestMenuShellData(TransactionCase):
         for pattern in (r'`vu\.rail\.mode\.\$\{uid', r'`vu\.tab\.\$\{uid',
                         r'`cms_catchment_\$\{user\.userId'):
             self.assertRegex(source, pattern)
+
+    def test_07b_the_shell_is_on_screen_before_the_page(self):
+        """The page used to load, then the menu (read only once the shell was
+        mounted, after the first screen) pushed it 40px down and 76px right:
+        the "loads twice" look. The menu is read at boot by the service, the
+        page header is always drawn, the tab column is a shell for the
+        remembered section, and the host mounts the remembered shell."""
+        with open(os.path.join(MODULE_DIR, 'static', 'src', 'js',
+                               'cms_sidebar.js'), encoding='utf-8') as fh:
+            source = fh.read()
+        self.assertIn('takeMenuPrefetch', source)
+        self.assertIn('menuPrefetch = fetchMenu(orm)', source)
+        self.assertRegex(source, r'`vu\.section\.\$\{uid')
+        self.assertIn('readStore(sectionKey(this.uid))', source)
+        with open(os.path.join(MODULE_DIR, 'static', 'src', 'xml',
+                               'cms_sidebar.xml'), encoding='utf-8') as fh:
+            xml = fh.read()
+        self.assertIn('<header class="vu-pagehead">', xml)
+        self.assertNotIn('<header class="vu-pagehead" t-if', xml)
+        self.assertIn('t-if="showTabColumn"', xml)
+        host = get_module_path('health_fieldservice')
+        with open(os.path.join(host, 'static', 'src', 'js', 'sidebar_host.js'),
+                  encoding='utf-8') as fh:
+            source = fh.read()
+        self.assertRegex(source, r'`vu\.sidebar\.\$\{uid')
+        self.assertIn('sidebarRegistry.contains(remembered)', source)
 
     # ------------------------------------------------------------------ T9
     def test_08_no_containment_on_the_shell(self):

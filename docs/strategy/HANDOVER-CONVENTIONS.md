@@ -3718,3 +3718,26 @@ a no-op.
     `COPYFILE_DISABLE=1 scp` the prevention (§5.243). The server clock is
     UTC: odoo and postgres logs both read UTC. (WORKSPACE refinement,
     2026-09-30.)
+- **§5.261 — every CMS screen "loaded twice": the menu shell arrived AFTER the
+    page and pushed it 40px down and 76px right.** `SidebarHost` only mounted
+    `CmsSidebar` once the first action was on screen (`ACTION_MANAGER:UI-UPDATED`),
+    and the component read its data (`get_sidebar_data` + `get_catchment_scope`)
+    in `onMounted` — so the page header and the tab column landed ~500ms after
+    the form (CLS 0.27, measured with a `layout-shift` observer + a 50ms rect
+    timeline on live). Three rules now: (1) anything the shell draws around the
+    page is read AT BOOT by a service (`cms_sidebar_keys.takeMenuPrefetch()`),
+    never by the component after mount; (2) the shell's boxes are on screen
+    BEFORE their data — the page header is always drawn (fixed 40px), the tab
+    column is a fixed-width shell for the remembered section
+    (`vu.section.<uid>`), and `SidebarHost` mounts the remembered sidebar
+    (`vu.sidebar.<uid>`) at setup and only corrects it once an action exists
+    (a missing controller no longer clears it); (3) a record panel that needs
+    server data declares it as a `fieldDependencies` field so it rides with
+    `web_read` — the client's Next step box used to arrive one RPC after the
+    form and push the tabs 106px down; `res.partner.ws_profile_data` (json,
+    computed, `exportable=False`, `{}` for a NewId) now carries
+    `get_client_profile_data` with the record. Bonus: the stock Loading pill
+    hid between the web client's burst and the screen's burst (a 40ms gap) and
+    showed again 250ms later — `health_theme/loading_indicator_hold.js` holds
+    it 350ms so one load looks like one load. Measure with the rect timeline
+    before claiming a screen paints once. (WORKSPACE refinement, 2026-09-30.)
