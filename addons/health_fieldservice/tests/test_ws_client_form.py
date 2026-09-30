@@ -135,7 +135,11 @@ NEW_SCSS = [
 ]
 # plain arch terms this phase introduced on the client view
 NEW_ARCH_TERMS = ['Overview', 'Personal', 'Contact', 'Care', 'Identity', 'Commission',
-                  'People', 'Active', 'Inactive', 'Referrer', 'Deceased']
+                  'People', 'Active', 'Inactive', 'Referrer', 'Deceased', 'New booking']
+
+# The header's own standing action (added with the Quick-actions rethink): it is
+# the one primary button and is NOT under More.
+HEADER_PRIMARY = 'action_open_quick_booking_owl'
 CRM_VIEW = 'health_crm.view_health_patient_form_ops_crm_maincontact'
 # worded terms of the client view that need no translation: this placeholder
 # is ALREADY Vietnamese ("Vietnamese name"), so it rightly maps to itself
@@ -248,7 +252,14 @@ class TestWsClientForm(TransactionCase):
     # 4 ────────────────────────────────────────────────────────────────────
     def test_04_header_buttons_keep_their_conditions(self):
         own_buttons = {b.get('name'): b for b in self.own.xpath('//header/button')}
-        self.assertEqual(set(own_buttons), set(BUTTONS_BEFORE))
+        self.assertEqual(set(own_buttons), set(BUTTONS_BEFORE) | {HEADER_PRIMARY})
+        primary = own_buttons[HEADER_PRIMARY]
+        self.assertEqual(primary.get('type'), 'object')
+        self.assertIn('oe_highlight', (primary.get('class') or '').split())
+        self.assertNotIn('ws-more', (primary.get('class') or '').split())
+        self.assertTrue(hasattr(self.env['res.partner'], HEADER_PRIMARY))
+        # first in the header: the kit paints only the first visible button primary
+        self.assertEqual(self.own.xpath('//header/button')[0].get('name'), HEADER_PRIMARY)
         for name, (invisible, groups, confirm) in BUTTONS_BEFORE.items():
             with self.subTest(button=name):
                 b = own_buttons[name]
@@ -271,8 +282,9 @@ class TestWsClientForm(TransactionCase):
             self.assertTrue(sheet.xpath(".//widget[@name='%s']" % widget), widget)
         rail = sheet.xpath(".//div[contains(@class,'ws-rail')]")[0]
         modes = [w.get('mode') for w in rail.xpath(".//widget[@name='ws_client_glance']")]
-        self.assertEqual(modes, ['glance', 'contact', 'attention'])
-        self.assertTrue(rail.xpath(".//widget[@name='ws_client_shortcuts']"))
+        self.assertEqual(modes, ['attention', 'glance'])
+        # quick actions come first in the rail, as tiles
+        self.assertEqual(rail.xpath('./widget')[0].get('name'), 'ws_client_shortcuts')
         self.assertTrue(sheet.xpath(".//div[contains(@class,'ws-next')]/widget[@name='ws_client_next']"))
         self.assertTrue(sheet.xpath(".//div[contains(@class,'ws-pack')]/widget[@name='ws_client_visits']"))
         # the fold tray names real cards and real fields

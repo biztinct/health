@@ -4576,6 +4576,7 @@ msgstr "Cần chuẩn hóa"
 #. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/ops_client_profile_form.xml:0
 #: code:addons/health_fieldservice/static/src/xml/ws_client_panels.xml:0
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
 msgid "Call"
 msgstr "Gọi"
 
@@ -6666,6 +6667,7 @@ msgstr "Thời gian trôi qua"
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_order__confirmation_method__email
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_client_list_ops
 #: code:addons/health_fieldservice/static/src/xml/ws_client_panels.xml:0
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
 msgid "Email"
 msgstr "Thư điện tử"
 
@@ -9032,8 +9034,10 @@ msgid "Medium Complexity"
 msgstr "Độ phức tạp trung bình"
 
 #. module: health_fieldservice
+#. odoo-javascript
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_communication__message
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_communication_form
+#: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
 msgid "Message"
 msgstr "Thông điệp"
 
@@ -11203,6 +11207,13 @@ msgstr "Các loại dịch vụ có trình độ"
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
 msgid "Quick Actions"
 msgstr "Các hành động nhanh chóng"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
+#: code:addons/health_fieldservice/static/src/xml/ws_client_panels.xml:0
+msgid "Quick actions"
+msgstr "Thao tác nhanh"
 
 #. module: health_fieldservice
 #. odoo-javascript
@@ -15793,13 +15804,6 @@ msgstr "Người liên quan"
 
 #. module: health_fieldservice
 #. odoo-javascript
-#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
-#: code:addons/health_fieldservice/static/src/xml/ws_client_panels.xml:0
-msgid "Shortcuts"
-msgstr "Lối tắt"
-
-#. module: health_fieldservice
-#. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/ws_booking_glance.xml:0
 #: code:addons/health_fieldservice/static/src/xml/ws_client_panels.xml:0
 msgid "At a glance"
@@ -16112,6 +16116,7 @@ msgstr "Chưa có số điện thoại."
 #. odoo-javascript
 #: code:addons/health_fieldservice/static/src/js/ws_client_panels.js:0
 #: code:addons/health_fieldservice/static/src/xml/ws_client_panels.xml:0
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
 msgid "New booking"
 msgstr "Đặt lịch mới"
 

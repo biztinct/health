@@ -173,7 +173,7 @@ JOURNEY_LABELS = ['Created', 'Confirmed', 'Assigned', 'In progress', 'Completed'
 # arch text this phase introduced on the booking view
 # (plain terms only — a title with an icon span beside it is ONE markup term,
 #  covered by test_08b against the database instead)
-NEW_ARCH_TERMS = ['Next step', 'People', 'Shortcuts', 'Created', 'Deleted', 'Archived',
+NEW_ARCH_TERMS = ['Next step', 'People', 'Quick actions', 'Created', 'Deleted', 'Archived',
                   'Urgent', 'Emergency', 'Home Visit', 'Clinic Visit', 'Teleconsultation',
                   'Hospital Visit', 'Lab Visit', 'Rescheduled']
 # worded terms of the booking view that were untranslated before WS-1 and stay so

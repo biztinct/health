@@ -1690,12 +1690,70 @@
                              RAIL — pinned beside the record on every tab
                              ======================================================== -->
                         <div class="ws-rail">
+                            <!-- Quick actions: the record's shortcuts as tiles, first thing in the rail -->
+                            <div class="ws-panel ws-panel--links">
+                                <div class="ws-panel__head">Quick actions</div>
+
+                                <button name="action_open_client_form" type="object"
+                                        class="vu-action-item"
+                                        invisible="not patient_id">
+                                    <i class="fa fa-id-card-o"/> Client Details
+                                </button>
+
+                                <button name="action_view_quote" type="object"
+                                        class="vu-action-item"
+                                        invisible="not sale_order_id or invoice_id">
+                                    <i class="fa fa-file-text"/> View Quote
+                                </button>
+                                <button name="action_view_all_invoices" type="object"
+                                        class="vu-action-item"
+                                        invisible="not invoice_id">
+                                    <i class="fa fa-money"/> View Invoice
+                                </button>
+
+                                <button name="action_open_staff_timeline_modal" type="object"
+                                        class="vu-action-item"
+                                        invisible="state in ('draft', 'completed', 'completed_pending_invoice', 'cancelled', 'closed')">
+                                    <i class="fa fa-calendar-check-o"/> Staff Timeline
+                                </button>
+
+                                <!-- Staff Overview (side sheet) -->
+                                <widget name="vu_staff_sheet"
+                                        invisible="state in ('draft', 'completed', 'completed_pending_invoice', 'cancelled', 'closed')"/>
+
+                                <button name="action_create_and_open_quote" type="object"
+                                        class="vu-action-item"
+                                        invisible="sale_order_id or state not in ('draft', 'confirmed')"
+                                        groups="health_base.group_healthcare_operations_manager">
+                                    <i class="fa fa-file-text-o"/> Create Quote
+                                </button>
+
+                                <button name="action_view_assignments" type="object"
+                                        class="vu-action-item"
+                                        invisible="not assignment_count">
+                                    <i class="fa fa-list-ul"/> View Assignments
+                                    <field name="assignment_count" invisible="1"/>
+                                </button>
+
+                                <button name="action_open_lead_dashboard" type="object"
+                                        class="vu-action-item"
+                                        invisible="not crm_lead_id">
+                                    <i class="fa fa-line-chart"/> Lead Dashboard
+                                </button>
+                            </div>
+
+<!-- Needs attention: draws its own panel, or nothing -->
+                            <widget name="ws_booking_glance" mode="attention"/>
+
+                            
 
                             <div class="ws-panel ws-panel--glance">
                                 <widget name="ws_booking_glance" mode="glance"/>
                             </div>
 
-                            <!-- People: the client card (was the first card of Overview) -->
+                            
+
+<!-- People: the client card (was the first card of Overview) -->
                             <div class="ws-panel ws-panel--people">
                                 <div class="ws-panel__head">People</div>
                                 <div class="vu-client-card">
@@ -1745,61 +1803,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <!-- Needs attention: draws its own panel, or nothing -->
-                            <widget name="ws_booking_glance" mode="attention"/>
-
-                            <!-- Shortcuts (was: Quick Actions) -->
-                            <div class="ws-panel ws-panel--links">
-                                <div class="ws-panel__head">Shortcuts</div>
-
-                                <button name="action_open_client_form" type="object"
-                                        class="vu-action-item"
-                                        invisible="not patient_id">
-                                    <i class="fa fa-id-card-o"/> Client Details
-                                </button>
-
-                                <button name="action_view_quote" type="object"
-                                        class="vu-action-item"
-                                        invisible="not sale_order_id or invoice_id">
-                                    <i class="fa fa-file-text"/> View Quote
-                                </button>
-                                <button name="action_view_all_invoices" type="object"
-                                        class="vu-action-item"
-                                        invisible="not invoice_id">
-                                    <i class="fa fa-money"/> View Invoice
-                                </button>
-
-                                <button name="action_open_staff_timeline_modal" type="object"
-                                        class="vu-action-item"
-                                        invisible="state in ('draft', 'completed', 'completed_pending_invoice', 'cancelled', 'closed')">
-                                    <i class="fa fa-calendar-check-o"/> Staff Timeline
-                                </button>
-
-                                <!-- Staff Overview (side sheet) -->
-                                <widget name="vu_staff_sheet"
-                                        invisible="state in ('draft', 'completed', 'completed_pending_invoice', 'cancelled', 'closed')"/>
-
-                                <button name="action_create_and_open_quote" type="object"
-                                        class="vu-action-item"
-                                        invisible="sale_order_id or state not in ('draft', 'confirmed')"
-                                        groups="health_base.group_healthcare_operations_manager">
-                                    <i class="fa fa-file-text-o"/> Create Quote
-                                </button>
-
-                                <button name="action_view_assignments" type="object"
-                                        class="vu-action-item"
-                                        invisible="not assignment_count">
-                                    <i class="fa fa-list-ul"/> View Assignments
-                                    <field name="assignment_count" invisible="1"/>
-                                </button>
-
-                                <button name="action_open_lead_dashboard" type="object"
-                                        class="vu-action-item"
-                                        invisible="not crm_lead_id">
-                                    <i class="fa fa-line-chart"/> Lead Dashboard
-                                </button>
                             </div>
                         </div><!-- /ws-rail -->
                     </div><!-- /ws-page -->

@@ -107,13 +107,18 @@
         </div>
     </t>
 
-    <!-- Shortcuts: one row per registered entry -->
+    <!-- Quick actions: one tile per entry (call / message / email, then the registry) -->
     <t t-name="health_fieldservice.WsClientShortcuts">
         <div class="ws-panel ws-panel--links ws-panel--shortcuts">
-            <div class="ws-panel__head">Shortcuts</div>
+            <div class="ws-panel__head">Quick actions</div>
             <t t-foreach="entries" t-as="entry" t-key="entry.key">
-                <button type="button" class="vu-action-item ws-shortcut" t-att-data-shortcut="entry.key"
-                        t-on-click="() => this.run(entry)">
+                <a t-if="entry.href" class="vu-action-item ws-shortcut" t-att-data-shortcut="entry.key"
+                   t-att-href="entry.href" t-att-title="entry.label">
+                    <span class="ws-ico" t-att-data-icon="entry.icon"/>
+                    <span class="ws-shortcut__label" t-esc="entry.label"/>
+                </a>
+                <button t-else="" type="button" class="vu-action-item ws-shortcut" t-att-data-shortcut="entry.key"
+                        t-att-title="entry.label" t-on-click="() => this.run(entry)">
                     <span class="ws-ico" t-att-data-icon="entry.icon"/>
                     <span class="ws-shortcut__label" t-esc="entry.label"/>
                 </button>

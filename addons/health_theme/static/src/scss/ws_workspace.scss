@@ -89,7 +89,7 @@ $ws-icons: (
     // the sheet is the width reference for the whole ladder below
     .o_form_renderer.vu-form .o_form_sheet {
         max-width: none !important;
-        padding: var(--vuf-sp-3) var(--vuf-sp-6) var(--vuf-sp-7);
+        padding: var(--vuf-sp-2) var(--vuf-sp-6) var(--vuf-sp-7);
         // same container name the engine's three-column ladder uses; the host
         // is lifted by dropdown_trap_guard.scss while it holds an open dropdown
         container: vuform / inline-size;
@@ -207,18 +207,35 @@ $ws-icons: (
     }
 
     .ws-more-toggle .ws-ico { color: var(--vuf-muted); }
+
+    // lifted into the hero: no row of its own, right end of the identity line
+    &.ws-hero__actions {
+        margin: 0 0 0 auto !important;
+        flex: 0 0 auto;
+        align-self: flex-start;
+        order: 10;
+        max-width: 100%;
+
+        .o_statusbar_buttons { flex-wrap: wrap; }
+    }
 }
 
 // the More menu (rendered in the overlay container, outside the form)
 .ws-more-menu {
     min-width: 220px;
+    width: max-content;
+    max-width: 360px;
+    overflow: visible !important;
     padding: 6px !important;
     border: 1px solid var(--vuf-line) !important;
     border-radius: var(--vuf-r-md) !important;
     box-shadow: var(--vuf-sh-lg) !important;
 
     .ws-more-item {
+        display: block;
+        width: auto;
         padding: 0 !important;
+        margin: 0 !important;
         background: transparent !important;
 
         > .btn {
@@ -226,6 +243,8 @@ $ws-icons: (
             align-items: center;
             gap: 10px;
             width: 100%;
+            box-sizing: border-box !important;
+            margin: 0 !important;
             padding: 8px 10px !important;
             border: none !important;
             border-radius: 8px !important;
@@ -258,7 +277,7 @@ $ws-icons: (
     align-items: center;
     gap: var(--vuf-sp-4);
     flex-wrap: wrap;
-    padding: var(--vuf-sp-1) 0 0;
+    padding: 0;
 
     .ws-hero__avatar {
         flex: 0 0 48px;
@@ -731,30 +750,27 @@ $ws-icons: (
 }
 
 // =========================================================================
-// 6. NOTEBOOK — underline tabs, scrolling sideways when they overflow
+// 6. NOTEBOOK — underline tabs that wrap onto further rows (never a sideways
+//    scrollbar: the client screen has 18 tabs)
 // =========================================================================
 #{$ws} .ws-main .o_notebook {
-    margin-top: var(--vuf-sp-1) !important;
+    margin-top: 0 !important;
 
     .o_notebook_headers {
-        margin: 0 0 var(--vuf-sp-4) !important;
-        // the row clips vertically once it scrolls sideways; the active tab's
-        // 2px underline overlaps the hairline by 1px and needs this room
-        // (ledger §5.251)
-        padding-bottom: 1px;
-        overflow-x: auto;
-        overflow-y: hidden;
-        scrollbar-width: thin;
+        margin: 0 0 var(--vuf-sp-3) !important;
+        padding: 0;
+        overflow: visible;
     }
 
     .o_notebook_headers .nav,
     > .nav {
         display: flex !important;
-        flex-wrap: nowrap !important;
-        width: max-content !important;
-        min-width: 100%;
+        flex-wrap: wrap !important;
+        width: 100% !important;
+        min-width: 0;
         max-width: none !important;
         gap: 4px;
+        row-gap: 0 !important;
         margin: 0 !important;
         padding: 0 !important;
         background: transparent !important;
@@ -768,7 +784,7 @@ $ws-icons: (
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 10px 12px !important;
+            padding: 7px 10px !important;
             border: none !important;
             border-bottom: 2px solid transparent !important;
             border-radius: 0 !important;
@@ -1186,44 +1202,59 @@ $ws-icons: (
         &:hover { border-color: var(--vuf-primary); color: var(--vuf-primary); }
     }
 
-    // shortcuts: quiet link rows
+    // quick actions: a grid of tiles (icon over label), first thing in the rail
+    .ws-panel--links {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+
+        > .ws-panel__head { grid-column: 1 / -1; margin-bottom: 2px; }
+        // a widget that draws one tile (the staff side sheet) is a plain cell
+        > .o_widget { display: contents; }
+    }
+
     .ws-panel--links .vu-action-item {
         display: flex;
+        flex-direction: column;
         align-items: center;
-        gap: 10px;
+        justify-content: center;
+        gap: 6px;
         width: 100%;
-        padding: 7px 8px !important;
+        min-height: 64px;
+        padding: 9px 6px !important;
         margin: 0 !important;
-        border: none;
-        border-radius: 8px;
-        background: transparent;
-        font-size: 13.5px;
+        border: 1px solid var(--vuf-line);
+        border-radius: 10px;
+        background: var(--vuf-bg);
+        font-size: 12px;
         font-weight: 500;
+        line-height: 1.2;
         color: var(--vuf-ink);
-        text-align: left;
+        text-align: center;
+        overflow-wrap: anywhere;
+        transition: border-color var(--vuf-t-fast), background var(--vuf-t-fast), color var(--vuf-t-fast);
 
         > .fa, > i.fa, > span:first-child:not(:only-child):not(.ws-ico) {
-            width: 16px !important;
+            width: 18px !important;
             height: auto !important;
             margin: 0 !important;
             background: transparent !important;
-            color: var(--vuf-muted) !important;
-            font-size: 14px !important;
+            color: var(--vuf-primary) !important;
+            font-size: 17px !important;
         }
 
         // a mask icon keeps its colour (it paints with background-color)
         > .ws-ico {
-            width: 16px;
-            height: 16px;
-            flex: 0 0 16px;
-            color: var(--vuf-muted);
+            width: 18px;
+            height: 18px;
+            flex: 0 0 18px;
+            color: var(--vuf-primary);
         }
 
-        &:hover {
-            background: var(--vuf-bg);
+        &:hover, &:focus-visible {
+            background: var(--vuf-primary-soft);
+            border-color: var(--vuf-primary);
             color: var(--vuf-primary);
-            > .fa, > i.fa { background: transparent !important; color: var(--vuf-primary) !important; }
-            > .ws-ico { color: var(--vuf-primary); }
         }
     }
 }

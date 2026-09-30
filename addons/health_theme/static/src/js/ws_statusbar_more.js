@@ -43,7 +43,48 @@ export function markWsMoreSlots(statusBar) {
     return marked;
 }
 
+export const WS_WORKSPACE_CLASS = "ws-workspace";
+
+/**
+ * On a Workspace form the header buttons sit on the identity line, at its
+ * right end, instead of on a row of their own above it. The compiled
+ * statusbar node is MOVED into the hero (same node, same slots, same
+ * t-att-class), so StatusBarButtons and the More menu are untouched.
+ * A form without `ws-workspace` on its arch, or without a `.ws-hero`, keeps
+ * the stock layout.
+ */
+export function liftStatusBarIntoHero(arch, compiled) {
+    if (!arch || arch.tagName !== "form") {
+        return false;
+    }
+    const classes = (arch.getAttribute("class") || "").split(/\s+/);
+    if (!classes.includes(WS_WORKSPACE_CLASS)) {
+        return false;
+    }
+    const bar = compiled.querySelector(".o_form_statusbar");
+    const hero = compiled.querySelector(".ws-hero");
+    if (!bar || !hero || hero.contains(bar)) {
+        return false;
+    }
+    bar.classList.add("ws-hero__actions");
+    hero.appendChild(bar);
+    return true;
+}
+
 patch(FormCompiler.prototype, {
+    compile(key, params = {}) {
+        const res = super.compile(...arguments);
+        try {
+            if (!params.isSubView) {
+                liftStatusBarIntoHero(this.templates[key], res);
+            }
+        } catch (error) {
+            // fail closed: the header keeps its own row above the sheet
+            console.warn("ws_statusbar_more: header left above the hero", error);
+        }
+        return res;
+    },
+
     compileHeader(el, params) {
         const res = super.compileHeader(...arguments);
         try {

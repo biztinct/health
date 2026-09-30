@@ -19,6 +19,11 @@
                      live in the arch. Workspace kit (health_theme, WS-1):
                      buttons carrying `ws-more` render inside one "More" menu. -->
                 <header>
+                    <!-- the standing action of a client record; Next step keeps
+                         the contextual one, the More menu the lifecycle ones -->
+                    <button name="action_open_quick_booking_owl" type="object"
+                            string="New booking" class="oe_highlight"
+                            invisible="deleted or not active"/>
                     <button name="action_open_delete_wizard" type="object"
                             string="Delete" icon="fa-trash"
                             class="ws-more"
@@ -586,18 +591,21 @@
 
                         <!-- RAIL — pinned while the main column scrolls -->
                         <div class="ws-rail">
-                            <widget name="ws_client_glance" mode="glance"/>
-
-                            <!-- People: the client, then (health_crm) the main contact -->
-                            <div class="ws-panel ws-panel--people" name="people_panel">
-                                <div class="ws-panel__head">People</div>
-                                <widget name="ws_client_glance" mode="contact"/>
-                            </div>
+                            <!-- Quick actions: call / message / email and the
+                                 registered shortcuts, as tiles, first in the rail -->
+                            <widget name="ws_client_shortcuts"/>
 
                             <!-- Needs attention: draws its own panel, or nothing -->
                             <widget name="ws_client_glance" mode="attention"/>
 
-                            <widget name="ws_client_shortcuts"/>
+                            <widget name="ws_client_glance" mode="glance"/>
+
+                            <!-- People: the main contact (health_crm fills this panel);
+                                 the client's own phone is on the identity line and the
+                                 call / message tiles above -->
+                            <div class="ws-panel ws-panel--people" name="people_panel">
+                                <div class="ws-panel__head">People</div>
+                            </div>
                         </div><!-- /ws-rail -->
                     </div><!-- /ws-page -->
                 </sheet>

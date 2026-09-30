@@ -526,8 +526,27 @@ registry.category("view_widgets").add("ws_client_visits", wsClientVisits);
 export class WsClientShortcuts extends WsClientPanel {
     static template = "health_fieldservice.WsClientShortcuts";
 
+    // Call / Message / Email come first (from the record itself); then the
+    // registered shortcuts. "New booking" is the header's own button, so it
+    // is not repeated here.
     get entries() {
-        return shortcutEntries(this.env);
+        const c = this.contact;
+        const own = [
+            c.tel && { key: "call", label: _t("Call"), icon: "phone", href: c.tel },
+            c.sms && { key: "sms", label: _t("Message"), icon: "message-square", href: c.sms },
+            c.mail && { key: "mail", label: _t("Email"), icon: "mail", href: c.mail },
+        ].filter(Boolean);
+        return own.concat(shortcutEntries(this.env).filter((e) => e.key !== "new_booking"));
+    }
+
+    get contact() {
+        const phone = recordPhone(this.data);
+        const email = (this.data.email || "").trim();
+        return {
+            tel: phone ? "tel:" + phone.replace(/\s+/g, "") : "",
+            sms: phone ? "sms:" + phone.replace(/\s+/g, "") : "",
+            mail: email ? "mailto:" + email : "",
+        };
     }
 
     run(entry) {
