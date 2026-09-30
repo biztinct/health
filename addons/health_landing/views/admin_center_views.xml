@@ -631,10 +631,14 @@
                 <field name="default_code" string="Item Code"/>
                 <field name="name" string="Service"/>
                 <field name="categ_id" string="Category"/>
+                <field name="item_group" optional="show"/>
+                <field name="marketing_service_line" optional="hide"/>
                 <field name="list_price" string="Base Fee" widget="monetary"
                        options="{'currency_field': 'currency_id'}"/>
                 <field name="uom_id" string="Unit" optional="show" groups="uom.group_uom"/>
                 <field name="rounding_rule" optional="show"/>
+                <field name="price_version" optional="show"/>
+                <field name="price_valid_from" optional="hide"/>
                 <field name="sale_ok" string="Can be Sold" optional="hide"/>
                 <field name="active" widget="boolean_toggle"/>
             </list>

@@ -57,7 +57,34 @@ class SaleOrder(models.Model):
                                  help='Number of wounds treated. First is included in base price.')
     iv_fluid_count = fields.Integer('IV Fluid Bags', default=0,
                                     help='Number of IV fluid bags used. Not included in base price.')
-    
+    wound_size = fields.Selection([
+        ('small', 'Small'),
+        ('large', 'Large'),
+    ], string='Extra Wounds Size', default='small',
+       help='Size of the wounds after the first; the price list charges large '
+            'extra wounds more.')
+    wound_complex = fields.Boolean(
+        'Complex Wound', help='The price list doubles the fee for a complex wound.')
+    doctor_ordered = fields.Boolean(
+        'Ordered by Clinic Doctor',
+        help='A clinic doctor ordered this service. Some services may only be '
+             'booked alone when a doctor ordered them.')
+    other_service_failed = fields.Boolean(
+        'Other Service Unsuccessful',
+        help='Another service was tried and was unsuccessful. Some services may '
+             'only be booked alone in that case.')
+
+    partner_is_foreign_client = fields.Boolean(
+        related='partner_id.is_foreign_client', readonly=False, string='Foreign Client')
+
+    # Price-list condition warnings: never block, always kept on the booking
+    # (owner decision 2026-09-30) so they can be reviewed later.
+    pricing_warnings = fields.Text(
+        'Price Warnings', compute='_compute_pricing_warnings', store=True,
+        help='Price list conditions this booking does not meet.')
+    has_pricing_warnings = fields.Boolean(
+        'Has Price Warnings', compute='_compute_pricing_warnings', store=True)
+
     # Computed fields from FSO for pricing rules
     fso_distance = fields.Float('Distance (km)', 
                                compute='_compute_fso_fields', 
@@ -247,8 +274,11 @@ class SaleOrder(models.Model):
                     else:
                         dt_utc = dt.astimezone(pytz.UTC)
                     
-                    # Convert to company timezone for business hour calculations
-                    company_tz = pytz.timezone(order.company_id.partner_id.tz or 'UTC')
+                    # The booking's own timezone (facility → province →
+                    # Vietnam), not the company's: the company partner has
+                    # no tz on these databases, which read every visit 7 h
+                    # early and misjudged after-hours/weekend/holiday.
+                    company_tz = pytz.timezone(order._pricing_tz())
                     dt_local = dt_utc.astimezone(company_tz)
                 except:
                     # Fallback to original datetime if timezone conversion fails
@@ -346,6 +376,121 @@ class SaleOrder(models.Model):
             else:
                 order.service_city = ''
     
+    def _pricing_engine_for_order(self):
+        self.ensure_one()
+        if self.pricelist_id.advanced_engine_id:
+            return self.pricelist_id.advanced_engine_id
+        return self.env['advanced.pricing.config'].get_config().default_engine_id
+
+    def _pricing_tz(self):
+        self.ensure_one()
+        if self.fso_id:
+            return self.fso_id._get_booking_tz()
+        return self.company_id.partner_id.tz or 'Asia/Ho_Chi_Minh'
+
+    def _local_appointment_time(self):
+        """Visit start as decimal hours in the company's timezone (19.5 =
+        19:30), or None when the quote has no appointment."""
+        self.ensure_one()
+        dt = self.fso_appointment_time
+        if not dt:
+            return None
+        import pytz
+        try:
+            tz = pytz.timezone(self._pricing_tz())
+            local = pytz.UTC.localize(dt).astimezone(tz)
+        except Exception:
+            local = dt
+        return local.hour + local.minute / 60.0
+
+    def _pricing_booking_context(self):
+        """Everything price rules and condition checks read about this
+        booking — ONE builder for the price, the rule chips, the breakdown
+        and the warnings, so they can never disagree."""
+        self.ensure_one()
+        ctx = {
+            'order_id': self.id,
+            'partner_id': self.partner_id.id,
+            'date_order': self.date_order,
+            'distance': self.fso_distance or 0,
+            'appointment_hour': self.appointment_hour or 0,
+            'is_weekend': self.is_weekend,
+            'is_holiday': self.is_holiday,
+            'holiday_type': self.holiday_type,
+            'holiday_multiplier': self.holiday_multiplier or 1.0,
+            'is_after_hours': self.is_after_hours,
+            'service_type': self.fso_service_type,
+            'service_location': self.fso_service_location,
+            'urgency': self.fso_urgency,
+            'priority': self.fso_priority,
+            'service_units': self.service_units,
+            'service_city': self.service_city or '',
+            'injection_count': self.injection_count or 0,
+            'medication_count': self.medication_count or 0,
+            'wound_count': self.wound_count or 0,
+            'iv_fluid_count': self.iv_fluid_count or 0,
+            'wound_size': self.wound_size,
+            'wound_complex': self.wound_complex,
+            'doctor_ordered': self.doctor_ordered,
+            'other_service_failed': self.other_service_failed,
+        }
+        t = self._local_appointment_time()
+        if t is not None:
+            ctx['appointment_time'] = t
+        fso = self.fso_id
+        if fso:
+            ctx['fso_id'] = fso.id
+            ctx['booking_hours'] = (fso.scheduled_duration or 0) / 60.0
+        engine = self.env['advanced.pricing.engine']
+        ctx.update(engine._booking_facts(
+            self.partner_id,
+            self.order_line.mapped('product_id.product_tmpl_id'),
+            scheduled_dt=fso.scheduled_datetime if fso else False,
+            address=fso._pricing_address() if fso else False,
+            staff_ids=fso._pricing_staff_ids() if fso else (),
+            fso=fso,
+        ))
+        return ctx
+
+    @api.depends('order_line.product_id', 'order_line.product_uom_qty',
+                 'fso_id', 'fso_appointment_time', 'fso_distance', 'is_weekend',
+                 'partner_id', 'partner_id.is_foreign_client',
+                 'fso_id.scheduled_duration', 'fso_id.primary_nurse_id',
+                 'fso_id.primary_doctor_id', 'doctor_ordered',
+                 'other_service_failed', 'wound_size', 'wound_complex')
+    def _compute_pricing_warnings(self):
+        for order in self:
+            messages = []
+            try:
+                messages = order._collect_pricing_warnings()
+            except Exception:
+                import logging
+                logging.getLogger(__name__).exception(
+                    "Price warnings failed for quote %s", order.id)
+            order.pricing_warnings = '\n'.join(messages) or False
+            order.has_pricing_warnings = bool(messages)
+
+    def _collect_pricing_warnings(self, by_line=False):
+        """Condition warnings for every line. ``by_line`` returns
+        {line_id: [messages]} instead of a flat list."""
+        self.ensure_one()
+        result = {} if by_line else []
+        lines = self.order_line.filtered('product_id')
+        if not lines or not self.use_advanced_pricing:
+            return result
+        engine = self._pricing_engine_for_order()
+        if not engine:
+            return result
+        booking_ctx = self._pricing_booking_context()
+        for line in lines:
+            ctx = engine._line_pricing_context(line.product_id, line.product_uom_qty, booking_ctx)
+            msgs = engine.booking_warnings(line.product_id, line.product_uom_qty, ctx)
+            if by_line:
+                result[line.id] = msgs
+            else:
+                result.extend(msgs)
+        return result
+
     def action_recalculate_advanced_prices(self):
         """Recalculate prices using advanced pricing engine"""
         self.ensure_one()
@@ -681,7 +826,8 @@ class SaleOrder(models.Model):
                  'order_line.price_unit', 'order_line.discount', 'use_advanced_pricing',
                  'fso_distance', 'is_weekend', 'is_after_hours', 'is_holiday',
                  'fso_service_location', 'injection_count', 'medication_count',
-                 'wound_count', 'iv_fluid_count')
+                 'wound_count', 'iv_fluid_count', 'wound_size', 'wound_complex',
+                 'doctor_ordered', 'other_service_failed', 'partner_id.is_foreign_client')
     def _compute_pricing_breakdown_html(self):
         """Reactively rebuild the breakdown so it refreshes on catalog adds and
         line/qty/discount edits (no manual Recalc click needed)."""
@@ -775,32 +921,7 @@ class SaleOrder(models.Model):
             # Find matching rules for this product
             rules_text = []
             if engine and engine.rule_ids:
-                # Build context for evaluation
-                ctx = {
-                    'distance': self.fso_distance or 0,
-                    'appointment_hour': self.appointment_hour or 0,
-                    'is_weekend': self.is_weekend,
-                    'is_holiday': self.is_holiday,
-                    'holiday_type': self.holiday_type,
-                    'is_after_hours': self.is_after_hours,
-                    'service_type': self.fso_service_type,
-                    'service_location': self.fso_service_location,
-                    'urgency': self.fso_urgency,
-                    'priority': self.fso_priority,
-                    'region': '',
-                    # Post-service procedure counts (from quote itself)
-                    'injection_count': self.injection_count or 0,
-                    'medication_count': self.medication_count or 0,
-                    'wound_count': self.wound_count or 0,
-                    'iv_fluid_count': self.iv_fluid_count or 0,
-                }
-                # Determine region from product code
-                code = line.product_id.default_code or ''
-                if '_tphcm' in code:
-                    ctx['region'] = 'HCMC'
-                elif '_hanoi' in code:
-                    ctx['region'] = 'Hanoi'
-
+                ctx = line._pricing_rule_context()
                 approved_rules = engine.rule_ids.filtered(
                     lambda r: r.active and r.approval_status == 'approved'
                 )
@@ -820,7 +941,7 @@ class SaleOrder(models.Model):
                             elif rule.action_type == 'per_unit':
                                 action_desc = f'+{fmt(rule.action_value)} đ/unit'
                             elif rule.action_type == 'percentage':
-                                action_desc = f'+{rule.action_value}%'
+                                action_desc = f'{rule.action_value:+g}%'
 
                             # Short trigger name from rule name
                             short_name = rule.name
@@ -872,6 +993,15 @@ class SaleOrder(models.Model):
         html.append(f'<td style="padding:6px 8px;text-align:right;border-top:2px solid #dee2e6;">{fmt(grand_total)} đ</td>')
         html.append('</tr></tfoot>')
         html.append('</table>')
+        warnings = self._collect_pricing_warnings()
+        if warnings:
+            from markupsafe import escape
+            html.append(
+                '<div style="margin-top:10px;padding:8px 12px;border-radius:6px;'
+                'background:#fdecea;border:1px solid #f5c2c0;color:#8a1c14;font-size:13px;">')
+            html.append(f'<b>{escape(_("Price warnings"))}</b><ul style="margin:4px 0 0 18px;padding:0;">')
+            html.extend(f'<li>{escape(w)}</li>' for w in warnings)
+            html.append('</ul></div>')
         html.append('</div>')
 
         return ''.join(html)
@@ -880,7 +1010,8 @@ class SaleOrder(models.Model):
                  'order_line.price_unit', 'order_line.discount', 'use_advanced_pricing',
                  'fso_distance', 'is_weekend', 'is_after_hours', 'is_holiday',
                  'fso_service_location', 'injection_count', 'medication_count',
-                 'wound_count', 'iv_fluid_count')
+                 'wound_count', 'iv_fluid_count', 'wound_size', 'wound_complex',
+                 'doctor_ordered', 'other_service_failed', 'partner_id.is_foreign_client')
     def _compute_pricing_breakdown_data(self):
         """Structured breakdown consumed by the hf_quote_panel OWL widget. Same
         rule-evaluation as the HTML version, but returns JSON keyed by line id."""
@@ -928,6 +1059,7 @@ class SaleOrder(models.Model):
                 engine = config.default_engine_id
 
         lines = {}
+        warnings_by_line = self._collect_pricing_warnings(by_line=True)
         for line in self.order_line:
             if not line.product_id:
                 continue
@@ -947,6 +1079,7 @@ class SaleOrder(models.Model):
                 'qty': qty,
                 'subtotal': final_price * qty,
                 'rules': rules,
+                'warnings': warnings_by_line.get(line.id, []),
             }
         return {'factors': factors, 'lines': lines}
 
@@ -1047,47 +1180,12 @@ class SaleOrderLine(models.Model):
             else:
                 engine = line.order_id.pricelist_id.advanced_engine_id
             
-            # Build context data with FSO fields for pricing rules
-            context_data = {
-                'order_id': line.order_id.id,
-                'partner_id': line.order_id.partner_id.id,
-                'date_order': line.order_id.date_order,
+            # One shared booking context (see sale.order._pricing_booking_context)
+            context_data = line._pricing_rule_context()
+            context_data.update({
                 'product_id': line.product_id.id,
                 'quantity': line.product_uom_qty,
-            }
-            
-            # Add FSO-based context for pricing rules
-            if line.order_id.fso_id:
-                fso_context = {
-                    'fso_id': line.order_id.fso_id.id,
-                    'distance': line.order_id.fso_distance or 0,
-                    'appointment_hour': line.order_id.appointment_hour or 0,
-                    'is_weekend': line.order_id.is_weekend,
-                    'is_holiday': line.order_id.is_holiday,
-                    'holiday_type': line.order_id.holiday_type,
-                    'holiday_multiplier': line.order_id.holiday_multiplier,
-                    'is_after_hours': line.order_id.is_after_hours,
-                    'service_type': line.order_id.fso_service_type,
-                    'service_location': line.order_id.fso_service_location,
-                    'urgency': line.order_id.fso_urgency,
-                    'priority': line.order_id.fso_priority,
-                    'service_units': line.order_id.service_units,
-                    'service_city': line.order_id.service_city,
-                    # Post-service procedure counts (from quote itself)
-                    'injection_count': line.order_id.injection_count or 0,
-                    'medication_count': line.order_id.medication_count or 0,
-                    'wound_count': line.order_id.wound_count or 0,
-                    'iv_fluid_count': line.order_id.iv_fluid_count or 0,
-                }
-                # Determine region from product code suffix
-                code = line.product_id.default_code or ''
-                if '_tphcm' in code:
-                    fso_context['region'] = 'HCMC'
-                elif '_hanoi' in code:
-                    fso_context['region'] = 'Hanoi'
-                else:
-                    fso_context['region'] = ''
-                context_data.update(fso_context)
+            })
             
             # Calculate price using pricing engine
             try:
@@ -1131,31 +1229,9 @@ class SaleOrderLine(models.Model):
     def _pricing_rule_context(self):
         """Booking context this line's price was evaluated against."""
         self.ensure_one()
-        o = self.order_id
-        ctx = {
-            'distance': o.fso_distance or 0,
-            'appointment_hour': o.appointment_hour or 0,
-            'is_weekend': o.is_weekend,
-            'is_holiday': o.is_holiday,
-            'holiday_type': o.holiday_type,
-            'holiday_multiplier': o.holiday_multiplier or 1.0,
-            'is_after_hours': o.is_after_hours,
-            'service_type': o.fso_service_type,
-            'service_location': o.fso_service_location,
-            'urgency': o.fso_urgency,
-            'priority': o.fso_priority,
-            'region': '',
-            'injection_count': o.injection_count or 0,
-            'medication_count': o.medication_count or 0,
-            'wound_count': o.wound_count or 0,
-            'iv_fluid_count': o.iv_fluid_count or 0,
-        }
-        code = self.product_id.default_code or ''
-        if '_tphcm' in code:
-            ctx['region'] = 'HCMC'
-        elif '_hanoi' in code:
-            ctx['region'] = 'Hanoi'
-        return ctx
+        return self.env['advanced.pricing.engine']._line_pricing_context(
+            self.product_id, self.product_uom_qty,
+            self.order_id._pricing_booking_context())
 
     def _pricing_engine(self):
         """Resolve the pricing engine for this line's order (pricelist or default)."""

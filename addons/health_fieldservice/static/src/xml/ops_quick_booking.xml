@@ -235,6 +235,13 @@
                                                 </t>
                                             </div>
                                         </t>
+                                        <t t-if="item.warnings and item.warnings.length">
+                                            <div class="qb-pt-warnings">
+                                                <t t-foreach="item.warnings" t-as="w" t-key="w_index">
+                                                    <div class="qb-warning" t-esc="w"/>
+                                                </t>
+                                            </div>
+                                        </t>
                                     </t>
                                     <div class="qb-pt-footer">
                                         <div class="qb-pt-total-label">Total</div>

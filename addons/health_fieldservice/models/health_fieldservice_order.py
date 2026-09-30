@@ -5408,7 +5408,11 @@ class HealthFieldServiceOrderUnified(models.Model):
             'distance': distance,
             'urgency': 'normal',
             'priority': '1',
+            'appointment_time': float(time_hour),
+            'booking_hours': float(vals.get('duration_hours') or 0.0),
         }
+        base_context.update(self._quick_booking_booking_facts(
+            partner, product_lines, vals, date_obj, time_hour))
 
         # Plain-language factor chips describing the booking conditions in play
         factors = self._quick_booking_pricing_factors(base_context)
@@ -5428,25 +5432,44 @@ class HealthFieldServiceOrderUnified(models.Model):
                     pass
             unit_price = base_price
             rules = []
+            warnings = []
             if engine:
-                ctx = dict(base_context)
-                code = product.default_code or ''
-                ctx['region'] = 'HCMC' if '_tphcm' in code else ('Hanoi' if '_hanoi' in code else '')
+                ctx = self._quick_booking_line_context(engine, product, qty, base_context)
                 try:
                     unit_price = engine.calculate_price(product.id, qty, partner_id, ctx)
                     rules = engine.explain_applied_rules(product.id, partner_id, qty, ctx)
                 except Exception:
                     unit_price = base_price
+                warnings = self._quick_booking_line_warnings(engine, product, qty, ctx)
             lines.append({
                 'product_id': product.id,
                 'unit_price': unit_price,
                 'base_price': base_price,
                 'adjusted': abs((unit_price or 0) - (base_price or 0)) > 0.001,
                 'rules': rules,
+                'warnings': warnings,
             })
             total += (unit_price or 0) * qty
 
         return {'lines': lines, 'total': total, 'factors': factors}
+
+    # Hooks for the pricing module (advanced_pricing depends on this module,
+    # not the other way round): booking-wide facts, the per-line context and
+    # the condition warnings of the live quick-booking quote.
+    @api.model
+    def _quick_booking_booking_facts(self, partner, product_lines, vals, date_obj, time_hour):
+        return {}
+
+    @api.model
+    def _quick_booking_line_context(self, engine, product, qty, base_context):
+        ctx = dict(base_context)
+        code = product.default_code or ''
+        ctx['region'] = 'HCMC' if '_tphcm' in code else ('Hanoi' if '_hanoi' in code else '')
+        return ctx
+
+    @api.model
+    def _quick_booking_line_warnings(self, engine, product, qty, ctx):
+        return []
 
     @api.model
     def _quick_booking_pricing_factors(self, ctx):

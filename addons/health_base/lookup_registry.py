@@ -266,12 +266,15 @@ CATEGORIES = {
         "name": "Service Location",
         "used_by": ["product.template.healthcare_service_location"],
         "values": [
-            ("home", "Patient Home", ""),
-            ("clinic", "Clinic Visit", ""),
-            ("remote", "Remote/Telemedicine", ""),
-            ("flexible", "Flexible Location", ""),
-            ("hospital", "Hospital", ""),
-            ("care_facility", "Care Facility", ""),
+            # Wording from the client's master list (Lookup.xlsx "Dịch vụ tại",
+            # the "Place of Service" list); Telemedicine added at the client's
+            # request 2026-09-22. Codes are contracts — only labels changed.
+            ("home", "At home", "Tại Nhà"),
+            ("clinic", "At clinic", "Tại PK"),
+            ("remote", "Telemedicine", "Telemedicine"),
+            ("flexible", "Flexible Location", "Linh hoạt"),
+            ("hospital", "Hospital", "Bệnh viện"),
+            ("care_facility", "Care Facility", "Cơ sở chăm sóc"),
         ],
     },
     "staff_skill_category": {

@@ -49,8 +49,24 @@
                         </h1>
                     </div>
 
+                    <div class="alert alert-danger" role="alert"
+                         invisible="parse_status != 'not_understood'">
+                        <strong>The upload could not read this condition, so the rule is switched off.</strong>
+                        Set the conditions below by hand, then switch the rule on.
+                        <div>Not understood: <field name="parse_leftover" class="d-inline"/></div>
+                    </div>
+
                     <!-- Live plain-language summary: FOR … WHEN … THEN … -->
                     <field name="rule_summary_html" nolabel="1" class="apr-summary-wrap"/>
+
+                    <!-- The client's own wording, beside the reading above -->
+                    <group string="As written in the price list" invisible="not condition_text and not rule_note">
+                        <field name="condition_text"/>
+                        <field name="rule_note" invisible="not rule_note"/>
+                        <field name="parse_status" widget="badge"
+                               decoration-success="parse_status == 'understood'"
+                               decoration-danger="parse_status == 'not_understood'"/>
+                    </group>
 
                     <!-- Approval Information -->
                     <group string="Approval Status"
@@ -133,6 +149,23 @@
                                 <field name="medication_count_min" string="Min medications" placeholder="ignore"/>
                             </group>
                         </group>
+                        <group string="Price list conditions">
+                            <group>
+                                <field name="time_windows" placeholder="e.g. 19:00-07:00; 12:00-13:00"/>
+                                <field name="min_hours" placeholder="ignore"/>
+                                <field name="per_km_beyond" placeholder="ignore"/>
+                                <field name="requires_new_client"/>
+                                <field name="requires_foreign_client"/>
+                            </group>
+                            <group>
+                                <field name="requires_other_service_same_visit" string="Another service on the booking"/>
+                                <field name="accept_doctor_order" invisible="not requires_other_service_same_visit"/>
+                                <field name="accept_other_service_failed" invisible="not requires_other_service_same_visit"/>
+                                <field name="requires_multi_client_same_location" string="2nd client, same place, time and staff"/>
+                                <field name="wound_size"/>
+                                <field name="requires_complex_wound"/>
+                            </group>
+                        </group>
                         <div class="apr-advanced-toggle">
                             <field name="show_advanced_conditions"/>
                         </div>
@@ -146,8 +179,6 @@
                                 <field name="wound_count_max" string="Max wounds" placeholder="ignore"/>
                             </group>
                             <group>
-                                <field name="requires_other_service_same_visit"/>
-                                <field name="requires_multi_client_same_location"/>
                                 <field name="requires_bilingual_provider"/>
                                 <field name="is_repeat_booking"/>
                                 <field name="is_manual_quote"/>
@@ -183,7 +214,14 @@
                             <field name="action_value"/>
                             <field name="per_unit_field"
                                    invisible="action_type != 'per_unit'"/>
+                            <field name="conflict_product_tmpl_ids" widget="many2many_tags"
+                                   invisible="action_type != 'exclude'"
+                                   options="{'no_create': True}"/>
                         </group>
+                        <div class="text-muted" invisible="action_type not in ('eligibility', 'exclude')">
+                            This rule never changes a price. When a booking does not meet it,
+                            staff see a warning on the booking, and the warning is kept on the booking.
+                        </div>
                     </div>
                 </sheet>
                 <chatter/>
@@ -213,6 +251,9 @@
                 <filter string="Pending Approval" name="pending" domain="[('approval_status', '=', 'pending')]"/>
                 <filter string="Approved" name="approved" domain="[('approval_status', '=', 'approved')]"/>
                 <filter string="Rejected" name="rejected" domain="[('approval_status', '=', 'rejected')]"/>
+                <separator/>
+                <filter string="Not understood on upload" name="not_understood" domain="[('parse_status', '=', 'not_understood')]"/>
+                <filter string="Condition checks (warnings)" name="checks" domain="[('action_type', 'in', ('eligibility', 'exclude'))]"/>
                 <separator/>
                 <group>
                     <filter string="Region" name="group_region" context="{'group_by': 'region'}"/>
@@ -253,6 +294,10 @@
                 <field name="name"/>
                 <field name="region" optional="show"/>
                 <field name="item_code" optional="show"/>
+                <field name="condition_text" optional="show"/>
+                <field name="parse_status" optional="hide" widget="badge"
+                       decoration-success="parse_status == 'understood'"
+                       decoration-danger="parse_status == 'not_understood'"/>
                 <field name="approval_status" widget="badge"
                        decoration-success="approval_status == 'approved'"
                        decoration-warning="approval_status == 'pending'"

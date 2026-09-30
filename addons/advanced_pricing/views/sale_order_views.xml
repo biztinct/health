@@ -111,7 +111,23 @@
                         <field name="medication_count" string="Medications"/>
                         <field name="wound_count" string="Wounds"/>
                         <field name="iv_fluid_count" string="IV Bags"/>
+                        <field name="wound_size" invisible="wound_count &lt; 2"/>
+                        <field name="wound_complex"/>
                     </group>
+                    <group col="4">
+                        <field name="doctor_ordered"/>
+                        <field name="other_service_failed"/>
+                        <field name="partner_is_foreign_client"/>
+                    </group>
+                </div>
+
+                <!-- Price list conditions this booking does not meet. Warn,
+                     never block: staff may go ahead (e.g. an agreed exception)
+                     and the warning stays on the booking for review. -->
+                <field name="has_pricing_warnings" invisible="1"/>
+                <div class="alert alert-danger mt-2 mb-2" role="alert" invisible="not has_pricing_warnings">
+                    <strong>Price warnings</strong>
+                    <field name="pricing_warnings" nolabel="1" readonly="1" class="d-block" style="white-space: pre-line;"/>
                 </div>
                 
                 <div class="row mt-3">

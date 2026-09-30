@@ -351,6 +351,23 @@ select.qb-form-input { cursor: pointer; }
     .qb-rule-label { color: #616161; }
 }
 
+// Price list conditions not met (warn, never block)
+.qb-pt-warnings {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 12px 8px;
+}
+.qb-warning {
+    padding: 4px 10px;
+    border: 1px solid #F5C2C0;
+    border-radius: 6px;
+    background: #FDECEA;
+    color: #8A1C14;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
 .qb-pt-factors,
 .qb-mq-factors {
     display: flex;

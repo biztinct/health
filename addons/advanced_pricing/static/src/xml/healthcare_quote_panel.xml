@@ -40,6 +40,12 @@
                                 </span>
                                 <span class="hfq-noadj" t-if="!hasAdjustment(line)">No adjustments</span>
                             </div>
+                            <!-- price list conditions not met: warn, never block -->
+                            <div class="hfq-warnings" t-if="warnings(line).length">
+                                <t t-foreach="warnings(line)" t-as="w" t-key="w_index">
+                                    <div class="hfq-warning" t-esc="w"/>
+                                </t>
+                            </div>
                         </div>
 
                         <div class="hfq-card__controls">

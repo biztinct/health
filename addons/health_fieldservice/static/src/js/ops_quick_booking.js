@@ -576,7 +576,10 @@ class OpsQuickBooking extends Component {
         this.state.serviceLocation = SERVICE_DEFAULT_LOCATION[this.state.serviceType] || 'home';
         this.previewPricing();
     }
-    onDurationChange(ev) { this.state.durationHours = parseFloat(ev.target.value) || 1; }
+    onDurationChange(ev) {
+        this.state.durationHours = parseFloat(ev.target.value) || 1;
+        this.previewPricing();  // minimum-hours conditions
+    }
     onLocationChange(ev) {
         this.state.serviceLocation = ev.target.value;
         this.previewPricing();
@@ -687,6 +690,8 @@ class OpsQuickBooking extends Component {
                     facility_id: this.state.facilityId || false,
                     date: this.state.selectedDate,
                     time_hour: this.finetuneHourDecimal,
+                    duration_hours: this.state.durationHours,
+                    staff_ids: [...this.state.assignedStaffIds, this.state.doctorId].filter(Boolean),
                     product_lines: this.state.selectedProducts.map(p => ({
                         product_id: p.product_id, qty: p.qty,
                     })),
@@ -700,6 +705,7 @@ class OpsQuickBooking extends Component {
                     item.basePrice = line.base_price;
                     item.autopriced = !!line.adjusted;
                     item.rules = line.rules || [];
+                    item.warnings = line.warnings || [];
                 }
             }
             this.state.pricingFactors = (result && result.factors) || [];
@@ -731,6 +737,7 @@ class OpsQuickBooking extends Component {
             }
         }
         this.checkAvailability();
+        this.previewPricing();  // same place/time/staff discount
     }
 
     // =========================================================================
@@ -751,6 +758,7 @@ class OpsQuickBooking extends Component {
 
     removeProduct(index) {
         this.state.selectedProducts.splice(index, 1);
+        this.previewPricing();  // "with another service" conditions
     }
 
     updateProductQty(index, ev) {

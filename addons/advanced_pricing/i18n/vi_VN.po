@@ -69,7 +69,9 @@ msgstr "--- Điều kiện thời gian ---"
 msgid ""
 "<i class=\"fa fa-info-circle me-2\"/>\n"
 "                            Visual rule configuration is saved. You can modify it using the visual builder."
-msgstr "<i class=\"fa fa-info-circle me-2\"/>\n                            Cấu hình quy tắc trực quan đã được lưu. Bạn có thể sửa đổi bằng trình tạo trực quan."
+msgstr ""
+"<i class=\"fa fa-info-circle me-2\"/>\n"
+"                            Cấu hình quy tắc trực quan đã được lưu. Bạn có thể sửa đổi bằng trình tạo trực quan."
 
 #. module: advanced_pricing
 #: model_terms:ir.ui.view,arch_db:advanced_pricing.product_view_kanban_catalog_booking_quote
@@ -102,7 +104,10 @@ msgid ""
 "<span class=\"text-muted\">\n"
 "                            Adding products to Healthcare Quote\n"
 "                        </span>"
-msgstr "<span class=\"text-muted\">\n                            Đang thêm sản phẩm vào báo giá chăm sóc sức khỏe\n                        </span>"
+msgstr ""
+"<span class=\"text-muted\">\n"
+"                            Đang thêm sản phẩm vào báo giá chăm sóc sức khỏe\n"
+"                        </span>"
 
 #. module: advanced_pricing
 #: model_terms:ir.ui.view,arch_db:advanced_pricing.view_healthcare_quote_form_catalog
@@ -110,7 +115,10 @@ msgid ""
 "<span class=\"vu-section__icon\" data-icon=\"syringe\"/>\n"
 "                        <span style=\"font-weight: 700; font-size: 14px; color: #00695C;\">Service Procedures</span>\n"
 "                        <span style=\"font-size: 11px; color: #78909c; margin-left: auto;\">Updated by nurse after service delivery</span>"
-msgstr "<span class=\"vu-section__icon\" data-icon=\"syringe\"/>\n                        <span style=\"font-weight: 700; font-size: 14px; color: #00695C;\">Thủ thuật dịch vụ</span>\n                        <span style=\"font-size: 11px; color: #78909c; margin-left: auto;\">Được điều dưỡng cập nhật sau khi cung cấp dịch vụ</span>"
+msgstr ""
+"<span class=\"vu-section__icon\" data-icon=\"syringe\"/>\n"
+"                        <span style=\"font-weight: 700; font-size: 14px; color: #00695C;\">Thủ thuật dịch vụ</span>\n"
+"                        <span style=\"font-size: 11px; color: #78909c; margin-left: auto;\">Được điều dưỡng cập nhật sau khi cung cấp dịch vụ</span>"
 
 #. module: advanced_pricing
 #: model_terms:ir.ui.view,arch_db:advanced_pricing.view_order_form_advanced_pricing
@@ -118,20 +126,23 @@ msgid ""
 "<span invisible=\"not parent.use_advanced_pricing\" class=\"text-muted px-2\">\n"
 "                    <i class=\"fa fa-bar-chart me-1\"/> Advanced Pricing Active\n"
 "                </span>"
-msgstr "<span invisible=\"not parent.use_advanced_pricing\" class=\"text-muted px-2\">\n                    <i class=\"fa fa-bar-chart me-1\"/> Định giá nâng cao đang hoạt động\n                </span>"
+msgstr ""
+"<span invisible=\"not parent.use_advanced_pricing\" class=\"text-muted px-2\">\n"
+"                    <i class=\"fa fa-bar-chart me-1\"/> Định giá nâng cao đang hoạt động\n"
+"                </span>"
 
 #. module: advanced_pricing
 #: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_bulk_wizard_form
 msgid ""
 "<strong><i class=\"fa fa-check-circle\"/> Approve Rules</strong>\n"
 "                        — All pending rules are pre-selected. Toggle off any you don't want to approve."
-msgstr "<strong><i class=\"fa fa-check-circle\"/> Phê duyệt quy tắc</strong>\n                        — Tất cả quy tắc đang chờ đã được chọn sẵn. Tắt lựa chọn đối với quy tắc bạn không muốn phê duyệt."
+msgstr ""
+"<strong><i class=\"fa fa-check-circle\"/> Phê duyệt quy tắc</strong>\n"
+"                        — Tất cả quy tắc đang chờ đã được chọn sẵn. Tắt lựa chọn đối với quy tắc bạn không muốn phê duyệt."
 
 #. module: advanced_pricing
 #: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
-msgid ""
-"<strong><i class=\"fa fa-check-circle\"/> This rule is approved</strong> - "
-"It will be used in pricing calculations when active (not archived)."
+msgid "<strong><i class=\"fa fa-check-circle\"/> This rule is approved</strong> - It will be used in pricing calculations when active (not archived)."
 msgstr "<strong><i class=\"fa fa-check-circle\"/> Quy tắc này đã được phê duyệt</strong> - Quy tắc sẽ được dùng để tính giá khi đang hoạt động (không bị lưu trữ)."
 
 #. module: advanced_pricing
@@ -141,27 +152,29 @@ msgid ""
 "                        <span invisible=\"approval_status != 'draft'\"> - Submit for board approval to enable pricing</span>\n"
 "                        <span invisible=\"approval_status != 'pending'\"> - Awaiting board approval before it can be used</span>\n"
 "                        <span invisible=\"approval_status != 'rejected'\"> - Rule has been rejected and cannot be used</span>"
-msgstr "<strong><i class=\"fa fa-exclamation-triangle\"/> Quy tắc này KHÔNG được dùng để tính giá</strong>\n                        <span invisible=\"approval_status != 'draft'\"> - Gửi Hội đồng phê duyệt để bật tính giá</span>\n                        <span invisible=\"approval_status != 'pending'\"> - Đang chờ Hội đồng phê duyệt trước khi có thể sử dụng</span>\n                        <span invisible=\"approval_status != 'rejected'\"> - Quy tắc đã bị từ chối và không thể sử dụng</span>"
+msgstr ""
+"<strong><i class=\"fa fa-exclamation-triangle\"/> Quy tắc này KHÔNG được dùng để tính giá</strong>\n"
+"                        <span invisible=\"approval_status != 'draft'\"> - Gửi Hội đồng phê duyệt để bật tính giá</span>\n"
+"                        <span invisible=\"approval_status != 'pending'\"> - Đang chờ Hội đồng phê duyệt trước khi có thể sử dụng</span>\n"
+"                        <span invisible=\"approval_status != 'rejected'\"> - Quy tắc đã bị từ chối và không thể sử dụng</span>"
 
 #. module: advanced_pricing
 #: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_bulk_wizard_form
 msgid ""
 "<strong><i class=\"fa fa-paper-plane\"/> Submit for Approval</strong>\n"
 "                        — All draft rules are pre-selected. Toggle off any you don't want to submit."
-msgstr "<strong><i class=\"fa fa-paper-plane\"/> Gửi phê duyệt</strong>\n                        — Tất cả quy tắc dự thảo đã được chọn sẵn. Tắt lựa chọn đối với quy tắc bạn không muốn gửi."
+msgstr ""
+"<strong><i class=\"fa fa-paper-plane\"/> Gửi phê duyệt</strong>\n"
+"                        — Tất cả quy tắc dự thảo đã được chọn sẵn. Tắt lựa chọn đối với quy tắc bạn không muốn gửi."
 
 #. module: advanced_pricing
 #: model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
-msgid ""
-"<strong>Actions:</strong> Set what happens (add charges, apply discounts, "
-"multiply prices)"
+msgid "<strong>Actions:</strong> Set what happens (add charges, apply discounts, multiply prices)"
 msgstr "<strong>Hành động:</strong> Thiết lập kết quả (cộng phí, áp dụng giảm giá, nhân giá)"
 
 #. module: advanced_pricing
 #: model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
-msgid ""
-"<strong>Conditions:</strong> Define when rules apply (distance, quantity, "
-"customer type, etc.)"
+msgid "<strong>Conditions:</strong> Define when rules apply (distance, quantity, customer type, etc.)"
 msgstr "<strong>Điều kiện:</strong> Xác định khi nào quy tắc được áp dụng (khoảng cách, số lượng, loại khách hàng, v.v.)"
 
 #. module: advanced_pricing
@@ -181,9 +194,7 @@ msgid "API Key"
 msgstr "Khóa API"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard__mode
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__action_type_display
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_bulk_wizard_form
+#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard__mode model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__action_type_display model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_bulk_wizard_form
 msgid "Action"
 msgstr "Hành động"
 
@@ -193,8 +204,7 @@ msgid "Action Formula"
 msgstr "Công thức hành động"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_needaction
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_needaction
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_needaction model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_needaction
 msgid "Action Needed"
 msgstr "Cần xử lý"
 
@@ -209,43 +219,33 @@ msgid "Action Value"
 msgstr "Giá trị hành động"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__active
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__active
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__active
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__active
-#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__active
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__active model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__active model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__active model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__active model:ir.model.fields,field_description:advanced_pricing.field_sale_order__active model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
 msgid "Active"
 msgstr "Đang hoạt động"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_ids
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_ids
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_ids model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_ids
 msgid "Activities"
 msgstr "Hoạt động"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_exception_decoration
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_exception_decoration
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_exception_decoration model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_exception_decoration
 msgid "Activity Exception Decoration"
 msgstr "Kiểu hiển thị ngoại lệ hoạt động"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_state
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_state
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_state model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_state
 msgid "Activity State"
 msgstr "Trạng thái hoạt động"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_type_icon
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_type_icon
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_type_icon model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_type_icon
 msgid "Activity Type Icon"
 msgstr "Biểu tượng loại hoạt động"
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_type__add
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0 model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_type__add
 msgid "Add Amount"
 msgstr "Cộng số tiền"
 
@@ -271,8 +271,7 @@ msgid "Advanced Pricelist"
 msgstr "Bảng giá nâng cao"
 
 #. module: advanced_pricing
-#: model:ir.ui.menu,name:advanced_pricing.menu_advanced_pricing_root
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_order_form_advanced_pricing
+#: model:ir.ui.menu,name:advanced_pricing.menu_advanced_pricing_root model_terms:ir.ui.view,arch_db:advanced_pricing.view_order_form_advanced_pricing
 msgid "Advanced Pricing"
 msgstr "Định giá nâng cao"
 
@@ -360,8 +359,7 @@ msgstr "Quy tắc đã áp dụng"
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_type__formula
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0 model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_type__formula
 msgid "Apply Formula"
 msgstr "Áp dụng công thức"
 
@@ -372,8 +370,7 @@ msgstr "Áp dụng cho"
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_type__percentage
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0 model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_type__percentage
 msgid "Apply Percentage"
 msgstr "Áp dụng tỷ lệ phần trăm"
 
@@ -404,8 +401,7 @@ msgstr "Chỉ áp dụng cho dịch vụ tại thành phố này"
 
 #. module: advanced_pricing
 #: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__holiday_type
-msgid ""
-"Apply only for specific holiday type (requires Holiday Only to be checked)"
+msgid "Apply only for specific holiday type (requires Holiday Only to be checked)"
 msgstr "Chỉ áp dụng cho loại ngày lễ cụ thể (cần chọn Chỉ ngày lễ)"
 
 #. module: advanced_pricing
@@ -455,9 +451,7 @@ msgstr "Áp dụng khi dịch vụ diễn ra ngoài giờ HOẶC vào cuối tu�
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
-#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__appointment_hour
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__appointment_hour
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0 model:ir.model.fields,field_description:advanced_pricing.field_sale_order__appointment_hour model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__appointment_hour
 msgid "Appointment Hour"
 msgstr "Giờ hẹn"
 
@@ -477,9 +471,7 @@ msgid "Approval Notes"
 msgstr "Ghi chú phê duyệt"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__approval_status
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__approval_status model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
 msgid "Approval Status"
 msgstr "Trạng thái phê duyệt"
 
@@ -489,10 +481,7 @@ msgid "Approval required for all changes - any modification resets to draft"
 msgstr "Mọi thay đổi đều cần phê duyệt - bất kỳ sửa đổi nào cũng đặt lại về dự thảo"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__pricing_rule_bulk_wizard__mode__approve
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list_quick_edit
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__pricing_rule_bulk_wizard__mode__approve model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list_quick_edit
 msgid "Approve"
 msgstr "Phê duyệt"
 
@@ -507,8 +496,7 @@ msgid "Approve Selected"
 msgstr "Phê duyệt mục đã chọn"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__approval_status__approved
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__approval_status__approved model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
 msgid "Approved"
 msgstr "Đã phê duyệt"
 
@@ -518,8 +506,7 @@ msgid "Approved By"
 msgstr "Người phê duyệt"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_attachment_count
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_attachment_count
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_attachment_count model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_attachment_count
 msgid "Attachment Count"
 msgstr "Số tệp đính kèm"
 
@@ -535,8 +522,7 @@ msgstr "Quay lại báo giá"
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/product_catalog_controller.js:0
-#: code:addons/advanced_pricing/static/src/js/product_catalog_view.js:0
+#: code:addons/advanced_pricing/static/src/js/product_catalog_controller.js:0 code:addons/advanced_pricing/static/src/js/product_catalog_view.js:0
 msgid "Back to Quote"
 msgstr "Quay lại báo giá"
 
@@ -561,8 +547,7 @@ msgid "Blockly XML"
 msgstr "Blockly XML"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__visual_config
-#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_visual_wizard__visual_config
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__visual_config model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_visual_wizard__visual_config
 msgid "Blockly workspace configuration"
 msgstr "Cấu hình không gian làm việc Blockly"
 
@@ -603,14 +588,12 @@ msgid "Bulk Pricing Rule Action"
 msgstr "Hành động hàng loạt cho quy tắc định giá"
 
 #. module: advanced_pricing
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list_quick_edit
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list_quick_edit
 msgid "Bulk approve pending pricing rules"
 msgstr "Phê duyệt hàng loạt các quy tắc định giá đang chờ"
 
 #. module: advanced_pricing
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list_quick_edit
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list_quick_edit
 msgid "Bulk submit draft pricing rules for board approval"
 msgstr "Gửi hàng loạt các quy tắc dự thảo để Hội đồng phê duyệt"
 
@@ -620,8 +603,7 @@ msgid "CMF + Booking Form"
 msgstr "CMF + Biểu mẫu lịch hẹn"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__cache_duration
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__cache_duration
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__cache_duration model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__cache_duration
 msgid "Cache Duration (seconds)"
 msgstr "Thời gian lưu bộ nhớ đệm (giây)"
 
@@ -632,14 +614,11 @@ msgid "Calculation failed"
 msgstr "Tính toán thất bại"
 
 #. module: advanced_pricing
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_bulk_wizard_form
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_reject_wizard_form
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_bulk_wizard_form model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_reject_wizard_form model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
 msgid "Cancel"
 msgstr "Hủy"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_location__care_facility
 #: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_location__care_facility
 msgid "Care Facility"
 msgstr "Cơ sở chăm sóc"
@@ -651,10 +630,7 @@ msgid "Catalog"
 msgstr "Danh mục"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_product_product__catalog_catchment_area
-#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__catchment_province_id
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.product_view_search_catalog_catchment_area
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_sales_order_filter_catchment_area
+#: model:ir.model.fields,field_description:advanced_pricing.field_product_product__catalog_catchment_area model:ir.model.fields,field_description:advanced_pricing.field_sale_order__catchment_province_id model_terms:ir.ui.view,arch_db:advanced_pricing.product_view_search_catalog_catchment_area model_terms:ir.ui.view,arch_db:advanced_pricing.view_sales_order_filter_catchment_area
 msgid "Catchment Area"
 msgstr "Khu vực phụ trách"
 
@@ -674,16 +650,13 @@ msgid "Click \"Open Visual Builder\" to start creating your rule!"
 msgstr "Nhấp \"Mở trình tạo trực quan\" để bắt đầu tạo quy tắc!"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_location__clinic
 #: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_location__clinic
 msgid "Clinic"
 msgstr "Phòng khám"
 
 #. module: advanced_pricing
 #. odoo-python
-#: code:addons/advanced_pricing/models/sale_order.py:0
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__clinic_visit
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__clinic_visit
+#: code:addons/advanced_pricing/models/sale_order.py:0 model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__clinic_visit model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__clinic_visit
 msgid "Clinic Visit"
 msgstr "Khám tại phòng khám"
 
@@ -698,9 +671,7 @@ msgid "Code generated from visual blocks"
 msgstr "Mã được tạo từ các khối trực quan"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__company_id
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__company_id
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__company_id
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__company_id model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__company_id model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__company_id
 msgid "Company"
 msgstr "Công ty"
 
@@ -725,8 +696,7 @@ msgid "Conditional"
 msgstr "Theo điều kiện"
 
 #. module: advanced_pricing
-#: model:ir.actions.act_window,name:advanced_pricing.action_advanced_pricing_config
-#: model:ir.ui.menu,name:advanced_pricing.menu_pricing_config
+#: model:ir.actions.act_window,name:advanced_pricing.action_advanced_pricing_config model:ir.ui.menu,name:advanced_pricing.menu_pricing_config
 msgid "Configuration"
 msgstr "Cấu hình"
 
@@ -741,8 +711,7 @@ msgid "Confirm Rejection"
 msgstr "Xác nhận từ chối"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__consultation
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__consultation
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__consultation model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__consultation
 msgid "Consultation"
 msgstr "Tư vấn"
 
@@ -782,32 +751,17 @@ msgid "Create pricing rules using drag-and-drop blocks:"
 msgstr "Tạo quy tắc định giá bằng các khối kéo và thả:"
 
 #. module: advanced_pricing
-#: model_terms:ir.actions.act_window,help:advanced_pricing.action_pricing_rules_quick_edit
-#: model_terms:ir.actions.act_window,help:advanced_pricing.action_pricing_rules_with_visual
+#: model_terms:ir.actions.act_window,help:advanced_pricing.action_pricing_rules_quick_edit model_terms:ir.actions.act_window,help:advanced_pricing.action_pricing_rules_with_visual
 msgid "Create your first pricing rule!"
 msgstr "Tạo quy tắc định giá đầu tiên!"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__create_uid
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__create_uid
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__create_uid
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__create_uid
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__create_uid
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard__create_uid
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__create_uid
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__create_uid
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__create_uid model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__create_uid model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__create_uid model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__create_uid model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__create_uid model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard__create_uid model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__create_uid model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__create_uid
 msgid "Created by"
 msgstr "Người tạo"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__create_date
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__create_date
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__create_date
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__create_date
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__create_date
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard__create_date
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__create_date
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__create_date
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__create_date model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__create_date model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__create_date model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__create_date model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__create_date model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard__create_date model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__create_date model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__create_date
 msgid "Created on"
 msgstr "Ngày tạo"
 
@@ -830,8 +784,7 @@ msgstr "Python tùy chỉnh"
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__customer_type
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0 model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__customer_type
 msgid "Customer Type"
 msgstr "Loại khách hàng"
 
@@ -863,28 +816,13 @@ msgid "Discount Base Price"
 msgstr "Giảm giá trên giá cơ sở"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__display_name
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__display_name
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__display_name
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__display_name
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__display_name
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard__display_name
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__display_name
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__display_name
-#: model:ir.model.fields,field_description:advanced_pricing.field_product_pricelist__display_name
-#: model:ir.model.fields,field_description:advanced_pricing.field_product_product__display_name
-#: model:ir.model.fields,field_description:advanced_pricing.field_product_template__display_name
-#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__display_name
-#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order_line__display_name
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__display_name model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__display_name model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__display_name model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__display_name model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__display_name model:ir.model.fields,field_description:advanced_pricing.field_health_fieldservice_order__display_name model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard__display_name model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__display_name model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__display_name model:ir.model.fields,field_description:advanced_pricing.field_product_category__display_name model:ir.model.fields,field_description:advanced_pricing.field_product_pricelist__display_name model:ir.model.fields,field_description:advanced_pricing.field_product_product__display_name model:ir.model.fields,field_description:advanced_pricing.field_product_template__display_name model:ir.model.fields,field_description:advanced_pricing.field_res_partner__display_name model:ir.model.fields,field_description:advanced_pricing.field_sale_order__display_name model:ir.model.fields,field_description:advanced_pricing.field_sale_order_line__display_name
 msgid "Display Name"
 msgstr "Tên hiển thị"
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
-#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__fso_distance
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__distance
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__per_unit_field__distance
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0 model:ir.model.fields,field_description:advanced_pricing.field_sale_order__fso_distance model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__distance model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__per_unit_field__distance
 msgid "Distance (km)"
 msgstr "Khoảng cách (km)"
 
@@ -906,16 +844,12 @@ msgid "Distance: %.1f km"
 msgstr "Khoảng cách: %.1f km"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__approval_status__draft
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_import_wizard__state__draft model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__approval_status__draft model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
 msgid "Draft"
 msgstr "Dự thảo"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__emergency
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__urgency_level__emergency
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__emergency
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_urgency__emergency
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__emergency model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__urgency_level__emergency model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__emergency model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_urgency__emergency
 msgid "Emergency"
 msgstr "Khẩn cấp"
 
@@ -987,15 +921,13 @@ msgid "Excel File"
 msgstr "Tệp Excel"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__rule_id
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__rule_id model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
 msgid "Existing Rule"
 msgstr "Quy tắc hiện có"
 
 #. module: advanced_pricing
 #: model:ir.model.fields,help:advanced_pricing.field_pricing_rule_reject_wizard__rejection_reason
-msgid ""
-"Explain why this pricing rule is being rejected (minimum 10 characters)"
+msgid "Explain why this pricing rule is being rejected (minimum 10 characters)"
 msgstr "Giải thích lý do từ chối quy tắc định giá này (ít nhất 10 ký tự)"
 
 #. module: advanced_pricing
@@ -1061,26 +993,22 @@ msgid "Filename"
 msgstr "Tên tệp"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__follow_up
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__follow_up
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__follow_up model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__follow_up
 msgid "Follow-up"
 msgstr "Tái khám"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_follower_ids
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_follower_ids
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_follower_ids model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_follower_ids
 msgid "Followers"
 msgstr "Người theo dõi"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_partner_ids
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_partner_ids
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_partner_ids model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_partner_ids
 msgid "Followers (Partners)"
 msgstr "Người theo dõi (Đối tác)"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__activity_type_icon
-#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__activity_type_icon
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__activity_type_icon model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__activity_type_icon
 msgid "Font awesome icon e.g. fa-tasks"
 msgstr "Biểu tượng Font Awesome, ví dụ fa-tasks"
 
@@ -1101,8 +1029,7 @@ msgid "From hour (0–23)"
 msgstr "Từ giờ (0–23)"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__generated_code
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__generated_code
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__generated_code model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__generated_code
 msgid "Generated Code"
 msgstr "Mã đã tạo"
 
@@ -1132,15 +1059,12 @@ msgid "HCMC"
 msgstr "TP.HCM"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__product_product__catalog_catchment_area__hanoi
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_sales_order_filter_catchment_area
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__product_product__catalog_catchment_area__hanoi model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
 msgid "Hanoi"
 msgstr "Hà Nội"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__has_message
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__has_message
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__has_message model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__has_message
 msgid "Has Message"
 msgstr "Có tin nhắn"
 
@@ -1151,22 +1075,17 @@ msgstr "Danh mục sản phẩm chăm sóc sức khỏe"
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/product_catalog_controller.js:0
-#: code:addons/advanced_pricing/static/src/js/product_catalog_view.js:0
+#: code:addons/advanced_pricing/static/src/js/product_catalog_controller.js:0 code:addons/advanced_pricing/static/src/js/product_catalog_view.js:0
 msgid "Healthcare Quote"
 msgstr "Báo giá chăm sóc sức khỏe"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__priority__2
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__urgency_level__high
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_priority__2
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_urgency__high
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__priority__2 model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__urgency_level__high model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_priority__2 model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_urgency__high
 msgid "High"
 msgstr "Cao"
 
 #. module: advanced_pricing
 #: model:ir.model.fields.selection,name:advanced_pricing.selection__product_product__catalog_catchment_area__tphcm
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_sales_order_filter_catchment_area
 msgid "Ho Chi Minh City"
 msgstr "Thành phố Hồ Chí Minh"
 
@@ -1192,8 +1111,7 @@ msgid "Holiday Service"
 msgstr "Dịch vụ ngày lễ"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__holiday_type
-#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__holiday_type
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__holiday_type_id model:ir.model.fields,field_description:advanced_pricing.field_sale_order__holiday_type
 msgid "Holiday Type"
 msgstr "Loại ngày lễ"
 
@@ -1208,21 +1126,17 @@ msgid "Holidays only"
 msgstr "Chỉ ngày lễ"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_location__home
 #: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_location__home
 msgid "Home"
 msgstr "Tại nhà"
 
 #. module: advanced_pricing
 #. odoo-python
-#: code:addons/advanced_pricing/models/sale_order.py:0
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__home_visit
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__home_visit
+#: code:addons/advanced_pricing/models/sale_order.py:0 model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__home_visit model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__home_visit
 msgid "Home Visit"
 msgstr "Khám tại nhà"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_location__hospital
 #: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_location__hospital
 msgid "Hospital"
 msgstr "Bệnh viện"
@@ -1238,19 +1152,7 @@ msgid "How this rule changes the catalog price when it matches."
 msgstr "Cách quy tắc thay đổi giá danh mục khi các điều kiện khớp."
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__id
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__id
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__id
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__id
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__id
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard__id
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__id
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__id
-#: model:ir.model.fields,field_description:advanced_pricing.field_product_pricelist__id
-#: model:ir.model.fields,field_description:advanced_pricing.field_product_product__id
-#: model:ir.model.fields,field_description:advanced_pricing.field_product_template__id
-#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__id
-#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order_line__id
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__id model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__id model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__id model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__id model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__id model:ir.model.fields,field_description:advanced_pricing.field_health_fieldservice_order__id model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard__id model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__id model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__id model:ir.model.fields,field_description:advanced_pricing.field_product_category__id model:ir.model.fields,field_description:advanced_pricing.field_product_pricelist__id model:ir.model.fields,field_description:advanced_pricing.field_product_product__id model:ir.model.fields,field_description:advanced_pricing.field_product_template__id model:ir.model.fields,field_description:advanced_pricing.field_res_partner__id model:ir.model.fields,field_description:advanced_pricing.field_sale_order__id model:ir.model.fields,field_description:advanced_pricing.field_sale_order_line__id
 msgid "ID"
 msgstr "ID"
 
@@ -1270,14 +1172,12 @@ msgid "IV Fluid Count"
 msgstr "Số túi dịch truyền"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_exception_icon
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_exception_icon
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_exception_icon model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_exception_icon
 msgid "Icon"
 msgstr "Biểu tượng"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__activity_exception_icon
-#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__activity_exception_icon
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__activity_exception_icon model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__activity_exception_icon
 msgid "Icon to indicate an exception activity."
 msgstr "Biểu tượng cho biết hoạt động có ngoại lệ."
 
@@ -1288,16 +1188,12 @@ msgid "If"
 msgstr "Nếu"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__message_needaction
-#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__message_needaction
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__message_needaction model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__message_needaction
 msgid "If checked, new messages require your attention."
 msgstr "Nếu được chọn, có tin nhắn mới cần bạn xử lý."
 
 #. module: advanced_pricing
-#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__message_has_error
-#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__message_has_sms_error
-#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__message_has_error
-#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__message_has_sms_error
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__message_has_error model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__message_has_sms_error model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__message_has_error model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "Nếu được chọn, một số tin nhắn bị lỗi gửi."
 
@@ -1312,11 +1208,7 @@ msgid "Import Log"
 msgstr "Nhật ký nhập"
 
 #. module: advanced_pricing
-#: model:ir.actions.act_window,name:advanced_pricing.action_pricing_import_wizard
-#: model:ir.ui.menu,name:advanced_pricing.menu_healthcare_pricing_import
-#: model:ir.ui.menu,name:advanced_pricing.menu_pricing_import
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_import_wizard_form
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list
+#: model:ir.actions.act_window,name:advanced_pricing.action_pricing_import_wizard model:ir.ui.menu,name:advanced_pricing.menu_healthcare_pricing_import model:ir.ui.menu,name:advanced_pricing.menu_pricing_import model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_import_wizard_form model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list
 msgid "Import Price List"
 msgstr "Nhập bảng giá"
 
@@ -1363,21 +1255,18 @@ msgstr "Mũi tiêm đã thực hiện"
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__is_after_hours
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0 model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__is_after_hours
 msgid "Is After Hours"
 msgstr "Ngoài giờ"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_is_follower
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_is_follower
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_is_follower model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_is_follower
 msgid "Is Follower"
 msgstr "Là người theo dõi"
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__is_holiday
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0 model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__is_holiday
 msgid "Is Holiday"
 msgstr "Vào ngày lễ"
 
@@ -1388,38 +1277,22 @@ msgstr "Là quy tắc trực quan"
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__is_weekend
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0 model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__is_weekend
 msgid "Is Weekend"
 msgstr "Vào cuối tuần"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__item_code
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__item_code
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__item_code model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__item_code
 msgid "Item Code"
 msgstr "Mã hạng mục"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__write_uid
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__write_uid
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__write_uid
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__write_uid
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__write_uid
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard__write_uid
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__write_uid
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__write_uid
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__write_uid model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__write_uid model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__write_uid model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__write_uid model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__write_uid model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard__write_uid model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__write_uid model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__write_uid
 msgid "Last Updated by"
 msgstr "Người cập nhật gần nhất"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__write_date
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__write_date
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__write_date
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__write_date
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__write_date
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard__write_date
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__write_date
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__write_date
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__write_date model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__write_date model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__write_date model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__write_date model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__write_date model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard__write_date model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__write_date model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__write_date
 msgid "Last Updated on"
 msgstr "Ngày cập nhật gần nhất"
 
@@ -1455,8 +1328,7 @@ msgid "Less or Equal"
 msgstr "Nhỏ hơn hoặc bằng"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__level__1
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_visual_wizard__level__1
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__level__1 model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_visual_wizard__level__1
 msgid "Level 1 - Base Rules"
 msgstr "Cấp 1 - Quy tắc cơ sở"
 
@@ -1481,10 +1353,7 @@ msgid "Live plain-language summary of this rule (FOR … WHEN … THEN …)."
 msgstr "Tóm tắt trực tiếp quy tắc bằng ngôn ngữ dễ hiểu (ÁP DỤNG CHO … KHI … THÌ …)."
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__priority__0
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__urgency_level__low
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_priority__0
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_urgency__low
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__priority__0 model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__urgency_level__low model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_priority__0 model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_urgency__low
 msgid "Low"
 msgstr "Thấp"
 
@@ -1579,14 +1448,12 @@ msgid "Medications Given"
 msgstr "Thuốc đã sử dụng"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_has_error
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_has_error
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_has_error model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_has_error
 msgid "Message Delivery error"
 msgstr "Lỗi gửi tin nhắn"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_ids
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_ids
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_ids model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_ids
 msgid "Messages"
 msgstr "Tin nhắn"
 
@@ -1682,8 +1549,7 @@ msgstr "Số loại thuốc bổ sung tối thiểu để áp dụng quy tắc"
 
 #. module: advanced_pricing
 #: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__injection_count_min
-msgid ""
-"Minimum number of injections to apply this rule (e.g., after 1st injection)"
+msgid "Minimum number of injections to apply this rule (e.g., after 1st injection)"
 msgstr "Số mũi tiêm tối thiểu để áp dụng quy tắc (ví dụ: sau mũi tiêm đầu tiên)"
 
 #. module: advanced_pricing
@@ -1714,27 +1580,23 @@ msgstr "Nhiều khách hàng cùng địa điểm"
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_type__multiply
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0 model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_type__multiply
 msgid "Multiply by Factor"
 msgstr "Nhân với hệ số"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__my_activity_date_deadline
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__my_activity_date_deadline
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__my_activity_date_deadline model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__my_activity_date_deadline
 msgid "My Activity Deadline"
 msgstr "Hạn hoạt động của tôi"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__holiday_type__national
 #: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__holiday_type__national
 msgid "National Holiday"
 msgstr "Ngày lễ quốc gia"
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/rule_builder.js:0
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
+#: code:addons/advanced_pricing/static/src/js/rule_builder.js:0 code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
 msgid "New Rule"
 msgstr "Quy tắc mới"
 
@@ -1745,26 +1607,22 @@ msgid "New total: %(new_total)s đ (was %(old_total)s đ, delta: %(delta)s đ)"
 msgstr "Tổng mới: %(new_total)s đ (trước đây %(old_total)s đ, chênh lệch: %(delta)s đ)"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_calendar_event_id
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_calendar_event_id
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_calendar_event_id model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_calendar_event_id
 msgid "Next Activity Calendar Event"
 msgstr "Sự kiện lịch cho hoạt động tiếp theo"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_date_deadline
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_date_deadline
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_date_deadline model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_date_deadline
 msgid "Next Activity Deadline"
 msgstr "Hạn hoạt động tiếp theo"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_summary
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_summary
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_summary model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_summary
 msgid "Next Activity Summary"
 msgstr "Tóm tắt hoạt động tiếp theo"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_type_id
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_type_id
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_type_id model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_type_id
 msgid "Next Activity Type"
 msgstr "Loại hoạt động tiếp theo"
 
@@ -1794,8 +1652,7 @@ msgstr "Giá không thay đổi. Tổng tiền vẫn là %s đ."
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/pricing_calculator.js:0
-#: code:addons/advanced_pricing/static/src/js/pricing_service.js:0
+#: code:addons/advanced_pricing/static/src/js/pricing_calculator.js:0 code:addons/advanced_pricing/static/src/js/pricing_service.js:0
 msgid "No default pricing engine configured"
 msgstr "Chưa cấu hình công cụ định giá mặc định"
 
@@ -1811,16 +1668,12 @@ msgid "No services yet — add one from the catalog."
 msgstr "Chưa có dịch vụ - hãy thêm từ danh mục."
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__priority__1
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__urgency_level__normal
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_priority__1
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_urgency__normal
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__priority__1 model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__urgency_level__normal model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_priority__1 model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_urgency__normal
 msgid "Normal"
 msgstr "Bình thường"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_needaction_counter
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_needaction_counter
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_needaction_counter model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_needaction_counter
 msgid "Number of Actions"
 msgstr "Số hành động"
 
@@ -1830,8 +1683,7 @@ msgid "Number of IV fluid bags used. Not included in base price."
 msgstr "Số túi dịch truyền đã dùng. Không bao gồm trong giá cơ sở."
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_has_error_counter
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_has_error_counter
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_has_error_counter model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_has_error_counter
 msgid "Number of errors"
 msgstr "Số lỗi"
 
@@ -1846,14 +1698,12 @@ msgid "Number of medications administered. First is included in base price."
 msgstr "Số loại thuốc đã sử dụng. Loại đầu tiên được bao gồm trong giá cơ sở."
 
 #. module: advanced_pricing
-#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__message_needaction_counter
-#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__message_needaction_counter
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__message_needaction_counter model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__message_needaction_counter
 msgid "Number of messages requiring action"
 msgstr "Số tin nhắn cần xử lý"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__message_has_error_counter
-#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__message_has_error_counter
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__message_has_error_counter model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__message_has_error_counter
 msgid "Number of messages with delivery error"
 msgstr "Số tin nhắn bị lỗi gửi"
 
@@ -1863,15 +1713,13 @@ msgid "Number of wounds treated. First is included in base price."
 msgstr "Số vết thương đã xử lý. Vết thương đầu tiên được bao gồm trong giá cơ sở."
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__holiday_type__observance
 #: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__holiday_type__observance
 msgid "Observance"
 msgstr "Ngày kỷ niệm"
 
 #. module: advanced_pricing
 #. odoo-python
-#: code:addons/advanced_pricing/models/pricing_rule.py:0
-#: code:addons/advanced_pricing/wizards/pricing_rule_bulk_wizard.py:0
+#: code:addons/advanced_pricing/models/pricing_rule.py:0 code:addons/advanced_pricing/wizards/pricing_rule_bulk_wizard.py:0
 msgid "Only Board members can approve pricing rules."
 msgstr "Chỉ thành viên Hội đồng mới có thể phê duyệt quy tắc định giá."
 
@@ -1910,8 +1758,7 @@ msgstr "Toán tử"
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__order_total
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0 model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__order_total
 msgid "Order Total"
 msgstr "Tổng đơn hàng"
 
@@ -1950,9 +1797,7 @@ msgstr "Vui lòng tạo quy tắc bằng trình tạo trực quan trước."
 #. module: advanced_pricing
 #. odoo-python
 #: code:addons/advanced_pricing/models/sale_order.py:0
-msgid ""
-"Please enable \"Use Advanced Pricing Engine\" on pricelist: %(pricelist)s. "
-"Go to Sales → Pricelists → %(pricelist)s"
+msgid "Please enable \"Use Advanced Pricing Engine\" on pricelist: %(pricelist)s. Go to Sales → Pricelists → %(pricelist)s"
 msgstr "Vui lòng bật \"Sử dụng công cụ định giá nâng cao\" trên bảng giá %(pricelist)s. Đi tới Bán hàng → Bảng giá → %(pricelist)s"
 
 #. module: advanced_pricing
@@ -1964,9 +1809,7 @@ msgstr "Vui lòng nhập lý do từ chối chi tiết (ít nhất 10 ký tự).
 #. module: advanced_pricing
 #. odoo-python
 #: code:addons/advanced_pricing/models/pricing_rule.py:0
-msgid ""
-"Please review and approve the pricing rule.<br/><b>Action:</b> "
-"%(action)s<br/><b>Value:</b> %(value)s"
+msgid "Please review and approve the pricing rule.<br/><b>Action:</b> %(action)s<br/><b>Value:</b> %(value)s"
 msgstr "Vui lòng xem xét và phê duyệt quy tắc định giá.<br/><b>Hành động:</b> %(action)s<br/><b>Giá trị:</b> %(value)s"
 
 #. module: advanced_pricing
@@ -2001,16 +1844,13 @@ msgstr "Điều chỉnh sau dịch vụ"
 #. module: advanced_pricing
 #. odoo-python
 #: code:addons/advanced_pricing/models/sale_order.py:0
-msgid ""
-"Post-service adjustment: %(delta)s đ. Credit note %(credit_note)s created."
+msgid "Post-service adjustment: %(delta)s đ. Credit note %(credit_note)s created."
 msgstr "Điều chỉnh sau dịch vụ: %(delta)s đ. Đã tạo hóa đơn hoàn tiền %(credit_note)s."
 
 #. module: advanced_pricing
 #. odoo-python
 #: code:addons/advanced_pricing/models/sale_order.py:0
-msgid ""
-"Post-service adjustment: +%(delta)s đ. Supplementary invoice %(invoice)s "
-"created."
+msgid "Post-service adjustment: +%(delta)s đ. Supplementary invoice %(invoice)s created."
 msgstr "Điều chỉnh sau dịch vụ: +%(delta)s đ. Đã tạo hóa đơn bổ sung %(invoice)s."
 
 #. module: advanced_pricing
@@ -2045,7 +1885,7 @@ msgid "Prices recalculated successfully!"
 msgstr "Đã tính lại giá thành công!"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__pricing_breakdown_html
+#: model:ir.model.fields,field_description:advanced_pricing.field_health_fieldservice_order__pricing_breakdown_html model:ir.model.fields,field_description:advanced_pricing.field_sale_order__pricing_breakdown_html
 msgid "Pricing Breakdown"
 msgstr "Chi tiết định giá"
 
@@ -2065,18 +1905,12 @@ msgid "Pricing Configuration"
 msgstr "Cấu hình định giá"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__engine_id
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__engine_id
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__engine_name
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_engine_form
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__engine_id model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__engine_id model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__engine_name model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_engine_form
 msgid "Pricing Engine"
 msgstr "Công cụ định giá"
 
 #. module: advanced_pricing
-#: model:ir.actions.act_window,name:advanced_pricing.action_advanced_pricing_engines
-#: model:ir.ui.menu,name:advanced_pricing.menu_healthcare_pricing_engines
-#: model:ir.ui.menu,name:advanced_pricing.menu_pricing_engines
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_engine_list
+#: model:ir.actions.act_window,name:advanced_pricing.action_advanced_pricing_engines model:ir.ui.menu,name:advanced_pricing.menu_healthcare_pricing_engines model:ir.ui.menu,name:advanced_pricing.menu_pricing_engines model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_engine_list
 msgid "Pricing Engines"
 msgstr "Công cụ định giá"
 
@@ -2089,12 +1923,7 @@ msgstr "Đã tính lại giá"
 #. module: advanced_pricing
 #. odoo-javascript
 #. odoo-python
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder_action.js:0
-#: code:addons/advanced_pricing/wizards/visual_rule_builder_wizard.py:0
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__rule_id
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__rule_id
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0 code:addons/advanced_pricing/static/src/js/visual_rule_builder_action.js:0 code:addons/advanced_pricing/wizards/visual_rule_builder_wizard.py:0 model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__rule_id model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__rule_id model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
 msgid "Pricing Rule"
 msgstr "Quy tắc định giá"
 
@@ -2116,14 +1945,7 @@ msgstr "Dòng quy tắc trong trình hướng dẫn hàng loạt"
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder_action.js:0
-#: model:ir.actions.act_window,name:advanced_pricing.action_advanced_pricing_rules
-#: model:ir.actions.act_window,name:advanced_pricing.action_pricing_rules_with_visual
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__rule_ids
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard__line_ids
-#: model:ir.ui.menu,name:advanced_pricing.menu_healthcare_pricing_rules
-#: model:ir.ui.menu,name:advanced_pricing.menu_pricing_rules
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder_action.js:0 model:ir.actions.act_window,name:advanced_pricing.action_advanced_pricing_rules model:ir.actions.act_window,name:advanced_pricing.action_pricing_rules_with_visual model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__rule_ids model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard__line_ids model:ir.ui.menu,name:advanced_pricing.menu_healthcare_pricing_rules model:ir.ui.menu,name:advanced_pricing.menu_pricing_rules model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list
 msgid "Pricing Rules"
 msgstr "Quy tắc định giá"
 
@@ -2136,10 +1958,7 @@ msgstr "Giá đã được cập nhật"
 #. module: advanced_pricing
 #. odoo-python
 #: code:addons/advanced_pricing/models/pricing_rule.py:0
-msgid ""
-"Pricing rule modified by <b>%(modified_by)s</b>. The rule has been reset to "
-"Draft status and requires re-approval before becoming active "
-"again.<br/><b>Fields modified:</b> %(modified_fields)s"
+msgid "Pricing rule modified by <b>%(modified_by)s</b>. The rule has been reset to Draft status and requires re-approval before becoming active again.<br/><b>Fields modified:</b> %(modified_fields)s"
 msgstr "Quy tắc định giá đã được <b>%(modified_by)s</b> sửa đổi. Quy tắc đã được đặt lại về trạng thái Dự thảo và cần được phê duyệt lại trước khi hoạt động trở lại.<br/><b>Các trường đã sửa:</b> %(modified_fields)s"
 
 #. module: advanced_pricing
@@ -2147,14 +1966,13 @@ msgstr "Quy tắc định giá đã được <b>%(modified_by)s</b> sửa đổi
 msgid ""
 "Pricing rules allow you to automatically adjust prices based on various conditions.\n"
 "                Use the Visual Builder for an intuitive drag-and-drop experience."
-msgstr "Quy tắc định giá cho phép tự động điều chỉnh giá theo nhiều điều kiện.\n                Sử dụng Trình tạo trực quan để thao tác kéo và thả dễ dàng."
+msgstr ""
+"Quy tắc định giá cho phép tự động điều chỉnh giá theo nhiều điều kiện.\n"
+"                Sử dụng Trình tạo trực quan để thao tác kéo và thả dễ dàng."
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__priority
-#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__fso_priority
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__priority
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0 model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__priority model:ir.model.fields,field_description:advanced_pricing.field_sale_order__fso_priority model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__priority
 msgid "Priority"
 msgstr "Mức ưu tiên"
 
@@ -2164,15 +1982,12 @@ msgid "Priority from FSO for pricing rules"
 msgstr "Mức ưu tiên từ lệnh dịch vụ dùng cho quy tắc định giá"
 
 #. module: advanced_pricing
-#: model:ir.model,name:advanced_pricing.model_product_template
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__product_id
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__applied_on__1_product
+#: model:ir.model,name:advanced_pricing.model_product_template model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__product_id model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__applied_on__1_product
 msgid "Product"
 msgstr "Sản phẩm"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__categ_id
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__applied_on__2_product_category
+#: model:ir.model,name:advanced_pricing.model_product_category model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__categ_id model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__applied_on__2_product_category
 msgid "Product Category"
 msgstr "Danh mục sản phẩm"
 
@@ -2182,8 +1997,7 @@ msgid "Product Template"
 msgstr "Mẫu sản phẩm"
 
 #. module: advanced_pricing
-#: model:ir.model,name:advanced_pricing.model_product_product
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__applied_on__0_product_variant
+#: model:ir.model,name:advanced_pricing.model_product_product model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__applied_on__0_product_variant
 msgid "Product Variant"
 msgstr "Biến thể sản phẩm"
 
@@ -2210,8 +2024,7 @@ msgstr "Bảng ngày lễ"
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__quantity
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0 model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__quantity
 msgid "Quantity"
 msgstr "Số lượng"
 
@@ -2221,9 +2034,7 @@ msgid "Quick Edit Pricing Rules"
 msgstr "Chỉnh sửa nhanh quy tắc định giá"
 
 #. module: advanced_pricing
-#: model:ir.actions.act_window,name:advanced_pricing.action_pricing_rules_quick_edit
-#: model:ir.ui.menu,name:advanced_pricing.menu_healthcare_pricing_rules_quick_edit
-#: model:ir.ui.menu,name:advanced_pricing.menu_pricing_rules_quick_edit
+#: model:ir.actions.act_window,name:advanced_pricing.action_pricing_rules_quick_edit model:ir.ui.menu,name:advanced_pricing.menu_healthcare_pricing_rules_quick_edit model:ir.ui.menu,name:advanced_pricing.menu_pricing_rules_quick_edit
 msgid "Quick Edit Rules"
 msgstr "Chỉnh sửa nhanh quy tắc"
 
@@ -2232,7 +2043,9 @@ msgstr "Chỉnh sửa nhanh quy tắc"
 msgid ""
 "Quick edit pricing rules with inline editing. Click a cell to edit values directly.\n"
 "                WARNING: Editing approved rules will reset them to Draft status requiring re-approval."
-msgstr "Chỉnh sửa nhanh quy tắc định giá ngay trên danh sách. Nhấp vào ô để sửa giá trị trực tiếp.\n                CẢNH BÁO: Sửa quy tắc đã phê duyệt sẽ đặt lại về trạng thái Dự thảo và cần phê duyệt lại."
+msgstr ""
+"Chỉnh sửa nhanh quy tắc định giá ngay trên danh sách. Nhấp vào ô để sửa giá trị trực tiếp.\n"
+"                CẢNH BÁO: Sửa quy tắc đã phê duyệt sẽ đặt lại về trạng thái Dự thảo và cần phê duyệt lại."
 
 #. module: advanced_pricing
 #: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__trigger_source__quotation_booking_form
@@ -2241,13 +2054,11 @@ msgstr "Báo giá trên biểu mẫu lịch hẹn"
 
 #. module: advanced_pricing
 #: model:ir.model.fields,help:advanced_pricing.field_sale_order__pre_service_amount
-msgid ""
-"Quote total at time of advance payment, used to calculate post-service delta"
+msgid "Quote total at time of advance payment, used to calculate post-service delta"
 msgstr "Tổng báo giá tại thời điểm thanh toán trước, dùng để tính chênh lệch sau dịch vụ"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__rating_ids
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__rating_ids
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__rating_ids model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__rating_ids
 msgid "Ratings"
 msgstr "Đánh giá"
 
@@ -2259,8 +2070,7 @@ msgstr "Cần phê duyệt lại: %s"
 
 #. module: advanced_pricing
 #: model_terms:ir.ui.view,arch_db:advanced_pricing.view_healthcare_quote_form_catalog
-msgid ""
-"Recalculate with actual procedure counts and create adjustment if needed"
+msgid "Recalculate with actual procedure counts and create adjustment if needed"
 msgstr "Tính lại theo số lượng thủ thuật thực tế và tạo điều chỉnh nếu cần"
 
 #. module: advanced_pricing
@@ -2269,8 +2079,7 @@ msgid "Reference code from price list (e.g., bs_010, dd_020)"
 msgstr "Mã tham chiếu từ bảng giá (ví dụ: bs_010, dd_020)"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__region
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__region model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
 msgid "Region"
 msgstr "Khu vực"
 
@@ -2285,7 +2094,6 @@ msgid "Region/Catchment Area"
 msgstr "Khu vực/Khu vực phụ trách"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__holiday_type__regional
 #: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__holiday_type__regional
 msgid "Regional Holiday"
 msgstr "Ngày lễ khu vực"
@@ -2306,19 +2114,16 @@ msgid "Reject Pricing Rule with Mandatory Reason"
 msgstr "Từ chối quy tắc định giá và bắt buộc nhập lý do"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__approval_status__rejected
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__approval_status__rejected model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
 msgid "Rejected"
 msgstr "Đã từ chối"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__rejection_reason
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__rejection_reason
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__rejection_reason model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__rejection_reason
 msgid "Rejection Reason"
 msgstr "Lý do từ chối"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_location__remote
 #: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_location__remote
 msgid "Remote/Online"
 msgstr "Từ xa/Trực tuyến"
@@ -2350,8 +2155,7 @@ msgid "Reset to Draft"
 msgstr "Đặt lại về dự thảo"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_user_id
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_user_id
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_user_id model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_user_id
 msgid "Responsible User"
 msgstr "Người phụ trách"
 
@@ -2386,35 +2190,27 @@ msgid "Round up to next hour"
 msgstr "Làm tròn lên giờ tiếp theo"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_product_product__rounding_rule
-#: model:ir.model.fields,field_description:advanced_pricing.field_product_template__rounding_rule
+#: model:ir.model.fields,field_description:advanced_pricing.field_product_product__rounding_rule model:ir.model.fields,field_description:advanced_pricing.field_product_template__rounding_rule
 msgid "Rounding Rule"
 msgstr "Quy tắc làm tròn"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,help:advanced_pricing.field_product_product__rounding_rule
-#: model:ir.model.fields,help:advanced_pricing.field_product_template__rounding_rule
+#: model:ir.model.fields,help:advanced_pricing.field_product_product__rounding_rule model:ir.model.fields,help:advanced_pricing.field_product_template__rounding_rule
 msgid "Rounding rule applied to the calculated price for this product"
 msgstr "Quy tắc làm tròn áp dụng cho giá đã tính của sản phẩm này"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__routine_checkup
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__routine_checkup
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__routine_checkup model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__routine_checkup
 msgid "Routine Checkup"
 msgstr "Khám định kỳ"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__level
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__level
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__level model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__level
 msgid "Rule Level"
 msgstr "Cấp quy tắc"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__name
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__name
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__name
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__name model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__name model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard_line__name model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
 msgid "Rule Name"
 msgstr "Tên quy tắc"
 
@@ -2434,8 +2230,7 @@ msgid "Rule Summary"
 msgstr "Tóm tắt quy tắc"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__rule_type
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__rule_type model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
 msgid "Rule Type"
 msgstr "Loại quy tắc"
 
@@ -2469,8 +2264,7 @@ msgid "Rules"
 msgstr "Quy tắc"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_has_sms_error
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_has_sms_error
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_has_sms_error model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_has_sms_error
 msgid "SMS Delivery error"
 msgstr "Lỗi gửi SMS"
 
@@ -2515,18 +2309,13 @@ msgid "Selected Rules"
 msgstr "Quy tắc đã chọn"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__sequence
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__sequence
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__sequence
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__sequence model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__sequence model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__sequence
 msgid "Sequence"
 msgstr "Trình tự"
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__service_city
-#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__service_city
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__service_city
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0 model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__service_city model:ir.model.fields,field_description:advanced_pricing.field_sale_order__service_city model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__service_city
 msgid "Service City"
 msgstr "Thành phố cung cấp dịch vụ"
 
@@ -2537,28 +2326,19 @@ msgstr "Nhật ký thời lượng dịch vụ"
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__service_location
-#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__fso_service_location
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__service_location
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0 model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__service_location_id model:ir.model.fields,field_description:advanced_pricing.field_sale_order__fso_service_location model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__service_location
 msgid "Service Location"
 msgstr "Địa điểm dịch vụ"
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__service_type
-#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__fso_service_type
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__service_type
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0 model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__service_type model:ir.model.fields,field_description:advanced_pricing.field_sale_order__fso_service_type model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__service_type
 msgid "Service Type"
 msgstr "Loại dịch vụ"
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
-#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__service_units
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__service_units
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__per_unit_field__service_units
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0 model:ir.model.fields,field_description:advanced_pricing.field_sale_order__service_units model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__service_units model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__per_unit_field__service_units
 msgid "Service Units"
 msgstr "Đơn vị dịch vụ"
 
@@ -2589,16 +2369,13 @@ msgstr "Loại dịch vụ từ lệnh dịch vụ dùng cho quy tắc định g
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_type__fixed
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0 model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_type__fixed
 msgid "Set Fixed Price"
 msgstr "Đặt giá cố định"
 
 #. module: advanced_pricing
 #: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
-msgid ""
-"Set only the conditions you need — blank/unchecked is ignored. Every "
-"condition you set must match for the rule to fire."
+msgid "Set only the conditions you need — blank/unchecked is ignored. Every condition you set must match for the rule to fire."
 msgstr "Chỉ thiết lập các điều kiện cần dùng - trường trống hoặc không được chọn sẽ bị bỏ qua. Mọi điều kiện đã thiết lập phải khớp thì quy tắc mới được áp dụng."
 
 #. module: advanced_pricing
@@ -2613,47 +2390,41 @@ msgid "Show advanced conditions"
 msgstr "Hiển thị điều kiện nâng cao"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,help:advanced_pricing.field_sale_order__pricing_breakdown_html
-msgid ""
-"Shows applied pricing rules and calculations (auto-refreshes on "
-"line/qty/discount changes)"
+#: model:ir.model.fields,help:advanced_pricing.field_health_fieldservice_order__pricing_breakdown_html model:ir.model.fields,help:advanced_pricing.field_sale_order__pricing_breakdown_html
+msgid "Shows applied pricing rules and calculations (auto-refreshes on line/qty/discount changes)"
 msgstr "Hiển thị quy tắc định giá và phép tính đã áp dụng (tự động làm mới khi thay đổi dòng, số lượng hoặc giảm giá)"
 
 #. module: advanced_pricing
 #: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__categ_id
-msgid ""
-"Specify a product category if this rule only applies to products belonging "
-"to this category or its children categories. Keep empty otherwise."
+msgid "Specify a product category if this rule only applies to products belonging to this category or its children categories. Keep empty otherwise."
 msgstr "Chọn danh mục sản phẩm nếu quy tắc chỉ áp dụng cho sản phẩm thuộc danh mục này hoặc danh mục con. Nếu không, hãy để trống."
 
 #. module: advanced_pricing
 #: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__product_id
-msgid ""
-"Specify a product if this rule only applies to one product. Keep empty "
-"otherwise."
+msgid "Specify a product if this rule only applies to one product. Keep empty otherwise."
 msgstr "Chọn sản phẩm nếu quy tắc chỉ áp dụng cho một sản phẩm. Nếu không, hãy để trống."
 
 #. module: advanced_pricing
 #: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__product_tmpl_id
-msgid ""
-"Specify a template if this rule only applies to one product template. Keep "
-"empty otherwise."
+msgid "Specify a template if this rule only applies to one product template. Keep empty otherwise."
 msgstr "Chọn mẫu nếu quy tắc chỉ áp dụng cho một mẫu sản phẩm. Nếu không, hãy để trống."
 
 #. module: advanced_pricing
-#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__activity_state
-#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__activity_state
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__activity_state model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__activity_state
 msgid ""
 "Status based on activities\n"
 "Overdue: Due date is already passed\n"
 "Today: Activity date is today\n"
 "Planned: Future activities."
-msgstr "Trạng thái dựa trên hoạt động\nQuá hạn: Ngày đến hạn đã qua\nHôm nay: Ngày hoạt động là hôm nay\nĐã lên kế hoạch: Hoạt động trong tương lai."
+msgstr ""
+"Trạng thái dựa trên hoạt động\n"
+"Quá hạn: Ngày đến hạn đã qua\n"
+"Hôm nay: Ngày hoạt động là hôm nay\n"
+"Đã lên kế hoạch: Hoạt động trong tương lai."
 
 #. module: advanced_pricing
 #: model:ir.model.fields,help:advanced_pricing.field_sale_order__pricing_breakdown_data
-msgid ""
-"Structured per-line pricing breakdown consumed by the quote panel widget"
+msgid "Structured per-line pricing breakdown consumed by the quote panel widget"
 msgstr "Chi tiết định giá có cấu trúc theo từng dòng, được tiện ích bảng báo giá sử dụng"
 
 #. module: advanced_pricing
@@ -2662,11 +2433,7 @@ msgid "Submit Rules for Approval"
 msgstr "Gửi quy tắc để phê duyệt"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__pricing_rule_bulk_wizard__mode__submit
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_bulk_wizard_form
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list_quick_edit
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__pricing_rule_bulk_wizard__mode__submit model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_bulk_wizard_form model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list_quick_edit
 msgid "Submit for Approval"
 msgstr "Gửi phê duyệt"
 
@@ -2683,7 +2450,6 @@ msgid "Supplementary: %s"
 msgstr "Bổ sung: %s"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__holiday_type__tet
 #: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__holiday_type__tet
 msgid "TET Holiday"
 msgstr "Ngày lễ Tết"
@@ -2700,17 +2466,14 @@ msgid "Taxes"
 msgstr "Thuế"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__telemedicine
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__telemedicine
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__telemedicine model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__telemedicine
 msgid "Telemedicine"
 msgstr "Khám bệnh từ xa"
 
 #. module: advanced_pricing
 #. odoo-python
 #: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
-msgid ""
-"The openpyxl library is required for Excel import. Please install it: pip "
-"install openpyxl"
+msgid "The openpyxl library is required for Excel import. Please install it: pip install openpyxl"
 msgstr "Cần thư viện openpyxl để nhập Excel. Vui lòng cài đặt: pip install openpyxl"
 
 #. module: advanced_pricing
@@ -2721,23 +2484,19 @@ msgstr "Công cụ định giá, khu vực và sản phẩm mà quy tắc này �
 #. module: advanced_pricing
 #. odoo-python
 #: code:addons/advanced_pricing/models/pricing_rule.py:0
-msgid ""
-"The pricing rule was modified and requires board re-approval before it can "
-"be used again."
+msgid "The pricing rule was modified and requires board re-approval before it can be used again."
 msgstr "Quy tắc định giá đã được sửa đổi và cần Hội đồng phê duyệt lại trước khi có thể sử dụng."
 
 #. module: advanced_pricing
 #. odoo-javascript
 #. odoo-python
-#: code:addons/advanced_pricing/models/pricing_rule.py:0
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
+#: code:addons/advanced_pricing/models/pricing_rule.py:0 code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
 msgid "Then"
 msgstr "Thì"
 
 #. module: advanced_pricing
 #: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__is_manual_quote
-msgid ""
-"This rule requires manual pricing — value set on booking form or receipt"
+msgid "This rule requires manual pricing — value set on booking form or receipt"
 msgstr "Quy tắc này yêu cầu nhập giá thủ công - giá trị được đặt trên biểu mẫu lịch hẹn hoặc biên nhận"
 
 #. module: advanced_pricing
@@ -2752,8 +2511,7 @@ msgid "Total"
 msgstr "Tổng cộng"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard__rule_count
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_bulk_wizard_form
+#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_bulk_wizard__rule_count model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_bulk_wizard_form
 msgid "Total Rules"
 msgstr "Tổng số quy tắc"
 
@@ -2793,8 +2551,7 @@ msgid "Type of holiday for pricing calculations"
 msgstr "Loại ngày lễ dùng để tính giá"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__activity_exception_decoration
-#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__activity_exception_decoration
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__activity_exception_decoration model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__activity_exception_decoration
 msgid "Type of the exception activity on record."
 msgstr "Loại hoạt động ngoại lệ trên bản ghi."
 
@@ -2805,9 +2562,7 @@ msgstr "Nút chỉ dùng trên giao diện để hiển thị các trường đi
 
 #. module: advanced_pricing
 #: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__active
-msgid ""
-"Uncheck to archive this rule. Note: Only approved rules will be used in "
-"pricing calculations."
+msgid "Uncheck to archive this rule. Note: Only approved rules will be used in pricing calculations."
 msgstr "Bỏ chọn để lưu trữ quy tắc. Lưu ý: Chỉ quy tắc đã phê duyệt mới được dùng để tính giá."
 
 #. module: advanced_pricing
@@ -2830,10 +2585,7 @@ msgstr "Quy tắc chưa đặt tên"
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__urgency_level
-#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__fso_urgency
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__urgency
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0 model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__urgency_level model:ir.model.fields,field_description:advanced_pricing.field_sale_order__fso_urgency model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__urgency
 msgid "Urgency Level"
 msgstr "Mức độ khẩn cấp"
 
@@ -2843,8 +2595,7 @@ msgid "Urgency level from FSO for pricing rules"
 msgstr "Mức độ khẩn cấp từ lệnh dịch vụ dùng cho quy tắc định giá"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__urgency_level__urgent
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_urgency__urgent
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__urgency_level__urgent model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_urgency__urgent
 msgid "Urgent"
 msgstr "Khẩn"
 
@@ -2859,8 +2610,7 @@ msgid "Use Advanced Pricing Engine"
 msgstr "Sử dụng công cụ định giá nâng cao"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__vaccination
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__vaccination
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__vaccination model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__vaccination
 msgid "Vaccination"
 msgstr "Tiêm chủng"
 
@@ -2885,8 +2635,7 @@ msgid "Value"
 msgstr "Giá trị"
 
 #. module: advanced_pricing
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__priority__3
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_priority__3
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__priority__3 model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_priority__3
 msgid "Very High"
 msgstr "Rất cao"
 
@@ -2896,21 +2645,18 @@ msgid "Visit & time"
 msgstr "Lần khám và thời gian"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__visual_config
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__visual_config
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__visual_config model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__visual_config
 msgid "Visual Configuration"
 msgstr "Cấu hình trực quan"
 
 #. module: advanced_pricing
 #. odoo-javascript
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
-#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__rule_type__visual
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0 model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__rule_type__visual
 msgid "Visual Rule"
 msgstr "Quy tắc trực quan"
 
 #. module: advanced_pricing
-#: model:ir.actions.act_window,name:advanced_pricing.action_visual_rule_builder_wizard
-#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
+#: model:ir.actions.act_window,name:advanced_pricing.action_visual_rule_builder_wizard model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
 msgid "Visual Rule Builder"
 msgstr "Trình tạo quy tắc trực quan"
 
@@ -2926,14 +2672,12 @@ msgid "Visual rule saved successfully! Returning to rules list..."
 msgstr "Đã lưu quy tắc trực quan thành công! Đang quay lại danh sách quy tắc..."
 
 #. module: advanced_pricing
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__website_message_ids
-#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__website_message_ids
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__website_message_ids model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__website_message_ids
 msgid "Website Messages"
 msgstr "Tin nhắn trang web"
 
 #. module: advanced_pricing
-#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__website_message_ids
-#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__website_message_ids
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__website_message_ids model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__website_message_ids
 msgid "Website communication history"
 msgstr "Lịch sử trao đổi trên trang web"
 
@@ -2960,9 +2704,7 @@ msgstr "Chỉ cuối tuần"
 
 #. module: advanced_pricing
 #: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__data_required
-msgid ""
-"What data the rule needs to evaluate (e.g., service_location, number of "
-"wounds)"
+msgid "What data the rule needs to evaluate (e.g., service_location, number of wounds)"
 msgstr "Dữ liệu cần thiết để đánh giá quy tắc (ví dụ: địa điểm dịch vụ, số vết thương)"
 
 #. module: advanced_pricing
@@ -2983,8 +2725,7 @@ msgstr "Nội dung cần nhập từ tệp Excel"
 #. module: advanced_pricing
 #. odoo-javascript
 #. odoo-python
-#: code:addons/advanced_pricing/models/pricing_rule.py:0
-#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
+#: code:addons/advanced_pricing/models/pricing_rule.py:0 code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
 msgid "When"
 msgstr "Khi"
 
@@ -3000,8 +2741,7 @@ msgstr "Nguồn dữ liệu cho điều kiện của quy tắc"
 
 #. module: advanced_pricing
 #: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__per_unit_field
-msgid ""
-"Which field to multiply the action value by when action_type is per_unit"
+msgid "Which field to multiply the action value by when action_type is per_unit"
 msgstr "Trường được nhân với giá trị hành động khi loại hành động là tính theo đơn vị"
 
 #. module: advanced_pricing
@@ -3218,3 +2958,1022 @@ msgstr "≥ %d vết thương"
 #: model_terms:ir.ui.view,arch_db:advanced_pricing.view_health_fso_form_ops_pricing
 msgid "Pricing"
 msgstr "Giá"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "  Created %(code)s: %(name)s (%(fee)s VND)"
+msgstr "  Đã tạo %(code)s: %(name)s (%(fee)s VND)"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "  Created category: %s"
+msgstr "  Đã tạo nhóm dịch vụ: %s"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "  Rule %(code)s: %(cond)s → %(reading)s"
+msgstr "  Quy tắc %(code)s: %(cond)s → %(reading)s"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "  Switched off %(n)s %(region)s services not in the file: %(codes)s"
+msgstr "  Đã tắt %(n)s dịch vụ %(region)s không có trong tệp: %(codes)s"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "  Switched off %(n)s old rules of %(regions)s."
+msgstr "  Đã tắt %(n)s quy tắc cũ của %(regions)s."
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "  Updated %(code)s: %(name)s (%(fee)s VND)"
+msgstr "  Đã cập nhật %(code)s: %(name)s (%(fee)s VND)"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid " or "
+msgstr " hoặc "
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "%(code)s: the unit could not be changed because the service is already used; the rest was updated."
+msgstr "%(code)s: không đổi được đơn vị tính vì dịch vụ đã được sử dụng; các thông tin khác đã được cập nhật."
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "%(item)s: charge %(expected)s km (distance %(distance).1f km minus %(limit)g km), but %(qty)g km is booked."
+msgstr "%(item)s: cần tính %(expected)s km (khoảng cách %(distance).1f km trừ %(limit)g km), nhưng đang đặt %(qty)g km."
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "%(item)s: condition not met: %(condition)s (%(facts)s)."
+msgstr "%(item)s: chưa đáp ứng điều kiện: %(condition)s (%(facts)s)."
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "%(item)s: condition not met: %(condition)s."
+msgstr "%(item)s: chưa đáp ứng điều kiện: %(condition)s."
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "%(item)s: not applicable when the booking also has %(others)s."
+msgstr "%(item)s: không áp dụng khi lịch hẹn có cả %(others)s."
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "--- Rules sheet: %s ---"
+msgstr "--- Trang quy tắc: %s ---"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "--- Services sheet: %s ---"
+msgstr "--- Trang dịch vụ: %s ---"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "2nd client, same place, time and staff"
+msgstr "Khách thứ 2, cùng địa điểm, thời gian và nhân viên"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.report_invoice_pricing_rules model_terms:ir.ui.view,arch_db:advanced_pricing.report_saleorder_pricing_rules
+msgid "<span style=\"font-weight:600;\">Pricing:</span>"
+msgstr "<span style=\"font-weight:600;\">Giá:</span>"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_health_fso_form_ops_pricing model_terms:ir.ui.view,arch_db:advanced_pricing.view_healthcare_quote_form_catalog
+msgid "<strong>Price warnings</strong>"
+msgstr "<strong>Cảnh báo giá</strong>"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid ""
+"<strong>The upload could not read this condition, so the rule is switched off.</strong>\n"
+"                        Set the conditions below by hand, then switch the rule on."
+msgstr ""
+"<strong>Hệ thống không đọc được điều kiện này khi tải lên, nên quy tắc đang bị tắt.</strong>\n"
+"                        Hãy thiết lập điều kiện bên dưới theo cách thủ công, rồi bật quy tắc."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_health_fieldservice_order__pricing_doctor_ordered model:ir.model.fields,help:advanced_pricing.field_sale_order__doctor_ordered
+msgid "A clinic doctor ordered this service. Some services may only be booked alone when a doctor ordered them."
+msgstr "Bác sĩ phòng khám đã chỉ định dịch vụ này. Một số dịch vụ chỉ được đặt riêng khi có chỉ định của bác sĩ."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_product_product__price_is_fee model:ir.model.fields,help:advanced_pricing.field_product_template__price_is_fee
+msgid "A fee or surcharge (visit fee, after-hours, weekend, travel) rather than a service. Fee items do not count as \"another service\" in price conditions."
+msgstr "Khoản phí hoặc phụ phí (phí thăm khám, ngoài giờ, cuối tuần, đi lại) chứ không phải dịch vụ. Khoản phí không được tính là \"dịch vụ khác\" trong điều kiện giá."
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Another service on the booking"
+msgstr "Có dịch vụ khác trong lịch hẹn"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_health_fieldservice_order__pricing_other_service_failed model:ir.model.fields,help:advanced_pricing.field_sale_order__other_service_failed
+msgid "Another service was tried and was unsuccessful. Some services may only be booked alone in that case."
+msgstr "Đã thử dịch vụ khác nhưng không thành công. Một số dịch vụ chỉ được đặt riêng trong trường hợp này."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__wound_size
+msgid "Apply only when the extra wounds are of this size."
+msgstr "Chỉ áp dụng khi các vết thương thêm có kích thước này."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__requires_complex_wound
+msgid "Apply only when the wound is marked complex."
+msgstr "Chỉ áp dụng khi vết thương được đánh dấu là phức tạp."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__approve_rules
+msgid "Approve the Rules Now"
+msgstr "Duyệt quy tắc ngay"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "Approved on import of %s"
+msgstr "Đã duyệt khi tải lên %s"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_engine_list model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list
+msgid "Archive (custodian)"
+msgstr "Lưu trữ (người quản lý hồ sơ)"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "As written in the price list"
+msgstr "Theo nguyên văn bảng giá"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.report_invoice_pricing_rules model_terms:ir.ui.view,arch_db:advanced_pricing.report_saleorder_pricing_rules
+msgid "Base"
+msgstr "Giá gốc"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "CHECK ONLY: nothing was saved. Press Import to load the file."
+msgstr "CHỈ KIỂM TRA: chưa lưu gì. Bấm Nhập để tải tệp lên."
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__trigger_source__crm
+msgid "CRM"
+msgstr "CRM"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__trigger_source__crm_booking
+msgid "CRM/Booking"
+msgstr "CRM/Đặt lịch"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__per_km_beyond
+msgid "Charged per km Beyond"
+msgstr "Tính theo km vượt quá"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_import_wizard_form
+msgid "Check File"
+msgstr "Kiểm tra tệp"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_import_wizard__state__checked
+msgid "Checked"
+msgstr "Đã kiểm tra"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__wound_complex
+msgid "Complex Wound"
+msgstr "Vết thương phức tạp"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__requires_complex_wound
+msgid "Complex Wound Only"
+msgstr "Chỉ vết thương phức tạp"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__condition_text
+msgid "Condition (as written)"
+msgstr "Điều kiện (nguyên văn)"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_type__eligibility
+msgid "Condition Check (warn if not met)"
+msgstr "Kiểm tra điều kiện (cảnh báo nếu không đạt)"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+msgid "Condition checks (warnings)"
+msgstr "Kiểm tra điều kiện (cảnh báo)"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "Could not read the Excel file: %s"
+msgstr "Không đọc được tệp Excel: %s"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_engine_list model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list
+msgid "Delete (reason required)"
+msgstr "Xóa (cần ghi lý do)"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__deleted model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__deleted
+msgid "Deleted"
+msgstr "Đã xóa"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__deleted_by_id model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__deleted_by_id
+msgid "Deleted By"
+msgstr "Người xóa"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__deleted_date model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__deleted_date
+msgid "Deleted On"
+msgstr "Ngày xóa"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__deleted_note model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__deleted_note
+msgid "Deletion Note"
+msgstr "Ghi chú xóa"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__deleted_reason_id model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__deleted_reason_id
+msgid "Deletion Reason"
+msgstr "Lý do xóa"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_import_wizard__state__done
+msgid "Done"
+msgstr "Hoàn tất"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__per_unit_field__injection_or_medication
+msgid "Extra Injections or Medications"
+msgstr "Mũi tiêm hoặc thuốc thêm"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__wound_size
+msgid "Extra Wounds Size"
+msgstr "Kích thước vết thương thêm"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_product_product__price_is_fee model:ir.model.fields,field_description:advanced_pricing.field_product_template__price_is_fee
+msgid "Fee Item"
+msgstr "Khoản phí"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__per_km_beyond
+msgid "For a per-km fee: the distance must be over this many km, and the quantity should be the km beyond it (rounded up)."
+msgstr "Với phí tính theo km: khoảng cách phải lớn hơn số km này, và số lượng nên là số km vượt quá (làm tròn lên)."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_import_wizard__replace_existing
+msgid "For each region in the file: services of that region that are not in the file are switched off, and the region's current price rules are switched off and replaced by the file's rules. Nothing is deleted, so older bookings keep their lines."
+msgstr "Với mỗi khu vực trong tệp: các dịch vụ của khu vực đó không có trong tệp sẽ bị tắt, và các quy tắc giá hiện tại của khu vực sẽ bị tắt và thay bằng quy tắc trong tệp. Không có gì bị xóa, nên các lịch hẹn cũ vẫn giữ nguyên dòng dịch vụ."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_res_partner__is_foreign_client model:ir.model.fields,field_description:advanced_pricing.field_res_users__is_foreign_client model:ir.model.fields,field_description:advanced_pricing.field_sale_order__partner_is_foreign_client
+msgid "Foreign Client"
+msgstr "Khách nước ngoài"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__requires_foreign_client
+msgid "Foreign Client Only"
+msgstr "Chỉ khách nước ngoài"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_res_partner__is_foreign_client model:ir.model.fields,help:advanced_pricing.field_res_users__is_foreign_client model:ir.model.fields,help:advanced_pricing.field_sale_order__partner_is_foreign_client
+msgid "Foreign clients are charged the foreign-client rates in the price list."
+msgstr "Khách nước ngoài được tính theo mức giá dành cho khách nước ngoài trong bảng giá."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__has_pricing_warnings
+msgid "Has Price Warnings"
+msgstr "Có cảnh báo giá"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__holiday_type_code
+msgid "Holiday Type Code"
+msgstr "Mã loại ngày lễ"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__parse_status
+msgid "Import Reading"
+msgstr "Kết quả đọc khi tải lên"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_product_product__item_group model:ir.model.fields,field_description:advanced_pricing.field_product_template__item_group
+msgid "Item Group"
+msgstr "Nhóm hạng mục"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_product_product__price_item_code model:ir.model.fields,help:advanced_pricing.field_product_template__price_item_code
+msgid "Item code as written in the price list (e.g. bs_010). The internal reference adds the region (bs_010_hanoi)."
+msgstr "Mã hạng mục theo bảng giá (vd. bs_010). Mã nội bộ có thêm khu vực (bs_010_hanoi)."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_product_product__item_group model:ir.model.fields,help:advanced_pricing.field_product_template__item_group
+msgid "Item group from the price list, e.g. Doctor, Wound Care (English and Vietnamese)."
+msgstr "Nhóm hạng mục theo bảng giá, vd. Bác sĩ, Vết thương (tiếng Anh và tiếng Việt)."
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__wound_size__large
+msgid "Large"
+msgstr "Lớn"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__wound_size__large
+msgid "Large wound"
+msgstr "Vết thương lớn"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_product_product__marketing_service_line model:ir.model.fields,field_description:advanced_pricing.field_product_template__marketing_service_line
+msgid "Marketing Service Line"
+msgstr "Dòng dịch vụ marketing"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_product_product__marketing_service_line model:ir.model.fields,help:advanced_pricing.field_product_template__marketing_service_line
+msgid "Marketing grouping from the price list (English and Vietnamese)."
+msgstr "Nhóm marketing theo bảng giá (tiếng Anh và tiếng Việt)."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__min_hours
+msgid "Minimum Booked Hours"
+msgstr "Số giờ đặt tối thiểu"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "NEEDS ATTENTION:"
+msgstr "CẦN XỬ LÝ:"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "Needs"
+msgstr "Cần"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__requires_new_client
+msgid "New Client Only"
+msgstr "Chỉ khách hàng mới"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "No adjustments sheet found. It needs at least the columns Adjustment Applies to this item_code, Trigger Condition en and Adjustment_Type_en."
+msgstr "Không tìm thấy trang điều chỉnh. Cần tối thiểu các cột Adjustment Applies to this item_code, Trigger Condition en và Adjustment_Type_en."
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "No price list sheet found. It needs at least the columns item_code, province, item_description_en and base_fee_vnd."
+msgstr "Không tìm thấy trang bảng giá. Cần tối thiểu các cột item_code, province, item_description_en và base_fee_vnd."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__conflict_product_tmpl_ids
+msgid "Not Applicable With"
+msgstr "Không áp dụng cùng"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_type__exclude
+msgid "Not Applicable With (warn)"
+msgstr "Không áp dụng cùng (cảnh báo)"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__parse_status__not_understood
+msgid "Not understood"
+msgstr "Không đọc được"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+msgid "Not understood on upload"
+msgstr "Không đọc được khi tải lên"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Not understood:"
+msgstr "Không đọc được:"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "Only owners can approve price rules."
+msgstr "Chỉ chủ sở hữu mới được duyệt quy tắc giá."
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "Only owners, or staff allowed to create services, can upload a price list."
+msgstr "Chỉ chủ sở hữu, hoặc nhân viên được phép tạo dịch vụ, mới được tải bảng giá lên."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__accept_doctor_order
+msgid "Or: Doctor Ordered"
+msgstr "Hoặc: có chỉ định bác sĩ"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__accept_other_service_failed
+msgid "Or: Other Service Unsuccessful"
+msgstr "Hoặc: dịch vụ khác không thành công"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_health_fieldservice_order__pricing_doctor_ordered model:ir.model.fields,field_description:advanced_pricing.field_sale_order__doctor_ordered model_terms:ir.ui.view,arch_db:advanced_pricing.view_health_fso_form_ops_pricing
+msgid "Ordered by Clinic Doctor"
+msgstr "Có chỉ định BS phòng khám"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_health_fieldservice_order__pricing_other_service_failed model:ir.model.fields,field_description:advanced_pricing.field_sale_order__other_service_failed model_terms:ir.ui.view,arch_db:advanced_pricing.view_health_fso_form_ops_pricing
+msgid "Other Service Unsuccessful"
+msgstr "Dịch vụ khác không thành công"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_import_wizard__approve_rules
+msgid "Owners only. Imported rules start working straight away instead of waiting for approval."
+msgstr "Chỉ dành cho chủ sở hữu. Quy tắc được áp dụng ngay, không cần chờ duyệt."
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/sale_order.py:0
+msgid "Post-service price recalculated: %(old)s đ → %(new)s đ (%(delta)s đ)."
+msgstr "Đã tính lại giá sau dịch vụ: %(old)s đ → %(new)s đ (%(delta)s đ)."
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.product_template_form_price_list
+msgid "Price List"
+msgstr "Bảng giá"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_product_product__price_item_code model:ir.model.fields,field_description:advanced_pricing.field_product_template__price_item_code
+msgid "Price List Code"
+msgstr "Mã bảng giá"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__rule_note
+msgid "Price List Note"
+msgstr "Ghi chú bảng giá"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_product_product__price_updated_by model:ir.model.fields,field_description:advanced_pricing.field_product_template__price_updated_by
+msgid "Price Updated By"
+msgstr "Người cập nhật giá"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_product_product__price_updated_on model:ir.model.fields,field_description:advanced_pricing.field_product_template__price_updated_on
+msgid "Price Updated On"
+msgstr "Ngày cập nhật giá"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_product_product__price_valid_from model:ir.model.fields,field_description:advanced_pricing.field_product_template__price_valid_from
+msgid "Price Valid From"
+msgstr "Giá áp dụng từ"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_product_product__price_valid_to model:ir.model.fields,field_description:advanced_pricing.field_product_template__price_valid_to
+msgid "Price Valid To"
+msgstr "Giá áp dụng đến"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_product_product__price_version model:ir.model.fields,field_description:advanced_pricing.field_product_template__price_version
+msgid "Price Version"
+msgstr "Phiên bản giá"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_health_fieldservice_order__pricing_warnings
+msgid "Price Warning Details"
+msgstr "Chi tiết cảnh báo giá"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_health_fieldservice_order__has_pricing_warnings model:ir.model.fields,field_description:advanced_pricing.field_sale_order__pricing_warnings
+msgid "Price Warnings"
+msgstr "Cảnh báo giá"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "Price list"
+msgstr "Bảng giá"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Price list conditions"
+msgstr "Điều kiện bảng giá"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_health_fieldservice_order__pricing_warnings model:ir.model.fields,help:advanced_pricing.field_sale_order__pricing_warnings
+msgid "Price list conditions this booking does not meet."
+msgstr "Các điều kiện bảng giá mà lịch hẹn này chưa đáp ứng."
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_health_fso_search_pricing_warnings
+msgid "Price warnings"
+msgstr "Cảnh báo giá"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_product_product__price_change_reason model:ir.model.fields,field_description:advanced_pricing.field_product_template__price_change_reason
+msgid "Reason for Price Change"
+msgstr "Lý do thay đổi giá"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__replace_existing
+msgid "Replace the Current Price List"
+msgstr "Thay thế bảng giá hiện tại"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_engine_list model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list
+msgid "Restore this deleted record"
+msgstr "Khôi phục bản ghi đã xóa"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__product_template__rounding_rule__round_partial_hour
+msgid "Round partial hour up to next 1 hour"
+msgstr "Làm tròn phần giờ lẻ lên 1 giờ"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__product_template__rounding_rule__round_partial_30min
+msgid "Round partial hour up to next 30 minutes"
+msgstr "Làm tròn phần giờ lẻ lên 30 phút"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__product_template__rounding_rule__round_as_documented
+msgid "Round up partial time as documented"
+msgstr "Làm tròn thời gian lẻ theo ghi nhận"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "Row %(row)s (%(code)s): %(err)s"
+msgstr "Dòng %(row)s (%(code)s): %(err)s"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "Row %(row)s (%(code)s): %(note)s"
+msgstr "Dòng %(row)s (%(code)s): %(note)s"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "Row %(row)s (%(code)s): rounding rule '%(r)s' is not known; left empty."
+msgstr "Dòng %(row)s (%(code)s): không nhận ra quy tắc làm tròn '%(r)s'; để trống."
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "Row %(row)s (%(code)s): the base fee '%(fee)s' is not a number."
+msgstr "Dòng %(row)s (%(code)s): giá gốc '%(fee)s' không phải là số."
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "Row %(row)s (%(code)s): unknown province '%(prov)s'."
+msgstr "Dòng %(row)s (%(code)s): không nhận ra tỉnh/thành '%(prov)s'."
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "Row %(row)s: %(code)s appears twice for this region; the second row was skipped."
+msgstr "Dòng %(row)s: %(code)s xuất hiện hai lần cho khu vực này; đã bỏ qua dòng thứ hai."
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "Rows with errors: %s"
+msgstr "Số dòng lỗi: %s"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "Rules loaded: %(n)s (of which switched off because not understood: %(off)s); old rules replaced: %(old)s"
+msgstr "Số quy tắc đã tải: %(n)s (trong đó bị tắt vì không đọc được: %(off)s); quy tắc cũ đã thay: %(old)s"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "Rules row %(row)s (%(code)s): %(err)s"
+msgstr "Dòng quy tắc %(row)s (%(code)s): %(err)s"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "Rules row %(row)s (%(code)s): unknown region '%(reg)s'."
+msgstr "Dòng quy tắc %(row)s (%(code)s): không nhận ra khu vực '%(reg)s'."
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "Rules row %(row)s (%(code)s, '%(cond)s'): not understood (%(why)s). Loaded switched off."
+msgstr "Dòng quy tắc %(row)s (%(code)s, '%(cond)s'): không đọc được (%(why)s). Đã tải ở trạng thái tắt."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__service_location_code
+msgid "Service Location Code"
+msgstr "Mã địa điểm dịch vụ"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "Services created: %(c)s, updated: %(u)s, switched off (not in file): %(a)s"
+msgstr "Dịch vụ đã tạo: %(c)s, đã cập nhật: %(u)s, đã tắt (không có trong tệp): %(a)s"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__parse_status__manual
+msgid "Set by hand"
+msgstr "Thiết lập thủ công"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_sale_order__wound_size
+msgid "Size of the wounds after the first; the price list charges large extra wounds more."
+msgstr "Kích thước các vết thương từ vết thứ 2; bảng giá tính cao hơn cho vết thương lớn."
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__wound_size__small
+msgid "Small"
+msgstr "Nhỏ"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__wound_size__small
+msgid "Small wound"
+msgstr "Vết thương nhỏ"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__holiday_type_code model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__service_location_code
+msgid "Stable technical key. Used to match rows on re-import — changing it makes the next import create a duplicate instead of updating."
+msgstr "Khóa kỹ thuật cố định. Dùng để khớp dòng khi nhập lại — đổi khóa này sẽ khiến lần nhập sau tạo bản trùng thay vì cập nhật."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__time_windows
+msgid "Start Time Windows"
+msgstr "Khung giờ bắt đầu"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__state
+msgid "State"
+msgstr "Trạng thái"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__trigger_source__system
+msgid "System"
+msgstr "Hệ thống"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__min_hours
+msgid "The booked length of this service must be at least this many hours."
+msgstr "Thời lượng đặt của dịch vụ này phải tối thiểu bằng số giờ này."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_health_fieldservice_order__has_pricing_warnings
+msgid "The booking breaks one of the price list conditions."
+msgstr "Lịch hẹn vi phạm một điều kiện của bảng giá."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__requires_new_client
+msgid "The client has no earlier bookings at all."
+msgstr "Khách hàng chưa từng có lịch hẹn nào trước đó."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__requires_foreign_client
+msgid "The client is marked as a foreign client."
+msgstr "Khách hàng được đánh dấu là khách nước ngoài."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__parse_leftover
+msgid "The part of the sentence the import could not read."
+msgstr "Phần câu mà hệ thống không đọc được khi tải lên."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_sale_order__wound_complex
+msgid "The price list doubles the fee for a complex wound."
+msgstr "Bảng giá nhân đôi phí cho vết thương phức tạp."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__condition_text
+msgid "The price list's own wording of the condition, in English and Vietnamese."
+msgstr "Nguyên văn điều kiện trong bảng giá, bằng tiếng Anh và tiếng Việt."
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "The rules are waiting for approval and do not change prices until an owner approves them."
+msgstr "Các quy tắc đang chờ duyệt và chưa thay đổi giá cho đến khi chủ sở hữu duyệt."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__time_windows
+msgid "The visit must start inside one of these windows, e.g. \"19:00-07:00\" or \"00:00-08:00; 12:00-13:00; 17:00-24:00\". A window whose end is earlier than its start runs past midnight."
+msgstr "Lượt thăm khám phải bắt đầu trong một trong các khung giờ này, vd. \"19:00-07:00\" hoặc \"00:00-08:00; 12:00-13:00; 17:00-24:00\". Khung giờ có giờ kết thúc sớm hơn giờ bắt đầu sẽ kéo dài qua nửa đêm."
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid ""
+"This rule never changes a price. When a booking does not meet it,\n"
+"                            staff see a warning on the booking, and the warning is kept on the booking."
+msgstr ""
+"Quy tắc này không bao giờ thay đổi giá. Khi lịch hẹn không đáp ứng,\n"
+"                            nhân viên sẽ thấy cảnh báo trên lịch hẹn, và cảnh báo được lưu lại trên lịch hẹn."
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__parse_status__understood
+msgid "Understood"
+msgstr "Đã đọc được"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_import_wizard_form
+msgid ""
+"Upload one price list workbook per region (a services sheet and an\n"
+"                    adjustments sheet). Columns are found by their header names, so their\n"
+"                    order does not matter. Press <b>Check File</b> first to see what would\n"
+"                    change without saving anything."
+msgstr ""
+"Tải lên một tệp bảng giá cho mỗi khu vực (một trang dịch vụ và một\n"
+"                    trang điều chỉnh). Các cột được nhận theo tên tiêu đề, nên thứ tự\n"
+"                    cột không quan trọng. Bấm <b>Kiểm tra tệp</b> trước để xem những gì sẽ\n"
+"                    thay đổi mà chưa lưu gì."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__conflict_product_tmpl_ids
+msgid "Warn when the booking also contains any of these services."
+msgstr "Cảnh báo khi lịch hẹn có bất kỳ dịch vụ nào trong số này."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__parse_status
+msgid "Whether the import could read the condition sentence. A rule that was not understood is imported switched off."
+msgstr "Hệ thống có đọc được câu điều kiện khi tải lên hay không. Quy tắc không đọc được sẽ được tải ở trạng thái tắt."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__accept_other_service_failed
+msgid "With \"Other Service Same Visit\": also met when the booking is marked as another service having been unsuccessful."
+msgstr "Cùng với \"Có dịch vụ khác\": cũng đạt khi lịch hẹn được đánh dấu là dịch vụ khác không thành công."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__accept_doctor_order
+msgid "With \"Other Service Same Visit\": also met when the booking is marked as ordered by a clinic doctor."
+msgstr "Cùng với \"Có dịch vụ khác\": cũng đạt khi lịch hẹn được đánh dấu là có chỉ định của bác sĩ phòng khám."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__parse_leftover
+msgid "Words Not Understood"
+msgstr "Phần không đọc được"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__wound_size
+msgid "Wound Size"
+msgstr "Kích thước vết thương"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "a client with no earlier bookings"
+msgstr "khách hàng chưa từng có lịch hẹn"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "a clinic doctor's order"
+msgstr "có chỉ định của bác sĩ phòng khám"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "a complex wound"
+msgstr "vết thương phức tạp"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "a foreign client"
+msgstr "khách nước ngoài"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "add %(amount)s đ %(each)s"
+msgstr "cộng %(amount)s đ %(each)s"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "adjustment type '%s' is not known"
+msgstr "không nhận ra loại điều chỉnh '%s'"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "another service on the same booking"
+msgstr "có dịch vụ khác trong cùng lịch hẹn"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "another service was unsuccessful"
+msgstr "dịch vụ khác không thành công"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "booked %g h"
+msgstr "đặt %g giờ"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "booked for at least %g hours"
+msgstr "đặt tối thiểu %g giờ"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "did not understand '%s'"
+msgstr "không hiểu '%s'"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "distance %.1f km"
+msgstr "khoảng cách %.1f km"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "distance over %g km, charged per km beyond it"
+msgstr "khoảng cách trên %g km, tính theo mỗi km vượt"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "e.g. 19:00-07:00; 12:00-13:00"
+msgstr "vd. 19:00-07:00; 12:00-13:00"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "for each bottle after the first"
+msgstr "cho mỗi chai từ chai thứ 2"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "for each extra injection or medicine"
+msgstr "cho mỗi mũi tiêm hoặc thuốc thêm"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "for each injection after the first"
+msgstr "cho mỗi mũi từ mũi thứ 2"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "for each km over %g km"
+msgstr "cho mỗi km vượt %g km"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "for each medication after the first"
+msgstr "cho mỗi loại thuốc từ loại thứ 2"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "for each wound after the first"
+msgstr "cho mỗi vết thương từ vết thứ 2"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "for each: %s"
+msgstr "cho mỗi: %s"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "large wounds"
+msgstr "vết thương lớn"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "no condition found"
+msgstr "không tìm thấy điều kiện"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "no other service on the booking"
+msgstr "lịch hẹn không có dịch vụ khác"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "no service class matching '%s'"
+msgstr "không có nhóm dịch vụ khớp với '%s'"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "no service found for: %s"
+msgstr "không tìm thấy dịch vụ cho: %s"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "no services listed after 'Not applicable:'"
+msgstr "không có dịch vụ nào sau 'Not applicable:'"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "not a weekend"
+msgstr "không phải cuối tuần"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "second or later client at the same place and time with the same staff"
+msgstr "khách thứ 2 trở đi, cùng địa điểm và thời gian, cùng nhân viên"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "service %(code)s not found for this region"
+msgstr "không tìm thấy dịch vụ %(code)s cho khu vực này"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "small wounds"
+msgstr "vết thương nhỏ"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "starts at %02d:%02d"
+msgstr "bắt đầu lúc %02d:%02d"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "starts between %(start)s and %(end)s"
+msgstr "bắt đầu trong khoảng %(start)s đến %(end)s"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "starts between %(start)s and %(end)s the next morning"
+msgstr "bắt đầu trong khoảng %(start)s đến %(end)s sáng hôm sau"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "the client has earlier bookings"
+msgstr "khách hàng đã có lịch hẹn trước đó"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "the client is not marked foreign"
+msgstr "khách hàng chưa được đánh dấu là khách nước ngoài"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "the discount '%s' is not a number"
+msgstr "mức giảm '%s' không phải là số"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "the value '%s' is not a number"
+msgstr "giá trị '%s' không phải là số"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/pricing_import_wizard.py:0
+msgid "unit '%s' is not known; Units was used."
+msgstr "không nhận ra đơn vị '%s'; đã dùng Đơn vị."
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "warn staff on the booking when this is not met"
+msgstr "cảnh báo nhân viên trên lịch hẹn khi không đạt"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "warn staff when booked together with %s"
+msgstr "cảnh báo nhân viên khi đặt cùng %s"

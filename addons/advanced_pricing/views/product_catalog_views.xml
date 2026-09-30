@@ -43,4 +43,37 @@
         </field>
     </record>
 
+    <!-- Price list details on the service form (both languages come from the
+         price list upload; use the language switch to edit either). -->
+    <record id="product_template_form_price_list" model="ir.ui.view">
+        <field name="name">product.template.form.price.list</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Price List" name="price_list" invisible="type != 'service'">
+                    <group>
+                        <group>
+                            <field name="price_item_code"/>
+                            <field name="item_group"/>
+                            <field name="marketing_service_line"/>
+                            <field name="price_is_fee"/>
+                            <field name="rounding_rule"/>
+                        </group>
+                        <group>
+                            <field name="price_version"/>
+                            <field name="price_valid_from"/>
+                            <field name="price_valid_to"/>
+                            <field name="price_updated_by"/>
+                            <field name="price_updated_on"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="price_change_reason"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>

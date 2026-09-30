@@ -47,6 +47,90 @@ class AdvancedPricingEngine(models.Model):
                 continue
         return out
 
+    # ------------------------------------------------------------------
+    # Booking facts + condition warnings (price list 2026-09)
+    # ------------------------------------------------------------------
+    @api.model
+    def _booking_facts(self, partner, product_tmpls, scheduled_dt=False,
+                       address=False, staff_ids=(), fso=False):
+        """Facts about the whole booking that price conditions read.
+
+        Shared by the confirmed quote and the quick-booking preview (where the
+        booking does not exist yet, so ``fso`` is False) so both warn and
+        price alike. ``scheduled_dt`` is naive UTC, as stored.
+        """
+        FSO = self.env['health.fieldservice.order'].sudo()
+        facts = {
+            'is_foreign_client': bool(partner and partner.is_foreign_client),
+            'is_new_client': True,
+            'is_multi_client_same_location': False,
+            'booking_product_tmpl_ids': product_tmpls.ids,
+            'booking_fee_tmpl_ids': product_tmpls.filtered('price_is_fee').ids,
+        }
+        if partner:
+            # "New client" = no earlier bookings at all (owner, 2026-09-30).
+            domain = [('patient_id', '=', partner.id), ('state', '!=', 'cancelled')]
+            if fso:
+                domain.append(('id', '!=', fso.id))
+            if scheduled_dt:
+                domain.append(('scheduled_datetime', '<', scheduled_dt))
+            facts['is_new_client'] = not FSO.search_count(domain, limit=1)
+        if scheduled_dt and staff_ids:
+            # "From the second client, same place/time, same nurse/doctor":
+            # an EARLIER-created booking at the same start with a shared staff
+            # member and the same address makes this one the second client.
+            domain = [('scheduled_datetime', '=', scheduled_dt),
+                      ('state', '!=', 'cancelled')]
+            if fso:
+                domain.append(('id', '<', fso.id))
+            norm = lambda a: ' '.join((a or '').lower().split())
+            for other in FSO.search(domain, limit=50):
+                if other.patient_id == partner:
+                    continue
+                other_staff = set(other._pricing_staff_ids())
+                if not other_staff & set(staff_ids):
+                    continue
+                if address and norm(other._pricing_address()) == norm(address):
+                    facts['is_multi_client_same_location'] = True
+                    break
+        return facts
+
+    @api.model
+    def _line_pricing_context(self, product, quantity, booking_ctx):
+        """Per-line context on top of the booking facts: region (from the
+        default_code suffix, as everywhere else), whether ANOTHER non-fee
+        service is on the booking, and the booked hours of this service."""
+        ctx = dict(booking_ctx)
+        code = product.default_code or ''
+        ctx['region'] = 'HCMC' if '_tphcm' in code else ('Hanoi' if '_hanoi' in code else '')
+        fees = set(ctx.get('booking_fee_tmpl_ids') or [])
+        ctx['has_other_service_same_visit'] = any(
+            t != product.product_tmpl_id.id and t not in fees
+            for t in ctx.get('booking_product_tmpl_ids') or [])
+        hour = self.env.ref('uom.product_uom_hour', raise_if_not_found=False)
+        if hour and product.uom_id == hour:
+            ctx['booked_hours'] = quantity or 0
+        else:
+            ctx['booked_hours'] = ctx.get('booking_hours') or 0
+        return ctx
+
+    def booking_warnings(self, product, quantity, context_data):
+        """Warnings from the approved condition checks for one line."""
+        self.ensure_one()
+        out = []
+        checks = self.rule_ids.filtered(
+            lambda r: r.active and r.approval_status == 'approved'
+            and r.action_type in ('eligibility', 'exclude'))
+        for rule in checks.sorted('sequence'):
+            try:
+                msg = rule.check_booking_warning(product, quantity, context_data)
+            except Exception:
+                _logger.exception("Condition check %s failed", rule.id)
+                continue
+            if msg:
+                out.append(msg)
+        return out
+
     @api.model
     def calculate_price(self, product_id, quantity, partner_id, context_data):
         """Calculate price with multi-level rules"""

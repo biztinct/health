@@ -9,10 +9,37 @@
         <field name="arch" type="xml">
             <xpath expr="//page[@name='overview']" position="after">
                 <page string="Pricing" name="pricing" invisible="not sale_order_id">
+                    <field name="has_pricing_warnings" invisible="1"/>
+                    <div class="alert alert-danger" role="alert" invisible="not has_pricing_warnings">
+                        <strong>Price warnings</strong>
+                        <field name="pricing_warnings" nolabel="1" readonly="1"
+                               class="d-block" style="white-space: pre-line;"/>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="pricing_doctor_ordered" string="Ordered by Clinic Doctor"/>
+                        </group>
+                        <group>
+                            <field name="pricing_other_service_failed" string="Other Service Unsuccessful"/>
+                        </group>
+                    </group>
                     <group>
                         <field name="pricing_breakdown_html" nolabel="1" readonly="1"/>
                     </group>
                 </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Bookings that break a price list condition, for later review. -->
+    <record id="view_health_fso_search_pricing_warnings" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.search.pricing.warnings</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_fieldservice_order_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='patient_id']" position="after">
+                <filter string="Price warnings" name="has_pricing_warnings"
+                        domain="[('has_pricing_warnings', '=', True)]"/>
             </xpath>
         </field>
     </record>

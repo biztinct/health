@@ -97,3 +97,15 @@
 .hfq-totals{ min-width:240px; }
 .hfq-total-row{ display:flex; justify-content:space-between; gap:24px; font-size:13px; color:#475569; padding:2px 0; }
 .hfq-total-row--grand{ font-size:16px; font-weight:800; color:#0f172a; border-top:1px solid var(--hfq-hair); margin-top:4px; padding-top:6px; }
+
+/* Price list conditions not met (warn, never block) */
+.hfq-warnings { margin-top: 6px; display: flex; flex-direction: column; gap: 4px; }
+.hfq-warning {
+    padding: 4px 10px;
+    border: 1px solid #F5C2C0;
+    border-radius: 6px;
+    background: #FDECEA;
+    color: #8A1C14;
+    font-size: 12px;
+    line-height: 1.4;
+}

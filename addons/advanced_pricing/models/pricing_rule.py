@@ -167,6 +167,9 @@ class AdvancedPricingRule(models.Model):
         ('quotation_booking_form', 'Quotation on Booking Form'),
         ('service_duration_log', 'Service Duration Log'),
         ('booking_form_provider', 'Booking/Form & Provider after Service'),
+        ('crm', 'CRM'),
+        ('crm_booking', 'CRM/Booking'),
+        ('system', 'System'),
         ('manual', 'Manual Entry'),
     ], string='Trigger Source', tracking=True,
        help='Where the data for this rule condition comes from')
@@ -208,6 +211,10 @@ class AdvancedPricingRule(models.Model):
     is_manual_quote = fields.Boolean('Manual Quote/Override',
         help='This rule requires manual pricing — value set on booking form or receipt')
     
+    # 'eligibility' and 'exclude' never change a price. They are the price
+    # list's conditions ("Minimum 3 hours", "Not applicable: …") and produce a
+    # WARNING on the booking when not met — the owner chose warn-not-block
+    # (2026-09-30) so a manager can still agree an exception.
     action_type = fields.Selection([
         ('add', 'Add Amount'),
         ('multiply', 'Multiply by Factor'),
@@ -215,9 +222,11 @@ class AdvancedPricingRule(models.Model):
         ('fixed', 'Set Fixed Price'),
         ('discount', 'Discount Base Price'),
         ('per_unit', 'Amount Per Unit'),
-        ('formula', 'Apply Formula')
+        ('formula', 'Apply Formula'),
+        ('eligibility', 'Condition Check (warn if not met)'),
+        ('exclude', 'Not Applicable With (warn)'),
     ], string='Action Type', default='add', tracking=True)
-    
+
     # Per-unit configuration (e.g., 10,000 per km)
     per_unit_field = fields.Selection([
         ('distance', 'Distance (km)'),
@@ -225,9 +234,63 @@ class AdvancedPricingRule(models.Model):
         ('injection_count', 'Injection Count'),
         ('iv_fluid_count', 'IV Fluid Count'),
         ('medication_count', 'Medication Count'),
+        ('injection_or_medication', 'Extra Injections or Medications'),
         ('service_units', 'Service Units'),
     ], string='Per Unit Field',
        help='Which field to multiply the action value by when action_type is per_unit')
+
+    # --- Price-list conditions (CRM price input sheets, 2026-09) ---------
+    # The import reads the client's sentence into the structured fields
+    # below and keeps the sentence itself (both languages) beside them, so
+    # anyone can check the reading against what the client wrote.
+    condition_text = fields.Char(
+        'Condition (as written)', translate=True,
+        help="The price list's own wording of the condition, in English and Vietnamese.")
+    rule_note = fields.Text('Price List Note', translate=True)
+    parse_status = fields.Selection([
+        ('understood', 'Understood'),
+        ('not_understood', 'Not understood'),
+        ('manual', 'Set by hand'),
+    ], string='Import Reading', default='manual', tracking=True,
+       help='Whether the import could read the condition sentence. A rule that '
+            'was not understood is imported switched off.')
+    parse_leftover = fields.Char(
+        'Words Not Understood', readonly=True,
+        help='The part of the sentence the import could not read.')
+    min_hours = fields.Float(
+        'Minimum Booked Hours',
+        help='The booked length of this service must be at least this many hours.')
+    time_windows = fields.Char(
+        'Start Time Windows',
+        help='The visit must start inside one of these windows, e.g. '
+             '"19:00-07:00" or "00:00-08:00; 12:00-13:00; 17:00-24:00". '
+             'A window whose end is earlier than its start runs past midnight.')
+    requires_new_client = fields.Boolean(
+        'New Client Only', help='The client has no earlier bookings at all.')
+    requires_foreign_client = fields.Boolean(
+        'Foreign Client Only', help='The client is marked as a foreign client.')
+    accept_doctor_order = fields.Boolean(
+        'Or: Doctor Ordered',
+        help='With "Other Service Same Visit": also met when the booking is marked '
+             'as ordered by a clinic doctor.')
+    accept_other_service_failed = fields.Boolean(
+        'Or: Other Service Unsuccessful',
+        help='With "Other Service Same Visit": also met when the booking is marked '
+             'as another service having been unsuccessful.')
+    wound_size = fields.Selection([
+        ('small', 'Small wound'),
+        ('large', 'Large wound'),
+    ], string='Wound Size', help='Apply only when the extra wounds are of this size.')
+    requires_complex_wound = fields.Boolean(
+        'Complex Wound Only', help='Apply only when the wound is marked complex.')
+    per_km_beyond = fields.Float(
+        'Charged per km Beyond',
+        help='For a per-km fee: the distance must be over this many km, and the '
+             'quantity should be the km beyond it (rounded up).')
+    conflict_product_tmpl_ids = fields.Many2many(
+        'product.template', 'advanced_pricing_rule_conflict_rel',
+        'rule_id', 'product_tmpl_id', string='Not Applicable With',
+        help='Warn when the booking also contains any of these services.')
 
     action_value = fields.Float('Action Value', tracking=True)
     action_formula = fields.Text('Action Formula', tracking=True)
@@ -432,32 +495,14 @@ class AdvancedPricingRule(models.Model):
         if self.is_manual_quote:
             _logger.info(f"  Rule {self.name}: SKIPPED - Manual quote rule")
             return False
-        
-        # Check validity period
-        if self.valid_from or self.valid_to:
-            from datetime import date
-            today = date.today()
-            if self.valid_from and today < self.valid_from:
-                _logger.info(f"  Rule {self.name}: FAILED - Not yet valid (starts {self.valid_from})")
-                return False
-            if self.valid_to and today > self.valid_to:
-                _logger.info(f"  Rule {self.name}: FAILED - Expired (ended {self.valid_to})")
-                return False
-        
-        # Check region if set
-        if self.region:
-            service_region = context_data.get('region', '')
-            if service_region and service_region.lower() != self.region.lower():
-                _logger.info(f"  Rule {self.name}: FAILED - Region mismatch ({service_region} vs {self.region})")
-                return False
-        
-        _logger.info(f"  Rule {self.name}: Checking product applicability for product {product_id}")
-        # Check product applicability (like standard pricelist rules)
-        if not self._check_product_applicability(product_id):
-            _logger.info(f"  Rule {self.name}: FAILED - Product not applicable")
+
+        # Condition checks never move a price; they are read by
+        # check_booking_warning() instead.
+        if not self._is_price_rule():
             return False
-        
-        _logger.info(f"  Rule {self.name}: Product check passed")
+
+        if not self._applies_to(product_id, context_data):
+            return False
         
         # Check quantity
         if self.min_quantity and quantity < self.min_quantity:
@@ -485,6 +530,119 @@ class AdvancedPricingRule(models.Model):
         _logger.info(f"  Rule {self.name}: All checks passed")
         return True
     
+    def _is_price_rule(self):
+        self.ensure_one()
+        return self.action_type not in ('eligibility', 'exclude')
+
+    def _applies_to(self, product_id, context_data):
+        """Validity dates, region and product targeting — the part of a rule
+        that says WHICH service it is about, shared by price rules and
+        condition checks."""
+        self.ensure_one()
+        if self.valid_from or self.valid_to:
+            today = fields.Date.context_today(self)
+            if self.valid_from and today < self.valid_from:
+                return False
+            if self.valid_to and today > self.valid_to:
+                return False
+        if self.region:
+            service_region = context_data.get('region', '')
+            if service_region and service_region.lower() != self.region.lower():
+                return False
+        return self._check_product_applicability(product_id)
+
+    @staticmethod
+    def _parse_time_windows(text):
+        """'19:00-07:00; 12:00-13:00' -> [(19.0, 7.0), (12.0, 13.0)]."""
+        windows = []
+        for chunk in (text or '').replace(',', ';').split(';'):
+            chunk = chunk.strip()
+            if '-' not in chunk:
+                continue
+            start, end = [p.strip() for p in chunk.split('-', 1)]
+            try:
+                sh, sm = (start.split(':') + ['0'])[:2]
+                eh, em = (end.split(':') + ['0'])[:2]
+                windows.append((int(sh) + int(sm) / 60.0, int(eh) + int(em) / 60.0))
+            except ValueError:
+                continue
+        return windows
+
+    def _in_time_windows(self, context_data):
+        t = context_data.get('appointment_time')
+        if t is None:
+            t = context_data.get('appointment_hour', 0) or 0
+        for start, end in self._parse_time_windows(self.time_windows):
+            if start < end:
+                if start <= t < end:
+                    return True
+            elif t >= start or t < end:  # runs past midnight
+                return True
+        return False
+
+    def check_booking_warning(self, product, quantity, context_data):
+        """Return a plain-language warning when this condition check is not
+        met for ``product`` on the booking described by ``context_data``,
+        else False. Only 'eligibility' and 'exclude' rules ever warn."""
+        self.ensure_one()
+        if self._is_price_rule() or not product:
+            return False
+        if not self._applies_to(product.id, context_data):
+            return False
+        item = product.display_name
+        if self.action_type == 'exclude':
+            present = set(context_data.get('booking_product_tmpl_ids') or [])
+            clash = self.conflict_product_tmpl_ids.filtered(lambda t: t.id in present)
+            if not clash:
+                return False
+            return _("%(item)s: not applicable when the booking also has %(others)s.",
+                     item=item, others=', '.join(clash.mapped('name')))
+
+        ok = self._evaluate_fso_conditions(context_data)
+        if ok and self.per_km_beyond:
+            import math
+            distance = context_data.get('distance', 0) or 0
+            expected = max(0, math.ceil(distance - self.per_km_beyond))
+            if distance <= self.per_km_beyond:
+                ok = False
+            elif abs((quantity or 0) - expected) > 0.001:
+                return _(
+                    "%(item)s: charge %(expected)s km (distance %(distance).1f km minus "
+                    "%(limit)g km), but %(qty)g km is booked.",
+                    item=item, expected=expected, distance=distance,
+                    limit=self.per_km_beyond, qty=quantity or 0)
+        if ok:
+            return False
+        facts = self._warning_facts(context_data)
+        condition = self.condition_text or self._pricing_rule_short_label()
+        if facts:
+            return _("%(item)s: condition not met: %(condition)s (%(facts)s).",
+                     item=item, condition=condition, facts='; '.join(facts))
+        return _("%(item)s: condition not met: %(condition)s.",
+                 item=item, condition=condition)
+
+    def _warning_facts(self, ctx):
+        """What the booking actually has, for the conditions this rule sets."""
+        facts = []
+        if self.time_windows or self.appointment_hour_min or self.appointment_hour_max:
+            t = ctx.get('appointment_time')
+            if t is None:
+                t = ctx.get('appointment_hour', 0) or 0
+            facts.append(_("starts at %02d:%02d", int(t), round((t - int(t)) * 60) % 60))
+        if self.min_hours:
+            facts.append(_("booked %g h", ctx.get('booked_hours', 0) or 0))
+        if self.distance_min or self.distance_max or self.per_km_beyond:
+            facts.append(_("distance %.1f km", ctx.get('distance', 0) or 0))
+        if self.is_weekend_required and not ctx.get('is_weekend'):
+            facts.append(_("not a weekend"))
+        if self.requires_new_client and not ctx.get('is_new_client'):
+            facts.append(_("the client has earlier bookings"))
+        if self.requires_foreign_client and not ctx.get('is_foreign_client'):
+            facts.append(_("the client is not marked foreign"))
+        if self.requires_other_service_same_visit and not ctx.get('has_other_service_same_visit'):
+            facts.append(_("no other service on the booking"))
+        return facts
+
     def _evaluate_field_condition(self, context_data):
         """Evaluate field-based condition"""
         if not self.condition_field:
@@ -661,8 +819,31 @@ class AdvancedPricingRule(models.Model):
                 return False
         
         if self.requires_other_service_same_visit:
-            if not context_data.get('has_other_service_same_visit', False):
+            met = context_data.get('has_other_service_same_visit', False)
+            if not met and self.accept_doctor_order:
+                met = context_data.get('doctor_ordered', False)
+            if not met and self.accept_other_service_failed:
+                met = context_data.get('other_service_failed', False)
+            if not met:
                 return False
+
+        if self.time_windows and not self._in_time_windows(context_data):
+            return False
+
+        if self.min_hours and (context_data.get('booked_hours') or 0) + 1e-6 < self.min_hours:
+            return False
+
+        if self.requires_new_client and not context_data.get('is_new_client', False):
+            return False
+
+        if self.requires_foreign_client and not context_data.get('is_foreign_client', False):
+            return False
+
+        if self.wound_size and context_data.get('wound_size') != self.wound_size:
+            return False
+
+        if self.requires_complex_wound and not context_data.get('wound_complex', False):
+            return False
         
         if self.requires_multi_client_same_location:
             if not context_data.get('is_multi_client_same_location', False):
@@ -695,8 +876,11 @@ class AdvancedPricingRule(models.Model):
         elif self.applied_on == '1_product':
             return self.product_tmpl_id.id == product.product_tmpl_id.id
         elif self.applied_on == '2_product_category':
+            # parent_path is '1/5/9/' — its parts are STRINGS; comparing the
+            # int id against them never matched, so no category rule (e.g.
+            # ALL_NURSE) had ever fired.
             return product.categ_id.id == self.categ_id.id or \
-                   self.categ_id.id in product.categ_id.parent_path.split('/')[:-1]
+                   str(self.categ_id.id) in (product.categ_id.parent_path or '').split('/')[:-1]
         
         return False
     
@@ -709,7 +893,8 @@ class AdvancedPricingRule(models.Model):
         elif self.action_type == 'multiply':
             return price * self.action_value
         elif self.action_type == 'percentage':
-            return price * (1 + self.action_value / 100)
+            # (100 + v) / 100 rather than 1 + v/100: exact for whole percents
+            return price * (100 + self.action_value) / 100
         elif self.action_type == 'fixed':
             return self.action_value
         elif self.action_type == 'discount':
@@ -730,6 +915,11 @@ class AdvancedPricingRule(models.Model):
                 }
                 context_key = field_map.get(self.per_unit_field, self.per_unit_field)
                 unit_count = context_data.get(context_key, 0)
+                if self.per_unit_field == 'injection_or_medication':
+                    # "From second injection or additional medicine": every
+                    # injection past the first plus every medicine past the first.
+                    unit_count = (max(0, (context_data.get('injection_count') or 0) - 1)
+                                  + max(0, (context_data.get('medication_count') or 0) - 1))
 
                 # Use the min condition as threshold (e.g., distance_min = 8 means
                 # charge per km ABOVE 8km, so effective_units = distance - 8)
@@ -781,7 +971,7 @@ class AdvancedPricingRule(models.Model):
         if at == 'per_unit':
             return '+%s đ/unit' % '{:,.0f}'.format(av)
         if at == 'percentage':
-            return '+%s%%' % av
+            return '%+g%%' % av
         return ''
     
     @api.depends('rule_type')
@@ -815,7 +1005,12 @@ class AdvancedPricingRule(models.Model):
                  'service_type', 'service_location_id', 'requires_home_service',
                  'wound_count_min', 'wound_count_max', 'injection_count_min',
                  'iv_fluid_count_min', 'medication_count_min',
-                 'action_type', 'action_value', 'per_unit_field')
+                 'action_type', 'action_value', 'per_unit_field',
+                 'requires_other_service_same_visit', 'accept_doctor_order',
+                 'accept_other_service_failed', 'requires_multi_client_same_location',
+                 'min_hours', 'time_windows', 'requires_new_client',
+                 'requires_foreign_client', 'wound_size', 'requires_complex_wound',
+                 'per_km_beyond', 'conflict_product_tmpl_ids')
     def _compute_rule_summary_html(self):
         """Build a live FOR … WHEN … THEN sentence. Never raise (display only)."""
         type_labels = dict(self._fields['service_type']._description_selection(self.env))
@@ -886,11 +1081,43 @@ class AdvancedPricingRule(models.Model):
             conds.append(_("≥ %d IV bags", self.iv_fluid_count_min))
         if self.medication_count_min:
             conds.append(_("≥ %d medications", self.medication_count_min))
+        for start, end in sorted(self._parse_time_windows(self.time_windows)):
+            hm = lambda t: '%02d:%02d' % (int(t) % 24 if t < 24 else 24, round((t - int(t)) * 60))
+            if end < start:
+                conds.append(_("starts between %(start)s and %(end)s the next morning",
+                               start=hm(start), end=hm(end)))
+            else:
+                conds.append(_("starts between %(start)s and %(end)s",
+                               start=hm(start), end=hm(end)))
+        if self.min_hours:
+            conds.append(_("booked for at least %g hours", self.min_hours))
+        if self.per_km_beyond:
+            conds.append(_("distance over %g km, charged per km beyond it", self.per_km_beyond))
+        if self.requires_new_client:
+            conds.append(_("a client with no earlier bookings"))
+        if self.requires_foreign_client:
+            conds.append(_("a foreign client"))
+        if self.requires_other_service_same_visit:
+            alts = [_("another service on the same booking")]
+            if self.accept_doctor_order:
+                alts.append(_("a clinic doctor's order"))
+            if self.accept_other_service_failed:
+                alts.append(_("another service was unsuccessful"))
+            conds.append(_(" or ").join(alts))
+        if self.requires_multi_client_same_location:
+            conds.append(_("second or later client at the same place and time with the same staff"))
+        if self.wound_size == 'small':
+            conds.append(_("small wounds"))
+        elif self.wound_size == 'large':
+            conds.append(_("large wounds"))
+        if self.requires_complex_wound:
+            conds.append(_("a complex wound"))
         when = ", ".join(conds) if conds else _("always")
 
         # THEN (action)
         at = self.action_type
         v = self.action_value
+        per_unit_labels = dict(self._fields['per_unit_field']._description_selection(self.env))
         if at == 'add':
             then = _("add %s đ", fmt(v))
         elif at == 'fixed':
@@ -898,22 +1125,40 @@ class AdvancedPricingRule(models.Model):
         elif at == 'multiply':
             then = _("multiply the price ×%g", v or 0)
         elif at == 'percentage':
-            then = _("increase the price by %g%%", v or 0)
+            if (v or 0) < 0:
+                then = _("give a %g%% discount", abs(v))
+            else:
+                then = _("increase the price by %g%%", v or 0)
         elif at == 'discount':
             then = _("give a %g%% discount", (v or 0) * 100)
         elif at == 'per_unit':
-            then = _(
-                "add %(amount)s đ per %(unit)s",
-                amount=fmt(v),
-                unit=self.per_unit_field or _('unit'),
-            )
+            each = {
+                'wound_count': _("for each wound after the first"),
+                'injection_count': _("for each injection after the first"),
+                'iv_fluid_count': _("for each bottle after the first"),
+                'medication_count': _("for each medication after the first"),
+                'injection_or_medication': _("for each extra injection or medicine"),
+                'distance': _("for each km over %g km", self.distance_min or 0),
+            }.get(self.per_unit_field) or _(
+                "for each: %s", per_unit_labels.get(self.per_unit_field) or _('unit'))
+            then = _("add %(amount)s đ %(each)s", amount=fmt(v), each=each)
+        elif at == 'eligibility':
+            then = _("warn staff on the booking when this is not met")
+        elif at == 'exclude':
+            then = _("warn staff when booked together with %s",
+                     ', '.join(self.conflict_product_tmpl_ids.mapped('name')) or '…')
+            when = _("always")
         else:
             then = None
 
+        # Every text part is escaped: service names such as "Wound care <5cm"
+        # otherwise open an HTML tag and swallow the rest of the summary.
+        from markupsafe import escape
         seg = lambda icon, label, body: (
             "<span class='apr-sum__seg'>%s<b>%s</b> %s</span>"
-            % (self._summary_icon(icon), label, body))
-        parts = [seg('scope', _('For'), what), seg('when', _('When'), when)]
+            % (self._summary_icon(icon), escape(label), escape(body)))
+        when_label = _('Needs') if at == 'eligibility' else _('When')
+        parts = [seg('scope', _('For'), what), seg('when', when_label, when)]
         if then:
             parts.append(seg('then', _('Then'), then))
         else:

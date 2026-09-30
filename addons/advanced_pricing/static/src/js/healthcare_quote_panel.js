@@ -100,6 +100,9 @@ class HealthcareQuotePanel extends Component {
     rules(line) {
         return this.info(line).rules || [];
     }
+    warnings(line) {
+        return this.info(line).warnings || [];
+    }
     hasAdjustment(line) {
         return Math.abs(this.final(line) - this.base(line)) > 0.01 || this.rules(line).length > 0;
     }
