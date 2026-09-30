@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_theme.WsCompactBar">
+        <div t-ref="root" t-attf-class="ws-cbar #{state.shown ? 'is-shown' : ''}" t-att-aria-hidden="state.shown ? 'false' : 'true'">
+            <div t-ref="inner" class="ws-cbar__inner">
+                <button type="button" class="ws-cbar__title" t-att-tabindex="state.shown ? 0 : -1"
+                        title="Back to top" t-on-click="toTop">
+                    <span class="ws-cbar__name" t-esc="title"/>
+                </button>
+                <span t-if="badge" t-attf-class="ws-state ws-state--#{badge.tone} ws-cbar__badge" t-esc="badge.text"/>
+                <span t-foreach="facts" t-as="fact" t-key="fact.name" class="ws-cbar__fact" t-esc="fact.text"/>
+                <button t-if="state.action" type="button"
+                        class="vu-action-btn vu-action-btn--primary ws-cbar__action"
+                        t-att-tabindex="state.shown ? 0 : -1"
+                        t-on-click="onAction" t-esc="state.action"/>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="health_theme.WsRailFold">
+        <div t-ref="root" t-attf-class="ws-rail-fold #{state.folded ? 'is-folded' : ''}">
+            <button type="button" class="ws-rail-fold__btn" t-att-aria-expanded="state.folded ? 'false' : 'true'"
+                    t-on-click="toggle">
+                <span class="ws-rail-fold__label">Summary</span>
+                <span t-if="state.folded" class="ws-rail-fold__names" t-esc="state.names"/>
+                <span class="ws-rail-fold__cta">
+                    <t t-if="state.folded">Show</t>
+                    <t t-else="">Hide</t>
+                </span>
+                <span class="ws-rail-fold__chev"/>
+            </button>
+        </div>
+    </t>
+
+</templates>

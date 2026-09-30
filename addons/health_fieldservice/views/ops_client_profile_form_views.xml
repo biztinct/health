@@ -65,6 +65,12 @@
                     <div class="ws-page">
                         <div class="ws-main">
 
+                            <!-- COMPACT BAR — name, status, code, phone and the Next step
+                                 button, pinned at the top once the hero scrolls away -->
+                            <widget name="ws_compact_bar" title_fields="name"
+                                    badge_field="patient_status" badge_tones="active:ok,inactive:muted"
+                                    fact_fields="patient_code_display,phone"/>
+
                             <!-- HERO — who the client is, how to reach them -->
                             <div class="ws-hero">
                                 <div class="ws-hero__avatar">
@@ -591,6 +597,8 @@
 
                         <!-- RAIL — pinned while the main column scrolls -->
                         <div class="ws-rail">
+                            <!-- "Summary" head: folds the panels when they sit above the tabs -->
+                            <widget name="ws_rail_fold"/>
                             <!-- Quick actions: call / message / email and the
                                  registered shortcuts, as tiles, first in the rail -->
                             <widget name="ws_client_shortcuts"/>

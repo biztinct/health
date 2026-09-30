@@ -1085,6 +1085,13 @@
                     <div class="ws-page">
                         <div class="ws-main">
 
+                            <!-- COMPACT BAR — name, status, visit time and the Next step
+                                 button, pinned at the top once the hero scrolls away -->
+                            <widget name="ws_compact_bar" title_fields="name,patient_id"
+                                    badge_field="state"
+                                    badge_tones="draft:muted,confirmed:primary,assigned:ok,in_progress:warn,completed:ok,completed_pending_invoice:warn,cancelled:danger,closed:ok"
+                                    fact_fields="scheduled_datetime"/>
+
                             <!-- HERO — who, what, when, where -->
                             <div class="ws-hero">
                                 <div class="ws-hero__avatar">
@@ -1692,6 +1699,8 @@
                              RAIL — pinned beside the record on every tab
                              ======================================================== -->
                         <div class="ws-rail">
+                            <!-- "Summary" head: folds the panels when they sit above the tabs -->
+                            <widget name="ws_rail_fold"/>
                             <!-- Quick actions: the record's shortcuts as tiles, first thing in the rail -->
                             <div class="ws-panel ws-panel--links">
                                 <div class="ws-panel__head">Quick actions</div>

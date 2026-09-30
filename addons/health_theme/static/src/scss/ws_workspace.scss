@@ -136,12 +136,22 @@ $ws-icons: (
     }
 }
 
-// Below ~1100px of form width the rail drops under the main column and lays
-// its cards out side by side.
+// Below ~1100px of form width the rail leaves the side and moves UP: it sits
+// between the Next step banner and the tabs (never under the tabs, where it
+// used to land at the very bottom), cards side by side, foldable with the
+// "Summary" head (ws_rail_fold). .ws-main dissolves (display: contents) so its
+// children and the rail share one column and `order` can slot the rail in.
 @container vuform (max-width: 1100px) {
     #{$ws} {
-        .ws-page { grid-template-columns: minmax(0, 1fr); }
+        .ws-page {
+            grid-template-columns: minmax(0, 1fr);
+            gap: var(--vuf-sp-4);
+        }
+        .ws-main { display: contents; }
+        .ws-main > .o_notebook,
+        .ws-main > .o_notebook ~ * { order: 2; }
         .ws-rail {
+            order: 1;
             position: static;
             max-height: none;
             overflow: visible;
@@ -149,6 +159,12 @@ $ws-icons: (
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             align-items: start;
         }
+        // (.ws-rail in the selector: it must beat the base `display: none` in §11)
+        .ws-rail .ws-rail-fold {
+            display: block;
+            grid-column: 1 / -1;
+        }
+        .ws-rail.ws-rail--folded > :not(.o_widget_ws_rail_fold) { display: none !important; }
     }
 }
 
@@ -822,6 +838,47 @@ $ws-icons: (
         box-shadow: none;
         padding: 0;
     }
+
+    // ONE frame per box: a page whose content brings its own cards sits on
+    // the canvas like Overview, so the cards are not framed twice (the page
+    // card + the card, or three deep with a .vu-section wrapper around it).
+    // A page of loose content (a bare list) keeps the page card.
+    .tab-content > .tab-pane:has(.vu-detail-card, .vu-sec, .twin-panel, .bt-card) {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+    }
+
+    // a .vu-section is only a wrapper here: never a frame of its own
+    .tab-content > .tab-pane .vu-section {
+        padding: 0;
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    // the client's Financial Summary: its invoice/booking sections sit inside
+    // the page card (the page also holds loose totals), so they are sections,
+    // not frames
+    .tab-content > .tab-pane .bj-bookings-section {
+        padding-left: 0;
+        padding-right: 0;
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    // a page's card looks like an Overview card (a card inside a card is
+    // content, not a frame — it keeps the look its own module gave it)
+    .tab-content > .tab-pane .vu-detail-card:not(.vu-detail-card .vu-detail-card):not(.ws-card) {
+        background: var(--vuf-surface);
+        border: 1px solid var(--vuf-line) !important;
+        border-radius: var(--vuf-r-md);
+        box-shadow: none !important;
+    }
 }
 
 // =========================================================================
@@ -1329,4 +1386,190 @@ $ws-icons: (
 
         > .o_widget { display: block; }
     }
+}
+
+// =========================================================================
+// 11. COMPACT BAR + STICKY TABS — once the hero has scrolled away a slim bar
+//     (ws_compact_bar) holds the name, status, key fact and the Next step
+//     button at the top, and the tab strip sticks right under it. The bar's
+//     host is a zero-height sticky box, so the bar overlays the page and
+//     showing it never moves anything (no layout shift, ledger §5.261).
+// =========================================================================
+#{$ws} {
+    .ws-main > .o_widget_ws_compact_bar {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        height: 0;
+        // cancel the column gap this zero-height item would otherwise add
+        margin-bottom: calc(-1 * var(--vuf-sp-4));
+        pointer-events: none;
+    }
+
+    .ws-cbar { position: relative; }
+
+    .ws-cbar__inner {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        gap: var(--vuf-sp-3);
+        min-height: 52px;
+        padding: 8px var(--vuf-sp-4);
+        background: var(--vuf-surface);
+        border: 1px solid var(--vuf-line);
+        border-top: 0;
+        border-radius: 0 0 var(--vuf-r-md) var(--vuf-r-md);
+        box-shadow: var(--vuf-sh-md);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: opacity var(--vuf-t-fast), transform var(--vuf-t-fast), visibility 0s linear var(--vuf-t-fast);
+    }
+
+    // the scroll box keeps a little padding above the sticky line; a canvas
+    // strip over it stops the page peeking through above the bar
+    .ws-cbar__inner::before {
+        content: "";
+        position: absolute;
+        left: -1px;
+        right: -1px;
+        bottom: 100%;
+        height: var(--vuf-sp-6);
+        background: var(--vuf-bg);
+    }
+
+    .ws-cbar.is-shown .ws-cbar__inner {
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        pointer-events: auto;
+        transition: opacity var(--vuf-t-fast), transform var(--vuf-t-fast);
+    }
+
+    .ws-cbar__title {
+        min-width: 0;
+        flex: 0 1 auto;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .ws-cbar__name {
+        display: block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--vuf-ink);
+    }
+
+    .ws-cbar__title:hover .ws-cbar__name { color: var(--vuf-primary); }
+
+    .ws-cbar__badge { flex: 0 0 auto; }
+
+    .ws-cbar__fact {
+        flex: 0 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: 13.5px;
+        color: var(--vuf-muted);
+        font-variant-numeric: tabular-nums;
+    }
+
+    // the Next step button's look, outside the banner that normally styles it
+    .ws-cbar__action {
+        margin-left: auto;
+        flex: 0 0 auto;
+        padding: 7px 16px;
+        border: 1px solid var(--vuf-primary) !important;
+        border-radius: var(--vuf-r-sm);
+        background: var(--vuf-primary) !important;
+        color: var(--vuf-primary-ink) !important;
+        font-size: 14px;
+        font-weight: 600;
+        white-space: nowrap;
+        box-shadow: none !important;
+
+        transform: none !important;
+
+        &:hover, &:focus-visible { box-shadow: var(--vuf-sh-ring) !important; }
+    }
+
+}
+
+// the tab strip sticks under the bar while the bar is up and the strip is one
+// row (the widget puts ws-cbar-on, ws-cbar-tabs and --ws-cbar-h on the form
+// view root)
+.o_form_view.ws-workspace.ws-cbar-on.ws-cbar-tabs .o_form_renderer.vu-form .ws-main .o_notebook .o_notebook_headers {
+    position: sticky;
+    top: var(--ws-cbar-h, 0px);
+    z-index: 25;
+    background: var(--vuf-bg);
+}
+
+// the rail's "Summary" head: only when the rail sits in the page flow (§1)
+#{$ws} .ws-rail-fold {
+    display: none;
+
+    .ws-rail-fold__btn {
+        display: flex;
+        align-items: center;
+        gap: var(--vuf-sp-2);
+        width: 100%;
+        padding: 6px 2px;
+        border: 0;
+        background: transparent;
+        color: var(--vuf-muted);
+        text-align: left;
+        cursor: pointer;
+
+        &:hover { color: var(--vuf-ink); }
+    }
+
+    .ws-rail-fold__label {
+        flex: 0 0 auto;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+    }
+
+    .ws-rail-fold__names {
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: 13px;
+        color: var(--vuf-faint);
+    }
+
+    .ws-rail-fold__cta {
+        margin-left: auto;
+        flex: 0 0 auto;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--vuf-primary);
+    }
+
+    // a CSS chevron: down when open (click folds up), right when folded
+    .ws-rail-fold__chev {
+        flex: 0 0 auto;
+        width: 8px;
+        height: 8px;
+        margin: 0 4px 3px 0;
+        border-right: 2px solid var(--vuf-primary);
+        border-bottom: 2px solid var(--vuf-primary);
+        transform: rotate(-135deg) translate(-2px, -2px);
+        transition: transform var(--vuf-t-fast);
+    }
+
+    &.is-folded .ws-rail-fold__chev { transform: rotate(45deg); }
 }

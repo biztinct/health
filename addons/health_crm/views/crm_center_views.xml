@@ -119,6 +119,13 @@
                     <div class="ws-page">
                         <div class="ws-main">
 
+                            <!-- COMPACT BAR — name, status, code, phone and the Next step
+                                 button, pinned at the top once the hero scrolls away -->
+                            <widget name="ws_compact_bar" title_fields="name"
+                                    badge_field="contact_status"
+                                    badge_tones="active:primary,lead:primary,thinking:primary,recontact:primary,booking:ok,service_used:ok,existing:ok,lost_booking:danger,spam:danger"
+                                    fact_fields="unique_contact_code,phone"/>
+
                             <!-- HERO — who called, how, and when -->
                             <div class="ws-hero">
                                 <div class="ws-hero__avatar ws-hero__avatar--initials">
@@ -318,6 +325,8 @@
                              RAIL — pinned: glance, people, needs attention
                              ======================================================== -->
                         <div class="ws-rail">
+                            <!-- "Summary" head: folds the panels when they sit above the tabs -->
+                            <widget name="ws_rail_fold"/>
                             <widget name="ws_contact_glance" mode="glance"/>
 
                             <div class="ws-panel ws-panel--people" name="people_panel">

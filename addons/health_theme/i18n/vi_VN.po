@@ -876,3 +876,27 @@ msgstr "Đang theo dõi"
 #: code:addons/health_theme/static/src/js/ws_journey.js:0
 msgid "Booked"
 msgstr "Đã đặt lịch"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/xml/ws_compact_bar.xml:0
+msgid "Back to top"
+msgstr "Lên đầu trang"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/xml/ws_compact_bar.xml:0
+msgid "Summary"
+msgstr "Tóm tắt"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/xml/ws_compact_bar.xml:0
+msgid "Show"
+msgstr "Hiện"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/xml/ws_compact_bar.xml:0
+msgid "Hide"
+msgstr "Ẩn"

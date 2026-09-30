@@ -3741,3 +3741,24 @@ a no-op.
     showed again 250ms later — `health_theme/loading_indicator_hold.js` holds
     it 350ms so one load looks like one load. Measure with the rect timeline
     before claiming a screen paints once. (WORKSPACE refinement, 2026-09-30.)
+- **§5.263 — Workspace screens: a pinned slim bar, the rail moved up, one
+    frame per box.** (1) A bar that appears on scroll must never move the
+    page: host it in a ZERO-HEIGHT `position: sticky` box (first child of
+    `.ws-main`, negative margin cancelling the column gap) and absolutely
+    position the bar inside it; show it from an IntersectionObserver on
+    `.ws-hero` rooted at the scroll box (`.o_content`). The scroll box keeps
+    padding above the sticky line, so give the bar a canvas-coloured
+    `::before` strip or the page peeks through above it. (2) Reordering the
+    rail between the Next step banner and the tabs is CSS only: in the
+    narrow container query `.ws-main { display: contents }` and `order` on
+    the rail (1) and the notebook + later siblings (2). A base rule written
+    LATER in the file with equal specificity beats the container-query rule
+    — the fold head stayed hidden until its narrow selector gained
+    `.ws-rail`. (3) `.vu-action-btn--primary` paints with
+    `--vu-state-color` (grey on a draft), and only `.ws-next` turns it blue
+    — a copy of the button anywhere else must set its own colours. (4) Tab
+    frames: the engine draws every `.tab-pane` as a card, and module widgets
+    bring `.vu-section` > `.vu-detail-card`, i.e. three frames; a page that
+    holds cards now sits on the canvas and `.vu-section` inside a page is
+    never a frame. Pin the tab strip under the bar only while it is one row
+    (the client's 18 tabs wrap to three). (WORKSPACE refinement, 2026-09-30.)
