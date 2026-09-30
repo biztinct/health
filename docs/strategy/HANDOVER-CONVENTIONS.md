@@ -3697,3 +3697,24 @@ a no-op.
     fly-out covered (twice it opened Clinical › Observations). Hovering the area,
     clicking it (the area's first screen opens) and then clicking the tab in the tab
     column worked every time. (WORKSPACE WS-3.)
+- **§5.260 — the master `carejiox` had a deliberate CLEAN START on 2026-09-30
+    (owner: "Everything: clean start", contacts and leads kept).**
+    `tools/pricing/purge_bookings_and_prices.py` deleted every booking, quote,
+    invoice, payment, visit record, old price rule and old service product
+    before the 2026-09 price lists were loaded (commit d4a33465). Two rules
+    for anyone who lands on the box after it: (1) an empty bookings table on
+    live is NOT data loss — before restoring anything, `git log` for a
+    concurrent session's commit and read `tools/pricing/*`; the Workspace
+    refinement session spent an hour on exactly this alarm and restored the
+    17:25 backup to a checking copy, which then had live cron jobs ON (drop
+    such a copy at once, H78); (2) every QA record the WS-1..WS-3 handovers
+    name (BK3831 = id 9645, the per-state bookings, An Xu's 23 invoices) no
+    longer exists — a booking-screen check on live now needs a booking created
+    on purpose, with the owner's say-so. Also re-hit that day: 38 macOS `._*`
+    AppleDouble files were back in the live addons tree (advanced_pricing,
+    health_landing, health_fieldservice) and crashed the `health_base` i18n
+    gate with a UnicodeDecodeError on `i18n/._vi_VN.po`;
+    `find /odoo/odoo-server/addons -name "._*" -delete` is the cure and
+    `COPYFILE_DISABLE=1 scp` the prevention (§5.243). The server clock is
+    UTC: odoo and postgres logs both read UTC. (WORKSPACE refinement,
+    2026-09-30.)
