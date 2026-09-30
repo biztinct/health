@@ -12,6 +12,7 @@ export class TenantWorkspace extends Component {
         this.state = useState({profile:null, setup:null, history:null, busy:false, error:'', query:'', source:'all', offset:0});
         this.mode = (this.props.action.tag || '').split('_').pop();
         this.labels = {name:_t('Company name'),street:_t('Street'),street2:_t('Address line 2'),city:_t('City'),zip:_t('Postal code'),phone:_t('Phone'),email:_t('Email'),website:_t('Website'),vat:_t('Tax number'),company_registry:_t('Registration number')};
+        this.sourceLabels = {workspace:_t('Company and setup'),clinical:_t('Record changes'),access:_t('Access and roles'),support:_t('Support sessions'),api:_t('API activity'),channels:_t('Connections')};
         this.steps = ['company','facilities','people','services','connections','review'];
         this.stepLabels = {company:_t('Company'),facilities:_t('Facilities'),people:_t('People'),services:_t('Services'),connections:_t('Connections'),review:_t('Review')};
         this.stepHelp = {company:_t('Save your company name, address and country below.'),facilities:_t('Add the clinics and locations where your team works.'),people:_t('Create staff accounts and assign their access using the guided account screen.'),services:_t('Add the services you offer and review their prices.'),connections:_t('Connect the communication channels you need. You can do this later.'),review:_t('Review the checks below and finish when the required items are ready.')};
@@ -45,6 +46,11 @@ export class TenantWorkspace extends Component {
     }
     async step(key,complete=false){await this.run(async()=>{this.state.setup=await this.orm.call('health.tenant.workspace','save_setup',[key,this.state.setup.notes,complete]);});}
     async openCheck(check){if(check.key==='company'){await this.step('company');return;}if(check.action)await this.action.doAction(check.action);}
+    historyChanges(detail) {
+        try {
+            return Object.entries(JSON.parse(detail)).map(([key,value])=>({key,label:this.labels[key] || ({country:_t('Country'),logo:_t('Company logo'),checks:_t('Checks')})[key] || key,before:typeof value==='object' ? value.before || '—' : '',after:typeof value==='object' ? value.after || '—' : value}));
+        } catch { return []; }
+    }
     async loadHistory(){this.state.history=await this.orm.call('health.tenant.workspace','history',[this.state.source,this.state.query,this.state.offset]);}
     async search(){this.state.offset=0;await this.run(()=>this.loadHistory());}
     async page(delta){this.state.offset=Math.max(0,this.state.offset+delta);await this.run(()=>this.loadHistory());}
