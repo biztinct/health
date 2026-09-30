@@ -1,0 +1,44 @@
+<odoo>
+  <template id="identity_login" inherit_id="web.login" priority="120">
+    <xpath expr="//form[@role='form']" position="before">
+      <t t-set="tb" t-value="request.env['ir.http']._tenant_identity()"/>
+      <div t-if="tb['own']" class="text-center my-4"><img t-att-src="tb['logo']" t-att-alt="tb['name']" style="max-width:160px;max-height:80px"/><h1 class="h4 mt-3" t-out="tb['name']"/></div>
+    </xpath>
+  </template>
+  <template id="identity_metadata" inherit_id="web.layout" priority="110">
+    <xpath expr="//head/meta[@charset]" position="after">
+      <t t-set="tenant_brand" t-value="request and request.env['ir.http']._tenant_identity() or {}"/>
+      <meta name="biz-brand" t-att-content="tenant_brand.get('name')"/>
+      <meta name="biz-brand-website" t-att-content="tenant_brand.get('website')"/>
+      <meta name="biz-brand-product" t-att-content="tenant_brand.get('product') if tenant_brand.get('own') else ''"/>
+      <meta name="biz-brand-powered-by" t-att-content="tenant_brand.get('powered')"/>
+      <link t-if="tenant_brand.get('own')" rel="apple-touch-icon" t-att-href="tenant_brand.get('favicon')"/>
+    </xpath>
+    <xpath expr="//link[@rel='icon' or @rel='shortcut icon']" position="attributes"><attribute name="t-att-href">tenant_brand.get('favicon') or x_icon</attribute></xpath>
+  </template>
+  <template id="identity_splash" inherit_id="health_theme.webclient_bootstrap" priority="120">
+    <xpath expr="//meta[@name='theme-color']" position="attributes"><attribute name="t-att-content">request.env['ir.http']._tenant_identity()['color']</attribute></xpath>
+    <xpath expr="//link[@href='/vu_theme/tokens.css']" position="after">
+      <t t-set="tb" t-value="request.env['ir.http']._tenant_identity()"/>
+      <style t-if="tb['own']" t-out="':root {--vu-brand-primary:%s;--vu-tab-active:%s;--vu-navbar-bg:%s;--vu-btn-primary-bg:%s;}' % ((tb['color'],) * 4)"/>
+    </xpath>
+    <xpath expr="//t[@t-call='web.layout']" position="inside">
+      <t t-set="tb" t-value="request.env['ir.http']._tenant_identity()"/>
+      <t t-if="tb['own']">
+        <!-- Works with both the original shell and the newer animated splash. -->
+        <style>#cjx-splash .cjx-in > svg {display:none}</style>
+        <template id="tenant-loading-brand"><img t-att-src="tb['logo']" t-att-alt="tb['name']" style="max-width:180px;max-height:100px"/><strong t-out="tb['name']"/></template>
+        <script>(function(){const host=document.querySelector('#cjx-splash .cjx-in');const brand=document.getElementById('tenant-loading-brand');if(host &amp;&amp; brand)host.appendChild(brand.content.cloneNode(true));})();</script>
+      </t>
+    </xpath>
+  </template>
+  <template id="pwa_identity" inherit_id="health_pwa.app_shell" priority="120">
+    <xpath expr="//t[@t-set='head']" position="inside">
+      <t t-set="tb" t-value="request.env['ir.http']._tenant_identity()"/>
+      <meta name="tenant-name" t-att-content="tb['name']"/>
+      <script>window.TenantIdentity = {name: document.querySelector('meta[name="tenant-name"]').content};</script>
+    </xpath>
+    <xpath expr="//img[contains(@src, '/health_pwa/static/icons/')]" position="attributes"><attribute name="t-att-src">request.env['ir.http']._tenant_identity()['logo']</attribute><attribute name="t-att-alt">request.env['ir.http']._tenant_identity()['name']</attribute></xpath>
+    <xpath expr="//link[@rel='apple-touch-icon']" position="attributes"><attribute name="t-att-href">request.env['ir.http']._tenant_identity()['favicon']</attribute></xpath>
+  </template>
+</odoo>

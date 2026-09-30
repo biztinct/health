@@ -266,14 +266,48 @@ is a hot registry sitting there for a clinic that does not exist.
 
 ### A clinic on its own domain (e.g. `booking.someclinic.com`)
 
-**This does not work yet, and the tooling refuses rather than pretending.**
-Routing is by the first word of the address, and `booking.someclinic.com`'s
-first word is `booking`, which is not the clinic's database. Pinning it needs
-the application to read a header naming the database, and this build does not.
-`biz-domain-attach` therefore stops with an explanation and changes nothing.
-The honest answer to a client asking today is: use `<slug>.carejiox.com`, or
-point your own domain at it as a redirect. Revisit when the application is
-upgraded — then set `CUSTOM_DOMAIN_PINNING=1` in `/etc/biz-tenants.conf`.
+Open **Customers → customer → Brand and addresses**. Add the hostname,
+point its DNS to `54.206.18.111`, choose **Check DNS**, then **Activate HTTPS**.
+The customer must be live. The platform checks DNS before requesting a certificate.
+The original `<slug>.carejiox.com` address continues to work.
+
+`biz_domain_router` is loaded server-wide alongside `base,web`. It reads exact
+hostname-to-database mappings from root-owned `/etc/carejiox-domains.json`.
+Mapped hosts select only their assigned database; other hosts retain `^%d$`.
+No database-selection header supplied by a browser is trusted. A missing or
+unsafe map fails closed, so keep the file present (an empty `{}` is valid).
+
+The root-owned `biz-domain-attach`, `biz-domain-detach` and `biz-domain-map`
+helpers maintain nginx, certificates and the mapping. `CUSTOM_DOMAIN_PINNING=1`
+in `/etc/biz-tenants.conf` means the verified router is enabled; the old
+`PIN_HEADER` setting is unused. Attachment refuses existing unrelated blocks;
+repeating a completed attachment is safe. Removal checks the customer owning
+the managed custom-domain block. Certificate renewal uses certbot's nginx plugin.
+
+### Company identity and first-time setup
+
+Choose **Our product**, **Their brand, powered by us**, or **Their brand only**
+when creating a customer. Country and accounting currency can be selected for
+the new company; they do not install a different chart of accounts. Currency
+changes are refused if the template has accounting entries. Existing customer
+currency is deliberately absent from the branding editor.
+
+In **Brand and addresses**, leave the display name blank to follow the tenant's
+company name. Upload a logo and browser icon (PNG/JPEG/WebP, maximum 2 MB), choose
+an accent colour and save. The editor compares saved intent with the tenant's
+configuration and offers **Apply again**. Refresh open browsers after a change.
+Uploaded images survive branding-level changes and module upgrades.
+
+Tenant administrators use **Settings → Your company** for contact/legal details
+and their company logo; **Clinic setup** saves the current step and notes, and
+checks facilities, staff, services and optional connections. **Activity history**
+combines accessible summaries from existing logs with immutable company/setup
+changes. It retains each source's access rules and excludes clinical content
+and request payloads. The three support/action-approval/email-invitation policies
+are unchanged.
+
+Error pages show a short support reference instead of a traceback. Search the
+application log for `biz_errors [REFERENCE]` to find the associated failure.
 
 ---
 

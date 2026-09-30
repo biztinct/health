@@ -27,3 +27,5 @@ from . import alert_service
 from . import feature_service
 from . import support_service
 from . import billing_service
+
+from . import identity_service

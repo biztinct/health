@@ -33,6 +33,18 @@ if [[ "${2:-}" == "--check-only" ]]; then
     exit 0
 fi
 
+if [[ "${2:-}" == '--custom' ]]; then
+    biz_valid_slug "${3:-}" || biz_die 'invalid tenant' 2
+    CONF="/etc/nginx/sites-available/${CERT_NAME}.conf"
+    if [[ -e "$CONF" ]] && ! grep -Fxq "# Managed custom domain ${HOSTNAME_ARG} -> ${3}" "$CONF"; then
+        biz_die 'This address is not a custom domain of this customer' 2
+    fi
+    /usr/local/bin/biz-domain-map remove "$HOSTNAME_ARG" "$3"
+    if [[ ! -e "$CONF" ]]; then echo 'OK no managed custom address'; exit 0; fi
+else
+    /usr/local/bin/biz-domain-map remove "$HOSTNAME_ARG"
+fi
+
 rm -f "/etc/nginx/sites-enabled/${CERT_NAME}.conf" \
       "/etc/nginx/sites-available/${CERT_NAME}.conf"
 certbot delete --non-interactive --cert-name "$CERT_NAME" || true

@@ -1,0 +1,429 @@
+msgid ""
+msgstr ""
+"Language: vi\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:104
+msgid "Brand, country and currency applied."
+msgstr "Đã áp dụng thương hiệu, quốc gia và tiền tệ."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:133
+msgid "Branding choice saved."
+msgstr "Đã lưu lựa chọn thương hiệu."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:142
+msgid "Branding applied to the customer database."
+msgstr "Đã áp dụng thương hiệu cho hệ thống khách hàng."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:185
+msgid "Customer address activated: %s"
+msgstr "Đã kích hoạt địa chỉ khách hàng: %s"
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:37
+msgid "Choose an existing customer."
+msgstr "Chọn khách hàng hiện có."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:49
+msgid "Choose one of the branding options."
+msgstr "Chọn tùy chọn thương hiệu."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:52
+msgid "Use a colour such as #1565C0."
+msgstr "Sử dụng mã màu như #1565C0."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:64
+msgid "Application name: %s."
+msgstr "Tên ứng dụng: %s."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:64
+msgid "Keep the platform product name."
+msgstr "Giữ tên sản phẩm của nền tảng."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:84
+msgid "Would apply the selected brand, country and currency."
+msgstr "Sẽ áp dụng thương hiệu, quốc gia và tiền tệ đã chọn."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:128
+msgid "Only branding can be changed on this screen."
+msgstr "Chỉ có thể thay đổi thương hiệu trên màn hình này."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:150
+msgid "Enter a hostname such as care.example.com."
+msgstr "Nhập tên miền như care.example.com."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:152
+msgid "This address already belongs to the platform."
+msgstr "Địa chỉ này đã thuộc về nền tảng."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:153
+msgid "The customer must be live before adding an address."
+msgstr "Khách hàng phải đang hoạt động trước khi thêm địa chỉ."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:155
+msgid "That address is already attached to a customer."
+msgstr "Địa chỉ này đã được gắn với một khách hàng."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:162
+msgid "Choose a customer-owned address."
+msgstr "Chọn địa chỉ của khách hàng."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:180
+msgid "Check DNS before activating the address."
+msgstr "Kiểm tra DNS trước khi kích hoạt địa chỉ."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:183
+msgid "The address could not be activated. Ask the platform administrator to check the certificate and routing logs."
+msgstr "Không thể kích hoạt địa chỉ. Yêu cầu quản trị viên nền tảng kiểm tra chứng chỉ và nhật ký định tuyến."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:184
+msgid "Serving securely with HTTPS."
+msgstr "Đang phục vụ an toàn qua HTTPS."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:101
+msgid "Update the blank system before creating customers with these settings."
+msgstr "Cập nhật hệ thống mẫu trước khi tạo khách hàng với các cài đặt này."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:173
+msgid "DNS is ready."
+msgstr "DNS đã sẵn sàng."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:173
+msgid "Point the address to %s, then check again."
+msgstr "Trỏ địa chỉ đến %s, rồi kiểm tra lại."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:193
+msgid "The address could not be removed. Please try again."
+msgstr "Không thể xóa địa chỉ. Vui lòng thử lại."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:57
+msgid "Choose an available country and currency."
+msgstr "Chọn quốc gia và tiền tệ có sẵn."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:91
+msgid "The selected country is unavailable in the template."
+msgstr "Quốc gia đã chọn không có trong hệ thống mẫu."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:95
+msgid "The template contains accounting entries. Currency cannot be changed safely."
+msgstr "Hệ thống mẫu có bút toán kế toán. Không thể thay đổi tiền tệ an toàn."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:97
+msgid "The selected currency is unavailable in the template."
+msgstr "Tiền tệ đã chọn không có trong hệ thống mẫu."
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/js/identity.js:1
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:3
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:14
+msgid "Brand and addresses"
+msgstr "Thương hiệu và địa chỉ"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/js/identity.js:1
+msgid "Branding saved and applied. Refresh the customer’s browser to see the change."
+msgstr "Đã lưu và áp dụng thương hiệu. Làm mới trình duyệt của khách hàng để xem thay đổi."
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/js/identity.js:1
+msgid "Choose an image smaller than 2 MB."
+msgstr "Chọn ảnh nhỏ hơn 2 MB."
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:7
+msgid "Application branding"
+msgstr "Thương hiệu ứng dụng"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:7
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:18
+msgid "Our product"
+msgstr "Sản phẩm của nền tảng"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:7
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:18
+msgid "Their brand, powered by us"
+msgstr "Thương hiệu khách hàng, do nền tảng cung cấp"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:7
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:18
+msgid "Their brand only"
+msgstr "Chỉ thương hiệu khách hàng"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:8
+msgid "Display name (optional)"
+msgstr "Tên hiển thị (không bắt buộc)"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:8
+msgid "Use their company name"
+msgstr "Dùng tên công ty của khách hàng"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:9
+msgid "Country"
+msgstr "Quốc gia"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:9
+msgid "Keep the template country"
+msgstr "Giữ quốc gia của hệ thống mẫu"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:10
+msgid "Accounting currency"
+msgstr "Tiền tệ kế toán"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:10
+msgid "Keep the template currency"
+msgstr "Giữ tiền tệ của hệ thống mẫu"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:10
+msgid "Country and currency do not install a new accounting localisation. Review the chart of accounts before issuing invoices."
+msgstr "Chọn quốc gia và tiền tệ không cài đặt chế độ kế toán địa phương mới. Kiểm tra hệ thống tài khoản trước khi xuất hóa đơn."
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:14
+msgid "Customers"
+msgstr "Khách hàng"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:14
+msgid "Back to customers"
+msgstr "Quay lại khách hàng"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:16
+msgid "The customer database could not be read."
+msgstr "Không thể đọc hệ thống khách hàng."
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:16
+msgid "The customer database matches these settings."
+msgstr "Hệ thống khách hàng khớp với các cài đặt này."
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:16
+msgid "Some settings have not been applied."
+msgstr "Một số cài đặt chưa được áp dụng."
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:16
+msgid "Apply again"
+msgstr "Áp dụng lại"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:17
+msgid "What their people see"
+msgstr "Nội dung người dùng của khách hàng nhìn thấy"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:18
+msgid "Branding level"
+msgstr "Mức thương hiệu"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:19
+msgid "Display name"
+msgstr "Tên hiển thị"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:20
+msgid "Website"
+msgstr "Trang web"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:21
+msgid "Accent colour"
+msgstr "Màu chủ đạo"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:22
+msgid "Logo"
+msgstr "Logo"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:23
+msgid "Browser icon"
+msgstr "Biểu tượng trình duyệt"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:24
+msgid "Leave the display name empty to follow their company name. Logos and icons are kept when you change branding levels."
+msgstr "Để trống tên hiển thị để dùng tên công ty. Logo và biểu tượng được giữ khi thay đổi mức thương hiệu."
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:24
+msgid "Save and apply"
+msgstr "Lưu và áp dụng"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:25
+msgid "Application preview"
+msgstr "Xem trước ứng dụng"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:25
+msgid "Powered by"
+msgstr "Được cung cấp bởi"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:25
+msgid "Their name throughout the application."
+msgstr "Tên khách hàng trong toàn bộ ứng dụng."
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:25
+msgid "Last applied:"
+msgstr "Áp dụng lần cuối:"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:26
+msgid "Web addresses"
+msgstr "Địa chỉ web"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:26
+msgid "Add the hostname, point its DNS to this platform, then check and activate HTTPS."
+msgstr "Thêm tên miền, trỏ DNS đến nền tảng, sau đó kiểm tra và kích hoạt HTTPS."
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:26
+msgid "Add address"
+msgstr "Thêm địa chỉ"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:26
+msgid "Check DNS"
+msgstr "Kiểm tra DNS"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:26
+msgid "Activate HTTPS"
+msgstr "Kích hoạt HTTPS"
+
+#. module: biz_tenants
+#. odoo-javascript
+#: code:addons/biz_tenants/static/src/xml/identity.xml:26
+msgid "Remove"
+msgstr "Xóa"
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:0
+msgid "Open Brand and addresses to add a customer-owned hostname, check DNS and activate HTTPS."
+msgstr "Mở Thương hiệu và địa chỉ để thêm tên miền của khách hàng, kiểm tra DNS và kích hoạt HTTPS."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:0
+msgid "Customer closed; address disabled."
+msgstr "Khách hàng đã đóng; địa chỉ đã tắt."
+
+#. module: biz_tenants
+#. odoo-python
+#: code:addons/biz_tenants/models/identity_service.py:0
+msgid "Address removal needs administrator attention."
+msgstr "Việc xóa địa chỉ cần quản trị viên kiểm tra."

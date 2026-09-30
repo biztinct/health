@@ -1,0 +1,603 @@
+msgid ""
+msgstr ""
+"Language: vi\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/audit.py:25
+msgid "History cannot be changed."
+msgstr "Không thể sửa lịch sử."
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/audit.py:28
+msgid "History cannot be deleted."
+msgstr "Không thể xóa lịch sử."
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/audit.py:21
+msgid "History is recorded by the application."
+msgstr "Ứng dụng tự động ghi lại lịch sử."
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/workspace.py:16
+msgid "Only a clinic administrator can open these settings."
+msgstr "Chỉ quản trị viên phòng khám mới có thể mở các cài đặt này."
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/workspace.py:35
+msgid "Only company contact and legal details can be changed here."
+msgstr "Chỉ có thể thay đổi thông tin liên hệ và pháp lý của công ty tại đây."
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/workspace.py:39
+msgid "These details changed since you opened them. Refresh before saving."
+msgstr "Thông tin đã thay đổi kể từ khi bạn mở trang. Hãy làm mới trước khi lưu."
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/workspace.py:52
+msgid "Enter your company name."
+msgstr "Nhập tên công ty."
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/workspace.py:56
+msgid "Previous image"
+msgstr "Ảnh trước đó"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/workspace.py:56
+msgid "Image updated"
+msgstr "Đã cập nhật ảnh"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/workspace.py:61
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/workspace.py:74
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:12
+msgid "Company details"
+msgstr "Thông tin công ty"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/workspace.py:75
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Facilities"
+msgstr "Cơ sở"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/workspace.py:76
+msgid "Staff and access"
+msgstr "Nhân viên và quyền truy cập"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/workspace.py:77
+msgid "Services and prices"
+msgstr "Dịch vụ và giá"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/workspace.py:78
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:18
+msgid "Connections"
+msgstr "Kết nối"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/workspace.py:102
+msgid "Choose a setup step."
+msgstr "Chọn bước thiết lập."
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/workspace.py:104
+msgid "Complete the required checks before finishing setup."
+msgstr "Hoàn thành các mục bắt buộc trước khi kết thúc thiết lập."
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/workspace.py:108
+msgid "Clinic setup completed"
+msgstr "Đã hoàn thành thiết lập phòng khám"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/workspace.py:126
+msgid "Choose a history source."
+msgstr "Chọn nguồn lịch sử."
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/workspace.py:108
+msgid "Required checks passed"
+msgstr "Đã hoàn thành các mục bắt buộc"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/workspace.py:132
+msgid "Not installed"
+msgstr "Chưa cài đặt"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/workspace.py:147
+msgid "Available"
+msgstr "Khả dụng"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/workspace.py:47
+msgid "Choose a country."
+msgstr "Chọn quốc gia."
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/workspace.py:149
+msgid "Restricted by your access"
+msgstr "Bị giới hạn theo quyền truy cập"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/identity.py:35
+msgid "Some of these settings cannot be changed here."
+msgstr "Một số cài đặt không thể thay đổi tại đây."
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/identity.py:38
+msgid "Choose one of the three branding options."
+msgstr "Chọn một trong ba tùy chọn thương hiệu."
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/identity.py:29
+msgid "Choose a PNG, JPEG or WebP image smaller than 2 MB."
+msgstr "Chọn ảnh PNG, JPEG hoặc WebP nhỏ hơn 2 MB."
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/identity.py:45
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/identity.py:50
+msgid "Enter a valid website address."
+msgstr "Nhập địa chỉ trang web hợp lệ."
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/identity.py:55
+msgid "Use a colour such as #1565C0."
+msgstr "Sử dụng mã màu như #1565C0."
+
+#. module: health_tenant_workspace
+#: model:ir.rule,name:health_tenant_workspace.workspace_audit_company
+msgid "History for your own company"
+msgstr "Lịch sử của công ty bạn"
+
+#. module: health_tenant_workspace
+#: model:ir.actions.client,name:health_tenant_workspace.action_company
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Your company"
+msgstr "Công ty của bạn"
+
+#. module: health_tenant_workspace
+#: model:ir.actions.client,name:health_tenant_workspace.action_setup
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Clinic setup"
+msgstr "Thiết lập phòng khám"
+
+#. module: health_tenant_workspace
+#: model:ir.actions.client,name:health_tenant_workspace.action_history
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Activity history"
+msgstr "Lịch sử hoạt động"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Company name"
+msgstr "Tên công ty"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Street"
+msgstr "Địa chỉ"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Address line 2"
+msgstr "Địa chỉ bổ sung"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "City"
+msgstr "Thành phố"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Postal code"
+msgstr "Mã bưu chính"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Phone"
+msgstr "Điện thoại"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Email"
+msgstr "Email"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Website"
+msgstr "Trang web"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Tax number"
+msgstr "Mã số thuế"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Registration number"
+msgstr "Số đăng ký"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Company"
+msgstr "Công ty"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "People"
+msgstr "Nhân sự"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Services"
+msgstr "Dịch vụ"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Review"
+msgstr "Kiểm tra"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Save your company name, address and country below."
+msgstr "Lưu tên công ty, địa chỉ và quốc gia bên dưới."
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Add the clinics and locations where your team works."
+msgstr "Thêm phòng khám và địa điểm làm việc của đội ngũ."
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Create staff accounts and assign their access using the guided account screen."
+msgstr "Tạo tài khoản nhân viên và phân quyền qua màn hình hướng dẫn tạo tài khoản."
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Add the services you offer and review their prices."
+msgstr "Thêm dịch vụ cung cấp và kiểm tra giá."
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Connect the communication channels you need. You can do this later."
+msgstr "Kết nối các kênh liên lạc cần thiết. Bạn có thể thực hiện sau."
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Review the checks below and finish when the required items are ready."
+msgstr "Kiểm tra các mục bên dưới và hoàn tất khi các mục bắt buộc đã sẵn sàng."
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Ready"
+msgstr "Sẵn sàng"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Needs attention"
+msgstr "Cần kiểm tra"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Please try again."
+msgstr "Vui lòng thử lại."
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Company details saved."
+msgstr "Đã lưu thông tin công ty."
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.js:1
+msgid "Choose an image smaller than 2 MB."
+msgstr "Chọn ảnh nhỏ hơn 2 MB."
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:4
+msgid "Settings"
+msgstr "Cài đặt"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:4
+msgid "The details people see on your documents and company profile."
+msgstr "Thông tin hiển thị trên tài liệu và hồ sơ công ty."
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:4
+msgid "Set up your clinic at your own pace. Your progress is saved."
+msgstr "Thiết lập phòng khám theo tiến độ của bạn. Tiến trình được lưu lại."
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:4
+msgid "One timeline, with the access rules of each original record."
+msgstr "Một dòng thời gian, tuân theo quyền truy cập của từng bản ghi gốc."
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:4
+msgid "Refresh"
+msgstr "Làm mới"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:6
+msgid "Working…"
+msgstr "Đang xử lý…"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:8
+msgid "Setup steps"
+msgstr "Các bước thiết lập"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:9
+msgid "Setup completed. You can return here whenever your clinic changes."
+msgstr "Đã hoàn tất thiết lập. Bạn có thể quay lại khi phòng khám có thay đổi."
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:12
+msgid "Country"
+msgstr "Quốc gia"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:12
+msgid "Choose a country"
+msgstr "Chọn quốc gia"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:12
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:13
+msgid "Company logo"
+msgstr "Logo công ty"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:12
+msgid "Currency and platform settings are managed by the platform administrator."
+msgstr "Quản trị viên nền tảng quản lý tiền tệ và cài đặt nền tảng."
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:12
+msgid "Save company details"
+msgstr "Lưu thông tin công ty"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:13
+msgid "Document preview"
+msgstr "Xem trước tài liệu"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:13
+msgid "Tax number:"
+msgstr "Mã số thuế:"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:13
+msgid "This is a preview of your company details. Each document keeps its own layout."
+msgstr "Đây là bản xem trước thông tin công ty. Mỗi tài liệu vẫn giữ bố cục riêng."
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:13
+msgid "Application name:"
+msgstr "Tên ứng dụng:"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:13
+msgid "Currency:"
+msgstr "Tiền tệ:"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:16
+msgid "Optional"
+msgstr "Không bắt buộc"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:16
+msgid "Open"
+msgstr "Mở"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:16
+msgid "Ask your administrator to enable this screen."
+msgstr "Yêu cầu quản trị viên bật màn hình này."
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:16
+msgid "Setup notes"
+msgstr "Ghi chú thiết lập"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:16
+msgid "Save progress"
+msgstr "Lưu tiến trình"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:16
+msgid "Previous step"
+msgstr "Bước trước"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:16
+msgid "Next step"
+msgstr "Bước tiếp theo"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:16
+msgid "Finish setup"
+msgstr "Hoàn tất thiết lập"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:18
+msgid "Search summaries"
+msgstr "Tìm trong nội dung tóm tắt"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:18
+msgid "All sources"
+msgstr "Tất cả nguồn"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:18
+msgid "Company and setup"
+msgstr "Công ty và thiết lập"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:18
+msgid "Record changes"
+msgstr "Thay đổi bản ghi"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:18
+msgid "Access and roles"
+msgstr "Quyền truy cập và vai trò"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:18
+msgid "Support sessions"
+msgstr "Phiên hỗ trợ"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:18
+msgid "API activity"
+msgstr "Hoạt động API"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:18
+msgid "Search"
+msgstr "Tìm kiếm"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:19
+msgid "No matching activity is visible with your access."
+msgstr "Không có hoạt động phù hợp trong phạm vi quyền truy cập của bạn."
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:19
+msgid "What changed"
+msgstr "Nội dung thay đổi"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:19
+msgid "Times are shown in UTC. Detailed clinical content and request payloads are not included."
+msgstr "Thời gian hiển thị theo UTC. Không bao gồm nội dung lâm sàng chi tiết và dữ liệu yêu cầu."
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:19
+msgid "Previous"
+msgstr "Trước"
+
+#. module: health_tenant_workspace
+#. odoo-javascript
+#: code:addons/health_tenant_workspace/static/src/workspace.xml:19
+msgid "Next"
+msgstr "Tiếp"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/navigation.py:0
+msgid "About %s"
+msgstr "Giới thiệu %s"

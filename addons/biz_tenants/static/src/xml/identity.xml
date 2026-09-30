@@ -1,0 +1,29 @@
+<templates xml:space="preserve">
+<t t-inherit="biz_tenants.Detail" t-inherit-mode="extension">
+ <xpath expr="//div[hasclass('bzt-tabs')]" position="inside"><button class="bzk-segbtn" t-on-click="openIdentity">Brand and addresses</button></xpath>
+</t>
+<t t-inherit="biz_tenants.Wizard" t-inherit-mode="extension">
+ <xpath expr="//textarea[@t-att-value='state.form.note']/.." position="after">
+  <div class="bzk-field"><label>Application branding</label><select class="form-select" t-model="state.form.brand_level"><option value="product">Our product</option><option value="powered">Their brand, powered by us</option><option value="white">Their brand only</option></select></div>
+  <div class="bzk-field"><label>Display name (optional)</label><input class="form-control" t-model="state.form.brand_name" placeholder="Use their company name"/></div>
+  <div class="bzk-field"><label>Country</label><select class="form-select" t-model="state.form.country_id"><option value="">Keep the template country</option><option t-foreach="identityOptions.countries" t-as="c" t-key="c.id" t-att-value="c.id" t-esc="c.name"/></select></div>
+  <div class="bzk-field"><label>Accounting currency</label><select class="form-select" t-model="state.form.currency_id"><option value="">Keep the template currency</option><option t-foreach="identityOptions.currencies" t-as="c" t-key="c.id" t-att-value="c.id" t-esc="c.name"/></select><p>Country and currency do not install a new accounting localisation. Review the chart of accounts before issuing invoices.</p></div>
+ </xpath>
+</t>
+<t t-name="biz_tenants.Identity">
+ <main class="htw"><header class="htw-head"><div><p class="htw-eyebrow">Customers</p><h1>Brand and addresses</h1><p t-if="state.data" t-esc="state.data.name"/></div><button class="btn btn-outline-primary" t-on-click="back">Back to customers</button></header>
+ <div t-if="state.error" role="alert" class="alert alert-danger" t-esc="state.error"/><div t-if="state.message" class="alert alert-success" t-esc="state.message"/>
+ <t t-if="state.data"><div t-att-class="state.data.in_step ? 'alert alert-success' : 'alert alert-warning'"><t t-if="!state.data.reachable">The customer database could not be read.</t><t t-elif="state.data.in_step">The customer database matches these settings.</t><t t-else="">Some settings have not been applied.</t><button class="btn btn-link" t-on-click="retry" t-att-disabled="state.busy">Apply again</button></div>
+ <div class="htw-grid"><section class="htw-card"><h2>What their people see</h2><div class="htw-fields">
+ <label>Branding level<select class="form-select" t-model="state.form.brand_level"><option value="product">Our product</option><option value="powered">Their brand, powered by us</option><option value="white">Their brand only</option></select></label>
+ <label>Display name<input class="form-control" t-model="state.form.brand_name" t-att-placeholder="state.data.name" t-att-disabled="state.form.brand_level === 'product'"/></label>
+ <label>Website<input class="form-control" t-model="state.form.brand_website" placeholder="https://yourcompany.com"/></label>
+ <label>Accent colour<input class="form-control" type="color" t-model="state.form.brand_color"/></label>
+ <label>Logo<input type="file" accept="image/png,image/jpeg,image/webp" t-on-change="(ev)=>this.upload('brand_logo',ev)"/></label>
+ <label>Browser icon<input type="file" accept="image/png,image/jpeg,image/webp" t-on-change="(ev)=>this.upload('brand_favicon',ev)"/></label>
+ </div><p>Leave the display name empty to follow their company name. Logos and icons are kept when you change branding levels.</p><button class="btn btn-primary" t-on-click="save" t-att-disabled="state.busy">Save and apply</button></section>
+ <aside class="htw-card htw-preview"><p class="htw-eyebrow">Application preview</p><h2 t-att-style="'color:'+state.form.brand_color" t-esc="state.form.brand_level === 'product' ? (state.data.live.product || 'Our product') : (state.form.brand_name || state.data.name)"/><p t-if="state.form.brand_level === 'powered'">Powered by <t t-esc="state.data.live.product"/></p><p t-if="state.form.brand_level === 'white'">Their name throughout the application.</p><p t-if="state.data.pushed_at">Last applied: <t t-esc="state.data.pushed_at"/> UTC</p></aside></div>
+ <section class="htw-card"><h2>Web addresses</h2><p>Add the hostname, point its DNS to this platform, then check and activate HTTPS.</p><div class="htw-filters"><input class="form-control" t-model="state.hostname" placeholder="care.example.com"/><button class="btn btn-primary" t-on-click="addDomain" t-att-disabled="state.busy">Add address</button></div><article class="htw-check" t-foreach="state.data.domains" t-as="d" t-key="d.id"><div><strong t-esc="d.hostname"/><p t-esc="d.note"/></div><t t-if="d.kind === 'custom'"><span t-esc="d.state"/><button class="btn btn-outline-primary" t-on-click="()=>this.domain('domain_check',d.id)" t-att-disabled="state.busy">Check DNS</button><button class="btn btn-outline-primary" t-on-click="()=>this.domain('domain_activate',d.id)" t-att-disabled="state.busy or d.state !== 'verified'">Activate HTTPS</button><button class="btn btn-outline-danger" t-on-click="()=>this.domain('domain_remove',d.id)" t-att-disabled="state.busy">Remove</button></t></article></section>
+ </t></main>
+</t>
+</templates>

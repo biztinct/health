@@ -13,3 +13,5 @@ from . import test_support
 # H4d.
 from . import test_billing_rules
 from . import test_billing
+
+from . import test_identity

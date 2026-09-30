@@ -1,0 +1,14 @@
+.htw { padding: 28px; overflow:auto; height:100%; background:#f5f7fb; color:#152340; }
+.htw-head { display:flex; justify-content:space-between; gap:24px; align-items:start; margin-bottom:24px; }
+.htw h1 { font-size:28px; font-weight:700; } .htw h2 {font-size:20px;font-weight:650;}
+.htw-eyebrow { text-transform:uppercase; letter-spacing:.09em; color:#526887; font-size:12px; }
+.htw-grid {display:grid;grid-template-columns:2fr 1fr;gap:24px;}
+.htw-card {background:#fff;border:1px solid #dde5ef;border-radius:16px;padding:24px;margin-bottom:24px;}
+.htw-fields {display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:22px 0;}.htw-fields label {display:grid;gap:6px;font-weight:500;}
+.htw-preview img {max-height:80px;max-width:180px;object-fit:contain;margin:14px 0;}
+.htw-steps {display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;}.htw-steps button {border:1px solid #dae3ef;background:white;border-radius:10px;padding:12px;color:#405875;}.htw-steps button.active{background:#1565c0;color:white;}.htw-steps span {margin-right:10px;}
+.htw-check {display:flex;gap:20px;align-items:center;border-bottom:1px solid #edf0f5;padding:16px 0;}.htw-check>div{flex:1;}.htw-check small{display:block;color:#60728c;}.htw-notes{display:block;margin-top:20px;}.htw-buttons{display:flex;gap:12px;margin-top:20px;}
+.htw-filters {display:flex;gap:12px;margin-bottom:20px;}.htw-filters select{max-width:240px;}.htw-sources{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;color:#60728c;}.htw-event{display:flex;gap:14px;flex-wrap:wrap;border-top:1px solid #e5ebf3;padding:16px 0;}.htw-event strong{flex:1;}.htw-event details{width:100%;}.htw-event pre{white-space:pre-wrap;}.htw-event time{font-size:12px;color:#60728c;}
+@media(max-width:1000px){.htw-grid{grid-template-columns:1fr;}.htw{padding:16px;}}
+@media(max-width:600px){.htw-fields{grid-template-columns:1fr;}.htw-filters{flex-wrap:wrap;}}
+.vu-rail-logo[data-tenant-brand='own'] > :not(.tenant-rail-logo) { display: none; }

@@ -1,0 +1,9 @@
+<templates xml:space="preserve">
+<t t-inherit="health_cms_sidebar.CmsSidebar" t-inherit-mode="extension">
+ <xpath expr="//button[hasclass('vu-rail-logo')]" position="attributes"><attribute name="t-att-data-tenant-brand">tenantBrand.own ? 'own' : undefined</attribute></xpath>
+ <xpath expr="//button[hasclass('vu-rail-logo')]" position="inside"><img class="tenant-rail-logo" t-if="tenantBrand.own" t-att-src="tenantBrand.logo" t-att-alt="tenantBrand.name" style="width:40px;height:40px;object-fit:contain"/></xpath>
+ <xpath expr="//div[hasclass('vu-rail-brandname')]" position="attributes"><attribute name="t-if">!tenantBrand.own</attribute></xpath>
+ <xpath expr="//div[hasclass('vu-rail-brandtext')]" position="inside"><strong t-if="tenantBrand.own" t-esc="tenantBrand.name"/></xpath>
+ <xpath expr="//div[hasclass('vu-rail-userrole')]" position="replace"><div class="vu-rail-userrole" t-esc="tenantBrand.name || 'CMS'"/></xpath>
+</t>
+</templates>

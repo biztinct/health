@@ -122,7 +122,8 @@ expect "bad hostname"                    2 no -- "$ATTACH" "NOPE" acme
 expect "bad slug"                        2 no -- "$ATTACH" "clinic.example.com" "AC ME"
 expect "apex hostname refused"           2 no -- "$ATTACH" "carejiox.com" acme
 expect "apex subdomain refused"          2 no -- "$ATTACH" "acme.carejiox.com" acme
-expect "apex sub-subdomain refused"      2 no -- "$ATTACH" "a.b.carejiox.com" acme
+expect "independent alias passes guards" 0 no -- "$ATTACH" "a.b.carejiox.com" acme --check-only
+expect "practice copy refused"          2 no -- "$ATTACH" "clinic.example.com" acme-staging --check-only
 expect "lookalike apex NOT refused"      0 no -- "$ATTACH" "notcarejiox.com" acme --check-only
 expect "good pair passes the guards"     0 no -- "$ATTACH" "clinic.example.com" acme --check-only
 # The pinning refusal is exit 3, not 2: it is not a bad argument, it is a

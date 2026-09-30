@@ -59,7 +59,7 @@ registrations made by an overlay module (`models/tenants_common.py`). With
 nothing registered this still boots, still lists what is on the machine, and
 says honestly on screen that nobody has told it what this product is.
 """,
-    'version': '19.0.1.2.0',
+    'version': '19.0.1.3.0',
     'category': 'Administration',
     'license': 'LGPL-3',
     'author': 'Biztinct',
@@ -81,6 +81,8 @@ says honestly on screen that nobody has told it what this product is.
         'web.assets_backend': [
             'biz_tenants/static/src/scss/tenants.scss',
             'biz_tenants/static/src/js/tenants.js',
+            'biz_tenants/static/src/js/identity.js',
+            'biz_tenants/static/src/xml/identity.xml',
             'biz_tenants/static/src/xml/tenants.xml',
         ],
     },

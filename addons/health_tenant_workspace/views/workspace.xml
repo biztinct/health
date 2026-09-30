@@ -1,0 +1,9 @@
+<odoo>
+  <record id="workspace_audit_company" model="ir.rule">
+    <field name="name">History for your own company</field><field name="model_id" ref="model_health_workspace_audit"/>
+    <field name="domain_force">[('company_id', '=', user.company_id.id)]</field>
+  </record>
+  <record id="action_company" model="ir.actions.client"><field name="name">Your company</field><field name="tag">health_tenant_company</field></record>
+  <record id="action_setup" model="ir.actions.client"><field name="name">Clinic setup</field><field name="tag">health_tenant_setup</field></record>
+  <record id="action_history" model="ir.actions.client"><field name="name">Activity history</field><field name="tag">health_tenant_history</field></record>
+</odoo>
