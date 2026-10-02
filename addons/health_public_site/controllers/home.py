@@ -1,5 +1,7 @@
 from datetime import date
 
+from markupsafe import Markup
+
 from odoo import http
 from odoo.http import request
 from odoo.addons.website.controllers.main import Website
@@ -24,6 +26,7 @@ class CareJioxHomepage(Website):
         response = request.render('health_public_site.' + brand, {
             'lang': lang,
             'year': date.today().year,
+            'doctype': Markup('<!DOCTYPE html>'),
             'origin': 'https://hhh.carejiox.com' if brand == 'client' else 'https://carejiox.com',
         })
         response.headers['Cache-Control'] = 'private, no-store'

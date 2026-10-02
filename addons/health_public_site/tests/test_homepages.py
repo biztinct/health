@@ -21,6 +21,7 @@ class TestPublicHomepages(HttpCase):
         if not brand:
             self.assertFalse(doc.xpath('//body[contains(@class,"cj-platform") or contains(@class,"vu-client")]'))
             return
+        self.assertTrue(response.content.lstrip().startswith(b'<!DOCTYPE html>'))
         expected = 'cj-platform' if brand == 'platform' else 'vu-client'
         self.assertEqual(doc.xpath('//body/@class'), [expected])
         self.assertEqual(len(doc.xpath('//h1')), 1)
