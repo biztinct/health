@@ -1,864 +1,1170 @@
 <?xml version='1.0' encoding='utf-8'?>
 <odoo>
-  <template id="platform" name="CareJiox platform homepage">
+  <template id="platform" name="CareJiox product home">
     <t t-out="doctype"/>
     <html lang="en">
       <head>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
-        <meta name="theme-color" content="#10283f"/>
-        <link rel="stylesheet" href="/health_public_site/static/src/home.css?v=2"/>
-        <script defer="defer" src="/health_public_site/static/src/home.js?v=1"/>
-        <title>CareJiox — More care. Less complexity.</title>
-        <meta name="description" content="One connected platform for care teams. Bring client relationships, scheduling, clinical records, billing and family communication together with CareJiox."/>
+        <meta name="theme-color" content="#070c19"/>
+        <title>CareJiox | Care, in perfect sync.</title>
+        <meta name="description" content="Connect clinical care, people, scheduling, billing and insight in one exceptional care management platform."/>
         <link rel="canonical" href="https://carejiox.com/"/>
-        <meta property="og:title" content="CareJiox — More care. Less complexity."/>
-        <meta property="og:description" content="The connected operating platform for exceptional care."/>
         <meta property="og:type" content="website"/>
+        <meta property="og:title" content="CareJiox | Care, in perfect sync."/>
+        <meta property="og:description" content="Connect clinical care, people, scheduling, billing and insight in one exceptional care management platform."/>
         <meta property="og:url" content="https://carejiox.com/"/>
         <meta property="og:image" content="https://carejiox.com/health_public_site/static/img/carejiox-social.jpg"/>
         <meta name="twitter:card" content="summary_large_image"/>
-        <link rel="icon" type="image/svg+xml" href="/health_public_site/static/img/carejiox-mark.svg"/>
+        <meta name="twitter:title" content="CareJiox | Care, in perfect sync."/>
+        <meta name="twitter:description" content="Connect clinical care, people, scheduling, billing and insight in one exceptional care management platform."/>
+        <meta name="twitter:image" content="https://carejiox.com/health_public_site/static/img/carejiox-social.jpg"/>
+        <link rel="icon" href="/health_public_site/static/img/carejiox-mark.svg"/>
+        <link rel="preload" href="/health_public_site/static/fonts/dm-sans-700.ttf" as="font" type="font/ttf" crossorigin="anonymous"/>
+        <link rel="stylesheet" href="/health_public_site/static/src/home.css?v=3"/>
+        <script defer="defer" src="/health_public_site/static/src/home.js?v=3"/>
       </head>
       <body class="cj-platform">
         <a class="skip" href="#main">Skip to content</a>
         <header class="site-header">
-          <a class="brand" href="/" aria-label="CareJiox home">
-            <img src="/health_public_site/static/img/carejiox-lockup.svg" alt="CareJiox" width="180" height="50"/>
-          </a>
-          <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="main-nav">Menu <span aria-hidden="true">＋</span></button>
-          <nav id="main-nav" aria-label="Main navigation">
-            <a href="#platform">The platform</a>
-            <a href="#journey">How it connects</a>
-            <a href="#people">Built for you</a>
-            <a href="#questions">FAQs</a>
-          </nav>
-          <a class="header-login" href="/web/login">Sign in <span aria-hidden="true">↗</span></a>
-          <a class="button button-small" href="mailto:ash@biztinct.com?subject=CareJiox%20demo%20enquiry">Let’s talk <span aria-hidden="true">↗</span></a>
+          <div class="header-shell">
+            <a class="brand" href="/" aria-label="CareJiox home">
+              <img src="/health_public_site/static/img/carejiox-mark.svg" alt="" width="40" height="40"/>
+              <span>carejiox<span class="brand-dot">.</span></span>
+            </a>
+            <nav id="main-nav" aria-label="Main navigation">
+              <a href="#platform">Platform</a>
+              <a href="#flow">How it flows</a>
+              <a href="#product">Explore the product</a>
+            </nav>
+            <div class="header-actions">
+              <a class="sign-in" href="/web/login">Sign in <span class="arrow" aria-hidden="true">↗</span></a>
+              <a class="button primary small" href="mailto:ash@biztinct.com?subject=CareJiox%20demo%20enquiry">Book a demo<span class="arrow" aria-hidden="true">↗</span></a>
+              <button class="menu-toggle" aria-controls="main-nav" aria-expanded="false" aria-label="Menu">
+                <span/>
+                <span/>
+              </button>
+            </div>
+          </div>
         </header>
         <main id="main">
-          <section class="platform-hero shell">
-            <div class="hero-copy">
-              <p class="eyebrow"><span class="live-dot"/> THE CONNECTED CARE PLATFORM</p>
-              <h1>More care.<br/>Less <span class="serif">complexity.</span></h1>
-              <p class="hero-description">Extraordinary care starts with a team that’s connected. Bring your people, your operations and every step of the care journey into one beautifully simple workspace.</p>
-              <div class="hero-actions">
-                <a class="button" href="mailto:ash@biztinct.com?subject=CareJiox%20demo%20enquiry">Discover your possibilities <span aria-hidden="true">↗</span></a>
-                <a class="text-link" href="#platform">Explore the platform <span aria-hidden="true">↓</span></a>
+          <section class="hero " id="workspace">
+            <div class="hero-aurora aurora-one"/>
+            <div class="hero-aurora aurora-two"/>
+            <div class="hero-grid"/>
+            <div class="shell hero-layout">
+              <div class="hero-copy">
+                <div class="eyebrow"><span class="status-dot"/>THE OPERATING SYSTEM FOR CONNECTED CARE</div>
+                <h1>Care, in<br/><span class="gradient-text">perfect sync.</span></h1>
+                <p class="hero-description">From the first conversation to the next clinical decision. Connect your people, care and operations in one extraordinary workspace.</p>
+                <div class="hero-actions">
+                  <a class="button primary" href="#product">See CareJiox in action<span class="arrow" aria-hidden="true">↗</span></a>
+                  <a class="button ghost" href="mailto:ash@biztinct.com?subject=CareJiox%20demo%20enquiry">Let’s talk<span class="arrow" aria-hidden="true">↗</span></a>
+                </div>
+                <div class="hero-proof">
+                  <span class="proof-stack">
+                    <span class="icon i-users" aria-hidden="true"/>
+                    <span class="icon i-heart-pulse" aria-hidden="true"/>
+                    <span class="icon i-globe" aria-hidden="true"/>
+                  </span>
+                  <span>Clinical depth. Operational clarity.<br/><strong>Human connection.</strong></span>
+                </div>
               </div>
-              <div class="hero-footnote">
-                <span class="small-mark">C</span>
-                <p>One shared picture.<br/><strong>A whole team moving together.</strong></p>
+              <div class="network-scene" data-scene="true">
+                <div class="scene-halo"/>
+                <canvas class="network-canvas" aria-hidden="true"/>
+                <div class="scene-content">
+                  <div class="core-node">
+                    <div class="core-ring"/>
+                    <div class="core-face">
+                      <span class="icon i-heart-pulse" aria-hidden="true"/>
+                      <span>CAREJIOX</span>
+                    </div>
+                  </div>
+                  <div class="scene-card scene-clinical">
+                    <span class="scene-icon">
+                      <span class="icon i-activity" aria-hidden="true"/>
+                    </span>
+                    <div>
+                      <small>CLINICAL WORKSPACE</small>
+                      <strong>The complete care picture</strong>
+                    </div>
+                    <div class="vital-wave" aria-hidden="true">
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                    </div>
+                    <div class="scene-card-foot">
+                      <span>Care plans</span>
+                      <span>Vitals</span>
+                      <span>Visit notes</span>
+                    </div>
+                  </div>
+                  <div class="scene-card scene-visit">
+                    <span class="scene-icon mint">
+                      <span class="icon i-calendar" aria-hidden="true"/>
+                    </span>
+                    <div>
+                      <small>CARE COORDINATION</small>
+                      <strong>Every visit, in sync.</strong>
+                    </div>
+                    <div class="mini-calendar" aria-hidden="true">
+                      <span class="">M</span>
+                      <span class="">T</span>
+                      <span class="selected">W</span>
+                      <span class="">T</span>
+                      <span class="">F</span>
+                    </div>
+                    <div class="mini-appointment">
+                      <span class="mini-avatar">
+                        <span class="icon i-users" aria-hidden="true"/>
+                      </span>
+                      <span>Care team assigned</span>
+                      <span class="icon i-check" aria-hidden="true"/>
+                    </div>
+                  </div>
+                  <div class="scene-card scene-billing">
+                    <span class="scene-icon violet">
+                      <span class="icon i-credit-card" aria-hidden="true"/>
+                    </span>
+                    <div>
+                      <small>CONNECTED OPERATIONS</small>
+                      <strong>From care to completion.</strong>
+                    </div>
+                    <div class="billing-progress">
+                      <span/>
+                    </div>
+                    <div class="scene-card-foot">
+                      <span>Visit</span>
+                      <span>Invoice</span>
+                      <span>Follow-up</span>
+                    </div>
+                  </div>
+                  <div class="orbit-label label-one"><span class="icon i-shield-check" aria-hidden="true"/>Role-based access</div>
+                  <div class="orbit-label label-two"><span class="icon i-message-square" aria-hidden="true"/>One shared context</div>
+                  <div class="scene-spark spark-one"/>
+                  <div class="scene-spark spark-two"/>
+                </div>
+                <div class="scene-caption">A connected workflow, illustrated.</div>
               </div>
             </div>
-            <div class="care-stage" aria-label="Illustrative CareJiox workflow">
-              <div class="stage-orbit orbit-one"/>
-              <div class="stage-orbit orbit-two"/>
-              <span class="stage-label">EVERY MOMENT. CONNECTED.</span>
-              <div class="workspace-card">
-                <div class="workspace-top">
-                  <span><span class="live-dot"/> Care workspace</span>
-                  <span class="preview-tag">Preview</span>
-                </div>
-                <div class="workspace-title">
-                  <div>
-                    <small>A clearer view of the day</small>
-                    <h2>Good care starts here.</h2>
-                  </div>
-                  <span class="workspace-avatar">CJ</span>
-                </div>
-                <div class="workspace-tabs" role="tablist" aria-label="Explore the care workflow">
-                  <button id="tab-coordinate" role="tab" aria-selected="true" aria-controls="panel-coordinate" data-demo-tab="coordinate">Coordinate</button>
-                  <button id="tab-care" role="tab" aria-selected="false" aria-controls="panel-care" data-demo-tab="care" tabindex="-1">Deliver care</button>
-                  <button id="tab-billing" role="tab" aria-selected="false" aria-controls="panel-billing" data-demo-tab="billing" tabindex="-1">Keep in step</button>
-                </div>
-                <div class="demo-panel" id="panel-coordinate" role="tabpanel" aria-labelledby="tab-coordinate">
-                  <div class="mini-heading">
-                    <strong>Your care journey</strong>
-                    <span>All in one place</span>
-                  </div>
-                  <div class="journey-row">
-                    <span class="step-icon blue">01</span>
-                    <div>
-                      <strong>A new relationship</strong>
-                      <small>Enquiry received · Care needs understood</small>
-                    </div>
-                    <span class="status">Connected</span>
-                  </div>
-                  <div class="journey-row">
-                    <span class="step-icon peach">02</span>
-                    <div>
-                      <strong>The right team, ready</strong>
-                      <small>Visit planned · Care professional assigned</small>
-                    </div>
-                    <span class="status peach">Scheduled</span>
-                  </div>
-                  <div class="journey-row">
-                    <span class="step-icon mint">03</span>
-                    <div>
-                      <strong>Care that continues</strong>
-                      <small>Visit notes · Follow-up · Family updates</small>
-                    </div>
-                    <span class="status mint">Together</span>
-                  </div>
-                  <div class="mini-footer"><span class="live-dot"/> From first hello to ongoing care.</div>
-                </div>
-                <div class="demo-panel" id="panel-care" role="tabpanel" aria-labelledby="tab-care" hidden="hidden">
-                  <div class="mini-heading">
-                    <strong>Informed at every visit</strong>
-                    <span>Clinical workspace</span>
-                  </div>
-                  <div class="journey-row">
-                    <span class="step-icon blue">01</span>
-                    <div>
-                      <strong>A complete care picture</strong>
-                      <small>Clinical records · Conditions · Care plans</small>
-                    </div>
-                  </div>
-                  <div class="journey-row">
-                    <span class="step-icon peach">02</span>
-                    <div>
-                      <strong>Document in the moment</strong>
-                      <small>Observations · Vitals · Visit notes</small>
-                    </div>
-                  </div>
-                  <div class="journey-row">
-                    <span class="step-icon mint">03</span>
-                    <div>
-                      <strong>See what needs attention</strong>
-                      <small>Monitoring · Follow-ups · Team handovers</small>
-                    </div>
-                  </div>
-                  <div class="mini-footer"><span class="live-dot"/> The next person starts with the full story.</div>
-                </div>
-                <div class="demo-panel" id="panel-billing" role="tabpanel" aria-labelledby="tab-billing" hidden="hidden">
-                  <div class="mini-heading">
-                    <strong>Close the loop</strong>
-                    <span>Operations workspace</span>
-                  </div>
-                  <div class="journey-row">
-                    <span class="step-icon blue">01</span>
-                    <div>
-                      <strong>From service to invoice</strong>
-                      <small>Pricing · Packages · Invoice creation</small>
-                    </div>
-                  </div>
-                  <div class="journey-row">
-                    <span class="step-icon peach">02</span>
-                    <div>
-                      <strong>Keep the details together</strong>
-                      <small>Payments · Claims · Required submissions</small>
-                    </div>
-                  </div>
-                  <div class="journey-row">
-                    <span class="step-icon mint">03</span>
-                    <div>
-                      <strong>Make the next decision</strong>
-                      <small>Dashboards · Reporting · Operational insight</small>
-                    </div>
-                  </div>
-                  <div class="mini-footer"><span class="live-dot"/> A connected view beyond the visit.</div>
-                </div>
-              </div>
-              <div class="floating-note note-top">
-                <span class="note-symbol">＋</span>
-                <div>
-                  <strong>People at the centre.</strong>
-                  <small>Technology in the background.</small>
-                </div>
-              </div>
-              <div class="floating-note note-bottom">
-                <span class="note-check">✓</span>
-                <div>
-                  <strong>One connected care journey</strong>
-                  <small>From the first enquiry to the next visit.</small>
-                </div>
-              </div>
-              <span class="stage-caption">Illustrative workflow · No patient data</span>
+            <div class="shell hero-bottom">
+              <a class="scroll-cue" href="#platform"><span class="scroll-line"/>Discover what’s connected<span aria-hidden="true">↓</span></a>
+              <button class="motion-toggle" aria-pressed="false" data-pause="Pause motion" data-play="Play motion">
+                <span class="motion-symbol" aria-hidden="true">Ⅱ</span>
+                <span class="motion-label">Pause motion</span>
+              </button>
             </div>
           </section>
-          <section class="connection-strip" aria-label="Connected capabilities">
+          <div class="capability-ribbon">
             <div class="shell">
-              <span>BUILT AROUND THE WAY YOU CARE</span>
-              <p>Relationships <b>+</b> Operations <b>+</b> Clinical care <b>+</b> Finance <b>+</b> Insight</p>
+              <span><span class="icon i-calendar" aria-hidden="true"/>Scheduling</span>
+              <span><span class="icon i-clipboard-check" aria-hidden="true"/>Clinical records</span>
+              <span><span class="icon i-users" aria-hidden="true"/>Care teams</span>
+              <span><span class="icon i-credit-card" aria-hidden="true"/>Billing</span>
+              <span><span class="icon i-message-square" aria-hidden="true"/>Family connection</span>
+              <span><span class="icon i-gauge" aria-hidden="true"/>Insights</span>
             </div>
-          </section>
+          </div>
           <section class="section shell" id="platform">
-            <div class="section-heading">
-              <div>
-                <p class="eyebrow">ONE PLATFORM. A BIGGER PICTURE.</p>
-                <h2>Everything connected.<br/><span class="serif">Nothing between you and care.</span></h2>
-              </div>
-              <p>From your first conversation to your next decision, CareJiox keeps the details together—so your team can focus on people.</p>
+            <div class="section-heading reveal">
+              <span class="eyebrow">EVERYTHING MOVES TOGETHER</span>
+              <h2>Many moving parts. One beautiful flow.</h2>
+              <p>Purpose-built tools for the people who make care happen.</p>
             </div>
-            <div class="feature-grid">
-              <article class="feature-card feature-featured">
-                <span class="feature-number">01 / RELATIONSHIPS</span>
-                <h3>Every conversation.<br/>A meaningful next step.</h3>
-                <p>Bring enquiries, client profiles and team communication into a shared care workflow. Keep context close and follow-ups moving.</p>
-                <div class="contact-visual" aria-hidden="true">
-                  <span class="contact-circle">C</span>
-                  <div>
+            <div class="bento-grid">
+              <article class="bento reveal bento-0">
+                <div class="bento-art" aria-hidden="true">
+                  <div class="graphic-orbits">
+                    <span>
+                      <span class="icon i-calendar" aria-hidden="true"/>
+                    </span>
                     <i/>
-                    <i/>
+                    <b/>
                   </div>
-                  <span class="visual-pill">Connected</span>
                 </div>
-                <span class="feature-tags">CRM · Care Command · Communication</span>
+                <span class="feature-icon">
+                  <span class="icon i-calendar" aria-hidden="true"/>
+                </span>
+                <h3>Coordination, without the chaos.</h3>
+                <p>Bring enquiries, schedules, rosters and care teams into one connected working day.</p>
+                <small>SCHEDULE → ASSIGN → VISIT</small>
               </article>
-              <article class="feature-card">
-                <span class="feature-number">02 / COORDINATION</span>
-                <h3>The right care.<br/>In the right place.</h3>
-                <p>Plan bookings, organise rosters and assign field visits. Give your team a clearer view of who is going where, and what comes next.</p>
-                <div class="schedule-visual" aria-hidden="true">
-                  <span>M</span>
-                  <span>T</span>
-                  <span>W</span>
-                  <span>T</span>
-                  <span>F</span>
-                  <i/>
-                  <i/>
-                  <i/>
+              <article class="bento reveal bento-1">
+                <div class="bento-art" aria-hidden="true">
+                  <div class="graphic-orbits">
+                    <span>
+                      <span class="icon i-heart-pulse" aria-hidden="true"/>
+                    </span>
+                    <i/>
+                    <b/>
+                  </div>
                 </div>
-                <span class="feature-tags">Scheduling · Rosters · Field service</span>
+                <span class="feature-icon">
+                  <span class="icon i-heart-pulse" aria-hidden="true"/>
+                </span>
+                <h3>A richer picture of care.</h3>
+                <p>Clinical records, care plans, medication workflows and visit notes keep context close to every decision.</p>
+                <small>RECORDS · PLANS · MEDICATIONS</small>
               </article>
-              <article class="feature-card">
-                <span class="feature-number">03 / CLINICAL CARE</span>
-                <h3>The full story.<br/>At the point of care.</h3>
-                <p>Keep care plans, clinical records, medications, observations and visit notes connected. Support continuity with a shared patient history.</p>
-                <div class="record-visual" aria-hidden="true">
-                  <span>Care plan</span>
-                  <i/>
-                  <span>Visit notes</span>
-                  <i/>
+              <article class="bento reveal bento-2">
+                <div class="bento-art" aria-hidden="true">
+                  <div class="graphic-bars">
+                    <i style="--bar:32%"/>
+                    <i style="--bar:55%"/>
+                    <i style="--bar:42%"/>
+                    <i style="--bar:75%"/>
+                    <i style="--bar:63%"/>
+                    <i style="--bar:90%"/>
+                    <i style="--bar:78%"/>
+                    <i style="--bar:100%"/>
+                  </div>
                 </div>
-                <span class="feature-tags">Records · Care plans · Medication</span>
+                <span class="feature-icon">
+                  <span class="icon i-credit-card" aria-hidden="true"/>
+                </span>
+                <h3>Care meets operational clarity.</h3>
+                <p>Create invoices, manage payments and claims, and support filing to government agencies where required and configured.</p>
+                <small>VISITS → INVOICES → INSIGHT</small>
               </article>
-              <article class="feature-card">
-                <span class="feature-number">04 / FAMILY CONNECTION</span>
-                <h3>Closer to care.<br/>Even from a distance.</h3>
-                <p>Support patients and their families with portal access, consent workflows, shared updates and telehealth capabilities.</p>
-                <span class="feature-tags">Patient portal · Family access · Telehealth</span>
-              </article>
-              <article class="feature-card">
-                <span class="feature-number">05 / FINANCE</span>
-                <h3>Care delivered.<br/>Details accounted for.</h3>
-                <p>Manage service pricing, packages, invoice creation and payments, with workflows for claims and filing to government agencies where required.</p>
-                <span class="feature-tags">Invoicing · Payments · Required submissions</span>
-              </article>
-              <article class="feature-card">
-                <span class="feature-number">06 / INTELLIGENCE</span>
-                <h3>See the signals.<br/>Know the next step.</h3>
-                <p>Bring operational dashboards, care monitoring and assisted documentation into the daily workflow, with clinical judgement remaining with your team.</p>
-                <span class="feature-tags">Analytics · Monitoring · Assisted notes</span>
+              <article class="bento reveal bento-3">
+                <div class="bento-art" aria-hidden="true">
+                  <div class="graphic-orbits">
+                    <span>
+                      <span class="icon i-message-square" aria-hidden="true"/>
+                    </span>
+                    <i/>
+                    <b/>
+                  </div>
+                </div>
+                <span class="feature-icon">
+                  <span class="icon i-message-square" aria-hidden="true"/>
+                </span>
+                <h3>Keep the human connection.</h3>
+                <p>Support family communication, shared care information, telehealth and follow-up across the care journey.</p>
+                <small>TEAM · PERSON · FAMILY</small>
               </article>
             </div>
-            <p class="section-note">Capabilities and integrations are configured to your organisation, services and local requirements.</p>
           </section>
-          <section class="journey-section" id="journey">
+          <section class="product-section section" id="product">
             <div class="shell">
-              <div class="section-heading">
-                <div>
-                  <p class="eyebrow">LESS FRICTION. MORE CONTINUITY.</p>
-                  <h2>One journey.<br/><span class="serif">Beautifully in sync.</span></h2>
-                </div>
-                <p>Care doesn’t happen in isolated steps.<br/>Your software shouldn’t work that way either.</p>
+              <div class="section-heading reveal">
+                <span class="eyebrow">YOUR WORK, CONNECTED</span>
+                <h2>Find your rhythm.</h2>
               </div>
-              <div class="journey-steps">
-                <article>
-                  <span>01</span>
-                  <h3>Welcome</h3>
-                  <p>Understand the person, capture the enquiry and bring the relationship into focus.</p>
-                </article>
-                <article>
-                  <span>02</span>
-                  <h3>Coordinate</h3>
-                  <p>Plan the service, organise the team and make the next visit clear.</p>
-                </article>
-                <article>
-                  <span>03</span>
-                  <h3>Care</h3>
-                  <p>Deliver, document and share the information that keeps care moving.</p>
-                </article>
-                <article>
-                  <span>04</span>
-                  <h3>Continue</h3>
-                  <p>Follow up, keep families informed and connect delivery with billing and insight.</p>
-                </article>
+              <div class="product-demo reveal">
+                <div class="demo-top">
+                  <span class="demo-dots" aria-hidden="true">● ● ●</span>
+                  <span>WORKSPACE EXPLORER</span>
+                  <span class="demo-caption">Illustrative preview</span>
+                </div>
+                <div class="demo-tabs" role="tablist" aria-label="Workspace preview">
+                  <button role="tab" id="tab-0" aria-controls="panel-0" aria-selected="true" tabindex="0">Coordinate</button>
+                  <button role="tab" id="tab-1" aria-controls="panel-1" aria-selected="false" tabindex="-1">Deliver care</button>
+                  <button role="tab" id="tab-2" aria-controls="panel-2" aria-selected="false" tabindex="-1">Manage operations</button>
+                </div>
+                <div class="demo-panel" role="tabpanel" id="panel-0" aria-labelledby="tab-0">
+                  <div class="demo-copy">
+                    <span class="feature-icon">
+                      <span class="icon i-calendar" aria-hidden="true"/>
+                    </span>
+                    <h3>A care day, beautifully aligned.</h3>
+                    <p>See the schedule. Assign the right people. Keep the next step clear.</p>
+                    <span class="demo-note">One shared context. A clearer next step.</span>
+                  </div>
+                  <div class="demo-schedule">
+                    <div class="schedule-row">
+                      <span class="schedule-time">09:00</span>
+                      <div>
+                        <strong>Home visit</strong>
+                        <small>Care team assigned</small>
+                      </div>
+                      <span class="row-check">
+                        <span class="icon i-check" aria-hidden="true"/>
+                      </span>
+                    </div>
+                    <div class="schedule-row">
+                      <span class="schedule-time">11:30</span>
+                      <div>
+                        <strong>Care review</strong>
+                        <small>Clinical review</small>
+                      </div>
+                      <span class="row-check">
+                        <span class="icon i-check" aria-hidden="true"/>
+                      </span>
+                    </div>
+                    <div class="schedule-row">
+                      <span class="schedule-time">14:00</span>
+                      <div>
+                        <strong>Follow-up</strong>
+                        <small>Ready to coordinate</small>
+                      </div>
+                      <span class="row-check">
+                        <span class="icon i-check" aria-hidden="true"/>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="demo-panel" role="tabpanel" id="panel-1" aria-labelledby="tab-1" hidden="hidden">
+                  <div class="demo-copy">
+                    <span class="feature-icon">
+                      <span class="icon i-heart-pulse" aria-hidden="true"/>
+                    </span>
+                    <h3>Context for every clinical moment.</h3>
+                    <p>Bring the care plan, observations and visit documentation into view.</p>
+                    <span class="demo-note">One shared context. A clearer next step.</span>
+                  </div>
+                  <div class="demo-schedule">
+                    <div class="schedule-row">
+                      <span class="schedule-time">01</span>
+                      <div>
+                        <strong>Care plan</strong>
+                        <small>Goals and interventions</small>
+                      </div>
+                      <span class="row-check">
+                        <span class="icon i-check" aria-hidden="true"/>
+                      </span>
+                    </div>
+                    <div class="schedule-row">
+                      <span class="schedule-time">02</span>
+                      <div>
+                        <strong>Observations</strong>
+                        <small>Vitals and progress</small>
+                      </div>
+                      <span class="row-check">
+                        <span class="icon i-check" aria-hidden="true"/>
+                      </span>
+                    </div>
+                    <div class="schedule-row">
+                      <span class="schedule-time">03</span>
+                      <div>
+                        <strong>Visit notes</strong>
+                        <small>Document the next step</small>
+                      </div>
+                      <span class="row-check">
+                        <span class="icon i-check" aria-hidden="true"/>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="demo-panel" role="tabpanel" id="panel-2" aria-labelledby="tab-2" hidden="hidden">
+                  <div class="demo-copy">
+                    <span class="feature-icon">
+                      <span class="icon i-gauge" aria-hidden="true"/>
+                    </span>
+                    <h3>From delivered care to clear insight.</h3>
+                    <p>Connect service activity with invoicing, payments and reporting.</p>
+                    <span class="demo-note">One shared context. A clearer next step.</span>
+                  </div>
+                  <div class="demo-schedule">
+                    <div class="schedule-row">
+                      <span class="schedule-time">01</span>
+                      <div>
+                        <strong>Service activity</strong>
+                        <small>Review completed visits</small>
+                      </div>
+                      <span class="row-check">
+                        <span class="icon i-check" aria-hidden="true"/>
+                      </span>
+                    </div>
+                    <div class="schedule-row">
+                      <span class="schedule-time">02</span>
+                      <div>
+                        <strong>Invoices</strong>
+                        <small>Prepare and review</small>
+                      </div>
+                      <span class="row-check">
+                        <span class="icon i-check" aria-hidden="true"/>
+                      </span>
+                    </div>
+                    <div class="schedule-row">
+                      <span class="schedule-time">03</span>
+                      <div>
+                        <strong>Reporting</strong>
+                        <small>Understand operations</small>
+                      </div>
+                      <span class="row-check">
+                        <span class="icon i-check" aria-hidden="true"/>
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <a class="button button-light" href="mailto:ash@biztinct.com?subject=Show%20me%20the%20CareJiox%20workflow">See how it fits your team <span aria-hidden="true">↗</span></a>
+              <p class="product-disclaimer">Workflow illustrations, not live patient data. Available tools depend on your organisation’s configuration and your role.</p>
             </div>
           </section>
-          <section class="section shell people-section" id="people">
-            <div>
-              <p class="eyebrow">DESIGNED FOR YOUR WORLD</p>
-              <h2>For the people<br/><span class="serif">behind the care.</span></h2>
-              <p>Different roles. One shared purpose. Give everyone the context they need to do their best work.</p>
-              <a class="text-link" href="mailto:ash@biztinct.com?subject=CareJiox%20for%20our%20organisation">Let’s talk about your organisation <span aria-hidden="true">↗</span></a>
+          <section class="section shell" id="flow">
+            <div class="section-heading reveal">
+              <span class="eyebrow">FROM FIRST HELLO TO WHAT’S NEXT</span>
+              <h2>Care doesn’t stand still.<br/><span class="gradient-text">Neither should your software.</span></h2>
             </div>
-            <div class="role-list">
+            <div class="journey reveal">
               <article>
-                <span>01</span>
-                <div>
-                  <h3>Care providers &amp; clinical teams</h3>
-                  <p>A connected record, a clear plan and a simpler way to document care.</p>
-                </div>
+                <span class="journey-number">01</span>
+                <h3>Connect</h3>
+                <p>Capture enquiries and build the relationship.</p>
               </article>
               <article>
-                <span>02</span>
-                <div>
-                  <h3>Coordinators &amp; operations leaders</h3>
-                  <p>A shared view of bookings, people, schedules and the day ahead.</p>
-                </div>
+                <span class="journey-number">02</span>
+                <h3>Coordinate</h3>
+                <p>Shape the plan and bring the team together.</p>
               </article>
               <article>
-                <span>03</span>
-                <div>
-                  <h3>Finance &amp; business teams</h3>
-                  <p>Connect service delivery to invoices, payments and reporting.</p>
-                </div>
+                <span class="journey-number">03</span>
+                <h3>Care</h3>
+                <p>Record visits, clinical context and progress.</p>
               </article>
               <article>
-                <span>04</span>
-                <div>
-                  <h3>Patients &amp; their families</h3>
-                  <p>Keep the people who matter connected to the care journey.</p>
-                </div>
+                <span class="journey-number">04</span>
+                <h3>Complete</h3>
+                <p>Bring billing, follow-up and insight together.</p>
               </article>
             </div>
           </section>
-          <section class="faq-section shell" id="questions">
-            <div>
-              <p class="eyebrow">A LITTLE MORE CLARITY</p>
-              <h2>Good questions.<br/><span class="serif">Clear answers.</span></h2>
-            </div>
-            <div class="faq-list">
-              <details>
-                <summary>Who is CareJiox designed for?<span>+</span></summary>
-                <p>CareJiox supports organisations coordinating home care, community care and clinic services, bringing clinical, operational and business workflows together.</p>
-              </details>
-              <details>
-                <summary>Can it fit our local requirements?<span>+</span></summary>
-                <p>Service pricing, invoicing and submission workflows can be configured for your organisation. Available integrations and government filing requirements are reviewed as part of your setup.</p>
-              </details>
-              <details>
-                <summary>Can our team and families use it on the go?<span>+</span></summary>
-                <p>CareJiox includes mobile care workflows, patient and family access, and telehealth capabilities. Access is configured around the roles and services your organisation uses.</p>
-              </details>
-              <details>
-                <summary>How do we get started?<span>+</span></summary>
-                <p>Email <a href="mailto:ash@biztinct.com">ash@biztinct.com</a> to arrange a conversation about your services, team and workflows. We’ll walk through the platform with your needs in mind.</p>
-              </details>
-            </div>
-          </section>
-          <section class="closing-cta shell">
-            <p class="eyebrow">LET’S MAKE SPACE FOR WHAT MATTERS</p>
-            <h2>Your people.<br/>Your purpose. <span class="serif">Connected.</span></h2>
-            <a class="button" href="mailto:ash@biztinct.com?subject=CareJiox%20demo%20enquiry">Start a conversation <span aria-hidden="true">↗</span></a>
-            <span class="closing-mark" aria-hidden="true">c</span>
+          <section class="final-cta shell reveal">
+            <div class="cta-glow"/>
+            <span class="eyebrow">MAKE SPACE FOR BETTER CARE</span>
+            <h2>Your next chapter.<br/>Perfectly connected.</h2>
+            <p>Explore how CareJiox fits your people, services and way of working.</p>
+            <a class="button primary" href="mailto:ash@biztinct.com?subject=CareJiox%20demo%20enquiry">Let’s build your care workspace<span class="arrow" aria-hidden="true">↗</span></a>
           </section>
         </main>
-        <footer class="platform-footer shell">
-          <a class="brand" href="/" aria-label="CareJiox home">
-            <img src="/health_public_site/static/img/carejiox-lockup.svg" alt="CareJiox" width="160" height="45"/>
-          </a>
-          <p>More care. Less complexity.</p>
-          <a href="mailto:ash@biztinct.com">ash@biztinct.com <span aria-hidden="true">↗</span></a>
-          <a href="/web/login">Workspace sign in</a>
+        <footer class="site-footer shell">
+          <div>
+            <a class="brand" href="/" aria-label="CareJiox home">
+              <img src="/health_public_site/static/img/carejiox-mark.svg" alt="" width="40" height="40"/>
+              <span>carejiox<span class="brand-dot">.</span></span>
+            </a>
+            <p>Care, in perfect sync.</p>
+          </div>
+          <div class="footer-links">
+            <a href="mailto:ash@biztinct.com">ash@biztinct.com <span class="arrow" aria-hidden="true">↗</span></a>
+            <a href="/web/login">Workspace sign in <span class="arrow" aria-hidden="true">↗</span></a>
+          </div>
           <small>© <t t-out="year"/> CareJiox</small>
         </footer>
       </body>
     </html>
   </template>
-  <template id="client" name="Việt Úc bilingual client homepage">
+  <template id="client" name="Việt Úc application home">
     <t t-out="doctype"/>
     <html t-att-lang="site_lang">
       <head>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
-        <meta name="theme-color" content="#10283f"/>
-        <link rel="stylesheet" href="/health_public_site/static/src/home.css?v=2"/>
-        <script defer="defer" src="/health_public_site/static/src/home.js?v=1"/>
+        <meta name="theme-color" content="#070c19"/>
         <title>
-          <t t-out="'Việt Úc — Chăm sóc tận tâm. An tâm tại nhà.' if site_lang == 'vi' else 'Việt Úc — Thoughtful care. Close to home.'"/>
+          <t t-out="'Việt Úc | Không gian làm việc chăm sóc' if site_lang == 'vi' else 'Việt Úc | Your connected care workspace'"/>
         </title>
-        <meta name="description" t-att-content="'Chăm sóc sức khỏe tại nhà và y học gia đình Việt Úc. Kết nối với đội ngũ tại Hà Nội và TP. Hồ Chí Minh.' if site_lang == 'vi' else 'Việt Úc home healthcare and family medicine. Connect with our care teams in Hanoi and Ho Chi Minh City.'"/>
+        <meta name="description" content="The Việt Úc care application: your workspace for care coordination, clinical records, visits and service operations."/>
         <link rel="canonical" t-att-href="origin + '/?site_lang=' + site_lang"/>
-        <link rel="alternate" hreflang="vi" href="https://hhh.carejiox.com/?site_lang=vi"/>
         <link rel="alternate" hreflang="en" href="https://hhh.carejiox.com/?site_lang=en"/>
+        <link rel="alternate" hreflang="vi" href="https://hhh.carejiox.com/?site_lang=vi"/>
         <link rel="alternate" hreflang="x-default" href="https://hhh.carejiox.com/"/>
-        <meta property="og:title" t-att-content="'Việt Úc — Chăm sóc tận tâm. An tâm tại nhà.' if site_lang == 'vi' else 'Việt Úc — Thoughtful care. Close to home.'"/>
-        <meta property="og:description" t-att-content="'Chăm sóc sức khỏe tại nhà và y học gia đình.' if site_lang == 'vi' else 'Home healthcare and family medicine, centred on you.'"/>
         <meta property="og:type" content="website"/>
-        <meta property="og:url" t-att-content="origin + '/?site_lang=' + site_lang"/>
-        <meta property="og:image" content="https://hhh.carejiox.com/health_public_site/static/img/viet-uc-social.jpg"/>
+        <meta property="og:title" content="Việt Úc | Your connected care workspace"/>
+        <meta property="og:description" content="The Việt Úc care application: your workspace for care coordination, clinical records, visits and service operations."/>
+        <meta property="og:url" content="https://hhh.carejiox.com/"/>
+        <meta property="og:image" content="https://hhh.carejiox.com/health_public_site/static/img/viet-uc-logo.webp"/>
         <meta name="twitter:card" content="summary_large_image"/>
+        <meta name="twitter:title" content="Việt Úc | Your connected care workspace"/>
+        <meta name="twitter:description" content="The Việt Úc care application: your workspace for care coordination, clinical records, visits and service operations."/>
+        <meta name="twitter:image" content="https://hhh.carejiox.com/health_public_site/static/img/viet-uc-logo.webp"/>
         <link rel="icon" href="/health_public_site/static/img/viet-uc-logo.webp"/>
+        <link rel="preload" href="/health_public_site/static/fonts/dm-sans-700.ttf" as="font" type="font/ttf" crossorigin="anonymous"/>
+        <link rel="stylesheet" href="/health_public_site/static/src/home.css?v=3"/>
+        <script defer="defer" src="/health_public_site/static/src/home.js?v=3"/>
       </head>
       <body class="vu-client">
         <a class="skip" href="#main">
           <t t-out="'Chuyển đến nội dung' if site_lang == 'vi' else 'Skip to content'"/>
         </a>
-        <div class="client-topline">
-          <span>
-            <t t-out="'Y học gia đình. Chăm sóc tận tâm.' if site_lang == 'vi' else 'Family medicine. Personal care.'"/>
-          </span>
-          <a href="tel:18006896">
-            <t t-out="'Hà Nội' if site_lang == 'vi' else 'Hanoi'"/>
-            <b>1800 6896</b>
-          </a>
-          <a href="tel:18006894">
-            <t t-out="'TP. Hồ Chí Minh' if site_lang == 'vi' else 'Ho Chi Minh City'"/>
-            <b>1800 6894</b>
-          </a>
-        </div>
-        <header class="site-header client-header">
-          <a class="brand client-brand" href="/" aria-label="Việt Úc">
-            <img src="/health_public_site/static/img/viet-uc-logo.webp" width="200" height="59" alt="Phòng Khám Gia Đình Việt Úc"/>
-          </a>
-          <button class="menu-toggle" t-att-aria-label="'Mở menu' if site_lang == 'vi' else 'Open menu'" aria-expanded="false" aria-controls="main-nav">Menu <span aria-hidden="true">＋</span></button>
-          <nav id="main-nav" t-att-aria-label="'Điều hướng chính' if site_lang == 'vi' else 'Main navigation'">
-            <a href="#services">
-              <t t-out="'Dịch vụ' if site_lang == 'vi' else 'Our care'"/>
+        <header class="site-header">
+          <div class="header-shell">
+            <a class="tenant-brand" href="/" aria-label="Việt Úc">
+              <span class="tenant-logo">
+                <img src="/health_public_site/static/img/viet-uc-logo.webp" alt="Việt Úc" width="170" height="50"/>
+              </span>
+              <span class="tenant-brand-label">
+                <t t-out="'Ứng dụng chăm sóc' if site_lang == 'vi' else 'Care workspace'"/>
+              </span>
             </a>
-            <a href="#about">
-              <t t-out="'Về chúng tôi' if site_lang == 'vi' else 'Our approach'"/>
-            </a>
-            <a href="#locations">
-              <t t-out="'Liên hệ' if site_lang == 'vi' else 'Find us'"/>
-            </a>
-          </nav>
-          <div class="language-toggle" t-att-aria-label="'Ngôn ngữ' if site_lang == 'vi' else 'Language'">
-            <a href="/?site_lang=vi" lang="vi" t-att-aria-current="'true' if site_lang == 'vi' else None">VI</a>
-            <a href="/?site_lang=en" lang="en" t-att-aria-current="'true' if site_lang == 'en' else None">EN</a>
+            <nav id="main-nav" aria-label="Main navigation">
+              <a href="#workspace">
+                <t t-out="'Không gian làm việc' if site_lang == 'vi' else 'Workspace'"/>
+              </a>
+              <a href="#tools">
+                <t t-out="'Công cụ' if site_lang == 'vi' else 'Your tools'"/>
+              </a>
+              <a href="#access">
+                <t t-out="'Bắt đầu' if site_lang == 'vi' else 'Getting started'"/>
+              </a>
+            </nav>
+            <div class="header-actions">
+              <div class="language-toggle" aria-label="Language / Ngôn ngữ">
+                <a href="/?site_lang=vi" lang="vi" t-att-aria-current="'true' if site_lang == 'vi' else None">VI</a>
+                <a href="/?site_lang=en" lang="en" t-att-aria-current="'true' if site_lang == 'en' else None">EN</a>
+              </div>
+              <a class="button primary small" href="/web/login?redirect=%2Fbizapp">
+                <t t-out="'Mở ứng dụng' if site_lang == 'vi' else 'Open workspace'"/>
+                <span class="arrow" aria-hidden="true">↗</span>
+              </a>
+              <button class="menu-toggle" aria-controls="main-nav" aria-expanded="false" aria-label="Menu">
+                <span/>
+                <span/>
+              </button>
+            </div>
           </div>
-          <a class="button button-small" href="#contact">
-            <t t-out="'Nhận tư vấn' if site_lang == 'vi' else 'Let’s talk care'"/>
-            <span aria-hidden="true">↗</span>
-          </a>
         </header>
         <main id="main">
-          <section class="client-hero shell">
-            <div class="client-hero-copy">
-              <p class="eyebrow">
-                <span class="live-dot"/>
-                <t t-out="'PHÒNG KHÁM GIA ĐÌNH VIỆT ÚC' if site_lang == 'vi' else 'VIỆT ÚC FAMILY HEALTHCARE'"/>
-              </p>
-              <h1>
-                <t t-out="'Chăm sóc tận tâm.' if site_lang == 'vi' else 'Expert care.'"/>
-                <br/>
-                <span class="serif">
-                  <t t-out="'An tâm tại nhà.' if site_lang == 'vi' else 'A familiar place.'"/>
-                </span>
-              </h1>
-              <p class="hero-description">
-                <t t-out="'Sức khỏe vững vàng hơn khi được chăm sóc đúng cách. Từ điều dưỡng tại nhà đến y học gia đình, Việt Úc mang sự chăm sóc chuyên nghiệp đến gần bạn và những người thân yêu.' if site_lang == 'vi' else 'Life feels better when care feels personal. From home nursing to family medicine, we bring professional care closer to you—and to the people you love.'"/>
-              </p>
-              <div class="hero-actions">
-                <a class="button" href="#contact">
-                  <t t-out="'Tìm dịch vụ cho gia đình' if site_lang == 'vi' else 'Find care for your family'"/>
-                  <span aria-hidden="true">↗</span>
+          <section class="hero tenant-hero" id="workspace">
+            <div class="hero-aurora aurora-one"/>
+            <div class="hero-aurora aurora-two"/>
+            <div class="hero-grid"/>
+            <div class="shell hero-layout">
+              <div class="hero-copy">
+                <a class="parent-link" href="https://pkgdvietuc.com/">
+                  <t t-out="'Tìm dịch vụ y tế? Truy cập website Việt Úc' if site_lang == 'vi' else 'Looking for healthcare services? Visit the Việt Úc website'"/>
+                  <span class="arrow" aria-hidden="true">↗</span>
                 </a>
-                <a class="text-link" href="#services">
-                  <t t-out="'Khám phá dịch vụ' if site_lang == 'vi' else 'Explore our services'"/>
-                  <span aria-hidden="true">↓</span>
-                </a>
-              </div>
-              <div class="client-signature">
-                <span class="signature-line"/>
-                <p>
-                  <t t-out="'Chuyên môn vững vàng.' if site_lang == 'vi' else 'Clinical expertise.'"/>
-                  <br/>
-                  <strong>
-                    <t t-out="'Chăm sóc bằng cả trái tim.' if site_lang == 'vi' else 'A deeply human touch.'"/>
-                  </strong>
-                </p>
-              </div>
-            </div>
-            <div class="client-hero-art">
-              <div class="image-arch">
-                <img src="/health_public_site/static/img/viet-uc-team.webp" width="576" height="512" t-att-alt="'Đội ngũ chăm sóc sức khỏe Việt Úc' if site_lang == 'vi' else 'Việt Úc healthcare team'" fetchpriority="high"/>
-              </div>
-              <div class="client-roundel">
-                <span>
-                  <t t-out="'CHĂM SÓC' if site_lang == 'vi' else 'CARE THAT'"/>
-                </span>
-                <strong>
-                  <t t-out="'ngay' if site_lang == 'vi' else 'comes'"/>
-                </strong>
-                <span>
-                  <t t-out="'TẠI NHÀ' if site_lang == 'vi' else 'TO YOU'"/>
-                </span>
-              </div>
-              <div class="client-photo-note">
-                <span class="note-check">✓</span>
-                <div>
-                  <strong>
-                    <t t-out="'Chăm sóc dành riêng cho bạn' if site_lang == 'vi' else 'Care built around you'"/>
-                  </strong>
-                  <small>
-                    <t t-out="'Tại nhà. Tại phòng khám. Luôn đồng hành.' if site_lang == 'vi' else 'At home. In clinic. By your side.'"/>
-                  </small>
+                <div class="eyebrow">
+                  <span class="status-dot"/>
+                  <t t-out="'VIỆT ÚC · ỨNG DỤNG QUẢN LÝ CHĂM SÓC' if site_lang == 'vi' else 'VIỆT ÚC · YOUR CARE APPLICATION'"/>
                 </div>
-              </div>
-              <span class="photo-caption">
-                <t t-out="'Đồng hành cùng bạn ở mọi giai đoạn cuộc sống.' if site_lang == 'vi' else 'A personal approach to every stage of life.'"/>
-              </span>
-            </div>
-          </section>
-          <section class="client-values">
-            <div class="shell">
-              <div>
-                <span>01</span>
-                <strong>
-                  <t t-out="'Chăm sóc tại nhà' if site_lang == 'vi' else 'Home healthcare'"/>
-                </strong>
-                <small>
-                  <t t-out="'Thoải mái trong không gian quen thuộc' if site_lang == 'vi' else 'Comfort in familiar surroundings'"/>
-                </small>
-              </div>
-              <div>
-                <span>02</span>
-                <strong>
-                  <t t-out="'Y học gia đình' if site_lang == 'vi' else 'Family medicine'"/>
-                </strong>
-                <small>
-                  <t t-out="'Đồng hành lâu dài cùng gia đình' if site_lang == 'vi' else 'A relationship that continues'"/>
-                </small>
-              </div>
-              <div>
-                <span>03</span>
-                <strong>
-                  <t t-out="'Hà Nội &amp; TP. Hồ Chí Minh' if site_lang == 'vi' else 'Hanoi &amp; Ho Chi Minh City'"/>
-                </strong>
-                <small>
-                  <t t-out="'Đội ngũ tại địa phương, chăm sóc kết nối' if site_lang == 'vi' else 'Local teams, connected care'"/>
-                </small>
-              </div>
-            </div>
-          </section>
-          <section class="section shell client-services" id="services">
-            <div class="section-heading">
-              <div>
-                <p class="eyebrow">
-                  <t t-out="'CHĂM SÓC THEO NHU CẦU CỦA BẠN' if site_lang == 'vi' else 'CARE, ON YOUR TERMS'"/>
-                </p>
-                <h2>
-                  <t t-out="'Chăm sóc đúng nhu cầu.' if site_lang == 'vi' else 'The support you need.'"/>
+                <h1>
+                  <t t-out="'Một đội ngũ.' if site_lang == 'vi' else 'One team.'"/>
                   <br/>
-                  <span class="serif">
-                    <t t-out="'An tâm trong từng khoảnh khắc.' if site_lang == 'vi' else 'The comfort you know.'"/>
+                  <span class="gradient-text">
+                    <t t-out="'Một nhịp chung.' if site_lang == 'vi' else 'One rhythm.'"/>
                   </span>
-                </h2>
+                </h1>
+                <p class="hero-description">
+                  <t t-out="'Đội ngũ, lịch chăm sóc và hồ sơ lâm sàng. Không gian làm việc kết nối dành cho Việt Úc — đồng hành trong từng công việc chăm sóc hàng ngày.' if site_lang == 'vi' else 'Your people, your visits, your clinical work. A connected workspace for the Việt Úc team—built to bring every part of the care day together.'"/>
+                </p>
+                <div class="hero-actions">
+                  <a class="button primary" href="/web/login?redirect=%2Fbizapp">
+                    <t t-out="'Mở không gian làm việc' if site_lang == 'vi' else 'Open my workspace'"/>
+                    <span class="arrow" aria-hidden="true">↗</span>
+                  </a>
+                  <a class="button ghost" href="#tools">
+                    <t t-out="'Khám phá công cụ' if site_lang == 'vi' else 'Explore your tools'"/>
+                    <span class="arrow" aria-hidden="true">↗</span>
+                  </a>
+                </div>
+                <div class="hero-proof">
+                  <span class="icon i-shield-check" aria-hidden="true"/>
+                  <t t-out="'Đăng nhập bằng tài khoản được cấp. Quyền truy cập theo vai trò.' if site_lang == 'vi' else 'Sign in with your assigned account. Access follows your role.'"/>
+                </div>
               </div>
-              <p>
-                <t t-out="'Mỗi người có nhu cầu khác nhau. Chúng tôi cùng bạn lựa chọn dịch vụ phù hợp và lên kế hoạch cho bước tiếp theo.' if site_lang == 'vi' else 'Every person’s needs are different. We’ll help you find the right service and plan the next step, together.'"/>
-              </p>
+              <div class="network-scene" data-scene="true">
+                <div class="scene-halo"/>
+                <canvas class="network-canvas" aria-hidden="true"/>
+                <div class="scene-content">
+                  <div class="core-node">
+                    <div class="core-ring"/>
+                    <div class="core-face">
+                      <span class="icon i-heart-pulse" aria-hidden="true"/>
+                      <span>VIỆT ÚC</span>
+                    </div>
+                  </div>
+                  <div class="scene-card scene-clinical">
+                    <span class="scene-icon">
+                      <span class="icon i-activity" aria-hidden="true"/>
+                    </span>
+                    <div>
+                      <small>
+                        <t t-out="'HỒ SƠ LÂM SÀNG' if site_lang == 'vi' else 'CLINICAL WORKSPACE'"/>
+                      </small>
+                      <strong>
+                        <t t-out="'Bức tranh chăm sóc toàn diện' if site_lang == 'vi' else 'The complete care picture'"/>
+                      </strong>
+                    </div>
+                    <div class="vital-wave" aria-hidden="true">
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                      <i/>
+                    </div>
+                    <div class="scene-card-foot">
+                      <span>
+                        <t t-out="'Kế hoạch' if site_lang == 'vi' else 'Care plans'"/>
+                      </span>
+                      <span>
+                        <t t-out="'Sinh hiệu' if site_lang == 'vi' else 'Vitals'"/>
+                      </span>
+                      <span>
+                        <t t-out="'Ghi chú' if site_lang == 'vi' else 'Visit notes'"/>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="scene-card scene-visit">
+                    <span class="scene-icon mint">
+                      <span class="icon i-calendar" aria-hidden="true"/>
+                    </span>
+                    <div>
+                      <small>
+                        <t t-out="'ĐIỀU PHỐI CHĂM SÓC' if site_lang == 'vi' else 'CARE COORDINATION'"/>
+                      </small>
+                      <strong>
+                        <t t-out="'Mỗi lượt chăm sóc, một nhịp chung.' if site_lang == 'vi' else 'Every visit, in sync.'"/>
+                      </strong>
+                    </div>
+                    <div class="mini-calendar" aria-hidden="true">
+                      <span class="">M</span>
+                      <span class="">T</span>
+                      <span class="selected">W</span>
+                      <span class="">T</span>
+                      <span class="">F</span>
+                    </div>
+                    <div class="mini-appointment">
+                      <span class="mini-avatar">
+                        <span class="icon i-users" aria-hidden="true"/>
+                      </span>
+                      <span>
+                        <t t-out="'Đã phân công đội ngũ' if site_lang == 'vi' else 'Care team assigned'"/>
+                      </span>
+                      <span class="icon i-check" aria-hidden="true"/>
+                    </div>
+                  </div>
+                  <div class="scene-card scene-billing">
+                    <span class="scene-icon violet">
+                      <span class="icon i-credit-card" aria-hidden="true"/>
+                    </span>
+                    <div>
+                      <small>
+                        <t t-out="'VẬN HÀNH KẾT NỐI' if site_lang == 'vi' else 'CONNECTED OPERATIONS'"/>
+                      </small>
+                      <strong>
+                        <t t-out="'Từ chăm sóc đến hoàn tất.' if site_lang == 'vi' else 'From care to completion.'"/>
+                      </strong>
+                    </div>
+                    <div class="billing-progress">
+                      <span/>
+                    </div>
+                    <div class="scene-card-foot">
+                      <span>
+                        <t t-out="'Lượt chăm sóc' if site_lang == 'vi' else 'Visit'"/>
+                      </span>
+                      <span>
+                        <t t-out="'Hóa đơn' if site_lang == 'vi' else 'Invoice'"/>
+                      </span>
+                      <span>
+                        <t t-out="'Theo dõi' if site_lang == 'vi' else 'Follow-up'"/>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="orbit-label label-one">
+                    <span class="icon i-shield-check" aria-hidden="true"/>
+                    <t t-out="'Phân quyền truy cập' if site_lang == 'vi' else 'Role-based access'"/>
+                  </div>
+                  <div class="orbit-label label-two">
+                    <span class="icon i-message-square" aria-hidden="true"/>
+                    <t t-out="'Thông tin xuyên suốt' if site_lang == 'vi' else 'One shared context'"/>
+                  </div>
+                  <div class="scene-spark spark-one"/>
+                  <div class="scene-spark spark-two"/>
+                </div>
+                <div class="scene-caption">
+                  <t t-out="'Minh họa quy trình chăm sóc kết nối.' if site_lang == 'vi' else 'A connected workflow, illustrated.'"/>
+                </div>
+              </div>
             </div>
-            <div class="client-service-grid">
-              <article class="client-service-card">
-                <div class="service-card-top">
-                  <span class="service-line-icon icon-home" aria-hidden="true"/>
-                  <span>01</span>
-                </div>
-                <h3>
-                  <t t-out="'Điều dưỡng tại nhà' if site_lang == 'vi' else 'Home nursing'"/>
-                </h3>
-                <p>
-                  <t t-out="'Hỗ trợ sinh hoạt hàng ngày, chăm sóc vết thương và phục hồi sau khi xuất viện.' if site_lang == 'vi' else 'Professional support for daily living, wound care and recovery after a hospital stay.'"/>
-                </p>
-                <a href="#contact">
-                  <t t-out="'Trao đổi cùng chúng tôi' if site_lang == 'vi' else 'Talk to our team'"/>
-                  <span aria-hidden="true">↗</span>
-                </a>
-              </article>
-              <article class="client-service-card">
-                <div class="service-card-top">
-                  <span class="service-line-icon icon-doctor" aria-hidden="true"/>
-                  <span>02</span>
-                </div>
-                <h3>
-                  <t t-out="'Bác sĩ gia đình' if site_lang == 'vi' else 'Family doctors'"/>
-                </h3>
-                <p>
-                  <t t-out="'Tư vấn cá nhân, đánh giá sức khỏe và chăm sóc liên tục cho bạn cùng gia đình.' if site_lang == 'vi' else 'Personal consultations, health assessments and ongoing support for you and your family.'"/>
-                </p>
-                <a href="#contact">
-                  <t t-out="'Trao đổi cùng chúng tôi' if site_lang == 'vi' else 'Talk to our team'"/>
-                  <span aria-hidden="true">↗</span>
-                </a>
-              </article>
-              <article class="client-service-card">
-                <div class="service-card-top">
-                  <span class="service-line-icon icon-care" aria-hidden="true"/>
-                  <span>03</span>
-                </div>
-                <h3>
-                  <t t-out="'Chăm sóc chuyên sâu' if site_lang == 'vi' else 'Specialist support'"/>
-                </h3>
-                <p>
-                  <t t-out="'Trao đổi với đội ngũ về chăm sóc giảm nhẹ, bệnh mạn tính và nhu cầu điều dưỡng riêng.' if site_lang == 'vi' else 'Discuss palliative care, chronic conditions and individual nursing needs with our team.'"/>
-                </p>
-                <a href="#contact">
-                  <t t-out="'Trao đổi cùng chúng tôi' if site_lang == 'vi' else 'Talk to our team'"/>
-                  <span aria-hidden="true">↗</span>
-                </a>
-              </article>
-              <article class="client-service-card">
-                <div class="service-card-top">
-                  <span class="service-line-icon icon-remote" aria-hidden="true"/>
-                  <span>04</span>
-                </div>
-                <h3>
-                  <t t-out="'Chăm sóc từ xa' if site_lang == 'vi' else 'Care at a distance'"/>
-                </h3>
-                <p>
-                  <t t-out="'Tư vấn y tế trực tuyến và hướng dẫn chăm sóc, cùng dịch vụ lấy mẫu xét nghiệm tại nhà.' if site_lang == 'vi' else 'Online medical consultations and guidance, with at-home sample collection services available.'"/>
-                </p>
-                <a href="#contact">
-                  <t t-out="'Trao đổi cùng chúng tôi' if site_lang == 'vi' else 'Talk to our team'"/>
-                  <span aria-hidden="true">↗</span>
-                </a>
-              </article>
-            </div>
-          </section>
-          <section class="client-about shell" id="about">
-            <div class="about-photo">
-              <img src="/health_public_site/static/img/viet-uc-care.webp" width="576" height="576" loading="lazy" t-att-alt="'Tư vấn và chăm sóc sức khỏe tại Việt Úc' if site_lang == 'vi' else 'Consultation and personal healthcare at Việt Úc'"/>
-              <span>
-                <t t-out="'Chuyên nghiệp trong chăm sóc. Tận tâm trong kết nối.' if site_lang == 'vi' else 'Professional care. Personal connection.'"/>
-              </span>
-            </div>
-            <div class="about-copy">
-              <p class="eyebrow">
-                <t t-out="'KHÔNG CHỈ LÀ MỘT LẦN THĂM KHÁM' if site_lang == 'vi' else 'MORE THAN A VISIT'"/>
-              </p>
-              <h2>
-                <t t-out="'Thấu hiểu từng người.' if site_lang == 'vi' else 'We see the person.'"/>
-                <br/>
-                <span class="serif">
-                  <t t-out="'Chăm sóc bằng sự sẻ chia.' if site_lang == 'vi' else 'Not just the patient.'"/>
-                </span>
-              </h2>
-              <p>
-                <t t-out="'Thói quen, gia đình và những điều mang lại sự thoải mái cho bạn — tất cả đều là một phần trong hành trình chăm sóc tại Việt Úc.' if site_lang == 'vi' else 'Your routines. Your family. The things that make you feel at home. At Việt Úc, these are part of the care conversation.'"/>
-              </p>
-              <p>
-                <t t-out="'Đội ngũ bác sĩ gia đình và điều dưỡng tại nhà phối hợp để việc chăm sóc luôn liền mạch, từ buổi tư vấn đầu tiên đến những lần đồng hành tiếp theo.' if site_lang == 'vi' else 'Our family medicine and home nursing teams work together to support continuity, from an initial consultation to the care that follows.'"/>
-              </p>
-              <ul class="care-principles">
-                <li>
-                  <t t-out="'Kế hoạch phù hợp với nhu cầu của bạn' if site_lang == 'vi' else 'A plan shaped around your needs'"/>
-                </li>
-                <li>
-                  <t t-out="'Đội ngũ bác sĩ và điều dưỡng chuyên nghiệp' if site_lang == 'vi' else 'Professional doctors and nurses'"/>
-                </li>
-                <li>
-                  <t t-out="'Trao đổi rõ ràng cùng gia đình' if site_lang == 'vi' else 'Clear communication with your family'"/>
-                </li>
-              </ul>
-              <a class="text-link" href="https://pkgdvietuc.com/">
-                <t t-out="'Tìm hiểu thêm về Việt Úc' if site_lang == 'vi' else 'More about Việt Úc'"/>
-                <span aria-hidden="true">↗</span>
+            <div class="shell hero-bottom">
+              <a class="scroll-cue" href="#tools">
+                <span class="scroll-line"/>
+                <t t-out="'Khám phá sự kết nối' if site_lang == 'vi' else 'Discover what’s connected'"/>
+                <span aria-hidden="true">↓</span>
               </a>
-            </div>
-          </section>
-          <section class="client-process">
-            <div class="shell">
-              <p class="eyebrow">
-                <t t-out="'BẮT ĐẦU THẬT DỄ DÀNG' if site_lang == 'vi' else 'A SIMPLE FIRST STEP'"/>
-              </p>
-              <h2>
-                <t t-out="'Cùng tìm hướng' if site_lang == 'vi' else 'Let’s find your'"/>
-                <span class="serif">
-                  <t t-out="'chăm sóc phù hợp.' if site_lang == 'vi' else 'way forward.'"/>
+              <button class="motion-toggle" aria-pressed="false" data-pause="Tạm dừng chuyển động" data-play="Bật chuyển động">
+                <span class="motion-symbol" aria-hidden="true">Ⅱ</span>
+                <span class="motion-label">
+                  <t t-out="'Tạm dừng chuyển động' if site_lang == 'vi' else 'Pause motion'"/>
                 </span>
-              </h2>
-              <div class="process-grid">
-                <article>
-                  <span>01</span>
-                  <h3>
-                    <t t-out="'Chia sẻ nhu cầu' if site_lang == 'vi' else 'Tell us what you need'"/>
-                  </h3>
-                  <p>
-                    <t t-out="'Liên hệ đội ngũ tại địa phương và chia sẻ sự hỗ trợ bạn đang tìm kiếm.' if site_lang == 'vi' else 'Contact your local team and share the kind of support you’re looking for.'"/>
-                  </p>
-                </article>
-                <article>
-                  <span>02</span>
-                  <h3>
-                    <t t-out="'Cùng lên kế hoạch' if site_lang == 'vi' else 'Make a plan together'"/>
-                  </h3>
-                  <p>
-                    <t t-out="'Chúng tôi trao đổi về dịch vụ phù hợp, lịch hẹn và các chi tiết chăm sóc.' if site_lang == 'vi' else 'We’ll discuss suitable services, availability and the details of your care.'"/>
-                  </p>
-                </article>
-                <article>
-                  <span>03</span>
-                  <h3>
-                    <t t-out="'An tâm được chăm sóc' if site_lang == 'vi' else 'Feel supported'"/>
-                  </h3>
-                  <p>
-                    <t t-out="'Gặp chuyên viên chăm sóc và bắt đầu hành trình với sự đồng hành của gia đình.' if site_lang == 'vi' else 'Meet your care professional and take the next step with your family informed.'"/>
-                  </p>
-                </article>
-              </div>
+              </button>
             </div>
           </section>
-          <section class="section shell client-locations" id="locations">
-            <div class="section-heading">
-              <div>
-                <p class="eyebrow">
-                  <t t-out="'GẦN BẠN HƠN' if site_lang == 'vi' else 'CLOSER TO YOU'"/>
+          <div class="capability-ribbon">
+            <div class="shell">
+              <span>
+                <span class="icon i-calendar" aria-hidden="true"/>
+                <t t-out="'Lịch chăm sóc' if site_lang == 'vi' else 'Scheduling'"/>
+              </span>
+              <span>
+                <span class="icon i-clipboard-check" aria-hidden="true"/>
+                <t t-out="'Hồ sơ lâm sàng' if site_lang == 'vi' else 'Clinical records'"/>
+              </span>
+              <span>
+                <span class="icon i-users" aria-hidden="true"/>
+                <t t-out="'Đội ngũ' if site_lang == 'vi' else 'Care teams'"/>
+              </span>
+              <span>
+                <span class="icon i-credit-card" aria-hidden="true"/>
+                <t t-out="'Hóa đơn' if site_lang == 'vi' else 'Billing'"/>
+              </span>
+              <span>
+                <span class="icon i-message-square" aria-hidden="true"/>
+                <t t-out="'Kết nối gia đình' if site_lang == 'vi' else 'Family connection'"/>
+              </span>
+              <span>
+                <span class="icon i-gauge" aria-hidden="true"/>
+                <t t-out="'Phân tích' if site_lang == 'vi' else 'Insights'"/>
+              </span>
+            </div>
+          </div>
+          <section class="section shell" id="tools">
+            <div class="section-heading reveal">
+              <span class="eyebrow">
+                <t t-out="'MỌI CÔNG VIỆC CÙNG MỘT NHỊP' if site_lang == 'vi' else 'EVERYTHING MOVES TOGETHER'"/>
+              </span>
+              <h2>
+                <t t-out="'Nhiều công việc. Một dòng chảy xuyên suốt.' if site_lang == 'vi' else 'Many moving parts. One beautiful flow.'"/>
+              </h2>
+              <p>
+                <t t-out="'Công cụ dành cho những người làm nên chất lượng chăm sóc.' if site_lang == 'vi' else 'Purpose-built tools for the people who make care happen.'"/>
+              </p>
+            </div>
+            <div class="bento-grid">
+              <article class="bento reveal bento-0">
+                <div class="bento-art" aria-hidden="true">
+                  <div class="graphic-orbits">
+                    <span>
+                      <span class="icon i-calendar" aria-hidden="true"/>
+                    </span>
+                    <i/>
+                    <b/>
+                  </div>
+                </div>
+                <span class="feature-icon">
+                  <span class="icon i-calendar" aria-hidden="true"/>
+                </span>
+                <h3>
+                  <t t-out="'Điều phối nhịp nhàng.' if site_lang == 'vi' else 'Coordination, without the chaos.'"/>
+                </h3>
+                <p>
+                  <t t-out="'Kết nối yêu cầu, lịch chăm sóc, ca trực và đội ngũ trong một ngày làm việc.' if site_lang == 'vi' else 'Bring enquiries, schedules, rosters and care teams into one connected working day.'"/>
                 </p>
+                <small>
+                  <t t-out="'LÊN LỊCH → PHÂN CÔNG → CHĂM SÓC' if site_lang == 'vi' else 'SCHEDULE → ASSIGN → VISIT'"/>
+                </small>
+              </article>
+              <article class="bento reveal bento-1">
+                <div class="bento-art" aria-hidden="true">
+                  <div class="graphic-orbits">
+                    <span>
+                      <span class="icon i-heart-pulse" aria-hidden="true"/>
+                    </span>
+                    <i/>
+                    <b/>
+                  </div>
+                </div>
+                <span class="feature-icon">
+                  <span class="icon i-heart-pulse" aria-hidden="true"/>
+                </span>
+                <h3>
+                  <t t-out="'Toàn cảnh chăm sóc.' if site_lang == 'vi' else 'A richer picture of care.'"/>
+                </h3>
+                <p>
+                  <t t-out="'Hồ sơ lâm sàng, kế hoạch chăm sóc, thuốc và ghi chú hỗ trợ từng quyết định.' if site_lang == 'vi' else 'Clinical records, care plans, medication workflows and visit notes keep context close to every decision.'"/>
+                </p>
+                <small>
+                  <t t-out="'HỒ SƠ · KẾ HOẠCH · THUỐC' if site_lang == 'vi' else 'RECORDS · PLANS · MEDICATIONS'"/>
+                </small>
+              </article>
+              <article class="bento reveal bento-2">
+                <div class="bento-art" aria-hidden="true">
+                  <div class="graphic-bars">
+                    <i style="--bar:32%"/>
+                    <i style="--bar:55%"/>
+                    <i style="--bar:42%"/>
+                    <i style="--bar:75%"/>
+                    <i style="--bar:63%"/>
+                    <i style="--bar:90%"/>
+                    <i style="--bar:78%"/>
+                    <i style="--bar:100%"/>
+                  </div>
+                </div>
+                <span class="feature-icon">
+                  <span class="icon i-credit-card" aria-hidden="true"/>
+                </span>
+                <h3>
+                  <t t-out="'Vận hành minh bạch.' if site_lang == 'vi' else 'Care meets operational clarity.'"/>
+                </h3>
+                <p>
+                  <t t-out="'Tạo hóa đơn, quản lý thanh toán và hồ sơ yêu cầu; hỗ trợ nộp hồ sơ đến cơ quan nhà nước theo yêu cầu và cấu hình.' if site_lang == 'vi' else 'Create invoices, manage payments and claims, and support filing to government agencies where required and configured.'"/>
+                </p>
+                <small>
+                  <t t-out="'CHĂM SÓC → HÓA ĐƠN → PHÂN TÍCH' if site_lang == 'vi' else 'VISITS → INVOICES → INSIGHT'"/>
+                </small>
+              </article>
+              <article class="bento reveal bento-3">
+                <div class="bento-art" aria-hidden="true">
+                  <div class="graphic-orbits">
+                    <span>
+                      <span class="icon i-message-square" aria-hidden="true"/>
+                    </span>
+                    <i/>
+                    <b/>
+                  </div>
+                </div>
+                <span class="feature-icon">
+                  <span class="icon i-message-square" aria-hidden="true"/>
+                </span>
+                <h3>
+                  <t t-out="'Duy trì kết nối.' if site_lang == 'vi' else 'Keep the human connection.'"/>
+                </h3>
+                <p>
+                  <t t-out="'Hỗ trợ trao đổi với gia đình, chia sẻ thông tin, tư vấn từ xa và theo dõi xuyên suốt.' if site_lang == 'vi' else 'Support family communication, shared care information, telehealth and follow-up across the care journey.'"/>
+                </p>
+                <small>
+                  <t t-out="'ĐỘI NGŨ · NGƯỜI BỆNH · GIA ĐÌNH' if site_lang == 'vi' else 'TEAM · PERSON · FAMILY'"/>
+                </small>
+              </article>
+            </div>
+          </section>
+          <section class="product-section section" id="product">
+            <div class="shell">
+              <div class="section-heading reveal">
+                <span class="eyebrow">
+                  <t t-out="'CÔNG VIỆC ĐƯỢC KẾT NỐI' if site_lang == 'vi' else 'YOUR WORK, CONNECTED'"/>
+                </span>
                 <h2>
-                  <t t-out="'Hai thành phố.' if site_lang == 'vi' else 'Two cities.'"/>
-                  <br/>
-                  <span class="serif">
-                    <t t-out="'Chung một tấm lòng.' if site_lang == 'vi' else 'One caring approach.'"/>
-                  </span>
+                  <t t-out="'Tìm nhịp làm việc của bạn.' if site_lang == 'vi' else 'Find your rhythm.'"/>
                 </h2>
               </div>
-              <p>
-                <t t-out="'Kết nối trực tiếp với đội ngũ Việt Úc để trao đổi về dịch vụ và lịch chăm sóc tại khu vực của bạn.' if site_lang == 'vi' else 'Connect directly with your local Việt Úc team to discuss services and availability in your area.'"/>
+              <div class="product-demo reveal">
+                <div class="demo-top">
+                  <span class="demo-dots" aria-hidden="true">● ● ●</span>
+                  <span>
+                    <t t-out="'KHÁM PHÁ KHÔNG GIAN LÀM VIỆC' if site_lang == 'vi' else 'WORKSPACE EXPLORER'"/>
+                  </span>
+                  <span class="demo-caption">
+                    <t t-out="'Minh họa giao diện' if site_lang == 'vi' else 'Illustrative preview'"/>
+                  </span>
+                </div>
+                <div class="demo-tabs" role="tablist" aria-label="Workspace preview">
+                  <button role="tab" id="tab-0" aria-controls="panel-0" aria-selected="true" tabindex="0">
+                    <t t-out="'Điều phối' if site_lang == 'vi' else 'Coordinate'"/>
+                  </button>
+                  <button role="tab" id="tab-1" aria-controls="panel-1" aria-selected="false" tabindex="-1">
+                    <t t-out="'Chăm sóc' if site_lang == 'vi' else 'Deliver care'"/>
+                  </button>
+                  <button role="tab" id="tab-2" aria-controls="panel-2" aria-selected="false" tabindex="-1">
+                    <t t-out="'Vận hành' if site_lang == 'vi' else 'Manage operations'"/>
+                  </button>
+                </div>
+                <div class="demo-panel" role="tabpanel" id="panel-0" aria-labelledby="tab-0">
+                  <div class="demo-copy">
+                    <span class="feature-icon">
+                      <span class="icon i-calendar" aria-hidden="true"/>
+                    </span>
+                    <h3>
+                      <t t-out="'Một ngày chăm sóc được sắp xếp nhịp nhàng.' if site_lang == 'vi' else 'A care day, beautifully aligned.'"/>
+                    </h3>
+                    <p>
+                      <t t-out="'Xem lịch, phân công đội ngũ phù hợp và nắm rõ bước tiếp theo.' if site_lang == 'vi' else 'See the schedule. Assign the right people. Keep the next step clear.'"/>
+                    </p>
+                    <span class="demo-note">
+                      <t t-out="'Thông tin xuyên suốt. Bước tiếp theo rõ ràng.' if site_lang == 'vi' else 'One shared context. A clearer next step.'"/>
+                    </span>
+                  </div>
+                  <div class="demo-schedule">
+                    <div class="schedule-row">
+                      <span class="schedule-time">09:00</span>
+                      <div>
+                        <strong>
+                          <t t-out="'Chăm sóc tại nhà' if site_lang == 'vi' else 'Home visit'"/>
+                        </strong>
+                        <small>
+                          <t t-out="'Đã phân công' if site_lang == 'vi' else 'Care team assigned'"/>
+                        </small>
+                      </div>
+                      <span class="row-check">
+                        <span class="icon i-check" aria-hidden="true"/>
+                      </span>
+                    </div>
+                    <div class="schedule-row">
+                      <span class="schedule-time">11:30</span>
+                      <div>
+                        <strong>
+                          <t t-out="'Đánh giá chăm sóc' if site_lang == 'vi' else 'Care review'"/>
+                        </strong>
+                        <small>
+                          <t t-out="'Đánh giá lâm sàng' if site_lang == 'vi' else 'Clinical review'"/>
+                        </small>
+                      </div>
+                      <span class="row-check">
+                        <span class="icon i-check" aria-hidden="true"/>
+                      </span>
+                    </div>
+                    <div class="schedule-row">
+                      <span class="schedule-time">14:00</span>
+                      <div>
+                        <strong>
+                          <t t-out="'Theo dõi' if site_lang == 'vi' else 'Follow-up'"/>
+                        </strong>
+                        <small>
+                          <t t-out="'Sẵn sàng điều phối' if site_lang == 'vi' else 'Ready to coordinate'"/>
+                        </small>
+                      </div>
+                      <span class="row-check">
+                        <span class="icon i-check" aria-hidden="true"/>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="demo-panel" role="tabpanel" id="panel-1" aria-labelledby="tab-1" hidden="hidden">
+                  <div class="demo-copy">
+                    <span class="feature-icon">
+                      <span class="icon i-heart-pulse" aria-hidden="true"/>
+                    </span>
+                    <h3>
+                      <t t-out="'Thông tin cho từng thời điểm chăm sóc.' if site_lang == 'vi' else 'Context for every clinical moment.'"/>
+                    </h3>
+                    <p>
+                      <t t-out="'Theo dõi kế hoạch, sinh hiệu và ghi chép chăm sóc trong cùng không gian.' if site_lang == 'vi' else 'Bring the care plan, observations and visit documentation into view.'"/>
+                    </p>
+                    <span class="demo-note">
+                      <t t-out="'Thông tin xuyên suốt. Bước tiếp theo rõ ràng.' if site_lang == 'vi' else 'One shared context. A clearer next step.'"/>
+                    </span>
+                  </div>
+                  <div class="demo-schedule">
+                    <div class="schedule-row">
+                      <span class="schedule-time">01</span>
+                      <div>
+                        <strong>
+                          <t t-out="'Kế hoạch chăm sóc' if site_lang == 'vi' else 'Care plan'"/>
+                        </strong>
+                        <small>
+                          <t t-out="'Mục tiêu và can thiệp' if site_lang == 'vi' else 'Goals and interventions'"/>
+                        </small>
+                      </div>
+                      <span class="row-check">
+                        <span class="icon i-check" aria-hidden="true"/>
+                      </span>
+                    </div>
+                    <div class="schedule-row">
+                      <span class="schedule-time">02</span>
+                      <div>
+                        <strong>
+                          <t t-out="'Theo dõi' if site_lang == 'vi' else 'Observations'"/>
+                        </strong>
+                        <small>
+                          <t t-out="'Sinh hiệu và tiến triển' if site_lang == 'vi' else 'Vitals and progress'"/>
+                        </small>
+                      </div>
+                      <span class="row-check">
+                        <span class="icon i-check" aria-hidden="true"/>
+                      </span>
+                    </div>
+                    <div class="schedule-row">
+                      <span class="schedule-time">03</span>
+                      <div>
+                        <strong>
+                          <t t-out="'Ghi chú chăm sóc' if site_lang == 'vi' else 'Visit notes'"/>
+                        </strong>
+                        <small>
+                          <t t-out="'Ghi nhận bước tiếp theo' if site_lang == 'vi' else 'Document the next step'"/>
+                        </small>
+                      </div>
+                      <span class="row-check">
+                        <span class="icon i-check" aria-hidden="true"/>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="demo-panel" role="tabpanel" id="panel-2" aria-labelledby="tab-2" hidden="hidden">
+                  <div class="demo-copy">
+                    <span class="feature-icon">
+                      <span class="icon i-gauge" aria-hidden="true"/>
+                    </span>
+                    <h3>
+                      <t t-out="'Từ chăm sóc đến thông tin rõ ràng.' if site_lang == 'vi' else 'From delivered care to clear insight.'"/>
+                    </h3>
+                    <p>
+                      <t t-out="'Kết nối hoạt động dịch vụ với hóa đơn, thanh toán và báo cáo.' if site_lang == 'vi' else 'Connect service activity with invoicing, payments and reporting.'"/>
+                    </p>
+                    <span class="demo-note">
+                      <t t-out="'Thông tin xuyên suốt. Bước tiếp theo rõ ràng.' if site_lang == 'vi' else 'One shared context. A clearer next step.'"/>
+                    </span>
+                  </div>
+                  <div class="demo-schedule">
+                    <div class="schedule-row">
+                      <span class="schedule-time">01</span>
+                      <div>
+                        <strong>
+                          <t t-out="'Hoạt động dịch vụ' if site_lang == 'vi' else 'Service activity'"/>
+                        </strong>
+                        <small>
+                          <t t-out="'Xem lượt chăm sóc hoàn tất' if site_lang == 'vi' else 'Review completed visits'"/>
+                        </small>
+                      </div>
+                      <span class="row-check">
+                        <span class="icon i-check" aria-hidden="true"/>
+                      </span>
+                    </div>
+                    <div class="schedule-row">
+                      <span class="schedule-time">02</span>
+                      <div>
+                        <strong>
+                          <t t-out="'Hóa đơn' if site_lang == 'vi' else 'Invoices'"/>
+                        </strong>
+                        <small>
+                          <t t-out="'Chuẩn bị và kiểm tra' if site_lang == 'vi' else 'Prepare and review'"/>
+                        </small>
+                      </div>
+                      <span class="row-check">
+                        <span class="icon i-check" aria-hidden="true"/>
+                      </span>
+                    </div>
+                    <div class="schedule-row">
+                      <span class="schedule-time">03</span>
+                      <div>
+                        <strong>
+                          <t t-out="'Báo cáo' if site_lang == 'vi' else 'Reporting'"/>
+                        </strong>
+                        <small>
+                          <t t-out="'Nắm rõ hoạt động' if site_lang == 'vi' else 'Understand operations'"/>
+                        </small>
+                      </div>
+                      <span class="row-check">
+                        <span class="icon i-check" aria-hidden="true"/>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p class="product-disclaimer">
+                <t t-out="'Minh họa quy trình, không phải dữ liệu người bệnh thực tế. Công cụ khả dụng tùy cấu hình tổ chức và quyền truy cập.' if site_lang == 'vi' else 'Workflow illustrations, not live patient data. Available tools depend on your organisation’s configuration and your role.'"/>
               </p>
-            </div>
-            <div class="locations-grid">
-              <article>
-                <span class="eyebrow">01 / <t t-out="'HÀ NỘI' if site_lang == 'vi' else 'HANOI'"/></span>
-                <h3>
-                  <t t-out="'Đội ngũ tại Hà Nội' if site_lang == 'vi' else 'Your Hanoi care team'"/>
-                </h3>
-                <p>Số 30 Lô 1A, Khu đô thị Trung Yên,<br/>Đường Trung Yên 11B, Phường Yên Hòa, Hà Nội</p>
-                <a class="location-phone" href="tel:18006896">1800 6896 <span aria-hidden="true">↗</span></a>
-                <a href="mailto:contact@pkgdvietuc.com">contact@pkgdvietuc.com</a>
-                <a class="text-link" href="https://www.google.com/maps/search/?api=1&amp;query=Phong+Kham+Gia+Dinh+Viet+Uc+30+Trung+Yen+11B+Ha+Noi">
-                  <t t-out="'Xem đường đi' if site_lang == 'vi' else 'Find directions'"/>
-                  <span aria-hidden="true">↗</span>
-                </a>
-              </article>
-              <article>
-                <span class="eyebrow">02 / <t t-out="'TP. HỒ CHÍ MINH' if site_lang == 'vi' else 'HO CHI MINH CITY'"/></span>
-                <h3>
-                  <t t-out="'Đội ngũ tại TP. Hồ Chí Minh' if site_lang == 'vi' else 'Your Ho Chi Minh City care team'"/>
-                </h3>
-                <p>215 Đinh Tiên Hoàng,<br/>Phường Tân Định, TP. Hồ Chí Minh</p>
-                <a class="location-phone" href="tel:18006894">1800 6894 <span aria-hidden="true">↗</span></a>
-                <a href="mailto:om@cstnvusaigon.com">om@cstnvusaigon.com</a>
-                <a class="text-link" href="https://www.google.com/maps/search/?api=1&amp;query=Phong+Kham+Gia+Dinh+Viet+Uc+215+Dinh+Tien+Hoang">
-                  <t t-out="'Xem đường đi' if site_lang == 'vi' else 'Find directions'"/>
-                  <span aria-hidden="true">↗</span>
-                </a>
-              </article>
             </div>
           </section>
-          <section class="faq-section shell client-faq">
-            <div>
-              <p class="eyebrow">
-                <t t-out="'SẴN SÀNG HỖ TRỢ' if site_lang == 'vi' else 'HERE TO HELP'"/>
-              </p>
+          <section class="section shell" id="access">
+            <div class="section-heading reveal">
+              <span class="eyebrow">
+                <t t-out="'SẴN SÀNG CÙNG BẠN' if site_lang == 'vi' else 'READY WHEN YOU ARE'"/>
+              </span>
               <h2>
-                <t t-out="'Thêm hiểu biết.' if site_lang == 'vi' else 'A little reassurance.'"/>
-                <br/>
-                <span class="serif">
-                  <t t-out="'Thêm an tâm.' if site_lang == 'vi' else 'Before we begin.'"/>
-                </span>
-              </h2>
-            </div>
-            <div class="faq-list">
-              <details>
-                <summary>
-                  <t t-out="'Tôi đặt lịch chăm sóc như thế nào?' if site_lang == 'vi' else 'How do I arrange care?'"/>
-                  <span>+</span>
-                </summary>
-                <p>
-                  <t t-out="'Gọi đội ngũ Hà Nội theo số 1800 6896 hoặc TP. Hồ Chí Minh theo số 1800 6894. Chúng tôi trao đổi về nhu cầu, địa điểm và dịch vụ phù hợp trước khi sắp xếp bước tiếp theo.' if site_lang == 'vi' else 'Call the Hanoi team on 1800 6896 or the Ho Chi Minh City team on 1800 6894. We’ll discuss your needs, location and available services before arranging the next step.'"/>
-                </p>
-              </details>
-              <details>
-                <summary>
-                  <t t-out="'Tôi có thể được chăm sóc tại nhà không?' if site_lang == 'vi' else 'Can you provide care at home?'"/>
-                  <span>+</span>
-                </summary>
-                <p>
-                  <t t-out="'Điều dưỡng và bác sĩ thăm khám tại nhà là những dịch vụ của chúng tôi. Đội ngũ tại địa phương sẽ xác nhận dịch vụ phù hợp với nhu cầu và nơi ở của bạn.' if site_lang == 'vi' else 'Home nursing and doctor visits are part of our services. Your local team will confirm which services are suitable and available for your needs and location.'"/>
-                </p>
-              </details>
-              <details>
-                <summary>
-                  <t t-out="'Hóa đơn và bảo hiểm được hỗ trợ thế nào?' if site_lang == 'vi' else 'What about invoices and insurance?'"/>
-                  <span>+</span>
-                </summary>
-                <p>
-                  <t t-out="'Chúng tôi cung cấp hóa đơn chính thức để hỗ trợ yêu cầu bồi hoàn. Vui lòng xác nhận phạm vi bảo hiểm và thủ tục với công ty bảo hiểm và bộ phận hành chính.' if site_lang == 'vi' else 'Official invoices are available to support reimbursement requests. Please confirm coverage and requirements with your insurer and our administrative team.'"/>
-                </p>
-              </details>
-              <details>
-                <summary>
-                  <t t-out="'Gia đình có thể cùng tham gia không?' if site_lang == 'vi' else 'Can family members be involved?'"/>
-                  <span>+</span>
-                </summary>
-                <p>
-                  <t t-out="'Chúng tôi luôn lắng nghe người bệnh và gia đình. Hãy trao đổi cùng đội ngũ về mong muốn, sự đồng ý và cách bạn muốn nhận thông tin chăm sóc.' if site_lang == 'vi' else 'We welcome conversations with patients and their families. Speak with the team about your preferences, consent and how you would like to stay informed.'"/>
-                </p>
-              </details>
-            </div>
-          </section>
-          <section class="client-contact" id="contact">
-            <div class="shell">
-              <p class="eyebrow">
-                <t t-out="'GIA ĐÌNH BẠN. SỰ TẬN TÂM CỦA CHÚNG TÔI.' if site_lang == 'vi' else 'YOUR FAMILY. OUR COMMITMENT.'"/>
-              </p>
-              <h2>
-                <t t-out="'Chăm sóc tốt bắt đầu' if site_lang == 'vi' else 'Good care starts'"/>
-                <br/>
-                <span class="serif">
-                  <t t-out="'từ sự lắng nghe.' if site_lang == 'vi' else 'with a conversation.'"/>
-                </span>
+                <t t-out="'Ngày làm việc bắt đầu từ đây.' if site_lang == 'vi' else 'Your day starts here.'"/>
               </h2>
               <p>
-                <t t-out="'Hãy chia sẻ điều bạn quan tâm. Chúng tôi luôn sẵn sàng lắng nghe.' if site_lang == 'vi' else 'Tell us what matters to you. We’re here to listen.'"/>
+                <t t-out="'Sử dụng tài khoản do tổ chức cấp. Quyền truy cập được áp dụng theo vai trò.' if site_lang == 'vi' else 'Use the account assigned by your organisation. Your permissions follow you.'"/>
               </p>
-              <div class="contact-actions">
-                <a class="button button-light" href="tel:18006896"><t t-out="'Gọi Hà Nội' if site_lang == 'vi' else 'Call Hanoi'"/> · 1800 6896 <span aria-hidden="true">↗</span></a>
-                <a class="button button-outline" href="tel:18006894"><t t-out="'Gọi TP. Hồ Chí Minh' if site_lang == 'vi' else 'Call Ho Chi Minh City'"/> · 1800 6894 <span aria-hidden="true">↗</span></a>
+            </div>
+            <div class="access-grid">
+              <article class="access-card reveal">
+                <span class="icon i-gauge" aria-hidden="true"/>
+                <h3>
+                  <t t-out="'Không gian chăm sóc' if site_lang == 'vi' else 'Care workspace'"/>
+                </h3>
+                <p>
+                  <t t-out="'Không gian chung cho điều phối, lâm sàng và vận hành.' if site_lang == 'vi' else 'Your central workspace for coordination, clinical work and operations.'"/>
+                </p>
+                <a class="button primary" href="/web/login?redirect=%2Fbizapp">
+                  <t t-out="'Mở ứng dụng' if site_lang == 'vi' else 'Open workspace'"/>
+                  <span class="arrow" aria-hidden="true">↗</span>
+                </a>
+              </article>
+              <article class="access-card reveal">
+                <span class="icon i-heart-pulse" aria-hidden="true"/>
+                <h3>
+                  <t t-out="'Chăm sóc di động' if site_lang == 'vi' else 'Care on the move'"/>
+                </h3>
+                <p>
+                  <t t-out="'Mở ứng dụng di động để hỗ trợ công việc và các lượt chăm sóc tại nhà.' if site_lang == 'vi' else 'Open the mobile care application for your field work and visits.'"/>
+                </p>
+                <a class="button ghost" href="/web/login?redirect=%2Fhealth_pwa">
+                  <t t-out="'Mở chăm sóc di động' if site_lang == 'vi' else 'Open mobile care'"/>
+                  <span class="arrow" aria-hidden="true">↗</span>
+                </a>
+              </article>
+            </div>
+            <div class="access-notes reveal">
+              <div>
+                <h3>
+                  <t t-out="'Người bệnh và gia đình' if site_lang == 'vi' else 'Patients &amp; families'"/>
+                </h3>
+                <p>
+                  <t t-out="'Sử dụng liên kết chăm sóc riêng do đội ngũ cung cấp. Để tìm dịch vụ và yêu cầu đặt lịch, vui lòng truy cập website Việt Úc.' if site_lang == 'vi' else 'Use the personal care link shared by your care team. For healthcare services and appointment enquiries, visit the Việt Úc public website.'"/>
+                </p>
+                <a href="https://pkgdvietuc.com/">
+                  <t t-out="'Truy cập website Việt Úc' if site_lang == 'vi' else 'Visit the Việt Úc website'"/>
+                  <span class="arrow" aria-hidden="true">↗</span>
+                </a>
+              </div>
+              <div>
+                <h3>
+                  <t t-out="'Cần quyền truy cập?' if site_lang == 'vi' else 'Need access?'"/>
+                </h3>
+                <p>
+                  <t t-out="'Liên hệ quản trị viên của tổ chức để được cấp tài khoản hoặc hỗ trợ phân quyền. Đây là trang truy cập ứng dụng dành cho đội ngũ.' if site_lang == 'vi' else 'Contact your organisation’s administrator for an account or help with your permissions. This is the team’s application entry point.'"/>
+                </p>
               </div>
             </div>
           </section>
         </main>
-        <footer class="client-footer shell">
+        <footer class="site-footer shell">
           <div>
-            <a class="brand client-brand" href="/" aria-label="Việt Úc">
-              <img src="/health_public_site/static/img/viet-uc-logo.webp" alt="Phòng Khám Gia Đình Việt Úc" width="200" height="59" loading="lazy"/>
+            <a class="tenant-brand" href="/" aria-label="Việt Úc">
+              <span class="tenant-logo">
+                <img src="/health_public_site/static/img/viet-uc-logo.webp" alt="Việt Úc" width="170" height="50"/>
+              </span>
+              <span class="tenant-brand-label">
+                <t t-out="'Ứng dụng chăm sóc' if site_lang == 'vi' else 'Care workspace'"/>
+              </span>
             </a>
             <p>
-              <t t-out="'Chăm sóc chuyên nghiệp. Gần gũi tại nhà.' if site_lang == 'vi' else 'Professional care. Close to home.'"/>
+              <t t-out="'Chăm sóc đồng bộ, kết nối vẹn toàn.' if site_lang == 'vi' else 'Care, in perfect sync.'"/>
             </p>
           </div>
-          <div>
-            <a href="#services">
-              <t t-out="'Dịch vụ' if site_lang == 'vi' else 'Our services'"/>
-            </a>
+          <div class="footer-links">
             <a href="https://pkgdvietuc.com/">
-              <t t-out="'Website chính thức' if site_lang == 'vi' else 'Visit our main website'"/>
-              <span aria-hidden="true">↗</span>
+              <t t-out="'Website Việt Úc' if site_lang == 'vi' else 'Việt Úc public website'"/>
+              <span class="arrow" aria-hidden="true">↗</span>
             </a>
-            <a href="/web/login">
-              <t t-out="'Đăng nhập nhân viên' if site_lang == 'vi' else 'Staff sign in'"/>
-              <span aria-hidden="true">↗</span>
+            <a href="/web/login?redirect=%2Fbizapp">
+              <t t-out="'Mở ứng dụng' if site_lang == 'vi' else 'Open workspace'"/>
+              <span class="arrow" aria-hidden="true">↗</span>
             </a>
+            <a href="https://carejiox.com/">Powered by CareJiox <span class="arrow" aria-hidden="true">↗</span></a>
           </div>
-          <div>
-            <span>© <t t-out="year"/> Việt Úc</span>
-            <a href="https://carejiox.com/">
-              <t t-out="'Kết nối bởi CareJiox' if site_lang == 'vi' else 'Connected by CareJiox'"/>
-              <span aria-hidden="true">↗</span>
-            </a>
-            <div class="language-toggle">
-              <a href="/?site_lang=vi" lang="vi">Tiếng Việt</a>
-              <a href="/?site_lang=en" lang="en">English</a>
-            </div>
-          </div>
+          <small>© <t t-out="year"/> Việt Úc</small>
         </footer>
       </body>
     </html>

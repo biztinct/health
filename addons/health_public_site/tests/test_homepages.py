@@ -47,13 +47,13 @@ class TestPublicHomepages(HttpCase):
             self.assertNotIn('1800 6896', doc.text_content())
             self.assertIn('ash@biztinct.com', doc.text_content())
         else:
-            self.assertIn('Expert care.', doc.text_content())
-            self.assertNotIn('THE CONNECTED CARE PLATFORM', doc.text_content())
+            self.assertIn('One team.', doc.text_content())
+            self.assertNotIn('THE OPERATING SYSTEM FOR CONNECTED CARE', doc.text_content())
             self.assertNotIn('ash@biztinct.com', doc.text_content())
             vietnamese = self.url_open('/?site_lang=vi&brand=platform')
             vi = html.fromstring(vietnamese.content)
             self.assertEqual(vi.get('lang'), 'vi')
-            self.assertIn('Chăm sóc tận tâm.', vi.text_content())
+            self.assertIn('Một đội ngũ.', vi.text_content())
             self.assertEqual(vi.xpath('//link[@rel="canonical"]/@href'), ['https://hhh.carejiox.com/?site_lang=vi'])
             self.assertIn('cjx_site_lang=vi', vietnamese.headers.get('Set-Cookie', ''))
             self.assertEqual(html.fromstring(self.url_open('/').content).get('lang'), 'vi')
@@ -65,3 +65,22 @@ class TestPublicHomepages(HttpCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn('<script>alert(123)</script>', response.text)
         self.assertIn(html.fromstring(response.content).get('lang'), ('en', 'vi'))
+
+    def test_application_entry_and_motion_controls(self):
+        brand = homepage_brand(self.env.cr.dbname)
+        if not brand:
+            return
+        doc = html.fromstring(self.url_open('/?site_lang=en').content)
+        self.assertEqual(len(doc.xpath('//canvas[@aria-hidden="true"]')), 1)
+        self.assertEqual(len(doc.xpath('//button[contains(@class,"motion-toggle")]')), 1)
+        for tab in doc.xpath('//*[@role="tab"]'):
+            self.assertEqual(len(doc.xpath('//*[@id="%s"]' % tab.get('aria-controls'))), 1)
+        if brand == 'client':
+            links = doc.xpath('//a/@href')
+            self.assertIn('https://pkgdvietuc.com/', links)
+            self.assertIn('/web/login?redirect=%2Fbizapp', links)
+            self.assertIn('/web/login?redirect=%2Fhealth_pwa', links)
+            self.assertFalse(any(link.startswith('tel:') for link in links))
+            self.assertIn('Use the personal care link shared by your care team', doc.text_content())
+        else:
+            self.assertIn('filing to government agencies where required and configured', doc.text_content())
