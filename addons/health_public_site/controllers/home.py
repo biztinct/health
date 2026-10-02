@@ -24,7 +24,7 @@ class CareJioxHomepage(Website):
             chosen = kw.get('site_lang') or request.httprequest.cookies.get('cjx_site_lang')
             lang = chosen if chosen in ('en', 'vi') else 'vi'
         response = request.render('health_public_site.' + brand, {
-            'lang': lang,
+            'site_lang': lang,
             'year': date.today().year,
             'doctype': Markup('<!DOCTYPE html>'),
             'origin': 'https://hhh.carejiox.com' if brand == 'client' else 'https://carejiox.com',

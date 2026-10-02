@@ -372,7 +372,7 @@
   </template>
   <template id="client" name="Việt Úc bilingual client homepage">
     <t t-out="doctype"/>
-    <html t-att-lang="lang">
+    <html t-att-lang="site_lang">
       <head>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -380,35 +380,35 @@
         <link rel="stylesheet" href="/health_public_site/static/src/home.css?v=1"/>
         <script defer="defer" src="/health_public_site/static/src/home.js?v=1"/>
         <title>
-          <t t-out="'Việt Úc — Chăm sóc tận tâm. An tâm tại nhà.' if lang == 'vi' else 'Việt Úc — Thoughtful care. Close to home.'"/>
+          <t t-out="'Việt Úc — Chăm sóc tận tâm. An tâm tại nhà.' if site_lang == 'vi' else 'Việt Úc — Thoughtful care. Close to home.'"/>
         </title>
-        <meta name="description" t-att-content="'Chăm sóc sức khỏe tại nhà và y học gia đình Việt Úc. Kết nối với đội ngũ tại Hà Nội và TP. Hồ Chí Minh.' if lang == 'vi' else 'Việt Úc home healthcare and family medicine. Connect with our care teams in Hanoi and Ho Chi Minh City.'"/>
-        <link rel="canonical" t-att-href="origin + '/?site_lang=' + lang"/>
+        <meta name="description" t-att-content="'Chăm sóc sức khỏe tại nhà và y học gia đình Việt Úc. Kết nối với đội ngũ tại Hà Nội và TP. Hồ Chí Minh.' if site_lang == 'vi' else 'Việt Úc home healthcare and family medicine. Connect with our care teams in Hanoi and Ho Chi Minh City.'"/>
+        <link rel="canonical" t-att-href="origin + '/?site_lang=' + site_lang"/>
         <link rel="alternate" hreflang="vi" href="https://hhh.carejiox.com/?site_lang=vi"/>
         <link rel="alternate" hreflang="en" href="https://hhh.carejiox.com/?site_lang=en"/>
         <link rel="alternate" hreflang="x-default" href="https://hhh.carejiox.com/"/>
-        <meta property="og:title" t-att-content="'Việt Úc — Chăm sóc tận tâm. An tâm tại nhà.' if lang == 'vi' else 'Việt Úc — Thoughtful care. Close to home.'"/>
-        <meta property="og:description" t-att-content="'Chăm sóc sức khỏe tại nhà và y học gia đình.' if lang == 'vi' else 'Home healthcare and family medicine, centred on you.'"/>
+        <meta property="og:title" t-att-content="'Việt Úc — Chăm sóc tận tâm. An tâm tại nhà.' if site_lang == 'vi' else 'Việt Úc — Thoughtful care. Close to home.'"/>
+        <meta property="og:description" t-att-content="'Chăm sóc sức khỏe tại nhà và y học gia đình.' if site_lang == 'vi' else 'Home healthcare and family medicine, centred on you.'"/>
         <meta property="og:type" content="website"/>
-        <meta property="og:url" t-att-content="origin + '/?site_lang=' + lang"/>
+        <meta property="og:url" t-att-content="origin + '/?site_lang=' + site_lang"/>
         <meta property="og:image" content="https://hhh.carejiox.com/health_public_site/static/img/viet-uc-social.jpg"/>
         <meta name="twitter:card" content="summary_large_image"/>
         <link rel="icon" href="/health_public_site/static/img/viet-uc-logo.webp"/>
       </head>
       <body class="vu-client">
         <a class="skip" href="#main">
-          <t t-out="'Chuyển đến nội dung' if lang == 'vi' else 'Skip to content'"/>
+          <t t-out="'Chuyển đến nội dung' if site_lang == 'vi' else 'Skip to content'"/>
         </a>
         <div class="client-topline">
           <span>
-            <t t-out="'Y học gia đình. Chăm sóc tận tâm.' if lang == 'vi' else 'Family medicine. Personal care.'"/>
+            <t t-out="'Y học gia đình. Chăm sóc tận tâm.' if site_lang == 'vi' else 'Family medicine. Personal care.'"/>
           </span>
           <a href="tel:18006896">
-            <t t-out="'Hà Nội' if lang == 'vi' else 'Hanoi'"/>
+            <t t-out="'Hà Nội' if site_lang == 'vi' else 'Hanoi'"/>
             <b>1800 6896</b>
           </a>
           <a href="tel:18006894">
-            <t t-out="'TP. Hồ Chí Minh' if lang == 'vi' else 'Ho Chi Minh City'"/>
+            <t t-out="'TP. Hồ Chí Minh' if site_lang == 'vi' else 'Ho Chi Minh City'"/>
             <b>1800 6894</b>
           </a>
         </div>
@@ -416,24 +416,24 @@
           <a class="brand client-brand" href="/" aria-label="Việt Úc">
             <img src="/health_public_site/static/img/viet-uc-logo.webp" width="200" height="59" alt="Phòng Khám Gia Đình Việt Úc"/>
           </a>
-          <button class="menu-toggle" t-att-aria-label="'Mở menu' if lang == 'vi' else 'Open menu'" aria-expanded="false" aria-controls="main-nav">Menu <span aria-hidden="true">＋</span></button>
-          <nav id="main-nav" t-att-aria-label="'Điều hướng chính' if lang == 'vi' else 'Main navigation'">
+          <button class="menu-toggle" t-att-aria-label="'Mở menu' if site_lang == 'vi' else 'Open menu'" aria-expanded="false" aria-controls="main-nav">Menu <span aria-hidden="true">＋</span></button>
+          <nav id="main-nav" t-att-aria-label="'Điều hướng chính' if site_lang == 'vi' else 'Main navigation'">
             <a href="#services">
-              <t t-out="'Dịch vụ' if lang == 'vi' else 'Our care'"/>
+              <t t-out="'Dịch vụ' if site_lang == 'vi' else 'Our care'"/>
             </a>
             <a href="#about">
-              <t t-out="'Về chúng tôi' if lang == 'vi' else 'Our approach'"/>
+              <t t-out="'Về chúng tôi' if site_lang == 'vi' else 'Our approach'"/>
             </a>
             <a href="#locations">
-              <t t-out="'Liên hệ' if lang == 'vi' else 'Find us'"/>
+              <t t-out="'Liên hệ' if site_lang == 'vi' else 'Find us'"/>
             </a>
           </nav>
-          <div class="language-toggle" t-att-aria-label="'Ngôn ngữ' if lang == 'vi' else 'Language'">
-            <a href="/?site_lang=vi" lang="vi" t-att-aria-current="'true' if lang == 'vi' else None">VI</a>
-            <a href="/?site_lang=en" lang="en" t-att-aria-current="'true' if lang == 'en' else None">EN</a>
+          <div class="language-toggle" t-att-aria-label="'Ngôn ngữ' if site_lang == 'vi' else 'Language'">
+            <a href="/?site_lang=vi" lang="vi" t-att-aria-current="'true' if site_lang == 'vi' else None">VI</a>
+            <a href="/?site_lang=en" lang="en" t-att-aria-current="'true' if site_lang == 'en' else None">EN</a>
           </div>
           <a class="button button-small" href="#contact">
-            <t t-out="'Nhận tư vấn' if lang == 'vi' else 'Let’s talk care'"/>
+            <t t-out="'Nhận tư vấn' if site_lang == 'vi' else 'Let’s talk care'"/>
             <span aria-hidden="true">↗</span>
           </a>
         </header>
@@ -442,67 +442,67 @@
             <div class="client-hero-copy">
               <p class="eyebrow">
                 <span class="live-dot"/>
-                <t t-out="'PHÒNG KHÁM GIA ĐÌNH VIỆT ÚC' if lang == 'vi' else 'VIỆT ÚC FAMILY HEALTHCARE'"/>
+                <t t-out="'PHÒNG KHÁM GIA ĐÌNH VIỆT ÚC' if site_lang == 'vi' else 'VIỆT ÚC FAMILY HEALTHCARE'"/>
               </p>
               <h1>
-                <t t-out="'Chăm sóc tận tâm.' if lang == 'vi' else 'Expert care.'"/>
+                <t t-out="'Chăm sóc tận tâm.' if site_lang == 'vi' else 'Expert care.'"/>
                 <br/>
                 <span class="serif">
-                  <t t-out="'An tâm tại nhà.' if lang == 'vi' else 'A familiar place.'"/>
+                  <t t-out="'An tâm tại nhà.' if site_lang == 'vi' else 'A familiar place.'"/>
                 </span>
               </h1>
               <p class="hero-description">
-                <t t-out="'Sức khỏe vững vàng hơn khi được chăm sóc đúng cách. Từ điều dưỡng tại nhà đến y học gia đình, Việt Úc mang sự chăm sóc chuyên nghiệp đến gần bạn và những người thân yêu.' if lang == 'vi' else 'Life feels better when care feels personal. From home nursing to family medicine, we bring professional care closer to you—and to the people you love.'"/>
+                <t t-out="'Sức khỏe vững vàng hơn khi được chăm sóc đúng cách. Từ điều dưỡng tại nhà đến y học gia đình, Việt Úc mang sự chăm sóc chuyên nghiệp đến gần bạn và những người thân yêu.' if site_lang == 'vi' else 'Life feels better when care feels personal. From home nursing to family medicine, we bring professional care closer to you—and to the people you love.'"/>
               </p>
               <div class="hero-actions">
                 <a class="button" href="#contact">
-                  <t t-out="'Tìm dịch vụ cho gia đình' if lang == 'vi' else 'Find care for your family'"/>
+                  <t t-out="'Tìm dịch vụ cho gia đình' if site_lang == 'vi' else 'Find care for your family'"/>
                   <span aria-hidden="true">↗</span>
                 </a>
                 <a class="text-link" href="#services">
-                  <t t-out="'Khám phá dịch vụ' if lang == 'vi' else 'Explore our services'"/>
+                  <t t-out="'Khám phá dịch vụ' if site_lang == 'vi' else 'Explore our services'"/>
                   <span aria-hidden="true">↓</span>
                 </a>
               </div>
               <div class="client-signature">
                 <span class="signature-line"/>
                 <p>
-                  <t t-out="'Chuyên môn vững vàng.' if lang == 'vi' else 'Clinical expertise.'"/>
+                  <t t-out="'Chuyên môn vững vàng.' if site_lang == 'vi' else 'Clinical expertise.'"/>
                   <br/>
                   <strong>
-                    <t t-out="'Chăm sóc bằng cả trái tim.' if lang == 'vi' else 'A deeply human touch.'"/>
+                    <t t-out="'Chăm sóc bằng cả trái tim.' if site_lang == 'vi' else 'A deeply human touch.'"/>
                   </strong>
                 </p>
               </div>
             </div>
             <div class="client-hero-art">
               <div class="image-arch">
-                <img src="/health_public_site/static/img/viet-uc-team.webp" width="576" height="512" t-att-alt="'Đội ngũ chăm sóc sức khỏe Việt Úc' if lang == 'vi' else 'Việt Úc healthcare team'" fetchpriority="high"/>
+                <img src="/health_public_site/static/img/viet-uc-team.webp" width="576" height="512" t-att-alt="'Đội ngũ chăm sóc sức khỏe Việt Úc' if site_lang == 'vi' else 'Việt Úc healthcare team'" fetchpriority="high"/>
               </div>
               <div class="client-roundel">
                 <span>
-                  <t t-out="'CHĂM SÓC' if lang == 'vi' else 'CARE THAT'"/>
+                  <t t-out="'CHĂM SÓC' if site_lang == 'vi' else 'CARE THAT'"/>
                 </span>
                 <strong>
-                  <t t-out="'ngay' if lang == 'vi' else 'comes'"/>
+                  <t t-out="'ngay' if site_lang == 'vi' else 'comes'"/>
                 </strong>
                 <span>
-                  <t t-out="'TẠI NHÀ' if lang == 'vi' else 'TO YOU'"/>
+                  <t t-out="'TẠI NHÀ' if site_lang == 'vi' else 'TO YOU'"/>
                 </span>
               </div>
               <div class="client-photo-note">
                 <span class="note-check">✓</span>
                 <div>
                   <strong>
-                    <t t-out="'Chăm sóc dành riêng cho bạn' if lang == 'vi' else 'Care built around you'"/>
+                    <t t-out="'Chăm sóc dành riêng cho bạn' if site_lang == 'vi' else 'Care built around you'"/>
                   </strong>
                   <small>
-                    <t t-out="'Tại nhà. Tại phòng khám. Luôn đồng hành.' if lang == 'vi' else 'At home. In clinic. By your side.'"/>
+                    <t t-out="'Tại nhà. Tại phòng khám. Luôn đồng hành.' if site_lang == 'vi' else 'At home. In clinic. By your side.'"/>
                   </small>
                 </div>
               </div>
               <span class="photo-caption">
-                <t t-out="'Đồng hành cùng bạn ở mọi giai đoạn cuộc sống.' if lang == 'vi' else 'A personal approach to every stage of life.'"/>
+                <t t-out="'Đồng hành cùng bạn ở mọi giai đoạn cuộc sống.' if site_lang == 'vi' else 'A personal approach to every stage of life.'"/>
               </span>
             </div>
           </section>
@@ -511,28 +511,28 @@
               <div>
                 <span>01</span>
                 <strong>
-                  <t t-out="'Chăm sóc tại nhà' if lang == 'vi' else 'Home healthcare'"/>
+                  <t t-out="'Chăm sóc tại nhà' if site_lang == 'vi' else 'Home healthcare'"/>
                 </strong>
                 <small>
-                  <t t-out="'Thoải mái trong không gian quen thuộc' if lang == 'vi' else 'Comfort in familiar surroundings'"/>
+                  <t t-out="'Thoải mái trong không gian quen thuộc' if site_lang == 'vi' else 'Comfort in familiar surroundings'"/>
                 </small>
               </div>
               <div>
                 <span>02</span>
                 <strong>
-                  <t t-out="'Y học gia đình' if lang == 'vi' else 'Family medicine'"/>
+                  <t t-out="'Y học gia đình' if site_lang == 'vi' else 'Family medicine'"/>
                 </strong>
                 <small>
-                  <t t-out="'Đồng hành lâu dài cùng gia đình' if lang == 'vi' else 'A relationship that continues'"/>
+                  <t t-out="'Đồng hành lâu dài cùng gia đình' if site_lang == 'vi' else 'A relationship that continues'"/>
                 </small>
               </div>
               <div>
                 <span>03</span>
                 <strong>
-                  <t t-out="'Hà Nội &amp; TP. Hồ Chí Minh' if lang == 'vi' else 'Hanoi &amp; Ho Chi Minh City'"/>
+                  <t t-out="'Hà Nội &amp; TP. Hồ Chí Minh' if site_lang == 'vi' else 'Hanoi &amp; Ho Chi Minh City'"/>
                 </strong>
                 <small>
-                  <t t-out="'Đội ngũ tại địa phương, chăm sóc kết nối' if lang == 'vi' else 'Local teams, connected care'"/>
+                  <t t-out="'Đội ngũ tại địa phương, chăm sóc kết nối' if site_lang == 'vi' else 'Local teams, connected care'"/>
                 </small>
               </div>
             </div>
@@ -541,18 +541,18 @@
             <div class="section-heading">
               <div>
                 <p class="eyebrow">
-                  <t t-out="'CHĂM SÓC THEO NHU CẦU CỦA BẠN' if lang == 'vi' else 'CARE, ON YOUR TERMS'"/>
+                  <t t-out="'CHĂM SÓC THEO NHU CẦU CỦA BẠN' if site_lang == 'vi' else 'CARE, ON YOUR TERMS'"/>
                 </p>
                 <h2>
-                  <t t-out="'Chăm sóc đúng nhu cầu.' if lang == 'vi' else 'The support you need.'"/>
+                  <t t-out="'Chăm sóc đúng nhu cầu.' if site_lang == 'vi' else 'The support you need.'"/>
                   <br/>
                   <span class="serif">
-                    <t t-out="'An tâm trong từng khoảnh khắc.' if lang == 'vi' else 'The comfort you know.'"/>
+                    <t t-out="'An tâm trong từng khoảnh khắc.' if site_lang == 'vi' else 'The comfort you know.'"/>
                   </span>
                 </h2>
               </div>
               <p>
-                <t t-out="'Mỗi người có nhu cầu khác nhau. Chúng tôi cùng bạn lựa chọn dịch vụ phù hợp và lên kế hoạch cho bước tiếp theo.' if lang == 'vi' else 'Every person’s needs are different. We’ll help you find the right service and plan the next step, together.'"/>
+                <t t-out="'Mỗi người có nhu cầu khác nhau. Chúng tôi cùng bạn lựa chọn dịch vụ phù hợp và lên kế hoạch cho bước tiếp theo.' if site_lang == 'vi' else 'Every person’s needs are different. We’ll help you find the right service and plan the next step, together.'"/>
               </p>
             </div>
             <div class="client-service-grid">
@@ -562,13 +562,13 @@
                   <span>01</span>
                 </div>
                 <h3>
-                  <t t-out="'Điều dưỡng tại nhà' if lang == 'vi' else 'Home nursing'"/>
+                  <t t-out="'Điều dưỡng tại nhà' if site_lang == 'vi' else 'Home nursing'"/>
                 </h3>
                 <p>
-                  <t t-out="'Hỗ trợ sinh hoạt hàng ngày, chăm sóc vết thương và phục hồi sau khi xuất viện.' if lang == 'vi' else 'Professional support for daily living, wound care and recovery after a hospital stay.'"/>
+                  <t t-out="'Hỗ trợ sinh hoạt hàng ngày, chăm sóc vết thương và phục hồi sau khi xuất viện.' if site_lang == 'vi' else 'Professional support for daily living, wound care and recovery after a hospital stay.'"/>
                 </p>
                 <a href="#contact">
-                  <t t-out="'Trao đổi cùng chúng tôi' if lang == 'vi' else 'Talk to our team'"/>
+                  <t t-out="'Trao đổi cùng chúng tôi' if site_lang == 'vi' else 'Talk to our team'"/>
                   <span aria-hidden="true">↗</span>
                 </a>
               </article>
@@ -578,13 +578,13 @@
                   <span>02</span>
                 </div>
                 <h3>
-                  <t t-out="'Bác sĩ gia đình' if lang == 'vi' else 'Family doctors'"/>
+                  <t t-out="'Bác sĩ gia đình' if site_lang == 'vi' else 'Family doctors'"/>
                 </h3>
                 <p>
-                  <t t-out="'Tư vấn cá nhân, đánh giá sức khỏe và chăm sóc liên tục cho bạn cùng gia đình.' if lang == 'vi' else 'Personal consultations, health assessments and ongoing support for you and your family.'"/>
+                  <t t-out="'Tư vấn cá nhân, đánh giá sức khỏe và chăm sóc liên tục cho bạn cùng gia đình.' if site_lang == 'vi' else 'Personal consultations, health assessments and ongoing support for you and your family.'"/>
                 </p>
                 <a href="#contact">
-                  <t t-out="'Trao đổi cùng chúng tôi' if lang == 'vi' else 'Talk to our team'"/>
+                  <t t-out="'Trao đổi cùng chúng tôi' if site_lang == 'vi' else 'Talk to our team'"/>
                   <span aria-hidden="true">↗</span>
                 </a>
               </article>
@@ -594,13 +594,13 @@
                   <span>03</span>
                 </div>
                 <h3>
-                  <t t-out="'Chăm sóc chuyên sâu' if lang == 'vi' else 'Specialist support'"/>
+                  <t t-out="'Chăm sóc chuyên sâu' if site_lang == 'vi' else 'Specialist support'"/>
                 </h3>
                 <p>
-                  <t t-out="'Trao đổi với đội ngũ về chăm sóc giảm nhẹ, bệnh mạn tính và nhu cầu điều dưỡng riêng.' if lang == 'vi' else 'Discuss palliative care, chronic conditions and individual nursing needs with our team.'"/>
+                  <t t-out="'Trao đổi với đội ngũ về chăm sóc giảm nhẹ, bệnh mạn tính và nhu cầu điều dưỡng riêng.' if site_lang == 'vi' else 'Discuss palliative care, chronic conditions and individual nursing needs with our team.'"/>
                 </p>
                 <a href="#contact">
-                  <t t-out="'Trao đổi cùng chúng tôi' if lang == 'vi' else 'Talk to our team'"/>
+                  <t t-out="'Trao đổi cùng chúng tôi' if site_lang == 'vi' else 'Talk to our team'"/>
                   <span aria-hidden="true">↗</span>
                 </a>
               </article>
@@ -610,13 +610,13 @@
                   <span>04</span>
                 </div>
                 <h3>
-                  <t t-out="'Chăm sóc từ xa' if lang == 'vi' else 'Care at a distance'"/>
+                  <t t-out="'Chăm sóc từ xa' if site_lang == 'vi' else 'Care at a distance'"/>
                 </h3>
                 <p>
-                  <t t-out="'Tư vấn y tế trực tuyến và hướng dẫn chăm sóc, cùng dịch vụ lấy mẫu xét nghiệm tại nhà.' if lang == 'vi' else 'Online medical consultations and guidance, with at-home sample collection services available.'"/>
+                  <t t-out="'Tư vấn y tế trực tuyến và hướng dẫn chăm sóc, cùng dịch vụ lấy mẫu xét nghiệm tại nhà.' if site_lang == 'vi' else 'Online medical consultations and guidance, with at-home sample collection services available.'"/>
                 </p>
                 <a href="#contact">
-                  <t t-out="'Trao đổi cùng chúng tôi' if lang == 'vi' else 'Talk to our team'"/>
+                  <t t-out="'Trao đổi cùng chúng tôi' if site_lang == 'vi' else 'Talk to our team'"/>
                   <span aria-hidden="true">↗</span>
                 </a>
               </article>
@@ -624,41 +624,41 @@
           </section>
           <section class="client-about shell" id="about">
             <div class="about-photo">
-              <img src="/health_public_site/static/img/viet-uc-care.webp" width="576" height="576" loading="lazy" t-att-alt="'Tư vấn và chăm sóc sức khỏe tại Việt Úc' if lang == 'vi' else 'Consultation and personal healthcare at Việt Úc'"/>
+              <img src="/health_public_site/static/img/viet-uc-care.webp" width="576" height="576" loading="lazy" t-att-alt="'Tư vấn và chăm sóc sức khỏe tại Việt Úc' if site_lang == 'vi' else 'Consultation and personal healthcare at Việt Úc'"/>
               <span>
-                <t t-out="'Chuyên nghiệp trong chăm sóc. Tận tâm trong kết nối.' if lang == 'vi' else 'Professional care. Personal connection.'"/>
+                <t t-out="'Chuyên nghiệp trong chăm sóc. Tận tâm trong kết nối.' if site_lang == 'vi' else 'Professional care. Personal connection.'"/>
               </span>
             </div>
             <div class="about-copy">
               <p class="eyebrow">
-                <t t-out="'KHÔNG CHỈ LÀ MỘT LẦN THĂM KHÁM' if lang == 'vi' else 'MORE THAN A VISIT'"/>
+                <t t-out="'KHÔNG CHỈ LÀ MỘT LẦN THĂM KHÁM' if site_lang == 'vi' else 'MORE THAN A VISIT'"/>
               </p>
               <h2>
-                <t t-out="'Thấu hiểu từng người.' if lang == 'vi' else 'We see the person.'"/>
+                <t t-out="'Thấu hiểu từng người.' if site_lang == 'vi' else 'We see the person.'"/>
                 <br/>
                 <span class="serif">
-                  <t t-out="'Chăm sóc bằng sự sẻ chia.' if lang == 'vi' else 'Not just the patient.'"/>
+                  <t t-out="'Chăm sóc bằng sự sẻ chia.' if site_lang == 'vi' else 'Not just the patient.'"/>
                 </span>
               </h2>
               <p>
-                <t t-out="'Thói quen, gia đình và những điều mang lại sự thoải mái cho bạn — tất cả đều là một phần trong hành trình chăm sóc tại Việt Úc.' if lang == 'vi' else 'Your routines. Your family. The things that make you feel at home. At Việt Úc, these are part of the care conversation.'"/>
+                <t t-out="'Thói quen, gia đình và những điều mang lại sự thoải mái cho bạn — tất cả đều là một phần trong hành trình chăm sóc tại Việt Úc.' if site_lang == 'vi' else 'Your routines. Your family. The things that make you feel at home. At Việt Úc, these are part of the care conversation.'"/>
               </p>
               <p>
-                <t t-out="'Đội ngũ bác sĩ gia đình và điều dưỡng tại nhà phối hợp để việc chăm sóc luôn liền mạch, từ buổi tư vấn đầu tiên đến những lần đồng hành tiếp theo.' if lang == 'vi' else 'Our family medicine and home nursing teams work together to support continuity, from an initial consultation to the care that follows.'"/>
+                <t t-out="'Đội ngũ bác sĩ gia đình và điều dưỡng tại nhà phối hợp để việc chăm sóc luôn liền mạch, từ buổi tư vấn đầu tiên đến những lần đồng hành tiếp theo.' if site_lang == 'vi' else 'Our family medicine and home nursing teams work together to support continuity, from an initial consultation to the care that follows.'"/>
               </p>
               <ul class="care-principles">
                 <li>
-                  <t t-out="'Kế hoạch phù hợp với nhu cầu của bạn' if lang == 'vi' else 'A plan shaped around your needs'"/>
+                  <t t-out="'Kế hoạch phù hợp với nhu cầu của bạn' if site_lang == 'vi' else 'A plan shaped around your needs'"/>
                 </li>
                 <li>
-                  <t t-out="'Đội ngũ bác sĩ và điều dưỡng chuyên nghiệp' if lang == 'vi' else 'Professional doctors and nurses'"/>
+                  <t t-out="'Đội ngũ bác sĩ và điều dưỡng chuyên nghiệp' if site_lang == 'vi' else 'Professional doctors and nurses'"/>
                 </li>
                 <li>
-                  <t t-out="'Trao đổi rõ ràng cùng gia đình' if lang == 'vi' else 'Clear communication with your family'"/>
+                  <t t-out="'Trao đổi rõ ràng cùng gia đình' if site_lang == 'vi' else 'Clear communication with your family'"/>
                 </li>
               </ul>
               <a class="text-link" href="https://pkgdvietuc.com/">
-                <t t-out="'Tìm hiểu thêm về Việt Úc' if lang == 'vi' else 'More about Việt Úc'"/>
+                <t t-out="'Tìm hiểu thêm về Việt Úc' if site_lang == 'vi' else 'More about Việt Úc'"/>
                 <span aria-hidden="true">↗</span>
               </a>
             </div>
@@ -666,40 +666,40 @@
           <section class="client-process">
             <div class="shell">
               <p class="eyebrow">
-                <t t-out="'BẮT ĐẦU THẬT DỄ DÀNG' if lang == 'vi' else 'A SIMPLE FIRST STEP'"/>
+                <t t-out="'BẮT ĐẦU THẬT DỄ DÀNG' if site_lang == 'vi' else 'A SIMPLE FIRST STEP'"/>
               </p>
               <h2>
-                <t t-out="'Cùng tìm hướng' if lang == 'vi' else 'Let’s find your'"/>
+                <t t-out="'Cùng tìm hướng' if site_lang == 'vi' else 'Let’s find your'"/>
                 <span class="serif">
-                  <t t-out="'chăm sóc phù hợp.' if lang == 'vi' else 'way forward.'"/>
+                  <t t-out="'chăm sóc phù hợp.' if site_lang == 'vi' else 'way forward.'"/>
                 </span>
               </h2>
               <div class="process-grid">
                 <article>
                   <span>01</span>
                   <h3>
-                    <t t-out="'Chia sẻ nhu cầu' if lang == 'vi' else 'Tell us what you need'"/>
+                    <t t-out="'Chia sẻ nhu cầu' if site_lang == 'vi' else 'Tell us what you need'"/>
                   </h3>
                   <p>
-                    <t t-out="'Liên hệ đội ngũ tại địa phương và chia sẻ sự hỗ trợ bạn đang tìm kiếm.' if lang == 'vi' else 'Contact your local team and share the kind of support you’re looking for.'"/>
+                    <t t-out="'Liên hệ đội ngũ tại địa phương và chia sẻ sự hỗ trợ bạn đang tìm kiếm.' if site_lang == 'vi' else 'Contact your local team and share the kind of support you’re looking for.'"/>
                   </p>
                 </article>
                 <article>
                   <span>02</span>
                   <h3>
-                    <t t-out="'Cùng lên kế hoạch' if lang == 'vi' else 'Make a plan together'"/>
+                    <t t-out="'Cùng lên kế hoạch' if site_lang == 'vi' else 'Make a plan together'"/>
                   </h3>
                   <p>
-                    <t t-out="'Chúng tôi trao đổi về dịch vụ phù hợp, lịch hẹn và các chi tiết chăm sóc.' if lang == 'vi' else 'We’ll discuss suitable services, availability and the details of your care.'"/>
+                    <t t-out="'Chúng tôi trao đổi về dịch vụ phù hợp, lịch hẹn và các chi tiết chăm sóc.' if site_lang == 'vi' else 'We’ll discuss suitable services, availability and the details of your care.'"/>
                   </p>
                 </article>
                 <article>
                   <span>03</span>
                   <h3>
-                    <t t-out="'An tâm được chăm sóc' if lang == 'vi' else 'Feel supported'"/>
+                    <t t-out="'An tâm được chăm sóc' if site_lang == 'vi' else 'Feel supported'"/>
                   </h3>
                   <p>
-                    <t t-out="'Gặp chuyên viên chăm sóc và bắt đầu hành trình với sự đồng hành của gia đình.' if lang == 'vi' else 'Meet your care professional and take the next step with your family informed.'"/>
+                    <t t-out="'Gặp chuyên viên chăm sóc và bắt đầu hành trình với sự đồng hành của gia đình.' if site_lang == 'vi' else 'Meet your care professional and take the next step with your family informed.'"/>
                   </p>
                 </article>
               </div>
@@ -709,44 +709,44 @@
             <div class="section-heading">
               <div>
                 <p class="eyebrow">
-                  <t t-out="'GẦN BẠN HƠN' if lang == 'vi' else 'CLOSER TO YOU'"/>
+                  <t t-out="'GẦN BẠN HƠN' if site_lang == 'vi' else 'CLOSER TO YOU'"/>
                 </p>
                 <h2>
-                  <t t-out="'Hai thành phố.' if lang == 'vi' else 'Two cities.'"/>
+                  <t t-out="'Hai thành phố.' if site_lang == 'vi' else 'Two cities.'"/>
                   <br/>
                   <span class="serif">
-                    <t t-out="'Chung một tấm lòng.' if lang == 'vi' else 'One caring approach.'"/>
+                    <t t-out="'Chung một tấm lòng.' if site_lang == 'vi' else 'One caring approach.'"/>
                   </span>
                 </h2>
               </div>
               <p>
-                <t t-out="'Kết nối trực tiếp với đội ngũ Việt Úc để trao đổi về dịch vụ và lịch chăm sóc tại khu vực của bạn.' if lang == 'vi' else 'Connect directly with your local Việt Úc team to discuss services and availability in your area.'"/>
+                <t t-out="'Kết nối trực tiếp với đội ngũ Việt Úc để trao đổi về dịch vụ và lịch chăm sóc tại khu vực của bạn.' if site_lang == 'vi' else 'Connect directly with your local Việt Úc team to discuss services and availability in your area.'"/>
               </p>
             </div>
             <div class="locations-grid">
               <article>
-                <span class="eyebrow">01 / <t t-out="'HÀ NỘI' if lang == 'vi' else 'HANOI'"/></span>
+                <span class="eyebrow">01 / <t t-out="'HÀ NỘI' if site_lang == 'vi' else 'HANOI'"/></span>
                 <h3>
-                  <t t-out="'Đội ngũ tại Hà Nội' if lang == 'vi' else 'Your Hanoi care team'"/>
+                  <t t-out="'Đội ngũ tại Hà Nội' if site_lang == 'vi' else 'Your Hanoi care team'"/>
                 </h3>
                 <p>Số 30 Lô 1A, Khu đô thị Trung Yên,<br/>Đường Trung Yên 11B, Phường Yên Hòa, Hà Nội</p>
                 <a class="location-phone" href="tel:18006896">1800 6896 <span aria-hidden="true">↗</span></a>
                 <a href="mailto:contact@pkgdvietuc.com">contact@pkgdvietuc.com</a>
                 <a class="text-link" href="https://www.google.com/maps/search/?api=1&amp;query=Phong+Kham+Gia+Dinh+Viet+Uc+30+Trung+Yen+11B+Ha+Noi">
-                  <t t-out="'Xem đường đi' if lang == 'vi' else 'Find directions'"/>
+                  <t t-out="'Xem đường đi' if site_lang == 'vi' else 'Find directions'"/>
                   <span aria-hidden="true">↗</span>
                 </a>
               </article>
               <article>
-                <span class="eyebrow">02 / <t t-out="'TP. HỒ CHÍ MINH' if lang == 'vi' else 'HO CHI MINH CITY'"/></span>
+                <span class="eyebrow">02 / <t t-out="'TP. HỒ CHÍ MINH' if site_lang == 'vi' else 'HO CHI MINH CITY'"/></span>
                 <h3>
-                  <t t-out="'Đội ngũ tại TP. Hồ Chí Minh' if lang == 'vi' else 'Your Ho Chi Minh City care team'"/>
+                  <t t-out="'Đội ngũ tại TP. Hồ Chí Minh' if site_lang == 'vi' else 'Your Ho Chi Minh City care team'"/>
                 </h3>
                 <p>215 Đinh Tiên Hoàng,<br/>Phường Tân Định, TP. Hồ Chí Minh</p>
                 <a class="location-phone" href="tel:18006894">1800 6894 <span aria-hidden="true">↗</span></a>
                 <a href="mailto:om@cstnvusaigon.com">om@cstnvusaigon.com</a>
                 <a class="text-link" href="https://www.google.com/maps/search/?api=1&amp;query=Phong+Kham+Gia+Dinh+Viet+Uc+215+Dinh+Tien+Hoang">
-                  <t t-out="'Xem đường đi' if lang == 'vi' else 'Find directions'"/>
+                  <t t-out="'Xem đường đi' if site_lang == 'vi' else 'Find directions'"/>
                   <span aria-hidden="true">↗</span>
                 </a>
               </article>
@@ -755,51 +755,51 @@
           <section class="faq-section shell client-faq">
             <div>
               <p class="eyebrow">
-                <t t-out="'SẴN SÀNG HỖ TRỢ' if lang == 'vi' else 'HERE TO HELP'"/>
+                <t t-out="'SẴN SÀNG HỖ TRỢ' if site_lang == 'vi' else 'HERE TO HELP'"/>
               </p>
               <h2>
-                <t t-out="'Thêm hiểu biết.' if lang == 'vi' else 'A little reassurance.'"/>
+                <t t-out="'Thêm hiểu biết.' if site_lang == 'vi' else 'A little reassurance.'"/>
                 <br/>
                 <span class="serif">
-                  <t t-out="'Thêm an tâm.' if lang == 'vi' else 'Before we begin.'"/>
+                  <t t-out="'Thêm an tâm.' if site_lang == 'vi' else 'Before we begin.'"/>
                 </span>
               </h2>
             </div>
             <div class="faq-list">
               <details>
                 <summary>
-                  <t t-out="'Tôi đặt lịch chăm sóc như thế nào?' if lang == 'vi' else 'How do I arrange care?'"/>
+                  <t t-out="'Tôi đặt lịch chăm sóc như thế nào?' if site_lang == 'vi' else 'How do I arrange care?'"/>
                   <span>+</span>
                 </summary>
                 <p>
-                  <t t-out="'Gọi đội ngũ Hà Nội theo số 1800 6896 hoặc TP. Hồ Chí Minh theo số 1800 6894. Chúng tôi trao đổi về nhu cầu, địa điểm và dịch vụ phù hợp trước khi sắp xếp bước tiếp theo.' if lang == 'vi' else 'Call the Hanoi team on 1800 6896 or the Ho Chi Minh City team on 1800 6894. We’ll discuss your needs, location and available services before arranging the next step.'"/>
+                  <t t-out="'Gọi đội ngũ Hà Nội theo số 1800 6896 hoặc TP. Hồ Chí Minh theo số 1800 6894. Chúng tôi trao đổi về nhu cầu, địa điểm và dịch vụ phù hợp trước khi sắp xếp bước tiếp theo.' if site_lang == 'vi' else 'Call the Hanoi team on 1800 6896 or the Ho Chi Minh City team on 1800 6894. We’ll discuss your needs, location and available services before arranging the next step.'"/>
                 </p>
               </details>
               <details>
                 <summary>
-                  <t t-out="'Tôi có thể được chăm sóc tại nhà không?' if lang == 'vi' else 'Can you provide care at home?'"/>
+                  <t t-out="'Tôi có thể được chăm sóc tại nhà không?' if site_lang == 'vi' else 'Can you provide care at home?'"/>
                   <span>+</span>
                 </summary>
                 <p>
-                  <t t-out="'Điều dưỡng và bác sĩ thăm khám tại nhà là những dịch vụ của chúng tôi. Đội ngũ tại địa phương sẽ xác nhận dịch vụ phù hợp với nhu cầu và nơi ở của bạn.' if lang == 'vi' else 'Home nursing and doctor visits are part of our services. Your local team will confirm which services are suitable and available for your needs and location.'"/>
+                  <t t-out="'Điều dưỡng và bác sĩ thăm khám tại nhà là những dịch vụ của chúng tôi. Đội ngũ tại địa phương sẽ xác nhận dịch vụ phù hợp với nhu cầu và nơi ở của bạn.' if site_lang == 'vi' else 'Home nursing and doctor visits are part of our services. Your local team will confirm which services are suitable and available for your needs and location.'"/>
                 </p>
               </details>
               <details>
                 <summary>
-                  <t t-out="'Hóa đơn và bảo hiểm được hỗ trợ thế nào?' if lang == 'vi' else 'What about invoices and insurance?'"/>
+                  <t t-out="'Hóa đơn và bảo hiểm được hỗ trợ thế nào?' if site_lang == 'vi' else 'What about invoices and insurance?'"/>
                   <span>+</span>
                 </summary>
                 <p>
-                  <t t-out="'Chúng tôi cung cấp hóa đơn chính thức để hỗ trợ yêu cầu bồi hoàn. Vui lòng xác nhận phạm vi bảo hiểm và thủ tục với công ty bảo hiểm và bộ phận hành chính.' if lang == 'vi' else 'Official invoices are available to support reimbursement requests. Please confirm coverage and requirements with your insurer and our administrative team.'"/>
+                  <t t-out="'Chúng tôi cung cấp hóa đơn chính thức để hỗ trợ yêu cầu bồi hoàn. Vui lòng xác nhận phạm vi bảo hiểm và thủ tục với công ty bảo hiểm và bộ phận hành chính.' if site_lang == 'vi' else 'Official invoices are available to support reimbursement requests. Please confirm coverage and requirements with your insurer and our administrative team.'"/>
                 </p>
               </details>
               <details>
                 <summary>
-                  <t t-out="'Gia đình có thể cùng tham gia không?' if lang == 'vi' else 'Can family members be involved?'"/>
+                  <t t-out="'Gia đình có thể cùng tham gia không?' if site_lang == 'vi' else 'Can family members be involved?'"/>
                   <span>+</span>
                 </summary>
                 <p>
-                  <t t-out="'Chúng tôi luôn lắng nghe người bệnh và gia đình. Hãy trao đổi cùng đội ngũ về mong muốn, sự đồng ý và cách bạn muốn nhận thông tin chăm sóc.' if lang == 'vi' else 'We welcome conversations with patients and their families. Speak with the team about your preferences, consent and how you would like to stay informed.'"/>
+                  <t t-out="'Chúng tôi luôn lắng nghe người bệnh và gia đình. Hãy trao đổi cùng đội ngũ về mong muốn, sự đồng ý và cách bạn muốn nhận thông tin chăm sóc.' if site_lang == 'vi' else 'We welcome conversations with patients and their families. Speak with the team about your preferences, consent and how you would like to stay informed.'"/>
                 </p>
               </details>
             </div>
@@ -807,21 +807,21 @@
           <section class="client-contact" id="contact">
             <div class="shell">
               <p class="eyebrow">
-                <t t-out="'GIA ĐÌNH BẠN. SỰ TẬN TÂM CỦA CHÚNG TÔI.' if lang == 'vi' else 'YOUR FAMILY. OUR COMMITMENT.'"/>
+                <t t-out="'GIA ĐÌNH BẠN. SỰ TẬN TÂM CỦA CHÚNG TÔI.' if site_lang == 'vi' else 'YOUR FAMILY. OUR COMMITMENT.'"/>
               </p>
               <h2>
-                <t t-out="'Chăm sóc tốt bắt đầu' if lang == 'vi' else 'Good care starts'"/>
+                <t t-out="'Chăm sóc tốt bắt đầu' if site_lang == 'vi' else 'Good care starts'"/>
                 <br/>
                 <span class="serif">
-                  <t t-out="'từ sự lắng nghe.' if lang == 'vi' else 'with a conversation.'"/>
+                  <t t-out="'từ sự lắng nghe.' if site_lang == 'vi' else 'with a conversation.'"/>
                 </span>
               </h2>
               <p>
-                <t t-out="'Hãy chia sẻ điều bạn quan tâm. Chúng tôi luôn sẵn sàng lắng nghe.' if lang == 'vi' else 'Tell us what matters to you. We’re here to listen.'"/>
+                <t t-out="'Hãy chia sẻ điều bạn quan tâm. Chúng tôi luôn sẵn sàng lắng nghe.' if site_lang == 'vi' else 'Tell us what matters to you. We’re here to listen.'"/>
               </p>
               <div class="contact-actions">
-                <a class="button button-light" href="tel:18006896"><t t-out="'Gọi Hà Nội' if lang == 'vi' else 'Call Hanoi'"/> · 1800 6896 <span aria-hidden="true">↗</span></a>
-                <a class="button button-outline" href="tel:18006894"><t t-out="'Gọi TP. Hồ Chí Minh' if lang == 'vi' else 'Call Ho Chi Minh City'"/> · 1800 6894 <span aria-hidden="true">↗</span></a>
+                <a class="button button-light" href="tel:18006896"><t t-out="'Gọi Hà Nội' if site_lang == 'vi' else 'Call Hanoi'"/> · 1800 6896 <span aria-hidden="true">↗</span></a>
+                <a class="button button-outline" href="tel:18006894"><t t-out="'Gọi TP. Hồ Chí Minh' if site_lang == 'vi' else 'Call Ho Chi Minh City'"/> · 1800 6894 <span aria-hidden="true">↗</span></a>
               </div>
             </div>
           </section>
@@ -832,26 +832,26 @@
               <img src="/health_public_site/static/img/viet-uc-logo.webp" alt="Phòng Khám Gia Đình Việt Úc" width="200" height="59" loading="lazy"/>
             </a>
             <p>
-              <t t-out="'Chăm sóc chuyên nghiệp. Gần gũi tại nhà.' if lang == 'vi' else 'Professional care. Close to home.'"/>
+              <t t-out="'Chăm sóc chuyên nghiệp. Gần gũi tại nhà.' if site_lang == 'vi' else 'Professional care. Close to home.'"/>
             </p>
           </div>
           <div>
             <a href="#services">
-              <t t-out="'Dịch vụ' if lang == 'vi' else 'Our services'"/>
+              <t t-out="'Dịch vụ' if site_lang == 'vi' else 'Our services'"/>
             </a>
             <a href="https://pkgdvietuc.com/">
-              <t t-out="'Website chính thức' if lang == 'vi' else 'Visit our main website'"/>
+              <t t-out="'Website chính thức' if site_lang == 'vi' else 'Visit our main website'"/>
               <span aria-hidden="true">↗</span>
             </a>
             <a href="/web/login">
-              <t t-out="'Đăng nhập nhân viên' if lang == 'vi' else 'Staff sign in'"/>
+              <t t-out="'Đăng nhập nhân viên' if site_lang == 'vi' else 'Staff sign in'"/>
               <span aria-hidden="true">↗</span>
             </a>
           </div>
           <div>
             <span>© <t t-out="year"/> Việt Úc</span>
             <a href="https://carejiox.com/">
-              <t t-out="'Kết nối bởi CareJiox' if lang == 'vi' else 'Connected by CareJiox'"/>
+              <t t-out="'Kết nối bởi CareJiox' if site_lang == 'vi' else 'Connected by CareJiox'"/>
               <span aria-hidden="true">↗</span>
             </a>
             <div class="language-toggle">
