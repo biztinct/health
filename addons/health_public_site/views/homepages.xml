@@ -7,7 +7,7 @@
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <meta name="theme-color" content="#10283f"/>
-        <link rel="stylesheet" href="/health_public_site/static/src/home.css?v=1"/>
+        <link rel="stylesheet" href="/health_public_site/static/src/home.css?v=2"/>
         <script defer="defer" src="/health_public_site/static/src/home.js?v=1"/>
         <title>CareJiox — More care. Less complexity.</title>
         <meta name="description" content="One connected platform for care teams. Bring client relationships, scheduling, clinical records, billing and family communication together with CareJiox."/>
@@ -377,7 +377,7 @@
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <meta name="theme-color" content="#10283f"/>
-        <link rel="stylesheet" href="/health_public_site/static/src/home.css?v=1"/>
+        <link rel="stylesheet" href="/health_public_site/static/src/home.css?v=2"/>
         <script defer="defer" src="/health_public_site/static/src/home.js?v=1"/>
         <title>
           <t t-out="'Việt Úc — Chăm sóc tận tâm. An tâm tại nhà.' if site_lang == 'vi' else 'Việt Úc — Thoughtful care. Close to home.'"/>
