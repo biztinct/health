@@ -96,7 +96,10 @@
         new ResizeObserver(resize).observe(scene);
         new IntersectionObserver(entries => { visible = entries[0].isIntersecting; }).observe(scene);
         resize(); frame = requestAnimationFrame(tick);
-        window.addEventListener('pagehide', () => cancelAnimationFrame(frame), {once:true});
+        window.addEventListener('pagehide', () => cancelAnimationFrame(frame));
+        window.addEventListener('pageshow', event => {
+            if (event.persisted) { last = 0; frame = requestAnimationFrame(tick); }
+        });
         scene.addEventListener('pointermove', event => {
             if (paused || event.pointerType === 'touch') return;
             const r = scene.getBoundingClientRect();

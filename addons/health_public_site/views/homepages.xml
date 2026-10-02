@@ -22,7 +22,7 @@
         <link rel="icon" href="/health_public_site/static/img/carejiox-mark.svg"/>
         <link rel="preload" href="/health_public_site/static/fonts/dm-sans-700.ttf" as="font" type="font/ttf" crossorigin="anonymous"/>
         <link rel="stylesheet" href="/health_public_site/static/src/home.css?v=3"/>
-        <script defer="defer" src="/health_public_site/static/src/home.js?v=3"/>
+        <script defer="defer" src="/health_public_site/static/src/home.js?v=4"/>
       </head>
       <body class="cj-platform">
         <a class="skip" href="#main">Skip to content</a>
@@ -492,7 +492,7 @@
         <link rel="icon" href="/health_public_site/static/img/viet-uc-logo.webp"/>
         <link rel="preload" href="/health_public_site/static/fonts/dm-sans-700.ttf" as="font" type="font/ttf" crossorigin="anonymous"/>
         <link rel="stylesheet" href="/health_public_site/static/src/home.css?v=3"/>
-        <script defer="defer" src="/health_public_site/static/src/home.js?v=3"/>
+        <script defer="defer" src="/health_public_site/static/src/home.js?v=4"/>
       </head>
       <body class="vu-client">
         <a class="skip" href="#main">
