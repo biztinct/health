@@ -1,60 +1,70 @@
 /** @odoo-module **/
 
 function initializeTestimonialStrips() {
-    // Keep Website Builder content static and editable.
-    if (document.body.classList.contains('editor_enable')) return;
+    if (document.body.classList.contains('editor_enable')) {
+        document.querySelectorAll('[data-film-copy]').forEach((copy) => copy.remove());
+        return;
+    }
     document.querySelectorAll('.thhs26-film').forEach((strip) => {
         if (strip.dataset.ready) return;
         strip.dataset.ready = '1';
         const viewport = strip.querySelector('.thhs26-film-window');
-        const toggle = strip.querySelector('[data-film="pause"]');
+        const track = strip.querySelector('.thhs26-film-track');
+        const cards = Array.from(track.children);
         const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-        let paused = motion.matches;
         let hovering = false;
         let focused = false;
         let previous = 0;
-        const update = () => {
-            toggle.textContent = paused ? 'Play testimonials' : 'Pause testimonials';
-            toggle.setAttribute('aria-pressed', String(paused));
+        let position = 0;
+        let seam = 0;
+        const copies = [];
+        const rebuild = () => {
+            copies.splice(0).forEach((copy) => copy.remove());
+            if (!cards.length || motion.matches) return;
+            const gap = parseFloat(getComputedStyle(track).gap) || 0;
+            seam = cards.reduce((sum, card) => sum + card.getBoundingClientRect().width + gap, 0);
+            for (let group = 0; group < Math.ceil(viewport.clientWidth / seam) + 1; group++) {
+                cards.forEach((card) => {
+                    const copy = card.cloneNode(true);
+                    copy.setAttribute('data-film-copy', '1');
+                    copy.setAttribute('aria-hidden', 'true');
+                    copy.setAttribute('tabindex', '-1');
+                    track.append(copy);
+                    copies.push(copy);
+                });
+            }
         };
-        toggle.addEventListener('click', () => { paused = !paused; update(); });
         strip.addEventListener('mouseenter', () => { hovering = true; });
         strip.addEventListener('mouseleave', () => { hovering = false; });
         strip.addEventListener('focusin', () => { focused = true; });
         strip.addEventListener('focusout', (event) => { focused = strip.contains(event.relatedTarget); });
-        motion.addEventListener('change', () => { paused = motion.matches; update(); });
-        for (const direction of ['previous', 'next']) {
-            strip.querySelector(`[data-film="${direction}"]`).addEventListener('click', () => {
-                paused = true;
-                update();
-                viewport.scrollBy({left: direction === 'next' ? 234 : -234, behavior: motion.matches ? 'instant' : 'smooth'});
-            });
-        }
         viewport.addEventListener('keydown', (event) => {
             if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
                 event.preventDefault();
-                paused = true;
-                update();
                 viewport.scrollBy({left: event.key === 'ArrowRight' ? 234 : -234});
+                position = viewport.scrollLeft;
             }
         });
+        viewport.addEventListener('scroll', () => { if (focused) position = viewport.scrollLeft; });
+        const resize = new ResizeObserver(rebuild);
+        resize.observe(viewport);
+        motion.addEventListener('change', rebuild);
         const step = (time) => {
-            if (!strip.isConnected) return;
+            if (!strip.isConnected) { resize.disconnect(); return; }
+            if (document.body.classList.contains('editor_enable')) return;
             const delta = previous ? Math.min(time - previous, 50) : 0;
             previous = time;
-            if (!paused && !hovering && !focused && !document.hidden) {
-                const end = viewport.scrollWidth - viewport.clientWidth;
-                viewport.scrollLeft = viewport.scrollLeft >= end - 1 ? 0 : viewport.scrollLeft + delta * .035;
+            if (!motion.matches && !hovering && !focused && !document.hidden && seam) {
+                position = (position + delta * .035) % seam;
+                viewport.scrollLeft = position;
             }
             requestAnimationFrame(step);
         };
-        update();
+        rebuild();
         requestAnimationFrame(step);
     });
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initializeTestimonialStrips, {once: true});
 else initializeTestimonialStrips();
-// Odoo can insert page content after DOMContentLoaded during navigation.
-// Reinitialize newly inserted strips without duplicating existing listeners.
-const testimonialObserver = new MutationObserver(initializeTestimonialStrips);
-testimonialObserver.observe(document.documentElement, {childList: true, subtree: true});
+new MutationObserver(initializeTestimonialStrips).observe(document.documentElement, {childList: true, subtree: true});
+new MutationObserver(initializeTestimonialStrips).observe(document.body, {attributes: true, attributeFilter: ['class']});

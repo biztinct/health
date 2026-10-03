@@ -251,3 +251,45 @@ body:has(#wrap.thhs26) header#top {
         #top_menu > .nav-item > .nav-link { min-height: 62px; }
     }
 }
+
+// Screen-fit illustration pages; preserve complete images and readable text.
+#wrap.thhs26 {
+    .thhs26-vision {
+        min-height: 0;
+        background-size: contain;
+        background-position: center top;
+        height: unquote("max(270px, calc(100svh - 240px))");
+    }
+    .thhs26-incorporated {
+        max-height: unquote("min(390px, max(170px, calc(100svh - 290px)))");
+    }
+    .thhs26-hospital-details, .thhs26-hospital-photo {
+        max-height: unquote("min(340px, max(150px, calc(100svh - 280px)))");
+        object-fit: contain;
+    }
+    .thhs26-support {
+        h2 { margin-bottom: 18px; }
+        .row { --gutter-y: 18px; --bs-gutter-y: 18px; }
+        img {
+            max-height: unquote("min(120px, max(60px, calc((100svh - 340px) / 2)))");
+            max-width: 190px;
+        }
+    }
+    .thhs26-calendar .row { align-items: flex-start !important; }
+    .thhs26-calendar .col-md-3 img { max-height: 220px; object-fit: contain; }
+    .thhs26-testimonial-head { max-width: 640px; margin-bottom: 0; }
+    .thhs26-testimonial-head img { max-height: 180px; }
+    .thhs26-film-window { overflow: hidden; scrollbar-width: none; }
+    .thhs26-film-window::-webkit-scrollbar { display: none; }
+    .thhs26-film-card { flex-basis: 210px; }
+}
+@media (max-width: 767.98px) {
+    #wrap.thhs26 {
+        .thhs26-vision { height: auto; min-height: 280px; }
+        .thhs26-incorporated { max-height: 180px; }
+        .thhs26-rule-icon { max-height: 100px; }
+        .thhs26-hospital-details, .thhs26-hospital-photo { max-height: 150px; }
+        .thhs26-support img { max-height: 65px; max-width: 125px; }
+        .thhs26-support .thhs26-button { padding: 10px 15px; }
+    }
+}

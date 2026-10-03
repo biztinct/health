@@ -156,8 +156,15 @@ stay unchanged. Desktop navigation spacing, image coverage, lighter watermark
 overlays and news-card bottom/right shadows follow the approved review.
 
 The strip contains only the eight completed testimonials near the bottom of
-`/projects`, pauses on hover/focus, has keyboard and pause controls, and starts
-paused for reduced motion. Biographical carousels remain manual. Archive
+`/projects`, pauses on hover/focus, has keyboard access without visible controls or a scrollbar, and stays
+static for reduced motion. Biographical carousels remain manual. Archive
 maintenance stays editor-managed; no current item is twelve months old.
 Rules PDF, revised membership form, Mary's identified/reviewed biography,
 new social pictures and additional finished testimonials remain client inputs.
+
+Run `scripts/apply_responsive_review.py` in Odoo shell for the screenshot
+corrections: remove the duplicated static testimonial grid and strip controls,
+and reduce illustration-section spacing without replacing client text. The
+strip loops seamlessly with transient visual copies removed in Website Builder.
+Vision uses a contained background; Calendar art is top aligned; Rules,
+Get Involved and Hospital illustrations scale with available viewport height.
