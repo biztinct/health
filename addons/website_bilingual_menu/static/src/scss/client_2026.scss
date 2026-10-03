@@ -210,3 +210,44 @@ body:has(#wrap.thhs26) header#top #top_menu { width: 100%; }
     .thhs26-film-card img { width: 100%; height: 150px; object-fit: contain; }
     .thhs26-film-card:focus-visible { outline: 3px solid #005e76; outline-offset: -3px; }
 }
+
+// Compact client header: scale the existing square logo crop proportionally.
+body:has(#wrap.thhs26) header#top {
+    #o_main_nav { min-height: 86px; }
+    #top_menu > .nav-item > .nav-link { min-height: 86px; }
+    .navbar-brand.logo {
+        width: 140px;
+        height: 80px;
+        flex-basis: 140px;
+        margin-right: 22px !important;
+        img {
+            width: 140px !important;
+            height: 140px !important;
+            transform: translateY(-28px);
+        }
+    }
+}
+@media (min-width: 768px) {
+    #wrap.thhs26 .thhs26-welcome-photo {
+        height: min(38vw, calc(100svh - 150px));
+        min-height: 350px;
+        aspect-ratio: auto;
+        object-position: center 40%;
+    }
+}
+@media (max-width: 991.98px) {
+    body:has(#wrap.thhs26) header#top {
+        .o_header_mobile .o_main_nav { min-height: 72px; }
+        .navbar-brand.logo {
+            width: 120px;
+            height: 64px;
+            flex-basis: 120px;
+            img {
+                width: 120px !important;
+                height: 120px !important;
+                transform: translateY(-26px);
+            }
+        }
+        #top_menu > .nav-item > .nav-link { min-height: 62px; }
+    }
+}
