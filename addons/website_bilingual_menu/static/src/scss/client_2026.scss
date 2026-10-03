@@ -229,7 +229,7 @@ body:has(#wrap.thhs26) header#top {
 }
 @media (min-width: 768px) {
     #wrap.thhs26 .thhs26-welcome-photo {
-        height: min(38vw, calc(100svh - 150px));
+        height: unquote("min(38vw, calc(100svh - 150px))");
         min-height: 350px;
         aspect-ratio: auto;
         object-position: center 40%;
