@@ -142,3 +142,22 @@ local content/XML/checksum validation; local Chrome desktop/mobile previews;
 and a full Odoo importer/snippet dry run, rolled back successfully. The live
 review deployment uses the local Aptos stack and temporary Contact Us
 destinations. Missing final inputs do not block this requested review.
+
+### October 2026 approved review
+
+Run `scripts/apply_review_2026.py` in Odoo shell for `thhs` after upgrading the
+module. It reads current website 1 content and applies only the confirmed
+Givealittle URL, Les's 106th birthday, news labels, editable testimonial
+captions/rolling strip and an unlinked Instagram icon. It is idempotent and
+supports `THHS_REVIEW_DRYRUN=1`; the full refresh importer must not be rerun.
+Live History/Purpose copy and website 2 remain untouched. Heading declarations
+increase by exactly 2px, including responsive clamps; body/navigation sizes
+stay unchanged. Desktop navigation spacing, image coverage, lighter watermark
+overlays and news-card bottom/right shadows follow the approved review.
+
+The strip contains only the eight completed testimonials near the bottom of
+`/projects`, pauses on hover/focus, has keyboard and pause controls, and starts
+paused for reduced motion. Biographical carousels remain manual. Archive
+maintenance stays editor-managed; no current item is twelve months old.
+Rules PDF, revised membership form, Mary's identified/reviewed biography,
+new social pictures and additional finished testimonials remain client inputs.

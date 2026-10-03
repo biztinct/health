@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "Website Bilingual Menu",
-    "version": "19.0.3.0.0",
+    "version": "19.0.3.1.0",
     "category": "Website",
     "summary": "Two-line English and Māori website navigation",
     "description": """
@@ -28,6 +28,7 @@ in bold above the Māori label. Menu names without a pipe remain unchanged.
             "website_bilingual_menu/static/src/scss/help_page.scss",
             "website_bilingual_menu/static/src/scss/client_2026.scss",
             "website_bilingual_menu/static/src/js/homepage_editorial.js",
+            "website_bilingual_menu/static/src/js/testimonial_strip.js",
         ],
     },
     "installable": True,

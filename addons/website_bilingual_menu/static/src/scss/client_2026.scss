@@ -25,14 +25,14 @@
         letter-spacing: normal;
     }
     h1, h2, h3, h4 { font-weight: 700; }
-    h1 { font-size: clamp(26px, 2.7vw, 38px); }
-    h2 { font-size: 25px; }
-    h3 { font-size: 20px; }
-    h4 { font-size: 18px; }
+    h1 { font-size: calc(clamp(26px, 2.7vw, 38px) + 2px); }
+    h2 { font-size: 27px; }
+    h3 { font-size: 22px; }
+    h4 { font-size: 20px; }
     p { margin-bottom: 12px; }
     li { margin-bottom: 12px; }
     .container { max-width: 1320px; }
-    .thhs26-label { color: #005e76; font-size: 20px; font-weight: 700; }
+    .thhs26-label { color: #005e76; font-size: 22px; font-weight: 700; }
     .thhs26-button {
         border: 1px solid #548434;
         border-radius: 10px;
@@ -44,7 +44,7 @@
         &:hover, &:focus { background: #b0e47c; color: #163d4a; }
     }
     .thhs26-title {
-        background-size: 100% 100%;
+        background-size: cover;
         background-position: center;
         color: #fff;
         text-align: center;
@@ -54,7 +54,7 @@
     .thhs26-watermark-section {
         position: relative;
         background-repeat: no-repeat;
-        background-size: contain;
+        background-size: cover;
         background-position: center bottom;
         .thhs26-copy { position: relative; }
     }
@@ -70,8 +70,8 @@
         width: 100%;
         margin: auto;
     }
-    // The reference slide presents the complete photo in this panoramic frame.
-    .thhs26-welcome-photo { width: 100%; aspect-ratio: 2.235; display: block; object-fit: fill; }
+    // Preserve image proportions within the client panoramic frame.
+    .thhs26-welcome-photo { width: 100%; aspect-ratio: 2.235; display: block; object-fit: cover; }
     .thhs26-welcome-copy {
         position: absolute;
         top: 10%;
@@ -79,14 +79,14 @@
         width: 46%;
         color: #fff;
         text-shadow: 0 1px 4px rgba(0, 24, 52, .8);
-        h1 { color: #fff; font-size: clamp(34px, 4.5vw, 68px); line-height: 1.05; margin: 0; }
-        h2 { color: rgba(255,255,255,.5); font-size: clamp(25px, 2.8vw, 40px); margin-bottom: 12px; line-height: 1.08; }
+        h1 { color: #fff; font-size: calc(clamp(34px, 4.5vw, 68px) + 2px); line-height: 1.05; margin: 0; }
+        h2 { color: rgba(255,255,255,.5); font-size: calc(clamp(25px, 2.8vw, 40px) + 2px); margin-bottom: 12px; line-height: 1.08; }
         p { font-size: clamp(15px, 1.45vw, 21px); line-height: 1.3; }
         .thhs26-button { margin-top: 10px; text-shadow: none; }
     }
     .thhs26-profiles {
         .carousel-content { width: 100%; }
-        h2 { color: #e97132; font-size: 25px; margin-bottom: 8px; }
+        h2 { color: #e97132; font-size: 27px; text-transform: uppercase; margin-bottom: 8px; }
         p { font-size: 16px; line-height: 1.45; }
         .thhs26-role { font-weight: 700; font-size: 18px; }
         .thhs26-skills { font-weight: 700; }
@@ -112,9 +112,9 @@
     }
     .thhs26-incorporated { opacity: .65; width: 100%; max-height: 450px; object-fit: contain; }
     .thhs26-rule-icon { max-height: 155px; width: auto; }
-    .thhs26-news-item { border: 1px solid #53616a; box-shadow: 3px 3px 0 #e5e7e8; padding: 14px 18px; margin-bottom: 22px; }
+    .thhs26-news-item { border: 1px solid #53616a; box-shadow: 5px 5px 0 #e5e7e8; padding: 14px 18px; margin-bottom: 22px; }
     .thhs26-news-meta { display: flex; gap: 15px; justify-content: space-between; border-bottom: 1px solid #dce1e4; padding-bottom: 8px; margin-bottom: 10px; font-size: 14px; color: #005e76; }
-    .thhs26-news-item h3 { color: #141414; font-size: 21px; }
+    .thhs26-news-item h3 { color: #141414; font-size: 23px; }
     .thhs26-read-more { background: #18313e; color: #fff; padding: 4px 12px; font-size: 12px; font-weight: 700; text-decoration: none; }
     .thhs26-reports {
         h2 { margin-bottom: 56px; }
@@ -136,7 +136,7 @@
     .thhs26-testimonial-head img { width: 100%; opacity: .45; max-height: 270px; object-fit: contain; }
     .thhs26-testimonial-head h2 { position: absolute; top: 8%; left: 10%; right: 10%; color: #709d42; }
     .thhs26-testimonials .row img { width: 100%; height: 150px; object-fit: contain; }
-    .thhs26-calendar h3 { font-size: 18px; margin: 22px 0 8px; color: #141414; }
+    .thhs26-calendar h3 { font-size: 20px; margin: 22px 0 8px; color: #141414; }
     .thhs26-date { display: flex; gap: 24px; border: 1px solid #b6bdc0; padding: 14px 20px; margin-bottom: 10px; align-items: center; }
     .thhs26-date > div:first-child { min-width: 58px; text-align: center; border-right: 1px solid #ddd; padding-right: 20px; }
     .thhs26-date strong { display: block; font-size: 29px; line-height: 1; }
@@ -149,7 +149,7 @@
     .thhs26-contact { max-width: 1280px; margin: auto; }
     .thhs26-contact-heading h1 { color: #163d4a; margin-bottom: 6px; }
     .thhs26-contact-heading > p:first-child { font-size: 15px; margin-bottom: 4px; }
-    .thhs26-contact h2 { font-size: 22px; color: #163d4a; margin: 16px 0 5px; }
+    .thhs26-contact h2 { font-size: 24px; color: #163d4a; margin: 16px 0 5px; }
     .thhs26-contact-intro { background: #eaf2f4; padding: 12px 20px; border: 1px solid #72868e; }
     .thhs26-contact-intro h2 { margin: 0; }
     .thhs26-contact-intro p { margin: 0; font-size: 15px; }
@@ -158,7 +158,7 @@
     .thhs26-contact-details strong { background: #163d4a; color: white; font-size: 12px; padding: 16px; margin-right: 15px; }
     .thhs26-contact-details a { color: #268291; font-weight: 700; }
     .thhs26-contact-reasons > div > div { border: 1px solid #dbe3e5; background: #f2f6f7; padding: 14px; height: 100%; }
-    .thhs26-contact-reasons h3 { font-size: 18px; color: #268291; }
+    .thhs26-contact-reasons h3 { font-size: 20px; color: #268291; }
     .thhs26-contact-reasons p, .thhs26-contact li { font-size: 14px; }
     .thhs26-contact ul { padding-left: 20px; }
     .thhs26-hospital-details { width: 100%; }
@@ -176,8 +176,8 @@ body:has(#wrap.thhs26) header#top {
 @media (max-width: 767.98px) {
     #wrap.thhs26, #wrap:has([data-snippet^="s_thhs_"]) {
         font-size: 16px;
-        .thhs26-title h1 { font-size: 26px; }
-        .thhs26-title .thhs26-maori { display: block; font-size: 22px; }
+        .thhs26-title h1 { font-size: 28px; }
+        .thhs26-title .thhs26-maori { display: block; font-size: 24px; }
         .thhs26-welcome-frame { width: 100%; }
         .thhs26-welcome-photo { aspect-ratio: 4 / 3; }
         .thhs26-welcome-copy { position: relative; top: auto; left: auto; width: auto; padding: 22px; background: #005e76; }
@@ -188,4 +188,24 @@ body:has(#wrap.thhs26) header#top {
         .thhs26-contact-details strong { min-width: 112px; }
         .thhs26-news-meta { font-size: 12px; }
     }
+}
+
+// Client review: keep body/navigation sizes and native editor spacing unchanged.
+body:has(#wrap.thhs26) header#top #top_menu { width: 100%; }
+@media (min-width: 992px) {
+    body:has(#wrap.thhs26) header#top #top_menu > .nav-item {
+        flex: 1 1 0; text-align: center;
+    }
+}
+#wrap.thhs26 {
+    .thhs26-watermark-section > .o_we_bg_filter { background-color: rgba(255,255,255,.88) !important; }
+    .thhs26-caption { display: block; text-align: center; font-size: 16px; margin-top: 8px; }
+    .thhs26-instagram { display: inline-flex; flex-direction: column; align-items: center; color: #8a276f; margin: 35px; vertical-align: middle; }
+    .thhs26-instagram .fa { font-size: 110px; }
+    .thhs26-film-controls { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+    .thhs26-film-window { overflow-x: auto; }
+    .thhs26-film-track { display: flex; gap: 24px; width: max-content; }
+    .thhs26-film-card { flex: 0 0 210px; width: 210px; padding: 12px; border: 1px solid #dbe3e5; }
+    .thhs26-film-card img { width: 100%; height: 150px; object-fit: contain; }
+    .thhs26-film-card:focus-visible { outline: 3px solid #005e76; outline-offset: -3px; }
 }
