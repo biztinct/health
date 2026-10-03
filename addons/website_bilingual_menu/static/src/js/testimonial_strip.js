@@ -54,3 +54,7 @@ function initializeTestimonialStrips() {
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initializeTestimonialStrips, {once: true});
 else initializeTestimonialStrips();
+// Odoo can insert page content after DOMContentLoaded during navigation.
+// Reinitialize newly inserted strips without duplicating existing listeners.
+const testimonialObserver = new MutationObserver(initializeTestimonialStrips);
+testimonialObserver.observe(document.documentElement, {childList: true, subtree: true});
