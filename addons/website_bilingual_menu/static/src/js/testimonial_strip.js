@@ -1,13 +1,16 @@
 /** @odoo-module **/
 
+// Runtime state must never be serialized by Website Builder.
+const initializedStrips = new WeakSet();
+
 function initializeTestimonialStrips() {
     if (document.body.classList.contains('editor_enable')) {
         document.querySelectorAll('[data-film-copy]').forEach((copy) => copy.remove());
         return;
     }
     document.querySelectorAll('.thhs26-film').forEach((strip) => {
-        if (strip.dataset.ready) return;
-        strip.dataset.ready = '1';
+        if (initializedStrips.has(strip)) return;
+        initializedStrips.add(strip);
         const viewport = strip.querySelector('.thhs26-film-window');
         const track = strip.querySelector('.thhs26-film-track');
         const cards = Array.from(track.children);

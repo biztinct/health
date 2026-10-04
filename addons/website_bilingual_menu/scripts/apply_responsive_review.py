@@ -14,6 +14,10 @@ for url in ['/projects', '/incorporated-society', '/how-can-i-help', '/our-hospi
     root = etree.fromstring(view.arch_db.encode())
     dirty = False
     if url == '/projects':
+        for strip in root.xpath('//*[%s]' % cls('thhs26-film')):
+            if 'data-ready' in strip.attrib:
+                del strip.attrib['data-ready']
+                dirty = True
         if len(root.xpath('//*[%s]//a[img]' % cls('thhs26-film-track'))) < 8:
             raise RuntimeError('Published rolling testimonials must exist before removing static duplicates')
         for node in root.xpath('//*[%s]//div[%s] | //*[%s]' % (cls('thhs26-testimonials'), cls('row'), cls('thhs26-film-controls'))):
