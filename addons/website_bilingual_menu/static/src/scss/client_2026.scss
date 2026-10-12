@@ -65,18 +65,27 @@
     .thhs26-vision { background-position: 75% bottom; }
     .thhs26-vision .thhs26-copy p { max-width: 1100px; padding-top: 18px; font-size: 20px; }
     .thhs26-purpose { min-height: 440px; }
-    .thhs26-welcome { background: #087abe; }
+    .thhs26-welcome { background: #087abe; flex: 1 0 auto; display: flex; }
     .thhs26-welcome-frame {
         position: relative;
         width: 100%;
-        margin: auto;
+        flex: 1;
     }
-    // Preserve image proportions within the client panoramic frame.
-    .thhs26-welcome-photo { width: 100%; aspect-ratio: 2.235; display: block; object-fit: cover; }
-    .thhs26-welcome-copy {
+    // Fill the frame in either orientation, cropping without distorting the photo.
+    .thhs26-welcome-photo {
         position: absolute;
-        top: 10%;
-        left: 4%;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        max-height: none;
+        display: block;
+        object-fit: cover;
+        object-position: center 40%;
+    }
+    .thhs26-welcome-copy {
+        position: relative;
+        margin-left: 4%;
+        padding: clamp(28px, 6vh, 72px) 0;
         width: 46%;
         color: #fff;
         text-shadow: 0 1px 4px rgba(0, 24, 52, .8);
@@ -166,6 +175,19 @@
     .thhs26-hospital-photo { border: 1px solid #c2d0d4; border-radius: 8px; padding: 12px; max-height: 390px; object-fit: contain; }
 }
 
+// Odoo's page shell already fills the viewport between its header and footer.
+// Carry that flex growth through the homepage so no empty main area remains.
+// Keeping the copy in flow also lets short screens and enlarged text scroll.
+#wrapwrap > main:has(> #wrap.thhs26 > .thhs26-welcome) {
+    display: flex;
+    flex-direction: column;
+}
+#wrap.thhs26:has(> .thhs26-welcome) {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
 // Keep the bilingual menu geometry and colours; use the client's type family.
 body:has(#wrap.thhs26) header#top {
     #top_menu > .nav-item > .nav-link,
@@ -180,8 +202,15 @@ body:has(#wrap.thhs26) header#top {
         .thhs26-title h1 { font-size: 28px; }
         .thhs26-title .thhs26-maori { display: block; font-size: 24px; }
         .thhs26-welcome-frame { width: 100%; }
-        .thhs26-welcome-photo { aspect-ratio: 4 / 3; }
-        .thhs26-welcome-copy { position: relative; top: auto; left: auto; width: auto; padding: 22px; background: #005e76; }
+        .thhs26-welcome-frame::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0, 40, 65, .65), rgba(0, 40, 65, .35) 65%, rgba(0, 40, 65, .05));
+            z-index: 1;
+            pointer-events: none;
+        }
+        .thhs26-welcome-copy { width: auto; margin: 0; padding: 28px 22px; z-index: 1; }
         .thhs26-welcome-copy p { font-size: 17px; }
         .thhs26-profiles .thhs26-profile-photo { max-height: 200px; width: auto; display: block; margin: auto; }
         .thhs26-profiles p { font-size: 16px; }
@@ -225,14 +254,6 @@ body:has(#wrap.thhs26) header#top {
             height: 140px !important;
             transform: translateY(-28px);
         }
-    }
-}
-@media (min-width: 768px) {
-    #wrap.thhs26 .thhs26-welcome-photo {
-        height: unquote("min(38vw, calc(100svh - 150px))");
-        min-height: 350px;
-        aspect-ratio: auto;
-        object-position: center 40%;
     }
 }
 @media (max-width: 991.98px) {

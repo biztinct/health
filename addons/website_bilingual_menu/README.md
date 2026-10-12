@@ -73,10 +73,12 @@ The menu retains its existing bilingual layout and dropdown styling, originally
 described in the source as Te Tiratū-inspired. Labels and destinations follow
 slide 3. The menu font follows the client's Aptos requirement.
 
-The desktop homepage uses the complete supplied image in the panoramic frame
-shown on slide 1. On mobile it shows the photograph at its natural proportion
-above the text, retaining the complete photo and readable text. Long pages may
-scroll instead of reducing body text to unreadable slide-scale sizes.
+The homepage photograph fills the available screen between the navigation and
+footer on desktop and mobile. It crops horizontally or vertically with
+`object-fit: cover` as the frame changes, preserving image proportions. Mobile
+copy overlays the photograph with a contrast gradient. The page shell's flex
+layout accounts for the actual header/footer size without fixed viewport
+offsets. Short screens and enlarged text may scroll to keep the copy readable.
 
 ### Content decisions and missing inputs
 
