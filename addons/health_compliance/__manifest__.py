@@ -1,6 +1,6 @@
 {
     'name': 'Healthcare Compliance Assurance',
-    'version': '19.0.1.0.1',
+    'version': '19.0.1.0.2',
     'category': 'Healthcare',
     'author': 'Biztinct',
     'summary': 'Scoped evidence register, rights requests, retention holds and integration readiness',
