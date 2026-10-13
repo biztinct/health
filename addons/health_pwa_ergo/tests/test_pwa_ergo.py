@@ -10,14 +10,14 @@ class TestPwaErgo(HttpCase):
     """Front-end phase — the Python surface is the shell render + a CSS pin."""
 
     # FORCED EDIT (Phase GB): these two pins still named 1.9.0 while the shell
-    # has been on 1.19.2 for ten bumps. The assets ARE injected — the run that
-    # caught this shows ergo.css?v=1.19.2 and ergo.js?v=1.19.2 in the body — so
+    # has been on 1.20.0 for ten bumps. The assets ARE injected — the run that
+    # caught this shows ergo.css?v=1.20.0 and ergo.js?v=1.20.0 in the body — so
     # the product never drifted; the pins did. They survived because
     # health_pwa_ergo is absent from the conventions §3 pin-test list AND
     # because no HttpCase in this repo had ever executed. Both are fixed in
     # this phase; the pin stays a hard literal on purpose (that is the
     # tripwire that forces the 5-place bump to be noticed).
-    PWA_VERSION = '1.19.2'
+    PWA_VERSION = '1.20.0'
 
     def test_01_shell_injects_ergo_assets(self):
         """The PWA shell serves ergo.css/ergo.js at the pinned version."""

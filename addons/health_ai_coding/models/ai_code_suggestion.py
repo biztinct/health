@@ -318,7 +318,7 @@ class HealthAiCodeSuggestion(models.Model):
         caller's savepoint."""
         patient = note.order_id.patient_id
         # 1. consent gate — deny-by-default; the check log row is the evidence.
-        if not self.env['health.consent'].check_consent(patient, 'data_sharing'):
+        if not self.env['health.consent'].check_consent(patient, 'ai_processing'):
             note._mark_ai_attempt()
             return 0, False
         # 2. redacted prompt
@@ -330,7 +330,7 @@ class HealthAiCodeSuggestion(models.Model):
         started = fields.Datetime.now()
         raw = ''
         try:
-            raw = provider._complete(_SYSTEM_PROMPT, user_prompt, force_json=True)
+            raw = provider._complete(_SYSTEM_PROMPT, user_prompt, force_json=True, patient=patient)
         except Exception as exc:  # noqa: BLE001 — sweep survives Ollama down
             note._mark_ai_attempt()
             self._create_log(note, provider, user_prompt, raw, started,

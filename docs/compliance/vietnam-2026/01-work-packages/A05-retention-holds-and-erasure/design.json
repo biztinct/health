@@ -1,0 +1,29 @@
+{
+  "id": "A05",
+  "title": "Retention, holds and erasure",
+  "components": [
+    "health_compliance",
+    "health_base",
+    "biz_tenants"
+  ],
+  "requirements": [
+    "EV-02-4",
+    "EV-06-1",
+    "EV-06-3"
+  ],
+  "design_status": "approved_for_implementation_by_user",
+  "implementation_status": "implemented_partial_external_acceptance_pending",
+  "acceptance_scenarios": "Use boundary-date fixtures for each approved class; refuse deletion of held/retained records and whole tenants. Prove lawful purge, attachment removal, backup expiry and restore suppression.",
+  "evidence_after_implementation": "A05-retention-hold-tests.json; approved-schedule.pdf; disposal-approval.pdf; scoped-erasure-report.pdf; backup-expiry and restore-suppression results.",
+  "manual_acceptance": "Custodian/DPO approves trigger dates, exceptions and custody. Demonstrate configuration, boundary tests and sustainable contracts; do not claim a test proves decades of elapsed storage or physical erasure of unverified media.",
+  "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+  "deployment_scope": [
+    "carejiox",
+    "carejiox_template",
+    "hhh"
+  ],
+  "environment_class": "demo",
+  "external_dependencies": "",
+  "implemented_controls": "Company-scoped retention/legal holds stop linked healthcare-record and patient deletion. Released holds retain history. Tenant closure requires an explicit custodian approval reference and no active hold. No automatic clinical destruction is enabled.",
+  "remaining_actions": "Custodian/legal team must approve retention classes, schedule, exceptions, archive custody and each destruction procedure. Final clinical notes remain locked; a reviewed statutory disposition service is future work if required."
+}

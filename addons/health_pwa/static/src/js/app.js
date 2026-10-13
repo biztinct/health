@@ -2684,7 +2684,12 @@ window.healthPWA = {
             const response = await fetch(
               `/health_pwa/api/fso/${bookingId}/clinical_notes/${note.id}/finalize`,
               { method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({}) });
+                body: JSON.stringify({
+                  care_datetime: note.care_datetime_input
+                    ? new Date(note.care_datetime_input).toISOString().slice(0, 19).replace('T', ' ')
+                    : null,
+                  correction_reason: note.correction_reason || ''
+                }) });
             const result = await response.json();
             if (result.success && result.data) {
               window.healthPWA.showNotification(
@@ -3988,6 +3993,12 @@ window.healthPWA = {
                 </div>
               </div>
               <div v-else-if="viewingClinicalNote.emr_state === 'draft'" style="margin-bottom:12px;">
+                <label class="clinical-form-label">{{ _t('Care Provided At') }}</label>
+                <input type="datetime-local" v-model="viewingClinicalNote.care_datetime_input" class="clinical-form-field"/>
+                <div v-if="viewingClinicalNote.is_amendment">
+                  <label class="clinical-form-label">{{ _t('Correction Reason') }}</label>
+                  <textarea v-model="viewingClinicalNote.correction_reason" class="clinical-form-field"></textarea>
+                </div>
                 <button @click="finalizeNote(viewingClinicalNote)" :disabled="finalizingNote" class="btn btn-primary" style="width:100%;">
                   <i class="material-icons" style="vertical-align:middle; margin-right:4px;">verified</i>
                   {{ finalizingNote ? _t('Signing…') : _t('Finalize & Sign') }}

@@ -1,0 +1,26 @@
+{
+  "id": "A10",
+  "title": "BHYT / BHXH XML",
+  "components": [
+    "health_bhyt",
+    "health_compliance"
+  ],
+  "requirements": [
+    "EV-09-5"
+  ],
+  "design_status": "approved_for_implementation_by_user",
+  "implementation_status": "implemented_partial_external_acceptance_pending",
+  "acceptance_scenarios": "Validate against the approved current amended schema and mapping; reconcile source/claim totals; demonstrate accepted authority test submission and controlled rejected-claim correction.",
+  "evidence_after_implementation": "A10-current-schema-and-mapping.pdf; synthetic-valid-claim.xml; validation-results.json; BHXH acknowledgement; claim reconciliation and onboarding evidence.",
+  "manual_acceptance": "Finance/integration owner verifies insured-service scope and current schema. Test acceptance is distinct from production onboarding. Refresh on schema, pricing/claim rules, transport or facility changes.",
+  "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+  "deployment_scope": [
+    "carejiox",
+    "carejiox_template",
+    "hhh"
+  ],
+  "environment_class": "demo",
+  "external_dependencies": "Authority specifications/onboarding and provider credentials have not been arranged; no live submission or CA certification claim.",
+  "implemented_controls": "BHXH submitted/acknowledged states cannot be manufactured while onboarding is absent. Readiness dossier records current specification, credentials location and acceptance proof. Existing claim reconciliation remains available.",
+  "remaining_actions": "Current approved 130/4750/3176 schema/mappings, facility identifiers, contract and sandbox acceptance are required. Complete XML mapping/validation and submission adapter remain technical work after approved specifications are supplied."
+}

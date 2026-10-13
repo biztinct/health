@@ -7,6 +7,7 @@ HTTP call. Scribe jobs are a brand-new model, so the sweep has no live rows to
 pollute the assertions; sweep cases run the cron / call ``_process_job``
 directly on freshly created jobs.
 """
+from datetime import timedelta
 import base64
 import hashlib
 import uuid
@@ -49,6 +50,15 @@ class ScribeCommon:
     def _setup(cls):
         cls.province, cls.facility, cls.patient = _fixture(cls.env)
         cls.Job = cls.env['health.scribe.job']
+        if 'health.compliance.destination' in cls.env.registry.models:
+            cls.env.user.write({'group_ids': [(4, cls.env.ref('health_base.group_healthcare_admin').id)]})
+            terms=cls.env['ir.attachment'].create({'name':'synthetic-terms.txt','raw':b'Synthetic test terms'})
+            destination=cls.env['health.compliance.destination'].create({
+                'name':'Synthetic loopback STT', 'endpoint':'http://127.0.0.1:8123/v1/audio/transcriptions',
+                'country':'Synthetic isolated test host','purpose':'ai_processing',
+                'legal_basis':'Synthetic test only', 'processor_terms_id':terms.id,
+                'valid_until':fields.Date.today()+timedelta(days=1)})
+            destination.action_approve()
         cls._set_cfg(cls.env, enabled=True, stt_endpoint='',
                      allow_cloud=False, language='vi', max_bytes=15728640,
                      max_attempts=3, batch_cap=10, stt_timeout_s=120)
@@ -76,11 +86,16 @@ class ScribeCommon:
             note.order_id, note, audio, mimetype, filename='rec.webm',
             duration_s=3.0)
 
-    def _grant_consent(self, ctype='data_sharing', patient=None):
-        consent = self.env['health.consent'].create({
-            'client_id': (patient or self.patient).id, 'consent_type': ctype,
+    def _grant_consent(self, ctype='ai_processing', patient=None):
+        vals = {
+            'client_id': (patient or self.patient).id,
+            'consent_type_id': self.env['health.lookup.value']._default_for('consent_type', ctype),
+            'notice_version': 'SYNTHETIC-TEST', 'notice_text': 'Synthetic test purpose notice',
             'method': 'verbal', 'verbal_witness_id': self.env.uid,
-            'effective_date': fields.Date.today()})
+            'effective_date': fields.Date.today()}
+        if 'destination_ids' in self.env['health.consent']._fields:
+            vals['destination_ids'] = [(6, 0, self.env['health.compliance.destination'].search([('purpose', '=', ctype)]).ids)]
+        consent = self.env['health.consent'].create(vals)
         consent.action_grant()
         return consent
 
@@ -138,7 +153,7 @@ class TestUpload(HttpCase, ScribeCommon):
         # photography consent check-log row written (log-only).
         log = self.env['health.consent.check.log'].sudo().search([
             ('client_id', '=', self.patient.id),
-            ('consent_type_code', '=', 'photography')], limit=1)
+            ('consent_type', '=', 'audio_recording')], limit=1)
         self.assertTrue(log)
 
     def test_non_audio_rejected(self):
@@ -212,15 +227,19 @@ class TestSweepGates(TransactionCase, ScribeCommon):
                          'http://localhost:8123/v1/audio/transcriptions'):
             self.assertTrue(self.Job._endpoint_is_private(endpoint), endpoint)
 
-    def test_allow_cloud_lets_public_through(self):
+    def test_cloud_flag_does_not_bypass_destination_review(self):
         self._set_cfg(self.env, allow_cloud=True,
                       stt_endpoint='http://8.8.8.8:9000/v1/audio/transcriptions')
         self._grant_consent()
         job = self._make_job()
         with patch(_STT_PATH, self._mock_stt()) as m:
             self.Job.cron_scribe_transcribe()
-        self.assertTrue(m.called)
-        self.assertEqual(job.state, 'done')
+        if 'health.compliance.destination' in self.env.registry.models:
+            self.assertFalse(m.called)
+            self.assertEqual(job.error, 'destination_not_approved')
+        else:
+            self.assertTrue(m.called)
+            self.assertEqual(job.state, 'done')
 
 
 @tagged('post_install', '-at_install')
@@ -402,10 +421,10 @@ class TestShellAssets(HttpCase):
         res = self.url_open('/health_pwa')
         self.assertEqual(res.status_code, 200)
         body = res.text
-        self.assertIn('scribe.css?v=1.19.2', body)
-        self.assertIn('scribe.js?v=1.19.2', body)
-        self.assertIn('1.19.2', body)
+        self.assertIn('scribe.css?v=1.20.0', body)
+        self.assertIn('scribe.js?v=1.20.0', body)
+        self.assertIn('1.20.0', body)
         # Co-resident shell modules pinned to the same bumped version.
-        self.assertIn('daystrip.js?v=1.19.2', body)
-        self.assertIn('telehealth.js?v=1.19.2', body)
-        self.assertIn('ergo.css?v=1.19.2', body)
+        self.assertIn('daystrip.js?v=1.20.0', body)
+        self.assertIn('telehealth.js?v=1.20.0', body)
+        self.assertIn('ergo.css?v=1.20.0', body)

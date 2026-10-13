@@ -15,3 +15,5 @@ from . import test_billing_rules
 from . import test_billing
 
 from . import test_identity
+
+from . import test_backup_crypto

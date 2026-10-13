@@ -24,7 +24,8 @@ from odoo.http import request
 _logger = logging.getLogger(__name__)
 
 CONSENT_TYPES = ('service', 'data_sharing', 'photography',
-                 'emergency_treatment', 'marketing')
+                 'emergency_treatment', 'marketing', 'ai_processing',
+                 'support_access', 'analytics', 'model_training', 'audio_recording')
 
 
 class HealthConsentPWAController(http.Controller):
@@ -101,6 +102,10 @@ class HealthConsentPWAController(http.Controller):
                 if consent.expiry_date else None),
             'granted_by': granted_by,
             'scope_note': consent.scope_note or '',
+            'notice_version': consent.notice_version or '',
+            'notice_text': consent.notice_text or '',
+            'granted_datetime': fields.Datetime.to_string(consent.granted_datetime) if consent.granted_datetime else None,
+            'withdrawn_datetime': fields.Datetime.to_string(consent.withdrawn_datetime) if consent.withdrawn_datetime else None,
         }
 
     def _selection_labels(self, field_name):
@@ -204,9 +209,13 @@ class HealthConsentPWAController(http.Controller):
                 'method': body.get('method') or 'verbal',
                 'self_granted': bool(body.get('self_granted', True)),
                 'scope_note': body.get('scope_note') or False,
+                'notice_version': body.get('notice_version') or False,
+                'notice_text': body.get('notice_text') or False,
                 'notes': body.get('notes') or False,
                 'client_mutation_id': mutation_id or False,
             }
+            if 'destination_ids' in Consent._fields:
+                vals['destination_ids'] = [(6, 0, [int(v) for v in body.get('destination_ids', [])])]
             if body.get('granted_by_relation_id'):
                 vals['granted_by_relation_id'] = int(
                     body['granted_by_relation_id'])
@@ -287,8 +296,16 @@ class HealthConsentPWAController(http.Controller):
                 error=_('Access denied'), status_code=403)
         try:
             return self._prepare_json_response(data={
-                'types': self._selection_labels('consent_type'),
+                'types': [{'value': v.code, 'label': v.with_context(lang='en_US').name,
+                           'label_vi': v.with_context(lang='vi_VN').name}
+                          for v in request.env['health.lookup.value'].search([
+                              ('category_code', '=', 'consent_type'), ('code', 'in', CONSENT_TYPES)])],
                 'methods': self._selection_labels('method'),
+                'destinations': ([{'id': d.id, 'name': d.name, 'purpose': d.purpose, 'country': d.country}
+                    for d in request.env['health.compliance.destination'].sudo().search([
+                        ('company_id', '=', request.env.company.id), ('approved_at', '!=', False),
+                        ('valid_until', '>=', fields.Date.context_today(request.env.user))])]
+                    if 'health.compliance.destination' in request.env.registry.models else []),
             })
         except Exception as exc:  # noqa: BLE001
             return self._prepare_json_response(

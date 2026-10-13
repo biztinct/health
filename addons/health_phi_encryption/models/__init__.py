@@ -2,3 +2,4 @@
 from . import phi_crypto
 from . import res_partner
 from . import health_clinical_note
+from . import ir_attachment

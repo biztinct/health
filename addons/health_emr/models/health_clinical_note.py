@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """EMR record spine (Circular 13/2025 phase 1).
 
-Turns `health.clinical.note` from editable scratch text into a legally-valid
-electronic medical record entry: a clinician finalizes and signs it, after
+Turns `health.clinical.note` from editable scratch text into an internally authenticated
+electronic clinical record entry: a clinician finalizes and signs it, after
 which its content is immutable, sealed by a tamper-evident sha256 hash, and
 corrections are appended as addenda (never overwrites).
 
@@ -20,6 +20,7 @@ raw SQL).
 import hashlib
 import json
 import logging
+from contextvars import ContextVar
 from datetime import timedelta
 
 from odoo import _, api, fields, models
@@ -30,7 +31,9 @@ _logger = logging.getLogger(__name__)
 
 # Current hashing scheme. Stored on each sealed note so a future algorithm
 # change can be versioned without re-sealing historical records.
-HASH_VERSION = 'v1'
+HASH_VERSION = 'v2'
+# A Python-local capability, not a client-supplied RPC context bypass.
+_FINALIZING = ContextVar('health_emr_finalizing', default=False)
 
 # Per-run cap for the nightly unsigned-notes cron. A large backlog drains over
 # several runs (oldest-first) rather than one giant transaction.
@@ -42,6 +45,8 @@ CRON_BATCH_LIMIT = 500
 # `signature_ref` is deliberately EXCLUDED — the Phase-3 CA digital signature
 # attaches to an already-finalized record and must remain writable.
 EMR_LOCKED_FIELDS = (
+    'author_id', 'order_id', 'care_datetime', 'correction_reason', 'correction_reason_enc',
+    'audio_ids', 'condition_code_ids',
     'clinical_notes', 'diagnosis', 'treatment_performed',
     'medications_prescribed', 'vital_signs',
     'patient_condition_before', 'patient_condition_after',
@@ -115,6 +120,13 @@ class HealthClinicalNote(models.Model):
     amendment_ids = fields.One2many(
         'health.clinical.note', 'amends_note_id', string='Addenda',
         readonly=True)
+    care_datetime = fields.Datetime(
+        string='Care Provided At', copy=False,
+        help='The actual care/event time stated by the clinician. Kept '
+             'separate from entry and signing time; never inferred for legacy records.')
+    correction_reason = fields.Text(
+        string='Correction Reason', copy=False,
+        help='Required when finalizing an addendum. The original remains unchanged.')
     is_amendment = fields.Boolean(
         string='Is Addendum', compute='_compute_is_amendment', store=True)
 
@@ -146,6 +158,13 @@ class HealthClinicalNote(models.Model):
     # Finalization
     # ------------------------------------------------------------------
     def action_finalize(self):
+        token = _FINALIZING.set(True)
+        try:
+            return self._finalize_with_identity()
+        finally:
+            _FINALIZING.reset(token)
+
+    def _finalize_with_identity(self):
         """Finalize and sign the note(s): capture the signer, seal the content
         with a tamper-evident hash, and freeze it. Nurses have no write ACL on
         notes (only create), so the state write runs sudo AFTER an explicit
@@ -159,6 +178,10 @@ class HealthClinicalNote(models.Model):
                 raise UserError(_(
                     'Cannot finalize an empty clinical note — record the '
                     'clinical content first.'))
+            if note.amends_note_id and not (note.correction_reason or '').strip():
+                raise UserError(_('Explain the correction before finalizing the addendum.'))
+            if note.care_datetime and note.care_datetime > fields.Datetime.now():
+                raise UserError(_('Care provided time cannot be in the future.'))
 
             signer = note.env.user
             vals = {
@@ -276,6 +299,21 @@ class HealthClinicalNote(models.Model):
             # str vs bool.
             'images': sorted(filter(None, self.image_ids.mapped('checksum'))),
         }
+        version = overrides.get('hash_version') or self.hash_version or HASH_VERSION
+        if version == 'v2':
+            care_dt = _scalar('care_datetime')
+            payload.update({
+                'hash_version': 'v2',
+                'care_datetime': fields.Datetime.to_string(care_dt) if care_dt else '',
+                'correction_reason': _scalar('correction_reason') or '',
+                'signed_method': _scalar('signed_method') or '',
+                'audio': sorted(filter(None, self.audio_ids.mapped('checksum')))
+                         if 'audio_ids' in self._fields else [],
+                'diagnosis_codes': sorted(self.condition_code_ids.mapped('code'))
+                                   if 'condition_code_ids' in self._fields else [],
+            })
+        elif version != 'v1':
+            raise UserError(_('Unknown clinical integrity seal version.'))
         canonical = json.dumps(
             payload, sort_keys=True, ensure_ascii=False, separators=(',', ':'))
         return hashlib.sha256(canonical.encode('utf-8')).hexdigest()
@@ -357,6 +395,13 @@ class HealthClinicalNote(models.Model):
         return True
 
     def _auto_finalize(self):
+        token = _FINALIZING.set(True)
+        try:
+            return self._auto_finalize_with_identity()
+        finally:
+            _FINALIZING.reset(token)
+
+    def _auto_finalize_with_identity(self):
         """System backstop: lock aging unsigned drafts as AUTO-AUTHENTICATED.
         Attributed to the note's AUTHOR (the responsible clinician), never the
         cron user; `signed_method='auto'` marks it as a system lock — NOT a
@@ -365,6 +410,8 @@ class HealthClinicalNote(models.Model):
         design (the cron user is neither author nor head-nurse)."""
         for note in self.sudo():
             if note.emr_state != 'draft' or not note._has_content():
+                continue
+            if note.amends_note_id and not (note.correction_reason or '').strip():
                 continue
             # Per-note savepoint: one bad note must not abort the whole batch.
             try:
@@ -397,7 +444,25 @@ class HealthClinicalNote(models.Model):
     # ------------------------------------------------------------------
     # Immutability guards (clone of health.consent evidence-lock)
     # ------------------------------------------------------------------
+    @api.model_create_multi
+    def create(self, vals_list):
+        protected = {'signed_by_id', 'signed_role', 'signed_datetime',
+                     'signed_method', 'content_hash', 'hash_version'}
+        for vals in vals_list:
+            if vals.get('emr_state', 'draft') != 'draft' or protected.intersection(vals):
+                raise UserError(_('Create a draft and use authenticated finalization; '
+                                  'signing evidence cannot be supplied on creation.'))
+        records = super().create(vals_list)
+        if any(n.emr_state != 'draft' or any(n[f] for f in protected) for n in records):
+            raise UserError(_('Signing evidence cannot be supplied through creation defaults.'))
+        records._check_amends()
+        return records
+
     def write(self, vals):
+        signing = {'emr_state', 'signed_by_id', 'signed_role', 'signed_datetime',
+                   'signed_method', 'content_hash', 'hash_version'}
+        if signing.intersection(vals) and not _FINALIZING.get():
+            raise UserError(_('Use authenticated finalization to change signing evidence.'))
         locked = [f for f in EMR_LOCKED_FIELDS if f in vals]
         if locked:
             # No superuser escape (uid 1 forces su=True) — an EMR whose signed

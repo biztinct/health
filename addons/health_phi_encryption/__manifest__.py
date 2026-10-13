@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Healthcare PHI Field Encryption',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Healthcare',
     'summary': 'Transparent field-level encryption (AES-256-GCM) for narrative PHI and identity numbers',
     'description': """

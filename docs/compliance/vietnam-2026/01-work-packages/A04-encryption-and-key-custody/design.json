@@ -1,0 +1,28 @@
+{
+  "id": "A04",
+  "title": "Encryption and key custody",
+  "components": [
+    "health_phi_encryption",
+    "biz_tenants"
+  ],
+  "requirements": [
+    "EV-01-4",
+    "EV-04-1",
+    "EV-09-1"
+  ],
+  "design_status": "approved_for_implementation_by_user",
+  "implementation_status": "implemented_partial_external_acceptance_pending",
+  "acceptance_scenarios": "Inspect DB, filestore, audio, temporary/export copies, replicas and backups. Verify TLS, encrypted artifacts, legacy migration, separation of keys, rotation and controlled recovery.",
+  "evidence_after_implementation": "A04-storage-coverage.csv; A04-TLS-report.pdf; redacted key/rotation records; migration results; encrypted-backup and recovery test report.",
+  "manual_acceptance": "Infrastructure and security approve the estate/key inventory. A screenshot or encrypted field alone is insufficient. Refresh on storage, key, provider or encryption changes; schedule periodic checks.",
+  "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+  "deployment_scope": [
+    "carejiox",
+    "carejiox_template",
+    "hhh"
+  ],
+  "environment_class": "demo",
+  "external_dependencies": "",
+  "implemented_controls": "Sensitive healthcare attachments use AES-256-GCM with transparent HTTP delivery and unchanged plaintext checksums. Scribe transcripts, correction reasons and AI coding payloads are encrypted; legacy plaintext columns are migrated without changing seals. Backup pairs use an external root-owned key.",
+  "remaining_actions": "Production disk/database encryption, independent key escrow, custody and rotation must be arranged. Existing PHI derivation is preserved; database.secret remains available to an authorised DB administrator."
+}

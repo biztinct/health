@@ -1079,3 +1079,63 @@ msgstr ""
 #: code:addons/health_consent/static/src/js/consent-components.js:0
 msgid "self"
 msgstr "bản thân"
+
+#. module: health_consent
+#: model:health.lookup.value,name:health_consent.purpose_ai_processing
+msgid "AI Processing"
+msgstr "Xử lý bằng trí tuệ nhân tạo"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__granted_datetime
+msgid "Granted At"
+msgstr "Thời điểm đồng ý"
+
+#. module: health_consent
+#: model:health.lookup.value,name:health_consent.purpose_model_training
+msgid "Model Training"
+msgstr "Huấn luyện mô hình"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__notice_text
+msgid "Notice Presented"
+msgstr "Nội dung thông báo đã trình bày"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__notice_version
+msgid "Notice Version"
+msgstr "Phiên bản thông báo"
+
+#. module: health_consent
+#: model:health.lookup.value,name:health_consent.purpose_analytics
+msgid "Personal Data Analytics"
+msgstr "Phân tích dữ liệu cá nhân"
+
+#. module: health_consent
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_form
+msgid "Print Consent Evidence"
+msgstr "In bằng chứng đồng ý"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__granted_by_id
+msgid "Recorded By"
+msgstr "Người ghi nhận"
+
+#. module: health_consent
+#: model:health.lookup.value,name:health_consent.purpose_support_access
+msgid "Support Access"
+msgstr "Truy cập hỗ trợ"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__withdrawn_datetime
+msgid "Withdrawn At"
+msgstr "Thời điểm rút lại đồng ý"
+
+#. module: health_consent
+#: model:ir.model.fields.selection,name:health_consent.selection__health_consent__method__digital_signature
+msgid "Drawn Consent Signature"
+msgstr "Chữ ký đồng ý viết tay trên màn hình"
+
+#. module: health_consent
+#: model:health.lookup.value,name:health_consent.purpose_audio_recording
+msgid "Clinical Audio Recording"
+msgstr "Ghi âm lâm sàng"

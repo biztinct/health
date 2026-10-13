@@ -1,0 +1,31 @@
+{
+  "id": "A12",
+  "title": "AI and outbound data destinations",
+  "components": [
+    "ai_egress",
+    "biz_bi",
+    "health_scribe",
+    "health_ai_coding"
+  ],
+  "requirements": [
+    "EV-01-4",
+    "EV-02-2",
+    "EV-03-2",
+    "EV-07-3"
+  ],
+  "design_status": "approved_for_implementation_by_user",
+  "implementation_status": "implemented_partial_external_acceptance_pending",
+  "acceptance_scenarios": "Exercise every enabled AI/speech/analytics/support caller, redirects and queued work. Verify missing/withdrawn purpose blocks consent-dependent transmission and network logs show no disallowed payload left.",
+  "evidence_after_implementation": "A12-data-flow-and-destinations.pdf; caller-coverage.csv; egress-denial-results.json; redacted outbound observations; provider location and processing terms.",
+  "manual_acceptance": "DPO/security approves destinations and actual provider practices. A local label/private address or unchecked cloud flag is insufficient. Refresh on provider/model/endpoint, subprocessors or new callers.",
+  "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+  "deployment_scope": [
+    "carejiox",
+    "carejiox_template",
+    "hhh"
+  ],
+  "environment_class": "demo",
+  "external_dependencies": "",
+  "implemented_controls": "Central BI provider guard defaults unknown callers to records, binds patient AI consent to a reviewed destination, refuses remote patient text and disables redirects. Speech uses purpose/recipient gates. Free questions containing undetectable names require an approved local analytics destination.",
+  "remaining_actions": "Approve actual countries, processor terms, legal bases and destinations. Verify network controls/DNS routing and any providers outside these call paths; no complete all-integration egress claim is made."
+}

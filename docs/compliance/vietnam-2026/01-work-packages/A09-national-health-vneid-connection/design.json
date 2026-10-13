@@ -1,0 +1,26 @@
+{
+  "id": "A09",
+  "title": "National health / VNeID connection",
+  "components": [
+    "health_fhir_adapter_vn",
+    "health_compliance"
+  ],
+  "requirements": [
+    "EV-09-4"
+  ],
+  "design_status": "approved_for_implementation_by_user",
+  "implementation_status": "implemented_partial_external_acceptance_pending",
+  "acceptance_scenarios": "Use the actual authorised test endpoint/specification; submit valid cases, record accepted responses, and test retry, duplicate, mapping and reconciliation failures.",
+  "evidence_after_implementation": "A09-interface-version.pdf; onboarding approval; redacted request-response samples; authority-acknowledgement.json; reconciliation and failure-test report.",
+  "manual_acceptance": "Integration/clinic owner confirms applicable interfaces and credentials. Mocks or file exports do not prove authority acceptance. Refresh on interface/specification or facility changes and track production failures.",
+  "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+  "deployment_scope": [
+    "carejiox",
+    "carejiox_template",
+    "hhh"
+  ],
+  "environment_class": "demo",
+  "external_dependencies": "Authority specifications/onboarding and provider credentials have not been arranged; no live submission or CA certification claim.",
+  "implemented_controls": "Readiness dossier tracks approved national/VNeID specifications, onboarding, test acceptance and secret-store references. Manual VNeID checkbox is labelled as manual. Export and authority acceptance are distinct; fabricated government acknowledgements are blocked.",
+  "remaining_actions": "Authority/provider onboarding and approved test specifications are not arranged. Actual VNeID/national transport and reconciliation adapters still need implementation and authority testing."
+}

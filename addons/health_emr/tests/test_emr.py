@@ -54,6 +54,8 @@ class EmrBase(TransactionCase):
                 'clinical_notes': '<p>BP stable, patient comfortable</p>',
                 'diagnosis': 'Routine review'}
         vals.update(kw)
+        if vals.get('amends_note_id'):
+            vals.setdefault('correction_reason', 'Synthetic correction for test')
         return self.env['health.clinical.note'].create(vals)
 
 
@@ -69,7 +71,7 @@ class TestFinalize(EmrBase):
         self.assertTrue(note.signed_role)
         self.assertTrue(note.signed_datetime)
         self.assertEqual(len(note.content_hash or ''), 64)
-        self.assertEqual(note.hash_version, 'v1')
+        self.assertEqual(note.hash_version, 'v2')
         self.assertTrue(note.verify_integrity())
 
     def test_finalize_empty_note_raises(self):

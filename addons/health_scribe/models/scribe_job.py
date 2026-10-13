@@ -122,6 +122,8 @@ class HealthScribeJob(models.Model):
             [('audio_sha256', '=', sha), ('note_id', '=', note.id)], limit=1)
         if existing:
             return existing
+        patient = note.order_id.patient_id
+        self.env['health.consent'].require_consent(patient, 'audio_recording')
         # sudo the mutations: the note ACL gives the nurse read/create but NOT
         # write (health_fieldservice: nurse note perms are 1,0,1,0), so linking
         # the attachment needs sudo. The controller already authorized this call
@@ -142,11 +144,6 @@ class HealthScribeJob(models.Model):
             'duration_s': duration_s or 0.0,
             'state': 'pending',
         })
-        # Recording is media capture — log-only photography-consent evidence
-        # (never blocks a nurse mid-visit; the check-log row is the record).
-        patient = note.order_id.patient_id
-        if patient:
-            self.env['health.consent'].check_consent(patient, 'photography')
         return job
 
     # ==================================================================
@@ -251,7 +248,7 @@ class HealthScribeJob(models.Model):
             return False
         patient = self.note_id.order_id.patient_id
         # Text (AI) processing gate — mirrors the ai_coding sweep.
-        if not self.env['health.consent'].check_consent(patient, 'data_sharing'):
+        if not self.env['health.consent'].check_consent(patient, 'ai_processing'):
             self.write({'state': 'failed', 'error': 'consent'})
             return False
         attachment = self.attachment_id

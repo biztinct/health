@@ -1,0 +1,120 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: vi_VN\n"
+
+#. module: health_compliance
+#: model:ir.model.fields,field_description:health_compliance.field_health_compliance_rights__ack_proof_id
+msgid "Actual Acknowledgement Proof"
+msgstr "Bằng chứng phản hồi tiếp nhận thực tế"
+
+#. module: health_compliance
+#: model:ir.model.fields,field_description:health_compliance.field_health_compliance_rights__extension_notice_id
+msgid "Actual Extension Notice Proof"
+msgstr "Bằng chứng thông báo gia hạn thực tế"
+
+#. module: health_compliance
+#: model:ir.model.fields,field_description:health_compliance.field_health_compliance_rights__outcome_proof_id
+msgid "Actual Outcome Communication Proof"
+msgstr "Bằng chứng thông báo kết quả thực tế"
+
+#. module: health_compliance
+#: model_terms:ir.ui.view,arch_db:health_compliance.view_evidence_form
+msgid "Approve after review"
+msgstr "Phê duyệt sau khi rà soát"
+
+#. module: health_compliance
+#: model_terms:ir.ui.view,arch_db:health_compliance.view_destination_form
+msgid "Approve destination"
+msgstr "Phê duyệt điểm đến"
+
+#. module: health_compliance
+#: model:cms.sidebar.item,name:health_compliance.sidebar_integration
+#: model:ir.actions.act_window,name:health_compliance.action_integration
+msgid "Authority Integrations"
+msgstr "Tích hợp với cơ quan nhà nước"
+
+#. module: health_compliance
+#: model_terms:ir.ui.view,arch_db:health_compliance.view_rights_form
+msgid "Complete request"
+msgstr "Hoàn tất yêu cầu"
+
+#. module: health_compliance
+#: model:cms.sidebar.item,name:health_compliance.sidebar_requirement
+#: model:ir.actions.act_window,name:health_compliance.action_requirement
+msgid "Compliance Register"
+msgstr "Sổ đăng ký tuân thủ"
+
+#. module: health_compliance
+#: model_terms:ir.ui.view,arch_db:health_compliance.note_addendum_view
+msgid "Create Addendum"
+msgstr "Tạo bản bổ sung"
+
+#. module: health_compliance
+#: model:cms.sidebar.item,name:health_compliance.sidebar_evidence
+#: model:ir.actions.act_window,name:health_compliance.action_evidence
+msgid "Evidence Artifacts"
+msgstr "Hồ sơ bằng chứng"
+
+#. module: health_compliance
+#: model_terms:ir.ui.view,arch_db:health_compliance.view_requirement_form
+msgid "Export register"
+msgstr "Xuất sổ đăng ký"
+
+#. module: health_compliance
+#: model:ir.model.fields,field_description:health_compliance.field_res_partner__identity_review
+msgid "Identity Readiness"
+msgstr "Tình trạng định danh"
+
+#. module: health_compliance
+#: model:cms.sidebar.item,name:health_compliance.sidebar_destination
+#: model:ir.actions.act_window,name:health_compliance.action_destination
+msgid "Processing Destinations"
+msgstr "Điểm đến xử lý dữ liệu"
+
+#. module: health_compliance
+#: model_terms:ir.ui.view,arch_db:health_compliance.view_rights_form
+msgid "Record acknowledgement"
+msgstr "Ghi nhận phản hồi tiếp nhận"
+
+#. module: health_compliance
+#: model_terms:ir.ui.view,arch_db:health_compliance.view_rights_form
+msgid "Record extension notice"
+msgstr "Ghi nhận thông báo gia hạn"
+
+#. module: health_compliance
+#: model_terms:ir.ui.view,arch_db:health_compliance.view_hold_form
+msgid "Release hold"
+msgstr "Giải phóng lệnh lưu giữ"
+
+#. module: health_compliance
+#: model:cms.sidebar.item,name:health_compliance.sidebar_hold
+#: model:ir.actions.act_window,name:health_compliance.action_hold
+msgid "Retention Holds"
+msgstr "Lệnh lưu giữ hồ sơ"
+
+#. module: health_compliance
+#: model:cms.sidebar.item,name:health_compliance.sidebar_holiday
+msgid "Rights Calendar"
+msgstr "Lịch xử lý yêu cầu"
+
+#. module: health_compliance
+#: model:cms.sidebar.item,name:health_compliance.sidebar_rights
+#: model:ir.actions.act_window,name:health_compliance.action_rights
+msgid "Rights Requests"
+msgstr "Yêu cầu quyền dữ liệu cá nhân"
+
+#. module: health_compliance
+#: model:ir.model.fields,field_description:health_compliance.field_health_scribe_job__transcript_enc
+msgid "Transcript (encrypted)"
+msgstr "Bản ghi lời nói (đã mã hóa)"
+
+#. module: health_compliance
+#: model:ir.model.fields,field_description:health_compliance.field_res_partner__vneid_verified
+msgid "VNeID Checked Manually"
+msgstr "Đã kiểm tra VNeID thủ công"
+
+#. module: health_compliance
+#: model:ir.actions.act_window,name:health_compliance.action_holiday
+msgid "Vietnam Rights Calendar"
+msgstr "Lịch xử lý yêu cầu tại Việt Nam"

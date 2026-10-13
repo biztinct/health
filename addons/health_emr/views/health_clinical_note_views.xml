@@ -54,6 +54,14 @@
             <xpath expr="//sheet" position="after">
                 <chatter/>
             </xpath>
+            <xpath expr="//field[@name='author_id']" position="attributes">
+                <attribute name="readonly">emr_state == 'final'</attribute>
+            </xpath>
+            <xpath expr="//field[@name='author_id']" position="after">
+                <field name="care_datetime" readonly="emr_state == 'final'"/>
+                <field name="correction_reason" invisible="not amends_note_id"
+                       readonly="emr_state == 'final'"/>
+            </xpath>
 
         </field>
     </record>

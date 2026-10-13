@@ -125,8 +125,10 @@ class BiAiProvider(models.Model):
     # Completion contract: _complete(system, user, force_json) -> str
     # ------------------------------------------------------------------
 
-    def _complete(self, system, user_message, force_json=True):
+    def _complete(self, system, user_message, force_json=True, classification=egress.RECORDS, patient=None):
         self.ensure_one()
+        self.env['ai.egress.log'].guard((system or '') + '\n' + (user_message or ''),
+            classification, self.provider, self.endpoint, surface='bi.ai.provider')
         handler = getattr(self, '_complete_%s' % self.provider)
         return handler(system, user_message, force_json)
 
@@ -148,7 +150,7 @@ class BiAiProvider(models.Model):
                 'system': system,
                 'messages': [{'role': 'user', 'content': user_message}],
             },
-            timeout=self.timeout_s)
+            timeout=self.timeout_s, allow_redirects=False)
         response.raise_for_status()
         return response.json()['content'][0]['text']
 
@@ -170,7 +172,7 @@ class BiAiProvider(models.Model):
         response = requests.post(
             self.endpoint,
             headers={'Authorization': 'Bearer %s' % key},
-            json=payload, timeout=self.timeout_s)
+            json=payload, timeout=self.timeout_s, allow_redirects=False)
         response.raise_for_status()
         return response.json()['choices'][0]['message']['content']
 
@@ -187,7 +189,7 @@ class BiAiProvider(models.Model):
         if force_json:
             payload['format'] = 'json'
         response = requests.post(self.endpoint, json=payload,
-                                 timeout=self.timeout_s)
+                                 timeout=self.timeout_s, allow_redirects=False)
         response.raise_for_status()
         return response.json()['message']['content']
 
@@ -457,7 +459,7 @@ class BiAi(models.AbstractModel):
         last_error = None
         for attempt in range(2):
             try:
-                raw = provider._complete(system, user_message)
+                raw = provider._complete(system, user_message, classification=egress.SCHEMA)
                 config = self._parse_json(raw)
                 result = validate(config)
                 self._log(provider, kind, prompt, result, started, True)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Health Ambient Scribe',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'category': 'Healthcare',
     'summary': 'Voice → note text: the nurse records her observations in the '
                'clinical-note form; a pluggable server-side STT backend turns '

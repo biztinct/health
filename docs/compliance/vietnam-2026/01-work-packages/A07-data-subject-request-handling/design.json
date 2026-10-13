@@ -1,0 +1,26 @@
+{
+  "id": "A07",
+  "title": "Data-subject request handling",
+  "components": [
+    "health_compliance"
+  ],
+  "requirements": [
+    "EV-06-4",
+    "EV-07-4"
+  ],
+  "design_status": "approved_for_implementation_by_user",
+  "implementation_status": "implemented_partial_external_acceptance_pending",
+  "acceptance_scenarios": "Run request-specific access/deletion/withdrawal cases with reproducible clocks, processor handoffs, justified extensions and statutory-retention refusal. Use an integrated controlled case tool if suitable.",
+  "evidence_after_implementation": "A07-request-timeline.csv; redacted case-exhibit.pdf; A07-timer-tests.json; identity/refusal/extension procedures and notification records.",
+  "manual_acceptance": "DPO signs the applicable response rules and case outcome. Refresh when rules or workflows change and sample real closed cases periodically; simulated tests do not show all real requests met deadlines.",
+  "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+  "deployment_scope": [
+    "carejiox",
+    "carejiox_template",
+    "hhh"
+  ],
+  "environment_class": "demo",
+  "external_dependencies": "",
+  "implemented_controls": "Rights cases calculate Article 5 acknowledgement/completion clocks, distinguish processor involvement, enforce one justified extension with actual notice proof, and preserve acknowledgement/outcome proof. Company-scoped holiday calendar supports working-day deadlines.",
+  "remaining_actions": "Publish request procedures, verify identity, configure Vietnamese holidays, communicate outcomes and review legal exceptions. Workflow actions record actual communications; they do not send them."
+}

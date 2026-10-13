@@ -24,6 +24,9 @@
   'use strict';
 
   var VI = {
+    'Approved Recipients': 'Bên nhận dữ liệu đã được phê duyệt',
+    'Notice Version': 'Phiên bản thông báo',
+    'Notice Presented': 'Nội dung thông báo đã trình bày',
     'Consents': 'Đồng ý điều trị',
     'New consent': 'Đồng ý mới',
     'Consent type': 'Loại đồng ý',
@@ -354,6 +357,24 @@
       scopeInput.className = 'hc-input';
       labelled(_t('Scope / limitations'), scopeInput);
 
+      var noticeVersionInput = document.createElement('input');
+      noticeVersionInput.className = 'hc-input';
+      labelled(_t('Notice Version'), noticeVersionInput);
+      var noticeTextInput = document.createElement('textarea');
+      noticeTextInput.className = 'hc-input';
+      labelled(_t('Notice Presented'), noticeTextInput);
+
+      var recipientsSelect = document.createElement('select');
+      recipientsSelect.className = 'hc-select';
+      recipientsSelect.multiple = true;
+      (types.destinations || []).forEach(function (item) {
+        var option = document.createElement('option');
+        option.value = item.id;
+        option.textContent = item.name + ' / ' + item.country + ' / ' + item.purpose;
+        recipientsSelect.appendChild(option);
+      });
+      labelled(_t('Approved Recipients'), recipientsSelect);
+
       var expiryInput = document.createElement('input');
       expiryInput.type = 'date';
       expiryInput.className = 'hc-input';
@@ -388,6 +409,9 @@
           method: methodSelect.value,
           self_granted: selfCheckbox.checked,
           scope_note: scopeInput.value || '',
+          notice_version: noticeVersionInput.value || '',
+          destination_ids: Array.from(recipientsSelect.selectedOptions).map(function(o) { return Number(o.value); }),
+          notice_text: noticeTextInput.value || '',
           expiry_date: expiryInput.value || null,
         };
         if (!selfCheckbox.checked) {

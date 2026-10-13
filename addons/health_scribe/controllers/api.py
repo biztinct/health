@@ -6,6 +6,7 @@ import logging
 
 from odoo import http, fields, _
 from odoo.http import request
+from odoo.exceptions import AccessError
 
 _logger = logging.getLogger(__name__)
 
@@ -102,6 +103,8 @@ class HealthScribeController(http.Controller):
                 'attachment_id': job.attachment_id.id,
                 'state': job.state,
             })
+        except AccessError as exc:
+            return self._prepare_json_response(error=str(exc), status_code=403)
         except Exception as exc:  # noqa: BLE001
             _logger.error('Scribe upload_audio failed: %s', exc)
             return self._prepare_json_response(error=str(exc), status_code=500)

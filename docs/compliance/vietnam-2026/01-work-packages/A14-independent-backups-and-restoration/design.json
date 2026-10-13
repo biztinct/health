@@ -1,0 +1,27 @@
+{
+  "id": "A14",
+  "title": "Independent backups and restoration",
+  "components": [
+    "biz_tenants"
+  ],
+  "requirements": [
+    "EV-01-4",
+    "EV-06-2",
+    "EV-09-1"
+  ],
+  "design_status": "approved_for_implementation_by_user",
+  "implementation_status": "implemented_partial_external_acceptance_pending",
+  "acceptance_scenarios": "Restore DB plus all files into isolated staging with outbound jobs disabled. Reconcile counts/checksums, recover encrypted content, measure agreed RPO/RTO and test failed-job alerting.",
+  "evidence_after_implementation": "A14-backup-policy.pdf; redacted job/storage metadata; A14-restore-reconciliation.csv; timed restore-report.pdf; alert results and operator/reviewer approvals.",
+  "manual_acceptance": "Infrastructure and custodian witness recovery; confirm independent storage and lawful retention. Run scheduled restore exercises and after material architecture/key changes. Job success alone does not prove recoverability.",
+  "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+  "deployment_scope": [
+    "carejiox",
+    "carejiox_template",
+    "hhh"
+  ],
+  "environment_class": "demo",
+  "external_dependencies": "",
+  "implemented_controls": "Existing database-plus-filestore backups use streamed authenticated encryption, external key and artifact digests. Restore validates both artifacts and rejects unsafe archive members. Restored cron/mail COPY rows are neutralised before atomic schema publication. Registered legacy pairs are migrated explicitly.",
+  "remaining_actions": "Independent/off-host storage, independent key escrow, agreed RPO/RTO, backup retention and periodic witnessed restore schedules remain operational tasks."
+}

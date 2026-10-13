@@ -158,6 +158,10 @@ class HealthPWAAPIController(http.Controller):
                 # EMR finalization state (health_emr — optional module). Read
                 # defensively so health_pwa keeps no hard dependency on it.
                 if 'emr_state' in note._fields:
+                    note_data['care_datetime'] = (
+                        note.care_datetime.isoformat() + 'Z' if note.care_datetime else None)
+                    note_data['is_amendment'] = bool(note.amends_note_id)
+                    note_data['correction_reason'] = note.correction_reason or ''
                     note_data['emr_state'] = note.emr_state
                     note_data['signed_by'] = (
                         note.signed_by_id.name if note.signed_by_id else None)
@@ -1060,7 +1064,18 @@ class HealthPWAAPIController(http.Controller):
                 return self._prepare_json_response(
                     error=_('EMR finalization is not available.'), status_code=400)
 
+            # sudo preserves the authenticated uid. Read the identity safely
+            # and enforce author/head-nurse before any update or response.
+            note_sudo._ensure_can_finalize()
             if note_sudo.emr_state != 'final':
+                body = json.loads(request.httprequest.data or b'{}')
+                updates = {}
+                if body.get('care_datetime'):
+                    updates['care_datetime'] = fields.Datetime.to_datetime(body['care_datetime'])
+                if body.get('correction_reason'):
+                    updates['correction_reason'] = body['correction_reason']
+                if updates:
+                    note_sudo.write(updates)
                 # Finalize as the REAL nurse so the signature attributes to her;
                 # action_finalize sudo's its own heavy reads/writes internally.
                 request.env['health.clinical.note'].browse(note_id).action_finalize()
@@ -1216,6 +1231,9 @@ class HealthPWAAPIController(http.Controller):
             if not order.exists():
                 return self._prepare_json_response(error=_('Order not found'), status_code=404)
 
+            order.check_access('read')
+            if 'health.consent' in request.env.registry.models:
+                request.env['health.consent'].require_consent(order.patient_id, 'photography')
             image_file = request.httprequest.files.get('image')
             if not image_file:
                 return self._prepare_json_response(error=_('No image provided'), status_code=400)
@@ -1227,7 +1245,8 @@ class HealthPWAAPIController(http.Controller):
                 'name': f'Clinical_Image_{order.name}_{datetime.now().strftime("%Y%m%d_%H%M%S")}.jpg',
                 'type': 'binary',
                 'datas': image_data,
-                'res_model': 'health.clinical.note',
+                'res_model': 'health.fieldservice.order',
+                'res_id': order.id,
                 'mimetype': image_file.content_type or 'image/jpeg',
             })
 
@@ -1243,6 +1262,8 @@ class HealthPWAAPIController(http.Controller):
                 'url': f'/web/content/{attachment.id}'
             })
 
+        except AccessError as e:
+            return self._prepare_json_response(error=str(e), status_code=403)
         except Exception as e:
             return self._prepare_json_response(error=str(e), status_code=500)
 

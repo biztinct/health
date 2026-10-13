@@ -1,0 +1,436 @@
+{
+  "baseline_commit": "14e88f32",
+  "environment": "demo",
+  "databases": [
+    "carejiox",
+    "carejiox_template",
+    "hhh"
+  ],
+  "user_scope_decisions": {
+    "hosting": "User will arrange Vietnam hosting before production; no regional migration now.",
+    "signing": "Authenticated internal clinician confirmation for demo; CA certificate/provider validation remains a separate prerequisite if selected.",
+    "interfaces": "National/VNeID/BHXH onboarding, specifications and credentials not arranged; no live submission."
+  },
+  "implementation_sequence": [
+    "Design",
+    "History-safe clinical and consent changes",
+    "Assurance/retention/rights/export controls",
+    "Encryption and backups",
+    "Egress/integration/validation boundaries",
+    "Isolated tests",
+    "Commit latest combined state",
+    "Deploy all in-scope databases",
+    "Chrome workflow checks",
+    "Actual redacted evidence and status report"
+  ],
+  "sanctioned_modules": [
+    "biz_bi",
+    "biz_tenants",
+    "health_ai_coding",
+    "health_care_command_ai",
+    "health_cms_sidebar",
+    "health_compliance",
+    "health_consent",
+    "health_emr",
+    "health_phi_encryption",
+    "health_pwa",
+    "health_pwa_daystrip",
+    "health_pwa_ergo",
+    "health_pwa_family",
+    "health_scribe",
+    "health_theme"
+  ],
+  "packages": [
+    {
+      "id": "A01",
+      "title": "Consent and purpose checks",
+      "components": [
+        "health_consent",
+        "health_pwa",
+        "health_ai_coding",
+        "health_scribe",
+        "health_fhir_core"
+      ],
+      "requirements": [
+        "EV-02-2",
+        "EV-07-1",
+        "EV-07-2",
+        "EV-07-3",
+        "EV-11-4"
+      ],
+      "design_status": "approved_for_implementation_by_user",
+      "implementation_status": "implemented_partial_external_acceptance_pending",
+      "acceptance_scenarios": "Witness grant, missing consent, withdrawal and queued/offline replay across backend, FHIR, PWA, AI and marketing. Verify permissible other-lawful-basis processing remains available.",
+      "evidence_after_implementation": "A01-consent-exhibit.pdf; A01-purpose-cases.csv; A01-enforcement-results.json; tenant-configuration.json. Include notice version, exact event times and test identities.",
+      "manual_acceptance": "Approve purpose/legal-basis map and consent wording. Reviewer checks every enabled path and tenant/template. Refresh when purposes, notices, callers or enforcement settings change.",
+      "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+      "deployment_scope": [
+        "carejiox",
+        "carejiox_template",
+        "hhh"
+      ],
+      "environment_class": "demo",
+      "external_dependencies": "",
+      "implemented_controls": "Consent records capture exact notice/version, actor and event time. Purpose lookup includes AI, support, analytics, training and audio recording. Immutable selected recipients bind AI transmission. Photo/audio upload gates run before storage. PWA and backend expose notice/recipient controls.",
+      "remaining_actions": "Approve notices, representative authority and lawful exceptions; arrange actual provider destinations before AI/speech use."
+    },
+    {
+      "id": "A02",
+      "title": "Clinical author and correction integrity",
+      "components": [
+        "health_emr",
+        "health_pwa"
+      ],
+      "requirements": [
+        "EV-05-1",
+        "EV-05-2",
+        "EV-05-3"
+      ],
+      "design_status": "approved_for_implementation_by_user",
+      "implementation_status": "implemented_partial_external_acceptance_pending",
+      "acceptance_scenarios": "Attempt author/order relinking, content change and deletion/cascade through UI and APIs. Demonstrate original preservation, addendum export and offline identity attribution.",
+      "evidence_after_implementation": "A02-note-addendum-exhibit.pdf; A02-mutation-results.json; original-and-addendum.json; SHA-256 manifest. Use synthetic clinical records.",
+      "manual_acceptance": "Clinical reviewer approves late-entry/correction policy; security reviewer checks privileged access boundaries. Refresh after authoring, sync or schema changes.",
+      "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+      "deployment_scope": [
+        "carejiox",
+        "carejiox_template",
+        "hhh"
+      ],
+      "environment_class": "demo",
+      "external_dependencies": "",
+      "implemented_controls": "Authenticated finalization issues a v2 clinical seal over care time, correction reason, identity, audio and coding sidecars. RPC-created signatures and client-context bypasses are refused. Author/order/content lock after finalization; corrections use addenda. Existing v1 verification remains unchanged.",
+      "remaining_actions": "Approve clinician identity and supervisor permissions. Legacy missing event times remain missing."
+    },
+    {
+      "id": "A03",
+      "title": "Protected audit trail",
+      "components": [
+        "health_compliance",
+        "health_api_gateway"
+      ],
+      "requirements": [
+        "EV-01-4",
+        "EV-04-3",
+        "EV-04-5",
+        "EV-05-4"
+      ],
+      "design_status": "approved_for_implementation_by_user",
+      "implementation_status": "implemented_partial_external_acceptance_pending",
+      "acceptance_scenarios": "Generate login/logout, clinical read/create/change/delete, support and API events; reconcile all expected events and proxy metadata. Attempt unauthorised alteration and retrieve archived logs.",
+      "evidence_after_implementation": "A03-event-coverage.csv; audit-sample.ndjson; A03-tamper-and-retrieval.pdf; protected-store and retention configuration with access review.",
+      "manual_acceptance": "Security reviewer witnesses coverage and protection against relevant administrator roles. Evidence archive configuration and ongoing log continuity; a fresh deployment cannot prove 12 elapsed months of retained history.",
+      "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+      "deployment_scope": [
+        "carejiox",
+        "carejiox_template",
+        "hhh"
+      ],
+      "environment_class": "demo",
+      "external_dependencies": "",
+      "implemented_controls": "Healthcare ORM read/fetch/create/write/delete, partner reads, clinical signing and attachment streaming emit structured actor/time/record/result events without content. AUTHPRIV syslog is independent of the request transaction.",
+      "remaining_actions": "Configure and witness log collection, retention, access and independent/off-host protection. Direct SQL, external systems and all export channels still require coverage review; local logs are not proof against infrastructure administrators."
+    },
+    {
+      "id": "A04",
+      "title": "Encryption and key custody",
+      "components": [
+        "health_phi_encryption",
+        "biz_tenants"
+      ],
+      "requirements": [
+        "EV-01-4",
+        "EV-04-1",
+        "EV-09-1"
+      ],
+      "design_status": "approved_for_implementation_by_user",
+      "implementation_status": "implemented_partial_external_acceptance_pending",
+      "acceptance_scenarios": "Inspect DB, filestore, audio, temporary/export copies, replicas and backups. Verify TLS, encrypted artifacts, legacy migration, separation of keys, rotation and controlled recovery.",
+      "evidence_after_implementation": "A04-storage-coverage.csv; A04-TLS-report.pdf; redacted key/rotation records; migration results; encrypted-backup and recovery test report.",
+      "manual_acceptance": "Infrastructure and security approve the estate/key inventory. A screenshot or encrypted field alone is insufficient. Refresh on storage, key, provider or encryption changes; schedule periodic checks.",
+      "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+      "deployment_scope": [
+        "carejiox",
+        "carejiox_template",
+        "hhh"
+      ],
+      "environment_class": "demo",
+      "external_dependencies": "",
+      "implemented_controls": "Sensitive healthcare attachments use AES-256-GCM with transparent HTTP delivery and unchanged plaintext checksums. Scribe transcripts, correction reasons and AI coding payloads are encrypted; legacy plaintext columns are migrated without changing seals. Backup pairs use an external root-owned key.",
+      "remaining_actions": "Production disk/database encryption, independent key escrow, custody and rotation must be arranged. Existing PHI derivation is preserved; database.secret remains available to an authorised DB administrator."
+    },
+    {
+      "id": "A05",
+      "title": "Retention, holds and erasure",
+      "components": [
+        "health_compliance",
+        "health_base",
+        "biz_tenants"
+      ],
+      "requirements": [
+        "EV-02-4",
+        "EV-06-1",
+        "EV-06-3"
+      ],
+      "design_status": "approved_for_implementation_by_user",
+      "implementation_status": "implemented_partial_external_acceptance_pending",
+      "acceptance_scenarios": "Use boundary-date fixtures for each approved class; refuse deletion of held/retained records and whole tenants. Prove lawful purge, attachment removal, backup expiry and restore suppression.",
+      "evidence_after_implementation": "A05-retention-hold-tests.json; approved-schedule.pdf; disposal-approval.pdf; scoped-erasure-report.pdf; backup-expiry and restore-suppression results.",
+      "manual_acceptance": "Custodian/DPO approves trigger dates, exceptions and custody. Demonstrate configuration, boundary tests and sustainable contracts; do not claim a test proves decades of elapsed storage or physical erasure of unverified media.",
+      "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+      "deployment_scope": [
+        "carejiox",
+        "carejiox_template",
+        "hhh"
+      ],
+      "environment_class": "demo",
+      "external_dependencies": "",
+      "implemented_controls": "Company-scoped retention/legal holds stop linked healthcare-record and patient deletion. Released holds retain history. Tenant closure requires an explicit custodian approval reference and no active hold. No automatic clinical destruction is enabled.",
+      "remaining_actions": "Custodian/legal team must approve retention classes, schedule, exceptions, archive custody and each destruction procedure. Final clinical notes remain locked; a reviewed statutory disposition service is future work if required."
+    },
+    {
+      "id": "A06",
+      "title": "Readable complete exports and archives",
+      "components": [
+        "health_compliance",
+        "health_fhir_adapter_vn"
+      ],
+      "requirements": [
+        "EV-02-4",
+        "EV-06-2",
+        "EV-07-4"
+      ],
+      "design_status": "approved_for_implementation_by_user",
+      "implementation_status": "implemented_partial_external_acceptance_pending",
+      "acceptance_scenarios": "Export notes, addenda, attachments, consent and required metadata. Reconcile counts/checksums and open the archive independently of the current service; test representative format migrations.",
+      "evidence_after_implementation": "A06-synthetic-export.zip; manifest.csv; schema-and-format-guide.pdf; A06-independent-read-test.pdf; signed custody/exit terms.",
+      "manual_acceptance": "Receiving custodian witnesses readability and completeness. Refresh on export/schema/format changes; periodically rehearse retrieval and key preservation. A successful export is not a statutory national-interface submission.",
+      "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+      "deployment_scope": [
+        "carejiox",
+        "carejiox_template",
+        "hhh"
+      ],
+      "environment_class": "demo",
+      "external_dependencies": "",
+      "implemented_controls": "Restricted manager archive exports patient-linked healthcare/BHYT records, linked files, readable HTML, JSON and per-file SHA-256 manifest. Clinical integrity is verified before publication. Unsupported models and scope limits are explicit.",
+      "remaining_actions": "Reconcile the exported model inventory, fields, binary evidence, financial/chatter/external records and approved form set before calling an archive complete. PDF/PDF-A archival profiles and external records remain additional work where applicable."
+    },
+    {
+      "id": "A07",
+      "title": "Data-subject request handling",
+      "components": [
+        "health_compliance"
+      ],
+      "requirements": [
+        "EV-06-4",
+        "EV-07-4"
+      ],
+      "design_status": "approved_for_implementation_by_user",
+      "implementation_status": "implemented_partial_external_acceptance_pending",
+      "acceptance_scenarios": "Run request-specific access/deletion/withdrawal cases with reproducible clocks, processor handoffs, justified extensions and statutory-retention refusal. Use an integrated controlled case tool if suitable.",
+      "evidence_after_implementation": "A07-request-timeline.csv; redacted case-exhibit.pdf; A07-timer-tests.json; identity/refusal/extension procedures and notification records.",
+      "manual_acceptance": "DPO signs the applicable response rules and case outcome. Refresh when rules or workflows change and sample real closed cases periodically; simulated tests do not show all real requests met deadlines.",
+      "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+      "deployment_scope": [
+        "carejiox",
+        "carejiox_template",
+        "hhh"
+      ],
+      "environment_class": "demo",
+      "external_dependencies": "",
+      "implemented_controls": "Rights cases calculate Article 5 acknowledgement/completion clocks, distinguish processor involvement, enforce one justified extension with actual notice proof, and preserve acknowledgement/outcome proof. Company-scoped holiday calendar supports working-day deadlines.",
+      "remaining_actions": "Publish request procedures, verify identity, configure Vietnamese holidays, communicate outcomes and review legal exceptions. Workflow actions record actual communications; they do not send them."
+    },
+    {
+      "id": "A08",
+      "title": "Lawful signing and verification",
+      "components": [
+        "health_emr",
+        "health_compliance"
+      ],
+      "requirements": [
+        "EV-08-1",
+        "EV-08-2",
+        "EV-08-3"
+      ],
+      "design_status": "approved_for_implementation_by_user",
+      "implementation_status": "implemented_partial_external_acceptance_pending",
+      "acceptance_scenarios": "For the selected lawful method, test signer attribution and confirmation. Where CA signing applies, verify outside the app, preserve signed bytes and signing-time certificate/status evidence, and test tampering/revocation handling.",
+      "evidence_after_implementation": "A08-signed-synthetic-sample.pdf; detached signature/container if used; certificate-chain-and-status evidence; independent-verification.pdf; provider/method assessment.",
+      "manual_acceptance": "Legal/clinical owner selects the lawful method by document. No personal signing key enters the pack. Refresh on provider, signing component, standards or method changes; retain long-term verification material.",
+      "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+      "deployment_scope": [
+        "carejiox",
+        "carejiox_template",
+        "hhh"
+      ],
+      "environment_class": "demo",
+      "external_dependencies": "Authority specifications/onboarding and provider credentials have not been arranged; no live submission or CA certification claim.",
+      "implemented_controls": "Internal clinician confirmation identifies the authenticated signer and preserves the content seal. Consent evidence PDF distinguishes drawn signatures from certified digital signatures. Integration readiness stores provider/specification/onboarding references.",
+      "remaining_actions": "Select accredited CA/equivalent lawful mechanism, obtain approved signing profile, implement its driver and validate certificates/timestamps/revocation before a certified-signing claim."
+    },
+    {
+      "id": "A09",
+      "title": "National health / VNeID connection",
+      "components": [
+        "health_fhir_adapter_vn",
+        "health_compliance"
+      ],
+      "requirements": [
+        "EV-09-4"
+      ],
+      "design_status": "approved_for_implementation_by_user",
+      "implementation_status": "implemented_partial_external_acceptance_pending",
+      "acceptance_scenarios": "Use the actual authorised test endpoint/specification; submit valid cases, record accepted responses, and test retry, duplicate, mapping and reconciliation failures.",
+      "evidence_after_implementation": "A09-interface-version.pdf; onboarding approval; redacted request-response samples; authority-acknowledgement.json; reconciliation and failure-test report.",
+      "manual_acceptance": "Integration/clinic owner confirms applicable interfaces and credentials. Mocks or file exports do not prove authority acceptance. Refresh on interface/specification or facility changes and track production failures.",
+      "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+      "deployment_scope": [
+        "carejiox",
+        "carejiox_template",
+        "hhh"
+      ],
+      "environment_class": "demo",
+      "external_dependencies": "Authority specifications/onboarding and provider credentials have not been arranged; no live submission or CA certification claim.",
+      "implemented_controls": "Readiness dossier tracks approved national/VNeID specifications, onboarding, test acceptance and secret-store references. Manual VNeID checkbox is labelled as manual. Export and authority acceptance are distinct; fabricated government acknowledgements are blocked.",
+      "remaining_actions": "Authority/provider onboarding and approved test specifications are not arranged. Actual VNeID/national transport and reconciliation adapters still need implementation and authority testing."
+    },
+    {
+      "id": "A10",
+      "title": "BHYT / BHXH XML",
+      "components": [
+        "health_bhyt",
+        "health_compliance"
+      ],
+      "requirements": [
+        "EV-09-5"
+      ],
+      "design_status": "approved_for_implementation_by_user",
+      "implementation_status": "implemented_partial_external_acceptance_pending",
+      "acceptance_scenarios": "Validate against the approved current amended schema and mapping; reconcile source/claim totals; demonstrate accepted authority test submission and controlled rejected-claim correction.",
+      "evidence_after_implementation": "A10-current-schema-and-mapping.pdf; synthetic-valid-claim.xml; validation-results.json; BHXH acknowledgement; claim reconciliation and onboarding evidence.",
+      "manual_acceptance": "Finance/integration owner verifies insured-service scope and current schema. Test acceptance is distinct from production onboarding. Refresh on schema, pricing/claim rules, transport or facility changes.",
+      "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+      "deployment_scope": [
+        "carejiox",
+        "carejiox_template",
+        "hhh"
+      ],
+      "environment_class": "demo",
+      "external_dependencies": "Authority specifications/onboarding and provider credentials have not been arranged; no live submission or CA certification claim.",
+      "implemented_controls": "BHXH submitted/acknowledged states cannot be manufactured while onboarding is absent. Readiness dossier records current specification, credentials location and acceptance proof. Existing claim reconciliation remains available.",
+      "remaining_actions": "Current approved 130/4750/3176 schema/mappings, facility identifiers, contract and sandbox acceptance are required. Complete XML mapping/validation and submission adapter remain technical work after approved specifications are supplied."
+    },
+    {
+      "id": "A11",
+      "title": "Patient identity and required content",
+      "components": [
+        "health_fhir_adapter_vn",
+        "health_compliance"
+      ],
+      "requirements": [
+        "EV-09-2"
+      ],
+      "design_status": "approved_for_implementation_by_user",
+      "implementation_status": "implemented_partial_external_acceptance_pending",
+      "acceptance_scenarios": "Test valid/missing/incorrect identifiers, duplicates, permitted exceptions and required medical-form fields. Show required export/submission blocking and correct linkage; do not use real identity documents in demonstrations.",
+      "evidence_after_implementation": "A11-identity-and-content-cases.csv; A11-validation-results.json; redacted form exhibit; form/identifier rule matrix and exception approval.",
+      "manual_acceptance": "Registration/clinical owner witnesses patient linkage and signs form applicability. Refresh on forms, identity or mapping changes; merely displaying a code list does not prove complete medical-record compliance.",
+      "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+      "deployment_scope": [
+        "carejiox",
+        "carejiox_template",
+        "hhh"
+      ],
+      "environment_class": "demo",
+      "external_dependencies": "",
+      "implemented_controls": "Identity-readiness view flags missing/nonstandard CCCD and conflicting identity values, permits documented review exceptions and avoids blocking ordinary care. Manual VNeID assertion is distinguished from government authentication.",
+      "remaining_actions": "Verify identity ownership and approved exceptions. Custodian-approved clinical form/data-field inventory and destination-specific mandatory-content checks remain to be finalised; format checks do not establish authenticity."
+    },
+    {
+      "id": "A12",
+      "title": "AI and outbound data destinations",
+      "components": [
+        "ai_egress",
+        "biz_bi",
+        "health_scribe",
+        "health_ai_coding"
+      ],
+      "requirements": [
+        "EV-01-4",
+        "EV-02-2",
+        "EV-03-2",
+        "EV-07-3"
+      ],
+      "design_status": "approved_for_implementation_by_user",
+      "implementation_status": "implemented_partial_external_acceptance_pending",
+      "acceptance_scenarios": "Exercise every enabled AI/speech/analytics/support caller, redirects and queued work. Verify missing/withdrawn purpose blocks consent-dependent transmission and network logs show no disallowed payload left.",
+      "evidence_after_implementation": "A12-data-flow-and-destinations.pdf; caller-coverage.csv; egress-denial-results.json; redacted outbound observations; provider location and processing terms.",
+      "manual_acceptance": "DPO/security approves destinations and actual provider practices. A local label/private address or unchecked cloud flag is insufficient. Refresh on provider/model/endpoint, subprocessors or new callers.",
+      "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+      "deployment_scope": [
+        "carejiox",
+        "carejiox_template",
+        "hhh"
+      ],
+      "environment_class": "demo",
+      "external_dependencies": "",
+      "implemented_controls": "Central BI provider guard defaults unknown callers to records, binds patient AI consent to a reviewed destination, refuses remote patient text and disables redirects. Speech uses purpose/recipient gates. Free questions containing undetectable names require an approved local analytics destination.",
+      "remaining_actions": "Approve actual countries, processor terms, legal bases and destinations. Verify network controls/DNS routing and any providers outside these call paths; no complete all-integration egress claim is made."
+    },
+    {
+      "id": "A13",
+      "title": "Hosting region and tenant isolation",
+      "components": [
+        "health_compliance",
+        "biz_tenants"
+      ],
+      "requirements": [],
+      "design_status": "approved_for_implementation_by_user",
+      "implementation_status": "implemented_partial_external_acceptance_pending",
+      "acceptance_scenarios": "Inventory DB, files, logs, replicas, backups, AI and support access; reconcile actual locations to the approved architecture. Test cross-tenant API, database, file, cache and restore boundaries.",
+      "evidence_after_implementation": "A13-provider-location-evidence.pdf; data-estate.csv; tenant-isolation-results.json; redacted IAM/network boundary report; migration/restore acceptance.",
+      "manual_acceptance": "Infrastructure/DPO approves the complete estate and lawful transfer treatment. Include supplier/provider attestations and independently checked configurations. Refresh on infrastructure, tenancy, migration or support-location changes.",
+      "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+      "deployment_scope": [
+        "carejiox",
+        "carejiox_template",
+        "hhh"
+      ],
+      "environment_class": "demo",
+      "external_dependencies": "Vietnam production hosting is owned by user; demo location is not production residency proof.",
+      "implemented_controls": "Company boundaries apply to the compliance workspace. Cross-tenant backup restore is refused. All three demo databases receive schema updates; template jobs stay off. Demo hosting is intentionally unchanged.",
+      "remaining_actions": "User owns Vietnam production hosting, residency attestations and production tenant-isolation/security acceptance. No Vietnam hosting claim is issued for these demos."
+    },
+    {
+      "id": "A14",
+      "title": "Independent backups and restoration",
+      "components": [
+        "biz_tenants"
+      ],
+      "requirements": [
+        "EV-01-4",
+        "EV-06-2",
+        "EV-09-1"
+      ],
+      "design_status": "approved_for_implementation_by_user",
+      "implementation_status": "implemented_partial_external_acceptance_pending",
+      "acceptance_scenarios": "Restore DB plus all files into isolated staging with outbound jobs disabled. Reconcile counts/checksums, recover encrypted content, measure agreed RPO/RTO and test failed-job alerting.",
+      "evidence_after_implementation": "A14-backup-policy.pdf; redacted job/storage metadata; A14-restore-reconciliation.csv; timed restore-report.pdf; alert results and operator/reviewer approvals.",
+      "manual_acceptance": "Infrastructure and custodian witness recovery; confirm independent storage and lawful retention. Run scheduled restore exercises and after material architecture/key changes. Job success alone does not prove recoverability.",
+      "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+      "deployment_scope": [
+        "carejiox",
+        "carejiox_template",
+        "hhh"
+      ],
+      "environment_class": "demo",
+      "external_dependencies": "",
+      "implemented_controls": "Existing database-plus-filestore backups use streamed authenticated encryption, external key and artifact digests. Restore validates both artifacts and rejects unsafe archive members. Restored cron/mail COPY rows are neutralised before atomic schema publication. Registered legacy pairs are migrated explicitly.",
+      "remaining_actions": "Independent/off-host storage, independent key escrow, agreed RPO/RTO, backup retention and periodic witnessed restore schedules remain operational tasks."
+    }
+  ],
+  "evidence_policy": "No pass proof before a fix/test. Record actual scope, release, deployed settings and results. Pending manual/government conditions remain pending.",
+  "validation_scope": "Local crypto suite and isolated codex_vn2026 clone; live deployment and Chrome acceptance recorded separately after completion."
+}

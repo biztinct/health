@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="action_consent_evidence_report" model="ir.actions.report">
+        <field name="name">Consent Evidence</field>
+        <field name="model">health.consent</field><field name="report_type">qweb-pdf</field>
+        <field name="report_name">health_consent.report_consent_evidence</field>
+        <field name="report_file">health_consent.report_consent_evidence</field>
+    </record>
+    <template id="report_consent_evidence">
+        <t t-call="web.html_container"><t t-foreach="docs" t-as="o">
+            <t t-call="web.external_layout"><div class="page">
+                <h2>Consent Evidence</h2>
+                <p><strong>Reference:</strong> <span t-field="o.name"/></p>
+                <p><strong>Client:</strong> <span t-field="o.client_id"/></p>
+                <p><strong>Purpose:</strong> <span t-field="o.consent_type_id"/></p>
+                <p><strong>State:</strong> <span t-field="o.state"/></p>
+                <p><strong>Method:</strong> <span t-field="o.method"/></p>
+                <p><strong>Notice version:</strong> <span t-field="o.notice_version"/></p>
+                <div style="white-space:pre-wrap" t-field="o.notice_text"/>
+                <p><strong>Witness:</strong> <span t-field="o.verbal_witness_id"/></p>
+                <p><strong>Grantor:</strong> <span t-field="o.granted_by_partner_id"/></p>
+                <p><strong>Effective:</strong> <span t-field="o.effective_date"/> — <span t-field="o.expiry_date"/></p>
+                <p t-if="'destination_ids' in o._fields"><strong>Recipients:</strong>
+                    <t t-foreach="o.destination_ids" t-as="d"><span t-field="d.name"/> · <span t-field="d.country"/>; </t>
+                </p>
+                <div t-if="o.signature"><img t-att-src="image_data_uri(o.signature)" style="max-width:300px;max-height:120px"/></div>
+                <ul><t t-foreach="o.evidence_attachment_ids" t-as="a"><li><span t-field="a.name"/> · SHA-1 plaintext checksum <span t-field="a.checksum"/></li></t></ul>
+                <p><strong>Scope:</strong> <span t-field="o.scope_note"/></p>
+                <p><strong>Granted:</strong> <span t-field="o.granted_datetime"/> · <span t-field="o.granted_by_id"/></p>
+                <p><strong>Withdrawn:</strong> <span t-field="o.withdrawn_datetime"/> · <span t-field="o.withdrawn_by_id"/></p>
+                <p t-field="o.withdrawal_reason"/>
+                <p t-if="not o.granted_datetime">Legacy record: the precise grant timestamp was not recorded. No timestamp has been inferred.</p>
+                <p>Attached scans, witness records or drawn signatures support this record. A drawn signature is not a certified digital signature.</p>
+            </div></t>
+        </t></t>
+    </template>
+</odoo>

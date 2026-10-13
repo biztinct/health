@@ -1,0 +1,28 @@
+{
+  "id": "A08",
+  "title": "Lawful signing and verification",
+  "components": [
+    "health_emr",
+    "health_compliance"
+  ],
+  "requirements": [
+    "EV-08-1",
+    "EV-08-2",
+    "EV-08-3"
+  ],
+  "design_status": "approved_for_implementation_by_user",
+  "implementation_status": "implemented_partial_external_acceptance_pending",
+  "acceptance_scenarios": "For the selected lawful method, test signer attribution and confirmation. Where CA signing applies, verify outside the app, preserve signed bytes and signing-time certificate/status evidence, and test tampering/revocation handling.",
+  "evidence_after_implementation": "A08-signed-synthetic-sample.pdf; detached signature/container if used; certificate-chain-and-status evidence; independent-verification.pdf; provider/method assessment.",
+  "manual_acceptance": "Legal/clinical owner selects the lawful method by document. No personal signing key enters the pack. Refresh on provider, signing component, standards or method changes; retain long-term verification material.",
+  "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+  "deployment_scope": [
+    "carejiox",
+    "carejiox_template",
+    "hhh"
+  ],
+  "environment_class": "demo",
+  "external_dependencies": "Authority specifications/onboarding and provider credentials have not been arranged; no live submission or CA certification claim.",
+  "implemented_controls": "Internal clinician confirmation identifies the authenticated signer and preserves the content seal. Consent evidence PDF distinguishes drawn signatures from certified digital signatures. Integration readiness stores provider/specification/onboarding references.",
+  "remaining_actions": "Select accredited CA/equivalent lawful mechanism, obtain approved signing profile, implement its driver and validate certificates/timestamps/revocation before a certified-signing claim."
+}

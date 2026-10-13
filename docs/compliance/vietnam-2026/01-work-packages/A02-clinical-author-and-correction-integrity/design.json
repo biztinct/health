@@ -1,0 +1,28 @@
+{
+  "id": "A02",
+  "title": "Clinical author and correction integrity",
+  "components": [
+    "health_emr",
+    "health_pwa"
+  ],
+  "requirements": [
+    "EV-05-1",
+    "EV-05-2",
+    "EV-05-3"
+  ],
+  "design_status": "approved_for_implementation_by_user",
+  "implementation_status": "implemented_partial_external_acceptance_pending",
+  "acceptance_scenarios": "Attempt author/order relinking, content change and deletion/cascade through UI and APIs. Demonstrate original preservation, addendum export and offline identity attribution.",
+  "evidence_after_implementation": "A02-note-addendum-exhibit.pdf; A02-mutation-results.json; original-and-addendum.json; SHA-256 manifest. Use synthetic clinical records.",
+  "manual_acceptance": "Clinical reviewer approves late-entry/correction policy; security reviewer checks privileged access boundaries. Refresh after authoring, sync or schema changes.",
+  "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+  "deployment_scope": [
+    "carejiox",
+    "carejiox_template",
+    "hhh"
+  ],
+  "environment_class": "demo",
+  "external_dependencies": "",
+  "implemented_controls": "Authenticated finalization issues a v2 clinical seal over care time, correction reason, identity, audio and coding sidecars. RPC-created signatures and client-context bypasses are refused. Author/order/content lock after finalization; corrections use addenda. Existing v1 verification remains unchanged.",
+  "remaining_actions": "Approve clinician identity and supervisor permissions. Legacy missing event times remain missing."
+}

@@ -163,7 +163,7 @@ class CareAiAssist(models.AbstractModel):
         raises ``AttributeError: 'str' object has no attribute 'get'`` (§5.60)."""
         started = fields.Datetime.now()
         try:
-            raw = provider._complete(system, prompt, force_json=False)
+            raw = provider._complete(system, prompt, force_json=False, patient=rec.partner_id)
         except Exception as exc:  # noqa: BLE001 — any provider error → clean msg
             _logger.warning("care_ai %s failed (conv %s): %s",
                             capability, rec.id, exc)

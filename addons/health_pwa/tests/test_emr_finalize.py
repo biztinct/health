@@ -42,6 +42,10 @@ class TestEmrFinalizeEndpoint(HttpCase):
             self.env, login='fz_other_%s' % uuid.uuid4().hex[:6],
             groups='base.group_user,health_base.group_healthcare_nurse',
             password='fzotherpw')
+        if 'job_role_id' in self.nurse._fields:
+            role = self.env.ref('health_access.role_nurse', raise_if_not_found=False)
+            if role:
+                (self.nurse | self.other).write({'job_role_id': role.id})
         self.order = self.env['health.fieldservice.order'].create({
             'patient_id': self.patient.id, 'facility_id': self.facility.id,
             'scheduled_datetime': fields.Datetime.now() + timedelta(hours=1),

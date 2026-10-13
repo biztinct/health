@@ -1,0 +1,24 @@
+{
+  "id": "A13",
+  "title": "Hosting region and tenant isolation",
+  "components": [
+    "health_compliance",
+    "biz_tenants"
+  ],
+  "requirements": [],
+  "design_status": "approved_for_implementation_by_user",
+  "implementation_status": "implemented_partial_external_acceptance_pending",
+  "acceptance_scenarios": "Inventory DB, files, logs, replicas, backups, AI and support access; reconcile actual locations to the approved architecture. Test cross-tenant API, database, file, cache and restore boundaries.",
+  "evidence_after_implementation": "A13-provider-location-evidence.pdf; data-estate.csv; tenant-isolation-results.json; redacted IAM/network boundary report; migration/restore acceptance.",
+  "manual_acceptance": "Infrastructure/DPO approves the complete estate and lawful transfer treatment. Include supplier/provider attestations and independently checked configurations. Refresh on infrastructure, tenancy, migration or support-location changes.",
+  "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+  "deployment_scope": [
+    "carejiox",
+    "carejiox_template",
+    "hhh"
+  ],
+  "environment_class": "demo",
+  "external_dependencies": "Vietnam production hosting is owned by user; demo location is not production residency proof.",
+  "implemented_controls": "Company boundaries apply to the compliance workspace. Cross-tenant backup restore is refused. All three demo databases receive schema updates; template jobs stay off. Demo hosting is intentionally unchanged.",
+  "remaining_actions": "User owns Vietnam production hosting, residency attestations and production tenant-isolation/security acceptance. No Vietnam hosting claim is issued for these demos."
+}

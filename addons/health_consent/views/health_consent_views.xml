@@ -10,6 +10,7 @@
         <field name="arch" type="xml">
             <form string="Consent">
                 <header>
+                    <button name="action_print_evidence" type="object" string="Print Consent Evidence"/>
                     <button name="action_grant" type="object"
                             string="Grant" class="btn-primary"
                             invisible="state != 'draft'"
@@ -52,6 +53,13 @@
                         </group>
                     </group>
                     <group string="Evidence" name="evidence">
+                        <group>
+                            <field name="notice_version" readonly="state != 'draft'"/>
+                            <field name="notice_text" readonly="state != 'draft'"/>
+                            <field name="granted_datetime"/>
+                            <field name="granted_by_id"/>
+                            <field name="withdrawn_datetime"/>
+                        </group>
                         <group>
                             <field name="signature" widget="image"
                                    invisible="method != 'digital_signature'"

@@ -203,6 +203,10 @@ class BizTenantBackup(models.Model):
     ], default='manual', required=True, index=True)
     path = fields.Char(required=True, help="The database file.")
     filestore_path = fields.Char(help="The attachments archive beside it.")
+    encryption_format = fields.Char(readonly=True)
+    encryption_key_id = fields.Char(readonly=True)
+    database_sha256 = fields.Char(readonly=True)
+    filestore_sha256 = fields.Char(readonly=True)
     #: BOTH sizes, recorded separately and on purpose (ledger F59). A backup is
     #: the database AND the attachments; one number cannot say whether the
     #: second half is there.

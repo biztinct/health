@@ -39,6 +39,16 @@ class TestAiAttribution(BiCase):
             'model_name': 'llama3',
         })
 
+        if 'health.compliance.destination' in cls.env.registry.models:
+            from odoo import fields
+            from datetime import timedelta
+            cls.env.user.write({'group_ids':[(4,cls.env.ref('health_base.group_healthcare_admin').id)]})
+            terms=cls.env['ir.attachment'].create({'name':'synthetic-analytics-terms.txt','raw':b'Synthetic test only'})
+            destination=cls.env['health.compliance.destination'].create({'name':'Synthetic analytics destination',
+                'endpoint':cls.provider.endpoint,'purpose':'analytics','country':'Synthetic isolated test',
+                'legal_basis':'Synthetic test only','processor_terms_id':terms.id,'valid_until':fields.Date.today()+timedelta(days=1)})
+            destination.action_approve()
+
     def _canned_config(self):
         return json.dumps({
             'name': 'Partners by country',
@@ -60,7 +70,7 @@ class TestAiAttribution(BiCase):
         def fake_get_default(model, *args, **kwargs):
             return provider.with_env(model.env)
 
-        def fake_complete(prov, system, user_message, force_json=True):
+        def fake_complete(prov, system, user_message, force_json=True, classification=None, patient=None):
             return canned
 
         provider_cls = type(self.env['bi.ai.provider'])

@@ -1,0 +1,26 @@
+{
+  "id": "A11",
+  "title": "Patient identity and required content",
+  "components": [
+    "health_fhir_adapter_vn",
+    "health_compliance"
+  ],
+  "requirements": [
+    "EV-09-2"
+  ],
+  "design_status": "approved_for_implementation_by_user",
+  "implementation_status": "implemented_partial_external_acceptance_pending",
+  "acceptance_scenarios": "Test valid/missing/incorrect identifiers, duplicates, permitted exceptions and required medical-form fields. Show required export/submission blocking and correct linkage; do not use real identity documents in demonstrations.",
+  "evidence_after_implementation": "A11-identity-and-content-cases.csv; A11-validation-results.json; redacted form exhibit; form/identifier rule matrix and exception approval.",
+  "manual_acceptance": "Registration/clinical owner witnesses patient linkage and signs form applicability. Refresh on forms, identity or mapping changes; merely displaying a code list does not prove complete medical-record compliance.",
+  "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+  "deployment_scope": [
+    "carejiox",
+    "carejiox_template",
+    "hhh"
+  ],
+  "environment_class": "demo",
+  "external_dependencies": "",
+  "implemented_controls": "Identity-readiness view flags missing/nonstandard CCCD and conflicting identity values, permits documented review exceptions and avoids blocking ordinary care. Manual VNeID assertion is distinguished from government authentication.",
+  "remaining_actions": "Verify identity ownership and approved exceptions. Custodian-approved clinical form/data-field inventory and destination-specific mandatory-content checks remain to be finalised; format checks do not establish authenticity."
+}

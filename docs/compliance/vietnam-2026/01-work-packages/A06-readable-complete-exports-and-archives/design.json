@@ -1,0 +1,28 @@
+{
+  "id": "A06",
+  "title": "Readable complete exports and archives",
+  "components": [
+    "health_compliance",
+    "health_fhir_adapter_vn"
+  ],
+  "requirements": [
+    "EV-02-4",
+    "EV-06-2",
+    "EV-07-4"
+  ],
+  "design_status": "approved_for_implementation_by_user",
+  "implementation_status": "implemented_partial_external_acceptance_pending",
+  "acceptance_scenarios": "Export notes, addenda, attachments, consent and required metadata. Reconcile counts/checksums and open the archive independently of the current service; test representative format migrations.",
+  "evidence_after_implementation": "A06-synthetic-export.zip; manifest.csv; schema-and-format-guide.pdf; A06-independent-read-test.pdf; signed custody/exit terms.",
+  "manual_acceptance": "Receiving custodian witnesses readability and completeness. Refresh on export/schema/format changes; periodically rehearse retrieval and key preservation. A successful export is not a statutory national-interface submission.",
+  "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+  "deployment_scope": [
+    "carejiox",
+    "carejiox_template",
+    "hhh"
+  ],
+  "environment_class": "demo",
+  "external_dependencies": "",
+  "implemented_controls": "Restricted manager archive exports patient-linked healthcare/BHYT records, linked files, readable HTML, JSON and per-file SHA-256 manifest. Clinical integrity is verified before publication. Unsupported models and scope limits are explicit.",
+  "remaining_actions": "Reconcile the exported model inventory, fields, binary evidence, financial/chatter/external records and approved form set before calling an archive complete. PDF/PDF-A archival profiles and external records remain additional work where applicable."
+}

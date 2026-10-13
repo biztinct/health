@@ -1,0 +1,29 @@
+{
+  "id": "A03",
+  "title": "Protected audit trail",
+  "components": [
+    "health_compliance",
+    "health_api_gateway"
+  ],
+  "requirements": [
+    "EV-01-4",
+    "EV-04-3",
+    "EV-04-5",
+    "EV-05-4"
+  ],
+  "design_status": "approved_for_implementation_by_user",
+  "implementation_status": "implemented_partial_external_acceptance_pending",
+  "acceptance_scenarios": "Generate login/logout, clinical read/create/change/delete, support and API events; reconcile all expected events and proxy metadata. Attempt unauthorised alteration and retrieve archived logs.",
+  "evidence_after_implementation": "A03-event-coverage.csv; audit-sample.ndjson; A03-tamper-and-retrieval.pdf; protected-store and retention configuration with access review.",
+  "manual_acceptance": "Security reviewer witnesses coverage and protection against relevant administrator roles. Evidence archive configuration and ongoing log continuity; a fresh deployment cannot prove 12 elapsed months of retained history.",
+  "history_policy": "Do not invent legacy consent times, rewrite existing clinical seals, or record mock authority responses as real acceptance.",
+  "deployment_scope": [
+    "carejiox",
+    "carejiox_template",
+    "hhh"
+  ],
+  "environment_class": "demo",
+  "external_dependencies": "",
+  "implemented_controls": "Healthcare ORM read/fetch/create/write/delete, partner reads, clinical signing and attachment streaming emit structured actor/time/record/result events without content. AUTHPRIV syslog is independent of the request transaction.",
+  "remaining_actions": "Configure and witness log collection, retention, access and independent/off-host protection. Direct SQL, external systems and all export channels still require coverage review; local logs are not proof against infrastructure administrators."
+}

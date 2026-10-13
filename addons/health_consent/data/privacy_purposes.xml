@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <function model="health.lookup.value" name="_seed_from_registry" />
+    <data noupdate="1">
+        <record id="purpose_ai_processing" model="health.lookup.value">
+            <field name="category_id" search="[('code','=','consent_type')]" />
+            <field name="code">ai_processing</field><field name="name">AI Processing</field>
+        </record>
+        <record id="purpose_support_access" model="health.lookup.value">
+            <field name="category_id" search="[('code','=','consent_type')]" />
+            <field name="code">support_access</field><field name="name">Support Access</field>
+        </record>
+        <record id="purpose_analytics" model="health.lookup.value">
+            <field name="category_id" search="[('code','=','consent_type')]" />
+            <field name="code">analytics</field><field name="name">Personal Data Analytics</field>
+        </record>
+        <record id="purpose_model_training" model="health.lookup.value">
+            <field name="category_id" search="[('code','=','consent_type')]" />
+            <field name="code">model_training</field><field name="name">Model Training</field>
+        </record>
+    <record id="purpose_audio_recording" model="health.lookup.value"><field name="name">Clinical Audio Recording</field><field name="code">audio_recording</field><field name="category_id" search="[('code', '=', 'consent_type')]" /></record></data>
+</odoo>

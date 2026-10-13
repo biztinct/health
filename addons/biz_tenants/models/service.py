@@ -39,6 +39,7 @@ import socket
 import ssl
 import subprocess
 import tarfile
+from .. import backup_crypto
 import tempfile
 import time
 import urllib.request
@@ -1152,6 +1153,16 @@ class BizTenants(models.AbstractModel):
             raise UserError(self.env._("%s is already closed.", tenant.name))
         final = None
         if self._db_exists(tenant.slug):
+            with self._pg_cursor(tenant.slug) as retention_cr:
+                retention_cr.execute("SELECT to_regclass('health_compliance_hold')")
+                if retention_cr.fetchone()[0]:
+                    retention_cr.execute("SELECT count(*) FROM health_compliance_hold WHERE active")
+                    if retention_cr.fetchone()[0]:
+                        raise UserError(self.env._('Active retention/legal holds prevent tenant decommissioning.'))
+                retention_cr.execute("SELECT value FROM ir_config_parameter WHERE key='health_compliance.decommission_approval'")
+                approval = retention_cr.fetchone()
+                if not approval or not approval[0].strip():
+                    raise UserError(self.env._('Custodian approval, retention review and archive custody must be recorded before closing a healthcare tenant. Record the signed approval reference in health_compliance.decommission_approval.'))
             final = self._take_backup(tenant, 'final')
             if final.state != 'done':
                 raise UserError(self.env._(
@@ -1449,8 +1460,11 @@ class BizTenants(models.AbstractModel):
         dump_path = os.path.join(root, '%s_%s_%s.dump' % (t.slug, kind, stamp))
         fs_path = os.path.join(root, '%s_%s_%s.filestore.tar.gz'
                                      % (t.slug, kind, stamp))
+        sealed_dump = sealed_fs = None
         try:
-            os.makedirs(root, exist_ok=True)
+            key = backup_crypto.load_key()
+            os.makedirs(root, mode=0o700, exist_ok=True)
+            os.chmod(root, 0o700)
             proc = subprocess.run(
                 ['pg_dump', '-Fc', '-Z1', '-d', t.slug, '-f', dump_path],
                 capture_output=True, text=True, timeout=3600)
@@ -1476,10 +1490,21 @@ class BizTenants(models.AbstractModel):
                 return Backup.create({
                     'tenant_id': t.id, 'kind': kind, 'path': dump_path,
                     'state': 'failed', 'note': reason[:500]})
+            sealed_dump = dump_path + '.aesgcm'
+            sealed_fs = fs_path + '.aesgcm'
+            dump_proof = backup_crypto.seal_file(dump_path, sealed_dump, key)
+            fs_proof = backup_crypto.seal_file(fs_path, sealed_fs, key)
+            os.unlink(dump_path)
+            os.unlink(fs_path)
+            dump_path, fs_path = sealed_dump, sealed_fs
             rec = Backup.create({
                 'tenant_id': t.id, 'kind': kind, 'path': dump_path,
                 'filestore_path': fs_path, 'size': dump_size,
                 'filestore_size': fs_size, 'filestore_files': files,
+                'encryption_format': dump_proof['format'],
+                'encryption_key_id': dump_proof['key_id'],
+                'database_sha256': dump_proof['sha256'],
+                'filestore_sha256': fs_proof['sha256'],
                 'state': 'done'})
             t.write({'last_backup_at': fields.Datetime.now()})
             t.log('Copy kept: %s of data and %s of attachments in %d files.'
@@ -1488,7 +1513,7 @@ class BizTenants(models.AbstractModel):
             return rec
         except Exception as e:                               # noqa: BLE001
             _logger.exception("biz_tenants: backup failed for %s", t.slug)
-            for path in (dump_path, fs_path):
+            for path in set(filter(None, (dump_path, fs_path, sealed_dump, sealed_fs))):
                 try:
                     if os.path.exists(path):
                         os.unlink(path)
@@ -1538,6 +1563,8 @@ class BizTenants(models.AbstractModel):
         if not rec or not rec.path or not os.path.exists(rec.path):
             raise UserError(self.env._(
                 "There is no copy of %s on this machine to put back.", t.name))
+        if rec.tenant_id != t:
+            raise UserError(self.env._('That backup belongs to another customer.'))
         staging = '%s-staging' % t.slug
         if self._db_exists(staging):
             raise UserError(self.env._(
@@ -1545,14 +1572,18 @@ class BizTenants(models.AbstractModel):
                 'first — two people rehearsing on one name destroy each '
                 "other's work.", staging))
         kept = False
+        restore_entered = False
+        restore_context = backup_crypto.restore_inputs(
+            rec.path, rec.filestore_path or None,
+            {rec.path: rec.database_sha256, rec.filestore_path: rec.filestore_sha256})
         try:
+            database_input, filestore_input = restore_context.__enter__()
+            restore_entered = True
             with self._pg_cursor() as cr:
                 cr.execute('CREATE DATABASE "%s"' % staging)
-            proc = subprocess.run(
-                ['pg_restore', '--no-owner', '-d', staging, rec.path],
-                capture_output=True, text=True, timeout=3600)
-            # pg_restore returns non-zero for warnings as well as failures, so
-            # the test is "did the tables arrive", not "was the exit code nought".
+            proc = backup_crypto.restore_database(database_input, staging)
+            if proc.returncode:
+                raise RuntimeError('Database restore failed; incomplete copies are not accepted')
             with self._pg_cursor(staging) as cr:
                 cr.execute("SELECT to_regclass('ir_module_module')")
                 if not cr.fetchone()[0]:
@@ -1563,8 +1594,8 @@ class BizTenants(models.AbstractModel):
                 if os.path.exists(dest):
                     shutil.rmtree(dest, ignore_errors=True)
                 with tempfile.TemporaryDirectory() as tmp:
-                    with tarfile.open(rec.filestore_path, 'r:gz') as tar:
-                        tar.extractall(tmp)
+                    with tarfile.open(filestore_input, 'r:gz') as tar:
+                        backup_crypto.extract_filestore(tar, tmp)
                     src = os.path.join(tmp, 'filestore')
                     if os.path.isdir(src):
                         shutil.copytree(src, dest)
@@ -1583,8 +1614,12 @@ class BizTenants(models.AbstractModel):
                             "nothing to anybody. Remove it when you are done — "
                             "every extra system on this machine costs memory."}
         finally:
+            if restore_entered:
+                restore_context.__exit__(None, None, None)
             if not kept and self._db_exists(staging):
                 _direct(db_service.exp_drop)(staging)
+            if not kept:
+                shutil.rmtree(self._filestore_path(staging), ignore_errors=True)
 
     @api.model
     def drop_staging(self, tenant_id):

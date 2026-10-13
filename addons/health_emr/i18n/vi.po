@@ -528,3 +528,13 @@ msgstr ""
 #: model:ir.model.fields,help:health_emr.field_health_clinical_note__website_message_ids
 msgid "Website communication history"
 msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__care_datetime
+msgid "Care Provided At"
+msgstr "Thời điểm chăm sóc"
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__correction_reason
+msgid "Correction Reason"
+msgstr "Lý do chỉnh sửa"

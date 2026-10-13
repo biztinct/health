@@ -14,6 +14,7 @@ raises AccessError only when the `health_consent.enforce` config
 parameter is truthy (default falsy = log-only).
 """
 import logging
+from contextvars import ContextVar
 from datetime import timedelta
 
 from odoo import _, api, fields, models
@@ -21,6 +22,7 @@ from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tools import str2bool
 
 _logger = logging.getLogger(__name__)
+_CONSENT_TRANSITION = ContextVar('health_consent_transition', default=False)
 
 # Consent capture / withdrawal is a front-line task (spec §6.3:
 # receptionist, nurse+, manager+ — the operations desk included).
@@ -42,14 +44,16 @@ CAPTURE_GROUPS = (
 #   OR can_receive_medical_info.
 # - photography / marketing: any active relation of the client.
 MEDICAL_DECISION_TYPES = ('service', 'emergency_treatment')
-MEDICAL_INFO_TYPES = ('data_sharing',)
+MEDICAL_INFO_TYPES = ('data_sharing', 'ai_processing', 'support_access', 'analytics', 'model_training', 'audio_recording')
 
 # Evidence fields become immutable once the record leaves draft
 # (active/withdrawn/expired consents are audit records — spec §6.3).
 EVIDENCE_LOCKED_FIELDS = (
+    'notice_version', 'notice_text', 'granted_datetime', 'granted_by_id',
+    'withdrawn_datetime',
     'client_id', 'consent_type_id', 'scope_note', 'self_granted',
     'granted_by_relation_id', 'method', 'signature',
-    'evidence_attachment_ids', 'verbal_witness_id', 'effective_date',
+    'evidence_attachment_ids', 'verbal_witness_id', 'effective_date', 'expiry_date',
 )
 
 
@@ -106,7 +110,7 @@ class HealthConsent(models.Model):
     method = fields.Selection([
         ('verbal', 'Verbal'),
         ('written', 'Written (paper)'),
-        ('digital_signature', 'Digital Signature'),
+        ('digital_signature', 'Drawn Consent Signature'),
     ], required=True, tracking=True, default='verbal',
         help='Evidence class.')
     signature = fields.Binary(
@@ -137,6 +141,13 @@ class HealthConsent(models.Model):
         help='FHIR Consent.status: active→active, withdrawn→inactive '
              '(+ deny provision), expired→inactive, draft→draft.')
     withdrawal_date = fields.Date(readonly=True, copy=False)
+    notice_version = fields.Char(string='Notice Version', copy=False,
+                                help='Version of the notice actually presented; do not infer for legacy grants.')
+    notice_text = fields.Text(string='Notice Presented', copy=False,
+                             help='Exact approved notice content presented for this purpose.')
+    granted_datetime = fields.Datetime(string='Granted At', readonly=True, copy=False)
+    granted_by_id = fields.Many2one('res.users', string='Recorded By', readonly=True, copy=False)
+    withdrawn_datetime = fields.Datetime(string='Withdrawn At', readonly=True, copy=False)
     withdrawal_reason = fields.Char(copy=False)
     withdrawn_by_id = fields.Many2one(
         'res.users', readonly=True, copy=False)
@@ -305,10 +316,14 @@ class HealthConsent(models.Model):
     def create(self, vals_list):
         seen_mutation_ids = set()
         for vals in vals_list:
+            if any(vals.get(f) for f in ('granted_datetime', 'granted_by_id', 'withdrawn_datetime')):
+                raise UserError(_('Consent event times are recorded by the grant/withdraw actions.'))
+            if self._notice_required() and vals.get('state', 'draft') != 'draft':
+                raise UserError(_('Create a draft and explicitly grant consent.'))
             if vals.get('name', _('New')) == _('New'):
                 vals['name'] = self.env['ir.sequence'].next_by_code(
                     'health.consent') or _('New')
-            if (vals.get('method') == 'verbal'
+            if ((vals.get('method') or self.env.context.get('default_method') or 'verbal') == 'verbal'
                     and not vals.get('verbal_witness_id')):
                 vals['verbal_witness_id'] = self.env.uid
             # Pre-check the idempotency key BEFORE the INSERT: the
@@ -325,6 +340,9 @@ class HealthConsent(models.Model):
                         'unique).'))
                 seen_mutation_ids.add(mutation_id)
         consents = super().create(vals_list)
+        if self._notice_required() and any(c.state != 'draft' or c.granted_datetime
+                                           or c.granted_by_id or c.withdrawn_datetime for c in consents):
+            raise UserError(_('Consent evidence cannot be supplied through creation defaults.'))
         # Constraints re-run explicitly (Odoo 19 create gotcha).
         consents._check_expiry()
         consents._check_one_active()
@@ -333,6 +351,12 @@ class HealthConsent(models.Model):
         return consents
 
     def write(self, vals):
+        if 'withdrawal_reason' in vals and self.filtered(lambda c: c.state == 'withdrawn'):
+            raise UserError(_('The reason recorded for a completed withdrawal is immutable.'))
+        if (self._notice_required() and not _CONSENT_TRANSITION.get()
+                and {'state', 'granted_datetime', 'granted_by_id',
+                     'withdrawn_datetime', 'withdrawn_by_id', 'withdrawal_date'} & vals.keys()):
+            raise UserError(_('Use the grant or withdrawal action to record consent events.'))
         # Active/withdrawn/expired consents are immutable audit
         # records: evidence fields are locked after grant (spec §6.3,
         # acceptance #7). State-machine fields (state, withdrawal_*)
@@ -341,7 +365,8 @@ class HealthConsent(models.Model):
         # su=True for SUPERUSER_ID), so a su bypass would void the
         # evidence lock entirely (EVV append-only precedent).
         locked = [field for field in EVIDENCE_LOCKED_FIELDS
-                  if field in vals]
+                  if field in vals and not (
+                      field == 'withdrawn_datetime' and _CONSENT_TRANSITION.get())]
         if locked:
             frozen = self.filtered(lambda c: c.state != 'draft')
             if frozen:
@@ -380,6 +405,13 @@ class HealthConsent(models.Model):
                 'withdraw consents.'))
 
     def action_grant(self):
+        token = _CONSENT_TRANSITION.set(True)
+        try:
+            return self._grant_with_evidence()
+        finally:
+            _CONSENT_TRANSITION.reset(token)
+
+    def _grant_with_evidence(self):
         """draft → active. Method-specific evidence + grantor guards,
         then supersede: the previous active consent of the same
         (client, type) is withdrawn with reason "Superseded", logged
@@ -388,6 +420,9 @@ class HealthConsent(models.Model):
         self._check_capture_allowed()
         if self.state != 'draft':
             raise UserError(_('Only a draft consent can be granted.'))
+        if self._notice_required() and not (
+                (self.notice_version or '').strip() and (self.notice_text or '').strip()):
+            raise UserError(_('Record the notice version and content presented before granting consent.'))
         if self.method == 'verbal' and not self.verbal_witness_id:
             raise UserError(_(
                 'Verbal consent requires a witness (staff who heard '
@@ -416,15 +451,24 @@ class HealthConsent(models.Model):
                 'withdrawal_date': today,
                 'withdrawal_reason': _('Superseded'),
                 'withdrawn_by_id': self.env.uid,
+                'withdrawn_datetime': fields.Datetime.now(),
             })
             old.message_post(body=_(
                 'Superseded by %s.') % (self.name or _('a new consent')))
             self.message_post(body=_(
                 'Supersedes %s.') % old.name)
-        self.write({'state': 'active'})
+        self.write({'state': 'active', 'granted_datetime': fields.Datetime.now(),
+                    'granted_by_id': self.env.uid})
         return True
 
     def action_withdraw(self):
+        token = _CONSENT_TRANSITION.set(True)
+        try:
+            return self._withdraw_with_evidence()
+        finally:
+            _CONSENT_TRANSITION.reset(token)
+
+    def _withdraw_with_evidence(self):
         """active → withdrawn. Requires withdrawal_reason (wizard-free
         — spec §6.3)."""
         self.ensure_one()
@@ -443,6 +487,7 @@ class HealthConsent(models.Model):
             'withdrawal_reason': reason,
             'withdrawal_date': fields.Date.context_today(self),
             'withdrawn_by_id': self.env.uid,
+            'withdrawn_datetime': fields.Datetime.now(),
         })
         return True
 
@@ -454,6 +499,15 @@ class HealthConsent(models.Model):
     # `health_consent.enforce` config parameter is truthy (default
     # falsy = log-only mode, failures logged as compliance evidence).
     # ------------------------------------------------------------------
+    @api.model
+    def _notice_required(self):
+        return str(self.env['ir.config_parameter'].sudo().get_param(
+            'health_consent.require_notice_evidence', 'False')).lower() in ('true', '1', 'yes')
+
+    def action_print_evidence(self):
+        self.check_access('read')
+        return self.env.ref('health_consent.action_consent_evidence_report').report_action(self)
+
     @api.model
     def _partner_id(self, partner):
         """Accept a res.partner record or a plain id."""
@@ -607,6 +661,13 @@ class HealthConsent(models.Model):
     # ------------------------------------------------------------------
     @api.model
     def _cron_expire_consents(self):
+        token = _CONSENT_TRANSITION.set(True)
+        try:
+            return self._expire_with_evidence()
+        finally:
+            _CONSENT_TRANSITION.reset(token)
+
+    def _expire_with_evidence(self):
         """(1) active + expiry_date < today → expired (+ chatter).
         (2) Renewal warning at expiry == today + 14 days → to-do
         activity for the client's facility manager."""

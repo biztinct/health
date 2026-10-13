@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Health AI Retro-Coding Queue',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'category': 'Healthcare',
     'summary': 'LLM suggests ICD-10 codes for free-text clinical notes into a '
                'human review queue — the AI only ever suggests, a clinician '
