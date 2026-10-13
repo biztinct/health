@@ -142,7 +142,10 @@ class TestCompliance(EmrBase):
         with self.assertRaises(UserError):hold.action_release()
 
     def test_archive_manifest_and_clinical_content(self):
+        self.patient.write({'birth_date':'1980-01-01'})
         note=self._note(diagnosis='Synthetic archive observation');note.action_finalize()
+        self.env['health.ai.coding.log'].create({'note_id':note.id,
+            'request_json':{'user':'Synthetic structured archival payload'}, 'response_json':{'raw':'Synthetic response'}})
         action=self.patient.action_compliance_archive();identifier=int(action['url'].split('/')[3].split('?')[0])
         artifact=self.env['ir.attachment'].browse(identifier)
         with zipfile.ZipFile(io.BytesIO(artifact.raw)) as z:
@@ -153,6 +156,9 @@ class TestCompliance(EmrBase):
             self.assertIn('Synthetic archive observation',z.read('patient-records.html').decode())
             self.assertTrue(content['records']['health.clinical.note'][0]['integrity_verified'])
             self.assertIn('unsupported_models',manifest)
+            self.assertIn('omitted_fields',manifest)
+            self.assertEqual(content['patient']['birth_date'],'1980-01-01')
+            self.assertEqual(content['records']['health.ai.coding.log'][0]['request_json']['user'], 'Synthetic structured archival payload')
 
     def test_ai_missing_purpose_destination_and_cloud_refused_before_network(self):
         provider=self.env['bi.ai.provider'].create({'name':'Synthetic local AI','provider':'ollama',

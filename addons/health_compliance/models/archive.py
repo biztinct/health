@@ -20,6 +20,7 @@ class PartnerArchive(models.Model):
         files = {}
         sections = {}
         unsupported = []
+        omitted_fields = {}
         exported_refs = set()
         for model_name in sorted(self.env.registry.models):
             if not model_name.startswith(('health.', 'bhyt.')) or model_name.startswith('health.compliance.'):
@@ -31,7 +32,7 @@ class PartnerArchive(models.Model):
             if not relation:
                 unsupported.append(model_name)
                 continue
-            records = Model.sudo().with_context(active_test=False).search([(relation, '=', self.id)])
+            records = Model.sudo().with_context(active_test=False, bin_size=False).search([(relation, '=', self.id)])
             sections[model_name] = []
             for row in records:
                 exported_refs.add((model_name, row.id))
@@ -39,13 +40,27 @@ class PartnerArchive(models.Model):
                 for name, field in row._fields.items():
                     if name.endswith(('_enc', '_bidx')) or name in ('__last_update',):
                         continue
-                    if field.type in ('char', 'text', 'html', 'selection', 'integer', 'float', 'boolean', 'date', 'datetime', 'monetary'):
+                    if any(part in name.lower() for part in ('password', 'secret', 'api_key', 'credential', 'token')) or name.endswith('_url'):
+                        omitted_fields.setdefault(model_name, {})[name] = 'Credential/access-link field excluded; regenerate through an authorised workflow.'
+                        continue
+                    if field.type in ('char', 'text', 'html', 'selection', 'integer', 'float', 'boolean', 'date', 'datetime', 'monetary', 'json'):
                         value = row[name]
                         content[name] = str(value) if field.type in ('date', 'datetime') and value else value
                     elif field.type == 'many2one':
                         content[name] = {'id': row[name].id, 'label': row[name].display_name} if row[name] else None
                     elif field.type in ('one2many', 'many2many'):
-                        content[name] = row[name].ids
+                        related = row[name]
+                        content[name] = related.ids
+                        content[name + '_details'] = [dict(id=r.id, label=r.display_name,
+                            model=r._name, **({'code': r.code} if 'code' in r._fields else {})) for r in related]
+                    elif field.type == 'binary':
+                        value = row[name]
+                        if value:
+                            path = 'fields/%s/%s/%s.bin' % (model_name, row.id, name)
+                            files[path] = base64.b64decode(value)
+                            content[name] = {'archive_path': path}
+                    else:
+                        omitted_fields.setdefault(model_name, {})[name] = 'Unsupported field type: ' + field.type
                 if model_name == 'health.clinical.note' and 'emr_state' in row._fields:
                     content['integrity_verified'] = row.verify_integrity()
                     if not content['integrity_verified']:
@@ -66,10 +81,19 @@ class PartnerArchive(models.Model):
                         attachment = self.env['ir.attachment'].sudo().browse(identifier).exists()
                         if attachment:
                             files['attachments/%s.bin' % identifier] = attachment.raw or b''
-        patient_fields = [f for f in ('name', 'birthdate', 'gender', 'mobile', 'phone', 'email',
-            'national_id', 'cccd_number', 'allergies', 'medical_history', 'healthcare_notes') if f in self._fields]
-        data = {'patient': self.read(patient_fields)[0], 'records': sections,
-                'unsupported_models': unsupported,
+        # Include the actual healthcare profile field names (birth_date,
+        # gender_id etc.), rather than relying on aliases that are absent here.
+        metadata = self.env['ir.model.fields'].sudo().search([('model', '=', 'res.partner')])
+        healthcare_fields = {f.name for f in metadata if any(m.strip().startswith('health_')
+            for m in (f.modules or '').split(','))}
+        patient_fields = sorted({f for f in healthcare_fields | {'name', 'phone', 'mobile', 'email', 'lang', 'tz'}
+            if f in self._fields and self._fields[f].type in ('char', 'text', 'html', 'selection',
+                'integer', 'float', 'boolean', 'date', 'datetime', 'monetary', 'json', 'many2one')
+            and not f.endswith(('_enc', '_bidx'))
+            and not any(part in f.lower() for part in ('password', 'secret', 'api_key', 'credential', 'token'))
+            and not f.endswith('_url')})
+        data = {'patient': self.sudo().read(patient_fields)[0], 'records': sections,
+                'unsupported_models': unsupported, 'omitted_fields': omitted_fields,
                 'scope_notice': 'Export includes supported patient-linked healthcare models and their linked binary files. '
                     'Models without a supported patient link, chatter, financial/platform records and external systems '
                     'require a separate completeness review. This is not a declaration of a complete statutory EMR archive.'}
@@ -90,7 +114,7 @@ class PartnerArchive(models.Model):
         manifest = {'database': self.env.cr.dbname, 'exported_at': fields.Datetime.to_string(fields.Datetime.now()),
                     'patient_id': self.id, 'counts': {m: len(r) for m, r in sections.items()},
                     'files': {p: {'bytes': len(v), 'sha256': hashlib.sha256(v).hexdigest()} for p, v in files.items()},
-                    'unsupported_models': unsupported, 'scope_notice': data['scope_notice']}
+                    'unsupported_models': unsupported, 'omitted_fields': omitted_fields, 'scope_notice': data['scope_notice']}
         files['manifest.json'] = json.dumps(manifest, ensure_ascii=False, indent=2).encode()
         buffer = io.BytesIO()
         with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as archive:
