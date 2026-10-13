@@ -28,6 +28,22 @@ def audit_event(env, operation, model, identifiers, outcome='allowed', field_nam
 class PartnerProtection(models.Model):
     _inherit = 'res.partner'
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        records=super().create(vals_list)
+        audit_event(self.env, 'create', self._name, records.ids,
+                    field_names={k for v in vals_list for k in v})
+        return records
+
+    def write(self, vals):
+        try:
+            result=super().write(vals)
+        except Exception:
+            audit_event(self.env, 'write', self._name, self.ids, 'denied', vals.keys())
+            raise
+        audit_event(self.env, 'write', self._name, self.ids, field_names=vals.keys())
+        return result
+
     def _fetch_query(self, query, fields):
         records = super()._fetch_query(query, fields)
         audit_event(self.env, 'fetch', self._name, records.ids, field_names=[f.name for f in fields])
@@ -96,6 +112,33 @@ class NoteProtection(models.Model):
 
 class AttachmentProtection(models.Model):
     _inherit = 'ir.attachment'
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records=super().create(vals_list)
+        sensitive=records.filtered(lambda a:a._health_sensitive())
+        if sensitive:audit_event(self.env, 'attachment_create', self._name, sensitive.ids)
+        return records
+
+    def write(self, vals):
+        sensitive=self.filtered(lambda a:a._health_sensitive(vals))
+        try:
+            result=super().write(vals)
+        except Exception:
+            if sensitive:audit_event(self.env, 'attachment_write', self._name, sensitive.ids, 'denied', vals.keys())
+            raise
+        if sensitive:audit_event(self.env, 'attachment_write', self._name, sensitive.ids, field_names=vals.keys())
+        return result
+
+    def unlink(self):
+        identifiers=self.filtered(lambda a:a._health_sensitive()).ids
+        try:
+            result=super().unlink()
+        except Exception:
+            if identifiers:audit_event(self.env, 'attachment_unlink', self._name, identifiers, 'denied')
+            raise
+        if identifiers:audit_event(self.env, 'attachment_unlink', self._name, identifiers)
+        return result
 
     def _to_http_stream(self):
         result = super()._to_http_stream()

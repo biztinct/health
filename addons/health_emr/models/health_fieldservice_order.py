@@ -13,6 +13,15 @@ from odoo.exceptions import UserError
 class HealthFieldserviceOrder(models.Model):
     _inherit = 'health.fieldservice.order'
 
+    def write(self, vals):
+        identity = {'patient_id', 'facility_id'} & vals.keys()
+        if identity:
+            changed = self.filtered(lambda order: any(vals[name] != order[name].id for name in identity))
+            if changed and self.env['health.clinical.note'].sudo().search_count([
+                    ('order_id', 'in', changed.ids), ('emr_state', '=', 'final')]):
+                raise UserError(_('Patient and facility links of a visit with finalized clinical records cannot be reassigned. Preserve the original and make a governed correction.'))
+        return super().write(vals)
+
     def unlink(self):
         final_notes = self.env['health.clinical.note'].sudo().search([
             ('order_id', 'in', self.ids),

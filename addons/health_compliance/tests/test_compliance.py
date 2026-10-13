@@ -251,3 +251,20 @@ class TestCompliance(EmrBase):
         self.assertEqual(len(exported['requirements']),48)
         self.assertIn('No blanket compliance',exported['notice'])
         self.assertTrue(attachment.store_fname.startswith('hphi/'))
+
+    def test_parent_visit_cannot_move_signed_record_to_another_patient(self):
+        note=self._note();note.action_finalize()
+        other=self._make_patient('Synthetic other patient')
+        with self.assertRaises(UserError):self.order.sudo().write({'patient_id':other.id})
+        self.order.write({'patient_id':self.patient.id,'facility_id':self.facility.id})
+        self.assertTrue(note.verify_integrity())
+
+    def test_patient_and_attachment_changes_emit_content_free_audit(self):
+        with patch('odoo.addons.health_compliance.models.protections.audit_event') as audit:
+            self.patient.write({'medical_history':'SYNTHETIC sensitive history'})
+            attachment=self.env['ir.attachment'].create({'name':'synthetic.txt','raw':b'synthetic',
+                'res_model':'res.partner','res_id':self.patient.id})
+            attachment.write({'raw':b'synthetic update'})
+            operations=[c.args[1] for c in audit.call_args_list]
+            self.assertIn('write',operations);self.assertIn('attachment_create',operations);self.assertIn('attachment_write',operations)
+            self.assertNotIn('SYNTHETIC sensitive history',str(audit.call_args_list))
