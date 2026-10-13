@@ -16,7 +16,13 @@ for field in ('request_json','response_json'):
         for identifier,payload in env.cr.fetchall():
             token=phi_crypto.encrypt(env,json.dumps(payload,ensure_ascii=False))
             env.cr.execute('UPDATE health_ai_coding_log SET "'+field+'_enc"=%s WHERE id=%s',(token,identifier))
-        env.cr.execute('ALTER TABLE health_ai_coding_log DROP COLUMN "'+field+'"')
+        with env.cr.savepoint():
+            try:
+                with env.cr.savepoint():
+                    env.cr.execute('ALTER TABLE health_ai_coding_log DROP COLUMN "'+field+'"')
+            except Exception:
+                # Preserve dependent BI views without leaving plaintext behind.
+                env.cr.execute('UPDATE health_ai_coding_log SET "'+field+'"=NULL')
 count=0
 while True:
     moved=env['ir.attachment']._migrate_health_attachment_encryption(limit=200)
