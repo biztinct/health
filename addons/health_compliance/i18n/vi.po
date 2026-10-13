@@ -118,3 +118,8 @@ msgstr "Đã kiểm tra VNeID thủ công"
 #: model:ir.actions.act_window,name:health_compliance.action_holiday
 msgid "Vietnam Rights Calendar"
 msgstr "Lịch xử lý yêu cầu tại Việt Nam"
+
+#. module: health_compliance
+#: model:ir.model.fields,field_description:health_compliance.field_health_compliance_requirement__original_text
+msgid "Assessment Requirement (baseline)"
+msgstr "Yêu cầu đánh giá (ban đầu)"

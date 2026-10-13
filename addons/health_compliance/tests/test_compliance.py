@@ -235,3 +235,13 @@ class TestCompliance(EmrBase):
         job=Job.register_upload(self.order,note,b'fixture audio','audio/webm')
         self.assertEqual(job.state,'pending')
         self.assertTrue(job.attachment_id.store_fname.startswith('hphi/'))
+
+    def test_export_register_uses_real_object_button_rpc_contract(self):
+        from odoo.service.model import call_kw
+        requirement=self.env.ref('health_compliance.requirement_05_1')
+        action=call_kw(self.env[requirement._name],'export_register',[[requirement.id]],{})
+        attachment=self.env['ir.attachment'].browse(int(action['url'].split('/')[3].split('?')[0]))
+        exported=json.loads(attachment.raw)
+        self.assertEqual(len(exported['requirements']),48)
+        self.assertIn('No blanket compliance',exported['notice'])
+        self.assertTrue(attachment.store_fname.startswith('hphi/'))

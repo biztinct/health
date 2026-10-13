@@ -23,7 +23,7 @@ class Requirement(models.Model):
     name = fields.Char(required=True)
     code = fields.Char(required=True, index=True)
     package = fields.Char(required=True)
-    original_text = fields.Text(readonly=True, help='Assessment wording. The unchanged client document remains the source of original supplied text.')
+    original_text = fields.Text(string='Assessment Requirement (baseline)', readonly=True, help='Assessment wording. The unchanged client document remains the source of original supplied text.')
     source = fields.Char(readonly=True)
     effective_date_note = fields.Char(readonly=True)
     applicability = fields.Text()
@@ -65,7 +65,6 @@ class Requirement(models.Model):
                 raise UserError(_('New requirements start pending.'))
         return rows
 
-    @api.model
     def export_register(self):
         require_manager(self.env)
         rows = self.search([])
