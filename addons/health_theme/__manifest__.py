@@ -124,6 +124,9 @@
             # The "Loading" pill holds for one beat between two bursts of
             # requests, so opening a screen reads as one load, not two
             'health_theme/static/src/js/loading_indicator_hold.js',
+            # First-open splash (rendered by views/webclient_templates.xml):
+            # fades out once the first screen is up and the draw has finished
+            'health_theme/static/src/js/cjx_splash.js',
             # OWL components — Templates
             'health_theme/static/src/xml/vu_progress_rail.xml',
             'health_theme/static/src/xml/vu_side_sheet.xml',

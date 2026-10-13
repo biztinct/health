@@ -75,22 +75,37 @@ $vu-shell-motion: 160ms ease;
     white-space: nowrap;
 }
 
-// White plate so the hibiscus reads on every sidebar colour (as before).
+// White plate so the mark reads on every sidebar colour. The Care Pulse mark
+// follows the theme's primary; the dot is the brand orange.
 .vu-rail-logo {
     flex: none;
     width: 36px;
     height: 36px;
-    padding: 5px;
+    padding: 4px;
     border: 0;
     border-radius: 8px;
     background: #FFFFFF;
     cursor: pointer;
 
-    img {
+    .cjx-mark {
         display: block;
         width: 100%;
         height: 100%;
-        object-fit: contain;
+        overflow: visible;
+    }
+    .cjx-ring,
+    .cjx-pulse {
+        fill: none;
+        stroke: var(--vu-brand-primary, #1565C0);
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+    .cjx-ring { stroke-width: 10; }
+    .cjx-pulse { stroke-width: 7; }
+    .cjx-dot {
+        fill: var(--vu-brand-accent, #FB8C00);
+        transform-box: fill-box;
+        transform-origin: center;
     }
 
     &:focus-visible {
@@ -99,16 +114,41 @@ $vu-shell-motion: 160ms ease;
     }
 }
 
+// The "Quick" moment of the loading language: while a screen loads (the stock
+// indicator element is in the DOM) the corner mark's dot beats once. Same
+// trigger as the top line in health_theme/scss/loading_spinner.scss.
+body:has(.o_loading_indicator) .vu-rail-logo .cjx-dot {
+    animation: vu-rail-beat 0.7s ease-in-out both;
+}
+@keyframes vu-rail-beat {
+    0%, 100% { transform: scale(1); }
+    30%      { transform: scale(1.38); }
+    55%      { transform: scale(0.94); }
+}
+@media (prefers-reduced-motion: reduce) {
+    body:has(.o_loading_indicator) .vu-rail-logo .cjx-dot { animation: none; }
+}
+
 .vu-rail-brandtext {
     flex: 1 1 auto;
     min-width: 0;
 }
 
+// Wordmark as outlined paths: fills with the sidebar text colour, dot in orange.
 .vu-rail-brandname {
     font-size: 15px;
     font-weight: 700;
     letter-spacing: 0.5px;
     line-height: 1.2;
+
+    .cjx-word {
+        display: block;
+        height: 15px;
+        width: auto;
+        overflow: visible;
+        fill: currentColor;
+    }
+    .cjx-jdot { fill: var(--vu-brand-accent, #FB8C00); }
 }
 
 .vu-rail-brandsub {

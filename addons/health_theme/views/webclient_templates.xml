@@ -1,10 +1,111 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
+    <!-- Browser tab icon + iOS home-screen icon: the Carejiox "Care Pulse" mark
+         on every page that goes through web.layout (web client and login).
+         `x_icon` still wins when a caller sets one (website favicon, scoped apps). -->
+    <template id="layout_favicon" inherit_id="web.layout" priority="90">
+        <xpath expr="//link[@rel='shortcut icon']" position="replace">
+            <link type="image/png" rel="icon" sizes="64x64" t-att-href="x_icon or '/health_theme/static/src/img/carejiox-favicon.png'"/>
+            <link rel="apple-touch-icon" sizes="180x180" href="/health_theme/static/src/img/carejiox-touch-180.png"/>
+        </xpath>
+    </template>
+
     <!-- Set browser theme color to brand Deep Blue (matches navbar) -->
     <template id="webclient_bootstrap" inherit_id="web.webclient_bootstrap">
         <xpath expr="//meta[@name='theme-color']" position="replace">
             <meta name="theme-color" content="#1565C0"/>
+        </xpath>
+        <!-- the stock iOS icon goes; layout_favicon above already supplies ours -->
+        <xpath expr="//link[@rel='apple-touch-icon']" position="replace"/>
+        <!-- FIRST-OPEN SPLASH (the "First open" moment of the Carejiox loading
+             language). Rendered straight into the body with its own inline CSS
+             so the mark is drawing itself while the web client mounts and the
+             first screen loads; the choreography is: C draws (0–.65s), pulse traces (.42–.92s), dot
+             pops (.85–1.3s), wordmark wipes in (1–1.7s), status line (1.5s),
+             then the dot beats until static/src/js/cjx_splash.js fades it out
+             once the first screen is up. Repeat loads in the same tab get the
+             finished logo with no draw (.is-still, set by the inline script
+             below before first paint). Dark theme follows Odoo's color_scheme. -->
+        <xpath expr="//t[@t-call='web.layout']" position="inside">
+            <div id="cjx-splash" t-att-class="'cjx-splash' + (color_scheme == 'dark' and ' is-dark' or '')" aria-hidden="true">
+                <style>
+#cjx-splash{position:fixed;inset:0;z-index:20000;display:grid;place-items:center;background:#FFFFFF;color:#0F1E45;transition:opacity .5s cubic-bezier(.4,0,.2,1),transform .5s cubic-bezier(.4,0,.2,1)}
+#cjx-splash.is-dark{background:#0B1220;color:#E8EEF8}
+#cjx-splash.is-out{opacity:0;transform:scale(.985);pointer-events:none}
+#cjx-splash .cjx-in{display:grid;justify-items:center;gap:22px;transform:translateY(-4vh)}
+#cjx-splash .cjx-mark{width:96px;height:96px;overflow:visible}
+#cjx-splash .cjx-ring,#cjx-splash .cjx-pulse{fill:none;stroke:#1565C0;stroke-linecap:round;stroke-linejoin:round}
+#cjx-splash.is-dark .cjx-ring,#cjx-splash.is-dark .cjx-pulse{stroke:#42A5F5}
+#cjx-splash .cjx-ring{stroke-width:10;stroke-dasharray:170;stroke-dashoffset:170;animation:cjx-draw .65s cubic-bezier(.4,0,.2,1) forwards}
+#cjx-splash .cjx-pulse{stroke-width:7;stroke-dasharray:92;stroke-dashoffset:92;animation:cjx-draw .5s .42s cubic-bezier(.4,0,.2,1) forwards}
+#cjx-splash .cjx-sweep{fill:none;stroke:#42A5F5;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:14 90;stroke-dashoffset:104;opacity:0;animation:cjx-sweep 1.1s 1.5s linear infinite}
+#cjx-splash.is-dark .cjx-sweep{stroke:#83C5FA}
+#cjx-splash .cjx-dot{fill:#FB8C00;transform-box:fill-box;transform-origin:center;transform:scale(0);animation:cjx-pop .45s .85s cubic-bezier(.34,1.56,.64,1) forwards,cjx-beat 1.1s 1.5s ease-in-out infinite}
+#cjx-splash .cjx-word{height:30px;width:auto;overflow:visible;opacity:0;transform:translateY(6px);animation:cjx-rise .4s 1s cubic-bezier(.2,.8,.2,1) forwards}
+#cjx-splash .cjx-word path{fill:currentColor}
+#cjx-splash .cjx-word circle{fill:#FB8C00}
+#cjx-splash.is-dark .cjx-dot,#cjx-splash.is-dark .cjx-word circle{fill:#FCB24D}
+#cjx-splash .cjx-word rect{width:0;animation:cjx-wipe .7s 1s cubic-bezier(.2,.8,.2,1) forwards}
+#cjx-splash .cjx-status{font:500 13px/1.4 'Segoe UI',system-ui,-apple-system,Arial,sans-serif;letter-spacing:.02em;color:#5B6B8A;opacity:0;min-height:1.4em;animation:cjx-fade .4s 1.5s forwards}
+#cjx-splash.is-dark .cjx-status{color:#93A3BF}
+@keyframes cjx-draw{to{stroke-dashoffset:0}}
+@keyframes cjx-pop{to{transform:scale(1)}}
+@keyframes cjx-beat{0%,100%{transform:scale(1)}30%{transform:scale(1.32)}55%{transform:scale(.96)}}
+@keyframes cjx-sweep{0%{opacity:0;stroke-dashoffset:104}15%{opacity:.9}85%{opacity:.9}100%{opacity:0;stroke-dashoffset:0}}
+@keyframes cjx-rise{to{opacity:1;transform:none}}
+@keyframes cjx-wipe{to{width:402px}}
+@keyframes cjx-fade{to{opacity:1}}
+#cjx-splash.is-still .cjx-ring,#cjx-splash.is-still .cjx-pulse{animation:none;stroke-dashoffset:0}
+#cjx-splash.is-still .cjx-dot{animation:none;transform:scale(1)}
+#cjx-splash.is-still .cjx-sweep{animation:none;opacity:0}
+#cjx-splash.is-still .cjx-word{animation:none;opacity:1;transform:none}
+#cjx-splash.is-still .cjx-word rect{animation:none;width:402px}
+#cjx-splash.is-still .cjx-status{animation:none;opacity:1}
+@media (prefers-reduced-motion:reduce){
+#cjx-splash .cjx-ring,#cjx-splash .cjx-pulse{animation:none;stroke-dashoffset:0}
+#cjx-splash .cjx-dot{animation:none;transform:scale(1)}
+#cjx-splash .cjx-sweep{animation:none;opacity:0}
+#cjx-splash .cjx-word{animation:none;opacity:1;transform:none}
+#cjx-splash .cjx-word rect{animation:none;width:402px}
+#cjx-splash .cjx-status{animation:none;opacity:1}
+}
+                </style>
+                <div class="cjx-in">
+                    <svg class="cjx-mark" viewBox="0 0 100 100" role="img" aria-label="Carejiox">
+                        <path class="cjx-ring" d="M76.05 28.14A34 34 0 1 0 76.05 71.86"/>
+                        <path class="cjx-pulse" d="M28 50H40L46 37L54 63L60 50H80"/>
+                        <path class="cjx-sweep" d="M28 50H40L46 37L54 63L60 50H80"/>
+                        <circle class="cjx-dot" cx="89" cy="50" r="6.5"/>
+                    </svg>
+                    <svg class="cjx-word" viewBox="0 -82 402 106" role="img" aria-label="carejiox">
+                        <defs><clipPath id="cjx-wclip"><rect x="0" y="-82" width="402" height="106"/></clipPath></defs>
+                        <g clip-path="url(#cjx-wclip)">
+                            <path d="M33.20 0.80L33.20 0.80Q24.50 0.80 17.70-2.75Q10.90-6.30 7.05-12.55Q3.20-18.80 3.20-26.90L3.20-26.90Q3.20-35 7.05-41.25Q10.90-47.50 17.70-51.05Q24.50-54.60 33.20-54.60L33.20-54.60Q41.70-54.60 48-51.05Q54.30-47.50 57.30-40.90L57.30-40.90L45.20-34.40Q43.10-38.20 39.95-40Q36.80-41.80 33.10-41.80L33.10-41.80Q27.10-41.80 23.05-37.85Q19-33.90 19-26.90L19-26.90Q19-19.80 23.05-15.90Q27.10-12 33.10-12L33.10-12Q36.80-12 39.95-13.75Q43.10-15.50 45.20-19.40L45.20-19.40L57.30-12.80Q54.30-6.40 48-2.80Q41.70 0.80 33.20 0.80ZM111.90 0L97.30 0L97.30-6.60Q92.80 0.80 80.90 0.80L80.90 0.80Q71.40 0.80 66.10-3.85Q60.80-8.50 60.80-15.50L60.80-15.50Q60.80-22.60 66.20-27.10Q71.60-31.60 83.90-31.60L83.90-31.60L96.30-31.60L96.30-31.60Q96.30-36.60 93.25-39.40Q90.20-42.20 83.90-42.20L83.90-42.20Q79.60-42.20 75.45-40.85Q71.30-39.50 68.40-37.20L68.40-37.20L62.80-48.10Q67.20-51.20 73.40-52.90Q79.60-54.60 86-54.60L86-54.60Q98.30-54.60 105.10-48.75Q111.90-42.90 111.90-30.70L111.90-30.70L111.90 0ZM96.30-17L96.30-17L96.30-22.50L85.60-22.50Q80.10-22.50 78.05-20.70Q76-18.90 76-16.20L76-16.20Q76-13.20 78.35-11.45Q80.70-9.70 84.80-9.70L84.80-9.70Q88.70-9.70 91.80-11.55Q94.90-13.40 96.30-17ZM139.60 0L124.00 0L124.00-53.80L138.90-53.80L138.90-46.70Q144.60-54.60 157.40-54.60L157.40-54.60L157.40-40.20Q155.40-40.40 153.90-40.40L153.90-40.40Q147.40-40.40 143.50-36.75Q139.60-33.10 139.60-25.40L139.60-25.40L139.60 0ZM191.80 0.80L191.80 0.80Q182.50 0.80 175.60-2.80Q168.70-6.40 164.90-12.65Q161.10-18.90 161.10-26.90L161.10-26.90Q161.10-35 164.85-41.25Q168.60-47.50 175.10-51.05Q181.60-54.60 189.80-54.60L189.80-54.60Q197.70-54.60 204.05-51.20Q210.40-47.80 214.10-41.55Q217.80-35.30 217.80-26.70L217.80-26.70Q217.80-25.80 217.70-24.65Q217.60-23.50 217.50-22.50L217.50-22.50L176.80-22.50Q178-17.50 182.05-14.60Q186.10-11.70 192.20-11.70L192.20-11.70Q196.50-11.70 199.75-13Q203-14.30 205.70-16.90L205.70-16.90L214-7.90Q206.40 0.80 191.80 0.80ZM176.70-31.60L176.70-31.60L203.10-31.60Q202.30-36.70 198.75-39.75Q195.20-42.80 189.90-42.80L189.90-42.80Q184.60-42.80 181.05-39.75Q177.50-36.70 176.70-31.60ZM222.20 20.20L222.20 20.20Q218.60 20.20 215.30 19.45Q212 18.70 209.70 17.20L209.70 17.20L213.90 5.90Q216.60 7.80 220.50 7.80L220.50 7.80Q223.40 7.80 225.15 5.85Q226.90 3.90 226.90 0L226.90 0L226.90-53.80L242.50-53.80L242.50-0.10Q242.50 9.20 237.20 14.70Q231.90 20.20 222.20 20.20ZM270.50 0L254.90 0L254.90-53.80L270.50-53.80L270.50 0ZM262.70-61.30L262.70-61.30Q258.40-61.30 255.70-63.80Q253-66.30 253-70L253-70Q253-73.60 255.70-76.15Q258.40-78.70 262.70-78.70L262.70-78.70Q267-78.70 269.70-76.30Q272.40-73.90 272.40-70.30L272.40-70.30Q272.40-66.40 269.75-63.85Q267.10-61.30 262.70-61.30ZM308.60 0.80L308.60 0.80Q300 0.80 293.35-2.75Q286.70-6.30 282.85-12.55Q279-18.80 279-26.90L279-26.90Q279-35 282.85-41.25Q286.70-47.50 293.35-51.05Q300-54.60 308.60-54.60L308.60-54.60Q317.10-54.60 323.80-51.05Q330.50-47.50 334.30-41.25Q338.10-35 338.10-26.90L338.10-26.90Q338.10-18.80 334.30-12.55Q330.50-6.30 323.80-2.75Q317.10 0.80 308.60 0.80ZM308.60-12L308.60-12Q314.40-12 318.35-16Q322.30-20 322.30-26.90L322.30-26.90Q322.30-33.90 318.35-37.85Q314.40-41.80 308.60-41.80L308.60-41.80Q302.70-41.80 298.75-37.85Q294.80-33.90 294.80-26.90L294.80-26.90Q294.80-20 298.75-16Q302.70-12 308.60-12ZM356.70 0L339.70 0L360.40-27.10L340.40-53.80L357.90-53.80L369.30-38.10L381-53.80L397.60-53.80L377.60-27.50L398.40 0L380.70 0L368.90-16.40L356.70 0Z"/>
+                            <circle cx="234.7" cy="-70" r="9.2"/>
+                        </g>
+                    </svg>
+                    <!-- The status line is picked from session_info's user_context.lang,
+                         NOT translated through the view's arch_db: the render env's
+                         lang comes from request.session.context, which lags one
+                         request behind a language switch (the reload right after
+                         the EN/VI globe would show the old language), while
+                         session_info reads the user's lang fresh. A t-out
+                         expression is not a translatable term, so no .po entry. -->
+                    <t t-set="cjx_lang" t-value="((session_info or {}).get('user_context') or {}).get('lang') or ''"/>
+                    <div class="cjx-status" t-out="'Đang mở ngày làm việc của bạn' if cjx_lang.startswith('vi') else 'Opening your day'"/>
+                </div>
+            </div>
+            <script type="text/javascript">
+                (function () {
+                    var s = document.getElementById('cjx-splash');
+                    if (!s) { return; }
+                    s.dataset.t0 = String(performance.now());
+                    try {
+                        if (sessionStorage.getItem('cjx_splash_seen')) { s.classList.add('is-still'); }
+                    } catch (e) { /* storage blocked: play every time */ }
+                })();
+            </script>
         </xpath>
         <!-- Theme Engine: published token overrides. Anchored after the last
              asset call inside the head_web block, so the :root overrides load

@@ -3741,6 +3741,50 @@ a no-op.
     showed again 250ms later — `health_theme/loading_indicator_hold.js` holds
     it 350ms so one load looks like one load. Measure with the rect timeline
     before claiming a screen paints once. (WORKSPACE refinement, 2026-09-30.)
+- **§5.262 — the Carejiox loading language replaced the dim-and-spinner, and
+    three traps came with it.** Owner-approved design (2026-09-30): "Care
+    Pulse" mark, three moments — Quick = a 3px accent line on the top edge +
+    one beat of the sidebar mark's dot (`health_theme/scss/loading_spinner.scss`,
+    `health_cms_sidebar/scss/cms_sidebar.scss`, both on
+    `body:has(.o_loading_indicator)`); Filling = `.cjx-skel` / `.ws-row.is-loading`
+    breathing blocks, flat colour, no shimmer; First open = `#cjx-splash`
+    rendered by `health_theme/views/webclient_templates.xml` into the
+    `web.webclient_bootstrap` body with inline CSS, dismissed by
+    `health_theme/js/cjx_splash.js`. Never dim, blur or block on a screen
+    change again. Traps: (1) **the backend bundle is a parser-blocking
+    `<script>` in `<head>`, so module top-level code runs BEFORE `<body>`
+    exists** — `document.getElementById` on anything the bootstrap template
+    puts in the body returns null; the first deploy left the splash on screen
+    forever because the dismiss code (and its 8s hard cap) returned early.
+    Wait for `DOMContentLoaded`. The same fact means nothing in the body can
+    paint before the bundles load, so a splash covers mount + menus + first
+    screen, not the bundle download. (2) **The navbar is `--vu-brand-primary`,
+    so a primary-coloured top line is invisible** — the line takes
+    `--vu-brand-accent`. Check any top-edge element against the navbar, not
+    against the white mock-up. (3) **Montserrat is named in
+    `primary_variables.scss` but never loaded**, so headings fall back to
+    Segoe UI. The wordmark is therefore outlined paths (Montserrat Bold via
+    opentype.js, dotless `ȷ` + an orange circle), never live text; canonical
+    art is `health_theme/static/src/img/carejiox-{mark,lockup}.svg` and the
+    PNG icons were rendered from the same shapes (PWA `static/icons/icon-*.png`,
+    `carejiox-favicon.png`, `carejiox-touch-180.png`). Also: `web.layout`'s
+    favicon is `x_icon or ours`, so the LOGIN page (website layout sets
+    `x_icon` to `website.favicon`, which `biz_debranding` fills with the
+    hibiscus) still shows the tenant logo — owner decision pending. (4) **The
+    bootstrap page's render lang lags one request behind a language switch**:
+    `request.session.context` is refreshed DURING the `/bizapp` render, so a
+    view term translated through `arch_db` shows the OLD language on the
+    reload right after the EN/VI globe (measured: write `lang`, first fetch
+    stale, second correct). `session_info['user_context']['lang']` is fresh in
+    that same request, so the splash status line is a `t-out` expression
+    switched on it ("Đang mở ngày làm việc của bạn" / "Opening your day"),
+    deliberately with no .po entry. Anything else placed in the bootstrap
+    body must do the same. And when
+    another session has unfinished files in the same module, deploy
+    surgically: `cp -r` the server's module to `/tmp`, scp only your files
+    over it, then `carejiox-deploy -d -m`. QA trick for a splash: fetch the
+    page HTML, `importNode` the served `#cjx-splash` back into the document
+    and screenshot at 2.3s. (LOADING LANGUAGE, 2026-09-30.)
 - **§5.263 — Workspace screens: a pinned slim bar, the rail moved up, one
     frame per box.** (1) A bar that appears on scroll must never move the
     page: host it in a ZERO-HEIGHT `position: sticky` box (first child of

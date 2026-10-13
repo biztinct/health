@@ -18,9 +18,29 @@ import { LoadingIndicator } from "@web/webclient/loading_indicator/loading_indic
 
 export const HOLD_MS = 350;
 
+// The top line's finish. The line itself is CSS on body:has(.o_loading_indicator)
+// (see scss/loading_spinner.scss); when the pill finally hides, this class
+// keeps the line's box alive for half a second so it can run to the edge and
+// fade instead of vanishing mid-way. A new burst inside that window drops it.
+export const DONE_CLASS = "cjx-load-done";
+const DONE_MS = 500;
+let doneTimer = null;
+
+function markDone() {
+    browser.clearTimeout(doneTimer);
+    document.body.classList.add(DONE_CLASS);
+    doneTimer = browser.setTimeout(() => {
+        document.body.classList.remove(DONE_CLASS);
+    }, DONE_MS);
+}
+
 patch(LoadingIndicator.prototype, {
     requestCall(ev) {
         const { detail } = ev;
+        if (!detail.settings.silent) {
+            browser.clearTimeout(doneTimer);
+            document.body.classList.remove(DONE_CLASS);
+        }
         if (!detail.settings.silent && this.hideTimer) {
             // still shown from the previous burst: keep it, no rearm
             browser.clearTimeout(this.hideTimer);
@@ -51,6 +71,7 @@ patch(LoadingIndicator.prototype, {
             this.hideTimer = null;
             if (this.state.count === 0) {
                 this.state.show = false;
+                markDone();
             }
         }, HOLD_MS);
     },
