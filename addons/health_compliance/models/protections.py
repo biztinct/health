@@ -85,9 +85,13 @@ class NoteProtection(models.Model):
         self.check_access('read')
         if self.emr_state != 'final':
             raise UserError(_('Only a finalized note can receive an addendum.'))
-        return {'type': 'ir.actions.act_window', 'res_model': self._name, 'view_mode': 'form',
-                'target': 'current', 'context': {'default_order_id': self.order_id.id,
-                    'default_amends_note_id': self.id, 'default_author_id': self.env.uid}}
+        # Retain the named action so the CMS shell recognises this form.
+        action = self.env['ir.actions.actions']._for_xml_id('health_emr.action_unsigned_clinical_notes')
+        action.update({'view_mode': 'form', 'views': [(False, 'form')], 'res_id': False,
+            'target': 'current', 'context': dict(self.env.context,
+                default_order_id=self.order_id.id, default_amends_note_id=self.id,
+                default_author_id=self.env.uid)})
+        return action
 
 
 class AttachmentProtection(models.Model):
