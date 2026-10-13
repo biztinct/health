@@ -1,0 +1,20 @@
+{
+  "package": "A11",
+  "title": "Patient identity and required content",
+  "release_commit": "316f7cc316395e97008bfc6c9a2871e82e239591",
+  "environment": "three demo databases: carejiox, carejiox_template, hhh; synthetic isolated tests on codex_vn2026",
+  "state": "Implemented controls with scoped verification; independent review and remaining actions pending",
+  "requirements": [
+    "EV-09-2"
+  ],
+  "implemented_controls": "Identity-readiness view flags missing/nonstandard CCCD and conflicting identity values, permits documented review exceptions and avoids blocking ordinary care. Manual VNeID assertion is distinguished from government authentication.",
+  "remaining_actions": "Verify identity ownership and approved exceptions. Custodian-approved clinical form/data-field inventory and destination-specific mandatory-content checks remain to be finalised; format checks do not establish authenticity.",
+  "available_artifacts": [
+    "../00-release/final-isolated-regression-results.json",
+    "../00-release/isolated-regression-results.log",
+    "../00-release/final-deployment-results.json",
+    "../00-release/chrome-checks.json"
+  ],
+  "limitations": "Automated tests and demo evidence establish stated software behavior only. They do not establish every legal obligation, production suitability, authority acceptance or MPS certification.",
+  "package_exhibits": []
+}

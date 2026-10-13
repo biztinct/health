@@ -1,0 +1,10 @@
+test_archive_traversal_links_rejected (backup_test.tests.test_backup_crypto.TestBackupCrypto.test_archive_traversal_links_rejected) ... ok
+test_key_permissions_length_and_missing (backup_test.tests.test_backup_crypto.TestBackupCrypto.test_key_permissions_length_and_missing) ... ok
+test_pair_cleanup_and_digest (backup_test.tests.test_backup_crypto.TestBackupCrypto.test_pair_cleanup_and_digest) ... ok
+test_restore_neutralises_outbound_copy_before_commit (backup_test.tests.test_backup_crypto.TestBackupCrypto.test_restore_neutralises_outbound_copy_before_commit) ... ok
+test_roundtrip_large_empty_and_authentication (backup_test.tests.test_backup_crypto.TestBackupCrypto.test_roundtrip_large_empty_and_authentication) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.069s
+
+OK

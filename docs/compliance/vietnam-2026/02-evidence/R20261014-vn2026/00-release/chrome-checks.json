@@ -1,0 +1,18 @@
+{
+  "release_commit": "316f7cc316395e97008bfc6c9a2871e82e239591",
+  "browser": "Chrome via CUA",
+  "environment": "carejiox.com and hhh.carejiox.com demo",
+  "data_scope": "clearly named synthetic QA patient; no real treatment/consent acts",
+  "results": {
+    "main_final_note_readonly": "passed: banner, narrative/identity locks visible",
+    "addendum_cms_navigation": "passed: sidebar retained",
+    "addendum_save_and_finalize": "passed: 2791 linked to original 2720, reason preserved, internal v2 seal visible",
+    "consent_grant_notice_actor": "passed: exact notice/version, actor and grant time visible",
+    "consent_pdf_download_and_visual_review": "passed: one page; reference, synthetic client, notice, witness, method, time and drawn-signature limitation readable. Text extraction empty, so visually verified.",
+    "consent_withdrawal": "passed: checked Withdrawn state, actor/time/reason retained",
+    "patient_archive_download": "passed: readable HTML, JSON, attachment and manifest; original and addendum integrity_verified true; birth_date field retained",
+    "hhh_register": "passed: 48 rows, independent technical/manual/authority statuses pending",
+    "hhh_integrations": "passed: certified signing, national/VNeID and BHXH all onboarding pending"
+  },
+  "limitations": "No real certified signing or government integration endpoints were used. No production approval or complete archive certification inferred."
+}

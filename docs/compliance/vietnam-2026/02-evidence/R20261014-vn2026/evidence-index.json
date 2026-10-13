@@ -1,0 +1,63 @@
+{
+  "release_commit": "316f7cc316395e97008bfc6c9a2871e82e239591",
+  "packages": [
+    {
+      "package": "A01",
+      "path": "A01-consent-and-purpose-checks/control-results.json"
+    },
+    {
+      "package": "A02",
+      "path": "A02-clinical-author-and-correction-integrity/control-results.json"
+    },
+    {
+      "package": "A03",
+      "path": "A03-protected-audit-trail/control-results.json"
+    },
+    {
+      "package": "A04",
+      "path": "A04-encryption-and-key-custody/control-results.json"
+    },
+    {
+      "package": "A05",
+      "path": "A05-retention-holds-and-erasure/control-results.json"
+    },
+    {
+      "package": "A06",
+      "path": "A06-readable-complete-exports-and-archives/control-results.json"
+    },
+    {
+      "package": "A07",
+      "path": "A07-data-subject-request-handling/control-results.json"
+    },
+    {
+      "package": "A08",
+      "path": "A08-lawful-signing-and-verification/control-results.json"
+    },
+    {
+      "package": "A09",
+      "path": "A09-national-health-vneid-connection/control-results.json"
+    },
+    {
+      "package": "A10",
+      "path": "A10-bhyt-bhxh-xml/control-results.json"
+    },
+    {
+      "package": "A11",
+      "path": "A11-patient-identity-and-required-content/control-results.json"
+    },
+    {
+      "package": "A12",
+      "path": "A12-ai-and-outbound-data-destinations/control-results.json"
+    },
+    {
+      "package": "A13",
+      "path": "A13-hosting-region-and-tenant-isolation/control-results.json"
+    },
+    {
+      "package": "A14",
+      "path": "A14-independent-backups-and-restoration/control-results.json"
+    }
+  ],
+  "review_state": "Awaiting independent human review",
+  "authority_status": "No certificate or authority acceptance generated"
+}

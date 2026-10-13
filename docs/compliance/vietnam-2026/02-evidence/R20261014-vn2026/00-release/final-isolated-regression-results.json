@@ -1,0 +1,15 @@
+{
+  "release_commit": "316f7cc316395e97008bfc6c9a2871e82e239591",
+  "database": "codex_vn2026",
+  "data_scope": "isolated synthetic test database",
+  "modules": [
+    "health_compliance",
+    "health_emr"
+  ],
+  "log": "/odoo/codex_vn2026/test14.log",
+  "completed_utc": "2026-10-13 21:21:26",
+  "tests": 53,
+  "failed": 0,
+  "errors": 0,
+  "note": "Repeat regression runs are not added together. Earlier broader suites cover other modules; these final tests cover the late fixes."
+}

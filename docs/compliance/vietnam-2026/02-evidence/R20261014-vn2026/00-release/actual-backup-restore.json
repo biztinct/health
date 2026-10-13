@@ -1,0 +1,29 @@
+{
+  "backup_id": 41,
+  "format": "H19BKP-AES256GCM-v1",
+  "key_id": "c09a0786fe28f597",
+  "database_sha256": "d151aea9069d48e450f27266c84ee516398a7900b58c9e02392f7afc472aa0d3",
+  "filestore_sha256": "b1d3ca46eceed718ddb9369857e9d0085f666b7558d7bfe4e8064705c090d8f0",
+  "clinical_seal_verified": true,
+  "clinical_plaintext_recovered": true,
+  "attachment_plaintext_recovered": true,
+  "restored_active_crons": 0,
+  "restored_active_mail_servers": 0,
+  "source_and_restore_counts": {
+    "res_partner": {
+      "source": 17,
+      "restored": 17
+    },
+    "health_clinical_note": {
+      "source": 1,
+      "restored": 1
+    },
+    "ir_attachment": {
+      "source": 823,
+      "restored": 823
+    }
+  },
+  "elapsed_backup_and_restore_seconds": 37.28,
+  "staging_removed": true,
+  "scope": "Demo hhh; synthetic clinical content plus actual row-count reconciliation. Same-host storage. No independent-storage/RPO/RTO certification."
+}

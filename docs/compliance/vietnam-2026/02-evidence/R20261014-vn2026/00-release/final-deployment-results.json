@@ -1,0 +1,36 @@
+{
+  "release_commit": "316f7cc316395e97008bfc6c9a2871e82e239591",
+  "targets": [
+    "carejiox",
+    "carejiox_template",
+    "hhh"
+  ],
+  "upgrade_exit_codes": [
+    0,
+    0,
+    0
+  ],
+  "maintenance_exit_codes": [
+    0,
+    0,
+    0
+  ],
+  "http_checks": "carejiox.com HTTP 200 after each upgrade; tenant Chrome login/register verified separately",
+  "active_crons": {
+    "carejiox": 96,
+    "carejiox_template": 0,
+    "hhh": 77
+  },
+  "deployed_master_tests": {
+    "tests": 53,
+    "failed": 0,
+    "errors": 0,
+    "completed_utc": "2026-10-13 21:26:37"
+  },
+  "combined_source_comparison": {
+    "files": 498,
+    "mismatches": 0,
+    "modules": 15
+  },
+  "scope": "Combined latest custom module state; Odoo core and unrelated scratch databases unchanged"
+}

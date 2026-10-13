@@ -1,0 +1,12 @@
+{
+  "file": "../A06-readable-complete-exports-and-archives/synthetic-patient-archive.zip",
+  "files_verified": {
+    "attachments/94155.bin": true,
+    "patient-records.json": true,
+    "patient-records.html": true
+  },
+  "synthetic_attachment_plaintext_matches": true,
+  "clinical_notes": 2,
+  "original_and_addendum_seals_verified": true,
+  "scope_notice": "Export includes supported patient-linked healthcare models and their linked binary files. Models without a supported patient link, chatter, financial/platform records and external systems require a separate completeness review. This is not a declaration of a complete statutory EMR archive."
+}

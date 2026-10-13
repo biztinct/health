@@ -1,0 +1,21 @@
+{
+  "package": "A07",
+  "title": "Data-subject request handling",
+  "release_commit": "316f7cc316395e97008bfc6c9a2871e82e239591",
+  "environment": "three demo databases: carejiox, carejiox_template, hhh; synthetic isolated tests on codex_vn2026",
+  "state": "Implemented controls with scoped verification; independent review and remaining actions pending",
+  "requirements": [
+    "EV-06-4",
+    "EV-07-4"
+  ],
+  "implemented_controls": "Rights cases calculate Article 5 acknowledgement/completion clocks, distinguish processor involvement, enforce one justified extension with actual notice proof, and preserve acknowledgement/outcome proof. Company-scoped holiday calendar supports working-day deadlines.",
+  "remaining_actions": "Publish request procedures, verify identity, configure Vietnamese holidays, communicate outcomes and review legal exceptions. Workflow actions record actual communications; they do not send them.",
+  "available_artifacts": [
+    "../00-release/final-isolated-regression-results.json",
+    "../00-release/isolated-regression-results.log",
+    "../00-release/final-deployment-results.json",
+    "../00-release/chrome-checks.json"
+  ],
+  "limitations": "Automated tests and demo evidence establish stated software behavior only. They do not establish every legal obligation, production suitability, authority acceptance or MPS certification.",
+  "package_exhibits": []
+}

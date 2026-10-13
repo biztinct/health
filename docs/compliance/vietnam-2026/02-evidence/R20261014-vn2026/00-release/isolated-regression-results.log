@@ -1,0 +1,20 @@
+/odoo/codex_vn2026/test8.log:2026-10-13 16:23:48,438 235917 INFO codex_vn2026 odoo.service.server: 232 post-tests in 64.06s, 36339 queries 
+/odoo/codex_vn2026/test8.log:2026-10-13 16:23:48,438 235917 INFO codex_vn2026 odoo.tests.stats: biz_bi: 151 tests 34.75s 18894 queries 
+/odoo/codex_vn2026/test8.log:2026-10-13 16:23:48,439 235917 INFO codex_vn2026 odoo.tests.stats: health_ai_coding: 41 tests 5.21s 3590 queries 
+/odoo/codex_vn2026/test8.log:2026-10-13 16:23:48,439 235917 INFO codex_vn2026 odoo.tests.stats: health_compliance: 16 tests 1.66s 1202 queries 
+/odoo/codex_vn2026/test8.log:2026-10-13 16:23:48,439 235917 INFO codex_vn2026 odoo.tests.stats: health_consent: 22 tests 3.36s 2216 queries 
+/odoo/codex_vn2026/test8.log:2026-10-13 16:23:48,439 235917 INFO codex_vn2026 odoo.tests.stats: health_emr: 46 tests 5.09s 2937 queries 
+/odoo/codex_vn2026/test8.log:2026-10-13 16:23:48,439 235917 INFO codex_vn2026 odoo.tests.stats: health_phi_encryption: 8 tests 0.29s 194 queries 
+/odoo/codex_vn2026/test8.log:2026-10-13 16:23:48,439 235917 INFO codex_vn2026 odoo.tests.stats: health_pwa: 6 tests 4.39s 2800 queries 
+/odoo/codex_vn2026/test8.log:2026-10-13 16:23:48,439 235917 INFO codex_vn2026 odoo.tests.stats: health_scribe: 34 tests 6.55s 4224 queries 
+/odoo/codex_vn2026/test8.log:2026-10-13 16:23:48,439 235917 INFO codex_vn2026 odoo.tests.result: 0 failed, 0 error(s) of 232 tests when loading database 'codex_vn2026' 
+/odoo/codex_vn2026/test9.log:2026-10-13 18:33:10,123 238545 INFO codex_vn2026 odoo.service.server: 130 post-tests in 40.16s, 20549 queries 
+/odoo/codex_vn2026/test9.log:2026-10-13 18:33:10,124 238545 INFO codex_vn2026 odoo.tests.stats: biz_bi: 151 tests 34.93s 18930 queries 
+/odoo/codex_vn2026/test9.log:2026-10-13 18:33:10,124 238545 INFO codex_vn2026 odoo.tests.stats: health_compliance: 19 tests 2.34s 1337 queries 
+/odoo/codex_vn2026/test9.log:2026-10-13 18:33:10,124 238545 INFO codex_vn2026 odoo.tests.result: 0 failed, 0 error(s) of 130 tests when loading database 'codex_vn2026' 
+/odoo/codex_vn2026/test10.log:2026-10-13 18:35:38,335 238877 INFO codex_vn2026 odoo.service.server: 62 post-tests in 19.34s, 10977 queries 
+/odoo/codex_vn2026/test10.log:2026-10-13 18:35:38,336 238877 INFO codex_vn2026 odoo.tests.stats: health_compliance: 20 tests 2.07s 1455 queries 
+/odoo/codex_vn2026/test10.log:2026-10-13 18:35:38,336 238877 INFO codex_vn2026 odoo.tests.stats: health_consent: 22 tests 3.32s 2216 queries 
+/odoo/codex_vn2026/test10.log:2026-10-13 18:35:38,336 238877 INFO codex_vn2026 odoo.tests.stats: health_pwa: 6 tests 4.51s 2800 queries 
+/odoo/codex_vn2026/test10.log:2026-10-13 18:35:38,336 238877 INFO codex_vn2026 odoo.tests.stats: health_scribe: 34 tests 6.70s 4224 queries 
+/odoo/codex_vn2026/test10.log:2026-10-13 18:35:38,336 238877 INFO codex_vn2026 odoo.tests.result: 0 failed, 0 error(s) of 62 tests when loading database 'codex_vn2026' 

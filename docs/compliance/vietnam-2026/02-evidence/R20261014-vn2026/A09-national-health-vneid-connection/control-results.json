@@ -1,0 +1,20 @@
+{
+  "package": "A09",
+  "title": "National health / VNeID connection",
+  "release_commit": "316f7cc316395e97008bfc6c9a2871e82e239591",
+  "environment": "three demo databases: carejiox, carejiox_template, hhh; synthetic isolated tests on codex_vn2026",
+  "state": "Implemented controls with scoped verification; independent review and remaining actions pending",
+  "requirements": [
+    "EV-09-4"
+  ],
+  "implemented_controls": "Readiness dossier tracks approved national/VNeID specifications, onboarding, test acceptance and secret-store references. Manual VNeID checkbox is labelled as manual. Export and authority acceptance are distinct; fabricated government acknowledgements are blocked.",
+  "remaining_actions": "Authority/provider onboarding and approved test specifications are not arranged. Actual VNeID/national transport and reconciliation adapters still need implementation and authority testing.",
+  "available_artifacts": [
+    "../00-release/final-isolated-regression-results.json",
+    "../00-release/isolated-regression-results.log",
+    "../00-release/final-deployment-results.json",
+    "../00-release/chrome-checks.json"
+  ],
+  "limitations": "Automated tests and demo evidence establish stated software behavior only. They do not establish every legal obligation, production suitability, authority acceptance or MPS certification.",
+  "package_exhibits": []
+}

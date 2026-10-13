@@ -1,0 +1,24 @@
+{
+  "package": "A14",
+  "title": "Independent backups and restoration",
+  "release_commit": "316f7cc316395e97008bfc6c9a2871e82e239591",
+  "environment": "three demo databases: carejiox, carejiox_template, hhh; synthetic isolated tests on codex_vn2026",
+  "state": "Implemented controls with scoped verification; independent review and remaining actions pending",
+  "requirements": [
+    "EV-01-4",
+    "EV-06-2",
+    "EV-09-1"
+  ],
+  "implemented_controls": "Existing database-plus-filestore backups use streamed authenticated encryption, external key and artifact digests. Restore validates both artifacts and rejects unsafe archive members. Restored cron/mail COPY rows are neutralised before atomic schema publication. Registered legacy pairs are migrated explicitly.",
+  "remaining_actions": "Independent/off-host storage, independent key escrow, agreed RPO/RTO, backup retention and periodic witnessed restore schedules remain operational tasks.",
+  "available_artifacts": [
+    "../00-release/final-isolated-regression-results.json",
+    "../00-release/isolated-regression-results.log",
+    "../00-release/actual-backup-restore.json",
+    "../00-release/backup-crypto-local-results.log",
+    "../00-release/final-deployment-results.json",
+    "../00-release/chrome-checks.json"
+  ],
+  "limitations": "Automated tests and demo evidence establish stated software behavior only. They do not establish every legal obligation, production suitability, authority acceptance or MPS certification.",
+  "package_exhibits": []
+}

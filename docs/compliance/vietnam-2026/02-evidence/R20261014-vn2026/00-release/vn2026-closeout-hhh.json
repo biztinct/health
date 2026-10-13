@@ -1,0 +1,22 @@
+{
+  "database": "hhh",
+  "release_commit": "316f7cc316395e97008bfc6c9a2871e82e239591",
+  "draft_evidence_uploaded": 36,
+  "configuration": {
+    "health_consent.require_notice_evidence": "True",
+    "health_consent.enforce": "True",
+    "health_fhir_core.consent_enforced": "True",
+    "health_emr.auto_finalize_enabled": "False",
+    "health_scribe.allow_cloud": "False"
+  },
+  "requirements": 48,
+  "evidence_review_states": [
+    "draft"
+  ],
+  "synthetic_note_integrity": {
+    "1": true
+  },
+  "temporary_qa_account": "deactivated",
+  "synthetic_fixtures_removed": true,
+  "active_crons": 77
+}

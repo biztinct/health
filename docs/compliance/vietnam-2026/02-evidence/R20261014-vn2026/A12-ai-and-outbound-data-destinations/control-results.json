@@ -1,0 +1,23 @@
+{
+  "package": "A12",
+  "title": "AI and outbound data destinations",
+  "release_commit": "316f7cc316395e97008bfc6c9a2871e82e239591",
+  "environment": "three demo databases: carejiox, carejiox_template, hhh; synthetic isolated tests on codex_vn2026",
+  "state": "Implemented controls with scoped verification; independent review and remaining actions pending",
+  "requirements": [
+    "EV-01-4",
+    "EV-02-2",
+    "EV-03-2",
+    "EV-07-3"
+  ],
+  "implemented_controls": "Central BI provider guard defaults unknown callers to records, binds patient AI consent to a reviewed destination, refuses remote patient text and disables redirects. Speech uses purpose/recipient gates. Free questions containing undetectable names require an approved local analytics destination.",
+  "remaining_actions": "Approve actual countries, processor terms, legal bases and destinations. Verify network controls/DNS routing and any providers outside these call paths; no complete all-integration egress claim is made.",
+  "available_artifacts": [
+    "../00-release/final-isolated-regression-results.json",
+    "../00-release/isolated-regression-results.log",
+    "../00-release/final-deployment-results.json",
+    "../00-release/chrome-checks.json"
+  ],
+  "limitations": "Automated tests and demo evidence establish stated software behavior only. They do not establish every legal obligation, production suitability, authority acceptance or MPS certification.",
+  "package_exhibits": []
+}

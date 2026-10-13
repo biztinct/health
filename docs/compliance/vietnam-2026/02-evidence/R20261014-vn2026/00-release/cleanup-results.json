@@ -1,0 +1,31 @@
+{
+  "scope": "only artifacts and synthetic fixtures created by this compliance QA",
+  "isolated_database_removed": "codex_vn2026",
+  "restored_staging_database_removed": "hhh-staging",
+  "other_session_database_preserved": "codex_fb_center_reply",
+  "temporary_fixture_records_removed": [
+    "carejiox synthetic patient 37919/order 9653/notes 2720 and 2791/consent 2148",
+    "hhh synthetic patient 18/order 1/note 1/consent 1"
+  ],
+  "temporary_qa_account": "hhh user 11 deactivated; credential files removed from local/server /tmp",
+  "temporary_restore_backup_removed": 41,
+  "generated_pngs_remaining_in_own_test_directories": 0,
+  "retained_recovery": "Pre-deployment encrypted snapshots, 16 encrypted registered legacy backup pairs, backup key and unrelated product assets retained",
+  "generated_test_screenshots_remaining": 0,
+  "note": "Generated Chrome screenshots and PDF-review images were deleted in every format, as requested. Structured checks, downloadable PDF/ZIP/JSON and real restore results are retained.",
+  "independent_post_commit_database_checks": {
+    "carejiox": {
+      "synthetic_patients": 0,
+      "synthetic_notes": 0,
+      "synthetic_orders": 0,
+      "synthetic_consents": 0
+    },
+    "hhh": {
+      "synthetic_patients": 0,
+      "synthetic_notes": 0,
+      "synthetic_orders": 0,
+      "synthetic_consents": 0,
+      "qa_user_active": false
+    }
+  }
+}

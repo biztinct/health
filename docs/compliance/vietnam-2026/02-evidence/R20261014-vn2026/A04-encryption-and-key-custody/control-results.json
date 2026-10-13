@@ -1,0 +1,22 @@
+{
+  "package": "A04",
+  "title": "Encryption and key custody",
+  "release_commit": "316f7cc316395e97008bfc6c9a2871e82e239591",
+  "environment": "three demo databases: carejiox, carejiox_template, hhh; synthetic isolated tests on codex_vn2026",
+  "state": "Implemented controls with scoped verification; independent review and remaining actions pending",
+  "requirements": [
+    "EV-01-4",
+    "EV-04-1",
+    "EV-09-1"
+  ],
+  "implemented_controls": "Sensitive healthcare attachments use AES-256-GCM with transparent HTTP delivery and unchanged plaintext checksums. Scribe transcripts, correction reasons and AI coding payloads are encrypted; legacy plaintext columns are migrated without changing seals. Backup pairs use an external root-owned key.",
+  "remaining_actions": "Production disk/database encryption, independent key escrow, custody and rotation must be arranged. Existing PHI derivation is preserved; database.secret remains available to an authorised DB administrator.",
+  "available_artifacts": [
+    "../00-release/final-isolated-regression-results.json",
+    "../00-release/isolated-regression-results.log",
+    "../00-release/final-deployment-results.json",
+    "../00-release/chrome-checks.json"
+  ],
+  "limitations": "Automated tests and demo evidence establish stated software behavior only. They do not establish every legal obligation, production suitability, authority acceptance or MPS certification.",
+  "package_exhibits": []
+}
