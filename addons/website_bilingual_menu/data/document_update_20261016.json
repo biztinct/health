@@ -1,0 +1,44 @@
+{
+  "assets": {
+    "university_training": {
+      "file": "university-training-news.pdf",
+      "name": "Taupo_Hospital_University_Training_News_Update (1).pdf",
+      "sha256": "8eb4d50d2404e4d1533aae3cd9cedffd85bafd9abda4705f0cbbf38710e4f310"
+    },
+    "inpatient_tv": {
+      "file": "inpatient-tv-units-testimonial.pdf",
+      "name": "Testimonial_Taupo_Inpatient_TV_Units (1).pdf",
+      "sha256": "5ff8e37d774e36cdf408975d4a838b030ba5c097083f2442ff4b05a86e44dd30"
+    },
+    "constitution": {
+      "file": "constitution-2024.pdf",
+      "name": "TAU17041NOC029 Constitution - Taupo Hospital and Health Society 2024 (2).pdf",
+      "sha256": "89eac61db7ea61079bcf33fd1ed362b0008c568d92574b4abc6028dee27194c0"
+    },
+    "annual_2023": {
+      "file": "annual-report-2023.pdf",
+      "name": "THHS AGM booklet 2023.pdf",
+      "sha256": "265b5d617d14c9e056a2c2c8dbb017beb81c225ccc08574ee4f2b2bbe4d71435"
+    },
+    "annual_2025": {
+      "file": "annual-report-2025.pdf",
+      "name": "THHS AGM booklet 2025.pdf",
+      "sha256": "d0844fe7d08aab7b45006675135b6e0186bae89fba9754cea278e801eff978b5"
+    },
+    "membership": {
+      "file": "membership-and-donation-form.pdf",
+      "name": "THHS Membership and donation form.pdf",
+      "sha256": "e3134f0beebe4780dee70254815d14c57ecd7814c08b7310bfa113094f32f3c0"
+    },
+    "welcome_wide": {
+      "file": "welcome-lake-wide.png",
+      "name": "Carved pou beside a snow-capped lake.png",
+      "sha256": "73bb1c2e1c41d8ab785bba95af75372bc686725f2cb56d28b79ef164516f4fc2"
+    },
+    "inpatient_tv_photo": {
+      "file": "inpatient-tv-units.png",
+      "name": "Taupō Inpatient TV Units photograph",
+      "sha256": "bcd71858ece15f2666f4e114899ec8cb107465a87be404c4138750b913c5fc8a"
+    }
+  }
+}

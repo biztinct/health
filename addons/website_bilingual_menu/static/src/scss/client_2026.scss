@@ -133,6 +133,19 @@
     }
     .thhs26-social-icon { width: 155px; margin: 35px; }
     .thhs26-thermometer { max-height: 680px; display: block; margin: auto; }
+    .thhs26-gauge-link {
+        display: inline-block;
+        color: #005e76;
+        font-weight: 700;
+        .thhs26-thermometer {
+            height: unquote("clamp(280px, 50svh, 480px)");
+            max-height: none;
+            width: auto;
+            object-fit: contain;
+        }
+        &:focus-visible { outline: 3px solid #005e76; outline-offset: 6px; }
+    }
+    #thhs-grants-table { scroll-margin-top: 110px; }
     .thhs26-grants { font-size: 14px; line-height: 1.3; }
     .thhs26-grants th { background: #0c3855; color: #fff; }
     .thhs26-grants td { padding: 8px; }

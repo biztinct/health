@@ -170,3 +170,27 @@ and reduce illustration-section spacing without replacing client text. The
 strip loops seamlessly with transient visual copies removed in Website Builder.
 Vision uses a contained background; Calendar art is top aligned; Rules,
 Get Involved and Hospital illustrations scale with available viewport height.
+
+### 16 October 2026 supplied documents
+
+`data/document_update_20261016.json` records the eight published asset checksums.
+The six supplied PDFs are copied byte-for-byte into `static/client_updates_20261016`.
+The TV testimonial uses the photograph extracted from its supplied PDF. The new
+wider lake photograph is used on landscape screens at least 768px wide; portrait
+screens retain the existing photo and the screen-filling homepage layout.
+
+After fresh DB/filestore/module backups, run
+`scripts/apply_document_update_20261016.py` in Odoo shell for `thhs` with
+`THHS_DOCUMENT_APPLY=1`. Set `THHS_DOCUMENT_DRYRUN=1` to validate and roll back,
+and optionally `THHS_DOCUMENT_MODULE=/path/to/staged/module` to test staged files.
+Deploy the latest complete module, upgrade it, apply the targeted script and
+restart Odoo. Do not rerun the September replacement importer.
+
+The idempotent script patches only seven current website 1 pages. It adds the
+1 September university-training news item in date order and the inpatient-TV
+testimonial to the rolling strip; connects Rules to the supplied constitution;
+updates the 2023 and 2025 report links and, as explicitly requested, connects the
+2024 report icon to that same constitution PDF. Both membership/donation icons
+open the latest supplied membership and donation form. The Successes gauge sits
+under the cumulative value and links to the unchanged grants table below it.
+Existing attachments, other client copy, and website 2 are preserved.
