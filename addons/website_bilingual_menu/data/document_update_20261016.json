@@ -39,6 +39,11 @@
       "file": "inpatient-tv-units.png",
       "name": "Taupō Inpatient TV Units photograph",
       "sha256": "bcd71858ece15f2666f4e114899ec8cb107465a87be404c4138750b913c5fc8a"
+    },
+    "annual_2024": {
+      "file": "annual-report-2024.pdf",
+      "name": "THHS AGM booklet 2024.pdf",
+      "sha256": "7b5dff8e930f5b42d5f602a8f76df34139180a0f7f62967bc3cb4a3e31087108"
     }
   }
 }

@@ -173,8 +173,8 @@ Get Involved and Hospital illustrations scale with available viewport height.
 
 ### 16 October 2026 supplied documents
 
-`data/document_update_20261016.json` records the eight published asset checksums.
-The six supplied PDFs are copied byte-for-byte into `static/client_updates_20261016`.
+`data/document_update_20261016.json` records the nine published asset checksums.
+The seven supplied PDFs are copied byte-for-byte into `static/client_updates_20261016`.
 The TV testimonial uses the photograph extracted from its supplied PDF. The new
 wider lake photograph is used on landscape screens at least 768px wide; portrait
 screens retain the existing photo and the screen-filling homepage layout.
@@ -189,8 +189,9 @@ restart Odoo. Do not rerun the September replacement importer.
 The idempotent script patches only seven current website 1 pages. It adds the
 1 September university-training news item in date order and the inpatient-TV
 testimonial to the rolling strip; connects Rules to the supplied constitution;
-updates the 2023 and 2025 report links and, as explicitly requested, connects the
-2024 report icon to that same constitution PDF. Both membership/donation icons
+updates the 2023, 2024 and 2025 report links to their supplied AGM booklets.
+The later-supplied 2024 AGM booklet supersedes the initial constitution link;
+Rules continues to open the constitution. Both membership/donation icons
 open the latest supplied membership and donation form. The Successes gauge sits
 under the cumulative value and links to the unchanged grants table below it.
 Existing attachments, other client copy, and website 2 are preserved.

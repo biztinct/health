@@ -92,8 +92,7 @@ def transform_page(url, arch, links):
         anchor = one(root.xpath('//a[@aria-label="Read the Society constitution"]'), 'Rules link')
         pdf_link(anchor, links['constitution'])
     elif url == '/annual-report':
-        # The client explicitly supplied the constitution for the 2024 icon.
-        for year, key in [(2023, 'annual_2023'), (2024, 'constitution'), (2025, 'annual_2025')]:
+        for year, key in [(2023, 'annual_2023'), (2024, 'annual_2024'), (2025, 'annual_2025')]:
             anchor = one(root.xpath('//a[@aria-label="Open %s Annual Report"]' % year), f'{year} report link')
             pdf_link(anchor, links[key])
     elif url == '/how-can-i-help':
