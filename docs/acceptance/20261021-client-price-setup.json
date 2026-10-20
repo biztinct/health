@@ -1,0 +1,548 @@
+{
+  "target_url": "https://carejiox.com",
+  "database": "carejiox",
+  "source_workbook": "CareJioX_Test_Data_Contact_to_Billing_v20261013_V01.01.xlsx",
+  "source_sha256": "6d16dd46bded4e8cf42c4ab213487cf4e72da02ef233f0a82358fb4548417b5e",
+  "authorized_change": "Overwrite base product prices and descriptions with client acceptance data; use dedicated UAT rule engine. No application source changes.",
+  "engine_id": 7,
+  "pricelist_id": 7,
+  "products": [
+    {
+      "product_id": 575,
+      "template_id": 557,
+      "region": "Hanoi",
+      "code": "bs_020",
+      "source_row": 2,
+      "old_name": "Doctor examination at clinic",
+      "old_price": 400000.0,
+      "name": "Internal examination",
+      "name_vi": "Khám nội khoa",
+      "price": 500000,
+      "uom_id": 31,
+      "uom_source": "per_service",
+      "taxes": []
+    },
+    {
+      "product_id": 577,
+      "template_id": 559,
+      "region": "Hanoi",
+      "code": "bs_040",
+      "source_row": 3,
+      "old_name": "Doctor examination visit, distance 10–20km",
+      "old_price": 700000.0,
+      "name": "Ultrasound + reading results",
+      "name_vi": "Siêu âm + đọc kết quả",
+      "price": 300000,
+      "uom_id": 31,
+      "uom_source": "per_service",
+      "taxes": []
+    },
+    {
+      "product_id": 578,
+      "template_id": 560,
+      "region": "Hanoi",
+      "code": "bs_050",
+      "source_row": 4,
+      "old_name": "Doctor examination visit, distance >20km",
+      "old_price": 1000000.0,
+      "name": "ECG + reading results",
+      "name_vi": "Điện tim + đọc kết quả",
+      "price": 300000,
+      "uom_id": 31,
+      "uom_source": "per_service",
+      "taxes": []
+    },
+    {
+      "product_id": 576,
+      "template_id": 558,
+      "region": "Hanoi",
+      "code": "bs_030",
+      "source_row": 5,
+      "old_name": "Doctor examination visit, distance <10km",
+      "old_price": 500000.0,
+      "name": "Online internal examination",
+      "name_vi": "Khám nội trực tuyến",
+      "price": 200000,
+      "uom_id": 31,
+      "uom_source": "per_service",
+      "taxes": []
+    },
+    {
+      "product_id": 589,
+      "template_id": 571,
+      "region": "Hanoi",
+      "code": "đd_020",
+      "source_row": 6,
+      "old_name": "Taking sample fee",
+      "old_price": 50000.0,
+      "name": "Change wound dressing < 5cm",
+      "name_vi": "Thay băng vết thương < 5cm",
+      "price": 200000,
+      "uom_id": 33,
+      "uom_source": "per wound",
+      "taxes": []
+    },
+    {
+      "product_id": 609,
+      "template_id": 591,
+      "region": "Hanoi",
+      "code": "đd_220",
+      "source_row": 7,
+      "old_name": "Removing the NG tube",
+      "old_price": 200000.0,
+      "name": "Capillary blood glucose test",
+      "name_vi": "Kiểm tra đường huyết mao mạch",
+      "price": 50000,
+      "uom_id": 31,
+      "uom_source": "per_service",
+      "taxes": []
+    },
+    {
+      "product_id": 611,
+      "template_id": 593,
+      "region": "Hanoi",
+      "code": "đd_240",
+      "source_row": 8,
+      "old_name": "Throat suction",
+      "old_price": 350000.0,
+      "name": "Nursing fee (Additional hours)",
+      "name_vi": "Phí điều dưỡng (Giờ bổ sung)",
+      "price": 150000,
+      "uom_id": 4,
+      "uom_source": "per_hour",
+      "taxes": []
+    },
+    {
+      "product_id": 593,
+      "template_id": 575,
+      "region": "Hanoi",
+      "code": "đd_060",
+      "source_row": 9,
+      "old_name": "Wound care 5–15cm",
+      "old_price": 250000.0,
+      "name": "Intramuscular/intradermal/subcutaneous injection",
+      "name_vi": "Tiêm bắp/ trong da/ dưới da",
+      "price": 150000,
+      "uom_id": 34,
+      "uom_source": "per_injection",
+      "taxes": []
+    },
+    {
+      "product_id": 606,
+      "template_id": 588,
+      "region": "Hanoi",
+      "code": "đd_190",
+      "source_row": 10,
+      "old_name": "Setting or replacing urine tube",
+      "old_price": 300000.0,
+      "name": "Daytime personal care (minimum 3 hours)",
+      "name_vi": "Chăm sóc cá nhân ban ngày (tối thiểu 3 giờ)",
+      "price": 100000,
+      "uom_id": 4,
+      "uom_source": "per_hour",
+      "taxes": []
+    },
+    {
+      "product_id": 624,
+      "template_id": 606,
+      "region": "HCMC",
+      "code": "bs_010",
+      "source_row": 11,
+      "old_name": "Fee for doctor-on-demand service",
+      "old_price": 200000.0,
+      "name": "Medical Examination & Treatment at home",
+      "name_vi": "Phí dịch vụ yêu cầu bác sĩ tại PK",
+      "price": 200000,
+      "uom_id": 31,
+      "uom_source": "per_service",
+      "taxes": []
+    },
+    {
+      "product_id": 673,
+      "template_id": 655,
+      "region": "HCMC",
+      "code": "bs_015",
+      "source_row": 12,
+      "old_name": null,
+      "old_price": null,
+      "name": "Medical Examination & Treatment in the clinic",
+      "name_vi": "Phí dịch vụ yêu cầu bác sĩ tại Nhà",
+      "price": 600000,
+      "uom_id": 31,
+      "uom_source": "per_service",
+      "taxes": []
+    },
+    {
+      "product_id": 659,
+      "template_id": 641,
+      "region": "HCMC",
+      "code": "đd_290",
+      "source_row": 13,
+      "old_name": "8 hour palliative care package",
+      "old_price": 1100000.0,
+      "name": "Capillary Blood Glucose Test",
+      "name_vi": "Kiểm tra đường huyết mao mạch",
+      "price": 50000,
+      "uom_id": 31,
+      "uom_source": "per_service",
+      "taxes": []
+    },
+    {
+      "product_id": 637,
+      "template_id": 619,
+      "region": "HCMC",
+      "code": "đd_070",
+      "source_row": 14,
+      "old_name": "Cosmetic suture removal",
+      "old_price": 350000.0,
+      "name": "Intramuscular, intradermal, subcutaneous injection",
+      "name_vi": "Tiêm bắp, trong da, dưới da",
+      "price": 90000,
+      "uom_id": 34,
+      "uom_source": "per_injection",
+      "taxes": []
+    },
+    {
+      "product_id": 657,
+      "template_id": 639,
+      "region": "HCMC",
+      "code": "đd_270",
+      "source_row": 15,
+      "old_name": "12 hours night shift ADL care package",
+      "old_price": 1300000.0,
+      "name": "Personal Care 12h Nighttime",
+      "name_vi": "Chăm sóc cá nhân 12h đêm",
+      "price": 1200000,
+      "uom_id": 29,
+      "uom_source": "per_package",
+      "taxes": []
+    },
+    {
+      "product_id": 636,
+      "template_id": 618,
+      "region": "HCMC",
+      "code": "đd_060",
+      "source_row": 16,
+      "old_name": "Sutures cutting 15–30cm",
+      "old_price": 300000.0,
+      "name": "Infusion over time <= 3 hours",
+      "name_vi": "Truyền theo thời gian <= 3 giờ",
+      "price": 250000,
+      "uom_id": 4,
+      "uom_source": "per_hour",
+      "taxes": []
+    },
+    {
+      "product_id": 642,
+      "template_id": 624,
+      "region": "HCMC",
+      "code": "đd_120",
+      "source_row": 17,
+      "old_name": "IM, SC or Intradermal Injection",
+      "old_price": 170000.0,
+      "name": "Bladder Wash",
+      "name_vi": "Rửa bàng quang",
+      "price": 250000,
+      "uom_id": 31,
+      "uom_source": "per_service",
+      "taxes": []
+    },
+    {
+      "product_id": 625,
+      "template_id": 607,
+      "region": "HCMC",
+      "code": "bs_020",
+      "source_row": 18,
+      "old_name": "Doctor examination at clinic",
+      "old_price": 300000.0,
+      "name": "Telemedicine Consult",
+      "name_vi": "Khám nội khoa Tư vấn trực tuyến",
+      "price": 200000,
+      "uom_id": 31,
+      "uom_source": "per_service",
+      "taxes": []
+    },
+    {
+      "product_id": 632,
+      "template_id": 614,
+      "region": "HCMC",
+      "code": "đd_020",
+      "source_row": 19,
+      "old_name": "Gluco Blood Test",
+      "old_price": 50000.0,
+      "name": "Change wound dressing <15cm",
+      "name_vi": "Thay băng vết thương < 15cm",
+      "price": 150000,
+      "uom_id": 33,
+      "uom_source": "per_wound",
+      "taxes": []
+    }
+  ],
+  "rules": [
+    {
+      "id": 557,
+      "name": "Hanoi - Client UAT bs_040 - Is service at home",
+      "sequence": 1,
+      "action_type": "add",
+      "action_value": 200000.0,
+      "approval_status": "approved",
+      "product_id": [
+        577,
+        "[bs_040_hanoi] Ultrasound + reading results"
+      ],
+      "notes": "Client workbook Price_Reference row 25"
+    },
+    {
+      "id": 558,
+      "name": "Hanoi - Client UAT bs_020 - Is after hours or weekend",
+      "sequence": 1,
+      "action_type": "add",
+      "action_value": 150000.0,
+      "approval_status": "approved",
+      "product_id": [
+        575,
+        "[bs_020_hanoi] Internal examination"
+      ],
+      "notes": "Client workbook Price_Reference row 26"
+    },
+    {
+      "id": 560,
+      "name": "Hanoi - Client UAT đd_240 - Is after hours or weekend",
+      "sequence": 1,
+      "action_type": "add",
+      "action_value": 50000.0,
+      "approval_status": "approved",
+      "product_id": [
+        611,
+        "[đd_240_hanoi] Nursing fee (Additional hours)"
+      ],
+      "notes": "Client workbook Price_Reference row 28"
+    },
+    {
+      "id": 562,
+      "name": "HCMC - Client UAT đd_070 - Is service at home (first of two rows)",
+      "sequence": 1,
+      "action_type": "add",
+      "action_value": 70000.0,
+      "approval_status": "approved",
+      "product_id": [
+        637,
+        "[đd_070_tphcm] Intramuscular, intradermal, subcutaneous injection"
+      ],
+      "notes": "Client workbook Price_Reference row 30"
+    },
+    {
+      "id": 563,
+      "name": "HCMC - Client UAT đd_060 - Is service at home",
+      "sequence": 1,
+      "action_type": "add",
+      "action_value": 50000.0,
+      "approval_status": "approved",
+      "product_id": [
+        636,
+        "[đd_060_tphcm] Infusion over time <= 3 hours"
+      ],
+      "notes": "Client workbook Price_Reference row 32"
+    },
+    {
+      "id": 564,
+      "name": "HCMC - Client UAT đd_120 - Is service at home",
+      "sequence": 1,
+      "action_type": "add",
+      "action_value": 100000.0,
+      "approval_status": "approved",
+      "product_id": [
+        642,
+        "[đd_120_tphcm] Bladder Wash"
+      ],
+      "notes": "Client workbook Price_Reference row 34"
+    },
+    {
+      "id": 568,
+      "name": "HCMC - Client UAT đd_020 - Is service at home",
+      "sequence": 1,
+      "action_type": "add",
+      "action_value": 80000.0,
+      "approval_status": "approved",
+      "product_id": [
+        632,
+        "[đd_020_tphcm] Change wound dressing <15cm"
+      ],
+      "notes": "Client workbook Price_Reference row 38"
+    },
+    {
+      "id": 559,
+      "name": "Hanoi - Client UAT bs_020 - Starting after 20:00 and before 06:00",
+      "sequence": 2,
+      "action_type": "add",
+      "action_value": 250000.0,
+      "approval_status": "approved",
+      "product_id": [
+        575,
+        "[bs_020_hanoi] Internal examination"
+      ],
+      "notes": "Client workbook Price_Reference row 27"
+    },
+    {
+      "id": 565,
+      "name": "HCMC - Client UAT đd_120 - Valid if at home AND another service this visit",
+      "sequence": 2,
+      "action_type": "fixed",
+      "action_value": 200000.0,
+      "approval_status": "approved",
+      "product_id": [
+        642,
+        "[đd_120_tphcm] Bladder Wash"
+      ],
+      "notes": "Client workbook Price_Reference row 35"
+    },
+    {
+      "id": 561,
+      "name": "HCMC - Client UAT bs_015 - Is after hours or weekend",
+      "sequence": 4,
+      "action_type": "add",
+      "action_value": 200000.0,
+      "approval_status": "approved",
+      "product_id": [
+        673,
+        "[bs_015_tphcm] Medical Examination & Treatment in the clinic"
+      ],
+      "notes": "Client workbook Price_Reference row 29"
+    },
+    {
+      "id": 566,
+      "name": "HCMC - Client UAT bs_020 - Is after hours or weekend",
+      "sequence": 4,
+      "action_type": "add",
+      "action_value": 200000.0,
+      "approval_status": "approved",
+      "product_id": [
+        625,
+        "[bs_020_tphcm] Telemedicine Consult"
+      ],
+      "notes": "Client workbook Price_Reference row 36"
+    },
+    {
+      "id": 569,
+      "name": "Hanoi - Client UAT Any service - Is public holiday",
+      "sequence": 4,
+      "action_type": "multiply",
+      "action_value": 3.0,
+      "approval_status": "approved",
+      "product_id": false,
+      "notes": "Client workbook Price_Reference row 40"
+    },
+    {
+      "id": 567,
+      "name": "HCMC - Client UAT bs_020 - Service between 8 pm and 11:59 pm",
+      "sequence": 5,
+      "action_type": "add",
+      "action_value": 100000.0,
+      "approval_status": "approved",
+      "product_id": [
+        625,
+        "[bs_020_tphcm] Telemedicine Consult"
+      ],
+      "notes": "Client workbook Price_Reference row 37"
+    },
+    {
+      "id": 571,
+      "name": "Hanoi - Client UAT bs_020 - Distance from clinic 10–20 km (6 km: not triggered)",
+      "sequence": 5,
+      "action_type": "add",
+      "action_value": 200000.0,
+      "approval_status": "approved",
+      "product_id": [
+        575,
+        "[bs_020_hanoi] Internal examination"
+      ],
+      "notes": "Client workbook Price_Reference row 43"
+    },
+    {
+      "id": 570,
+      "name": "HCMC - Client UAT Any service - Is public holiday",
+      "sequence": 7,
+      "action_type": "multiply",
+      "action_value": 3.0,
+      "approval_status": "approved",
+      "product_id": false,
+      "notes": "Client workbook Price_Reference row 41"
+    }
+  ],
+  "rule_gaps": [
+    {
+      "source_row": 23,
+      "description": "Subsequent wounds on same visit",
+      "reason": "Replacement price for units 2+ is not supported by native per-unit action (which adds amounts)."
+    },
+    {
+      "source_row": 24,
+      "description": "After 1st injection",
+      "reason": "Replacement price for units 2+ is not supported by native per-unit action."
+    },
+    {
+      "source_row": 28,
+      "description": "Is after hours or weekend",
+      "reason": "Native add action is per unit. Restricted to quantity 1 to avoid misrepresenting a once-per-line surcharge for multi-unit lines."
+    },
+    {
+      "source_row": 30,
+      "description": "Is service at home (first of two rows)",
+      "reason": "Native add action is per unit. Restricted to quantity 1 to avoid misrepresenting a once-per-line surcharge for multi-unit lines."
+    },
+    {
+      "source_row": 31,
+      "description": "Every additional injection",
+      "reason": "Replacement price for subsequent injections is not supported by native per-unit action."
+    },
+    {
+      "source_row": 32,
+      "description": "Is service at home",
+      "reason": "Native add action is per unit. Restricted to quantity 1 to avoid misrepresenting a once-per-line surcharge for multi-unit lines."
+    },
+    {
+      "source_row": 33,
+      "description": "After 1st bottle of IV fluid",
+      "reason": "Extra IV bottle charge must apply once to line total; engine returns unit prices."
+    },
+    {
+      "source_row": 38,
+      "description": "Is service at home",
+      "reason": "Native add action is per unit. Restricted to quantity 1 to avoid misrepresenting a once-per-line surcharge for multi-unit lines."
+    },
+    {
+      "source_row": 39,
+      "description": "Wounds after the first on same visit",
+      "reason": "Replacement price for subsequent wounds is not supported by native per-unit action."
+    },
+    {
+      "source_row": 42,
+      "description": "Distance from clinic 5–8 km",
+      "reason": "Nursing distance fee must be once per booking on first nursing line, not on each unit/line."
+    },
+    {
+      "source_row": 44,
+      "description": "All start at 8 km (6 km: not triggered)",
+      "reason": "Reference only states no surcharge below 8 km; no complete fee values supplied."
+    },
+    {
+      "source_row": 45,
+      "description": "Multiple and/or repeat bookings — discount on booking form",
+      "reason": "Discount is entered per booking; native line discount applies to adjusted subtotal. Test base-only discount separately."
+    }
+  ],
+  "holiday": {
+    "id": 222,
+    "name": "CLIENT UAT ONLY - fictional holiday 19 Oct 2026",
+    "date_from": "2026-10-18 17:00:00",
+    "date_to": "2026-10-19 16:59:59",
+    "is_pricing_holiday": true,
+    "price_multiplier": 3
+  },
+  "test_summary": {
+    "quote_pass": 8,
+    "quote_fail": 9,
+    "end_to_end_signoff": "NOT READY",
+    "live_channels": "ON HOLD per user"
+  }
+}
