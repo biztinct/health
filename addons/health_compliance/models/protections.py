@@ -420,7 +420,15 @@ class HealthcareAudit(models.AbstractModel):
     _inherit = 'base'
 
     def _compliance_audited_model(self):
-        return self._name.startswith(('health.', 'bhyt.')) and not self._transient
+        transaction_models = {
+            'crm.lead', 'sale.order', 'sale.order.line', 'account.move',
+            'account.payment', 'product.pricelist', 'product.pricelist.item',
+            'product.product', 'product.template', 'advanced.pricing.engine',
+            'advanced.pricing.rule', 'res.users', 'biz.access.role',
+        }
+        return not self._transient and (
+            self._name.startswith(('health.', 'bhyt.')) or self._name in transaction_models
+        )
 
     def _fetch_query(self, query, fields):
         records = super()._fetch_query(query, fields)
