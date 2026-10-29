@@ -59,6 +59,17 @@
             
             <!-- Add Tax Authority Status in a separate group -->
             <notebook position="inside">
+                <page string="eInvoice Test" name="einvoice_test" invisible="move_type not in ['out_invoice', 'out_refund']">
+                    <p>Internal acceptance test only. No digital signature or tax-authority upload is performed.</p>
+                    <button name="action_record_einvoice_test" type="object" string="Record eInvoice Test"
+                            groups="health_base.group_healthcare_owner,health_base.group_healthcare_finance"
+                            invisible="state != 'posted' or einvoice_test_reference"/>
+                    <group>
+                        <field name="einvoice_test_reference"/>
+                        <field name="einvoice_test_date"/>
+                        <field name="einvoice_test_user_id"/>
+                    </group>
+                </page>
                 <page string="Tax Authority &amp; Compliance" name="tax_compliance"
                       invisible="move_type not in ['out_invoice', 'out_refund'] or not red_invoice_enabled">
 

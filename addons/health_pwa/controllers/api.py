@@ -749,6 +749,7 @@ class HealthPWAAPIController(http.Controller):
             })
 
         except Exception as e:
+            request.env.cr.rollback()
             return self._prepare_json_response(error=str(e), status_code=500)
 
     @http.route('/health_pwa/api/cancellation_reasons', type='http', auth='user', methods=['GET'], csrf=False)
@@ -946,6 +947,7 @@ class HealthPWAAPIController(http.Controller):
             })
 
         except Exception as e:
+            request.env.cr.rollback()
             return self._prepare_json_response(error=str(e), status_code=500)
 
     @http.route('/health_pwa/api/fso/<int:order_id>/complete_without_quote', type='http', auth='user', methods=['POST'], csrf=False)
@@ -1039,6 +1041,7 @@ class HealthPWAAPIController(http.Controller):
             })
 
         except Exception as e:
+            request.env.cr.rollback()
             return self._prepare_json_response(error=str(e), status_code=500)
 
     @http.route('/health_pwa/api/fso/<int:order_id>/clinical_notes/<int:note_id>/finalize',

@@ -1,4 +1,5 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, _
+from odoo.exceptions import AccessError
 
 
 class HealthClinicalNote(models.Model):
@@ -6,6 +7,29 @@ class HealthClinicalNote(models.Model):
     _description = 'Clinical Note'
     _order = 'create_date desc'
     _rec_name = 'display_name'
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        if not self.env.su:
+            for vals in vals_list:
+                if vals.get('author_id', self.env.uid) != self.env.uid:
+                    raise AccessError(_('Clinical notes must identify the authenticated author.'))
+        return super().create(vals_list)
+
+    def write(self, vals):
+        # Nurses need write access for encrypted-field inverses during create,
+        # but may only update their own notes. Existing catchment rules and
+        # the EMR finalized-record guard still apply.
+        user = self.env.user
+        if (not self.env.su
+                and user.has_group('health_base.group_healthcare_nurse')
+                and not user.has_group('health_base.group_healthcare_doctor')
+                and not user.has_group('health_base.group_healthcare_owner')):
+            if any(n.author_id != user for n in self) or (
+                'author_id' in vals and vals['author_id'] != user.id
+            ) or 'order_id' in vals:
+                raise AccessError(_('You can only edit your own clinical notes.'))
+        return super().write(vals)
 
     order_id = fields.Many2one(
         'health.fieldservice.order',

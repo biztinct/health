@@ -540,7 +540,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             else:
                 record.order_line_count = 0
     
-    @api.depends('assignment_ids.staff_id', 'assignment_ids.assignment_role', 'assignment_ids.staff_id.is_doctor_role')
+    @api.depends('assignment_ids.staff_id', 'assignment_ids.assignment_role', 'assignment_ids.state', 'assignment_ids.staff_id.is_doctor_role')
     def _compute_assigned_staff(self):
         """Compute assigned staff from assignment records"""
         for record in self:
@@ -548,7 +548,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             # private employee field non-HR users (e.g. nurses) cannot read, which
             # would otherwise break this compute whenever they load bookings.
             staff_ids = record.assignment_ids.filtered(
-                lambda a: a.state != 'template'
+                lambda a: a.state not in ('template', 'cancelled', 'deferred')
                 and a.assignment_role != 'doctor'
                 and a.staff_id
                 and not a.staff_id.sudo().is_doctor_role
@@ -622,7 +622,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             else:
                 record.lead_staff_id = False
 
-    @api.depends('assignment_ids.staff_id', 'assignment_ids.assignment_role', 'assignment_ids.staff_id.job_title', 'primary_doctor_id')
+    @api.depends('assignment_ids.staff_id', 'assignment_ids.assignment_role', 'assignment_ids.state', 'assignment_ids.staff_id.is_doctor_role', 'primary_doctor_id')
     def _compute_assigned_doctors(self):
         """Compute assigned doctors from staff assignments or primary_doctor_id"""
         for record in self:
@@ -635,9 +635,9 @@ class HealthFieldServiceOrderUnified(models.Model):
             # Look for doctors in assignments - check assignment_role first, then job_title
             # sudo the job_title read (private employee field, unreadable by nurses)
             doctor_assignments = record.assignment_ids.filtered(
-                lambda a: a.state != 'template' and a.staff_id and (
+                lambda a: a.state not in ('template', 'cancelled', 'deferred') and a.staff_id and (
                     a.assignment_role == 'doctor' or
-                    (a.staff_id.sudo().job_title and 'doctor' in a.staff_id.sudo().job_title.lower())
+                    a.staff_id.sudo().is_doctor_role
                 )
             )
             doctor_ids.extend(doctor_assignments.mapped('staff_id.id'))
@@ -753,6 +753,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         'hr.employee',
         string='Assigned Staff',
         compute='_compute_assigned_staff',
+        compute_sudo=True,
         inverse='_inverse_assigned_staff',
         store=False,
         readonly=False,
@@ -786,6 +787,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         'fso_id', 'doctor_id',
         string='Assigned Doctors',
         compute='_compute_assigned_doctors',
+        compute_sudo=True,
         inverse='_inverse_assigned_doctors',
         store=False,
         readonly=False,
@@ -2213,7 +2215,7 @@ class HealthFieldServiceOrderUnified(models.Model):
     def _create_empty_quote(self):
         """Create an empty healthcare quote for this FSO"""
         # Get default pricelist
-        pricelist = self.env['product.pricelist'].search([('currency_id', '=', self.env.company.currency_id.id)], limit=1)
+        pricelist = self.patient_id.with_company(self.company_id if 'company_id' in self._fields else self.env.company).property_product_pricelist or self.env['product.pricelist'].search([('currency_id', '=', self.env.company.currency_id.id)], limit=1)
         if not pricelist:
             pricelist = self.env['product.pricelist'].create({
                 'name': 'Healthcare Services Pricelist',
@@ -3295,7 +3297,7 @@ class HealthFieldServiceOrderUnified(models.Model):
     def _create_quote_with_lines(self):
         """Create quote with all necessary lines and validation"""
         # Get default pricelist (first found or create one)
-        pricelist = self.env['product.pricelist'].search([('currency_id', '=', self.env.company.currency_id.id)], limit=1)
+        pricelist = self.patient_id.with_company(self.company_id if 'company_id' in self._fields else self.env.company).property_product_pricelist or self.env['product.pricelist'].search([('currency_id', '=', self.env.company.currency_id.id)], limit=1)
         if not pricelist:
             pricelist = self.env['product.pricelist'].create({
                 'name': 'Healthcare Services Pricelist',
@@ -3458,7 +3460,7 @@ class HealthFieldServiceOrderUnified(models.Model):
     def _create_quote_silent(self):
         """Create quote silently without UI interaction"""
         # Get default pricelist
-        pricelist = self.env['product.pricelist'].search([('currency_id', '=', self.env.company.currency_id.id)], limit=1)
+        pricelist = self.patient_id.with_company(self.company_id if 'company_id' in self._fields else self.env.company).property_product_pricelist or self.env['product.pricelist'].search([('currency_id', '=', self.env.company.currency_id.id)], limit=1)
         if not pricelist:
             pricelist = self.env['product.pricelist'].create({
                 'name': 'Healthcare Services Pricelist',

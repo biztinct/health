@@ -331,9 +331,15 @@ class SaleOrder(models.Model):
 
             # Search for holidays on this date
             # Priority: province-specific holidays first, then national holidays
+            from datetime import datetime, time, timedelta
+            import pytz
+            tz = pytz.timezone(self._pricing_tz())
+            start = tz.localize(datetime.combine(date, time.min)).astimezone(pytz.UTC).replace(tzinfo=None)
+            end = tz.localize(datetime.combine(date + timedelta(days=1), time.min)).astimezone(pytz.UTC).replace(tzinfo=None)
             holidays = self.env['resource.calendar.leaves'].search([
-                ('date_from', '<=', date),
-                ('date_to', '>=', date),
+                ('date_from', '<', end),
+                ('date_to', '>=', start),
+                ('company_id', 'in', [False, self.company_id.id]),
                 ('resource_id', '=', False),  # Not employee-specific
                 ('calendar_id', '=', False),  # Company-wide holidays
                 ('is_pricing_holiday', '=', True),  # Only pricing holidays
@@ -345,7 +351,7 @@ class SaleOrder(models.Model):
                 holiday = holidays[0]
                 result.update({
                     'is_holiday': True,
-                    'holiday_type': holiday.holiday_type,
+                    'holiday_type': holiday.holiday_type_code if holiday.holiday_type_code in ('national', 'tet', 'regional', 'observance') else False,
                     'multiplier': holiday.price_multiplier or 1.0,
                     'holiday_name': holiday.name
                 })
@@ -410,6 +416,9 @@ class SaleOrder(models.Model):
         self.ensure_one()
         ctx = {
             'order_id': self.id,
+            'booking_lines': [{'line_id': l.id, 'product_id': l.product_id.id}
+                              for l in self.order_line.sorted(lambda l: (l.sequence, l.id))
+                              if l.product_id and not l.display_type],
             'partner_id': self.partner_id.id,
             'date_order': self.date_order,
             'distance': self.fso_distance or 0,
@@ -914,7 +923,7 @@ class SaleOrder(models.Model):
             base_price = line.base_price or line.product_id.list_price or 0
             final_price = line.price_unit or 0
             qty = line.product_uom_qty
-            subtotal = final_price * qty
+            subtotal = line.price_subtotal
             grand_total += subtotal
             diff = final_price - base_price
 
@@ -1077,7 +1086,7 @@ class SaleOrder(models.Model):
                 'base': base_price,
                 'final': final_price,
                 'qty': qty,
-                'subtotal': final_price * qty,
+                'subtotal': line.price_subtotal,
                 'rules': rules,
                 'warnings': warnings_by_line.get(line.id, []),
             }
@@ -1229,9 +1238,36 @@ class SaleOrderLine(models.Model):
     def _pricing_rule_context(self):
         """Booking context this line's price was evaluated against."""
         self.ensure_one()
-        return self.env['advanced.pricing.engine']._line_pricing_context(
+        ctx = self.env['advanced.pricing.engine']._line_pricing_context(
             self.product_id, self.product_uom_qty,
             self.order_id._pricing_booking_context())
+        ctx['line_id'] = self.id
+        return ctx
+
+    def _base_discount_tax_values(self):
+        self.ensure_one()
+        if not self.order_id.pricelist_id.discount_on_base_only or not self.discount:
+            return {}
+        # Keep the entered percentage on the quote. Feed standard Odoo taxes
+        # and invoices the equivalent net unit price, preserving exact money
+        # even when an adjustment makes the gross unit price zero.
+        return {'price_unit': self.price_unit - self.base_price * self.discount / 100.0,
+                'discount': 0.0}
+
+    def _prepare_base_line_for_taxes_computation(self, **kwargs):
+        return super()._prepare_base_line_for_taxes_computation(
+            **{**self._base_discount_tax_values(), **kwargs})
+
+    @api.depends('product_uom_qty', 'discount', 'price_unit', 'tax_ids',
+                 'base_price', 'order_id.pricelist_id.discount_on_base_only')
+    def _compute_amount(self):
+        return super()._compute_amount()
+
+    def _prepare_invoice_line(self, **optional_values):
+        vals = super()._prepare_invoice_line(**optional_values)
+        if not self.display_type:
+            vals.update(self._base_discount_tax_values())
+        return vals
 
     def _pricing_engine(self):
         """Resolve the pricing engine for this line's order (pricelist or default)."""

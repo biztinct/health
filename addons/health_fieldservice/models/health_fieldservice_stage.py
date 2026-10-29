@@ -80,7 +80,9 @@ class HealthFieldServiceStage(models.Model):
         if self.require_quote_items and (not fso.sale_order_id or not fso.sale_order_id.order_line):
             errors.append(_('Quote with items is required for stage "%s"') % self.name)
         
-        if self.require_staff_assignment and not fso.assigned_staff_ids:
+        if self.require_staff_assignment and not fso.assignment_ids.filtered(
+            lambda a: a.staff_id and a.state not in ('template', 'cancelled', 'deferred')
+        ):
             errors.append(_('Staff assignment is required for stage "%s"') % self.name)
         
         if self.require_patient_contact and not fso.patient_contact_confirmed:

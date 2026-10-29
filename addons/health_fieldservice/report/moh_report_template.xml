@@ -31,7 +31,7 @@
                     <div class="row mb-4">
                         <div class="col-6">
                             <strong>Service Type / Loại dịch vụ:</strong>
-                            <span t-esc="dict(o._fields['service_type'].selection).get(o.service_type, '')"/>
+                            <span t-field="o.service_type"/>
                         </div>
                         <div class="col-6">
                             <strong>Doctor / Bác sĩ:</strong>
@@ -99,7 +99,7 @@
                                 </td>
                                 <td style="border: 1px solid black; padding: 8px;">
                                     <span t-if="o.patient_id.ethnicity">
-                                        <t t-esc="dict(o.patient_id._fields['ethnicity'].selection).get(o.patient_id.ethnicity, '-')"/>
+                                        <span t-field="o.patient_id.ethnicity"/>
                                     </span>
                                     <span t-else="">-</span>
                                 </td>
@@ -271,7 +271,7 @@
                                 </td>
                                 <td style="border: 1px solid black; padding: 5px;">
                                     <span t-if="o.patient_id.ethnicity">
-                                        <t t-esc="dict(o.patient_id._fields['ethnicity'].selection).get(o.patient_id.ethnicity, '-')[:10]"/>
+                                        <span t-field="o.patient_id.ethnicity"/>
                                     </span>
                                     <span t-else="">-</span>
                                 </td>

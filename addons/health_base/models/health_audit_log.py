@@ -31,25 +31,29 @@ class HealthAuditLogView(models.Model):
                 SELECT
                     mtv.id,
                     mm.date,
-                    COALESCE(
-                        -- Prefer the author_id from mail_message if it's not a system user
-                        CASE WHEN mm.author_id != (
-                            SELECT id FROM res_users WHERE login = 'Default User Template' LIMIT 1
-                        ) THEN mm.author_id
-                        -- Otherwise fall back to the message's actual user (create_uid)
-                        ELSE mm.create_uid
-                        END,
-                        mm.author_id
-                    ) as user_id,
+                    COALESCE(actor.id, mm.create_uid) as user_id,
                     mm.model,
                     COALESCE(im.name->>'en_US', mm.model) as model_name,
                     mm.res_id,
                     COALESCE(mm.subject, '') as record_name,
                     COALESCE(mf.field_description->>'en_US', mf.name) as field_name,
-                    mtv.old_value_char as old_value,
-                    mtv.new_value_char as new_value
+                    CASE
+                        WHEN mf.ttype IN ('float', 'monetary') THEN mtv.old_value_float::text
+                        WHEN mf.ttype IN ('integer', 'boolean') THEN mtv.old_value_integer::text
+                        WHEN mf.ttype IN ('date', 'datetime') THEN mtv.old_value_datetime::text
+                        WHEN mf.ttype IN ('text', 'html') THEN mtv.old_value_text
+                        ELSE mtv.old_value_char END as old_value,
+                    CASE
+                        WHEN mf.ttype IN ('float', 'monetary') THEN mtv.new_value_float::text
+                        WHEN mf.ttype IN ('integer', 'boolean') THEN mtv.new_value_integer::text
+                        WHEN mf.ttype IN ('date', 'datetime') THEN mtv.new_value_datetime::text
+                        WHEN mf.ttype IN ('text', 'html') THEN mtv.new_value_text
+                        ELSE mtv.new_value_char END as new_value
                 FROM mail_tracking_value mtv
                 JOIN mail_message mm ON mm.id = mtv.mail_message_id
+                LEFT JOIN LATERAL (
+                    SELECT id FROM res_users WHERE partner_id = mm.author_id ORDER BY id LIMIT 1
+                ) actor ON true
                 JOIN ir_model im ON im.model = mm.model
                 LEFT JOIN ir_model_fields mf ON mf.id = mtv.field_id
                 WHERE mm.model IN (
@@ -61,6 +65,9 @@ class HealthAuditLogView(models.Model):
                     'res.partner',
                     'health.facility',
                     'resource.calendar.leaves'
+                    , 'crm.lead', 'health.clinical.note', 'account.payment',
+                    'health.payment.transaction', 'health.staff.assignment',
+                    'res.users', 'biz.access.role'
                 )
                 AND mtv.field_id IS NOT NULL
                 ORDER BY mm.date DESC

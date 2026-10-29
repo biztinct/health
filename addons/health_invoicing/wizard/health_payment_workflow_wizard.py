@@ -223,31 +223,22 @@ class HealthPaymentWorkflowWizard(models.TransientModel):
         if self.invoice_id.state == 'draft':
             self.invoice_id.action_post()
         
-        # Create payment record
-        payment_vals = {
-            'payment_type': 'inbound',
-            'partner_type': 'customer', 
-            'partner_id': self.invoice_id.partner_id.id,
+        if self.invoice_id.amount_residual <= 0:
+            raise UserError(_('This invoice has already been paid.'))
+        if self.payment_amount > self.invoice_id.amount_residual:
+            raise UserError(_('Payment cannot exceed the outstanding invoice amount.'))
+        # The standard Odoo 19 wizard selects payment method lines, posts the
+        # journal entry and reconciles the exact invoice atomically.
+        register = self.env['account.payment.register'].with_context(
+            active_model='account.move', active_ids=self.invoice_id.ids,
+        ).create({
             'amount': self.payment_amount,
-            'currency_id': self.currency_id.id,
             'payment_date': fields.Date.today(),
-            'ref': f'Payment - {self.invoice_id.name}',
             'journal_id': self._get_payment_journal().id,
-            
-            # Healthcare specific fields
-            'healthcare_payment_method': self.payment_method,
-            'fso_id': self.fso_id.id,
-            'cash_held_by_staff': self.cash_held_by_nurse,
-            'om_receipt_required': self.nurse_receipt_required,
-            'payment_proof_notes': self.payment_proof_notes,
-        }
-        
-        # Create and post payment
-        payment = self.env['account.payment'].create(payment_vals)
-        payment.action_post()
-        
-        # Reconcile with invoice
-        self._reconcile_payment_with_invoice(payment)
+        })
+        payment = register._create_payments()
+        payment.write({'fieldservice_order_id': self.fso_id.id,
+                       'patient_id': self.invoice_id.partner_id.id})
         
         # Handle cash collection workflow (per Invoicing.md)
         if self.payment_method == 'cash':
@@ -266,13 +257,12 @@ class HealthPaymentWorkflowWizard(models.TransientModel):
         self.fso_id.write({
             'stage_id': completed_stage.id if completed_stage else False,
             'state': 'completed',  # Move to completed after cash payment
-            'payment_status': 'paid',
         })
         
         # Log service completion (per Invoicing.md)
         self._log_service_completion()
         
-        return self._return_success_action('Payment processed successfully. Invoice submitted to Tax Department.')
+        return self._return_success_action('Payment processed successfully.')
     
     def _process_pay_later_workflow(self):
         """Process Case 3: Payment After Service (Invoicing.md)"""
@@ -305,13 +295,12 @@ class HealthPaymentWorkflowWizard(models.TransientModel):
         self.fso_id.write({
             'stage_id': completed_pending_stage.id if completed_pending_stage else False,
             'state': 'completed_pending_invoice',
-            'payment_status': 'pending',
         })
         
         # Log service completion
         self._log_service_completion()
         
-        return self._return_success_action('Invoice created and submitted to Tax Department. Outstanding balance recorded in AR.')
+        return self._return_success_action('Invoice posted. Outstanding balance recorded in AR.')
     
     def _apply_invoice_adjustments(self):
         """Apply invoice adjustments if nurse made changes"""
@@ -400,10 +389,11 @@ class HealthPaymentWorkflowWizard(models.TransientModel):
         # Note: Cash is recorded as AR increase initially, not cash increase
         # Cash increase only happens when OM receives it from nurse
         
-        payment.write({
-            'ar_cash_status': 'ar_increase_logged',
-            'cash_recorded': False,  # Will be True when OM receives cash
-            'ar_notes': 'Initial nurse collection - logged as AR increase per Invoicing.md',
+        payment.health_transaction_id.write({
+            'status': 'pending_delivery',
+            'fso_id': self.fso_id.id,
+            'invoice_id': self.invoice_id.id,
+            'transaction_notes': self.payment_proof_notes or _('Cash collected; awaiting handover to Operations Manager.'),
         })
     
     def _create_ar_entry_with_balance(self):

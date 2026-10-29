@@ -96,6 +96,28 @@ class HealthcareInvoice(models.Model):
     _name = 'account.move'
     _inherit = ['account.move', 'health.lifecycle.mixin']
 
+    einvoice_test_reference = fields.Char('eInvoice Test Reference', readonly=True, copy=False, tracking=True)
+    einvoice_test_date = fields.Datetime('eInvoice Test Date', readonly=True, copy=False, tracking=True)
+    einvoice_test_user_id = fields.Many2one('res.users', 'eInvoice Test User', readonly=True, copy=False, tracking=True)
+
+    def action_record_einvoice_test(self):
+        """Internal acceptance placeholder. Never signs or calls a provider."""
+        self.ensure_one()
+        self.check_access('write')
+        if not (self.env.user.has_group('health_base.group_healthcare_owner')
+                or self.env.user.has_group('health_base.group_healthcare_finance')):
+            raise UserError(_('Only Finance or the Owner can record an eInvoice test.'))
+        if self.state != 'posted' or self.move_type not in ('out_invoice', 'out_refund'):
+            raise UserError(_('Post the customer invoice before recording an eInvoice test.'))
+        if not self.einvoice_test_reference:
+            import uuid
+            self.write({'einvoice_test_reference': 'TEST-' + uuid.uuid4().hex[:12].upper(),
+                        'einvoice_test_date': fields.Datetime.now(),
+                        'einvoice_test_user_id': self.env.uid})
+            self.message_post(body=_('Internal eInvoice test recorded. No digital signature or tax-authority upload was performed.'),
+                              subtype_xmlid='mail.mt_note')
+        return True
+
     def _lifecycle_check_soft_delete(self):
         # A posted move is part of the financial/e-invoice chain (VN tax
         # compliance) — it must be reversed or reset to draft before a Delete

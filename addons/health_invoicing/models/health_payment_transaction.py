@@ -301,10 +301,10 @@ class HealthPaymentTransaction(models.Model):
         return super().create(vals_list)
     
     # Constraints and Validations
-    @api.constrains('amount')
+    @api.constrains('amount', 'transaction_type')
     def _check_amount(self):
         for transaction in self:
-            if transaction.amount <= 0:
+            if transaction.amount == 0 or (transaction.amount < 0 and transaction.transaction_type != 'refund'):
                 raise ValidationError(_('Payment amount must be positive.'))
     
     @api.constrains('transaction_date', 'cash_delivery_date')
@@ -410,6 +410,16 @@ class HealthPaymentTransaction(models.Model):
 
         if self.status == 'refunded':
             raise UserError(_('Payment is already refunded.'))
+        if self.transaction_type == 'refund' or self.amount <= 0:
+            raise UserError(_('A refund must reference an original collection.'))
+        original = self.payment_id
+        if not original or not original.move_id or original.state not in ('paid', 'in_process'):
+            raise UserError(_('Post and reconcile the original payment before refunding it.'))
+        # Serialize repeated clicks against the original collection.
+        self.env.cr.execute('SELECT id FROM health_payment_transaction WHERE id = %s FOR UPDATE', [self.id])
+        self.invalidate_recordset(['status'])
+        if self.status == 'refunded':
+            raise UserError(_('Payment is already refunded.'))
 
         # Create refund transaction
         refund = self.create({
@@ -424,6 +434,27 @@ class HealthPaymentTransaction(models.Model):
             'collected_by_id': self.env.user.employee_id.id,
             'transaction_notes': f'Refund for transaction {self.name}',
         })
+
+        payment = self.env['account.payment'].create({
+            'payment_type': 'outbound', 'partner_type': 'customer',
+            'partner_id': self.patient_id.id, 'amount': self.amount,
+            'currency_id': original.currency_id.id, 'journal_id': original.journal_id.id,
+            'date': fields.Date.today(), 'payment_reference': f'Refund {self.name}',
+            'fieldservice_order_id': self.fso_id.id,
+            'health_transaction_id': refund.id,
+        })
+        payment.action_post()
+        refund.payment_id = payment
+        # Returning funds reopens the receivable. It does not cancel the
+        # invoiced service: cancellation credits use the credit-note workflow.
+        original_lines = original.move_id.line_ids.filtered(
+            lambda l: l.account_id.account_type == 'asset_receivable')
+        refund_lines = payment.move_id.line_ids.filtered(
+            lambda l: l.account_id.account_type == 'asset_receivable')
+        if not original_lines or not refund_lines:
+            raise UserError(_('Refund journal must create receivable entries.'))
+        original_lines.remove_move_reconcile()
+        (original_lines + refund_lines).reconcile()
 
         # Update original transaction status
         self.status = 'refunded'

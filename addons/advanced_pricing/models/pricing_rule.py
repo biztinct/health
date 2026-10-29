@@ -222,10 +222,16 @@ class AdvancedPricingRule(models.Model):
         ('fixed', 'Set Fixed Price'),
         ('discount', 'Discount Base Price'),
         ('per_unit', 'Amount Per Unit'),
+        ('subsequent_fixed', 'Set Price for Subsequent Units'),
         ('formula', 'Apply Formula'),
         ('eligibility', 'Condition Check (warn if not met)'),
         ('exclude', 'Not Applicable With (warn)'),
     ], string='Action Type', default='add', tracking=True)
+
+    action_scope = fields.Selection([
+        ('unit', 'Per Unit'), ('line', 'Once per Line'),
+        ('booking', 'Once per Booking'),
+    ], default='unit', required=True, tracking=True)
 
     # Per-unit configuration (e.g., 10,000 per km)
     per_unit_field = fields.Selection([
@@ -887,9 +893,22 @@ class AdvancedPricingRule(models.Model):
     def apply_action(self, price, context_data):
         """Apply the pricing action"""
         self.ensure_one()
+
+        quantity = context_data.get('quantity') or 1.0
+        if self.action_scope == 'booking':
+            # Allocate to the first matching line in quote order. The engine
+            # receives the same ordered lines for calculation and previews.
+            candidates = context_data.get('booking_lines') or []
+            eligible = [line for line in candidates if self._check_product_applicability(line['product_id'])]
+            if eligible and context_data.get('line_id') != eligible[0]['line_id']:
+                return price
+        divisor = quantity if self.action_scope in ('line', 'booking') else 1.0
+        if self.action_type == 'subsequent_fixed':
+            base = context_data.get('base_unit_price', price)
+            return price + (self.action_value - base) * max(0, quantity - 1) / quantity
         
         if self.action_type == 'add':
-            return price + self.action_value
+            return price + self.action_value / divisor
         elif self.action_type == 'multiply':
             return price * self.action_value
         elif self.action_type == 'percentage':
@@ -934,7 +953,7 @@ class AdvancedPricingRule(models.Model):
                 threshold = threshold_map.get(self.per_unit_field, 0)
 
             effective_units = max(0, unit_count - threshold)
-            return price + (self.action_value * effective_units)
+            return price + (self.action_value * effective_units) / divisor
         
         return price
     

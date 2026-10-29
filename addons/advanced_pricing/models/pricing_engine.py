@@ -101,6 +101,7 @@ class AdvancedPricingEngine(models.Model):
         default_code suffix, as everywhere else), whether ANOTHER non-fee
         service is on the booking, and the booked hours of this service."""
         ctx = dict(booking_ctx)
+        ctx.update(quantity=quantity, base_unit_price=product.list_price)
         code = product.default_code or ''
         ctx['region'] = 'HCMC' if '_tphcm' in code else ('Hanoi' if '_hanoi' in code else '')
         fees = set(ctx.get('booking_fee_tmpl_ids') or [])

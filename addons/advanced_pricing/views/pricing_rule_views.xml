@@ -212,6 +212,7 @@
                         <group>
                             <field name="action_type" widget="radio"/>
                             <field name="action_value"/>
+                            <field name="action_scope" invisible="action_type not in ('add', 'per_unit')"/>
                             <field name="per_unit_field"
                                    invisible="action_type != 'per_unit'"/>
                             <field name="conflict_product_tmpl_ids" widget="many2many_tags"

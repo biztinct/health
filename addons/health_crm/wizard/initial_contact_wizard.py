@@ -614,6 +614,13 @@ class HealthInitialContactWizard(models.TransientModel):
             'context': {'form_view_initial_mode': 'edit'},
         }
     
+    def _contact_mode_id(self):
+        self.ensure_one()
+        return self.env['health.lookup.value'].search([
+            ('category_code', '=', 'mode_of_contact'),
+            ('code', '=', self.mode_of_contact), ('active', '=', True),
+        ], limit=1).id
+
     def action_next(self):
         """
         NEXT button - Create or update contact and open Contact Details form
@@ -629,7 +636,7 @@ class HealthInitialContactWizard(models.TransientModel):
             lead = self.existing_contact_id
             update_vals = {
                 'contact_datetime': self.contact_datetime,
-                'mode_of_contact': self.mode_of_contact,
+                'mode_of_contact_id': self._contact_mode_id(),
                 'contact_type': 'repeat',
                 'contact_status': 'active',  # Reactivate if was spam
                 'contact_relationship_type': self.contact_relationship_type,
@@ -647,7 +654,7 @@ class HealthInitialContactWizard(models.TransientModel):
                 'phone': self.phone,
                 'email_from': self.email,
                 'catchment_province_id': self.catchment_province_id.id,
-                'mode_of_contact': self.mode_of_contact,
+                'mode_of_contact_id': self._contact_mode_id(),
                 'contact_datetime': self.contact_datetime,
                 'contact_type': 'new',
                 'contact_status': 'active',
@@ -700,7 +707,7 @@ class HealthInitialContactWizard(models.TransientModel):
                 'phone': self.phone,
                 'email_from': self.email,
                 'catchment_province_id': self.catchment_province_id.id if self.catchment_province_id else False,
-                'mode_of_contact': self.mode_of_contact,
+                'mode_of_contact_id': self._contact_mode_id(),
                 'contact_datetime': self.contact_datetime,
                 'contact_type': self.contact_type,
                 'contact_status': 'spam',  # Mark as spam
@@ -726,7 +733,7 @@ class HealthInitialContactWizard(models.TransientModel):
             # Don't reset contact_status if it's already set to something meaningful
             update_vals = {
                 'contact_datetime': self.contact_datetime,
-                'mode_of_contact': self.mode_of_contact,
+                'mode_of_contact_id': self._contact_mode_id(),
                 'contact_type': 'repeat',
             }
             # Only set contact_status to 'active' if it's currently empty or spam
@@ -752,7 +759,7 @@ class HealthInitialContactWizard(models.TransientModel):
                 'phone': self.phone or self.existing_partner_id.phone,
                 'email_from': self.email or self.existing_partner_id.email,
                 'catchment_province_id': self.catchment_province_id.id if self.catchment_province_id else False,
-                'mode_of_contact': self.mode_of_contact,
+                'mode_of_contact_id': self._contact_mode_id(),
                 'contact_datetime': self.contact_datetime,
                 'contact_type': 'repeat',
                 'contact_status': 'active',
