@@ -3977,3 +3977,33 @@ msgstr "cảnh báo nhân viên trên lịch hẹn khi không đạt"
 #: code:addons/advanced_pricing/models/pricing_rule.py:0
 msgid "warn staff when booked together with %s"
 msgstr "cảnh báo nhân viên khi đặt cùng %s"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__action_scope
+msgid "Action Scope"
+msgstr "Phạm vi áp dụng"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_scope__unit
+msgid "Per Unit"
+msgstr "Mỗi đơn vị"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_scope__line
+msgid "Once per Line"
+msgstr "Một lần mỗi dòng"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_scope__booking
+msgid "Once per Booking"
+msgstr "Một lần mỗi đặt lịch"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_type__subsequent_fixed
+msgid "Set Price for Subsequent Units"
+msgstr "Đặt giá cho các đơn vị tiếp theo"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_product_pricelist__discount_on_base_only
+msgid "Discount on Base Price Only"
+msgstr "Chỉ giảm giá trên giá cơ bản"

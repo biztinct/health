@@ -235,6 +235,7 @@ class AdvancedPricingRule(models.Model):
 
     # Per-unit configuration (e.g., 10,000 per km)
     per_unit_field = fields.Selection([
+        ('quantity', 'Line Quantity'),
         ('distance', 'Distance (km)'),
         ('wound_count', 'Wound Count'),
         ('injection_count', 'Injection Count'),
@@ -943,6 +944,7 @@ class AdvancedPricingRule(models.Model):
                 # Use the min condition as threshold (e.g., distance_min = 8 means
                 # charge per km ABOVE 8km, so effective_units = distance - 8)
                 threshold_map = {
+                    'quantity': max(0, (self.min_quantity or 1) - 1),
                     'distance': self.distance_min or 0,
                     'wound_count': (self.wound_count_min or 1) - 1,  # "after 1st" = threshold 1
                     'injection_count': (self.injection_count_min or 1) - 1,

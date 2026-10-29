@@ -2612,7 +2612,9 @@ class HealthFieldServiceOrderUnified(models.Model):
         if not self.lead_staff_id:
             # If no lead staff, allow invoice creation (default behavior)
             return True
-        return self.lead_staff_id.can_create_invoices
+        # Read only this workflow capability for the already linked worker;
+        # nurses must not need access to the private employee record.
+        return self.lead_staff_id.sudo().can_create_invoices
 
     def _check_invoice_authorization(self):
         """

@@ -8188,3 +8188,33 @@ msgstr "Mua gói dịch vụ"
 #: code:addons/health_invoicing/static/src/js/client_package_patch.js:0
 msgid "Create invoice"
 msgstr "Tạo hóa đơn"
+
+#. module: health_invoicing
+#: model:ir.model.fields,field_description:health_invoicing.field_account_move__einvoice_test_reference
+msgid "eInvoice Test Reference"
+msgstr "Mã thử nghiệm hóa đơn điện tử"
+
+#. module: health_invoicing
+#: model:ir.model.fields,field_description:health_invoicing.field_account_move__einvoice_test_date
+msgid "eInvoice Test Date"
+msgstr "Ngày thử nghiệm hóa đơn điện tử"
+
+#. module: health_invoicing
+#: model:ir.model.fields,field_description:health_invoicing.field_account_move__einvoice_test_user_id
+msgid "eInvoice Test User"
+msgstr "Người thử nghiệm hóa đơn điện tử"
+
+#. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_invoice_form
+msgid "eInvoice Test"
+msgstr "Thử nghiệm hóa đơn điện tử"
+
+#. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_invoice_form
+msgid "Record eInvoice Test"
+msgstr "Ghi nhận thử nghiệm hóa đơn điện tử"
+
+#. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_invoice_form
+msgid "Internal acceptance test only. No digital signature or tax-authority upload is performed."
+msgstr "Chỉ thử nghiệm nghiệm thu nội bộ. Không ký số hoặc gửi đến cơ quan thuế."

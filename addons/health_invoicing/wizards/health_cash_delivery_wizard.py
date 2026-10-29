@@ -96,7 +96,7 @@ class HealthCashDeliveryWizard(models.TransientModel):
     
     create_bank_deposit = fields.Boolean(
         'Create Bank Deposit Record',
-        default=True,
+        default=False,
         help='Create bank deposit record for cash banking'
     )
     
@@ -199,6 +199,12 @@ class HealthCashDeliveryWizard(models.TransientModel):
         If no CIT entry exists (legacy transactions), fall back to standard
         payment: Debit Cash → Credit AR.
         """
+        # A registered cash payment already credits receivables. Handover
+        # confirms custody; collecting it again would double the payment.
+        payment = self.transaction_id.payment_id
+        if payment and payment.move_id.state == 'posted':
+            self._reconcile_payment_with_invoice(payment, self.transaction_id.invoice_id)
+            return payment
         # Check if this transaction has a CIT entry to settle
         cit_move = self.transaction_id.cit_move_id if hasattr(self.transaction_id, 'cit_move_id') else False
         

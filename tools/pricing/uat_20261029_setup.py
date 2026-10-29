@@ -13,6 +13,7 @@ pricelist = env['product.pricelist'].browse(7)
 pricelist.with_user(owner).write({'active': True, 'discount_on_base_only': True})
 for rule in rules.search([('engine_id', '=', engine.id), ('action_type', '=', 'add')]):
     rule.write({'action_scope': 'line', 'max_quantity': 0})
+    rule.action_submit_for_approval()
     rule.action_approve()
 
 def upsert(name, values):
@@ -23,6 +24,7 @@ def upsert(name, values):
         rule.write(vals)
     else:
         rule = rules.create(vals)
+    rule.action_submit_for_approval()
     rule.action_approve()
     return rule.id
 
@@ -38,7 +40,7 @@ upsert('Client UAT - Additional IV bottles', {
     'applied_on': '0_product_variant', 'product_id': 636,
     'region': 'HCMC', 'sequence': 3, 'level': '1',
     'action_type': 'per_unit', 'action_value': 150000, 'action_scope': 'line',
-    'per_unit_field': 'iv_fluid_count', 'iv_fluid_count_min': 2,
+    'per_unit_field': 'quantity', 'min_quantity': 2,
 })
 nursing = env['product.category'].search([('name', '=', 'Nurse Service')], limit=1)
 assert nursing
@@ -55,6 +57,7 @@ orders = bookings.mapped('sale_order_id').with_user(owner)
 orders.write({'pricelist_id': pricelist.id})
 orders._compute_fso_fields()
 orders._compute_time_factors()
-orders.action_recalculate_advanced_prices()
+for order in orders:
+    order.action_recalculate_advanced_prices()
 env.cr.commit()
 print('UAT_CONFIG_APPLIED', len(orders), 'quotes', rules.search_count([('engine_id', '=', engine.id)]), 'rules')

@@ -163,6 +163,7 @@ class HealthPaymentCollectionWizard(models.TransientModel):
             'amount': self.amount,
             'journal_id': payment_journal.id,
             'payment_reference': f'Payment collection: {transaction.display_name}',
+            'health_transaction_id': transaction.id,
         }
         
         payment = self.env['account.payment'].create(payment_vals)
@@ -181,7 +182,7 @@ class HealthPaymentCollectionWizard(models.TransientModel):
             self._show_manual_allocation_wizard(payment, transaction)
         
         # Update transaction status
-        if payment.state == 'posted':
+        if payment.state in ('paid', 'in_process') and self.payment_method != 'cash':
             transaction.write({
                 'status': 'reconciled',
                 'ar_reconciliation_date': fields.Datetime.now()
