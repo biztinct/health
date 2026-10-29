@@ -454,7 +454,14 @@ class HealthPWAAPIController(http.Controller):
 
             # Get primary contact from patient relations
             primary_contact = None
-            if order.patient_id:
+            if order.patient_id and order.patient_id.main_contact_id:
+                contact = order.patient_id.main_contact_id
+                primary_contact = {
+                    'name': contact.name,
+                    'phone': contact.mobile or contact.phone,
+                    'relationship': _('Designated contact'),
+                }
+            if not primary_contact and order.patient_id:
                 # Look for emergency contact marked as primary (sudo: order is
                 # already sudo-scoped above, keep the relation read consistent
                 # so a minimal nurse doesn't 500 on health.client.relation ACL).
