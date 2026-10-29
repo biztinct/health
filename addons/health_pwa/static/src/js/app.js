@@ -4189,7 +4189,7 @@ window.healthPWA = {
                         </div>
                         <div class="detail-cell total-cell">
                           <label>{{ _t('Total') }}</label>
-                          <span>{{ (line.quantity * line.unit_price * (1 - (line.discount || 0) / 100)).toLocaleString() }}</span>
+                          <span>{{ showSaveMessage ? _t('Save Quote to display updated Total') : Number(line.subtotal).toLocaleString() }}</span>
                         </div>
                       </div>
 

@@ -1548,6 +1548,9 @@ class HealthPWAAPIController(http.Controller):
                         if update_vals:
                             sale_line.write(update_vals)
 
+            if modified_lines and hasattr(sale_order, 'action_recalculate_advanced_prices'):
+                sale_order.action_recalculate_advanced_prices()
+
             # Save general comments to the sale order note
             if comments:
                 # Add comments to the internal notes of the quote
@@ -1566,6 +1569,7 @@ class HealthPWAAPIController(http.Controller):
             })
 
         except Exception as e:
+            request.env.cr.rollback()
             return self._prepare_json_response(error=str(e), status_code=500)
 
     @http.route('/health_pwa/api/assignments/today', type='http', auth='user', methods=['GET'], csrf=False)
