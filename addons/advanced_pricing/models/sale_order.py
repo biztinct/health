@@ -293,8 +293,9 @@ class SaleOrder(models.Model):
                 order.holiday_type = holiday_info.get('holiday_type', False)
                 order.holiday_multiplier = holiday_info.get('multiplier', 1.0)
 
-                # After hours check (before 8 AM or after 6 PM)
-                order.is_after_hours = dt_local.hour < 8 or dt_local.hour >= 18
+                # Client schedule: before 8 AM or after 5 PM
+                hour = dt_local.hour + dt_local.minute / 60.0
+                order.is_after_hours = hour < 8 or hour > 17
 
                 # Appointment hour for time-based rules
                 order.appointment_hour = dt_local.hour
@@ -333,13 +334,13 @@ class SaleOrder(models.Model):
             # Priority: province-specific holidays first, then national holidays
             from datetime import datetime, time, timedelta
             import pytz
-            tz = pytz.timezone(self._pricing_tz())
+            tz = pytz.timezone(self._pricing_tz() if self else 'Asia/Ho_Chi_Minh')
             start = tz.localize(datetime.combine(date, time.min)).astimezone(pytz.UTC).replace(tzinfo=None)
             end = tz.localize(datetime.combine(date + timedelta(days=1), time.min)).astimezone(pytz.UTC).replace(tzinfo=None)
             holidays = self.env['resource.calendar.leaves'].search([
                 ('date_from', '<', end),
                 ('date_to', '>=', start),
-                ('company_id', 'in', [False, self.company_id.id]),
+                ('company_id', 'in', [False, self.company_id.id if self else self.env.company.id]),
                 ('resource_id', '=', False),  # Not employee-specific
                 ('calendar_id', '=', False),  # Company-wide holidays
                 ('is_pricing_holiday', '=', True),  # Only pricing holidays

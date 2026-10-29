@@ -54,7 +54,7 @@ bookings = env['health.fieldservice.order'].browse(list(range(9666, 9683))).exis
 assert len(bookings) == 17
 bookings.mapped('patient_id').write({'specific_property_product_pricelist': pricelist.id})
 orders = bookings.mapped('sale_order_id').with_user(owner)
-orders.write({'pricelist_id': pricelist.id})
+orders.filtered(lambda order: order.pricelist_id != pricelist).write({'pricelist_id': pricelist.id})
 orders._compute_fso_fields()
 orders._compute_time_factors()
 for order in orders:

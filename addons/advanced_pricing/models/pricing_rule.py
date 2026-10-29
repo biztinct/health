@@ -510,6 +510,11 @@ class AdvancedPricingRule(models.Model):
 
         if not self._applies_to(product_id, context_data):
             return False
+        if self.action_scope == 'booking':
+            eligible = [line for line in context_data.get('booking_lines', [])
+                        if self._check_product_applicability(line['product_id'])]
+            if eligible and context_data.get('line_id') != eligible[0]['line_id']:
+                return False
         
         # Check quantity
         if self.min_quantity and quantity < self.min_quantity:

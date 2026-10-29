@@ -5405,7 +5405,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             'service_type': vals.get('service_type'),
             'service_location': vals.get('service_location'),
             'is_weekend': weekday in (5, 6) if weekday is not None else False,
-            'is_after_hours': appointment_hour < 7 or appointment_hour >= 19,
+            'is_after_hours': float(time_hour) < 8 or float(time_hour) > 17,
             'is_holiday': holiday_info.get('is_holiday', False),
             'holiday_type': holiday_info.get('holiday_type', False),
             'holiday_multiplier': holiday_info.get('multiplier', 1.0) or 1.0,
@@ -5414,6 +5414,8 @@ class HealthFieldServiceOrderUnified(models.Model):
             'priority': '1',
             'appointment_time': float(time_hour),
             'booking_hours': float(vals.get('duration_hours') or 0.0),
+            'booking_lines': [{'line_id': i, 'product_id': pl['product_id']}
+                              for i, pl in enumerate(product_lines)],
         }
         base_context.update(self._quick_booking_booking_facts(
             partner, product_lines, vals, date_obj, time_hour))
@@ -5423,7 +5425,7 @@ class HealthFieldServiceOrderUnified(models.Model):
 
         lines = []
         total = 0.0
-        for pl in product_lines:
+        for line_index, pl in enumerate(product_lines):
             product = self.env['product.product'].browse(pl['product_id'])
             if not product.exists():
                 continue
@@ -5439,6 +5441,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             warnings = []
             if engine:
                 ctx = self._quick_booking_line_context(engine, product, qty, base_context)
+                ctx['line_id'] = line_index
                 try:
                     unit_price = engine.calculate_price(product.id, qty, partner_id, ctx)
                     rules = engine.explain_applied_rules(product.id, partner_id, qty, ctx)
