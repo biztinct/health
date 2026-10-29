@@ -1327,8 +1327,8 @@ class HealthLead(models.Model):
             return
         
         if self.contact_relationship_type == 'client':
-            # Contact is the client - create/find patient using contact name
-            patient = self._get_or_create_patient()
+            # Preserve the client explicitly selected during booking conversion.
+            patient = self._booking_client() or self._get_or_create_patient()
             self.patient_id = patient.id
         else:
             # Contact is a representative - handle client and representative separately

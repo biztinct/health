@@ -5822,7 +5822,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         if lead_id:
             lead = self.env['crm.lead'].browse(lead_id)
             if lead.exists():
-                lead.write({'contact_outcome': 'service_booked'})
+                lead.write({'patient_id': patient_id, 'contact_outcome': 'service_booked'})
 
         return {
             'success': True,
