@@ -2221,7 +2221,9 @@ class HealthPWAAPIController(http.Controller):
             user = request.env.user
 
             # Get employee record if exists
-            employee = request.env['hr.employee'].search([
+            # Read only the signed-in user's own profile configuration.
+            # Public employee profiles do not expose healthcare role fields.
+            employee = request.env['hr.employee'].sudo().search([
                 ('user_id', '=', user.id)
             ], limit=1)
 
