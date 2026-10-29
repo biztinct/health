@@ -2212,10 +2212,20 @@ class HealthFieldServiceOrderUnified(models.Model):
         # Implementation for patient confirmation
         pass
     
+    def _patient_booking_pricelist(self, patient):
+        """Honor the explicitly selected, company-specific patient tariff."""
+        patient = patient.with_company(self.env.company)
+        pricelist = patient.specific_property_product_pricelist or patient.property_product_pricelist
+        pricelist = pricelist.filtered(lambda p: p.active and p.company_id in (self.env.company, self.env['res.company']))
+        return pricelist or self.env['product.pricelist'].search([
+            ('currency_id', '=', self.env.company.currency_id.id),
+            ('company_id', 'in', [False, self.env.company.id]),
+        ], limit=1)
+
     def _create_empty_quote(self):
         """Create an empty healthcare quote for this FSO"""
         # Get default pricelist
-        pricelist = self.patient_id.with_company(self.company_id if 'company_id' in self._fields else self.env.company).property_product_pricelist or self.env['product.pricelist'].search([('currency_id', '=', self.env.company.currency_id.id)], limit=1)
+        pricelist = self._patient_booking_pricelist(self.patient_id)
         if not pricelist:
             pricelist = self.env['product.pricelist'].create({
                 'name': 'Healthcare Services Pricelist',
@@ -3299,7 +3309,7 @@ class HealthFieldServiceOrderUnified(models.Model):
     def _create_quote_with_lines(self):
         """Create quote with all necessary lines and validation"""
         # Get default pricelist (first found or create one)
-        pricelist = self.patient_id.with_company(self.company_id if 'company_id' in self._fields else self.env.company).property_product_pricelist or self.env['product.pricelist'].search([('currency_id', '=', self.env.company.currency_id.id)], limit=1)
+        pricelist = self._patient_booking_pricelist(self.patient_id)
         if not pricelist:
             pricelist = self.env['product.pricelist'].create({
                 'name': 'Healthcare Services Pricelist',
@@ -3462,7 +3472,7 @@ class HealthFieldServiceOrderUnified(models.Model):
     def _create_quote_silent(self):
         """Create quote silently without UI interaction"""
         # Get default pricelist
-        pricelist = self.patient_id.with_company(self.company_id if 'company_id' in self._fields else self.env.company).property_product_pricelist or self.env['product.pricelist'].search([('currency_id', '=', self.env.company.currency_id.id)], limit=1)
+        pricelist = self._patient_booking_pricelist(self.patient_id)
         if not pricelist:
             pricelist = self.env['product.pricelist'].create({
                 'name': 'Healthcare Services Pricelist',
@@ -5104,7 +5114,7 @@ class HealthFieldServiceOrderUnified(models.Model):
 
         if product_lines and len(product_lines) > 0:
             patient = self.env['res.partner'].browse(patient_id)
-            pricelist = patient.property_product_pricelist if hasattr(patient, 'property_product_pricelist') else False
+            pricelist = self._patient_booking_pricelist(patient)
             summary_lines = []
 
             for fso_rec in fso_records:
@@ -5358,7 +5368,7 @@ class HealthFieldServiceOrderUnified(models.Model):
 
         partner_id = vals.get('patient_id') or False
         partner = self.env['res.partner'].browse(partner_id) if partner_id else self.env['res.partner']
-        pricelist = partner.property_product_pricelist if partner and hasattr(partner, 'property_product_pricelist') else False
+        pricelist = self._patient_booking_pricelist(partner)
 
         # Resolve a pricing engine (pricelist engine first, else global default)
         engine = False
@@ -5698,7 +5708,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         quote_summary = {}
         if product_lines and len(product_lines) > 0:
             patient = self.env['res.partner'].browse(patient_id)
-            pricelist = patient.property_product_pricelist if hasattr(patient, 'property_product_pricelist') else False
+            pricelist = self._patient_booking_pricelist(patient)
 
             so_vals = {
                 'partner_id': patient_id,
