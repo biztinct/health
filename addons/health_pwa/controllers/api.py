@@ -898,36 +898,21 @@ class HealthPWAAPIController(http.Controller):
 
             # Process payment based on choice (only if invoice was created)
             if payment_choice == 'pay_now' and payment_method and order.invoice_id:
-                # Create payment transaction record
-                try:
-                    transaction_vals = {
-                        'patient_id': order.patient_id.id if order.patient_id else False,
+                # Use the same posted/reconciled collection as the desktop
+                # workflow. A custody-only transaction must not report payment
+                # success while the invoice is still outstanding.
+                if order.invoice_id.amount_residual > 0:
+                    wizard = request.env['health.payment.workflow.wizard'].create({
                         'fso_id': order.id,
-                        'invoice_id': order.invoice_id.id if order.invoice_id else False,
-                        'amount': order.invoice_id.amount_total if order.invoice_id else 0.0,
+                        'invoice_id': order.invoice_id.id,
+                        'payment_workflow': 'pay_now',
                         'payment_method': payment_method,
-                        'transaction_type': 'immediate',
-                        'status': 'collected' if payment_method != 'cash' else 'pending_delivery',
-                        'collected_by_id': request.env.user.employee_id.id if request.env.user.employee_id else False,
-                        'transaction_notes': service_notes or f'Payment collected on service completion via mobile - {payment_method}',
-                    }
-
-                    # Create transaction if model exists
-                    if 'health.payment.transaction' in request.env:
-                        transaction = request.env['health.payment.transaction'].create(transaction_vals)
-                        message = _(
-                            'Service completed - %s payment collected'
-                        ) % payment_method.replace("_", " ").title()
-                    else:
-                        message = _(
-                            'Service completed - %s payment noted'
-                        ) % payment_method.replace("_", " ").title()
-
-                except Exception as e:
-                    _logger.warning(f'Could not create payment transaction: {str(e)}')
-                    message = _(
-                        'Service completed - %s payment noted'
-                    ) % payment_method.replace("_", " ").title()
+                        'payment_amount': order.invoice_id.amount_residual,
+                        'payment_proof_notes': service_notes,
+                        'tax_submission_required': False,
+                    })
+                    wizard.action_process_payment_workflow()
+                message = _('Service completed - payment reconciled')
             elif payment_choice == 'pay_later' and order.invoice_id:
                 # Pay Later (only if invoice exists)
                 message = _('Service completed - Invoice will be sent for later payment')
