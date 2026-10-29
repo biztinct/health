@@ -1387,6 +1387,10 @@ class HealthPWAAPIController(http.Controller):
                 return self._prepare_json_response(error=_('No quote found for this order'), status_code=404)
 
             sale_order = order.sale_order_id
+            # Validate the caller's parent-record access before creating a line.
+            # Assigned clinicians may edit their quote without a global sales
+            # line creation privilege.
+            sale_order.check_access('write')
 
             # Get update data from request body
             import json as json_module
@@ -1411,7 +1415,7 @@ class HealthPWAAPIController(http.Controller):
                     return self._prepare_json_response(error=_('Product not found'), status_code=404)
 
                 # Create order line
-                request.env['sale.order.line'].create({
+                request.env['sale.order.line'].sudo().create({
                     'order_id': sale_order.id,
                     'product_id': product_id,
                     'product_uom_qty': quantity,
@@ -1462,6 +1466,9 @@ class HealthPWAAPIController(http.Controller):
             else:
                 return self._prepare_json_response(error=_('Invalid action'), status_code=400)
 
+            if hasattr(sale_order, 'action_recalculate_advanced_prices'):
+                sale_order.action_recalculate_advanced_prices()
+
             # Return updated quote data
             updated_quote = {
                 'id': sale_order.id,
@@ -1493,6 +1500,7 @@ class HealthPWAAPIController(http.Controller):
             })
 
         except Exception as e:
+            request.env.cr.rollback()
             return self._prepare_json_response(error=str(e), status_code=500)
 
     @http.route('/health_pwa/api/fso/<int:order_id>/quote/save', type='http', auth='user', methods=['POST'], csrf=False)
