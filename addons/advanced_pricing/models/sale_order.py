@@ -393,7 +393,8 @@ class SaleOrder(models.Model):
         self.ensure_one()
         if self.fso_id:
             return self.fso_id._get_booking_tz()
-        return self.company_id.partner_id.tz or 'Asia/Ho_Chi_Minh'
+        # Staff may price their bookings without access to the company contact.
+        return self.company_id.partner_id.sudo().tz or 'Asia/Ho_Chi_Minh'
 
     def _local_appointment_time(self):
         """Visit start as decimal hours in the company's timezone (19.5 =
@@ -535,7 +536,7 @@ class SaleOrder(models.Model):
             _logger.info(f"FSO appointment_time: {getattr(self.fso_id, 'appointment_time', 'Not found')}")
         
         _logger.info(f"Sale Order fso_appointment_time: {self.fso_appointment_time} (timezone: {self.fso_appointment_time.tzinfo if self.fso_appointment_time else 'None'})")
-        _logger.info(f"Company Timezone: {self.company_id.partner_id.tz or 'UTC'}")
+        _logger.info(f"Pricing Timezone: {self._pricing_tz()}")
         _logger.info(f"Is After Hours: {self.is_after_hours}")
         _logger.info(f"Appointment Hour: {self.appointment_hour}")
         _logger.info(f"Use Advanced Pricing: {self.use_advanced_pricing}")
@@ -584,8 +585,7 @@ class SaleOrder(models.Model):
         # Generate user-friendly pricing rule notes
         self._compute_pricing_breakdown_html()
         
-        # Force UI refresh to show updated prices immediately
-        self.env.cr.commit()  # Commit changes to database
+        # Keep quote edits and repricing in the caller's atomic transaction.
         
         # Return to the correct form view (FSO custom form if FSO order, regular form otherwise)
         if self.fso_id:
