@@ -3898,17 +3898,16 @@ class HealthFieldServiceOrderUnified(models.Model):
                 'total_price': fso.total_price or 0,
             })
 
-        # Staff roster: read with sudo so non-HR dashboard users (e.g. CRM /
-        # Operations roles that are not HR officers) can see role/duty flags.
-        # Odoo otherwise serves them the employee *public* profile, which hides
-        # job_role_id/is_om_role/is_head_nurse/is_duty_doctor -> AccessError.
-        Employee = self.env['hr.employee'].sudo()
+        # Select employees under the caller's catchment rules first. Elevate
+        # only the selected profiles to read role/duty flags absent from the
+        # public employee model; sudo on the search exposed other areas.
+        Employee = self.env['hr.employee']
         staff_domain = [('is_healthcare_staff', '=', True), ('employment_status', '=', 'active')]
         if facility_id:
             staff_domain.append(('healthcare_facility_id', '=', facility_id))
-        staff_members = Employee.search(staff_domain, order='name asc')
+        staff_members = Employee.search(staff_domain, order='name asc').sudo()
 
-        Assignment = self.env['health.staff.assignment'].sudo()
+        Assignment = self.env['health.staff.assignment']
         role_labels = {
             'Admin': self.env._('Admin'),
             'Doctor': self.env._('Doctor'),

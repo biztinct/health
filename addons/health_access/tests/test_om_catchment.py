@@ -57,6 +57,20 @@ class TestOperationsManagerCatchment(TransactionCase):
             ('id', 'in', self.patients.ids)]))
         self.assertFalse(self.areas.with_user(manager).search([]))
 
+    def test_operations_dashboard_roster_obeys_catchment(self):
+        employees = self.env['hr.employee'].create([
+            {'name': 'OM dashboard A', 'is_healthcare_staff': True,
+             'employment_status': 'active', 'staff_catchment_province_id': self.areas[0].id},
+            {'name': 'OM dashboard B', 'is_healthcare_staff': True,
+             'employment_status': 'active', 'staff_catchment_province_id': self.areas[1].id},
+        ])
+        for index, manager in enumerate(self.managers):
+            dashboard = self.env['health.fieldservice.order'].with_user(manager).get_ops_dashboard_data(
+                '2099-01-01', '2099-01-01')
+            staff_ids = {row['id'] for row in dashboard['staff']}
+            self.assertIn(employees[index].id, staff_ids)
+            self.assertNotIn(employees[1 - index].id, staff_ids)
+
     def test_migration_repairs_legacy_om_and_preserves_owner(self):
         owner = self.env['res.users'].with_context(no_reset_password=True).create({
             'name': 'OM test genuine owner', 'login': 'om.test.owner',
