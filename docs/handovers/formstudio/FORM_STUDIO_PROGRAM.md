@@ -336,13 +336,18 @@ tenant seeding; validator deactivates a broken layout and emails; no "Odoo" stri
 
 ---
 
-## 7. Decisions only the owner can make (ask once, in a card, before FS-H1)
-1. **Who may open Studio on a clinic tenant?** Recommended: `health_access.group_clinic_admin`
-   (owner/admin roles). Alternative: platform admin only (`base.group_system`) — then clinics cannot
-   self-serve, which defeats the feature. (Payobook decided "tenant administrator only"; the
-   health19 equivalent is the clinic admin role, not `base.group_system`.)
-2. **PHI by default?** Recommended: text/long-text/file custom fields on Client start with the PHI
-   switch ON (safer); numbers/dates/dropdowns OFF.
+## 7. Owner decisions
+
+**Decided 2026-11-02 (do not re-ask):**
+1. **Who may open Studio on a clinic tenant?** → **`health_access.group_clinic_admin`** (owner/admin
+   roles). Not `base.group_system`, which is the platform admin on health19.
+2. **PHI by default?** → **OFF by default** for every type. The admin switches it on for sensitive
+   fields. Keep the one-time warning on text/file fields ("do not put health information in an
+   unmarked field") — it is the only guard left, so it must stay.
+3. **Build start** → **not yet.** Owner said "stop here for now" (same as Payobook). Do not launch
+   FS-H1 until asked.
+
+**Still open (ask when FS-H1 starts):**
 3. **Nurse app exposure** — recommended: read-only `custom_fields` block on client + booking in
    FS-H4; editing from the PWA is out of scope.
 4. **Family portal** — recommended: never in release 1 (portal pages are curated QWeb).
