@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Sales manager/all-documents rules otherwise OR away healthcare scope.
+         Cover both headers and direct line reads. Shared, unassigned records
+         retain the same treatment as the other global healthcare rules. -->
+    <record id="catchment_global_sale_order" model="ir.rule">
+        <field name="name">Catchment: quotations stay within the assigned area</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="domain_force">[(1, '=', 1)] if not user.catchment_enforced else ['|', ('catchment_province_id', '=', False), ('catchment_province_id', '=', user.catchment_province_id.id)]</field>
+    </record>
+    <record id="catchment_global_sale_order_line" model="ir.rule">
+        <field name="name">Catchment: quotation lines follow their quotation</field>
+        <field name="model_id" ref="sale.model_sale_order_line"/>
+        <field name="domain_force">[(1, '=', 1)] if not user.catchment_enforced else ['|', ('order_id.catchment_province_id', '=', False), ('order_id.catchment_province_id', '=', user.catchment_province_id.id)]</field>
+    </record>
+    <record id="catchment_global_sale_report" model="ir.rule">
+        <field name="name">Catchment: sales analysis follows the client area</field>
+        <field name="model_id" ref="sale.model_sale_report"/>
+        <field name="domain_force">[(1, '=', 1)] if not user.catchment_enforced else ['|', ('partner_id.catchment_province_id', '=', False), ('partner_id.catchment_province_id', '=', user.catchment_province_id.id)]</field>
+    </record>
+</odoo>

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Advanced Pricing Engine',
-    'version': '19.0.1.3.0',
+    'version': '19.0.1.3.1',
     'category': 'Sales/Sales',
     'summary': 'Enterprise-grade pricing engine with visual rule builder and holiday pricing for Odoo 19 CE',
     'description': """
@@ -34,6 +34,7 @@ Features:
     ],
     'data': [
         'security/ir.model.access.csv',
+        'security/catchment_rules.xml',
         'views/pricing_engine_views.xml',
         'views/pricing_rule_bulk_wizard_views.xml',
         'views/pricing_import_wizard_views.xml',
