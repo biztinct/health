@@ -13,3 +13,4 @@ from . import test_ar2_screens
 from . import test_menu_home
 from . import test_ar3_vietnamese
 from . import test_doctor_bookings
+from . import test_om_catchment

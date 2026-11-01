@@ -333,8 +333,8 @@ ROLE_NOTES = {
     'Operations Manager': {
         'area': 'operations',
         'description': "Runs the day: the roster, the visits, the people and "
-                       "the money that follows them. Everything an owner can "
-                       "reach except the last word on removing records.",
+                       "the money that follows them, within their assigned "
+                       "catchment area. Does not carry the Owner permission.",
     },
     'Branch Manager': {
         'area': 'operations',
@@ -407,7 +407,7 @@ FRESH_ROLE_ABILITIES = {
     'Operations Manager': (
         'sign-in', 'care-base', 'reception', 'nursing', 'head-nursing',
         'doctoring', 'sales', 'ops-manage', 'finance-work', 'care-manage',
-        'care-admin', 'ownership', 'patient-portal', 'crm-work', 'crm-manage',
+        'care-admin', 'patient-portal', 'crm-work', 'crm-manage',
         'invoicing-work', 'invoicing-manage', 'insurance-claims', 'misa-sync',
         'tax-compliance', 'red-invoice', 'accounting-invoices',
         'staff-records', 'sales-manage', 'analytics-build'),
@@ -1528,6 +1528,32 @@ def post_init_hook(env):
     # on a fresh install. This is what makes the pair reachable from the hook
     # path as well as the migration one — see the note above.
     ensure_topbar_settings(env)
+    scope_operations_managers(env)
+
+
+def scope_operations_managers(env):
+    """Remove the legacy Owner bypass from the OM bundle and existing OM jobs.
+
+    Do not infer OM employment from group membership: Owners inherit the OM
+    group too. Only accounts explicitly employed as OMs are repaired. Other
+    groups, job assignments, catchments and genuine Owner accounts stay intact.
+    """
+    role = env.ref('health_access.role_operations_manager', raise_if_not_found=False)
+    if not role:
+        return 0
+    ownership = role.ability_ids.filtered(lambda a: a.technical_key == 'ownership')
+    if ownership:
+        role.write({'ability_ids': [(3, a.id) for a in ownership]})
+    role.with_context(lang='en_US').write({
+        'description': ROLE_NOTES['Operations Manager']['description'],
+    })
+    owner = env.ref('health_base.group_healthcare_owner')
+    users = env['res.users'].with_context(active_test=False).search([
+        ('job_role_id', '=', role.id), ('group_ids', 'in', owner.ids),
+    ])
+    users.write({'group_ids': [(3, owner.id)]})
+    _logger.info('Catchment policy: removed legacy Owner bypass from OM users %s', users.ids)
+    return len(users)
 
 
 def _release_borrowed_matches(env):
