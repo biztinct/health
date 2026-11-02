@@ -3806,3 +3806,33 @@ a no-op.
     holds cards now sits on the canvas and `.vu-section` inside a page is
     never a frame. Pin the tab strip under the bar only while it is one row
     (the client's 18 tabs wrap to three). (WORKSPACE refinement, 2026-09-30.)
+- **§5.264 — the theme NAMED two typefaces and shipped neither; one record
+    screen rendered in four font stacks.** `--vuf-font` said Inter and
+    `$font-family-headings` said Montserrat, with no `@font-face` anywhere, so
+    every browser fell through: Windows = Segoe UI everywhere, Mac = Arial for
+    the record name and card titles (Montserrat → Segoe UI → Arial) beside the
+    system font for fields, tabs and buttons (Odoo's `$o-system-fonts`
+    stack), and Arial again for the navbar and lists (measured with
+    `getComputedStyle` on live `res.partner/533`, 2026-11-02). Fixed by the
+    typeface build: `health_theme/static/src/scss/fonts.scss` declares Inter
+    (variable 400–700, Google's latin / latin-ext / vietnamese subsets, OFL,
+    in `static/src/fonts/inter/`) in BOTH `web.assets_backend` and
+    `web.assets_frontend`; `primary_variables.scss` now sets Odoo's own
+    `$o-system-fonts` and `$o-headings-font-family` (both `!default` in
+    `web/static/src/scss/primary_variables.scss`, which loads AFTER our
+    prepended file — that single override is what reaches every stock
+    component, and `$o-headings-font-family` had "SF Pro Display" first,
+    which a Mac would honour). Rules for anyone touching type: (1) a font
+    name in a stack is a promise — grep for its `@font-face` before you rely
+    on it, and `document.fonts` on the live page tells the truth; (2) never
+    write a literal font stack in a module stylesheet — use
+    `var(--vu-font-family-base)` / `var(--vu-font-family-headings)` (the
+    Sass `$font-family-headings` also works in `.scss`); eleven stylesheets
+    across health_fieldservice, health_invoicing, health_crm, health_base,
+    health_zalo and health_landing were swept in the same change; (3) the
+    weight ladder is 400 / 500 / 600 / 700 — nothing at 800; (4) Vietnamese
+    stacked marks (ấ ỗ ữ) need `line-height ≥ 1.2` on any chip or name;
+    (5) figures in columns take `font-variant-numeric: tabular-nums`
+    (`backend_04_typography_responsive.scss`). Out of scope and still on
+    their own fonts: the PWA (Roboto), portal/family QWeb pages, e-mail
+    templates and invoice PDFs. (TYPEFACE BUILD, 2026-11-02.)

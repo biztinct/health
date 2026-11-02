@@ -3,7 +3,7 @@
 .ops-staff-assign-page {
     display: flex;
     background: #F5F5F5;
-    font-family: 'Segoe UI', Arial, sans-serif;
+    font-family: var(--vu-font-family-base);
     font-size: 14px;
     color: #212121;
     line-height: 1.5;
@@ -52,7 +52,7 @@
 }
 
 .sa-wizard-title {
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-family: var(--vu-font-family-headings);
     font-size: 16px;
     font-weight: 700;
     display: flex;
@@ -188,7 +188,7 @@
 }
 
 .sa-score-value {
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-family: var(--vu-font-family-headings);
     font-size: 24px;
     font-weight: 800;
 }
@@ -259,7 +259,7 @@
 
 .sa-mini-score {
     margin-left: auto;
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-family: var(--vu-font-family-headings);
     font-weight: 800;
     font-size: 16px;
     &.sa-score-high { color: #43A047; }

@@ -43,6 +43,23 @@
 }
 
 // =============================================================================
+// LINED-UP NUMBERS (typeface study 2026-11-02)
+// =============================================================================
+// Every place a figure sits in a column or beside another figure uses
+// tabular digits, so prices, dates, counts and phone numbers align and stop
+// jittering as values change. Running text keeps proportional digits.
+.o_list_view .o_data_cell,
+.o_list_view tfoot td,
+.o_field_monetary, .o_field_float, .o_field_integer,
+.o_field_date, .o_field_datetime, .o_field_phone,
+.o_stat_value, .o_pager_value, .o_pager_limit,
+.ws-row__value, .ws-chip, .ws-fact, .vu-hero-status,
+.o_kanban_record .o_field_monetary,
+.badge {
+    font-variant-numeric: tabular-nums;
+}
+
+// =============================================================================
 // LIST VIEW COMPACTNESS
 // =============================================================================
 .o_list_view .o_data_row > .o_data_cell {

@@ -67,7 +67,7 @@
     .o_form_sheet > .oe_title {
         margin: 0 0 var(--vuf-sp-4);
 
-        h1 { font-weight: 800; letter-spacing: -.01em; }
+        h1 { font-weight: 700; letter-spacing: -.01em; }
     }
 
     // view brings its own identity header → the native title is redundant
@@ -127,7 +127,7 @@
         display: grid;
         place-items: center;
         font-size: 19px;
-        font-weight: 800;
+        font-weight: 700;
         letter-spacing: .02em;
         background: var(--vuf-primary-soft);
         color: var(--vuf-primary);
@@ -145,14 +145,14 @@
 
             h1, h2, h3 {
                 margin: 0;
-                font-weight: 800;
+                font-weight: 700;
                 letter-spacing: -.01em;
             }
         }
 
         .vu-hero-name {
             font-size: 21px;
-            font-weight: 800;
+            font-weight: 700;
             letter-spacing: -.01em;
         }
     }
@@ -743,7 +743,7 @@
             background: var(--vuf-primary-soft);
         }
         .o_button_icon { color: var(--vuf-primary); }
-        .o_stat_value { font-weight: 800; color: var(--vuf-ink); }
+        .o_stat_value { font-weight: 700; color: var(--vuf-ink); }
         .o_stat_text { color: var(--vuf-muted); }
     }
 }

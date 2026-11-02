@@ -182,12 +182,24 @@ $vu-shadow-md: 0 2px 8px rgba($vu-text-primary, 0.12);
 $vu-shadow-lg: 0 4px 16px rgba($vu-text-primary, 0.15);
 
 // ===== TYPOGRAPHY SYSTEM =====
-// Primary: Montserrat (Regular 400, Semi Bold 600, Extra Bold 800)
-// Secondary: Segoe (Regular 400, Semi Bold 600, Bold 700)
-// Fallback: Arial
+// ONE family: Inter (variable 400–700), shipped by this module (fonts.scss +
+// static/src/fonts/inter). Decided 2026-11-02 after the typeface study
+// (design-poc/premium-type.html): the old file named Montserrat + Segoe UI but
+// shipped neither, so Windows showed Segoe UI and Macs showed Arial beside the
+// system font. Weight ladder: 400 text, 500 values, 600 labels/buttons,
+// 700 the record name. Nothing at 800.
+//
+// $o-system-fonts is Odoo's own stack (`!default` in web/primary_variables.scss,
+// which loads AFTER this prepended file), and it is what $o-font-family-sans-serif,
+// $o-headings-font-family and the frontend bootstrap variables derive from — so
+// overriding it here is what makes the whole web client, not only our own
+// rules, render in the product typeface.
 
-$font-family-sans-serif: 'Segoe UI', Arial, sans-serif;
-$font-family-headings: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+$o-system-fonts: ("Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+$o-headings-font-family: $o-system-fonts;   // Odoo's default is "SF Pro Display" first — a Mac would pick it
+
+$font-family-sans-serif: 'Inter', 'Segoe UI', Arial, sans-serif;
+$font-family-headings: 'Inter', 'Segoe UI', Arial, sans-serif;
 
 $headings-font-family: $font-family-headings;
 $headings-font-weight: 600;         // Semi Bold for headings

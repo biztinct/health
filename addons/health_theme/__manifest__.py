@@ -45,7 +45,7 @@
         - Modern pill-shaped badges for healthcare workflows
         - Custom navbar and control panel styling
     ''',
-    'version': '19.0.5.8.0',
+    'version': '19.0.5.9.0',
     'category': 'Themes/Backend',
     'license': 'LGPL-3',
     'author': 'VAFHS Healthcare System - Vietnam-Australia Family Health Service',
@@ -73,7 +73,16 @@
         'web._assets_primary_variables': [
             ('prepend', 'health_theme/static/src/scss/primary_variables.scss'),
         ],
+        # The product typeface (Inter, self-hosted) for the login page too, so the
+        # first screen a user sees is set in the same face as the app
+        'web.assets_frontend': [
+            'health_theme/static/src/scss/fonts.scss',
+        ],
         'web.assets_backend': [
+            # The product typeface: @font-face for the three Inter subsets in
+            # static/src/fonts/inter. Declared first so every later rule that
+            # says "Inter" resolves to a real face instead of a silent fallback.
+            'health_theme/static/src/scss/fonts.scss',
             # Theme Engine — draft preview loader (published themes are pure CSS)
             'health_theme/static/src/services/theme_loader_service.js',
             # Core theme — backend.scss split into ordered partials (Phase 4);

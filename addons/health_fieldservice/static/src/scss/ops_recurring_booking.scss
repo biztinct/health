@@ -3,7 +3,7 @@
 .ops-recurring-page {
     display: flex;
     background: #F5F5F5;
-    font-family: 'Segoe UI', Arial, sans-serif;
+    font-family: var(--vu-font-family-base);
     font-size: 14px;
     color: #212121;
     line-height: 1.5;
@@ -51,7 +51,7 @@
 .rb-wizard-title {
     font-size: 18px;
     font-weight: 700;
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-family: var(--vu-font-family-headings);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -91,7 +91,7 @@
 .rb-section-title {
     font-size: 15px;
     font-weight: 700;
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-family: var(--vu-font-family-headings);
     margin-bottom: 12px;
     display: flex;
     align-items: center;
@@ -463,7 +463,7 @@
     font-size: 15px;
     font-weight: 700;
     color: #1565C0;
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-family: var(--vu-font-family-headings);
 }
 
 .rb-pt-autoprice {
@@ -558,7 +558,7 @@
     border-top: 2px solid #212121;
     font-size: 15px;
     font-weight: 700;
-    .rb-sum-value { font-family: 'Montserrat', 'Segoe UI', sans-serif; color: #1565C0; }
+    .rb-sum-value { font-family: var(--vu-font-family-headings); color: #1565C0; }
 }
 
 /* Footer */
@@ -723,7 +723,7 @@
 .rb-modal-title {
     font-size: 20px;
     font-weight: 700;
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-family: var(--vu-font-family-headings);
     color: #212121;
 }
 
@@ -844,7 +844,7 @@
         padding-top: 6px;
         margin-top: 4px;
         border-top: 1px solid #E0E0E0;
-        font-family: 'Montserrat', 'Segoe UI', sans-serif;
+        font-family: var(--vu-font-family-headings);
     }
 }
 

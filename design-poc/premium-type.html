@@ -1,0 +1,453 @@
+<title>Carejiox Typeface Study</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap">
+<style>
+/* Layout: a verdict panel, then a faithful copy of the live Client screen (navbar, icon rail, tab column, Workspace record) driven by three font tokens that the switcher swaps. Colours are the product's own --vuf-* values. */
+:root{
+  --bg:#F4F6FB; --surface:#FFFFFF; --ink:#101728; --muted:#6B7280; --faint:#9CA3AF; --line:#E5E7EB; --line-soft:#F1F0F7;
+  --primary:#1565C0; --primary-soft:#E8F0FB; --hero:#0F1E45; --navbar:#1565C0; --rail:#0D356B; --accent:#FB8C00;
+  --ok:#10B981; --ok-bg:#E7F6EF; --warn:#B45309; --warn-bg:#FDF3E2; --danger:#DC2626; --danger-bg:#FDECEC;
+  --verdict-bg:#0F1E45; --verdict-ink:#FFFFFF; --verdict-muted:#B7C3DA;
+  --shadow:0 1px 2px rgba(16,12,40,.05);
+  /* the three font roles the switcher sets (defaults = Inter everywhere, the recommendation) */
+  --font-body:"Inter","Segoe UI",-apple-system,BlinkMacSystemFont,Arial,sans-serif;
+  --font-head:var(--font-body);
+  --font-ui:var(--font-body);
+  --num:tabular-nums;
+  --lh-tight:1.25;
+  --mono:ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0F1420; --surface:#171D2C; --ink:#E9EDF6; --muted:#9AA4BA; --faint:#6F7A94; --line:#2A3246; --line-soft:#222A3C;
+  --primary:#7FB0F0; --primary-soft:#1C2B45; --hero:#D6E4FA; --navbar:#13203A; --rail:#0B1430; --accent:#FFB155;
+  --ok:#6CC477; --ok-bg:#15301A; --warn:#FFA447; --warn-bg:#3A2A14; --danger:#F08080; --danger-bg:#3C1C1C;
+  --verdict-bg:#0B1430; --verdict-ink:#E9EDF6; --verdict-muted:#9AA4BA;
+  --shadow:0 1px 2px rgba(0,0,0,.4); color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0F1420; --surface:#171D2C; --ink:#E9EDF6; --muted:#9AA4BA; --faint:#6F7A94; --line:#2A3246; --line-soft:#222A3C;
+  --primary:#7FB0F0; --primary-soft:#1C2B45; --hero:#D6E4FA; --navbar:#13203A; --rail:#0B1430; --accent:#FFB155;
+  --ok:#6CC477; --ok-bg:#15301A; --warn:#FFA447; --warn-bg:#3A2A14; --danger:#F08080; --danger-bg:#3C1C1C;
+  --verdict-bg:#0B1430; --verdict-ink:#E9EDF6; --verdict-muted:#9AA4BA;
+  --shadow:0 1px 2px rgba(0,0,0,.4); color-scheme:dark }
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:13px/1.45 var(--font-body);-webkit-font-smoothing:antialiased;font-variant-numeric:var(--num)}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+h1,h2,h3,h4,p{margin:0}
+svg.lucide,[data-lucide]{width:16px;height:16px;flex:none;stroke-width:2}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:6px}
+
+/* ───────── control bar (the study's own chrome, outside the copied screen) ───────── */
+.study{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--verdict-bg);color:var(--verdict-ink);padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;gap:10px 18px;align-items:center;flex-wrap:wrap;font-family:"Inter",system-ui,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--verdict-bg)}
+.study .ttl{font-weight:700;font-size:13px;letter-spacing:.01em;display:flex;align-items:center;gap:8px}
+.study .ttl small{font-weight:500;color:var(--verdict-muted)}
+.seg{display:inline-flex;gap:2px;background:rgba(255,255,255,.1);border-radius:999px;padding:3px;flex-wrap:wrap}
+.seg button{padding:5px 12px;border-radius:999px;font-weight:600;font-size:12.5px;color:rgba(255,255,255,.78);white-space:nowrap}
+.seg button[aria-pressed="true"]{background:#fff;color:#0F1E45}
+.seg button[data-reco]::after{content:"recommended";margin-left:6px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.seg button[aria-pressed="true"][data-reco]::after{color:#B45309}
+.tog{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.85);cursor:pointer}
+.sw{position:relative;width:34px;height:20px;border-radius:999px;background:rgba(255,255,255,.22);flex:none;transition:background .15s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .15s}
+.sw[aria-checked="true"]{background:var(--accent)}
+.sw[aria-checked="true"]::after{transform:translateX(14px)}
+.study .spacer{flex:1}
+.note{font-size:12px;color:var(--verdict-muted);max-width:52ch}
+.note b{color:#fff;font-weight:600}
+
+/* ───────── verdict ───────── */
+.verdict{padding-block:22px 6px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;max-width:1320px;margin:0 auto;font-family:"Inter",system-ui,sans-serif}
+.vcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;min-width:0}
+.vcard h3{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.vcard h3 [data-lucide]{color:var(--primary)}
+.vcard ul{margin:0;padding-left:16px;display:grid;gap:6px;font-size:13px;line-height:1.5}
+.vcard li b{font-weight:600}
+.vcard .pill{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:999px;background:var(--ok-bg);color:var(--ok);vertical-align:1px}
+.vcard .pill.warn{background:var(--warn-bg);color:var(--warn)}
+.stacks{display:grid;gap:5px;font-size:12.5px}
+.stacks div{display:flex;justify-content:space-between;gap:10px;padding:5px 8px;border-radius:7px;background:var(--bg)}
+.stacks span:last-child{font-family:var(--mono);font-size:11.5px;color:var(--muted);text-align:right}
+.stacks .bad span:last-child{color:var(--danger)}
+
+/* ───────── the copied screen ───────── */
+.app{max-width:1320px;margin:16px auto 0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg);box-shadow:0 18px 50px rgba(16,12,40,.08);font-family:var(--font-ui)}
+.navbar{height:46px;background:var(--navbar);color:#fff;display:flex;align-items:center;gap:14px;padding:0 14px;font-weight:600;font-size:13px}
+.navbar .grid{display:grid;grid-template-columns:repeat(3,4px);gap:2px}
+.navbar .grid i{width:4px;height:4px;background:#fff;border-radius:1px;display:block}
+.navbar .r{margin-left:auto;display:flex;align-items:center;gap:14px;font-weight:600}
+.navbar .badge{background:#fff;color:var(--navbar);font-size:10px;font-weight:700;padding:1px 5px;border-radius:999px;margin-left:2px;vertical-align:top}
+.navbar .av{width:26px;height:26px;border-radius:50%;background:#FB8C00;display:grid;place-items:center;font-size:11px;font-weight:700}
+.frame{display:grid;grid-template-columns:60px 76px minmax(0,1fr);min-height:620px}
+.rail{background:var(--rail);display:flex;flex-direction:column;align-items:center;gap:14px;padding-block:12px}
+.rail .logo{width:34px;height:34px;border-radius:50%;background:#fff;display:grid;place-items:center;color:#1565C0}
+.rail [data-lucide]{width:18px;height:18px;color:rgba(255,255,255,.75)}
+.rail .on{background:rgba(255,255,255,.14);border-radius:8px;padding:6px}
+.rail .on [data-lucide]{color:#fff}
+.rail .me{margin-top:auto;width:28px;height:28px;border-radius:50%;background:#fff;color:#0D356B;font-size:10px;font-weight:700;display:grid;place-items:center}
+.tabcol{background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:8px;padding-block:10px}
+.tabcol button{display:grid;justify-items:center;gap:3px;width:68px;padding:7px 2px;border-radius:8px;color:#3B4660;font-size:9px;font-weight:800;letter-spacing:.02em;text-transform:uppercase;line-height:1.2;text-align:center}
+.tabcol button [data-lucide]{width:16px;height:16px;color:#3B4660}
+.tabcol button.on{background:var(--primary-soft);color:var(--primary)}
+.tabcol button.on [data-lucide]{color:var(--primary)}
+.page{min-width:0;display:flex;flex-direction:column}
+.cbar{height:40px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 16px;font-size:12px}
+.cbar .lab{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.cbar .sel{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-weight:600;font-size:12.5px}
+.cbar .area{font-weight:600}
+.crumbs{background:var(--surface);border-bottom:1px solid var(--line);padding:10px 24px;font-size:14px;display:flex;gap:8px;align-items:center}
+.crumbs a{color:var(--primary);text-decoration:none}
+.crumbs b{font-weight:600}
+.canvas{padding:18px 24px 26px;display:grid;gap:14px;min-width:0}
+
+/* hero */
+.hero{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.hero .avatar{width:48px;height:48px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center;font-size:22px;font-weight:600;font-family:var(--font-head)}
+.hero .main{flex:1 1 320px;min-width:0;display:grid;gap:5px}
+.hero .title{display:flex;align-items:center;gap:10px;flex-wrap:wrap;row-gap:6px}
+.hero h1{font-family:var(--font-head);font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:var(--lh-tight)}
+.chip{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;border-radius:7px;font-size:12px;font-weight:600;background:var(--line);color:var(--muted);white-space:nowrap}
+.chip.mono{font-family:var(--mono);letter-spacing:.02em}
+.chip.ok{background:var(--ok-bg);color:#047857}
+.chip.ok::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ok)}
+.chip.custom{background:var(--primary-soft);color:var(--primary)}
+.facts{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--muted)}
+.fact{display:inline-flex;align-items:center;gap:6px;min-width:0}
+.fact [data-lucide]{color:var(--faint)}
+.hero .acts{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 14px;border-radius:10px;font-weight:600;font-size:13.5px;border:1px solid transparent;white-space:nowrap}
+.btn.primary{background:var(--primary);color:#fff}
+.btn.ghost{background:var(--surface);border-color:var(--line);color:var(--ink)}
+.btn [data-lucide]{width:15px;height:15px}
+
+/* next step */
+.next{background:var(--primary-soft);border-radius:12px;padding:14px 18px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.next .ic{width:44px;height:44px;border-radius:10px;background:var(--primary);color:#fff;display:grid;place-items:center;flex:none}
+.next .ic [data-lucide]{width:20px;height:20px}
+.next .eyebrow{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--primary)}
+.next .t{font-size:15px;font-weight:600;line-height:1.35;margin-top:2px}
+.next .s{font-size:13px;color:var(--muted);margin-top:1px}
+.next .btn{margin-left:auto}
+
+/* tabs */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tabs span{padding:9px 14px;font-size:14px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.tabs span.on{color:var(--primary);border-color:var(--primary)}
+
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+/* panels row */
+.panels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;min-width:0;display:grid;gap:10px;align-content:start}
+.panel h3{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.qa{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.qa button{display:grid;justify-items:center;gap:6px;padding:12px 6px;border:1px solid var(--line);border-radius:10px;font-size:13px;font-weight:500;text-align:center;line-height:1.2}
+.qa button [data-lucide]{color:var(--primary);width:18px;height:18px}
+.row{display:flex;justify-content:space-between;gap:12px;font-size:13.5px;padding:7px 0;border-bottom:1px solid var(--line-soft)}
+.row:last-child{border-bottom:0}
+.row .l{color:var(--muted)}
+.row .v{font-weight:600}
+.row .v.quiet{font-weight:400;color:var(--faint)}
+.row .v.warn{color:var(--warn)}
+.who .n{font-weight:600;font-size:13.5px}
+.who .p{color:var(--muted);font-size:13.5px}
+
+/* cards */
+.pack{columns:2 340px;column-gap:14px}
+.card{break-inside:avoid;margin-bottom:14px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;min-width:0;display:inline-block;width:100%}
+.card .hd{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.card .hd h2{font-family:var(--font-head);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);flex:1}
+.card .hd [data-lucide]{color:var(--primary);width:15px;height:15px}
+.kv{display:grid;grid-template-columns:minmax(0,40%) minmax(0,1fr);gap:6px 14px;align-items:baseline}
+.kv .k{color:var(--muted);font-size:13px}
+.kv .d{font-size:13.5px;font-weight:500;overflow-wrap:anywhere}
+.kv .d.empty{color:var(--faint);font-weight:400}
+.kv .d.money{text-align:right;padding-right:40%}
+.kv .k.custom::after{content:"custom";margin-left:6px;font-size:9.5px;padding:1px 5px;border-radius:999px;background:var(--primary-soft);color:var(--primary);letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+.inv{display:grid;gap:4px}
+.inv div{display:flex;justify-content:space-between;gap:12px;font-size:13.5px;padding:4px 0;border-bottom:1px solid var(--line-soft)}
+.inv div:last-child{border-bottom:0;font-weight:600}
+.inv span:last-child{font-weight:500}
+.fold{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:12.5px;font-weight:500}
+.fold .chip{height:26px;background:var(--surface);border:1px dashed var(--line)}
+.fold .chip [data-lucide]{width:13px;height:13px}
+
+/* ───────── specimen strip ───────── */
+.spec{max-width:1320px;margin:22px auto 0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));font-family:"Inter",system-ui,sans-serif}
+.spec h2{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.spec .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.sp{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;gap:8px;min-width:0;cursor:pointer}
+.sp[aria-pressed="true"]{outline:2px solid var(--primary);outline-offset:-2px}
+.sp .nm{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--primary);display:flex;justify-content:space-between;gap:8px}
+.sp .nm small{color:var(--muted);font-weight:500;letter-spacing:0;text-transform:none}
+.sp .big{font-size:22px;font-weight:700;letter-spacing:-.02em;line-height:1.25}
+.sp .lab{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.sp .txt{font-size:13.5px;line-height:1.45}
+.sp .nums{display:grid;grid-template-columns:1fr auto;gap:2px 16px;font-size:13.5px}
+.sp .nums span:nth-child(even){text-align:right;font-weight:500}
+.foot{max-width:1320px;margin:0 auto;padding:18px max(16px,env(safe-area-inset-left,0px)) 36px;color:var(--muted);font-size:12.5px;line-height:1.6;font-family:"Inter",system-ui,sans-serif}
+.foot b{color:var(--ink);font-weight:600}
+
+@media (max-width:1000px){ .verdict{grid-template-columns:1fr} .panels{grid-template-columns:1fr} .frame{grid-template-columns:60px minmax(0,1fr)} .tabcol{display:none} }
+@media (max-width:640px){ .frame{grid-template-columns:minmax(0,1fr)} .rail{display:none} .canvas{padding:14px 16px 22px} .hero .acts{margin-left:0} .qa{grid-template-columns:repeat(3,minmax(0,1fr))} .crumbs{padding:10px 16px} }
+@media (prefers-reduced-motion:reduce){ *{transition:none!important} }
+</style>
+
+<div class="study" role="toolbar" aria-label="Study controls">
+  <span class="ttl"><i data-lucide="type"></i> Typeface study <small>· the live Client screen, redrawn</small></span>
+  <div class="seg" id="fontSeg" role="group" aria-label="Typeface">
+    <button data-f="mac">Today · Mac</button>
+    <button data-f="win">Today · Windows</button>
+    <button data-f="design">As the theme intended</button>
+    <button data-f="inter" data-reco aria-pressed="true">Inter</button>
+    <button data-f="bvp">Be Vietnam Pro</button>
+    <button data-f="pjs">Plus Jakarta Sans</button>
+  </div>
+  <label class="tog"><span class="sw" id="numSw" role="switch" aria-checked="true" tabindex="0"></span> Lined-up numbers</label>
+  <label class="tog"><span class="sw" id="viSw" role="switch" aria-checked="false" tabindex="0"></span> Tiếng Việt</label>
+  <span class="spacer"></span>
+  <span class="note" id="fontNote"></span>
+</div>
+
+<section class="verdict" aria-label="Verdict">
+  <div class="vcard">
+    <h3><i data-lucide="search"></i> What the screen does today</h3>
+    <p class="eyebrow" style="margin-bottom:6px">Measured on the live client record, 2 Nov 2026</p>
+    <div class="stacks">
+      <div class="bad"><span>Record name, card titles</span><span>Montserrat → Arial</span></div>
+      <div class="bad"><span>Form canvas</span><span>Inter → system font</span></div>
+      <div><span>Fields, tabs, buttons, panels</span><span>system font</span></div>
+      <div class="bad"><span>Top bar, menu, lists</span><span>Segoe UI → Arial</span></div>
+    </div>
+    <ul style="margin-top:10px">
+      <li>The two fonts the theme names are <b>never shipped</b>, so the browser quietly swaps them. On a Mac the client's name is Arial beside system-font fields; on Windows everything is Segoe UI.</li>
+      <li>Numbers do not line up (prices, dates, counts use proportional digits almost everywhere).</li>
+    </ul>
+  </div>
+  <div class="vcard">
+    <h3><i data-lucide="sparkles"></i> Recommendation</h3>
+    <ul>
+      <li><b>One real typeface, shipped with the app</b> (no Google call, works offline, every tenant the same). Inter is already what the theme asked for; Be Vietnam Pro is the warmer alternative built for Vietnamese. Pick on this page.</li>
+      <li><b>One weight ladder</b>: 400 text, 500 values, 600 labels and buttons, 700 the record name. Nothing at 800.</li>
+      <li><b>Lined-up numbers</b> everywhere a figure appears (At a glance, invoices, lists, chips).</li>
+      <li><b>Room for Vietnamese marks</b>: no line tighter than 1.25 where a name or chip can carry ấ, ỗ, ữ.</li>
+      <li>Colours, spacing, cards, icons, layout: <span class="pill">unchanged</span></li>
+    </ul>
+  </div>
+  <div class="vcard">
+    <h3><i data-lucide="shield-check"></i> Effect on Form Studio</h3>
+    <ul>
+      <li><span class="pill">None</span> A typeface is a theme setting. Form Studio adds fields and places them on cards; the cards already take their type from the theme, so a custom field looks like a standard one automatically (see the <b>Clinic details</b> card below).</li>
+      <li>Both land through the theme module only. They can ship in either order and never touch the same file.</li>
+      <li>Size: about one day, one module, one deploy to every database. Font files ≈ 100 KB.</li>
+      <li>Does not touch the nurse app, the family pages or printed invoices, which have their own fonts. <span class="pill warn">follow-up</span></li>
+    </ul>
+  </div>
+</section>
+
+<div class="app" id="app" aria-label="Client record, redrawn">
+  <div class="navbar"><span class="grid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span> Viet Uc CMS
+    <span class="r"><span><i data-lucide="globe" style="width:14px;height:14px;vertical-align:-2px"></i> EN</span><span>Chat <span class="badge">104</span></span><span>Pulse <span class="badge">72</span></span><span>VIET UC</span><span class="av">MA</span></span></div>
+  <div class="frame">
+    <nav class="rail" aria-label="Areas">
+      <div class="logo"><i data-lucide="activity" style="color:#1565C0"></i></div>
+      <i data-lucide="house"></i><i data-lucide="messages-square"></i><span class="on"><i data-lucide="heart-pulse"></i></span><i data-lucide="landmark"></i><i data-lucide="stethoscope"></i><i data-lucide="arrow-left-right"></i><i data-lucide="bar-chart-3"></i><i data-lucide="graduation-cap"></i><i data-lucide="settings"></i>
+      <span class="me">MA</span>
+    </nav>
+    <nav class="tabcol" aria-label="Operations tabs">
+      <button><i data-lucide="layout-grid"></i><span data-i18n="t.dash">Dashboard</span></button>
+      <button><i data-lucide="calendar-check"></i><span data-i18n="t.book">Bookings</span></button>
+      <button class="on"><i data-lucide="user-square"></i><span data-i18n="t.cli">Clients</span></button>
+      <button><i data-lucide="calendar-days"></i><span data-i18n="t.sched">Schedule</span></button>
+      <button><i data-lucide="wallet"></i><span data-i18n="t.coll">Collections</span></button>
+      <button><i data-lucide="message-circle"></i><span data-i18n="t.fam">Family inbox</span></button>
+      <button><i data-lucide="route"></i><span data-i18n="t.routes">Routes</span></button>
+      <button><i data-lucide="alert-circle"></i><span data-i18n="t.exc">Exceptions</span></button>
+    </nav>
+    <div class="page">
+      <div class="cbar"><span class="lab" data-i18n="c.area">Catchment area</span><span class="sel" data-i18n="c.all">All areas <i data-lucide="chevron-down" style="width:13px;height:13px"></i></span><span class="area" data-i18n="c.ops">Operations</span></div>
+      <div class="crumbs"><a href="#" data-i18n="b.dash">Dashboard</a> › <a href="#" data-i18n="b.cli">Clients</a> › <b id="crumbName">An Xu</b></div>
+      <div class="canvas">
+        <div class="hero">
+          <div class="avatar" id="avatarLetter">A</div>
+          <div class="main">
+            <div class="title"><h1 id="heroName">An Xu</h1><span class="chip mono">02 002402026</span><span class="chip ok" data-i18n="h.active">Active</span></div>
+            <div class="facts">
+              <span class="fact"><i data-lucide="phone"></i> 0802247413</span>
+              <span class="fact"><i data-lucide="map-pin"></i> g cư Charmingto, Phường/Xã Bến Nghé, Hà Nội, Vietnam</span>
+              <span class="fact"><i data-lucide="user"></i> <span data-i18n="h.age">81 years old</span> · <span data-i18n="h.sex">Male</span></span>
+            </div>
+          </div>
+          <div class="acts"><button class="btn primary" data-i18n="h.newb">New booking</button><button class="btn ghost"><i data-lucide="ellipsis"></i> <span data-i18n="h.more">More</span></button></div>
+        </div>
+
+        <div class="next">
+          <div class="ic"><i data-lucide="calendar"></i></div>
+          <div><div class="eyebrow" data-i18n="n.eye">Next step</div><div class="t" data-i18n="n.t">No visit is booked.</div><div class="s" data-i18n="n.s">No visits yet. The last visit was a nurse visit on 3 Jun.</div></div>
+          <button class="btn primary" data-i18n="h.newb">New booking</button>
+        </div>
+
+        <div class="tabs"><span class="on" data-i18n="tab.ov">Overview</span><span data-i18n="tab.bk">Bookings</span><span data-i18n="tab.cl">Clinical</span><span data-i18n="tab.fa">Family</span><span data-i18n="tab.do">Documents</span><span data-i18n="tab.bi">Billing</span><span data-i18n="tab.cp">Care plan</span></div>
+
+        <div class="eyebrow" data-i18n="s.sum">Summary</div>
+        <div class="panels">
+          <div class="panel"><h3 data-i18n="p.qa">Quick actions</h3>
+            <div class="qa">
+              <button><i data-lucide="phone"></i><span data-i18n="qa.call">Call</span></button>
+              <button><i data-lucide="message-square"></i><span data-i18n="qa.msg">Message</span></button>
+              <button><i data-lucide="repeat"></i><span data-i18n="qa.rec">Recurring booking</span></button>
+              <button><i data-lucide="list"></i><span data-i18n="qa.all">All bookings</span></button>
+              <button><i data-lucide="package"></i><span data-i18n="qa.pkg">Buy a package</span></button>
+              <button><i data-lucide="receipt"></i><span data-i18n="qa.inv">Create invoice</span></button>
+            </div></div>
+          <div class="panel"><h3 data-i18n="p.gl">At a glance</h3>
+            <div><div class="row"><span class="l" data-i18n="g.visits">Visits</span><span class="v">12</span></div>
+            <div class="row"><span class="l" data-i18n="g.last">Last visit</span><span class="v" data-i18n="g.lastv">Jun 3 · 09:30</span></div>
+            <div class="row"><span class="l" data-i18n="g.next">Next visit</span><span class="v quiet" data-i18n="g.nextv">None booked</span></div>
+            <div class="row"><span class="l" data-i18n="g.since">Client since</span><span class="v" data-i18n="g.sincev">Jun 2026</span></div>
+            <div class="row"><span class="l" data-i18n="g.spent">Spent</span><span class="v">₫ 4,850,000</span></div>
+            <div class="row"><span class="l" data-i18n="g.due">Outstanding</span><span class="v warn">₫ 1,450,000</span></div></div></div>
+          <div class="panel who"><h3 data-i18n="p.people">People</h3>
+            <div class="eyebrow" style="letter-spacing:.02em;text-transform:none;font-size:13px" data-i18n="w.main">Main contact</div>
+            <div><div class="n" id="whoName">An Xu</div><div class="p">0802247413</div></div>
+            <div class="eyebrow" style="letter-spacing:.02em;text-transform:none;font-size:13px" data-i18n="w.fam">Family contact</div>
+            <div><div class="n">Nguyễn Thị Hoa <span style="color:var(--muted);font-weight:400">· <span data-i18n="w.dau">daughter</span></span></div><div class="p">0913 334 455</div></div></div>
+        </div>
+
+        <div class="pack">
+          <div class="card"><div class="hd"><i data-lucide="user"></i><h2 data-i18n="k.personal">Personal</h2></div>
+            <div class="kv">
+              <span class="k" data-i18n="k.title">Title</span><span class="d" data-i18n="k.titlev">Mr</span>
+              <span class="k" data-i18n="k.dob">Date of birth</span><span class="d">12/03/1945</span>
+              <span class="k" data-i18n="k.sex">Gender</span><span class="d" data-i18n="h.sex">Male</span>
+              <span class="k" data-i18n="k.lang">Preferred language</span><span class="d" data-i18n="k.langv">Vietnamese</span>
+              <span class="k" data-i18n="k.id">National ID</span><span class="d">079 045 001 234</span>
+              <span class="k" data-i18n="k.bhyt">Health insurance</span><span class="d">HT 4 79 0790 12345</span>
+            </div></div>
+          <div class="card"><div class="hd"><i data-lucide="map-pin"></i><h2 data-i18n="k.home">Home and access</h2></div>
+            <div class="kv">
+              <span class="k" data-i18n="k.addr">Home address</span><span class="d">g cư Charmingto, Phường/Xã Bến Nghé, Hà Nội</span>
+              <span class="k" data-i18n="k.catch">Catchment</span><span class="d" data-i18n="k.catchv">Hà Nội · Bến Nghé team</span>
+              <span class="k" data-i18n="k.access">Access instructions</span><span class="d" data-i18n="k.accessv">Ring twice. Lift on the left, floor 7.</span>
+              <span class="k" data-i18n="k.nurse">Primary nurse</span><span class="d">Trần Minh Đức</span>
+            </div></div>
+          <div class="card"><div class="hd"><i data-lucide="receipt"></i><h2 data-i18n="k.bill">Billing</h2></div>
+            <div class="inv">
+              <div><span data-i18n="i.1">INV/2026/0412 · Nurse visit</span><span>₫ 1,450,000</span></div>
+              <div><span data-i18n="i.2">INV/2026/0398 · Wound care</span><span>₫ 350,000</span></div>
+              <div><span data-i18n="i.3">INV/2026/0371 · Physio package</span><span>₫ 3,050,000</span></div>
+              <div><span data-i18n="i.tot">Paid this year</span><span>₫ 4,850,000</span></div>
+            </div></div>
+          <div class="card"><div class="hd"><i data-lucide="sparkles"></i><h2 data-i18n="k.clinic">Clinic details</h2><span class="chip custom" style="height:20px;font-size:10.5px" data-i18n="k.fs">Form Studio</span></div>
+            <div class="kv">
+              <span class="k custom" data-i18n="k.window">Preferred visit window</span><span class="d" data-i18n="k.windowv">Morning</span>
+              <span class="k custom" data-i18n="k.pet">Pet at home</span><span class="d" data-i18n="k.petv">Yes</span>
+              <span class="k custom" data-i18n="k.diet">Dietary notes</span><span class="d" data-i18n="k.dietv">Low salt, no shellfish</span>
+              <span class="k custom" data-i18n="k.key">Key safe code</span><span class="d empty">—</span>
+            </div></div>
+        </div>
+        <div class="fold"><span data-i18n="f.not">Not filled yet</span><span class="chip"><i data-lucide="plus"></i> <span data-i18n="f.care">Care team</span> · <span data-i18n="f.3">3 fields</span></span><span class="chip"><i data-lucide="plus"></i> <span data-i18n="f.ins">Insurance</span> · <span data-i18n="f.2">2 fields</span></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="spec" aria-label="Specimens">
+  <h2>Same words, every option · click one to apply it above</h2>
+  <div class="grid" id="specGrid"></div>
+</section>
+<p class="foot"><b>How to read this.</b> The screen above is a redraw of the live client record (An Xu) with its real colours, spacing and sizes; only the typeface changes when you press an option. "Today · Mac" and "Today · Windows" show what people actually see now, because the fonts the theme names are not installed with the app. "As the theme intended" is what the designer meant: Montserrat headings over Inter text. The three remaining options each ship one real font family with Vietnamese letters. Production self-hosts the font files inside the theme; this page loads them from Google only for the demonstration.</p>
+
+<script src="https://unpkg.com/lucide@0.452.0/dist/umd/lucide.min.js"></script>
+<script>
+(function(){
+'use strict';
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const icons=()=>{ try{ window.lucide&&lucide.createIcons(); }catch(e){} };
+
+const FONTS={
+  mac:{ body:'Arial, Helvetica, sans-serif', head:'Arial, Helvetica, sans-serif', ui:'-apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif',
+        note:'What a Mac shows now: the name and card titles fall back to Arial, the fields and buttons to the system font. Two faces on one screen.', label:'Today · Mac', sub:'Arial + system font' },
+  win:{ body:'"Segoe UI", Tahoma, Arial, sans-serif', head:'"Segoe UI", Tahoma, Arial, sans-serif', ui:'"Segoe UI", Tahoma, Arial, sans-serif',
+        note:'What Windows shows now: Segoe UI for everything. Consistent, but the default of every office PC. Renders exactly only on a Windows machine.', label:'Today · Windows', sub:'Segoe UI (Windows only)' },
+  design:{ body:'"Inter", "Segoe UI", Arial, sans-serif', head:'"Montserrat", "Segoe UI", Arial, sans-serif', ui:'"Inter", "Segoe UI", Arial, sans-serif',
+        note:'What the theme file asks for: Montserrat for the name and titles, Inter for everything else. Never shipped, so nobody has seen it.', label:'As the theme intended', sub:'Montserrat + Inter' },
+  inter:{ body:'"Inter", "Segoe UI", -apple-system, Arial, sans-serif', head:'"Inter", "Segoe UI", -apple-system, Arial, sans-serif', ui:'"Inter", "Segoe UI", -apple-system, Arial, sans-serif',
+        note:'Recommended. One neutral face, narrow enough for dense cards, full Vietnamese, lined-up digits built in. The theme already names it; we only have to ship it.', label:'Inter', sub:'recommended · one family' },
+  bvp:{ body:'"Be Vietnam Pro", "Segoe UI", Arial, sans-serif', head:'"Be Vietnam Pro", "Segoe UI", Arial, sans-serif', ui:'"Be Vietnam Pro", "Segoe UI", Arial, sans-serif',
+        note:'The alternative: drawn in Vietnam for Vietnamese. Warmer and rounder, a little wider, so long labels wrap sooner in narrow cards.', label:'Be Vietnam Pro', sub:'warmer · made for Vietnamese' },
+  pjs:{ body:'"Plus Jakarta Sans", "Segoe UI", Arial, sans-serif', head:'"Plus Jakarta Sans", "Segoe UI", Arial, sans-serif', ui:'"Plus Jakarta Sans", "Segoe UI", Arial, sans-serif',
+        note:'A more geometric, brand-like face. Distinctive at 24 px, slightly less legible at 11 px labels.', label:'Plus Jakarta Sans', sub:'geometric · brand feel' },
+};
+
+const VI={
+ 't.dash':'Bảng điều khiển','t.book':'Lịch hẹn','t.cli':'Khách hàng','t.sched':'Lịch làm việc','t.coll':'Thu tiền','t.fam':'Hộp thư gia đình','t.routes':'Lộ trình','t.exc':'Ngoại lệ',
+ 'c.area':'Khu vực phục vụ','c.all':'Tất cả khu vực','c.ops':'Vận hành','b.dash':'Bảng điều khiển','b.cli':'Khách hàng',
+ 'h.active':'Đang hoạt động','h.age':'81 tuổi','h.sex':'Nam','h.newb':'Lịch hẹn mới','h.more':'Thêm',
+ 'n.eye':'Bước tiếp theo','n.t':'Chưa có lượt thăm nào được đặt.','n.s':'Chưa có lượt thăm. Lần gần nhất là lượt thăm điều dưỡng ngày 3/6.',
+ 'tab.ov':'Tổng quan','tab.bk':'Lịch hẹn','tab.cl':'Lâm sàng','tab.fa':'Gia đình','tab.do':'Tài liệu','tab.bi':'Thanh toán','tab.cp':'Kế hoạch chăm sóc',
+ 's.sum':'Tóm tắt','p.qa':'Thao tác nhanh','qa.call':'Gọi','qa.msg':'Nhắn tin','qa.rec':'Đặt lịch định kỳ','qa.all':'Tất cả lịch hẹn','qa.pkg':'Mua gói','qa.inv':'Tạo hóa đơn',
+ 'p.gl':'Tổng quan nhanh','g.visits':'Lượt thăm','g.last':'Lần thăm gần nhất','g.lastv':'3/6 · 09:30','g.next':'Lượt thăm tiếp theo','g.nextv':'Chưa đặt','g.since':'Khách hàng từ','g.sincev':'Th6 2026','g.spent':'Đã chi','g.due':'Còn nợ',
+ 'p.people':'Người liên quan','w.main':'Liên hệ chính','w.fam':'Người thân','w.dau':'con gái',
+ 'k.personal':'Cá nhân','k.title':'Danh xưng','k.titlev':'Ông','k.dob':'Ngày sinh','k.sex':'Giới tính','k.lang':'Ngôn ngữ ưu tiên','k.langv':'Tiếng Việt','k.id':'Số CCCD','k.bhyt':'Số thẻ BHYT',
+ 'k.home':'Nhà ở và lối vào','k.addr':'Địa chỉ nhà','k.catch':'Khu vực phục vụ','k.catchv':'Hà Nội · đội Bến Nghé','k.access':'Hướng dẫn vào nhà','k.accessv':'Bấm chuông hai lần. Thang máy bên trái, tầng 7.','k.nurse':'Điều dưỡng chính',
+ 'k.bill':'Thanh toán','i.1':'INV/2026/0412 · Thăm điều dưỡng','i.2':'INV/2026/0398 · Chăm sóc vết thương','i.3':'INV/2026/0371 · Gói vật lý trị liệu','i.tot':'Đã thanh toán năm nay',
+ 'k.clinic':'Thông tin phòng khám','k.fs':'Form Studio','k.window':'Khung giờ ưu tiên','k.windowv':'Buổi sáng','k.pet':'Thú cưng trong nhà','k.petv':'Có','k.diet':'Ghi chú ăn uống','k.dietv':'Ít muối, không hải sản có vỏ','k.key':'Mã két chìa khóa',
+ 'f.not':'Chưa điền','f.care':'Nhóm chăm sóc','f.3':'3 trường','f.ins':'Bảo hiểm','f.2':'2 trường',
+};
+const EN={};
+$$('[data-i18n]').forEach(el=>{ EN[el.dataset.i18n]=el.innerHTML; });
+
+const root=document.documentElement.style;
+let cur='inter';
+function applyFont(k){
+  cur=k; const f=FONTS[k];
+  root.setProperty('--font-body',f.body); root.setProperty('--font-head',f.head); root.setProperty('--font-ui',f.ui);
+  $$('#fontSeg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.f===k)));
+  $$('#specGrid .sp').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.f===k)));
+  $('#fontNote').innerHTML=f.note;
+  try{ localStorage.setItem('cjx_type_font',k); }catch(e){}
+}
+function applyNums(on){
+  root.setProperty('--num',on?'tabular-nums':'normal');
+  $('#numSw').setAttribute('aria-checked',String(on));
+  try{ localStorage.setItem('cjx_type_nums',on?'1':'0'); }catch(e){}
+}
+let vi=false;
+function applyLang(isVi){
+  vi=isVi; const d=isVi?VI:EN;
+  $$('[data-i18n]').forEach(el=>{ const v=d[el.dataset.i18n]; if(v!==undefined) el.innerHTML=v; });
+  const name=isVi?'Nguyễn Văn Ân':'An Xu';
+  $('#heroName').textContent=name; $('#crumbName').textContent=name; $('#whoName').textContent=name; $('#avatarLetter').textContent=isVi?'N':'A';
+  $('#viSw').setAttribute('aria-checked',String(isVi));
+  icons();
+  try{ localStorage.setItem('cjx_type_vi',isVi?'1':'0'); }catch(e){}
+}
+
+/* specimen cards */
+const grid=$('#specGrid');
+Object.entries(FONTS).forEach(([k,f])=>{
+  const b=document.createElement('button'); b.className='sp'; b.dataset.f=k; b.setAttribute('aria-pressed',String(k===cur));
+  b.style.setProperty('--font-body',f.body); b.style.setProperty('--font-head',f.head); b.style.fontFamily='var(--font-body)';
+  b.innerHTML=`<div class="nm" style="font-family:Inter,system-ui,sans-serif"><span>${f.label}</span><small>${f.sub}</small></div>
+    <div class="big" style="font-family:var(--font-head)">Nguyễn Thị Hoa</div>
+    <div class="lab">Tổng quan nhanh · Next step</div>
+    <div class="txt">Phường/Xã Bến Nghé, Quận 1 · 81 tuổi · Đặt lịch định kỳ</div>
+    <div class="nums"><span>Thăm điều dưỡng</span><span>₫ 1,450,000</span><span>Chăm sóc vết thương</span><span>₫ 350,000</span><span>Gói vật lý trị liệu</span><span>₫ 3,050,000</span></div>`;
+  b.addEventListener('click',()=>{ applyFont(k); $('#app').scrollIntoView({behavior:'smooth',block:'start'}); });
+  grid.appendChild(b);
+});
+
+$$('#fontSeg button').forEach(b=>b.addEventListener('click',()=>applyFont(b.dataset.f)));
+const toggle=(el,fn)=>{ const h=()=>fn(el.getAttribute('aria-checked')!=='true'); el.addEventListener('click',h); el.addEventListener('keydown',e=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); h(); } }); };
+toggle($('#numSw'),applyNums);
+toggle($('#viSw'),applyLang);
+
+let f0='inter', n0=true, v0=false;
+try{ f0=localStorage.getItem('cjx_type_font')||f0; n0=localStorage.getItem('cjx_type_nums')!=='0'; v0=localStorage.getItem('cjx_type_vi')==='1'; }catch(e){}
+if(!FONTS[f0]) f0='inter';
+applyFont(f0); applyNums(n0); if(v0) applyLang(true);
+icons();
+})();
+</script>

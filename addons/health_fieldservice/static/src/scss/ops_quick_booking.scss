@@ -3,7 +3,7 @@
 .ops-quick-booking-page {
     display: flex;
     background: #F5F5F5;
-    font-family: 'Segoe UI', Arial, sans-serif;
+    font-family: var(--vu-font-family-base);
     font-size: 14px;
     color: #212121;
     line-height: 1.5;
@@ -52,7 +52,7 @@
 .qb-wizard-title {
     font-size: 18px;
     font-weight: 700;
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-family: var(--vu-font-family-headings);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -105,7 +105,7 @@
 .qb-section-title {
     font-size: 15px;
     font-weight: 700;
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-family: var(--vu-font-family-headings);
     margin-bottom: 12px;
     display: flex;
     align-items: center;
@@ -306,7 +306,7 @@ select.qb-form-input { cursor: pointer; }
     font-size: 15px;
     font-weight: 700;
     color: #1565C0;
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-family: var(--vu-font-family-headings);
 }
 
 .qb-pt-autoprice {
@@ -510,7 +510,7 @@ select.qb-form-input { cursor: pointer; }
 .qb-cal-title {
     font-size: 14px;
     font-weight: 700;
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-family: var(--vu-font-family-headings);
     color: #212121;
 }
 
@@ -663,7 +663,7 @@ select.qb-form-input { cursor: pointer; }
     transition: all 150ms;
     font-size: 14px;
     font-weight: 600;
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-family: var(--vu-font-family-headings);
     background: #fff;
     color: #212121;
     display: flex;
@@ -797,7 +797,7 @@ select.qb-form-input { cursor: pointer; }
     text-align: center;
     font-size: 18px;
     font-weight: 700;
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-family: var(--vu-font-family-headings);
     color: #1565C0;
     cursor: default;
 }
@@ -819,7 +819,7 @@ select.qb-form-input { cursor: pointer; }
     padding: 8px 16px;
     border-radius: 8px;
     border: 1px solid #E0E0E0;
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-family: var(--vu-font-family-headings);
 }
 
 /* ===== STAFF CHIPS ===== */
@@ -1096,7 +1096,7 @@ select.qb-form-input { cursor: pointer; }
 .qb-modal-title {
     font-size: 20px;
     font-weight: 700;
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-family: var(--vu-font-family-headings);
     color: #212121;
 }
 
@@ -1223,7 +1223,7 @@ select.qb-form-input { cursor: pointer; }
         padding-top: 6px;
         margin-top: 4px;
         border-top: 1px solid #E0E0E0;
-        font-family: 'Montserrat', 'Segoe UI', sans-serif;
+        font-family: var(--vu-font-family-headings);
     }
 }
 

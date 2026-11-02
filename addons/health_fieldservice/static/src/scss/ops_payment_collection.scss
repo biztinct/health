@@ -3,7 +3,7 @@
 .ops-payment-page {
     display: flex;
     background: #F5F5F5;
-    font-family: 'Segoe UI', Arial, sans-serif;
+    font-family: var(--vu-font-family-base);
     font-size: 14px;
     color: #212121;
     line-height: 1.5;
@@ -53,7 +53,7 @@
 .pc-wizard-title {
     font-size: 18px;
     font-weight: 700;
-    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+    font-family: var(--vu-font-family-headings);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -135,7 +135,7 @@
 .pc-amount-value {
     font-size: 36px;
     font-weight: 800;
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-family: var(--vu-font-family-headings);
     color: #1565C0;
     margin: 4px 0;
 }

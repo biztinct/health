@@ -53,56 +53,56 @@
 .o_notebook .nav-tabs .nav-link[data-bs-target*="address_info"]::before {
     content: '📍';
     font-size: 16px !important;
-    font-family: system-ui, -apple-system, sans-serif !important;
+    font-family: var(--vu-font-family-base) !important;
 }
 
 /* Medical Information - Heart Icon */
 .o_notebook .nav-tabs .nav-link[data-bs-target*="medical_info"]::before {
     content: '❤️';
     font-size: 14px !important;
-    font-family: system-ui, -apple-system, sans-serif !important;
+    font-family: var(--vu-font-family-base) !important;
 }
 
 /* Insurance & Billing - Credit Card Icon */
 .o_notebook .nav-tabs .nav-link[data-bs-target*="insurance_billing"]::before {
     content: '💳';
     font-size: 16px !important;
-    font-family: system-ui, -apple-system, sans-serif !important;
+    font-family: var(--vu-font-family-base) !important;
 }
 
 /* Service History - List Icon */
 .o_notebook .nav-tabs .nav-link[data-bs-target*="service_history"]::before {
     content: '📋';
     font-size: 16px !important;
-    font-family: system-ui, -apple-system, sans-serif !important;
+    font-family: var(--vu-font-family-base) !important;
 }
 
 /* Active Packages - Gift Icon */
 .o_notebook .nav-tabs .nav-link[data-bs-target*="active_packages"]::before {
     content: '🎁';
     font-size: 16px !important;
-    font-family: system-ui, -apple-system, sans-serif !important;
+    font-family: var(--vu-font-family-base) !important;
 }
 
 /* Healthcare Relationships - Users Icon */
 .o_notebook .nav-tabs .nav-link[data-bs-target*="healthcare_relationships"]::before {
     content: '👥';
     font-size: 16px !important;
-    font-family: system-ui, -apple-system, sans-serif !important;
+    font-family: var(--vu-font-family-base) !important;
 }
 
 /* Client Journey - Road Icon */
 .o_notebook .nav-tabs .nav-link[data-bs-target*="patient_journey"]::before {
     content: '🚀';
     font-size: 16px !important;
-    font-family: system-ui, -apple-system, sans-serif !important;
+    font-family: var(--vu-font-family-base) !important;
 }
 
 /* Clinical Notes - File Icon */
 .o_notebook .nav-tabs .nav-link[data-bs-target*="clinical_notes"]::before {
     content: '📄';
     font-size: 16px !important;
-    font-family: system-ui, -apple-system, sans-serif !important;
+    font-family: var(--vu-font-family-base) !important;
 }
 
 /* Utility classes for manually adding Font Awesome icons to notebook tabs */

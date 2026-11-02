@@ -3,7 +3,7 @@
 .ops-sip-page {
     display: flex;
     background: #F5F5F5;
-    font-family: 'Segoe UI', Arial, sans-serif;
+    font-family: var(--vu-font-family-base);
     font-size: 14px;
     color: #212121;
     line-height: 1.5;
@@ -47,7 +47,7 @@
 }
 
 .sip-topbar-title {
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-family: var(--vu-font-family-headings);
     font-weight: 700;
     font-size: 15px;
 }
@@ -93,7 +93,7 @@
 }
 
 .sip-timer-value {
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-family: var(--vu-font-family-headings);
     font-size: 42px;
     font-weight: 800;
     letter-spacing: 2px;
@@ -221,7 +221,7 @@
 .sip-section-title {
     font-size: 15px;
     font-weight: 700;
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-family: var(--vu-font-family-headings);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -342,7 +342,7 @@
     text-align: center;
     font-size: 16px;
     font-weight: 700;
-    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-family: var(--vu-font-family-headings);
     color: #1565C0;
     &:focus {
         outline: none;

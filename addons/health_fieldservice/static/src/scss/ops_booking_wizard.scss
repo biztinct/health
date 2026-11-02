@@ -39,7 +39,7 @@
 .bw-title {
     font-size: 18px;
     font-weight: 700;
-    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+    font-family: var(--vu-font-family-headings);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -159,7 +159,7 @@
     font-size: 15px;
     font-weight: 700;
     margin-bottom: 16px;
-    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+    font-family: var(--vu-font-family-headings);
 }
 
 .bw-step-subtitle {
@@ -473,7 +473,7 @@ textarea.bw-form-input { resize: vertical; }
 .bw-ts-time {
     font-size: 15px;
     font-weight: 700;
-    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+    font-family: var(--vu-font-family-headings);
 }
 
 .bw-selected-time-badge {

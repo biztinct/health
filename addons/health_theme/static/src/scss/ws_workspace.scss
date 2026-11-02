@@ -317,7 +317,7 @@ $ws-icons: (
 
         > .o_widget { display: contents; }
     }
-    .ws-initials { line-height: 1; }
+    .ws-initials { line-height: 1.15; }
 
     .ws-hero__main {
         flex: 1 1 320px;
@@ -449,7 +449,7 @@ $ws-icons: (
 
             > span, > div, a {
                 display: block;
-                line-height: 1;
+                line-height: 1.2;
                 color: inherit;
                 font-weight: inherit;
                 text-decoration: none;
@@ -1099,7 +1099,7 @@ $ws-icons: (
         color: var(--vuf-ink);
         font-size: 13px;
         font-weight: 500;
-        line-height: 1;
+        line-height: 1.2;
         cursor: pointer;
         transition: border-color var(--vuf-t-fast) var(--vuf-ease), color var(--vuf-t-fast) var(--vuf-ease);
 
