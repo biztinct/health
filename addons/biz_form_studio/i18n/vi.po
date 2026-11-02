@@ -810,6 +810,12 @@ msgid "Health information cannot be exported: %s"
 msgstr "Không thể xuất thông tin sức khỏe: %s"
 
 #. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/base.py:0
+msgid "\"%(value)s\" is not one of the options of %(field)s."
+msgstr "\"%(value)s\" không phải là một lựa chọn của %(field)s."
+
+#. module: biz_form_studio
 #. odoo-javascript
 #. odoo-python
 #: code:addons/biz_form_studio/models/fs_field_meta.py:0

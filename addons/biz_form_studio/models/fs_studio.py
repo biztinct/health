@@ -1402,7 +1402,9 @@ class FsStudio(models.AbstractModel):
     @api.model
     def validate_all(self):
         """Re-draw every layout against today's screen; switch off the ones
-        that no longer fit. For the deploy step and a nightly job (later)."""
+        that no longer fit. Run by the deploy wrapper's post-upgrade check on
+        every database. Also answers how many encrypted values this database
+        holds (`encrypted_values`, per field in `encrypted_fields`)."""
         if not (self.env.uid == SUPERUSER_ID or self._is_gate_user()
                 or self.env.user.has_group('base.group_system')):
             raise self._deny()
@@ -1431,7 +1433,30 @@ class FsStudio(models.AbstractModel):
                               'name': host._title(), 'problems': problems})
                 _logger.warning("Form Studio: host %s (%s): %s", host.id,
                                 host.model, '; '.join(problems))
-        return {'checked': len(layouts), 'broken': broken, 'hosts': hosts}
+        encrypted = self._encrypted_value_counts()
+        return {'checked': len(layouts), 'broken': broken, 'hosts': hosts,
+                'encrypted_values': sum(e['values'] for e in encrypted),
+                'encrypted_fields': encrypted}
+
+    @api.model
+    def _encrypted_value_counts(self):
+        """How many values each encrypted Studio field holds on this
+        database, counted on its hidden column. A copy of this database made
+        with a new secret (a new system made from a template) could never
+        read them, which is why the deploy check reports the total."""
+        out = []
+        self.env.flush_all()
+        companions = self.env['ir.model.fields'].sudo().search(
+            [('fs_companion', '=', True)], order='model, name')
+        for row in companions:
+            Model = self.env.get(row.model)
+            if Model is None or row.name not in Model._fields:
+                continue
+            values = self._non_empty(Model._table, row.name)
+            out.append({'model': row.model, 'name': row.name[:-len(ENC_SUFFIX)]
+                        if row.name.endswith(ENC_SUFFIX) else row.name,
+                        'values': values})
+        return out
 
     # ==================================================================
     #  Visibility after the settings change

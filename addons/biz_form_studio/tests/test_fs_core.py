@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Core tests: FS-H1 (tests 1–12), FS-H2 (17–27), FS-H3 (33–44), FS-H4
-(49–59).
+(49–59), FS-H5 (68, 69, 74, 75).
 
 The core is tested on a NEUTRAL model — `res.partner` with a throwaway host on
 `base.view_partner_form` — so nothing here depends on a product's screens. The
@@ -17,6 +17,7 @@ database really holds.
 import base64
 import datetime
 import json
+import logging
 import os
 import re
 
@@ -27,6 +28,8 @@ from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.modules.module import get_module_path
 from odoo.tests import HttpCase, TransactionCase, tagged
 from odoo.tools import format_date, format_datetime
+
+_logger = logging.getLogger(__name__)
 
 TOUCHED = ('res.partner', 'account.move')
 
@@ -1552,6 +1555,147 @@ class TestFsHealthInformation(_FsPhiCase):
 
 
 # =========================================================================
+#  FS-H5 — the dropdown write check, encrypted values, related copies
+# =========================================================================
+@tagged('post_install', '-at_install')
+class TestFsHardening(_FsPhiCase):
+
+    def option(self, name, label):
+        field = self.row(name)
+        return field.selection_ids.filtered(lambda s: s.name == label).value
+
+    def test_68_a_dropdown_refuses_a_value_that_is_not_an_option(self):
+        """T68 — create and write with a value that is not an option are
+        refused naming the field's label (never its technical name); an
+        option and an empty value pass; an import of a wrong value creates
+        nothing; the same on an encrypted dropdown, whose token is written
+        only for a good value; a Vietnamese reader reads Vietnamese."""
+        Partner = self.env['res.partner']
+        blood = self.make('Blood group', 'selection',
+                          options=['Group A', 'Group B'])
+        code_b = self.option(blood, 'Group B')
+        with self.assertRaises(UserError) as caught:
+            Partner.create({'name': 'FS5 wrong', blood: 'not_an_option'})
+        msg = str(caught.exception)
+        self.assertIn('"not_an_option" is not one of the options of '
+                      'Blood group.', msg)
+        self.assertNotIn('x_fs_', msg)
+        partner = Partner.create({'name': 'FS5 right', blood: code_b})
+        self.assertEqual(partner[blood], code_b)
+        with self.assertRaisesRegex(UserError, 'is not one of the options '
+                                               'of Blood group'):
+            partner.write({blood: 'zzz'})
+        self.assertEqual(partner[blood], code_b)
+        partner.write({blood: False})
+        self.assertFalse(partner[blood])
+        # many records at once: one wrong value refuses the whole batch
+        before = Partner.search_count([('name', 'like', 'FS5 batch')])
+        with self.assertRaises(UserError):
+            Partner.create([{'name': 'FS5 batch 1', blood: code_b},
+                            {'name': 'FS5 batch 2', blood: 'zzz'}])
+        self.assertEqual(
+            Partner.search_count([('name', 'like', 'FS5 batch')]), before)
+        # an encrypted dropdown: refused before the token is written
+        self.encrypting_host()
+        rhesus = self.make('Rhesus', 'selection', phi=True,
+                           options=['Positive', 'Negative'])
+        pos = self.option(rhesus, 'Positive')
+        with self.assertRaisesRegex(UserError, 'is not one of the options '
+                                               'of Rhesus'):
+            partner.write({rhesus: 'bogus'})
+        self.assertFalse(self.raw(partner, rhesus + '_enc'))
+        partner.write({rhesus: pos})
+        self.assertEqual(self.cipher[1](self.env, self.raw(
+            partner, rhesus + '_enc')), pos)
+        # Vietnamese
+        self.env['res.lang']._activate_lang('vi_VN')
+        with self.assertRaises(UserError) as caught:
+            partner.with_context(lang='vi_VN').write({blood: 'zzz'})
+        self.assertIn('"zzz" không phải là một lựa chọn của',
+                      str(caught.exception))
+        # a record type with no Studio dropdown in the request is untouched
+        country = self.env['res.country'].search([], limit=1)
+        country.write({'name': country.name})
+        # the import screen: an option's label imports; a wrong value
+        # creates nothing and says why. Last, on purpose: a failed import
+        # resets the registry (`load` -> `reset_changes`), which in a test
+        # transaction drops the fields made in it.
+        res = self.env['res.partner'].load(['name', blood],
+                                           [['FS5 import right', 'Group A']])
+        self.assertEqual(len(res['ids']), 1)
+        res = self.env['res.partner'].load(['name', blood],
+                                           [['FS5 import wrong', 'zzz']])
+        self.assertFalse(res['ids'])
+        self.assertTrue(res['messages'])
+        # (the importer's own refusal, which names the field by its label;
+        # the technical name is only in the message's `field` key)
+        for message in res['messages']:
+            self.assertIn('Blood group', message['message'])
+            self.assertNotIn('x_fs_', message['message'])
+
+    def test_68b_the_check_costs_nothing_without_studio_keys(self):
+        """T68b — measured: creating contacts with no Studio key in the
+        request. Logged for the report; a bound only against a pathology."""
+        import time
+        Partner = self.env['res.partner']
+        Partner.create({'name': 'FS5 warm'})
+        vals = [{'name': 'FS5 t %s' % i, 'email': 'fs5t%s@x.y' % i}
+                for i in range(200)]
+        start = time.perf_counter()
+        for _i in range(2000):
+            Partner._fs_check_selections(vals)
+        per_call = (time.perf_counter() - start) / 2000 / 200 * 1e6
+        _logger.info("FS-H5 T68b: dropdown check %.3f microseconds per "
+                     "written record without Studio keys", per_call)
+        self.assertLess(per_call, 50)
+
+    def test_69_validate_all_counts_encrypted_values(self):
+        """T69 — `encrypted_values` is 0 with no encrypted field; after n
+        values on one it counts n, and `encrypted_fields` names the record
+        type, the field and its count."""
+        companions = self.env['ir.model.fields'].search_count(
+            [('fs_companion', '=', True)])
+        res = self.Studio.validate_all()
+        self.assertIn('encrypted_values', res)
+        self.assertIn('encrypted_fields', res)
+        if not companions:
+            self.assertEqual(res['encrypted_values'], 0)
+            self.assertEqual(res['encrypted_fields'], [])
+        base = res['encrypted_values']
+        self.encrypting_host()
+        name = self.make('Allergy notes', 'text', phi=True)
+        res = self.Studio.validate_all()
+        self.assertEqual(res['encrypted_values'], base)
+        self.assertIn({'model': 'res.partner', 'name': name, 'values': 0},
+                      res['encrypted_fields'])
+        self.env['res.partner'].create([
+            {'name': 'FS5 enc %s' % i, name: 'note %s' % i} for i in range(3)])
+        self.env['res.partner'].create({'name': 'FS5 enc empty'})
+        res = self.Studio.validate_all()
+        self.assertEqual(res['encrypted_values'], base + 3)
+        self.assertIn({'model': 'res.partner', 'name': name, 'values': 3},
+                      res['encrypted_fields'])
+
+    def test_74_a_user_does_not_offer_its_contacts_health_field(self):
+        """T74 — a user carries its contact's Studio fields as related
+        copies: `fields_get` says the copy of a health field is not
+        exportable; a plain Studio field still is."""
+        phi = self.make('Allergy flag', phi=True)
+        plain = self.make('Shoe size')
+        users = self.env['res.users'].fields_get([phi, plain], ['exportable'])
+        self.assertIs(users[phi]['exportable'], False)
+        self.assertIs(users[plain]['exportable'], True)
+        # the copy is a related field (what made the dialog list it)
+        self.assertTrue(self.env['res.users']._fields[phi].related)
+        # asked without a list of attributes, the same
+        self.assertIs(self.env['res.users'].fields_get([phi])[phi][
+            'exportable'], False)
+        # an attribute list without `exportable` is left as asked
+        self.assertNotIn('exportable', self.env['res.users'].fields_get(
+            [phi], ['string'])[phi])
+
+
+# =========================================================================
 #  T12 — the source gates
 # =========================================================================
 _ROOT = get_module_path('biz_form_studio')
@@ -1724,6 +1868,30 @@ class TestFsSourceGates(TransactionCase):
         self.assertNotIn("_('Health information cannot be exported: %s', "
                          "field.name", base)
 
+    def test_75_the_gates_cover_the_fs_h5_files(self):
+        """T75 — the gates above (12a–12f) run over every file FS-H5
+        touched; the core still imports no cipher and names no product; the
+        dropdown refusal names a label, the check is gated on the prefix,
+        and the values are read through the framework's own `get_values`."""
+        sources = {os.path.relpath(p, _ROOT) for p in _all_sources()}
+        for rel in ('models/base.py', 'models/fs_studio.py'):
+            self.assertIn(rel, sources)
+        base = _src('models', 'base.py')
+        self.assertIn('def _fs_check_selections', base)
+        self.assertIn('name.startswith(FS_PREFIX)', base)
+        self.assertIn('field.get_values(self.env)', base)
+        self.assertIn('def fields_get', base)
+        studio = _src('models', 'fs_studio.py')
+        self.assertIn("'encrypted_values'", studio)
+        self.assertIn("'encrypted_fields'", studio)
+        for path in _all_sources():
+            text = open(path, encoding='utf-8').read()
+            self.assertNotIn('phi_crypto', text, path)
+            self.assertNotIn('import cryptography', text, path)
+        po = _src('i18n', 'vi.po')
+        self.assertIn('msgid "\\"%(value)s\\" is not one of the options of '
+                      '%(field)s."', po)
+
 
 @tagged('post_install', '-at_install')
 class TestFsEditorAddress(HttpCase):
@@ -1772,3 +1940,49 @@ class TestFsEditorAddress(HttpCase):
              'args': ['res.partner', view.id], 'kwargs': {}})
         self.assertEqual(data['host']['title'], 'Partner sheet')
         self.start_tour(url, 'biz_form_studio_reload', login='fs3_tour_admin')
+
+
+@tagged('post_install', '-at_install')
+class TestFsUsersExportDialog(HttpCase):
+    """T74 (dialog half) — the export dialog's field list for Users, asked
+    over the dialog's own route, leaves out the contact's Studio health
+    field and still offers a plain Studio field."""
+
+    def setUp(self):
+        self.addCleanup(self._fs_rebuild_registry)
+        super().setUp()
+
+    def _fs_rebuild_registry(self):
+        self.registry._setup_models__(
+            self.cr, [m for m in TOUCHED if m in self.registry])
+
+    def test_74b_the_users_export_dialog(self):
+        ICP = self.env['ir.config_parameter'].sudo()
+        ICP.set_param('biz_form_studio.gate_group', 'base.group_system')
+        view = self.env.ref('base.view_partner_form')
+        self.env['fs.host'].search([('model', 'in', TOUCHED)]).write(
+            {'active': False})
+        self.env['fs.host'].create({
+            'name': 'Partner sheet', 'model': 'res.partner',
+            'base_view_xmlid': 'base.view_partner_form'})
+        Studio = self.env['fs.studio']
+        phi = Studio.create_field('res.partner', {
+            'type': 'char', 'label': 'Allergy flag', 'phi': True},
+            view_id=view.id)['name']
+        plain = Studio.create_field('res.partner', {
+            'type': 'char', 'label': 'Shoe size'}, view_id=view.id)['name']
+        self.env['res.users'].create({
+            'name': 'FS5 export admin', 'login': 'fs5_export_admin',
+            'password': 'fs5_export_admin',
+            'group_ids': [(6, 0, [self.env.ref('base.group_user').id,
+                                  self.env.ref('base.group_system').id])],
+        })
+        self.authenticate('fs5_export_admin', 'fs5_export_admin')
+        listed = {}
+        for model in ('res.users', 'res.partner'):
+            rows = self.make_jsonrpc_request('/web/export/get_fields', {
+                'model': model, 'domain': [], 'import_compat': False})
+            listed[model] = {r['id'] for r in rows}
+        for model in ('res.users', 'res.partner'):
+            self.assertNotIn(phi, listed[model], model)
+            self.assertIn(plain, listed[model], model)
