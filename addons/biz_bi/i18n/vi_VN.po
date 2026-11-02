@@ -972,3 +972,9 @@ msgid ""
 msgstr ""
 "Đang hiển thị %(shown)s dòng đầu trong tổng số %(total)s — hãy mở trong "
 "Khám phá hoặc xuất tệp để xem toàn bộ."
+
+#. module: biz_bi
+#. odoo-python
+#: code:addons/biz_bi/models/bi_query_engine.py:0
+msgid "This field is not available to analytics."
+msgstr "Trường này không được dùng cho phân tích."

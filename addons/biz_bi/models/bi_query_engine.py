@@ -156,6 +156,9 @@ class BiQueryEngine(models.AbstractModel):
             if dataset.root_node_id and dataset.field_ids:
                 dataset._recreate_silver_view()
 
+        # Refused before the cache is asked: a result cached before a field
+        # stopped being analytics material must not be served from it.
+        self._refuse_not_analytics_material(dataset, request)
         lang = self.env.user.lang or 'en_US'
         fingerprint = self._rls_fingerprint(dataset)
         Cache = self.env['bi.query.cache'].sudo()
@@ -272,6 +275,22 @@ class BiQueryEngine(models.AbstractModel):
     # Request resolution & authorization
     # ==================================================================
 
+    def _refuse_not_analytics_material(self, dataset, request):
+        """Every field a request names, checked against
+        `bi.field._not_analytics_material` (sensitive, or a column the product
+        marked non-exportable) — for every reader, administrators included."""
+        ids = []
+        for key in ('dimensions', 'measures', 'filters'):
+            for item in request.get(key) or []:
+                if isinstance(item, dict) and item.get('field_id'):
+                    try:
+                        ids.append(int(item['field_id']))
+                    except (TypeError, ValueError):
+                        continue
+        for field in self.env['bi.field'].browse(ids).exists():
+            if field.dataset_id == dataset and field._not_analytics_material():
+                raise UserError(_("This field is not available to analytics."))
+
     def _resolve_request(self, dataset, request, hard_cap=None):
         masked = self.env['bi.access.rule']._masked_field_ids(dataset)
         nulled = self.env['bi.access.rule']._nulled_field_ids(dataset)
@@ -288,6 +307,8 @@ class BiQueryEngine(models.AbstractModel):
             if field.id in masked:
                 raise UserError(_(
                     "You do not have access to the field used in %s.", usage))
+            if field._not_analytics_material():
+                raise UserError(_("This field is not available to analytics."))
             return field
 
         dimensions = []

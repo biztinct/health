@@ -176,6 +176,10 @@ class BiSource(models.Model):
         for fname, field_obj in model._fields.items():
             if not field_obj.store or fname not in columns:
                 continue
+            # A field the product marked non-exportable (health information,
+            # an encrypted value's hidden column) is not analytics material.
+            if not field_obj.exportable:
+                continue
             if field_obj.type in ('binary', 'reference', 'many2many',
                                   'one2many', 'json', 'properties',
                                   'properties_definition'):

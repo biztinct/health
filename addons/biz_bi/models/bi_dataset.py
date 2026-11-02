@@ -127,11 +127,22 @@ class BiDatasetNode(models.Model):
         for node in self:
             existing = {f.technical_name for f in node.field_ids
                         if f.origin == 'stored'}
+            # Fields the product marked non-exportable since the last scan
+            # stop being analytics material: never offered again, never
+            # deleted (saved charts keep their references), and refused by the
+            # engine (`bi.field._not_analytics_material`).
+            blocked = node._non_exportable_names()
+            node.field_ids.filtered(
+                lambda f: f.origin == 'stored'
+                and f.technical_name in blocked
+                and f.visibility != 'sensitive').write(
+                    {'visibility': 'sensitive'})
             values_list = []
             sequence = 100
             for col in node.source_id._fetch_schema():
                 sequence += 1
-                if col['name'] in SKIP_FIELDS or col['name'] in existing:
+                if col['name'] in SKIP_FIELDS or col['name'] in existing \
+                        or col['name'] in blocked:
                     continue
                 role, agg = _classify(col['name'], col['odoo_type'])
                 data_type = col['odoo_type']
@@ -165,6 +176,18 @@ class BiDatasetNode(models.Model):
             if values_list:
                 BiField.create(values_list)
         return True
+
+    def _non_exportable_names(self):
+        """Names of the fields of this node's record type that the product
+        marked non-exportable (empty for a non-ORM source)."""
+        self.ensure_one()
+        source = self.source_id
+        if source.type != 'odoo_model' or not source.model_name \
+                or source.model_name not in self.env:
+            return set()
+        return {name for name, field in
+                self.env[source.model_name]._fields.items()
+                if not field.exportable}
 
     def suggest_relationships(self):
         """Auto-discover join candidates from the ORM: every many2one on an

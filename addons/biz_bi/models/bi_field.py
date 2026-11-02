@@ -154,6 +154,20 @@ class BiField(models.Model):
             filled += 1
         return filled
 
+    def _not_analytics_material(self):
+        """Marked sensitive, or a stored column whose field the product
+        marked non-exportable (health information, an encrypted value's
+        hidden column). Such a field is never queried, whoever asks."""
+        self.ensure_one()
+        if self.visibility == 'sensitive':
+            return True
+        source = self.node_id.source_id
+        if self.origin != 'stored' or source.type != 'odoo_model' \
+                or not source.model_name or source.model_name not in self.env:
+            return False
+        field = self.env[source.model_name]._fields.get(self.technical_name)
+        return field is not None and not field.exportable
+
     def _selection_labels_for(self, lang=None):
         """Selection labels in the given (or user) language, with en_US then
         any-language fallback. Handles both the per-language format and
