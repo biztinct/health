@@ -220,7 +220,22 @@ class BiSource(models.Model):
         'jsonb': 'char',
     }
 
+    def _non_exportable_field_names(self):
+        """Names of the fields of this source's record type that the
+        product marked non-exportable (empty for a source that is not a
+        record type)."""
+        self.ensure_one()
+        if self.type != 'odoo_model' or not self.model_name \
+                or self.model_name not in self.env:
+            return set()
+        return {name for name, field in
+                self.env[self.model_name]._fields.items()
+                if not field.exportable}
+
     def _fetch_schema_pg(self, table=None):
+        # A clean view made before its column list was explicit may still
+        # carry a column the product marked non-exportable: never offer it.
+        blocked = self._non_exportable_field_names()
         self.env.cr.execute("""
             SELECT column_name, data_type
             FROM information_schema.columns
@@ -235,7 +250,7 @@ class BiSource(models.Model):
             'translated': False,
             'selection': False,
         } for row in self.env.cr.fetchall()
-            if not row[0].startswith('_bi_')]
+            if not row[0].startswith('_bi_') and row[0] not in blocked]
 
     def _pg_columns(self, table):
         self.env.cr.execute("""

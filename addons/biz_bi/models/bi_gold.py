@@ -75,9 +75,10 @@ class BiRefreshJob(models.Model):
                 SQL.identifier('%s_pk' % matview),
                 SQL.identifier(matview)))
             # secondary indexes: filterable + date fields + company column —
-            # minus stale columns the silver SELECT skipped (their f_<id>
-            # column does not exist in the matview)
-            stale = dataset._stale_stored_fields()
+            # minus the columns the silver SELECT skipped — stale ones and
+            # fields that are not analytics material (their f_<id> column
+            # does not exist in the matview)
+            stale = dataset._silver_left_out_fields()
             indexed_fields = dataset.field_ids.filtered(
                 lambda f: f.origin == 'stored' and f not in stale
                 and (f.is_filterable or f.role == 'date'))

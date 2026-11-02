@@ -70,21 +70,72 @@ class BiPipeline(models.Model):
         """The raw relation under the pipeline (never the clean view)."""
         return self.source_id._table_name(raw=True)
 
+    def _left_out_columns(self):
+        """Names the clean view never carries: every field of the source's
+        record type that the product marked non-exportable (health
+        information, an encrypted value's hidden column, a search index of
+        one) and every field a dataset on this source marked sensitive."""
+        self.ensure_one()
+        source = self.source_id
+        names = set(source._non_exportable_field_names())
+        # A physical column whose field is NOT stored is a leftover the
+        # framework never reads or writes (a value moved to an encrypted
+        # column keeps its old plain column on some databases): not data.
+        if source.type == 'odoo_model' and source.model_name in self.env:
+            names |= {name for name, field in
+                      self.env[source.model_name]._fields.items()
+                      if not field.store}
+        names |= set(self.env['bi.field'].sudo().search([
+            ('node_id.source_id', '=', source.id),
+            ('visibility', '=', 'sensitive'),
+        ]).mapped('technical_name'))
+        return names
+
+    def _clean_base_columns(self):
+        """The raw relation's columns, in table order, minus the ones left
+        out. A column with no field behind it is kept: it is not anything a
+        product marked."""
+        self.ensure_one()
+        left_out = self._left_out_columns()
+        self.env.cr.execute("""
+            SELECT column_name FROM information_schema.columns
+            WHERE table_name = %s AND table_schema = current_schema()
+            ORDER BY ordinal_position
+        """, (self._base_relation(),))
+        return [row[0] for row in self.env.cr.fetchall()
+                if row[0] not in left_out]
+
     def _base_schema(self):
-        """{column: odoo_type} of the raw relation."""
+        """{column: odoo_type} of the raw relation, minus the columns the
+        clean view never carries — a step can therefore not name them."""
+        left_out = self._left_out_columns()
         return {col['name']: col['odoo_type']
-                for col in self.source_id._fetch_schema(raw=True)}
+                for col in self.source_id._fetch_schema(raw=True)
+                if col['name'] not in left_out}
 
     def compile_sql(self):
-        """Transpile steps to `WITH s1 AS (...), ... SELECT * FROM s<n>`.
-        Returns (SQL, final_schema)."""
+        """Transpile steps to `WITH s1 AS (...), ... SELECT <cols> FROM s<n>`.
+        Returns (SQL, final_schema).
+
+        THE CLEAN VIEW NAMES ITS COLUMNS, it never selects `*` from the raw
+        relation: a `*` carried every column of the table into the view, the
+        product's hidden ones included. The first select lists the raw
+        columns minus `_left_out_columns`; the final select lists what the
+        last step produces, minus the same names."""
         self.ensure_one()
         steps = (self.steps_json or {}).get('steps') or []
         schema = self._base_schema()
         if not schema:
             raise UserError(_("Source %s has no columns to transform.",
                               self.source_id.name))
-        base = SQL("SELECT * FROM %s", SQL.identifier(self._base_relation()))
+        left_out = self._left_out_columns()
+        columns = self._clean_base_columns()
+        if not columns:
+            raise UserError(_("Source %s has no columns to transform.",
+                              self.source_id.name))
+        base = SQL("SELECT %s FROM %s",
+                   SQL(", ").join(SQL.identifier(c) for c in columns),
+                   SQL.identifier(self._base_relation()))
         if not steps:
             return base, schema
 
@@ -101,15 +152,33 @@ class BiPipeline(models.Model):
                     "rename, cast, filter, calc, dedupe.",
                     type=step_type, n=index))
             alias = 's%d' % index
+            before = schema
             select_sql, schema = handler(
                 step.get('params') or {}, previous, schema, index)
             ctes.append((SQL.identifier(alias), select_sql))
             previous = alias
+            # what this step's SELECT really returns: a filter keeps every
+            # column of the step before it (`SELECT *`), a calculation adds
+            # one to them, every other step lists the tracked schema
+            if step_type == 'filter':
+                pass
+            elif step_type == 'calc':
+                columns = columns + [c for c in schema if c not in before]
+            else:
+                columns = list(schema)
 
+        final = [c for c in columns if c not in left_out]
+        if not final:
+            raise UserError(_("Source %s has no columns to transform.",
+                              self.source_id.name))
         with_sql = SQL(", ").join(
             SQL("%s AS (%s)", alias, body) for alias, body in ctes)
-        return SQL("WITH %s SELECT * FROM %s",
-                   with_sql, SQL.identifier(previous)), schema
+        return SQL("WITH %s SELECT %s FROM %s",
+                   with_sql,
+                   SQL(", ").join(SQL.identifier(c) for c in final),
+                   SQL.identifier(previous)), {
+                       name: kind for name, kind in schema.items()
+                       if name not in left_out}
 
     # -- step handlers: (params, prev_alias, schema, index)
     #    -> (SELECT SQL, new_schema) --------------------------------------
@@ -266,6 +335,9 @@ class BiPipeline(models.Model):
                 'last_compiled_sql': self.env.cr.mogrify(compiled).decode(),
                 'last_error': False,
             })
+            # computed without dependencies, so a value read earlier in this
+            # request would still say "no pipeline" to the silver view below
+            pipeline.source_id.invalidate_recordset(['has_active_pipeline'])
             # dependent datasets: silver views read through the clean view
             nodes = self.env['bi.dataset.node'].search(
                 [('source_id', '=', pipeline.source_id.id)])

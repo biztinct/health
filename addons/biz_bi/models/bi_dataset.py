@@ -436,6 +436,21 @@ class BiDataset(models.Model):
                     stale |= field
         return stale
 
+    def _withheld_stored_fields(self):
+        """Stored fields that are not analytics material
+        (`bi.field._not_analytics_material`): never a column of the silver
+        view or of the gold copy."""
+        self.ensure_one()
+        return self.field_ids.filtered(
+            lambda f: f.origin == 'stored' and f._not_analytics_material())
+
+    def _silver_left_out_fields(self):
+        """Every stored field the silver SELECT leaves out: stale columns
+        and fields that are not analytics material. Gold builds its indexes
+        on what is left."""
+        self.ensure_one()
+        return self._stale_stored_fields() | self._withheld_stored_fields()
+
     def _compile_silver_sql(self):
         """The dataset's semantic SELECT: all stored fields as f_<id> columns
         plus _bi_row_key, with the full join tree. Calculated fields are NOT
@@ -460,8 +475,15 @@ class BiDataset(models.Model):
                 "table column: %s", self.name,
                 ", ".join("%s (field %d)" % (f.technical_name, f.id)
                           for f in stale))
+        # Only analytics material reaches the SQL layer: a field marked
+        # sensitive, or a column the product marked non-exportable, is not a
+        # column of the silver view (nor of the gold copy made from it). The
+        # engine refuses such a field anyway; a view that carried it would
+        # still hand it to anybody reading the view directly.
+        withheld = self._withheld_stored_fields()
         for field in self.field_ids:
-            if field.origin != 'stored' or field in stale:
+            if field.origin != 'stored' or field in stale \
+                    or field in withheld:
                 continue
             select_parts.append(SQL(
                 "%s.%s AS %s",
