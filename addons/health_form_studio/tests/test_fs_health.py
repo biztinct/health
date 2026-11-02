@@ -3,7 +3,8 @@
 Contact Workspace hosts (FS-H2, tests 23 for the Incident payload, 28–32), and
 the Booking host and the four lists (FS-H3, tests 45–48), and health
 information reach — exports, analytics, the nurse app, encryption on the
-Client record (FS-H4, tests 60–64).
+Client record (FS-H4, tests 60–64), and the nurse app's version and
+service-worker language (FS-H5, tests 72–73).
 
 As in the core tests, every test that makes a field rebuilds the touched
 models after the transaction is rolled back (the cleanup is registered before
@@ -1137,7 +1138,7 @@ class TestFsHealthReach(TransactionCase):
 
     # T64 --------------------------------------------------------------
     def test_64_the_nurse_app_version_and_strings(self):
-        """T64 — the app's five version pins read 1.21.0; the new block's
+        """T64 — the app's five version pins read 1.21.1; the new block's
         title has its Vietnamese in both of the app's dictionaries; nothing
         added names the product underneath."""
         pwa = get_module_path('health_pwa')
@@ -1147,7 +1148,7 @@ class TestFsHealthReach(TransactionCase):
         pins = re.findall(r"(?:pwa_asset_version\">|version: '|PWA_SW_VERSION = '"
                           r"|Service Worker v|CACHE_VERSION = ')(\d+\.\d+\.\d+)",
                           tpl)
-        self.assertEqual(pins, ['1.21.0'] * 5)
+        self.assertEqual(pins, ['1.21.1'] * 5)
         with open(os.path.join(pwa, 'static', 'src', 'js', 'app.js'),
                   encoding='utf-8') as fh:
             app = fh.read()
@@ -1257,3 +1258,120 @@ class TestFsNurseAppOverHttp(HttpCase):
         self.assertNotIn('4455', body)
         self.assertNotIn(allergy, body)
         self.assertNotIn(keycode, body)
+
+
+#: the files whose literal nurse-app version pins move with every bump
+PIN_FILES = (
+    ('health_pwa_daystrip', 'tests/test_daystrip.py'),
+    ('health_scribe', 'tests/test_scribe.py'),
+    ('health_pwa_ergo', 'tests/test_pwa_ergo.py'),
+    ('health_pwa_family', 'tests/test_pwa_family.py'),
+    ('health_form_studio', 'tests/test_fs_health.py'),
+)
+APP_VERSION = '1.21.1'
+
+
+@tagged('post_install', '-at_install')
+class TestFsNurseAppVersion(TransactionCase):
+
+    def test_73_the_nurse_app_version_pins(self):
+        """T73 (FS-H5) — the five pins read 1.21.1; the five co-resident
+        test files pin 1.21.1 and no older version of the 1.21 line; the
+        service-worker script is kept out of the translatable terms."""
+        pwa = get_module_path('health_pwa')
+        with open(os.path.join(pwa, 'views', 'pwa_templates.xml'),
+                  encoding='utf-8') as fh:
+            tpl = fh.read()
+        pins = re.findall(r"(?:pwa_asset_version\">|version: '|PWA_SW_VERSION = '"
+                          r"|Service Worker v|CACHE_VERSION = ')(\d+\.\d+\.\d+)",
+                          tpl)
+        self.assertEqual(pins, [APP_VERSION] * 5)
+        arch = etree.fromstring(tpl.encode())
+        worker = arch.xpath("//template[@id='service_worker_js']")
+        self.assertEqual(len(worker), 1)
+        self.assertEqual([c.get('t-translation') for c in worker[0]], ['off'])
+        self.assertFalse((worker[0].text or '').strip())
+        for module, rel in PIN_FILES:
+            path = os.path.join(get_module_path(module), rel)
+            with open(path, encoding='utf-8') as fh:
+                text = fh.read()
+            self.assertIn(APP_VERSION, text, path)
+            self.assertNotIn('1.21.' + '0', text, path)
+        with open(os.path.join(pwa, 'i18n', 'vi_VN.po'),
+                  encoding='utf-8') as fh:
+            self.assertNotIn('arch_db:health_pwa.service_worker_js', fh.read())
+
+
+@tagged('post_install', '-at_install')
+class TestFsWorkerLanguage(HttpCase):
+    """T72 (FS-H5) — a Vietnamese-language user and an English one are
+    served the same service-worker script, at the current version; a stale
+    Vietnamese copy planted in the view goes with the module's migration;
+    the app's own Vietnamese copy is untouched."""
+
+    def _users(self):
+        from odoo.tests import new_test_user
+        env = self.env
+        env['res.lang']._activate_lang('vi_VN')
+        groups = 'base.group_user,health_base.group_healthcare_nurse'
+        vi = new_test_user(env, login='fs5_sw_vi', groups=groups,
+                           password='fs5_sw_vi_pw', lang='vi_VN')
+        en = new_test_user(env, login='fs5_sw_en', groups=groups,
+                           password='fs5_sw_en_pw', lang='en_US')
+        return vi, en
+
+    def _worker(self, login, password):
+        self.authenticate(login, password)
+        res = self.url_open('/health_pwa/service-worker.js')
+        self.assertEqual(res.status_code, 200)
+        return res.content
+
+    def test_72_the_worker_script_is_the_same_in_every_language(self):
+        import importlib.util
+        vi, en = self._users()
+        view = self.env.ref('health_pwa.service_worker_js')
+        self.env.flush_all()
+        cr = self.env.cr
+        # plant what every database carried: a Vietnamese copy of an old
+        # version of the script
+        cr.execute("SELECT arch_db->>'en_US' FROM ir_ui_view WHERE id = %s",
+                   (view.id,))
+        source = cr.fetchone()[0]
+        self.assertIn("CACHE_VERSION = '%s'" % APP_VERSION, source)
+        stale = source.replace(APP_VERSION, '1.0.95')
+        cr.execute("UPDATE ir_ui_view SET arch_db = arch_db || "
+                   "jsonb_build_object('vi_VN', %s::text) WHERE id = %s",
+                   (stale, view.id))
+        self.env.invalidate_all()
+        self.env.registry.clear_cache('templates')
+        planted = self._worker('fs5_sw_vi', 'fs5_sw_vi_pw')
+        self.assertIn(b"CACHE_VERSION = '1.0.95'", planted)
+        # the migration removes it, for this view only
+        path = os.path.join(get_module_path('health_pwa'), 'migrations',
+                            '19.0.1.1.1', 'end-drop-stale-worker-copy.py')
+        spec = importlib.util.spec_from_file_location('fs5_pwa_end', path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        cr.execute("SELECT count(*) FROM ir_ui_view WHERE arch_db ? 'vi_VN'")
+        others = cr.fetchone()[0] - 1
+        module.migrate(cr, '19.0.1.1.0')
+        cr.execute("SELECT arch_db ? 'vi_VN' FROM ir_ui_view WHERE id = %s",
+                   (view.id,))
+        self.assertFalse(cr.fetchone()[0])
+        cr.execute("SELECT count(*) FROM ir_ui_view WHERE arch_db ? 'vi_VN'")
+        self.assertEqual(cr.fetchone()[0], others)
+        self.env.invalidate_all()
+        self.env.registry.clear_cache('templates')
+        body_vi = self._worker('fs5_sw_vi', 'fs5_sw_vi_pw')
+        body_en = self._worker('fs5_sw_en', 'fs5_sw_en_pw')
+        self.assertEqual(body_vi, body_en)
+        self.assertIn(b"CACHE_VERSION = '%s'" % APP_VERSION.encode(), body_vi)
+        self.assertNotIn(b'<t', body_vi)
+        # the shell itself is still Vietnamese for the Vietnamese user
+        self.authenticate('fs5_sw_vi', 'fs5_sw_vi_pw')
+        shell = self.url_open('/health_pwa')
+        self.assertEqual(shell.status_code, 200)
+        self.assertIn('Việt Úc Care v', shell.text)
+        self.assertIn('?v=%s' % APP_VERSION, shell.text)
+        self.authenticate('fs5_sw_en', 'fs5_sw_en_pw')
+        self.assertIn('Viet Uc Care v', self.url_open('/health_pwa').text)
