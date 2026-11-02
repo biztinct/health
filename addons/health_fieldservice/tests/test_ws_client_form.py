@@ -283,8 +283,9 @@ class TestWsClientForm(TransactionCase):
         rail = sheet.xpath(".//div[contains(@class,'ws-rail')]")[0]
         modes = [w.get('mode') for w in rail.xpath(".//widget[@name='ws_client_glance']")]
         self.assertEqual(modes, ['attention', 'glance'])
-        # quick actions come first in the rail, as tiles
-        self.assertEqual(rail.xpath('./widget')[0].get('name'), 'ws_client_shortcuts')
+        # the rail opens with its fold head, then the quick actions as tiles
+        self.assertEqual([w.get('name') for w in rail.xpath('./widget')[:2]],
+                         ['ws_rail_fold', 'ws_client_shortcuts'])
         self.assertTrue(sheet.xpath(".//div[contains(@class,'ws-next')]/widget[@name='ws_client_next']"))
         self.assertTrue(sheet.xpath(".//div[contains(@class,'ws-pack')]/widget[@name='ws_client_visits']"))
         # the fold tray names real cards and real fields
@@ -407,15 +408,19 @@ class TestWsClientForm(TransactionCase):
             if isinstance(el.tag, str):
                 classes |= set((el.get('class') or '').split())
         # every template in the repo that extends the chrome must hang on a class
-        # that still exists (a dangling xpath breaks EVERY backend page)
+        # that still exists (a dangling xpath breaks EVERY backend page); the
+        # only one allowed to extend it is Form Studio's top-bar button
         addons = os.path.dirname(get_module_path('health_fieldservice'))
-        hooked = 0
+        studio_xml = os.path.join(addons, 'health_form_studio', 'static', 'src', 'xml')
+        hooked = set()
         for path in glob.glob(os.path.join(addons, '*', 'static', 'src', '**', '*.xml'), recursive=True):
             with open(path, encoding='utf-8') as fh:
                 text = fh.read()
             if 'health_fieldservice.OpsClientProfileFormView' not in text or 't-inherit' not in text:
                 continue
-            hooked += 1
+            self.assertEqual(os.path.dirname(path), studio_xml,
+                             '%s extends the client top bar' % path)
+            hooked.add(os.path.relpath(path, addons))
             for cls in re.findall(r"hasclass\('([^']+)'\)", text):
                 with self.subTest(file=path, cls=cls):
                     self.assertIn(cls, classes, '%s hangs on .%s, which is gone' % (path, cls))
@@ -425,7 +430,11 @@ class TestWsClientForm(TransactionCase):
             self.assertFalse(os.path.exists(os.path.join(crm, 'static/src/xml/ops_client_profile_header.xml')))
             self.assertFalse(os.path.exists(os.path.join(crm, 'static/src/js/ops_client_profile_header.js')))
             self.assertNotIn('ops_client_profile_header', _read('health_crm', '__manifest__.py'))
-        self.assertEqual(hooked, 0, 'no module extends the chrome template any more')
+        if get_module_path('health_form_studio'):
+            self.assertEqual(hooked, {'health_form_studio/static/src/xml/ws_header_client.xml'},
+                             'only the Form Studio button extends the chrome template')
+        else:
+            self.assertEqual(hooked, set(), 'no module extends the chrome template')
         # the controller no longer fetches the profile on mount (the panels do, once)
         controller = _read('health_fieldservice', 'static/src/js/ops_client_profile_form.js')
         mounted = controller.split('onMounted(', 1)[1].split('});', 1)[0]

@@ -280,17 +280,38 @@ class TestWsContactForm(TransactionCase):
         js = _read('health_crm', 'static/src/js/crm_contact_form.js')
         mounted = js.split('onMounted(')[1].split('});')[0]
         self.assertNotIn('_loadHeaderData', mounted)
-        # nothing in any addon t-inherits the controller template any more
+        # Nothing in any addon t-inherits the controller template, except ONE
+        # sanctioned extender: Form Studio's top-bar button
+        # (health_form_studio/static/src/xml/), which must hang only on
+        # classes the bar still draws.
+        root_el = etree.fromstring(chrome.encode())
+        classes = set()
+        for el in root_el.iter():
+            if isinstance(el.tag, str):
+                classes |= set((el.get('class') or '').split())
         addons = os.path.dirname(get_module_path('health_crm'))
+        studio_xml = os.path.join(addons, 'health_form_studio', 'static', 'src', 'xml')
+        extenders = set()
         for root, _dirs, files in os.walk(addons):
             if '/static/src' not in root + '/':
                 continue
             for fn in files:
                 if not fn.endswith('.xml'):
                     continue
-                with open(os.path.join(root, fn), encoding='utf-8', errors='ignore') as fh:
+                path = os.path.join(root, fn)
+                with open(path, encoding='utf-8', errors='ignore') as fh:
                     text = fh.read()
-                self.assertNotIn('t-inherit="health_crm.CrmContactFormView"', text, fn)
+                if 't-inherit="health_crm.CrmContactFormView"' not in text:
+                    continue
+                self.assertEqual(os.path.dirname(path), studio_xml,
+                                 '%s extends the contact top bar' % path)
+                extenders.add(os.path.relpath(path, addons))
+                for cls in re.findall(r"hasclass\('([^']+)'\)", text):
+                    self.assertIn(cls, classes, '%s hangs on .%s, which is gone' % (path, cls))
+        if get_module_path('health_form_studio'):
+            self.assertEqual(extenders, {'health_form_studio/static/src/xml/ws_header_contact.xml'})
+        else:
+            self.assertEqual(extenders, set())
 
     # 6 ────────────────────────────────────────────────────────────────────
     def test_06_every_status_has_a_place_on_the_journey(self):
