@@ -4036,3 +4036,81 @@ a no-op.
     the browser QA, and an HttpCase should check every server-side half of
     the contract BEFORE its `start_tour` line, because the skip discards
     nothing that already ran. (FS-H3, test 44.)
+- **§5.285 — a non-stored computed field is computed AS THE READER, not as
+    the superuser.** `fields.py::_setup_attrs__` sets `compute_sudo` to the
+    field's `store` when nothing says otherwise, so a non-stored compute that
+    reads a column the reader may not read (an administrators-only token
+    column) refuses everybody else — "You do not have enough rights to access
+    the field …_enc" on a plain `read()`, while attribute access in a test
+    that already had the value in cache passed. Pass `compute_sudo=True`
+    with a callable compute whose own field carries the access rule, and
+    test with `invalidate_all()` then `read()` as the persona.
+    (FORM STUDIO FS-H4, found in browser QA, test 53/61.)
+- **§5.286 — the related copies `_inherits` makes do not carry
+    `exportable`.** A user record carries every contact field as a related
+    copy; related fields copy `string`, `help`, `groups` (the `_related_*`
+    attributes, `fields.py:774-778`) but not `exportable`. A field kept out
+    of exports on `res.partner` is exportable again as `res.users.<field>`.
+    Anything that decides "may this be exported" must follow `related_field`
+    to the source (Form Studio's `base.export_data` and export sweep do).
+    The export DIALOG of Users still lists such a field; the server refuses
+    it. (FS-H4.)
+- **§5.287 — biz_bi answers from its result cache BEFORE it resolves the
+    request.** `bi.query.engine.run` looks the request up in
+    `bi.query.cache` first and only calls `_resolve_request` on a miss, so a
+    refusal added inside `browse_field` is bypassed for any request somebody
+    ran before the rule existed. A new refusal must run ahead of the cache
+    lookup (`_refuse_not_analytics_material`). (FS-H4, test 55.)
+- **§5.288 — the nurse app's service worker is frozen at v1.0.95 for every
+    Vietnamese-language user, on every database.** The whole service-worker
+    script is one text node of `health_pwa.service_worker_js`, so it is one
+    translatable term; the `vi_VN` copy of `arch_db` still holds the v1.0.95
+    script (`CACHE_VERSION = '1.0.95'`) on carejiox, carejiox_template, hhh
+    and every clone. A Vietnamese user's service worker therefore never
+    changes when the version is bumped (its cache stays `health-pwa-v1.0.95`;
+    new JS still arrives because the shell's `?v=` URLs change). Version
+    bumps are only proven for English sessions. Fix (not done, `health_pwa`
+    translations are not sanctioned): drop the `vi_VN` term of that view, or
+    keep the script out of a translatable node. (FS-H4, QA 37.)
+- **§5.289 — the nurse app's VI/EN switch is the app's own; what the server
+    writes follows the ACCOUNT language of the session.** The switch changes
+    `healthPWAConfig.user_lang` for the app's dictionaries only; sync payloads
+    are rendered in the language the session was opened with
+    (`res.users.lang`, read at sign-in). Server-formatted text (Form Studio's
+    "More details" labels and values) is Vietnamese only for a Vietnamese
+    account. (FS-H4, QA 35.)
+- **§5.290 — a static file of the nurse app changed under the SAME version is
+    invisible even on a clone.** The shell loads `app.js?v=<version>`; the
+    browser's HTTP cache (not only the service worker) keeps the old file for
+    that URL. Unregistering the worker and clearing `caches` is not enough:
+    re-fetch each asset with `fetch(url, {cache: 'reload'})`, or bump the
+    version. (FS-H4.)
+- **§5.291 — the nurse app's client screen drew nothing for any client with
+    orders.** `patient-detail-view`'s template calls `displayDbValue` in its
+    Recent Orders list, and the component's `setup()` did not return it
+    ("TypeError: displayDbValue is not a function"), so the whole screen
+    failed to draw. Fixed in FS-H4 (one name added to the return). Read the
+    console before concluding a block "does not show". (FS-H4, QA 35.)
+- **§5.292 — the framework refuses to delete a column another custom field
+    depends on.** `ir.model.fields._prepare_update` raises "cannot be removed
+    because the field … depends on it" for every manual dependent, even when
+    both are in the same `unlink()`. Delete the dependent first (the
+    encrypted field, then its token column). (FS-H4.)
+- **§5.293 — `odoo-bin i18n export` without `-o` writes into the module's
+    own `i18n/` folder** ("Exports language files into the i18n folder of
+    each module"). On a shared addons tree that rewrites a live catalogue.
+    Always pass `-o /tmp/<file>.po`. (FS-H4.)
+- **§5.294 — five co-resident nurse-app suites are red for reasons outside
+    the app shell.** On a fresh clone of carejiox with the live tree
+    (2026-11-03): `health_pwa_family` 19 errors (`_grant_consent` → "Record
+    the notice version and content presented before granting consent."),
+    `health_scribe` 2 failures + 13 errors (upload 403 and "No active
+    audio_recording consent on file"), `health_telehealth` 1 error
+    (`health.consent.check.log` has no `consent_type_code`). All three follow
+    the consent/compliance work, not the shell; the shell-version tests in the
+    same suites pass once the pins match. (FS-H4.)
+- **§5.295 — the Owner role cannot export records.** The export action needs
+    `base.group_allow_export` (or an administrator); on carejiox only the
+    `__system__` and `demo` logins hold that group (checked 2026-11-03), so
+    in practice no clinic user can export at all today. Export QA needs that
+    group added to the persona on the clone. (FS-H4, QA 33.)
