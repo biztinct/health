@@ -3977,3 +3977,62 @@ a no-op.
     Form Studio's gate needs write access to the record type, so in practice
     the Client and Contact Studio is the Owner's (or an Admin who also holds
     a sales group). Pre-existing access gaps, reported, not fixed. (FS-H2.)
+- **§5.278 — a client action keeps its screen in the address only under keys
+    of its own, and only once it is mounted.** `props.updateActionState(patch)`
+    copies the patch into the controller's state, and the router writes that
+    state into the URL — except the four PATH_KEYS (`model`, `resId`,
+    `action`, `active_id`, `web/static/src/core/browser/router.js:10`), which
+    it keeps for itself and drops. A reload hands the state back as
+    `props.action.params`, numbers cast to numbers. The wrapper
+    (`action_service.js:1042-1044`) pushes the URL only when the controller
+    is mounted, so a call made in `onWillStart` updates the state silently and
+    the action manager writes it at mount — which is what you want. Form
+    Studio uses `fs_model` / `fs_view` / `fs_res`. (FORM STUDIO FS-H3.)
+- **§5.279 — Workspace cards are not written the same way on every screen.**
+    Client and Contact title a card with `div.vu-card__title > div + div`;
+    Booking uses `span`s, behind a pencil `span.vu-detail-card__edit-trigger`;
+    a reader that took "the last div" read every Booking title as empty. Read
+    the title node's text, minus the icon. And a card may hold its one field
+    with no `<group>` (Booking's Notes): it can be shown but never take a
+    field (`//div[@name]/group` matches nothing), so "open" means declared
+    AND has a group. (FS-H3.)
+- **§5.280 — a money column in a list shows no currency unless the list reads
+    the currency field.** `monetary_field.js` takes the currency from
+    `record.data[currency_field]`, and nothing on this build adds that field
+    to a list's fetch for you. Put `<field name="currency_id"
+    column_invisible="1"/>` next to any money column a module adds. (FS-H3.)
+- **§5.281 — `odoo-bin i18n export` reads a module's code from EVERY addons
+    path that has a copy of it.** With a private tree first on the path, the
+    export of `health_form_studio` still carried strings that exist only in
+    the live tree's older copy. Prune code entries whose text is not in the
+    new sources before committing a catalogue. (FS-H3.)
+- **§5.282 — two guard tests have been red on the live tree since FS-H2, and a
+    rehearsal only sees them if its private tree holds their modules.**
+    `health_crm/tests/test_ws_contact_form.py::test_05` and
+    `health_fieldservice/tests/test_ws_client_form.py::test_07` walk the
+    addons folder their module sits in and forbid ANY template extension of
+    the Contact / Client top bar — and Form Studio's button extends both
+    (`health_form_studio/static/src/xml/ws_header_*.xml`). FS-H2's clone tree
+    held neither module, so the walk read the live tree before the button
+    shipped. The useful half of `test_07` (every extension hangs on a class
+    the bar still has) passes once each file extends one bar; the "nobody
+    extends it" assertions need a sanctioned edit to allow the Studio
+    button. Lesson: put every module whose tests you run into the private
+    tree, or the walk reads code you are not testing. (FS-H3.)
+- **§5.283 — who can actually open a booking.** Reading bookings needs at
+    least the nurse group (`health_fieldservice` ACL): the healthcare base
+    group ("Staff") alone is refused, so a Staff-only test persona for a
+    booking must be a nurse. `get_views` itself checks read access on the
+    model (`ir_ui_view.py:3153`), so an outsider gets an AccessError, not a
+    list without the column. On a clone of the master: Owner and Operations
+    Manager open bookings and hold Studio there; the Admin role sees the
+    Bookings list but is refused on opening one ("Journal Entry
+    (account.move)", the §5.277 family); Nurse and Doctor open them without
+    Studio; CRM and Accountant have no Bookings entry in their menu. (FS-H3.)
+- **§5.284 — browser tours never run on this box.** `start_tour` /
+    `browser_js` skip the whole test with "websocket-client module is not
+    installed" (there is no Chrome either). A tour is written for machines
+    that have both; on this server the proof of anything a browser does is
+    the browser QA, and an HttpCase should check every server-side half of
+    the contract BEFORE its `start_tour` line, because the skip discards
+    nothing that already ran. (FS-H3, test 44.)
