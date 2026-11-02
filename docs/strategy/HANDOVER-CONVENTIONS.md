@@ -3929,3 +3929,51 @@ a no-op.
     claiming the tag keeps the shell, lights nothing and leaves the section
     where the person was (`health_form_studio.item_form_studio_editor`).
     (FS-H1.)
+- **§5.273 — on this build a translated dropdown option never reaches a form:
+    `web_debranding` REPLACES `ir.model.fields.get_field_selection` and never
+    reads the option rows.** `web_debranding/models/ir_translation.py:104`
+    rebuilds the labels from the Python field's fixed `(value, label)` list
+    and does not call `super()`, so `ir.model.fields.selection.name` in
+    `vi_VN` (stored correctly, `rec.with_context(lang='vi_VN').name` returns
+    it) is ignored by `fields_get` for every custom selection field — no cache
+    clear helps. This is the mechanism behind the older memory note "jsonb
+    writes silently don't translate". A CALLABLE selection is honoured by
+    every reader (core `_description_selection` and that override both call
+    it with the reader's env), so Form Studio builds its dropdowns with a
+    callable that reads the option rows in the reader's language
+    (`biz_form_studio/models/ir_model_fields.py::_fs_options`). Any other
+    runtime-created selection needs the same. (FORM STUDIO FS-H2, test 26.)
+- **§5.274 — translated field labels and option names are cached in the
+    'stable' ormcache, and a translation write does not clear it.**
+    `ir.model.fields._get_fields_cached` is `@ormcache(..., cache='stable')`;
+    `update_field_translations` writes SQL and invalidates the record cache
+    only. `registry.clear_cache()` clears the 'default' cache alone — call
+    `registry.clear_cache('stable')` too (FS-H1's `_write_vi` now does).
+    (FS-H2.)
+- **§5.275 — `-u <modules> --test-enable` runs the test suites of the
+    UPGRADED modules only; the other `--test-tags` are silently skipped.**
+    A run with `-u biz_form_studio,health_form_studio,health_theme` and tags
+    for eight modules reported "0 failed of 60 tests" — three suites. The
+    same tags with NO `-u` (a plain `--test-enable --stop-after-init` after
+    the upgrade) ran all eight (372 tests). Upgrade first, then test without
+    `-u`, and compare the per-module `odoo.tests.stats` lines with the tags
+    you asked for. Also measured: `-u health_theme` in this version does NOT
+    cascade to the modules that depend on it (4 modules loaded with data,
+    24 s on a clone of the master). (FS-H2.)
+- **§5.276 — an XML comment may not contain `--`, and Workspace class names
+    are BEM (`ws-fold-tray--empty`).** Writing a modifier class name inside an
+    `<!-- … -->` in a data file failed the whole module load ("Comment must
+    not contain '--'") — the registry did not load at all. Quote the idea,
+    not the class, in comments; parse every XML file with lxml before an
+    upgrade. (FS-H2.)
+- **§5.277 — "the Admin role" cannot open the Client or Contact screens on
+    the master today; Workspace-screen QA personas must be checked against
+    real access first.** Measured on a clone of `carejiox` (2026-11-03): a
+    user holding exactly the Admin role's groups is refused on the Clients
+    list ("Journal Entry (account.move)") and on every contact ("Lead
+    (crm.lead)"); the CRM role opens contacts but is refused on a client
+    ("res.partner.allowed_main_contact_ids"); a Doctor is bounced from the
+    Clients entry back to Clinical. Only the Owner role opens both screens.
+    Form Studio's gate needs write access to the record type, so in practice
+    the Client and Contact Studio is the Owner's (or an Admin who also holds
+    a sales group). Pre-existing access gaps, reported, not fixed. (FS-H2.)
