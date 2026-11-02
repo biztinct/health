@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 """Overlay tests: the Incident host (FS-H1, tests 13–16), the Client and
 Contact Workspace hosts (FS-H2, tests 23 for the Incident payload, 28–32), and
-the Booking host and the four lists (FS-H3, tests 45–48).
+the Booking host and the four lists (FS-H3, tests 45–48), and health
+information reach — exports, analytics, the nurse app, encryption on the
+Client record (FS-H4, tests 60–64).
 
 As in the core tests, every test that makes a field rebuilds the touched
 models after the transaction is rolled back (the cleanup is registered before
 the framework's own, so it runs last).
 """
+import json
 import logging
 import os
 import re
@@ -908,3 +911,349 @@ class TestFsBookingOverHttp(HttpCase):
                           if c.get('pack') and c['open']], BOOKING_CARDS)
         self.assertEqual({z['name'] for z in data['cards']
                           if z['kind'] == 'zone'}, {'button_box'})
+
+
+# =========================================================================
+#  FS-H4 — health information reach: exports, analytics, the nurse app,
+#  encryption on the Client record (tests 60–64)
+# =========================================================================
+def _pwa_controller():
+    from odoo.addons.health_pwa.controllers.sync import (
+        HealthPWASyncController)
+    return HealthPWASyncController()
+
+
+@tagged('post_install', '-at_install')
+class TestFsHealthReach(TransactionCase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.Studio = cls.env['fs.studio']
+        cls.client_view = cls.env.ref(CLIENT_VIEW)
+        cls.booking_view = cls.env.ref(BOOKING_VIEW)
+        cls.client_host = cls.env.ref('health_form_studio.fs_host_client')
+        cls.booking_host = cls.env.ref('health_form_studio.fs_host_booking')
+        province = cls.env['health.catchment.province'].search([], limit=1)
+        cls.province = province
+        cls.owner = cls.env['res.users'].create({
+            'name': 'FS4 owner', 'login': 'fs4_owner',
+            'catchment_province_id': province.id,
+            'group_ids': [(6, 0, _owner_groups(cls.env))],
+        })
+        nurse = cls.env.ref('health_access.role_nurse')
+        cls.nurse = cls.env['res.users'].create({
+            'name': 'FS4 nurse', 'login': 'fs4_nurse',
+            'catchment_province_id': province.id,
+            'group_ids': [(6, 0, (nurse.group_ids | cls.env.ref(
+                'base.group_user')).ids)],
+        })
+
+    def setUp(self):
+        self.addCleanup(self._fs_rebuild_registry)
+        super().setUp()
+
+    def _fs_rebuild_registry(self):
+        self.registry._setup_models__(self.cr, list(TOUCHED))
+
+    def client(self, name='FS4 client'):
+        return self.env['res.partner'].create({
+            'name': name, 'is_patient': True,
+            'catchment_province_id': self.province.id})
+
+    def columns(self, table):
+        self.env.cr.execute(
+            "SELECT column_name FROM information_schema.columns "
+            "WHERE table_name = %s", [table])
+        return {r[0] for r in self.env.cr.fetchall()}
+
+    # T60 --------------------------------------------------------------
+    def test_60_hosts_flags_and_words(self):
+        """T60 — the Client stores health information encrypted and is in
+        the nurse app; the Booking is in the nurse app, not encrypted; the
+        Contact and the Incident are neither. The encryption module is
+        installed. Every new sentence has its Vietnamese."""
+        from odoo.addons.health_form_studio.models.fs_host import APP_WORDS
+        flags = {self.env.ref('health_form_studio.%s' % x).name:
+                 (self.env.ref('health_form_studio.%s' % x).encrypt_ok,
+                  self.env.ref('health_form_studio.%s' % x).pwa_ok)
+                 for x in ('fs_host_client', 'fs_host_booking',
+                           'fs_host_contact', 'fs_host_incident')}
+        self.assertEqual(flags, {'Client': (True, True),
+                                 'Booking': (False, True),
+                                 'Contact': (False, False),
+                                 'Incident': (False, False)})
+        module = self.env['ir.module.module'].search(
+            [('name', '=', 'health_phi_encryption')])
+        self.assertEqual(module.state, 'installed')
+        cipher = self.env['ir.model.fields']._fs_cipher()
+        self.assertTrue(cipher)
+        token = cipher[0](self.env, 'probe')
+        self.assertTrue(token.startswith('enc$1$'))
+        self.assertEqual(cipher[1](self.env, token), 'probe')
+        self.assertEqual(set(APP_WORDS),
+                         set(self.env['fs.host']._app_words()))
+        for key in APP_WORDS:
+            text = self.client_host._app_text(key)
+            self.assertNotIn('mobile app', text)
+            self.assertNotIn('Odoo', text)
+        if self.env['res.lang']._lang_get('vi_VN'):
+            vi = self.client_host.with_context(lang='vi_VN')
+            for key in APP_WORDS:
+                self.assertNotEqual(vi._app_text(key),
+                                    self.client_host._app_text(key), key)
+
+    # T61 --------------------------------------------------------------
+    def test_61_end_to_end_on_the_client(self):
+        """T61 — as the Owner on the Client: "Allergy notes" (long text,
+        health information) is stored encrypted with the client's own token
+        format; "Preferred language" (dropdown, nurse app on) reaches the
+        app's client record with its Vietnamese option for a Vietnamese
+        reader; the health field never does; exports refuse it; analytics
+        discovery skips the field and its hidden column."""
+        as_owner = self.Studio.with_user(self.owner)
+        view = self.client_view
+        allergy = as_owner.create_field('res.partner', {
+            'type': 'text', 'label': 'Allergy notes', 'phi': True,
+            'vis': 'staff', 'pwa': True}, view_id=view.id)
+        self.assertTrue(allergy['encrypted'])
+        allergy = allergy['name']
+        lang = as_owner.create_field('res.partner', {
+            'type': 'selection', 'label': 'Preferred language', 'pwa': True,
+            'label_vi': 'Ngôn ngữ ưu tiên',
+            'options': [{'label': 'Vietnamese', 'label_vi': 'Tiếng Việt'},
+                        {'label': 'English', 'label_vi': 'Tiếng Anh'}]},
+            view_id=view.id)['name']
+        meta = self.env['fs.field.meta']
+        self.assertFalse(meta.search([('name', '=', allergy)]).pwa)
+        self.assertTrue(meta.search([('name', '=', lang)]).pwa)
+        cols = self.columns('res_partner')
+        self.assertNotIn(allergy, cols)
+        self.assertIn(allergy + '_enc', cols)
+        as_owner.publish('res.partner', view.id, [{
+            'id': 'pref1', 'title': 'Preferences', 'anchor': {'kind': 'pack_end'},
+            'fields': [{'name': lang, 'order': 0},
+                       {'name': allergy, 'order': 1}]}])
+        partner = self.client()
+        en_code = self.env['ir.model.fields'].search(
+            [('model', '=', 'res.partner'), ('name', '=', lang)]
+        ).selection_ids.filtered(lambda s: s.name == 'English').value
+        partner.with_user(self.owner).write(
+            {allergy: 'Penicillin\nLatex', lang: en_code})
+        self.env.flush_all()
+        self.env.cr.execute('SELECT "%s" FROM res_partner WHERE id = %%s'
+                            % (allergy + '_enc'), [partner.id])
+        raw = self.env.cr.fetchone()[0]
+        self.assertTrue(raw.startswith('enc$1$'))
+        self.assertNotIn('Penicillin', raw)
+        partner.invalidate_recordset()
+        self.assertEqual(partner[allergy], 'Penicillin\nLatex')
+        # Staff read it on screen (encrypted at rest only)
+        self.env.invalidate_all()
+        self.assertEqual(partner.with_user(self.nurse).read([allergy])[0][
+            allergy], 'Penicillin\nLatex')
+        # the nurse app's client record
+        ctl = _pwa_controller()
+        rec = ctl._patient_record(partner.sudo())
+        names = [c['name'] for c in rec['custom_fields']]
+        self.assertEqual(names, [lang])
+        self.assertEqual(rec['custom_fields'][0]['value'], 'English')
+        self.assertEqual(rec['custom_fields'][0]['label'], 'Preferred language')
+        if self.env['res.lang']._lang_get('vi_VN'):
+            vi = ctl._patient_record(partner.sudo().with_context(lang='vi_VN'))
+            self.assertEqual(vi['custom_fields'][0]['value'], 'Tiếng Anh')
+            self.assertEqual(vi['custom_fields'][0]['label'], 'Ngôn ngữ ưu tiên')
+        self.assertNotIn(allergy, json.dumps(rec, default=str))
+        # exports refuse it, by its label
+        from odoo.exceptions import UserError
+        with self.assertRaisesRegex(UserError, 'Allergy notes'):
+            partner.export_data(['name', allergy])
+        self.assertIs(self.env['res.partner'].fields_get(
+            [allergy], ['exportable'])[allergy]['exportable'], False)
+        # analytics discovery skips the field and its hidden column
+        if 'bi.source' in self.env:
+            source = self.env['bi.source'].create({
+                'name': 'FS4 partners', 'type': 'odoo_model',
+                'model_id': self.env['ir.model']._get_id('res.partner')})
+            found = {c['name'] for c in source._fetch_schema_odoo()}
+            self.assertNotIn(allergy, found)
+            self.assertNotIn(allergy + '_enc', found)
+            self.assertIn(lang, found)
+
+    # T62 --------------------------------------------------------------
+    def test_62_end_to_end_on_the_booking(self):
+        """T62 — on the Booking: "Key safe code" (text, health information)
+        is hidden only (stored plain, not exportable, never in the app);
+        "Parking instructions" (long text, Staff, nurse app on) reaches both
+        app payloads; an Admins-only field cannot be switched on."""
+        as_owner = self.Studio.with_user(self.owner)
+        view = self.booking_view
+        key = as_owner.create_field(BOOKING, {
+            'type': 'char', 'label': 'Key safe code', 'phi': True,
+            'pwa': True}, view_id=view.id)
+        self.assertFalse(key['encrypted'])
+        key = key['name']
+        parking = as_owner.create_field(BOOKING, {
+            'type': 'text', 'label': 'Parking instructions', 'vis': 'staff',
+            'pwa': True}, view_id=view.id)['name']
+        internal = as_owner.create_field(BOOKING, {
+            'type': 'char', 'label': 'Internal code', 'vis': 'admin',
+            'pwa': True}, view_id=view.id)['name']
+        meta = self.env['fs.field.meta']
+        self.assertFalse(meta.search([('name', '=', key)]).pwa)
+        self.assertTrue(meta.search([('name', '=', parking)]).pwa)
+        self.assertFalse(meta.search([('name', '=', internal)]).pwa)
+        info = as_owner.get_studio(BOOKING, view.id)['fields']
+        self.assertEqual(info[internal]['pwa_reason'],
+                         'Admins-only fields cannot show in the nurse app.')
+        self.assertEqual(info[key]['pwa_reason'],
+                         'Health information never reaches the nurse app.')
+        row = self.env['ir.model.fields'].search(
+            [('model', '=', BOOKING), ('name', '=', key)])
+        self.assertTrue(row.store)
+        self.assertTrue(row.fs_phi)
+        self.assertIn(key, self.columns('health_fieldservice_order'))
+        self.assertIs(self.env[BOOKING].fields_get([key], ['exportable'])[
+            key]['exportable'], False)
+        as_owner.publish(BOOKING, view.id, [{
+            'id': 'visit1', 'title': 'Visit access',
+            'anchor': {'kind': 'pack_end'},
+            'fields': [{'name': parking, 'order': 0},
+                       {'name': key, 'order': 1},
+                       {'name': internal, 'order': 2}]}])
+        order = self.env[BOOKING].search([], limit=1)
+        if not order:
+            self.skipTest('no booking on this database')
+        order.write({parking: 'Use the side gate.\nBlue door.',
+                     key: '4455', internal: 'X1'})
+        rec = _pwa_controller()._fso_record(order.sudo())
+        self.assertEqual([c['name'] for c in rec['custom_fields']], [parking])
+        self.assertEqual(rec['custom_fields'][0]['value'],
+                         'Use the side gate.\nBlue door.')
+        self.assertEqual(rec['custom_fields'][0]['type'], 'text')
+        detail = self.env['fs.studio'].app_fields(BOOKING, order.sudo())
+        self.assertEqual([c['name'] for c in detail[order.id]], [parking])
+        self.assertNotIn('4455', json.dumps(rec, default=str))
+
+    # T64 --------------------------------------------------------------
+    def test_64_the_nurse_app_version_and_strings(self):
+        """T64 — the app's five version pins read 1.21.0; the new block's
+        title has its Vietnamese in both of the app's dictionaries; nothing
+        added names the product underneath."""
+        pwa = get_module_path('health_pwa')
+        with open(os.path.join(pwa, 'views', 'pwa_templates.xml'),
+                  encoding='utf-8') as fh:
+            tpl = fh.read()
+        pins = re.findall(r"(?:pwa_asset_version\">|version: '|PWA_SW_VERSION = '"
+                          r"|Service Worker v|CACHE_VERSION = ')(\d+\.\d+\.\d+)",
+                          tpl)
+        self.assertEqual(pins, ['1.21.0'] * 5)
+        with open(os.path.join(pwa, 'static', 'src', 'js', 'app.js'),
+                  encoding='utf-8') as fh:
+            app = fh.read()
+        with open(os.path.join(pwa, 'static', 'src', 'js', 'utils',
+                               'pwa-utils.js'), encoding='utf-8') as fh:
+            utils = fh.read()
+        self.assertIn("'More details': 'Chi tiết thêm'", app)
+        self.assertIn("'More details': 'Chi tiết thêm'", utils)
+        blocks = re.findall(r'<!-- More details:.*?</div>\s*</div>', app, re.S)
+        self.assertEqual(len(blocks), 2)
+        for block in blocks:
+            self.assertNotIn('Odoo', block)
+            self.assertIn('custom_fields', block)
+
+
+@tagged('post_install', '-at_install')
+class TestFsNurseAppOverHttp(HttpCase):
+    """T63 — as a nurse, over the app's real routes: the client in the
+    nurse's sync and the booking detail carry the allowed Studio field only;
+    health information never."""
+
+    def setUp(self):
+        self.addCleanup(self._fs_rebuild_registry)
+        super().setUp()
+
+    def _fs_rebuild_registry(self):
+        self.registry._setup_models__(self.cr, list(TOUCHED))
+
+    def test_63_the_nurse_app_over_http(self):
+        import uuid
+        from datetime import timedelta
+        from odoo import fields as ofields
+        from odoo.tests import new_test_user
+        env = self.env
+        Province = env['health.catchment.province']
+        province = Province.create({'name': 'FS4 X %s' % uuid.uuid4().hex[:5],
+                                    'code': 'F4%s' % uuid.uuid4().hex[:3]})
+        facility = env['health.facility'].create({
+            'name': 'FS4 Facility', 'code': 'F4F%s' % uuid.uuid4().hex[:3],
+            'street': '1 X St', 'city': 'X City',
+            'catchment_province_id': province.id})
+        patient = env['res.partner'].create({
+            'name': 'FS4 Patient', 'is_patient': True,
+            'catchment_province_id': province.id,
+            'primary_facility_id': facility.id,
+            'mobile': '09%08d' % (uuid.uuid4().int % 10 ** 8)})
+        nurse = new_test_user(
+            env, login='fs4_nurse_%s' % uuid.uuid4().hex[:6],
+            groups='base.group_user,health_base.group_healthcare_nurse',
+            password='fs4nursepw')
+        nurse.write({'catchment_province_id': False})
+        staff = env['hr.employee'].create({'name': 'FS4 Nurse Emp',
+                                           'user_id': nurse.id})
+        order = env[BOOKING].create({
+            'patient_id': patient.id, 'facility_id': facility.id,
+            'scheduled_datetime': ofields.Datetime.now() + timedelta(days=1),
+            'scheduled_duration': 120, 'service_type': 'home_visit'})
+        order.action_assign_staff_to_fso(staff.id, assignment_role='lead')
+        # Studio fields (as the superuser: the gate is not what is tested)
+        Studio = env['fs.studio']
+        client_view = env.ref(CLIENT_VIEW)
+        booking_view = env.ref(BOOKING_VIEW)
+        lang = Studio.create_field('res.partner', {
+            'type': 'char', 'label': 'Preferred language', 'pwa': True},
+            view_id=client_view.id)['name']
+        allergy = Studio.create_field('res.partner', {
+            'type': 'text', 'label': 'Allergy notes', 'phi': True},
+            view_id=client_view.id)['name']
+        parking = Studio.create_field(BOOKING, {
+            'type': 'text', 'label': 'Parking instructions', 'vis': 'staff',
+            'pwa': True}, view_id=booking_view.id)['name']
+        keycode = Studio.create_field(BOOKING, {
+            'type': 'char', 'label': 'Key safe code', 'phi': True},
+            view_id=booking_view.id)['name']
+        Studio.publish('res.partner', client_view.id, [{
+            'id': 'pref1', 'title': 'Preferences', 'anchor': {'kind': 'pack_end'},
+            'fields': [{'name': lang, 'order': 0},
+                       {'name': allergy, 'order': 1}]}])
+        Studio.publish(BOOKING, booking_view.id, [{
+            'id': 'acc1', 'title': 'Access', 'anchor': {'kind': 'pack_end'},
+            'fields': [{'name': parking, 'order': 0},
+                       {'name': keycode, 'order': 1}]}])
+        patient.write({lang: 'Vietnamese', allergy: 'Penicillin'})
+        order.write({parking: 'Side gate', keycode: '4455'})
+        self.authenticate(nurse.login, 'fs4nursepw')
+        resp = self.url_open('/health_pwa/sync/changes?force_full=true').json()
+        resp = resp.get('data', resp)
+        patients = {r['id']: r for r in resp['changes']['patients']['records']
+                    if not r.get('is_deleted')}
+        self.assertIn(patient.id, patients)
+        custom = patients[patient.id]['custom_fields']
+        self.assertEqual([(c['name'], c['value']) for c in custom],
+                         [(lang, 'Vietnamese')])
+        orders = {r['id']: r for r in
+                  resp['changes']['field_service_orders']['records']
+                  if not r.get('is_deleted')}
+        self.assertIn(order.id, orders)
+        self.assertEqual([c['name'] for c in orders[order.id]['custom_fields']],
+                         [parking])
+        detail = self.url_open('/health_pwa/api/fso/%s' % order.id).json()
+        data = detail.get('data', detail)
+        self.assertEqual([(c['name'], c['value'])
+                          for c in data['custom_fields']],
+                         [(parking, 'Side gate')])
+        body = json.dumps(resp) + json.dumps(detail)
+        self.assertNotIn('Penicillin', body)
+        self.assertNotIn('4455', body)
+        self.assertNotIn(allergy, body)
+        self.assertNotIn(keycode, body)

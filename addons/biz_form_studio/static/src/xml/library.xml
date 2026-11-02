@@ -69,6 +69,7 @@
                       <td>
                         <span t-if="rw.phi" class="bzk-badge ok"><t t-out="ic('shield', 11)"/> Yes</span>
                         <span t-else="" class="fs-muted">No</span>
+                        <span t-if="rw.encrypted" class="bzk-badge ok fs-lib-enc"><t t-out="ic('lock', 11)"/> Stored encrypted</span>
                       </td>
                       <td><span t-att-class="rw.list_ok ? '' : 'fs-muted'"><t t-if="rw.list_ok">Yes</t><t t-else="">No</t></span></td>
                       <td><span t-att-class="rw.pwa ? '' : 'fs-muted'"><t t-if="rw.pwa">Yes</t><t t-else="">No</t></span></td>

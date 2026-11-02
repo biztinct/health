@@ -10,8 +10,29 @@ from lxml import etree
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
+from odoo.tools.translate import LazyTranslate
 
 from .fs_common import ANCHOR_NAME_RE
+
+_lt = LazyTranslate(__name__)
+
+#: The sentences that name the mobile app, by key. A product whose app has a
+#: name of its own overrides `_app_words` with its wording (and its own
+#: translations); the keys stay the same.
+APP_WORDS = {
+    'pwa_phi': _lt("Health information never reaches the mobile app."),
+    'pwa_admin': _lt("Admins-only fields cannot show in the mobile app."),
+    'pwa_host': _lt("This screen is not in the mobile app."),
+    'pwa_help': _lt("Shown, read-only, in the mobile app once the field is "
+                    "on the screen. Appears in the app for records synced "
+                    "after you publish."),
+    'phi_hidden': _lt("Hidden from lists, exports, reports and the mobile "
+                      "app. Not encrypted on this screen."),
+    'phi_encrypted': _lt("Stored encrypted. Hidden from lists, exports, "
+                         "reports and the mobile app."),
+    'pwa_added': _lt("Now in the mobile app: %s"),
+    'pwa_removed': _lt("Removed from the mobile app: %s"),
+}
 
 
 class FsHost(models.Model):
@@ -57,6 +78,14 @@ class FsHost(models.Model):
         help="What the list is called in Studio (\"the Bookings list\"). "
              "Empty: the list's own title, else the screen's name.")
     money_ok = fields.Boolean(string='Can hold money', compute='_compute_money_ok')
+    pwa_ok = fields.Boolean(
+        string='In the mobile app', default=False,
+        help="The mobile app shows this screen's records, so a field may be "
+             "switched on to show there, read-only.")
+    encrypt_ok = fields.Boolean(
+        string='Stores health information encrypted', default=False,
+        help="Text fields marked health information on this screen are "
+             "stored encrypted. Needs a cipher from the product.")
     active = fields.Boolean(default=True)
 
     @api.constrains('list_view_xmlid', 'list_anchor')
@@ -219,6 +248,26 @@ class FsHost(models.Model):
         language. Core has no catalogue of the product's words; the product's
         overlay overrides this."""
         return text
+
+    @api.model
+    def _app_words(self):
+        """Hook: the sentences that name the mobile app (see APP_WORDS)."""
+        return APP_WORDS
+
+    @api.model
+    def _app_text(self, key):
+        return self.env._(self._app_words()[key])
+
+    def _pwa_reason(self, phi, vis):
+        """Why a field with these settings cannot show in the mobile app on
+        this screen ('' when it can)."""
+        if not any(host.pwa_ok for host in self):
+            return self._app_text('pwa_host')
+        if phi:
+            return self._app_text('pwa_phi')
+        if vis == 'admin':
+            return self._app_text('pwa_admin')
+        return ''
 
     @api.model
     def _for(self, model, view_id):

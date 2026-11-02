@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Core tests: FS-H1 (tests 1–12), FS-H2 (17–27), FS-H3 (33–44).
+"""Core tests: FS-H1 (tests 1–12), FS-H2 (17–27), FS-H3 (33–44), FS-H4
+(49–59).
 
 The core is tested on a NEUTRAL model — `res.partner` with a throwaway host on
 `base.view_partner_form` — so nothing here depends on a product's screens. The
@@ -13,14 +14,19 @@ the rebuild BEFORE the framework's own cleanups, so it runs LAST — after the
 savepoint has been rolled back — and rebuilds the touched models from what the
 database really holds.
 """
+import base64
+import datetime
+import json
 import os
 import re
 
 from lxml import etree
 
+from odoo import Command
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.modules.module import get_module_path
 from odoo.tests import HttpCase, TransactionCase, tagged
+from odoo.tools import format_date, format_datetime
 
 TOUCHED = ('res.partner', 'account.move')
 
@@ -36,6 +42,11 @@ class _FsCase(TransactionCase):
         ICP.set_param('biz_form_studio.group_admin', 'base.group_system')
         cls.Studio = cls.env['fs.studio']
         cls.view = cls.env.ref('base.view_partner_form')
+        # A product's own screens on the same record types decide things per
+        # record type (health information stored encrypted, the mobile app):
+        # the core is tested on its neutral host alone.
+        cls.env['fs.host'].search([('model', 'in', TOUCHED)]).write(
+            {'active': False})
         cls.host = cls.env['fs.host'].create({
             'model': 'res.partner',
             'base_view_xmlid': 'base.view_partner_form',
@@ -1100,6 +1111,447 @@ class TestFsListColumns(_FsListCase):
 
 
 # =========================================================================
+#  FS-H4 — health information: exports, the mobile app, encryption (49–58)
+# =========================================================================
+TEST_MARKER = '*** cannot read this value ***'
+
+
+def _test_cipher():
+    """A reversible stand-in for a product's cipher (the core ships none):
+    `tst$` + base64. Its decrypt never raises and answers the marker for a
+    token it cannot read, like a real one."""
+    def encrypt(env, text):
+        if not text or not isinstance(text, str) or text.startswith('tst$'):
+            return text
+        return 'tst$' + base64.b64encode(text.encode()).decode()
+
+    def decrypt(env, token):
+        if not isinstance(token, str) or not token.startswith('tst$'):
+            return token
+        try:
+            return base64.b64decode(token[4:], validate=True).decode()
+        except Exception:  # noqa: BLE001 — the marker, never a crash
+            return TEST_MARKER
+    return encrypt, decrypt, TEST_MARKER
+
+
+class _FsPhiCase(_FsListCase):
+    """The neutral host, with its list, and a test cipher."""
+
+    def setUp(self):
+        super().setUp()
+        cipher = _test_cipher()
+        self.cipher = cipher
+        self.patch(self.registry['ir.model.fields'], '_fs_cipher',
+                   lambda model: cipher)
+
+    def row(self, name, model='res.partner'):
+        return self.env['ir.model.fields'].search(
+            [('model', '=', model), ('name', '=', name)])
+
+    def columns_of(self, table='res_partner'):
+        self.env.cr.execute(
+            "SELECT column_name FROM information_schema.columns "
+            "WHERE table_name = %s", [table])
+        return {r[0] for r in self.env.cr.fetchall()}
+
+    def raw(self, partner, column):
+        self.env.flush_all()
+        self.env.cr.execute('SELECT "%s" FROM res_partner WHERE id = %%s'
+                            % column, [partner.id])
+        return self.env.cr.fetchone()[0]
+
+    def layout_bodies(self):
+        layout = self._layout()
+        return ' '.join(layout.message_ids.mapped('body'))
+
+    def encrypting_host(self):
+        self.host.write({'encrypt_ok': True, 'pwa_ok': True})
+
+
+@tagged('post_install', '-at_install')
+class TestFsHealthInformation(_FsPhiCase):
+
+    def test_49_health_information_is_not_export_material(self):
+        """T49 — the registry flag mirrors the setting on create and on
+        update; `fields_get` says `exportable: False`; switching it off
+        restores `exportable: True`."""
+        Partner = self.env['res.partner']
+        name = self.make('Allergy flag', phi=True)
+        self.assertTrue(self.row(name).fs_phi)
+        self.assertTrue(self.row(name).store)  # hidden only on this screen
+        self.assertIs(Partner.fields_get([name], ['exportable'])[name][
+            'exportable'], False)
+        self.Studio.update_field('res.partner', name, {'phi': False})
+        self.assertFalse(self.row(name).fs_phi)
+        self.assertIs(Partner.fields_get([name], ['exportable'])[name][
+            'exportable'], True)
+        plain = self.make('Shoe size')
+        self.assertFalse(self.row(plain).fs_phi)
+        self.Studio.update_field('res.partner', plain, {'phi': True})
+        self.assertTrue(self.row(plain).fs_phi)
+        self.assertIs(Partner.fields_get([plain], ['exportable'])[plain][
+            'exportable'], False)
+
+    def test_50_the_server_refuses_to_export_health_information(self):
+        """T50 — `export_data` as an administrator with the field's own
+        path, and with a path reaching it from another record type, is
+        refused naming the label; a Studio field that is not health
+        information exports normally."""
+        name = self.make('Allergy flag', phi=True)
+        plain = self.make('Shoe size')
+        partner = self.env['res.partner'].create(
+            {'name': 'FS4 export', name: 'peanuts', plain: '42'})
+        with self.assertRaises(UserError) as caught:
+            partner.export_data(['name', name])
+        self.assertIn('Health information cannot be exported: Allergy flag',
+                      str(caught.exception))
+        self.assertNotIn('x_fs_', str(caught.exception))
+        user = self.env['res.users'].create({
+            'name': 'FS4 export user', 'login': 'fs4_export_user',
+            'partner_id': partner.id})
+        with self.assertRaisesRegex(UserError, 'Allergy flag'):
+            user.export_data(['login', 'partner_id/%s' % name])
+        # a user carries its contact's fields as related copies, which do
+        # not inherit "not exportable": the server judges the source field
+        with self.assertRaisesRegex(UserError, 'Allergy flag'):
+            user.export_data(['login', name])
+        data = partner.export_data(['name', plain])
+        self.assertEqual(data['datas'], [[partner.name, '42']])
+
+    def test_51_saved_export_lists_lose_the_field(self):
+        """T51 — switching health information on removes it from saved
+        export lists on its own record type and on another; other lines and
+        lists stay; the layout's chatter names the lists."""
+        name = self.make('Allergy flag')
+        other = self.make('Shoe size')
+        Exports = self.env['ir.exports']
+        own = Exports.create({
+            'name': 'FS4 partners', 'resource': 'res.partner',
+            'export_fields': [Command.create({'name': 'name'}),
+                              Command.create({'name': name}),
+                              Command.create({'name': other})]})
+        users = Exports.create({
+            'name': 'FS4 users', 'resource': 'res.users',
+            'export_fields': [Command.create({'name': 'login'}),
+                              Command.create({'name': 'partner_id/%s' % name}),
+                              Command.create({'name': name})]})
+        unrelated = Exports.create({
+            'name': 'FS4 unrelated', 'resource': 'res.partner',
+            'export_fields': [Command.create({'name': other})]})
+        self.Studio.update_field('res.partner', name, {'phi': True})
+        self.assertEqual(sorted(own.export_fields.mapped('name')),
+                         sorted(['name', other]))
+        self.assertEqual(users.export_fields.mapped('name'), ['login'])
+        self.assertEqual(unrelated.export_fields.mapped('name'), [other])
+        bodies = self.layout_bodies()
+        self.assertIn('Removed from 2 saved export lists', bodies)
+        self.assertIn('FS4 partners', bodies)
+        self.assertIn('FS4 users', bodies)
+        # deleting it is no longer blocked by those lists
+        refs = self.Studio.field_references('res.partner', name)
+        self.assertFalse([r for r in refs if r['kind'] == 'export'])
+
+    def test_52_the_mobile_app_rules_and_values(self):
+        """T52 — health information, admins-only fields and a screen the app
+        does not show keep the switch off, with the reason; a staff field on
+        a screen the app shows may be on. `app_fields` writes each value out
+        for display and applies the rules again when asked."""
+        Meta = self.env['fs.field.meta']
+        Host = self.host
+        # the screen is not in the app
+        off = self.make('Shoe size', pwa=True)
+        self.assertFalse(Meta.search([('name', '=', off)]).pwa)
+        self.assertEqual(self.Studio.get_studio('res.partner', self.view.id)[
+            'fields'][off]['pwa_reason'], Host._app_text('pwa_host'))
+        Host.pwa_ok = True
+        phi = self.make('Allergy flag', phi=True, pwa=True)
+        admin = self.make('Internal code', vis='admin', pwa=True)
+        staff = self.make('Gate code', vis='staff', pwa=True)
+        info = self.Studio.get_studio('res.partner', self.view.id)['fields']
+        self.assertFalse(Meta.search([('name', '=', phi)]).pwa)
+        self.assertEqual(info[phi]['pwa_reason'], Host._app_text('pwa_phi'))
+        self.assertFalse(Meta.search([('name', '=', admin)]).pwa)
+        self.assertEqual(info[admin]['pwa_reason'], Host._app_text('pwa_admin'))
+        self.assertTrue(Meta.search([('name', '=', staff)]).pwa)
+        self.assertEqual(info[staff]['pwa_reason'], '')
+        # update_field forces it off too; a direct write is refused
+        self.Studio.update_field('res.partner', admin, {'pwa': True})
+        self.assertFalse(Meta.search([('name', '=', admin)]).pwa)
+        with self.assertRaises(ValidationError):
+            Meta.search([('name', '=', admin)]).write({'pwa': True})
+
+        # values, written out for display
+        slot = self.make('Preferred slot', 'selection', pwa=True,
+                         options=['Morning', 'Evening'])
+        country = self.make('Home country', 'many2one', comodel='res.country',
+                            pwa=True)
+        day = self.make('First visit', 'date', pwa=True)
+        when = self.make('Last call', 'datetime', pwa=True)
+        lift = self.make('Lift access', 'boolean', pwa=True)
+        floors = self.make('Floors', 'integer', pwa=True)
+        doc = self.make('Floor plan', 'binary', pwa=True)
+        unplaced = self.make('Not on the screen', pwa=True)
+        names = [staff, slot, country, day, when, lift, floors, doc]
+        self.publish([self.section('s1', names)])
+        values = {
+            staff: '4321', slot: self.option(slot, 'Morning'),
+            country: self.env.ref('base.vn').id,
+            day: datetime.date(2026, 11, 3),
+            when: datetime.datetime(2026, 11, 3, 2, 30),
+            lift: True, floors: 1200, doc: base64.b64encode(b'plan'),
+            unplaced: 'x'}
+        partner = self.env['res.partner'].create(dict(values, name='FS4 app'))
+        reader = self.env['res.partner'].with_context(
+            tz='Asia/Ho_Chi_Minh', lang='en_US').browse(partner.id)
+        out = self.Studio.with_context(tz='Asia/Ho_Chi_Minh').app_fields(
+            'res.partner', reader)[partner.id]
+        got = {e['name']: e for e in out}
+        self.assertEqual([e['name'] for e in out],
+                         [staff, slot, country, day, when, lift, floors])
+        self.assertEqual(got[staff]['value'], '4321')
+        self.assertEqual(got[staff]['label'], 'Gate code')
+        self.assertEqual(got[slot]['value'], 'Morning')
+        self.assertEqual(got[country]['value'],
+                         self.env.ref('base.vn').display_name)
+        self.assertEqual(got[day]['value'],
+                         format_date(reader.env, values[day]))
+        self.assertEqual(got[when]['value'], format_datetime(
+            reader.env, values[when], tz='Asia/Ho_Chi_Minh'))
+        self.assertIn('9:30', got[when]['value'])
+        self.assertEqual(got[lift]['value'], 'Yes')
+        self.assertEqual(got[floors]['value'], '1,200')
+        self.assertNotIn(doc, got)
+        self.assertNotIn(unplaced, got)
+        if self.host.money_ok:
+            money = self.make('Deposit', 'monetary', pwa=True)
+            self.publish([self.section('s1', names + [money])])
+            partner[money] = 250.0
+            entry = {e['name']: e for e in self.Studio.app_fields(
+                'res.partner', reader)[partner.id]}[money]
+            self.assertIn('250', entry['value'])
+        # the rules again at call time: a field made admins-only behind the
+        # switch's back is dropped
+        self.env.cr.execute("UPDATE fs_field_meta SET vis = 'admin' "
+                            "WHERE name = %s", [staff])
+        self.env.invalidate_all()
+        out = self.Studio.app_fields('res.partner', reader)[partner.id]
+        self.assertNotIn(staff, [e['name'] for e in out])
+        # a screen the app no longer shows sends nothing
+        Host.pwa_ok = False
+        self.assertEqual(self.Studio.app_fields('res.partner', reader),
+                         {partner.id: []})
+        # never callable from outside the server
+        self.assertTrue(getattr(type(self.Studio).app_fields,
+                                '_api_private', False))
+
+    def option(self, name, label):
+        field = self.row(name)
+        return field.selection_ids.filtered(lambda s: s.name == label).value
+
+    def test_53_the_encrypted_shape(self):
+        """T53 — on a screen that stores health information encrypted, a
+        text field made as health information has no column: a hidden text
+        column holds a token; reads (any language) return the value; a
+        dropdown keeps its code and label; a damaged token reads as the
+        marker."""
+        self.encrypting_host()
+        name = self.make('Allergy notes', 'char', phi=True)
+        exposed, companion = self.row(name), self.row(name + '_enc')
+        self.assertFalse(exposed.store)
+        self.assertTrue(exposed.fs_phi)
+        self.assertFalse(exposed.fs_companion)
+        self.assertEqual(companion.ttype, 'text')
+        self.assertTrue(companion.store)
+        self.assertTrue(companion.fs_companion)
+        self.assertTrue(companion.fs_phi)
+        cols = self.columns_of()
+        self.assertNotIn(name, cols)
+        self.assertIn(name + '_enc', cols)
+        partner = self.env['res.partner'].create(
+            {'name': 'FS4 enc', name: 'Hello'})
+        raw = self.raw(partner, name + '_enc')
+        self.assertNotEqual(raw, 'Hello')
+        self.assertEqual(self.cipher[1](self.env, raw), 'Hello')
+        partner.invalidate_recordset()
+        self.assertEqual(partner[name], 'Hello')
+        self.assertEqual(partner.with_context(lang='vi_VN')[name], 'Hello')
+        # read by somebody who may read the field but not the hidden column
+        # (found in browser QA: computed as the reader, it was refused)
+        own = self.plain.partner_id  # a record the plain user may read
+        own.write({name: 'Own note'})
+        self.env.invalidate_all()
+        self.assertEqual(own.with_user(self.plain).read([name])[0][name],
+                         'Own note')
+        partner.write({name: 'Again'})
+        self.assertEqual(self.cipher[1](self.env, self.raw(
+            partner, name + '_enc')), 'Again')
+        partner.write({name: False})
+        self.assertFalse(self.raw(partner, name + '_enc'))
+        # a dropdown: the code is what is encrypted
+        blood = self.make('Blood group', 'selection', phi=True,
+                          options=['Group A', 'Group B'])
+        code = self.option(blood, 'Group B')
+        partner.write({blood: code})
+        raw = self.raw(partner, blood + '_enc')
+        self.assertNotEqual(raw, code)
+        self.assertEqual(self.cipher[1](self.env, raw), code)
+        partner.invalidate_recordset()
+        self.assertEqual(partner[blood], code)
+        sel = dict(self.env['res.partner'].fields_get(
+            [blood], ['selection'])[blood]['selection'])
+        self.assertEqual(sel[code], 'Group B')
+        # a token that cannot be read
+        partner.write({name: 'Hello'})
+        self.env.flush_all()
+        self.env.cr.execute('UPDATE res_partner SET "%s" = %%s WHERE id = %%s'
+                            % (name + '_enc'), ['tst$***', partner.id])
+        self.env.invalidate_all()
+        self.assertEqual(partner[name], TEST_MARKER)
+        # other types marked health information are hidden only
+        day = self.make('Diagnosed on', 'date', phi=True)
+        self.assertTrue(self.row(day).store)
+        self.assertFalse(self.row(day + '_enc'))
+        # a non-administrator reading the field never sees the hidden column
+        self.assertNotIn(name + '_enc',
+                         self.env['res.partner'].with_user(self.plain)
+                         .fields_get())
+        self.assertIn(name, self.env['res.partner'].with_user(self.plain)
+                      .fields_get())
+
+    def test_54_switching_an_existing_field_converts_its_values(self):
+        """T54 — switching health information on for a stored text field
+        with 7 values among 10 records: 7 tokens, the plain column gone,
+        reads unchanged, "7 values converted". Off mirrors it. A conversion
+        whose count does not match undoes everything."""
+        self.encrypting_host()
+        name = self.make('Allergy notes', 'char')
+        partners = self.env['res.partner'].create(
+            [{'name': 'FS4 mig %s' % i,
+              name: ('value %s' % i) if i < 7 else False} for i in range(10)])
+        before = {p.id: p[name] for p in partners}
+        self.Studio.update_field('res.partner', name, {'phi': True})
+        self.assertNotIn(name, self.columns_of())
+        self.assertIn(name + '_enc', self.columns_of())
+        self.env.cr.execute(
+            'SELECT count(*) FROM res_partner WHERE "%s" IS NOT NULL'
+            % (name + '_enc'))
+        self.assertEqual(self.env.cr.fetchone()[0], 7)
+        self.env.invalidate_all()
+        self.assertEqual({p.id: p[name] for p in partners}, before)
+        self.assertIn('7 values converted', self.layout_bodies())
+        self.assertTrue(self.Studio._is_encrypted(self.row(name)))
+        # off again: the column comes back, the hidden one goes
+        self.Studio.update_field('res.partner', name, {'phi': False})
+        self.assertIn(name, self.columns_of())
+        self.assertNotIn(name + '_enc', self.columns_of())
+        self.assertFalse(self.row(name + '_enc'))
+        self.assertTrue(self.row(name).store)
+        self.env.invalidate_all()
+        self.assertEqual({p.id: p[name] for p in partners}, before)
+        self.assertEqual(self.layout_bodies().count('7 values converted'), 2)
+        # a conversion that loses a value is undone as a whole
+        Studio = type(self.env['fs.studio'])
+        write_column = Studio._write_column
+
+        def lossy(model, table, col, pairs):
+            return write_column(model, table, col, list(pairs)[:-1])
+        self.patch(Studio, '_write_column', lossy)
+        with self.assertRaisesRegex(UserError, 'nothing was changed'):
+            self.Studio.update_field('res.partner', name, {'phi': True})
+        field = self.row(name)
+        self.assertTrue(field.store)
+        self.assertFalse(field.fs_phi)
+        self.assertFalse(self.row(name + '_enc'))
+        self.assertIn(name, self.columns_of())
+        self.assertNotIn(name + '_enc', self.columns_of())
+        self.assertFalse(self.env['fs.field.meta'].search(
+            [('name', '=', name)]).phi)
+        self.env.invalidate_all()
+        self.assertEqual({p.id: p[name] for p in partners}, before)
+
+    def test_56_deleting_an_encrypted_field(self):
+        """T56 — the delete sheet counts the hidden column's values; both
+        rows and the hidden column go; the layout is republished without
+        the field."""
+        self.encrypting_host()
+        name = self.make('Allergy notes', 'text', phi=True)
+        keep = self.make('Shoe size')
+        self.env['res.partner'].create([
+            {'name': 'FS4 del %s' % i, name: 'note %s' % i} for i in range(3)])
+        self.publish([self.section('s1', [name, keep])])
+        refs = self.Studio.field_references('res.partner', name)
+        self.assertEqual(next(r['count'] for r in refs
+                              if r['kind'] == 'values'), 3)
+        res = self.Studio.delete_field('res.partner', name, confirm='DELETE')
+        self.assertEqual(res['count'], 3)
+        self.assertFalse(self.row(name))
+        self.assertFalse(self.row(name + '_enc'))
+        self.assertNotIn(name + '_enc', self.columns_of())
+        self.assertNotIn(name, self.env['res.partner']._fields)
+        arch = self.combined()
+        self.assertFalse(arch.xpath("//field[@name='%s']" % name))
+        self.assertTrue(arch.xpath("//field[@name='%s']" % keep))
+
+    def test_57_without_a_cipher(self):
+        """T57 — with no cipher on the system, health information of a text
+        type on a screen that encrypts is refused in plain words, either
+        way it is asked; other types, and other screens, hide it."""
+        self.patch(self.registry['ir.model.fields'], '_fs_cipher',
+                   lambda model: None)
+        self.encrypting_host()
+        msg = 'Encryption is not available on this system.'
+        with self.assertRaisesRegex(UserError, msg):
+            self.make('Allergy notes', 'char', phi=True)
+        name = self.make('Allergy notes', 'char')
+        with self.assertRaisesRegex(UserError, msg):
+            self.Studio.update_field('res.partner', name, {'phi': True})
+        self.assertFalse(self.env['fs.field.meta'].search(
+            [('name', '=', name)]).phi)
+        day = self.make('Diagnosed on', 'date', phi=True)
+        self.assertTrue(self.row(day).fs_phi)
+        data = self.Studio.get_studio('res.partner', self.view.id)
+        self.assertFalse(data['host']['encrypt_available'])
+        self.assertEqual(data['host']['words']['enc_unavailable'], msg)
+        # a screen that does not encrypt: hidden only, no cipher needed
+        self.host.encrypt_ok = False
+        other = self.make('Key note', 'char', phi=True)
+        self.assertTrue(self.row(other).store)
+        self.assertTrue(self.row(other).fs_phi)
+
+    def test_58_the_hidden_column_is_never_shown(self):
+        """T58 — no generated form or list, Studio payload, library row or
+        app payload names the hidden column; a non-administrator's
+        `fields_get` has no hidden column; the writer refuses to place one."""
+        self.encrypting_host()
+        name = self.make('Allergy notes', 'char', phi=True)
+        shown = self.make('Gate code', pwa=True, list_ok=True)
+        self.publish([self.section('s1', [name, shown])])
+        partner = self.env['res.partner'].create(
+            {'name': 'FS4 hygiene', name: 'x', shown: 'y'})
+        layout = self._layout()
+        texts = [layout.view_id.arch_db, layout.list_view_id.arch_db or '',
+                 json.dumps(self.Studio.get_studio('res.partner',
+                                                   self.view.id),
+                            default=str),
+                 json.dumps(self.Studio.library(), default=str),
+                 json.dumps(self.Studio.app_fields('res.partner', partner))]
+        for text in texts:
+            self.assertNotIn(name + '_enc', text)
+            self.assertFalse(re.search(r'x_fs_\w*_enc\b', text), text[:200])
+        self.assertEqual(
+            [e['name'] for e in self.Studio.app_fields(
+                'res.partner', partner)[partner.id]], [shown])
+        self.assertNotIn(name + '_enc', self.env['res.partner'].with_user(
+            self.plain).fields_get())
+        with self.assertRaisesRegex(UserError, 'Only fields made in Studio'):
+            self.publish([self.section('s1', [name + '_enc'])])
+        with self.assertRaisesRegex(UserError, 'not made in Studio'):
+            self.Studio.update_field('res.partner', name + '_enc',
+                                     {'label': 'x'})
+
+
+# =========================================================================
 #  T12 — the source gates
 # =========================================================================
 _ROOT = get_module_path('biz_form_studio')
@@ -1246,6 +1698,31 @@ class TestFsSourceGates(TransactionCase):
         layout = _src('models', 'fs_layout.py')
         self.assertIn("//field[@name='%s']", layout)
         self.assertNotIn('@string=', layout)
+
+    def test_59_the_gates_cover_the_fs_h4_files(self):
+        """T59 — the gates above (12a–12f) run over every file FS-H4
+        touched or added; the core ships no cipher and imports no product
+        module; the export refusal names labels, never technical names."""
+        sources = {os.path.relpath(p, _ROOT) for p in _all_sources()}
+        for rel in ('models/base.py', 'models/ir_model_fields.py',
+                    'models/fs_field_meta.py', 'models/fs_host.py',
+                    'models/fs_studio.py', 'models/fs_layout.py',
+                    'migrations/19.0.1.3.0/end-migrate.py',
+                    'static/src/js/studio/studio_editor.js',
+                    'static/src/xml/studio/studio_editor.xml',
+                    'static/src/xml/library.xml',
+                    'static/src/scss/studio.scss'):
+            self.assertIn(rel, sources)
+        fields_py = _src('models', 'ir_model_fields.py')
+        self.assertIn('def _fs_cipher', fields_py)
+        self.assertNotIn('crypto', _src('models', 'fs_studio.py'))
+        for path in _all_sources():
+            text = open(path, encoding='utf-8').read()
+            self.assertNotIn('phi_crypto', text, path)
+        base = _src('models', 'base.py')
+        self.assertIn('get_field_string', base)
+        self.assertNotIn("_('Health information cannot be exported: %s', "
+                         "field.name", base)
 
 
 @tagged('post_install', '-at_install')

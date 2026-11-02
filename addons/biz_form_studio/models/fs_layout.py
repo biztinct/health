@@ -114,6 +114,9 @@ class FsLayout(models.Model):
         if not isinstance(sections, list):
             raise UserError(_("The layout could not be read. Reload Studio."))
         seen_ids, seen_fields, out = set(), set(), []
+        # an encrypted field's hidden column is never placed anywhere
+        companions = set(self.env['ir.model.fields'].sudo().search(
+            [('model', '=', model), ('fs_companion', '=', True)]).mapped('name'))
         for sec in sections:
             if not isinstance(sec, dict):
                 raise UserError(_("The layout could not be read. Reload Studio."))
@@ -141,7 +144,8 @@ class FsLayout(models.Model):
             names = []
             for fld in sec.get('fields') or []:
                 name = fld.get('name') if isinstance(fld, dict) else fld
-                if not isinstance(name, str) or not name.startswith(FS_PREFIX):
+                if not isinstance(name, str) or not name.startswith(FS_PREFIX) \
+                        or name in companions:
                     raise UserError(_("Only fields made in Studio can be placed."))
                 if name not in Model._fields:
                     raise UserError(_(

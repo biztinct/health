@@ -28,6 +28,8 @@
                 {'name': 'button_box', 'title': 'Counters', 'reason': 'Drawn by the system.'},
             ]"/>
             <field name="pwa_label">Nurse app</field>
+            <field name="pwa_ok" eval="False"/>
+            <field name="encrypt_ok" eval="False"/>
             <field name="list_view_xmlid">health_incident.view_health_incident_list</field>
             <field name="list_anchor">open_action_count</field>
             <field name="list_name">Incidents</field>
@@ -76,6 +78,11 @@
                 {'name': 'people_panel', 'title': 'People', 'reason': 'Drawn by the system.'},
             ]"/>
             <field name="pwa_label">Nurse app</field>
+            <!-- the nurse app shows clients; health information typed into a
+                 Studio text field here is stored encrypted like the client's
+                 own identity numbers (FS-H4) -->
+            <field name="pwa_ok" eval="True"/>
+            <field name="encrypt_ok" eval="True"/>
             <!-- the Clients list is the default client list everywhere (like
                  the form): a Client column shows wherever that list does -->
             <field name="list_view_xmlid">health_fieldservice.view_health_client_list_ops</field>
@@ -87,7 +94,7 @@
              The Contact record (Workspace form). Its pack has no trailing
              widget: new sections go last. The mobile app does not show
              contacts, so the switch keeps the core's "Mobile app" name and
-             its honest "from a later release" copy. (crm.lead has no
+             is switched off with its reason. (crm.lead has no
              `mobile` field in this version, so none is locked.)
              ========================================================== -->
         <record id="fs_host_contact" model="fs.host">
@@ -126,6 +133,8 @@
                 {'name': 'contact_history', 'title': 'Contact history', 'reason': 'Drawn by the system.'},
             ]"/>
             <field name="pwa_label" eval="False"/>
+            <field name="pwa_ok" eval="False"/>
+            <field name="encrypt_ok" eval="False"/>
             <field name="list_view_xmlid">health_crm.view_crm_contact_list_crm_center</field>
             <field name="list_anchor">user_id</field>
             <field name="list_name">Contacts</field>
@@ -201,6 +210,10 @@
                 {'name': 'button_box', 'title': 'Counters', 'reason': 'Drawn by the system.'},
             ]"/>
             <field name="pwa_label">Nurse app</field>
+            <!-- the nurse app shows bookings (read-only "More details");
+                 health information here is hidden, not encrypted -->
+            <field name="pwa_ok" eval="True"/>
+            <field name="encrypt_ok" eval="False"/>
             <field name="list_view_xmlid">health_fieldservice.view_health_fso_list_ops</field>
             <field name="list_anchor">priority</field>
             <field name="list_name">Bookings</field>

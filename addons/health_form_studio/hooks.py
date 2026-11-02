@@ -2,7 +2,8 @@
 """Install-time wiring that data files cannot express.
 
 1. The groups behind "Staff" and "Admins" were just set; any Studio field that
-   already exists (a database that had the core first) is rebuilt with them.
+   already exists (a database that had the core first) is rebuilt with them,
+   and its health-information and nurse-app flags are re-applied.
 2. The Form Studio entry sits beside Field Requirements under the "Master
    data" heading when the menu reorganisation that created that heading is
    installed. The heading belongs to another module, so this is looked up and
@@ -15,7 +16,7 @@ _logger = logging.getLogger(__name__)
 
 
 def post_init_hook(env):
-    env['fs.studio']._reapply_visibility()
+    env['fs.studio']._reapply_flags()
     item = env.ref('health_form_studio.item_admin_form_studio',
                    raise_if_not_found=False)
     parent = env.ref('health_cms_ia.parent_admin_master',

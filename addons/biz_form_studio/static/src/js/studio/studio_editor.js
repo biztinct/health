@@ -401,6 +401,115 @@ export class FormStudioEditor extends Component {
         return this.host.pwa_label || _t("Mobile app");
     }
 
+    // ============================================================ health information
+    /** A sentence the server wrote for this screen (it may name the app). */
+    word(key) {
+        return (this.host.words && this.host.words[key]) || "";
+    }
+
+    /** The type of the field being edited. */
+    get formType() {
+        const sel = this.state.sel;
+        if (!sel) {
+            return "";
+        }
+        if (sel.kind === "new") {
+            return sel.type;
+        }
+        const info = this.fields[sel.name];
+        return (info && info.type) || "";
+    }
+
+    /** Would the field being edited be stored encrypted with health
+     *  information on? Only text types, only where the screen says so. */
+    get wouldEncrypt() {
+        return Boolean(this.host.encrypt_ok && (this.host.enc_types || []).includes(this.formType));
+    }
+
+    /** Why the health-information switch cannot move ('' when it can). */
+    get phiBlocked() {
+        const info = this.selField;
+        const encrypted = Boolean(info && info.encrypted);
+        if ((this.wouldEncrypt || encrypted) && !this.host.encrypt_available) {
+            return this.word("enc_unavailable");
+        }
+        return "";
+    }
+
+    /** The "Stored encrypted" badge: the field is encrypted, or will be
+     *  once the switch that is on now is saved. */
+    get encBadge() {
+        const form = this.state.form;
+        const info = this.selField;
+        if (info && info.encrypted) {
+            return Boolean(form && form.phi);
+        }
+        return Boolean(form && form.phi && this.wouldEncrypt && !this.phiBlocked);
+    }
+
+    /** What the health-information switch does here, in one sentence. */
+    get phiHelp() {
+        const info = this.selField;
+        if (info && info.encrypted) {
+            return this.word("phi_encrypted");
+        }
+        return this.wouldEncrypt ? this.word("phi_encrypted") : this.word("phi_hidden");
+    }
+
+    /** Why the field being edited cannot show in the app ('' if it can).
+     *  Live: it follows the switches before they are saved. */
+    get pwaReason() {
+        const form = this.state.form;
+        if (!form) {
+            return "";
+        }
+        if (!this.host.pwa_ok) {
+            return this.word("pwa_host");
+        }
+        if (form.phi) {
+            return this.word("pwa_phi");
+        }
+        if (form.vis === "admin") {
+            return this.word("pwa_admin");
+        }
+        return "";
+    }
+
+    /** May this field show in the app (its saved settings)? */
+    inApp(name) {
+        const info = this.fields[name];
+        return Boolean(info && !info.std && info.pwa && !info.pwa_reason);
+    }
+
+    /** Publish sheet lines: fields this publish puts in (or takes out of)
+     *  the app, and new fields that are stored encrypted. */
+    get appChanges() {
+        const before = new Set(shape(this.state.published).flatMap((sec) => sec.fields));
+        const after = new Set(shape(this.state.sections).flatMap((sec) => sec.fields));
+        const label = (name) => (this.fields[name] ? this.fields[name].display : name);
+        const out = [];
+        for (const name of after) {
+            if (before.has(name)) {
+                continue;
+            }
+            const info = this.fields[name];
+            if (info && info.encrypted) {
+                out.push({ icon: "lock", text: _t("Now stored encrypted: %s", label(name)) });
+            }
+            if (this.host.pwa_ok && this.inApp(name)) {
+                out.push({ icon: "smartphone", text: this.word("pwa_added").replace("%s", label(name)) });
+            }
+        }
+        if (this.host.pwa_ok) {
+            for (const name of before) {
+                if (!after.has(name) && this.inApp(name)) {
+                    out.push({ icon: "smartphone", text: this.word("pwa_removed").replace("%s", label(name)) });
+                }
+            }
+        }
+        return out;
+    }
+
     // ============================================================ list columns
     get hasList() {
         return Boolean(this.host.list_title);
@@ -717,6 +826,10 @@ export class FormStudioEditor extends Component {
         this.state.form[key] = value;
         if (key === "phi" && value) {
             this.state.form.list_ok = false;
+            this.state.form.pwa = false;
+        }
+        if (key === "vis" && value === "admin") {
+            this.state.form.pwa = false;
         }
     }
 
@@ -729,6 +842,13 @@ export class FormStudioEditor extends Component {
             return;
         }
         if (key === "list_ok" && this.listReason) {
+            return;
+        }
+        if (key === "pwa" && this.pwaReason) {
+            return;
+        }
+        if (key === "phi" && this.phiBlocked) {
+            this.notify(this.phiBlocked, "warning");
             return;
         }
         this.setForm(key, !this.state.form[key]);
@@ -783,7 +903,7 @@ export class FormStudioEditor extends Component {
             vis: form.vis,
             required: form.required,
             phi: form.phi,
-            pwa: form.pwa,
+            pwa: form.pwa && !this.pwaReason,
             list_ok: form.list_ok && !this.listReason,
             label_vi: form.label_vi,
             help_vi: form.help_vi,
@@ -831,7 +951,7 @@ export class FormStudioEditor extends Component {
             vis: form.vis,
             required: form.required,
             phi: form.phi,
-            pwa: form.pwa,
+            pwa: form.pwa && !this.pwaReason,
             list_ok: form.list_ok,
             label_vi: form.label_vi,
             help_vi: form.help_vi,

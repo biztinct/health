@@ -45,6 +45,16 @@ PHI_WARN_TYPES = ('text', 'binary')
 #: and long text overflows one.
 NO_LIST_TYPES = ('binary', 'text')
 
+#: Health information of these types is STORED ENCRYPTED on a screen whose
+#: host allows it (`fs.host.encrypt_ok`): the value is text (a dropdown keeps
+#: its option code). Every other type marked health information is hidden
+#: only — kept out of lists, exports, reports and the mobile app.
+ENC_TYPES = ('char', 'text', 'selection')
+
+#: The column that holds an encrypted field's value is the field's name plus
+#: this. The field itself then has no column at all.
+ENC_SUFFIX = '_enc'
+
 
 def has_class(node, cls):
     return cls in (node.get('class') or '').split()

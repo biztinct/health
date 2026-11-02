@@ -222,8 +222,9 @@
       <span class="fs-chip__marks">
         <span t-if="fields[fname].locked" class="fs-mark" t-out="ic('lock', 12)"/>
         <span t-if="fields[fname].phi" class="fs-mark fs-mark--phi" title="Health information" t-out="ic('shield', 12)"/>
+        <span t-if="fields[fname].encrypted" class="fs-mark fs-mark--phi" title="Stored encrypted" t-out="ic('lock', 12)"/>
         <span t-if="fields[fname].vis and fields[fname].vis !== 'all'" class="fs-mark" t-att-title="visLabel(fields[fname].vis)" t-out="ic('eyeOff', 12)"/>
-        <span t-if="fields[fname].pwa" class="fs-mark" t-att-title="pwaLabel" t-out="ic('smartphone', 12)"/>
+        <span t-if="inApp(fname)" class="fs-mark" t-att-title="pwaLabel" t-out="ic('smartphone', 12)"/>
         <span t-if="!fields[fname].std" class="fs-badge">custom</span>
       </span>
     </div>
@@ -384,22 +385,33 @@
         Per-role or per-stage rules: open Field Requirements
       </button>
 
+      <!-- Health information: what it does HERE (stored encrypted, or
+           hidden only), said before it is switched on. -->
       <div class="fs-row">
         <div class="fs-row__tx">
           <div class="fs-row__t"><t t-out="ic('shield', 13)"/> Health information</div>
-          <div class="fs-row__d" t-if="state.form.phi">Kept out of lists and shown with a shield. Exports, reports and the mobile app leave it out from a later release.</div>
-          <div class="fs-row__d" t-else="">Switch on for anything about a person's health.</div>
+          <span t-if="encBadge" class="fs-encbadge"><t t-out="ic('lock', 11)"/> Stored encrypted</span>
+          <div class="fs-row__d" t-if="phiBlocked" t-esc="phiBlocked"/>
+          <t t-else="">
+            <div class="fs-row__d" t-if="!state.form.phi">Switch on for anything about a person's health.</div>
+            <div class="fs-row__d" t-esc="phiHelp"/>
+          </t>
         </div>
         <button type="button" role="switch" class="fs-sw" t-att-aria-checked="state.form.phi ? 'true' : 'false'"
+                t-att-disabled="phiBlocked ? 'disabled' : false"
                 aria-label="Health information" t-on-click="() => this.toggle('phi')"/>
       </div>
 
+      <!-- The mobile app: disabled, with the reason, where the rules say no. -->
       <div class="fs-row">
         <div class="fs-row__tx">
-          <div class="fs-row__t" t-esc="pwaLabel"/>
-          <div class="fs-row__d">Shown, read-only, in the mobile app from a later release.</div>
+          <div class="fs-row__t"><t t-out="ic('smartphone', 13)"/> <t t-esc="pwaLabel"/></div>
+          <div class="fs-row__d" t-if="pwaReason" t-esc="pwaReason"/>
+          <div class="fs-row__d" t-else="" t-esc="word('pwa_help')"/>
         </div>
-        <button type="button" role="switch" class="fs-sw" t-att-aria-checked="state.form.pwa ? 'true' : 'false'"
+        <button type="button" role="switch" class="fs-sw"
+                t-att-aria-checked="state.form.pwa and !pwaReason ? 'true' : 'false'"
+                t-att-disabled="pwaReason ? 'disabled' : false"
                 t-att-aria-label="pwaLabel" t-on-click="() => this.toggle('pwa')"/>
       </div>
 
@@ -533,6 +545,9 @@
             <div class="fs-chg fs-chg--col"><span class="fs-chg__ic" t-out="ic(col.icon, 14)"/><span t-esc="col.text"/></div>
           </t>
           <p t-if="cols.length" class="fs-sheet__note" t-esc="columnWarning"/>
+          <t t-foreach="appChanges" t-as="app" t-key="app_index">
+            <div class="fs-chg fs-chg--col"><span class="fs-chg__ic" t-out="ic(app.icon, 14)"/><span t-esc="app.text"/></div>
+          </t>
         </div>
         <div class="bzk-modal__foot">
           <span class="bzk-modal__sp"/>

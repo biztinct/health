@@ -7,7 +7,7 @@ translations, so the export picks them up and `_fs_text` hands each reader
 their own language. Every sentence in `data/fs_hosts.xml` needs its entry here
 (`test_28` checks it).
 """
-from odoo import models
+from odoo import api, models
 from odoo.tools.translate import LazyTranslate
 
 _lt = LazyTranslate(__name__)
@@ -73,8 +73,31 @@ HOST_TEXT = {
 }
 
 
+#: The engine's sentences about its mobile app, in the clinic's words: the
+#: app is the nurse app (`fs.host.pwa_label`). Same keys as the engine's.
+APP_WORDS = {
+    'pwa_phi': _lt("Health information never reaches the nurse app."),
+    'pwa_admin': _lt("Admins-only fields cannot show in the nurse app."),
+    'pwa_host': _lt("This screen is not in the nurse app."),
+    'pwa_help': _lt("Shown, read-only, in the nurse app once the field is on "
+                    "the screen. Appears in the app for records synced after "
+                    "you publish."),
+    'phi_hidden': _lt("Hidden from lists, exports, reports and the nurse "
+                      "app. Not encrypted on this screen."),
+    'phi_encrypted': _lt("Stored encrypted, like the client's identity "
+                         "numbers. Hidden from lists, exports, reports and "
+                         "the nurse app."),
+    'pwa_added': _lt("Now in the nurse app: %s"),
+    'pwa_removed': _lt("Removed from the nurse app: %s"),
+}
+
+
 class FsHost(models.Model):
     _inherit = 'fs.host'
+
+    @api.model
+    def _app_words(self):
+        return dict(super()._app_words(), **APP_WORDS)
 
     def _fs_text(self, text):
         lazy = HOST_TEXT.get(text)

@@ -19,7 +19,11 @@ class FsFieldMeta(models.Model):
         [('all', 'Everyone'), ('staff', 'Staff'), ('admin', 'Admins')],
         string='Who sees it', default='all', required=True)
     phi = fields.Boolean(string='Health information', default=False)
-    pwa = fields.Boolean(string='Mobile app', default=False)
+    pwa = fields.Boolean(
+        string='Mobile app', default=False,
+        help="Shown, read-only, in the mobile app once placed on a published "
+             "screen. Never for health information or admins-only fields, "
+             "and only on a screen the app shows.")
     required = fields.Boolean(
         default=False,
         help="Must be filled on the screen. A rule of the screen, not of the "
@@ -44,23 +48,48 @@ class FsFieldMeta(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        ttypes = {f.id: f.ttype for f in self.env['ir.model.fields'].sudo()
-                  .browse([v['field_id'] for v in vals_list
-                           if v.get('field_id')]).exists()}
+        rows = {f.id: f for f in self.env['ir.model.fields'].sudo()
+                .browse([v['field_id'] for v in vals_list
+                         if v.get('field_id')]).exists()}
         for vals in vals_list:
-            if vals.get('phi') or ttypes.get(vals.get('field_id')) in \
-                    NO_LIST_TYPES:
+            row = rows.get(vals.get('field_id'))
+            if vals.get('phi') or (row and row.ttype in NO_LIST_TYPES):
                 vals['list_ok'] = False
+            if vals.get('pwa') and (not row or self._pwa_reason(
+                    row.model, vals.get('phi'), vals.get('vis') or 'all')):
+                vals['pwa'] = False
         records = super().create(vals_list)
         records._check_phi_list()
         return records
 
     def write(self, vals):
         if vals.get('phi'):
-            vals = dict(vals, list_ok=False)
+            vals = dict(vals, list_ok=False, pwa=False)
+        if vals.get('vis') == 'admin':
+            vals = dict(vals, pwa=False)
         res = super().write(vals)
         self._check_phi_list()
         return res
+
+    # ------------------------------------------------------------------
+    #  The mobile app
+    # ------------------------------------------------------------------
+    @api.model
+    def _pwa_reason(self, model, phi, vis):
+        """Why a field of `model` with these settings can never show in the
+        mobile app ('' when it can): health information never does, an
+        admins-only field never does, and a screen the app does not show
+        has nowhere to show it."""
+        hosts = self.env['fs.host'].sudo().search([('model', '=', model)])
+        return hosts._pwa_reason(phi, vis)
+
+    @api.constrains('pwa', 'phi', 'vis')
+    def _check_pwa(self):
+        for meta in self:
+            if meta.pwa:
+                reason = self._pwa_reason(meta.model, meta.phi, meta.vis)
+                if reason:
+                    raise ValidationError(reason)
 
     @api.model
     def _list_reason(self, ttype, phi=False):

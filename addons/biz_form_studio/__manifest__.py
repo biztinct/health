@@ -39,6 +39,20 @@ WHAT IT DOES
     is who may see the field.
   * **The editor keeps its screen in the address**, so reloading the browser
     inside Studio opens the same screen again.
+  * **Health information stays inside.** A field marked health information
+    is never exported (the export dialog leaves it out and the server refuses
+    a saved or hand-written export that names it; switching the mark on takes
+    it out of saved export lists), is never a list column, and never reaches
+    the mobile app. On a screen whose host says so (`fs.host.encrypt_ok`) a
+    text field marked health information is STORED ENCRYPTED: it has no
+    column, a hidden companion column holds a token, and switching the mark
+    on or off converts the values in one transaction that checks its count.
+    The cipher is the product's (`ir.model.fields._fs_cipher`).
+  * **The mobile app, read-only.** On a screen the app shows
+    (`fs.host.pwa_ok`) a placed field may be switched on for the app;
+    `fs.studio.app_fields(model, records)` hands a product's app the values
+    written out for display. Health information and admins-only fields never
+    are.
 
 WHAT A PRODUCT SUPPLIES
 
@@ -46,6 +60,9 @@ WHAT A PRODUCT SUPPLIES
     list its records appear in (optional);
   * `fs.link.target` records — the records a "Link to a record" field may
     point at (none are shipped here);
+  * optionally the cipher for encrypted fields (`_fs_cipher` on
+    `ir.model.fields`) and the app's own name for its sentences
+    (`fs.host._app_words`);
   * three settings read at call time: `biz_form_studio.gate_group` (who may
     open Studio, default the system administrator), `biz_form_studio.group_staff`
     and `biz_form_studio.group_admin` (the groups behind "Staff" and "Admins").
@@ -54,7 +71,7 @@ IT SEEDS NOTHING AND NAMES NOBODY. No host, no target, no menu entry: a
 product decides which screens support Studio and where the field library sits
 in its own navigation.
 """,
-    'version': '19.0.1.2.0',
+    'version': '19.0.1.3.0',
     'category': 'Technical',
     'license': 'LGPL-3',
     'author': 'Biztinct',

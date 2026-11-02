@@ -78,6 +78,14 @@ msgid "A dropdown needs at least one option."
 msgstr "Danh sách chọn cần ít nhất một lựa chọn."
 
 #. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_ir_model_fields__fs_phi
+msgid ""
+"A field made in Form Studio that holds health information: never exported."
+msgstr ""
+"Trường tạo trong Form Studio chứa thông tin sức khỏe: không bao giờ được "
+"xuất."
+
+#. module: biz_form_studio
 #. odoo-python
 #: code:addons/biz_form_studio/models/fs_field_meta.py:0
 msgid ""
@@ -98,8 +106,8 @@ msgid ""
 "A list needs the name of the column new columns go after, and that column "
 "needs its list."
 msgstr ""
-"Danh sách cần tên của cột mà các cột mới được đặt sau, và cột đó cần có "
-"danh sách của nó."
+"Danh sách cần tên của cột mà các cột mới được đặt sau, và cột đó cần có danh"
+" sách của nó."
 
 #. module: biz_form_studio
 #. odoo-javascript
@@ -136,6 +144,12 @@ msgstr "Không thể xóa một phiên bản đã xuất bản."
 #: code:addons/biz_form_studio/models/fs_layout.py:0
 msgid "A section's name is already taken on this screen. Reload Studio."
 msgstr "Tên mục đã được dùng trên màn hình này. Hãy tải lại Studio."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "A value could not be decrypted, so nothing was changed."
+msgstr "Có một giá trị không giải mã được, nên không có gì thay đổi."
 
 #. module: biz_form_studio
 #. odoo-javascript
@@ -200,6 +214,13 @@ msgid "Admins"
 msgstr "Quản trị"
 
 #. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_host.py:0
+msgid "Admins-only fields cannot show in the mobile app."
+msgstr ""
+"Trường chỉ dành cho quản trị viên không thể hiện trong ứng dụng di động."
+
+#. module: biz_form_studio
 #. odoo-javascript
 #: code:addons/biz_form_studio/static/src/xml/library.xml:0
 msgid "All screens"
@@ -260,6 +281,11 @@ msgstr ""
 #: code:addons/biz_form_studio/models/fs_studio.py:0
 msgid "Back to version %s."
 msgstr "Quay về phiên bản %s."
+
+#. module: biz_form_studio
+#: model:ir.model,name:biz_form_studio.model_base
+msgid "Base"
+msgstr "Cơ sở"
 
 #. module: biz_form_studio
 #: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__base_view_id
@@ -507,6 +533,12 @@ msgid "Dropdown"
 msgstr "Danh sách chọn"
 
 #. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Encryption is not available on this system."
+msgstr "Hệ thống này chưa có chức năng mã hóa."
+
+#. module: biz_form_studio
 #. odoo-javascript
 #: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
 msgid "Every field made in Studio is on the screen."
@@ -567,6 +599,23 @@ msgstr "Trường \"%(label)s\" bị %(who)s xóa. 1 bản ghi đã có dữ li�
 #. module: biz_form_studio
 #. odoo-python
 #: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid ""
+"Field \"%(label)s\" is no longer stored encrypted (%(count)s values "
+"converted)."
+msgstr ""
+"Trường \"%(label)s\" không còn được lưu mã hóa (đã chuyển đổi %(count)s giá "
+"trị)."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Field \"%(label)s\" is now stored encrypted (%(count)s values converted)."
+msgstr ""
+"Trường \"%(label)s\" giờ được lưu mã hóa (đã chuyển đổi %(count)s giá trị)."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
 msgid "Field \"%s\" deleted."
 msgstr "Trường \"%s\" đã bị xóa."
 
@@ -585,6 +634,12 @@ msgstr "Trường \"%s\" không còn bắt buộc."
 #. module: biz_form_studio
 #. odoo-python
 #: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Field \"%s\" is no longer stored encrypted (1 value converted)."
+msgstr "Trường \"%s\" không còn được lưu mã hóa (đã chuyển đổi 1 giá trị)."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
 msgid "Field \"%s\" is now a list column."
 msgstr "Trường \"%s\" giờ là một cột của danh sách."
 
@@ -593,6 +648,12 @@ msgstr "Trường \"%s\" giờ là một cột của danh sách."
 #: code:addons/biz_form_studio/models/fs_studio.py:0
 msgid "Field \"%s\" is now required."
 msgstr "Trường \"%s\" giờ là bắt buộc."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Field \"%s\" is now stored encrypted (1 value converted)."
+msgstr "Trường \"%s\" giờ được lưu mã hóa (đã chuyển đổi 1 giá trị)."
 
 #. module: biz_form_studio
 #: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__name
@@ -743,6 +804,12 @@ msgid "Health information"
 msgstr "Thông tin sức khỏe"
 
 #. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/base.py:0
+msgid "Health information cannot be exported: %s"
+msgstr "Không thể xuất thông tin sức khỏe: %s"
+
+#. module: biz_form_studio
 #. odoo-javascript
 #. odoo-python
 #: code:addons/biz_form_studio/models/fs_field_meta.py:0
@@ -751,10 +818,26 @@ msgid "Health information is never a column."
 msgstr "Thông tin sức khỏe không bao giờ là một cột."
 
 #. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_host.py:0
+msgid "Health information never reaches the mobile app."
+msgstr "Thông tin sức khỏe không bao giờ được đưa lên ứng dụng di động."
+
+#. module: biz_form_studio
 #. odoo-javascript
 #: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
 msgid "Help text"
 msgstr "Văn bản trợ giúp"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_host.py:0
+msgid ""
+"Hidden from lists, exports, reports and the mobile app. Not encrypted on "
+"this screen."
+msgstr ""
+"Ẩn khỏi danh sách, tệp xuất, báo cáo và ứng dụng di động. Không được mã hóa "
+"trên màn hình này."
 
 #. module: biz_form_studio
 #. odoo-javascript
@@ -797,20 +880,14 @@ msgid "In the %s tab, after the standard cards."
 msgstr "Trong tab %s, sau các thẻ chuẩn."
 
 #. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__pwa_ok
+msgid "In the mobile app"
+msgstr "Có trong ứng dụng di động"
+
+#. module: biz_form_studio
 #: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__message_is_follower
 msgid "Is Follower"
 msgstr "Là người theo dõi"
-
-#. module: biz_form_studio
-#. odoo-javascript
-#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
-msgid ""
-"Kept out of lists and shown with a shield. Exports, reports and the mobile "
-"app leave it out from a later release."
-msgstr ""
-"Không hiển thị trong danh sách và được đánh dấu bằng biểu tượng khiên. Xuất "
-"dữ liệu, báo cáo và ứng dụng di động sẽ bỏ trường này từ một bản phát hành "
-"sau."
 
 #. module: biz_form_studio
 #: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__kit
@@ -1057,6 +1134,8 @@ msgstr "Mục mới: %s"
 
 #. module: biz_form_studio
 #. odoo-javascript
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
 #: code:addons/biz_form_studio/static/src/xml/library.xml:0
 msgid "No"
 msgstr "Không"
@@ -1097,6 +1176,18 @@ msgstr "Chưa có trên màn hình."
 #: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
 msgid "Not published yet"
 msgstr "Chưa xuất bản"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_host.py:0
+msgid "Now in the mobile app: %s"
+msgstr "Đã có trong ứng dụng di động: %s"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Now stored encrypted: %s"
+msgstr "Đã lưu mã hóa: %s"
 
 #. module: biz_form_studio
 #: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__message_needaction_counter
@@ -1330,6 +1421,24 @@ msgid "Remove the field from the places marked above first."
 msgstr "Hãy bỏ trường khỏi những nơi được đánh dấu ở trên trước."
 
 #. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Removed from %(count)s saved export lists: %(lists)s."
+msgstr "Đã gỡ khỏi %(count)s danh sách xuất đã lưu: %(lists)s."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_host.py:0
+msgid "Removed from the mobile app: %s"
+msgstr "Đã gỡ khỏi ứng dụng di động: %s"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Removed from the saved export list %s."
+msgstr "Đã gỡ khỏi danh sách xuất đã lưu %s."
+
+#. module: biz_form_studio
 #. odoo-javascript
 #: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
 msgid "Rename section: %s"
@@ -1427,8 +1536,6 @@ msgid "Show as a column in the %s list"
 msgstr "Hiện thành cột trong danh sách %s"
 
 #. module: biz_form_studio
-#. odoo-javascript
-#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
 #: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__list_ok
 msgid "Show in lists"
 msgstr "Hiển thị trong danh sách"
@@ -1440,10 +1547,25 @@ msgid "Shown when someone points at the label"
 msgstr "Hiện khi người dùng trỏ vào tên trường"
 
 #. module: biz_form_studio
-#. odoo-javascript
-#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
-msgid "Shown, read-only, in the mobile app from a later release."
-msgstr "Hiển thị chỉ xem trong ứng dụng di động từ một bản phát hành sau."
+#: model:ir.model.fields,help:biz_form_studio.field_fs_field_meta__pwa
+msgid ""
+"Shown, read-only, in the mobile app once placed on a published screen. Never"
+" for health information or admins-only fields, and only on a screen the app "
+"shows."
+msgstr ""
+"Hiện (chỉ đọc) trong ứng dụng di động khi đã được đặt trên màn hình đã xuất "
+"bản. Không áp dụng cho thông tin sức khỏe hay trường chỉ dành cho quản trị "
+"viên, và chỉ trên màn hình mà ứng dụng có hiển thị."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_host.py:0
+msgid ""
+"Shown, read-only, in the mobile app once the field is on the screen. Appears"
+" in the app for records synced after you publish."
+msgstr ""
+"Hiện (chỉ đọc) trong ứng dụng di động khi trường đã nằm trên màn hình. Xuất "
+"hiện trong ứng dụng với các bản ghi được đồng bộ sau khi bạn xuất bản."
 
 #. module: biz_form_studio
 #. odoo-python
@@ -1495,6 +1617,32 @@ msgid "Status bar"
 msgstr "Thanh trạng thái"
 
 #. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/library.xml:0
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Stored encrypted"
+msgstr "Được lưu mã hóa"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Stored encrypted."
+msgstr "Được lưu mã hóa."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_host.py:0
+msgid ""
+"Stored encrypted. Hidden from lists, exports, reports and the mobile app."
+msgstr ""
+"Được lưu mã hóa. Ẩn khỏi danh sách, tệp xuất, báo cáo và ứng dụng di động."
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__encrypt_ok
+msgid "Stores health information encrypted"
+msgstr "Lưu thông tin sức khỏe dạng mã hóa"
+
+#. module: biz_form_studio
 #. odoo-python
 #: code:addons/biz_form_studio/models/fs_studio.py:0
 msgid "Structured data"
@@ -1517,6 +1665,16 @@ msgstr "Studio không kiểm tra được trường này đang được dùng �
 #: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
 msgid "Studio could not open this screen."
 msgstr "Studio không mở được màn hình này."
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_ir_model_fields__fs_companion
+msgid "Studio encrypted column"
+msgstr "Cột mã hóa (Studio)"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_ir_model_fields__fs_phi
+msgid "Studio health information"
+msgstr "Thông tin sức khỏe (Studio)"
 
 #. module: biz_form_studio
 #: model:ir.model.fields,field_description:biz_form_studio.field_ir_model_fields__fs_vis
@@ -1565,6 +1723,15 @@ msgstr "Bỏ khỏi màn hình này"
 #: code:addons/biz_form_studio/models/fs_studio.py:0
 msgid "Text"
 msgstr "Văn bản"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_fs_host__encrypt_ok
+msgid ""
+"Text fields marked health information on this screen are stored encrypted. "
+"Needs a cipher from the product."
+msgstr ""
+"Các trường văn bản được đánh dấu là thông tin sức khỏe trên màn hình này "
+"được lưu mã hóa. Cần bộ mã hóa do sản phẩm cung cấp."
 
 #. module: biz_form_studio
 #. odoo-javascript
@@ -1670,6 +1837,15 @@ msgid "The form the Studio layout extends."
 msgstr "Màn hình mà bố cục Studio mở rộng."
 
 #. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_ir_model_fields__fs_companion
+msgid ""
+"The hidden column that holds the encrypted value of a Form Studio field. "
+"Never shown, never exported."
+msgstr ""
+"Cột ẩn chứa giá trị đã mã hóa của một trường Form Studio. Không bao giờ hiển"
+" thị, không bao giờ được xuất."
+
+#. module: biz_form_studio
 #. odoo-javascript
 #: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
 msgid "The layout could not be published."
@@ -1698,8 +1874,7 @@ msgstr "Danh sách đã thay đổi: %s"
 #: code:addons/biz_form_studio/models/fs_layout.py:0
 msgid ""
 "The list changed: the column \"%s\" that new columns go after is not there."
-msgstr ""
-"Danh sách đã thay đổi: không còn cột \"%s\" mà các cột mới được đặt sau."
+msgstr "Danh sách đã thay đổi: không còn cột \"%s\" mà các cột mới được đặt sau."
 
 #. module: biz_form_studio
 #: model:ir.model.fields,help:biz_form_studio.field_fs_host__list_view_xmlid
@@ -1707,6 +1882,15 @@ msgid "The list this screen's records appear in. Empty: no list columns."
 msgstr ""
 "Danh sách hiển thị bản ghi của màn hình này. Để trống: không có cột danh "
 "sách."
+
+#. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_fs_host__pwa_ok
+msgid ""
+"The mobile app shows this screen's records, so a field may be switched on to"
+" show there, read-only."
+msgstr ""
+"Ứng dụng di động hiện các bản ghi của màn hình này, nên có thể bật một "
+"trường để hiện ở đó (chỉ đọc)."
 
 #. module: biz_form_studio
 #. odoo-python
@@ -1730,6 +1914,16 @@ msgstr "Màn hình không còn hỗ trợ Studio."
 #: model:ir.model.fields,help:biz_form_studio.field_fs_field_meta__model
 msgid "The technical name of the model this field belongs to"
 msgstr "Tên kỹ thuật của loại bản ghi chứa trường này"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid ""
+"The values could not all be converted (%(found)s of %(count)s), so nothing "
+"was changed."
+msgstr ""
+"Không thể chuyển đổi hết các giá trị (%(found)s trên %(count)s), nên không "
+"có gì thay đổi."
 
 #. module: biz_form_studio
 #. odoo-javascript
@@ -1801,6 +1995,12 @@ msgstr "Màn hình này không có đơn vị tiền tệ nên không thể ch�
 #: code:addons/biz_form_studio/models/fs_layout.py:0
 msgid "This screen has no place for new sections."
 msgstr "Màn hình này không có chỗ cho mục mới."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_host.py:0
+msgid "This screen is not in the mobile app."
+msgstr "Màn hình này không có trong ứng dụng di động."
 
 #. module: biz_form_studio
 #. odoo-javascript
@@ -1910,8 +2110,8 @@ msgid ""
 "What the list is called in Studio (\"the Bookings list\"). Empty: the list's"
 " own title, else the screen's name."
 msgstr ""
-"Tên của danh sách trong Studio (\"danh sách Lịch hẹn\"). Để trống: dùng "
-"tiêu đề của chính danh sách, nếu không có thì dùng tên màn hình."
+"Tên của danh sách trong Studio (\"danh sách Lịch hẹn\"). Để trống: dùng tiêu"
+" đề của chính danh sách, nếu không có thì dùng tên màn hình."
 
 #. module: biz_form_studio
 #: model:ir.model.fields,help:biz_form_studio.field_fs_host__pwa_label
@@ -1982,6 +2182,8 @@ msgstr "Chỉ cho biểu mẫu Workspace: tab có nhóm thẻ nhận các mục 
 
 #. module: biz_form_studio
 #. odoo-javascript
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
 #: code:addons/biz_form_studio/static/src/xml/library.xml:0
 #: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
 msgid "Yes"

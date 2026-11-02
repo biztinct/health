@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from . import base
 from . import ir_model_fields
 from . import fs_host
 from . import fs_link_target

@@ -21,6 +21,13 @@ msgid "Add fields to the Booking, Client, Contact and Incident screens"
 msgstr "Thêm trường cho màn hình Lịch hẹn, Khách hàng, Liên hệ và Sự cố"
 
 #. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Admins-only fields cannot show in the nurse app."
+msgstr ""
+"Trường chỉ dành cho quản trị viên không thể hiện trong ứng dụng điều dưỡng."
+
+#. module: health_form_studio
 #: model:fs.host,name:health_form_studio.fs_host_booking
 msgid "Booking"
 msgstr "Lịch hẹn"
@@ -114,6 +121,7 @@ msgstr "Quyết định ai phụ trách liên hệ này."
 #. module: health_form_studio
 #: model:ir.model.fields,field_description:health_form_studio.field_fs_host__display_name
 #: model:ir.model.fields,field_description:health_form_studio.field_fs_studio__display_name
+#: model:ir.model.fields,field_description:health_form_studio.field_ir_model_fields__display_name
 msgid "Display Name"
 msgstr "Tên hiển thị"
 
@@ -159,6 +167,11 @@ msgid "Field Requirements rules: %s"
 msgstr "Quy tắc Yêu cầu trường dữ liệu: %s"
 
 #. module: health_form_studio
+#: model:ir.model,name:health_form_studio.model_ir_model_fields
+msgid "Fields"
+msgstr "Trường"
+
+#. module: health_form_studio
 #. odoo-javascript
 #: code:addons/health_form_studio/static/src/xml/admin_settings.xml:0
 #: model:cms.sidebar.item,name:health_form_studio.item_admin_form_studio
@@ -172,8 +185,25 @@ msgid "Form Studio editor"
 msgstr "Trình chỉnh sửa Form Studio"
 
 #. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Health information never reaches the nurse app."
+msgstr "Thông tin sức khỏe không bao giờ được đưa lên ứng dụng điều dưỡng."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid ""
+"Hidden from lists, exports, reports and the nurse app. Not encrypted on this"
+" screen."
+msgstr ""
+"Ẩn khỏi danh sách, tệp xuất, báo cáo và ứng dụng điều dưỡng. Không được mã "
+"hóa trên màn hình này."
+
+#. module: health_form_studio
 #: model:ir.model.fields,field_description:health_form_studio.field_fs_host__id
 #: model:ir.model.fields,field_description:health_form_studio.field_fs_studio__id
+#: model:ir.model.fields,field_description:health_form_studio.field_ir_model_fields__id
 msgid "ID"
 msgstr "ID"
 
@@ -236,6 +266,12 @@ msgid "Links the incident to the client record."
 msgstr "Liên kết sự cố với hồ sơ khách hàng."
 
 #. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Now in the nurse app: %s"
+msgstr "Đã có trong ứng dụng điều dưỡng: %s"
+
+#. module: health_form_studio
 #: model:fs.host,pwa_label:health_form_studio.fs_host_booking
 #: model:fs.host,pwa_label:health_form_studio.fs_host_client
 #: model:fs.host,pwa_label:health_form_studio.fs_host_incident
@@ -247,6 +283,12 @@ msgstr "Ứng dụng điều dưỡng"
 #: code:addons/health_form_studio/models/fs_host.py:0
 msgid "People"
 msgstr "Người liên quan"
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Removed from the nurse app: %s"
+msgstr "Đã gỡ khỏi ứng dụng điều dưỡng: %s"
 
 #. module: health_form_studio
 #: model:ir.model,name:health_form_studio.model_fs_host
@@ -265,6 +307,16 @@ msgid "Shown to the care team in the nurse app."
 msgstr "Hiển thị cho nhóm chăm sóc trong ứng dụng điều dưỡng."
 
 #. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid ""
+"Shown, read-only, in the nurse app once the field is on the screen. Appears "
+"in the app for records synced after you publish."
+msgstr ""
+"Hiện (chỉ đọc) trong ứng dụng điều dưỡng khi trường đã nằm trên màn hình. "
+"Xuất hiện trong ứng dụng với các bản ghi được đồng bộ sau khi bạn xuất bản."
+
+#. module: health_form_studio
 #: model:fs.link.target,label:health_form_studio.fs_target_employee
 msgid "Staff member"
 msgstr "Nhân viên"
@@ -274,6 +326,22 @@ msgstr "Nhân viên"
 #: code:addons/health_form_studio/models/fs_host.py:0
 msgid "Stored encrypted by the system."
 msgstr "Hệ thống lưu ở dạng mã hóa."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid ""
+"Stored encrypted, like the client's identity numbers. Hidden from lists, "
+"exports, reports and the nurse app."
+msgstr ""
+"Được lưu mã hóa, như số giấy tờ tùy thân của khách hàng. Ẩn khỏi danh sách, "
+"tệp xuất, báo cáo và ứng dụng điều dưỡng."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "This screen is not in the nurse app."
+msgstr "Màn hình này không có trong ứng dụng điều dưỡng."
 
 #. module: health_form_studio
 #. odoo-python

@@ -24,9 +24,15 @@ The clinic's side of Form Studio. Data only, plus two small hooks:
     Owner and Admin roles, and a Form Studio tile on the Settings landing;
   * the Vietnamese words of all of the above, and the incident's lock reasons
     in the reader's language;
-  * Field Requirements rules counted as a place a field is still used.
+  * Field Requirements rules counted as a place a field is still used;
+  * health information: on the Client record a text field marked health
+    information is stored encrypted with the client's own key and token
+    format (the cipher comes from the encryption module); on the other
+    screens it is hidden from lists, exports, reports and the nurse app;
+  * the nurse app shows the Client and Booking screens: a field switched on
+    for it appears there, read-only, under "More details".
 """,
-    'version': '19.0.1.2.0',
+    'version': '19.0.1.3.0',
     'category': 'Healthcare',
     'license': 'LGPL-3',
     'author': 'Biztinct',
@@ -41,6 +47,8 @@ The clinic's side of Form Studio. Data only, plus two small hooks:
         'health_fieldservice',
         'health_crm',
         'health_landing',
+        # the cipher behind encrypted Studio fields on the Client (FS-H4)
+        'health_phi_encryption',
     ],
     'data': [
         'data/fs_parameters.xml',
