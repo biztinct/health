@@ -4088,6 +4088,10 @@ a no-op.
     bumps are only proven for English sessions. Fix (not done, `health_pwa`
     translations are not sanctioned): drop the `vi_VN` term of that view, or
     keep the script out of a translatable node. (FS-H4, QA 37.)
+    **Fixed in FS-H5 (nurse app 1.21.1)** by `t-translation="off"` around the
+    script, the stale term removed from `vi_VN.po`, and a safety-net
+    migration; the upgrade itself dropped the `vi_VN` key on all three
+    databases (§5.299). Vietnamese and English sessions now get the same bytes.
 - **§5.289 — the nurse app's VI/EN switch is the app's own; what the server
     writes follows the ACCOUNT language of the session.** The switch changes
     `healthPWAConfig.user_lang` for the app's dictionaries only; sync payloads
@@ -4130,3 +4134,95 @@ a no-op.
     `__system__` and `demo` logins hold that group (checked 2026-11-03), so
     in practice no clinic user can export at all today. Export QA needs that
     group added to the persona on the clone. (FS-H4, QA 33.)
+- **§5.296 — every upgrade through the wrapper now ends with a post-check, and
+    its exit code 3 means "read the lines", not "the upgrade failed".**
+    `carejiox-deploy` runs `/usr/local/lib/carejiox/postcheck.py` (source
+    `.agent/workflows/carejiox-postcheck.py`) in an `odoo-bin shell` after a
+    successful `-m`/`-i`, service still down: `fs.studio.validate_all()` as the
+    superuser (broken layouts are switched off by the validator), the encrypted
+    Studio value count, and the scheduled jobs. A shell fed on stdin `exec`s
+    the script and exits with its `sys.exit` code (core `cli/shell.py:79-82`;
+    the shell rolls back unless the script commits). The wrapper refuses to
+    upgrade at all when the check file is missing, carries exit 3 as its own,
+    and starts the service anyway. Copy its `==> studio:` / `==> jobs:` lines
+    into every phase report. (FS-H5.)
+- **§5.297 — the master does NOT store `biz_tenants.template_db`, and the
+    template does NOT have `biz_tenants`.** `template_db(env)` answers the
+    setting OR the product's registered default (`health_tenancy`'s
+    `register_platform`), and on carejiox the `ir_config_parameter` row does
+    not exist — a psql read returns nothing. The wrapper falls back to
+    `carejiox_template`. And `biz.tenants._quiet_template` exists only in a
+    registry that has `biz_tenants` (the master): the post-check on the
+    template opens the master's registry in the same process and calls it
+    there; the routine itself opens the template through `_tenant_env`, so
+    nothing is written on the master. (FS-H5.)
+- **§5.298 — a callable selection accepts ANY value on create and write;
+    `Selection.get_values(env)` answers VALUES, not pairs.** `_selection` is
+    `None` for a callable/string selection (`fields_selection.py:70`, :113-116,
+    :177) and `convert_to_cache` (:228-235) then returns the value unchecked.
+    Form Studio checks its own dropdowns in `base.create`/`write`
+    (`biz_form_studio/models/base.py::_fs_check_selections`, prefix-gated).
+    The IMPORT path was never open: `ir.fields.converter._str_to_selection`
+    matches the cell against the options and refuses with its own "Value … not
+    found in selection field …", so `load()` never reaches the new message.
+    (FS-H5, test 68.)
+- **§5.299 — `t-translation="off"` on a child `<t>` keeps a template's text out
+    of the translatable terms, and the next module update then DROPS every
+    language copy of that view by itself.** `xml_translate`'s `process`
+    returns at a node carrying it (`tools/translate.py:211`), so the
+    service-worker script is no longer a term; and a translated field written
+    with no terms stores `{'en_US': value}` only (`fields_textual.py:343-345`),
+    so the stale `vi_VN` key of `health_pwa.service_worker_js` vanished at the
+    1.21.1 upgrade before the safety-net migration ran (it reported 0). The
+    `t-translation` directive renders nothing (QWeb `SPECIAL_DIRECTIVES`).
+    Fixes §5.288. (FS-H5, test 72.)
+- **§5.300 — a materialized view is invisible to `information_schema.columns`,
+    and the gold copies were carrying the encrypted columns.** `bi_gold_10` on
+    carejiox and `bi_gold_6` on the template and hhh held 13 `f_<id>` columns
+    of `_enc`/`_bidx` fields (tokens and blind indexes), visible only through
+    `pg_attribute`. The silver SELECT now leaves out fields that are not
+    analytics material, gold's index list follows it
+    (`bi.dataset._silver_left_out_fields` — a filterable withheld field would
+    otherwise make `CREATE INDEX` fail on a column the view no longer has), and
+    biz_bi 19.0.1.7.3's end-migrate re-publishes every existing gold copy.
+    (FS-H5, test 71.)
+- **§5.301 — a related copy does not carry `exportable`, so the export dialog
+    of a child record type re-offers its parent's hidden fields.** Fixed
+    generically in `biz_form_studio`'s `base.fields_get`: a related field whose
+    final source is not exportable is described `exportable: False`. This
+    also takes the standard `_enc`/`_bidx` columns out of the Users dialog.
+    Server-side refusal of a hand-made export of the STANDARD columns is still
+    not there (only Studio fields are refused in `export_data`). Follows
+    §5.286. (FS-H5, test 74.)
+- **§5.302 — the PHI-encryption move left its PLAIN columns behind, empty.**
+    `res_partner` still has the eleven physical columns `allergies`,
+    `national_id`, `cccd_number`, `medical_history`, … and
+    `health_clinical_note` the seven narrative ones, on carejiox,
+    carejiox_template and hhh — every row empty (checked 2026-11-03). The
+    fields are now non-stored computes, so the framework never reads or
+    writes them; but anything that selects `*` from the table (biz_bi's old
+    clean view did) carries them. The clean view now leaves out every
+    physical column whose field is not stored. Dropping the columns is a
+    separate, sanctioned clean-up. (FS-H5, QA 43.)
+- **§5.303 — `bi.source.has_active_pipeline` is computed without
+    dependencies, so it is cached for the whole request.** Read once before a
+    pipeline is applied, it keeps saying "no pipeline": `_table_name()` and
+    `_fetch_schema()` then read the raw table, and `action_apply` rebuilt the
+    silver views over the raw table. `action_apply` now invalidates it; a
+    test must too. (FS-H5, test 71.)
+- **§5.304 — a failed `load()` resets the registry, which inside a test
+    transaction drops the custom fields made in it.** `load` ends an import
+    with errors with `self.pool.reset_changes()`; a test that made a Studio
+    field earlier in the same transaction then reads `Invalid field name
+    'x_fs_…'` on its next import. Put a failing import LAST in a test.
+    (FS-H5, test 68.)
+- **§5.305 — "can this role open the screen" cannot be measured by a test
+    user without an area.** The Client and Booking rules are
+    catchment-province rules: a test person with no province is refused every
+    patient record ("top-secret records") whatever the role. Give the probe
+    the record's province first, then read the screen's fields. Measured that
+    way on a copy of carejiox (2026-11-03): Owner and Operations Manager open
+    all three screens; Admin, Branch Manager and Doctor stop at the client's
+    invoices (`res.partner.invoice_ids`); Nurse opens clients of their area
+    but only their own bookings; Accountant and CRM open contacts and
+    bookings but not clients. (FS-H5, access proposal.)

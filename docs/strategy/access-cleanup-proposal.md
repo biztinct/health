@@ -27,7 +27,7 @@ holds only that role and opening a real record of each kind with every field on 
 | Admin | 9 (0 / 2) | **No** — stopped at the client's invoices | **No** — no access to contacts | **No** — stopped at the booking's invoices | Yes | No | No |
 | Operations Manager | 3 (0 / 0) | Yes | Yes | Yes | Yes on carejiox.com (No on the blank system — see note) | No | No |
 | Branch Manager | 3 (0 / 0) | No — stopped at invoices | No | No | No | No | No |
-| Doctor | 22 (0 / 2) | No — stopped at invoices (earlier screen test: bounced back to Clinical) | No | Partly — see note | No | No | No |
+| Doctor | 22 (0 / 2) | No — stopped at invoices (earlier screen test: bounced back to Clinical) | No | Partly — stopped at the booking's equipment list here; an earlier screen test opened bookings | No | No | No |
 | Nurse | 57 (0 / 2) | Yes, clients in their area | No | Only their own visits | No | No | No |
 | Accountant | 7 (0 / 0) | No | Yes | Yes | No | No | No |
 | CRM | 8 (0 / 0) | No | Yes | Yes | No | No | No |
@@ -37,8 +37,9 @@ Who CAN export lists today: on carejiox.com the platform administrator (`ash@biz
 accounts. Who can design Analytics datasets: only the platform administrator.
 
 Notes. Many people hold several roles, so most of them can do more than their row says (an Owner who
-is also listed under Admin opens everything). The Doctor row reads every field of the screen; in an
-earlier test in the browser a Doctor could open bookings but was sent back from the Clients entry.
+is also listed under Admin opens everything). The test person reads every field of the screen, so a
+"No" can be stricter than what a person sees in the browser, where some sections are simply left
+out; in an earlier browser test a Doctor could open bookings but was sent back from the Clients entry.
 On the blank system the Operations Manager role is made of a slightly different set of permissions
 from carejiox.com and does not reach Form Studio there — worth aligning when the roles are next
 reviewed. Form Studio still needs the right to change that kind of record, so in practice the
