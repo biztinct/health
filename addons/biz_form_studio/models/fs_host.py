@@ -6,7 +6,10 @@ ships none: it cannot know which forms are safe to extend, which of their
 cards may receive a field, or which fields are load-bearing for the product's
 own logic. Those are the product's facts, so they arrive here as records.
 """
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
+
+from .fs_common import ANCHOR_NAME_RE
 
 
 class FsHost(models.Model):
@@ -36,8 +39,32 @@ class FsHost(models.Model):
         translate=True,
         help="What the mobile app switch is called on this screen. "
              "Empty: \"Mobile app\".")
+    pack_page = fields.Char(
+        help="Workspace forms only: the tab whose card pack receives new "
+             "sections.")
+    pack_tail = fields.Char(
+        help="Workspace forms only: a widget at the end of the pack that new "
+             "sections are placed before. Empty: sections go last.")
     money_ok = fields.Boolean(string='Can hold money', compute='_compute_money_ok')
     active = fields.Boolean(default=True)
+
+    @api.constrains('kit', 'pack_page', 'pack_tail')
+    def _check_ws(self):
+        """A Workspace screen has exactly two places for a field: inside one
+        of its open cards, or in a new card at the end of one card pack. The
+        pack is named here; a standard form has none."""
+        for host in self:
+            if host.kit == 'ws' and not host.pack_page:
+                raise ValidationError(_(
+                    "A Workspace screen needs the tab whose cards receive new "
+                    "sections."))
+            if host.kit != 'ws' and (host.pack_page or host.pack_tail):
+                raise ValidationError(_(
+                    "Only a Workspace screen has a card pack."))
+            for name in (host.pack_page, host.pack_tail):
+                if name and not ANCHOR_NAME_RE.match(name):
+                    raise ValidationError(_(
+                        "\"%s\" is not a name Studio can place against.", name))
 
     @api.depends('model')
     def _compute_money_ok(self):

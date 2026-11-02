@@ -15,6 +15,12 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_host.py:0
+msgid "\"%s\" is not a name Studio can place against."
+msgstr "\"%s\" không phải là tên Studio có thể đặt theo."
+
+#. module: biz_form_studio
 #. odoo-javascript
 #: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
 msgid "%s changes"
@@ -43,6 +49,12 @@ msgstr "1 thay đổi"
 #: code:addons/biz_form_studio/models/fs_studio.py:0
 msgid "12.5"
 msgstr "12,5"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_host.py:0
+msgid "A Workspace screen needs the tab whose cards receive new sections."
+msgstr "Màn hình Workspace cần có thẻ (tab) chứa các thẻ nhận mục mới."
 
 #. module: biz_form_studio
 #. odoo-python
@@ -93,6 +105,12 @@ msgstr "Không thể sửa một phiên bản đã xuất bản."
 #: code:addons/biz_form_studio/models/fs_layout.py:0
 msgid "A published version cannot be deleted."
 msgstr "Không thể xóa một phiên bản đã xuất bản."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_layout.py:0
+msgid "A section's name is already taken on this screen. Reload Studio."
+msgstr "Tên mục đã được dùng trên màn hình này. Hãy tải lại Studio."
 
 #. module: biz_form_studio
 #. odoo-javascript
@@ -644,6 +662,12 @@ msgid "Has Message"
 msgstr "Có tin nhắn"
 
 #. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Header"
+msgstr "Phần đầu"
+
+#. module: biz_form_studio
 #. odoo-javascript
 #: code:addons/biz_form_studio/static/src/xml/library.xml:0
 #: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
@@ -696,6 +720,12 @@ msgstr "Nếu được chọn, một số tin nhắn bị lỗi gửi."
 #: code:addons/biz_form_studio/static/src/xml/library.xml:0
 msgid "In lists"
 msgstr "Trong danh sách"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "In the %s tab, after the standard cards."
+msgstr "Trong tab %s, sau các thẻ chuẩn."
 
 #. module: biz_form_studio
 #: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__message_is_follower
@@ -991,6 +1021,12 @@ msgstr "Có thể bật làm cột trong danh sách."
 
 #. module: biz_form_studio
 #. odoo-python
+#: code:addons/biz_form_studio/models/fs_host.py:0
+msgid "Only a Workspace screen has a card pack."
+msgstr "Chỉ màn hình Workspace mới có nhóm thẻ."
+
+#. module: biz_form_studio
+#. odoo-python
 #: code:addons/biz_form_studio/models/fs_layout.py:0
 msgid "Only fields made in Studio can be placed."
 msgstr "Chỉ có thể đặt các trường tạo trong Studio."
@@ -1039,6 +1075,22 @@ msgstr "Lựa chọn"
 #: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
 msgid "Options"
 msgstr "Các lựa chọn"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Other tabs"
+msgstr "Các tab khác"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__pack_page
+msgid "Pack Page"
+msgstr "Tab nhóm thẻ"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__pack_tail
+msgid "Pack Tail"
+msgstr "Phần cuối nhóm thẻ"
 
 #. module: biz_form_studio
 #. odoo-python
@@ -1420,6 +1472,16 @@ msgid "The card \"%s\" no longer accepts fields."
 msgstr "Thẻ \"%s\" không còn nhận trường mới."
 
 #. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_layout.py:0
+msgid ""
+"The cards of this screen moved, so Studio cannot place new sections. Open "
+"Studio to repair the layout."
+msgstr ""
+"Các thẻ của màn hình này đã thay đổi vị trí nên Studio không thể đặt mục "
+"mới. Mở Studio để sửa bố cục."
+
+#. module: biz_form_studio
 #. odoo-javascript
 #: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
 msgid "The draft could not be discarded."
@@ -1643,6 +1705,12 @@ msgstr "Tên tiếng Việt"
 #. module: biz_form_studio
 #. odoo-javascript
 #: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Vietnamese name"
+msgstr "Tên tiếng Việt"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
 msgid "Vietnamese title"
 msgstr "Tên mục tiếng Việt"
 
@@ -1720,6 +1788,20 @@ msgstr "Đang hoạt động"
 #: model:ir.model.fields.selection,name:biz_form_studio.selection__fs_host__kit__ws
 msgid "Workspace form"
 msgstr "Màn hình làm việc"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_fs_host__pack_tail
+msgid ""
+"Workspace forms only: a widget at the end of the pack that new sections are "
+"placed before. Empty: sections go last."
+msgstr ""
+"Chỉ cho biểu mẫu Workspace: phần tử ở cuối nhóm thẻ, mục mới được đặt trước "
+"nó. Để trống: mục mới ở cuối cùng."
+
+#. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_fs_host__pack_page
+msgid "Workspace forms only: the tab whose card pack receives new sections."
+msgstr "Chỉ cho biểu mẫu Workspace: tab có nhóm thẻ nhận các mục mới."
 
 #. module: biz_form_studio
 #. odoo-javascript

@@ -25,6 +25,12 @@ WHAT IT DOES
   * **A screen opts in.** Nothing works on a screen until a product declares it
     as a host (`fs.host`): its form, the cards a field may be dropped into, the
     fields and areas that are locked and why.
+  * **Two kinds of screen.** A standard form takes a new section above its
+    tabs or at the end of the sheet. A Workspace form (a pack of cards in one
+    tab, `kit='ws'`) takes it as one more card at the end of the pack, drawn
+    like the pack's own cards and marked so the "Not filled yet" tray folds it
+    while it is empty. A product whose form draws its own top bar calls the
+    `biz_form_studio.StudioButton` template from it.
 
 WHAT A PRODUCT SUPPLIES
 
@@ -39,7 +45,7 @@ IT SEEDS NOTHING AND NAMES NOBODY. No host, no target, no menu entry: a
 product decides which screens support Studio and where the field library sits
 in its own navigation.
 """,
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Technical',
     'license': 'LGPL-3',
     'author': 'Biztinct',

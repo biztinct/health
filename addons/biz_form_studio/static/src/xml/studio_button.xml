@@ -2,18 +2,27 @@
 <templates xml:space="preserve">
 
     <!-- ================================================================
-         The Studio door, right after the cog, inside the control panel's
-         additional-actions slot of every full-page form.
+         The Studio door. One template, called wherever a form draws its own
+         top bar: it reads `fsCanEdit`, `fsIcon` and `openFormStudio` from the
+         form controller that calls it (studio_button.js adds them to every
+         form controller), so a product whose form hides the standard control
+         panel calls this same markup from its own header.
          ================================================================ -->
+    <t t-name="biz_form_studio.StudioButton">
+        <button t-if="fsCanEdit" type="button"
+                class="btn btn-secondary o_fs_studio_btn"
+                title="Add fields to this screen and place them"
+                t-on-click.stop="openFormStudio">
+            <t t-out="fsIcon"/>
+            <span>Studio</span>
+        </button>
+    </t>
+
+    <!-- Right after the cog, inside the control panel's additional-actions
+         slot of every full-page form. -->
     <t t-inherit="web.FormView" t-inherit-mode="extension">
         <xpath expr="//t[@t-set-slot='control-panel-additional-actions']/CogMenu" position="after">
-            <button t-if="fsCanEdit" type="button"
-                    class="btn btn-secondary o_fs_studio_btn"
-                    title="Add fields to this screen and place them"
-                    t-on-click.stop="openFormStudio">
-                <t t-out="fsIcon"/>
-                <span>Studio</span>
-            </button>
+            <t t-call="biz_form_studio.StudioButton"/>
         </xpath>
     </t>
 

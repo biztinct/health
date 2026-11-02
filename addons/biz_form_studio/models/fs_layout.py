@@ -12,6 +12,16 @@ the whole form down for everybody.
 A BROKEN LAYOUT SWITCHES ITSELF OFF, NEVER THE SCREEN. `validate_all` re-draws
 every layout against today's form; one that no longer fits deactivates its
 OWN view and says why. The form underneath keeps working.
+
+TWO KINDS OF SCREEN. A standard form (`kit='vu'`) takes a new section as a
+`<group>` above the tabs or at the end of the sheet. A Workspace form
+(`kit='ws'`) is a pack of cards: a new section is drawn as one more card at
+the END of the pack the host names (`pack_end`), carrying the markup the
+pack's own cards carry, plus two attributes the "Not filled yet" tray reads:
+`data-fs-fold="1"` (this card may fold) and `data-fs-fields` (the fields that
+decide whether it is empty). A field dropped into an open card of a Workspace
+form also marks that card with `data-fs-fields`, so the tray never folds a
+card while a Studio field in it holds a value.
 """
 import logging
 
@@ -24,6 +34,22 @@ from odoo.addons.base.models.ir_model import MODULE_UNINSTALL_FLAG
 from .fs_common import ANCHOR_NAME_RE, FS_PREFIX, SECTION_ID_RE
 
 _logger = logging.getLogger(__name__)
+
+#: Where a section may go, per kind of screen. A Workspace screen has no
+#: "above the tabs" or "end of the sheet": its tabs and rail are drawn by the
+#: product, so a section is either inside an open card or a card of its own.
+ANCHORS = {
+    'vu': ('card', 'sheet_end', 'before_notebook'),
+    'ws': ('card', 'pack_end'),
+}
+DEFAULT_ANCHOR = {'vu': 'before_notebook', 'ws': 'pack_end'}
+
+#: The card-title glyph of a Studio card on a Workspace form. It must be one
+#: the Workspace's own section-icon set draws (`vu-section__icon[data-icon]`).
+WS_CARD_ICON = 'clipboard-list'
+
+#: Types that take the pack's "—" placeholder, like the cards around them.
+WS_NO_PLACEHOLDER = ('boolean', 'binary')
 
 
 class FsLayout(models.Model):
@@ -59,14 +85,17 @@ class FsLayout(models.Model):
     #  The writer
     # ------------------------------------------------------------------
     @api.model
-    def _clean_sections(self, sections, model):
+    def _clean_sections(self, sections, model, host=None):
         """Validate the client's description and return a normalised copy.
 
         Raises UserError naming the first problem. Empty sections are kept in
         the description (an administrator may be about to fill one) but are
-        not drawn.
+        not drawn. `host` decides which places exist (see ANCHORS); without
+        one, the standard form's.
         """
         Model = self.env[model]
+        kit = (host.kit if host else None) or 'vu'
+        allowed = ANCHORS.get(kit, ANCHORS['vu'])
         if not isinstance(sections, list):
             raise UserError(_("The layout could not be read. Reload Studio."))
         seen_ids, seen_fields, out = set(), set(), []
@@ -76,10 +105,17 @@ class FsLayout(models.Model):
             sid = str(sec.get('id') or '')
             if not SECTION_ID_RE.match(sid) or sid in seen_ids:
                 raise UserError(_("The layout could not be read. Reload Studio."))
+            # A Studio card is found on the page by its `name`, and the first
+            # element carrying that name wins: a field of the same name would
+            # be found instead of the card.
+            if ('fs_%s' % sid) in Model._fields:
+                raise UserError(_(
+                    "A section's name is already taken on this screen. "
+                    "Reload Studio."))
             seen_ids.add(sid)
-            anchor = sec.get('anchor') or {'kind': 'before_notebook'}
+            anchor = sec.get('anchor') or {'kind': DEFAULT_ANCHOR[kit]}
             kind = anchor.get('kind')
-            if kind not in ('card', 'sheet_end', 'before_notebook'):
+            if kind not in allowed:
                 raise UserError(_("The layout could not be read. Reload Studio."))
             clean_anchor = {'kind': kind}
             if kind == 'card':
@@ -114,7 +150,7 @@ class FsLayout(models.Model):
         return out
 
     @api.model
-    def _field_node(self, Model, name, required=False):
+    def _field_node(self, Model, name, required=False, ws=False):
         field = Model._fields[name]
         node = etree.Element('field', name=name)
         if required:
@@ -123,12 +159,57 @@ class FsLayout(models.Model):
             node.set('widget', 'binary')
         elif field.type == 'many2one':
             node.set('options', "{'no_create': True}")
+        if ws and field.type not in WS_NO_PLACEHOLDER:
+            # read-first cards show an empty value as a dash, like their
+            # neighbours
+            node.set('placeholder', '—')
         return node
+
+    @api.model
+    def _ws_pack(self, combined, host):
+        """(xpath, position) that puts a new card at the end of the host's
+        pack, checked against today's form. Raises before anything is
+        written when the pack or its tail is gone."""
+        pack = "//page[@name='%s']/div[hasclass('ws-pack')]" % host.pack_page
+        if len(combined.xpath(pack)) != 1:
+            raise UserError(_(
+                "The cards of this screen moved, so Studio cannot place new "
+                "sections. Open Studio to repair the layout."))
+        if host.pack_tail:
+            tail = "%s/widget[@name='%s']" % (pack, host.pack_tail)
+            if len(combined.xpath(tail)) != 1:
+                raise UserError(_(
+                    "The cards of this screen moved, so Studio cannot place "
+                    "new sections. Open Studio to repair the layout."))
+            return tail, 'before'
+        return pack, 'inside'
+
+    @api.model
+    def _ws_card(self, parent, sec, names, Model, required):
+        """One Workspace card, drawn like the pack's own cards."""
+        card = etree.SubElement(parent, 'div', {
+            'class': 'vu-detail-card ws-card fs-card',
+            'name': 'fs_%s' % sec['id'],
+            'data-fs-fold': '1',
+            'data-fs-fields': ','.join(names),
+        })
+        head = etree.SubElement(card, 'div', {'class': 'vu-card__title'})
+        etree.SubElement(head, 'div', {'class': 'vu-section__icon',
+                                       'data-icon': WS_CARD_ICON})
+        # The English source; the Vietnamese title is this text node's
+        # translation (`_write_title_translations`).
+        etree.SubElement(head, 'div').text = sec.get('title') or 'More details'
+        group = etree.SubElement(card, 'group')
+        for name in names:
+            group.append(self._field_node(Model, name, name in required,
+                                          ws=True))
+        return card
 
     @api.model
     def _render_arch(self, sections, host, base_view):
         """The inherited view's arch for `sections` on `host`'s form."""
         Model = self.env[host.model]
+        ws = host.kit == 'ws'
         combined = etree.fromstring(base_view.get_combined_arch())
         has_sheet = bool(combined.xpath('//sheet'))
         if not has_sheet:
@@ -140,6 +221,8 @@ class FsLayout(models.Model):
         required = set(self.env['fs.field.meta'].sudo().search(
             [('model', '=', host.model), ('required', '=', True)]).mapped('name'))
         root = etree.Element('data')
+        pack_at = None
+        card_fields = {}  # open Workspace card -> Studio fields, in order
         for sec in sections:
             names = [f['name'] for f in sorted(
                 sec.get('fields') or [], key=lambda f: f.get('order', 0))]
@@ -149,20 +232,35 @@ class FsLayout(models.Model):
                         "The field %s no longer exists. Reload Studio.", name))
             if not names:
                 continue
-            anchor = sec.get('anchor') or {'kind': 'before_notebook'}
+            anchor = sec.get('anchor') or {
+                'kind': DEFAULT_ANCHOR['ws' if ws else 'vu']}
+            if anchor['kind'] not in ANCHORS['ws' if ws else 'vu']:
+                raise UserError(_("The layout could not be read. Reload Studio."))
             if anchor['kind'] == 'card':
                 card = anchor.get('name')
                 if card not in open_cards:
                     raise UserError(_(
                         "The card \"%s\" no longer accepts fields.", card))
-                if host.kit == 'ws':
+                if ws:
                     expr = "//div[@name='%s']/group" % card
+                    card_fields.setdefault(card, []).extend(names)
                 else:
                     expr = "//group[@name='%s']" % card
                 xp = etree.SubElement(root, 'xpath', expr=expr,
                                       position='inside')
                 for name in names:
-                    xp.append(self._field_node(Model, name, name in required))
+                    xp.append(self._field_node(Model, name, name in required,
+                                               ws=ws))
+                continue
+            if anchor['kind'] == 'pack_end':
+                # One xpath per section, in section order: each lands at the
+                # end of the pack (or just before its tail), so the order on
+                # the screen is the order in Studio.
+                if pack_at is None:
+                    pack_at = self._ws_pack(combined, host)
+                xp = etree.SubElement(root, 'xpath', expr=pack_at[0],
+                                      position=pack_at[1])
+                self._ws_card(xp, sec, names, Model, required)
                 continue
             if anchor['kind'] == 'before_notebook' and has_notebook:
                 xp = etree.SubElement(root, 'xpath', expr='//sheet/notebook',
@@ -179,6 +277,13 @@ class FsLayout(models.Model):
             })
             for name in names:
                 group.append(self._field_node(Model, name, name in required))
+        # An open Workspace card that received Studio fields says so, so the
+        # "Not filled yet" tray counts them when it decides the card is empty.
+        for card, names in card_fields.items():
+            xp = etree.SubElement(root, 'xpath', expr="//div[@name='%s']" % card,
+                                  position='attributes')
+            etree.SubElement(xp, 'attribute', name='data-fs-fields').text = \
+                ','.join(names)
         return etree.tostring(root, pretty_print=True, encoding='unicode')
 
     def _write_view(self, arch, host):
@@ -246,7 +351,7 @@ class FsLayout(models.Model):
         """Draw `sections`, bump the version, keep the history, say so."""
         self.ensure_one()
         base_view = self.base_view_id.sudo()
-        clean = self._clean_sections(sections, self.model)
+        clean = self._clean_sections(sections, self.model, host)
         arch = self._render_arch(clean, host, base_view)
         old = self.sections or []
         added, removed, moved = self._diff(old, clean)
@@ -301,8 +406,8 @@ class FsLayout(models.Model):
         try:
             with self.env.cr.savepoint():
                 arch = self._render_arch(
-                    self._clean_sections(self.sections, self.model), host,
-                    self.base_view_id.sudo())
+                    self._clean_sections(self.sections, self.model, host),
+                    host, self.base_view_id.sudo())
                 self.view_id.sudo().with_context(lang='en_US').write(
                     {'arch': arch, 'active': True})
                 self.base_view_id.sudo()._get_combined_arch()

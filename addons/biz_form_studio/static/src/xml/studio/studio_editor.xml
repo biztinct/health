@@ -97,7 +97,35 @@
 
           <!-- ================================================ the screen -->
           <main class="fs-canvas" t-on-click.self="clearSelection">
-            <div class="fs-screen">
+            <div t-if="isWs" class="fs-screen fs-screen--ws">
+              <div t-if="wsHead.length" class="fs-wshead">
+                <t t-foreach="wsHead" t-as="cd" t-key="cd.key">
+                  <t t-call="biz_form_studio.StudioCard"/>
+                </t>
+              </div>
+              <div class="fs-tabs-label">
+                <t t-out="ic('layers', 13)"/> <t t-esc="packTitle"/>
+              </div>
+              <div class="fs-pack">
+                <t t-foreach="cardsPack" t-as="cd" t-key="cd.key">
+                  <t t-call="biz_form_studio.StudioCard"/>
+                </t>
+                <t t-foreach="sectionsAt('pack')" t-as="sec" t-key="sec.id">
+                  <t t-call="biz_form_studio.StudioSection"/>
+                </t>
+              </div>
+              <t t-call="biz_form_studio.StudioAddSection"/>
+              <div t-if="wsTabs.length" class="fs-tabs-label">
+                <t t-out="ic('table', 13)"/> Other tabs
+              </div>
+              <t t-foreach="wsTabs" t-as="cd" t-key="cd.key">
+                <t t-call="biz_form_studio.StudioCard"/>
+              </t>
+              <t t-foreach="wsZones" t-as="cd" t-key="cd.key">
+                <t t-call="biz_form_studio.StudioCard"/>
+              </t>
+            </div>
+            <div t-else="" class="fs-screen">
               <t t-foreach="cardsBefore" t-as="cd" t-key="cd.key">
                 <t t-call="biz_form_studio.StudioCard"/>
               </t>
@@ -310,17 +338,21 @@
         <div class="fs-lab">Options</div>
         <div class="fs-options">
           <t t-foreach="state.form.options" t-as="opt" t-key="opt_index">
-            <div t-att-class="'fs-option' + (opt.retired ? ' is-retired' : '')">
-              <input type="text" class="fs-input" t-model="opt.label" aria-label="Option"/>
-              <button t-if="opt.value" type="button" class="bzk-btn bzk-btn-sm ghost"
-                      title="Hidden from new picks after the next release"
-                      t-on-click="() => this.toggleRetired(opt_index)">
-                <t t-if="opt.retired">Bring back</t><t t-else="">Retire</t>
-              </button>
-              <button t-else="" type="button" class="bzk-btn bzk-btn-sm ghost" aria-label="Remove"
-                      t-on-click="() => this.removeNewOption(opt_index)">
-                <t t-out="ic('x', 12)"/>
-              </button>
+            <div t-att-class="'fs-optblock' + (opt.retired ? ' is-retired' : '')">
+              <div class="fs-option">
+                <input type="text" class="fs-input" t-model="opt.label" aria-label="Option"/>
+                <button t-if="opt.value" type="button" class="bzk-btn bzk-btn-sm ghost"
+                        title="Hidden from new picks after the next release"
+                        t-on-click="() => this.toggleRetired(opt_index)">
+                  <t t-if="opt.retired">Bring back</t><t t-else="">Retire</t>
+                </button>
+                <button t-else="" type="button" class="bzk-btn bzk-btn-sm ghost" aria-label="Remove"
+                        t-on-click="() => this.removeNewOption(opt_index)">
+                  <t t-out="ic('x', 12)"/>
+                </button>
+              </div>
+              <input type="text" class="fs-input fs-input--vi" t-model="opt.label_vi"
+                     placeholder="Vietnamese name" aria-label="Vietnamese name"/>
             </div>
           </t>
           <div class="fs-option">
@@ -447,7 +479,11 @@
         <input type="text" class="fs-input" t-att-value="selSection.title_vi"
                t-on-input="(ev) => this.setSectionTitleVi(selSection, ev)"/>
       </label>
-      <t t-if="host.has_notebook">
+      <t t-if="isWs">
+        <div class="fs-lab">Where it sits</div>
+        <p class="fs-hint fs-hint--flush" t-esc="wsPlaceLine"/>
+      </t>
+      <t t-elif="host.has_notebook">
         <div class="fs-lab">Where it sits</div>
         <div class="bzk-seg fs-seg">
           <button type="button" t-att-class="'bzk-segbtn' + (selSection.anchor.kind === 'before_notebook' ? ' on' : '')"

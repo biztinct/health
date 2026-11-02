@@ -178,6 +178,10 @@ class FsStudio(models.AbstractModel):
                 'help', {'vi_VN': help_vi.strip()})
             changed = True
         if changed:
+            # The translated labels and options are cached per language in the
+            # 'stable' cache (`ir.model.fields._get_fields_cached`), which a
+            # translation alone does not clear.
+            self.env.registry.clear_cache('stable')
             self.env.registry.clear_cache()
 
     @api.model
@@ -254,6 +258,15 @@ class FsStudio(models.AbstractModel):
             _logger.debug("Form Studio probe said no", exc_info=True)
             return no
 
+    @api.model
+    def can_use(self):
+        """May this person open Studio at all (the field library, a Settings
+        tile)? A capability question like `probe`: it never raises."""
+        try:
+            return bool(self._is_gate_user())
+        except Exception:  # noqa: BLE001 — a capability probe has no error path
+            return False
+
     # ==================================================================
     #  Reading a screen
     # ==================================================================
@@ -266,11 +279,32 @@ class FsStudio(models.AbstractModel):
         # calling frame, and the nested helpers below have no `self` in it.
         t_details, t_tab = _('Details'), _('Tab')
         t_title, t_status = _('Title'), _('Status bar')
+        t_header = _('Header')
+        ws = host.kit == 'ws'
         zones = {z.get('name'): z for z in (host.locked_zones or [])
                  if isinstance(z, dict)}
         open_cards = {c.get('name'): c for c in (host.sections or [])
                       if isinstance(c, dict)}
         cards, seen_zones, counter = [], set(), [0]
+
+        def has_class(node, cls):
+            return cls in (node.get('class') or '').split()
+
+        def ws_title(card):
+            """A Workspace card's title is the text of the LAST `div` of its
+            `.vu-card__title` (the first one is the icon)."""
+            for head in card:
+                if head.tag == 'div' and has_class(head, 'vu-card__title'):
+                    divs = [d for d in head if d.tag == 'div']
+                    if divs:
+                        return ''.join(divs[-1].itertext()).strip()
+            return ''
+
+        def ws_pack(page):
+            for child in page:
+                if child.tag == 'div' and has_class(child, 'ws-pack'):
+                    return child
+            return None
 
         def collect(node, out):
             for child in node:
@@ -327,12 +361,47 @@ class FsStudio(models.AbstractModel):
                     for page in child:
                         if not isinstance(page.tag, str) or page.tag != 'page':
                             continue
+                        pack = None
+                        if ws and page.get('name') == host.pack_page:
+                            pack = ws_pack(page)
+                        if pack is not None:
+                            # The pack: a marker, one card per named card of
+                            # the pack (Studio's own `fs_` cards are drawn from
+                            # the layout, not from here), and an end marker.
+                            cards.append({'kind': 'pack', 'key': key(),
+                                          'name': page.get('name'),
+                                          'title': page.get('string') or t_tab})
+                            for card in pack:
+                                cname = card.get('name') if isinstance(
+                                    card.tag, str) else None
+                                if (card.tag != 'div' or not cname
+                                        or not has_class(card, 'vu-detail-card')
+                                        or cname.startswith('fs_')):
+                                    continue
+                                cards.append({
+                                    'kind': 'std', 'key': key(), 'name': cname,
+                                    'title': ws_title(card) or open_cards.get(
+                                        cname, {}).get('title') or t_details,
+                                    'open': cname in open_cards,
+                                    'tab': False, 'pack': True,
+                                    'fields': collect(card, [])})
+                            cards.append({'kind': 'pack_end', 'key': key()})
+                            continue
                         fields_ = collect(page, [])
                         cards.append({
                             'kind': 'std', 'key': key(),
                             'name': page.get('name') or '',
                             'title': page.get('string') or t_tab,
                             'open': False, 'tab': True, 'fields': fields_})
+                elif ws and child.tag == 'div' and has_class(child, 'ws-hero'):
+                    # the Workspace header: who the record is, read-only here
+                    # (its picture is not a field anybody reads as text)
+                    fields_ = [n for n in collect(child, [])
+                               if fg[n].get('type') != 'binary']
+                    if fields_:
+                        cards.append({'kind': 'std', 'key': key(), 'name': '',
+                                      'title': t_header, 'open': False,
+                                      'tab': False, 'fields': fields_})
                 elif child.tag == 'div' and 'oe_title' in (
                         child.get('class') or ''):
                     fields_ = collect(child, [])
@@ -356,12 +425,18 @@ class FsStudio(models.AbstractModel):
         return missing + cards
 
     @api.model
-    def _field_info(self, model, fg, fg_en, host):
-        """Every field the schematic may show, keyed by name."""
+    def _field_info(self, model, fg, fg_en, host, shown=None):
+        """Every field the schematic may show, keyed by name: the standard
+        fields its cards list (`shown`; None = all of them), and every field
+        made in Studio. A large record type has hundreds of standard fields
+        the schematic never draws; they are not sent."""
         locked = host.locked_fields or {}
+        vi_on = self._vi_active()
         out = {}
         for name, desc in fg.items():
             if name.startswith(FS_PREFIX):
+                continue
+            if shown is not None and name not in shown:
                 continue
             out[name] = {
                 'label': desc.get('string') or name,
@@ -411,11 +486,16 @@ class FsStudio(models.AbstractModel):
             }
             if field.ttype == 'selection':
                 retired = set((meta and meta.retired_values) or [])
-                info['options'] = [
-                    {'value': s.value,
-                     'label': s.with_context(lang='en_US').name,
-                     'retired': s.value in retired}
-                    for s in field.selection_ids.sorted('sequence')]
+                info['options'] = []
+                for sel in field.selection_ids.sorted('sequence'):
+                    en_label = sel.with_context(lang='en_US').name
+                    vi_label = sel.with_context(lang='vi_VN').name \
+                        if vi_on else en_label
+                    info['options'].append({
+                        'value': sel.value,
+                        'label': en_label,
+                        'label_vi': vi_label if vi_label != en_label else '',
+                        'retired': sel.value in retired})
             if field.ttype == 'many2one':
                 info['comodel'] = field.relation
                 info['comodel_label'] = targets.get(field.relation) or \
@@ -435,6 +515,8 @@ class FsStudio(models.AbstractModel):
         fg_en = Model.with_context(lang='en_US').fields_get(
             attributes=['string', 'help'])
         arch = etree.fromstring(base.get_combined_arch())
+        cards = self._base_cards(arch, host, fg)
+        shown = {name for card in cards for name in card.get('fields') or []}
         draft = None
         history = []
         if layout:
@@ -470,6 +552,8 @@ class FsStudio(models.AbstractModel):
                 'has_notebook': bool(arch.xpath('//sheet/notebook')),
                 'pwa_label': host.pwa_label or _('Mobile app'),
                 'base_view_id': base.id,
+                'pack_page': host.pack_page or False,
+                'pack_tail': host.pack_tail or False,
             },
             'layout': {
                 'id': layout.id or False,
@@ -479,8 +563,8 @@ class FsStudio(models.AbstractModel):
                 'broken_reason': (layout.broken_reason or '') if layout else '',
             },
             'draft': draft,
-            'cards': self._base_cards(arch, host, fg),
-            'fields': self._field_info(model, fg, fg_en, host),
+            'cards': cards,
+            'fields': self._field_info(model, fg, fg_en, host, shown),
             'link_targets': targets,
             'types': self._type_list(host),
             'can_publish': True,
@@ -497,7 +581,7 @@ class FsStudio(models.AbstractModel):
         self._check_gate(model)
         host = self._host(model, view_id)
         layout = self._layout(host)
-        clean = layout._clean_sections(sections, model)
+        clean = layout._clean_sections(sections, model, host)
         Draft = self.env['fs.layout.draft'].sudo()
         draft = Draft.search([('layout_id', '=', layout.id),
                               ('user_id', '=', self.env.uid)], limit=1)
@@ -561,12 +645,14 @@ class FsStudio(models.AbstractModel):
             'fs_vis': vis,
         }
         if ftype == 'selection':
-            labels = []
+            labels, labels_vi = [], {}
             for opt in spec.get('options') or []:
                 text = opt.get('label') if isinstance(opt, dict) else opt
                 text = (text or '').strip()
                 if text and text not in labels:
                     labels.append(text)
+                    if isinstance(opt, dict):
+                        labels_vi[text] = (opt.get('label_vi') or '').strip()
             if not labels:
                 raise UserError(_("A dropdown needs at least one option."))
         if ftype == 'many2one':
@@ -589,12 +675,14 @@ class FsStudio(models.AbstractModel):
                 # (`_allow_sudo_commands = False`), so a command list is
                 # re-run as the person who made the request — who is not a
                 # system administrator — and refused.
-                self.env['ir.model.fields.selection'].sudo().with_context(
-                    lang='en_US').create([
-                        {'field_id': field.id, 'value': value, 'name': text,
-                         'sequence': i}
-                        for i, (value, text) in enumerate(
-                            zip(self._option_values(labels), labels))])
+                options = self.env['ir.model.fields.selection'].sudo(
+                ).with_context(lang='en_US').create([
+                    {'field_id': field.id, 'value': value, 'name': text,
+                     'sequence': i}
+                    for i, (value, text) in enumerate(
+                        zip(self._option_values(labels), labels))])
+                self._write_options_vi(
+                    {opt: labels_vi.get(opt.name) for opt in options})
         phi = bool(spec.get('phi'))
         meta = self.env['fs.field.meta'].sudo().create({
             'field_id': field.id,
@@ -623,6 +711,32 @@ class FsStudio(models.AbstractModel):
         return True
 
     @api.model
+    def _write_options_vi(self, wanted):
+        """`{option row: Vietnamese name | '' | None}` as the rows' own
+        translations. '' removes a Vietnamese name (the English shows again);
+        None leaves the row as it is. Written as translations, never with a
+        Vietnamese context: that would replace the English (ledger §5.270)."""
+        if not self._vi_active():
+            return
+        changed = False
+        for row, label_vi in wanted.items():
+            if label_vi is None:
+                continue
+            en = row.with_context(lang='en_US').name
+            now = row.with_context(lang='vi_VN').name
+            target = label_vi or en
+            if target == now:
+                continue
+            row.sudo().update_field_translations(
+                'name', {'vi_VN': label_vi if label_vi and label_vi != en
+                         else False})
+            changed = True
+        if changed:
+            # option labels are read per language from the 'stable' cache
+            self.env.registry.clear_cache('stable')
+            self.env.registry.clear_cache()
+
+    @api.model
     def _apply_options(self, field, options, meta):
         """Add and rename only. Removing an option still in use is refused
         with the number of records that use it; "retire" is offered instead."""
@@ -631,11 +745,14 @@ class FsStudio(models.AbstractModel):
         existing = {s.value: s for s in field.selection_ids}
         keep, new_labels, retired = [], [], []
         renames, removals = [], []
+        vi_wanted, new_vi = {}, {}
         for opt in options or []:
             if not isinstance(opt, dict):
                 opt = {'label': opt}
             label = (opt.get('label') or '').strip()
             value = opt.get('value')
+            label_vi = (opt.get('label_vi') or '').strip() \
+                if 'label_vi' in opt else None
             if value and value in existing:
                 keep.append(value)
                 old = existing[value].with_context(lang='en_US').name
@@ -643,8 +760,10 @@ class FsStudio(models.AbstractModel):
                     renames.append((existing[value], label))
                 if opt.get('retired'):
                     retired.append(value)
-            elif label:
+                vi_wanted[existing[value]] = label_vi
+            elif label and label not in new_labels:
                 new_labels.append(label)
+                new_vi[label] = label_vi
         Model = self.env[field.model].sudo().with_context(active_test=False)
         for value, sel in existing.items():
             if value in keep:
@@ -667,11 +786,16 @@ class FsStudio(models.AbstractModel):
             Selection.browse([r.id for r in removals]).unlink()
         start = max([s.sequence for s in existing.values()] or [0]) + 1
         if new_labels:
-            Selection.create([
+            created = Selection.create([
                 {'field_id': field.id, 'value': value, 'name': label,
                  'sequence': start + i}
                 for i, (value, label) in enumerate(zip(
                     self._option_values(new_labels, existing), new_labels))])
+            for row in created:
+                vi_wanted[row] = new_vi.get(row.name)
+        # the Vietnamese names last: a rename above changed the English they
+        # are compared with
+        self._write_options_vi(vi_wanted)
         meta.retired_values = retired
 
     @api.model

@@ -1,0 +1,19 @@
+// =============================================================================
+// Form Studio on the clinic screens — the button in the Client and Contact top
+// bars, and the Form Studio tile on the Settings landing. Tokens only; no font
+// stack, no gradient.
+// =============================================================================
+
+// the bars space their items with a flex gap: the core's own left margin
+// (it sits beside the cog there) is not wanted here
+.ops-header-right,
+.crm-form-header-right {
+    > .o_fs_studio_btn { margin-left: 0; }
+}
+
+// the tile's icon well in the theme's flat colours (the other tiles carry an
+// inline colour pair; this one reads the theme's tokens, declared on :root)
+.admin-tile-icon.fs-tile-icon {
+    background: var(--vuf-primary-soft);
+    color: var(--vuf-primary);
+}

@@ -21,6 +21,15 @@
 //  5. Nothing folded → the tray draws nothing.
 //  6. Re-evaluated on every mount and patch, idempotently (classes are only
 //     toggled when they change).
+//  7. Cards it was not told about are DISCOVERED from the page: any element
+//     of the same tab marked `data-fs-fold="1"` with a `name` is a card the
+//     tray governs, its fields read from `data-fs-fields="a,b"` (fallback:
+//     the field widgets inside it). An element with `data-fs-fields` and no
+//     `data-fs-fold` is a configured card that received more fields: those
+//     are added to its list, so it never folds while one of them holds a
+//     value. (Written by a form layout tool; costs one frame on first mount.)
+//     A discovered card with no field this person can read stays folded and
+//     draws no chip.
 // Product-agnostic: it knows cards, fields and names — nothing else.
 // =============================================================================
 
@@ -64,12 +73,26 @@ export class WsFoldTray extends Component {
         this.opened = useState({});
         this.seen = new Map();
         this.state = useState({ titles: {} });
+        // cards found on the page (contract 7): {cards: {name: [fields]},
+        // extra: {configured card: [more fields]}}
+        this.discovered = useState({ cards: {}, extra: {} });
         onMounted(() => this.sync());
         onPatched(() => this.sync());
     }
 
     get cards() {
-        return this.props.cards || {};
+        const out = {};
+        const extra = this.discovered.extra;
+        for (const [cardName, fieldNames] of Object.entries(this.props.cards || {})) {
+            const more = (extra[cardName] || []).filter((name) => !fieldNames.includes(name));
+            out[cardName] = more.length ? fieldNames.concat(more) : fieldNames;
+        }
+        for (const [cardName, fieldNames] of Object.entries(this.discovered.cards)) {
+            if (!(cardName in out)) {
+                out[cardName] = fieldNames;
+            }
+        }
+        return out;
     }
 
     get recordKey() {
@@ -120,7 +143,8 @@ export class WsFoldTray extends Component {
     }
 
     get chips() {
-        return this.foldedNames.map((cardName) => {
+        // a discovered card with no readable field folds without a chip
+        return this.foldedNames.filter((cardName) => (this.cards[cardName] || []).length).map((cardName) => {
             const count = (this.cards[cardName] || []).length;
             return {
                 name: cardName,
@@ -139,7 +163,48 @@ export class WsFoldTray extends Component {
         return form ? form.querySelector(`[name="${cardName}"]`) : null;
     }
 
+    _fieldList(el) {
+        const listed = (el.getAttribute("data-fs-fields") || "")
+            .split(",")
+            .map((name) => name.trim())
+            .filter(Boolean);
+        const names = listed.length
+            ? listed
+            : [...el.querySelectorAll(".o_field_widget[name]")].map((w) => w.getAttribute("name"));
+        // only fields this person's record holds: one they may not read is
+        // not on the page, so it can neither fill the card nor be counted
+        const fields = this.props.record.fields;
+        return names.filter((name) => name in fields);
+    }
+
+    /** Contract 7. Writes `discovered` only when what is on the page changed,
+     *  so the re-render it causes finds nothing new and stops. */
+    discover() {
+        const scope = this.root.el?.closest(".tab-pane") || this.formRoot;
+        if (!scope) {
+            return;
+        }
+        const cards = {};
+        const extra = {};
+        for (const el of scope.querySelectorAll('[data-fs-fold="1"][name]')) {
+            cards[el.getAttribute("name")] = this._fieldList(el);
+        }
+        for (const el of scope.querySelectorAll("[data-fs-fields]:not([data-fs-fold])")) {
+            const cardName = el.getAttribute("name");
+            if (cardName) {
+                extra[cardName] = this._fieldList(el);
+            }
+        }
+        if (JSON.stringify(cards) !== JSON.stringify(this.discovered.cards)) {
+            this.discovered.cards = cards;
+        }
+        if (JSON.stringify(extra) !== JSON.stringify(this.discovered.extra)) {
+            this.discovered.extra = extra;
+        }
+    }
+
     sync() {
+        this.discover();
         const folded = new Set(this.foldedNames);
         const titles = {};
         let titlesChanged = false;

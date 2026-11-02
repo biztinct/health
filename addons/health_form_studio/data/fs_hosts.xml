@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- ================================================================
-         The Incident form: the first screen that supports Studio.
-
-         sections = [] on purpose. The form's <group>s carry no name=, so
-         there is no open card an administrator may drop into; Studio adds
-         its own sections (above the tabs, or at the bottom).
-         The reasons below are translated by models/fs_host.py.
+         The screens that support Studio. The reasons and titles below are
+         translated by models/fs_host.py (HOST_TEXT): every new sentence
+         here needs its entry there.
          ================================================================ -->
     <data noupdate="0">
+        <!-- ==========================================================
+             The Incident form. sections = [] on purpose: its <group>s
+             carry no name=, so there is no open card an administrator may
+             drop into; Studio adds its own sections (above the tabs, or at
+             the bottom).
+             ========================================================== -->
         <record id="fs_host_incident" model="fs.host">
             <field name="name">Incident</field>
             <field name="model">health.incident</field>
@@ -25,6 +28,96 @@
                 {'name': 'button_box', 'title': 'Counters', 'reason': 'Drawn by the system.'},
             ]"/>
             <field name="pwa_label">Nurse app</field>
+        </record>
+
+        <!-- ==========================================================
+             The Client record (Workspace form, the default client form
+             everywhere). New sections become cards at the end of the
+             Overview pack, before the "Recent visits" widget. The header
+             (.ws-hero) carries no name=, so it is shown read-only in the
+             schematic and is not a locked zone.
+             ========================================================== -->
+        <record id="fs_host_client" model="fs.host">
+            <field name="name">Client</field>
+            <field name="model">res.partner</field>
+            <field name="base_view_xmlid">health_fieldservice.view_health_patient_form_ops</field>
+            <field name="kit">ws</field>
+            <field name="pack_page">profile_overview</field>
+            <field name="pack_tail">ws_client_visits</field>
+            <field name="sections" eval="[
+                {'name': 'personal_card', 'title': 'Personal'},
+                {'name': 'contact_card', 'title': 'Contact'},
+                {'name': 'care_card', 'title': 'Care'},
+                {'name': 'identity_card', 'title': 'Identity'},
+                {'name': 'commission_card', 'title': 'Commission'},
+            ]"/>
+            <field name="locked_fields" eval="{
+                'name': 'Identifies the client everywhere.',
+                'first_name': 'Builds the client\'s name.',
+                'middle_name': 'Builds the client\'s name.',
+                'last_name': 'Builds the client\'s name.',
+                'vietnamese_name': 'Builds the client\'s name.',
+                'birth_date': 'Used for age, consent and insurance.',
+                'phone': 'Used to reach the client and by the messaging channels.',
+                'mobile': 'Used to reach the client and by the messaging channels.',
+                'email': 'Used to reach the client and by the messaging channels.',
+                'catchment_province_id': 'Decides which team can see this client.',
+                'primary_facility_id': 'Links the client to their facility.',
+                'national_id': 'Stored encrypted by the system.',
+                'cccd_number': 'Stored encrypted by the system.',
+                'insurance_number': 'Used on insurance claims.',
+                'patient_category_id': 'Drives pricing.',
+                'gender_id': 'Used on clinical records.',
+            }"/>
+            <field name="locked_zones" eval="[
+                {'name': 'people_panel', 'title': 'People', 'reason': 'Drawn by the system.'},
+            ]"/>
+            <field name="pwa_label">Nurse app</field>
+        </record>
+
+        <!-- ==========================================================
+             The Contact record (Workspace form). Its pack has no trailing
+             widget: new sections go last. The mobile app does not show
+             contacts, so the switch keeps the core's "Mobile app" name and
+             its honest "from a later release" copy. (crm.lead has no
+             `mobile` field in this version, so none is locked.)
+             ========================================================== -->
+        <record id="fs_host_contact" model="fs.host">
+            <field name="name">Contact</field>
+            <field name="model">crm.lead</field>
+            <field name="base_view_xmlid">health_crm.view_crm_contact_form_crm_center</field>
+            <field name="kit">ws</field>
+            <field name="pack_page">overview</field>
+            <field name="pack_tail" eval="False"/>
+            <field name="sections" eval="[
+                {'name': 'contact_card', 'title': 'Contact'},
+                {'name': 'reached_card', 'title': 'How they reached us'},
+                {'name': 'status_card', 'title': 'Status'},
+            ]"/>
+            <field name="locked_fields" eval="{
+                'name': 'Identifies the contact.',
+                'contact_name': 'Identifies the contact.',
+                'phone': 'Used to reach the contact.',
+                'email_from': 'Used to reach the contact.',
+                'stage_id': 'Drives the contact workflow.',
+                'contact_status': 'Drives the contact workflow.',
+                'contact_outcome': 'Drives the contact workflow.',
+                'user_id': 'Decides who works this contact.',
+                'team_id': 'Decides who works this contact.',
+                'catchment_province_id': 'Decides which team can see this contact.',
+                'district_id': 'Decides which team can see this contact.',
+                'facility_id': 'Decides which team can see this contact.',
+                'mode_of_contact_id': 'Used in channel reports.',
+                'patient_id': 'Links the contact to a client.',
+                'campaign_id': 'Written by the website and ads tracking.',
+                'medium_id': 'Written by the website and ads tracking.',
+                'source_id': 'Written by the website and ads tracking.',
+            }"/>
+            <field name="locked_zones" eval="[
+                {'name': 'people_panel', 'title': 'People', 'reason': 'Drawn by the system.'},
+                {'name': 'contact_history', 'title': 'Contact history', 'reason': 'Drawn by the system.'},
+            ]"/>
+            <field name="pwa_label" eval="False"/>
         </record>
     </data>
 </odoo>

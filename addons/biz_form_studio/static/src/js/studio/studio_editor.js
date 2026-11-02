@@ -21,6 +21,13 @@
  * Drag and drop is HTML5 (as in the concept page); every move also has a
  * button in the right panel, so nothing needs a mouse.
  *
+ * TWO KINDS OF SCREEN. A standard form takes a section above the tabs or at
+ * the bottom. A Workspace form (`host.kit === "ws"`) is a pack of cards in
+ * one tab: the schematic draws that pack as a grid of its own cards (open
+ * ones take fields), Studio's cards after them, then one "new section" zone,
+ * then the other tabs, dimmed. A new section there is always a card at the
+ * end of the pack (`pack_end`); there is no position to choose.
+ *
  * R1 — no `t-as` variable is named lt / gt / lte / gte / and / or / not / in.
  * R2 — every sentence is ONE expression.
  */
@@ -181,7 +188,14 @@ export class FormStudioEditor extends Component {
         return out;
     }
 
+    get isWs() {
+        return this.host.kit === "ws";
+    }
+
     get defaultAnchor() {
+        if (this.isWs) {
+            return "pack_end";
+        }
         return this.host.has_notebook ? "before_notebook" : "sheet_end";
     }
 
@@ -189,9 +203,12 @@ export class FormStudioEditor extends Component {
     sectionsAt(where) {
         const notebook = this.host.has_notebook;
         return this.state.sections.filter((sec) => {
-            const kind = (sec.anchor && sec.anchor.kind) || "before_notebook";
+            const kind = (sec.anchor && sec.anchor.kind) || this.defaultAnchor;
             if (kind === "card") {
                 return false;
+            }
+            if (this.isWs) {
+                return where === "pack" && kind === "pack_end";
             }
             if (!notebook) {
                 return where === "end";
@@ -211,10 +228,57 @@ export class FormStudioEditor extends Component {
         return out;
     }
 
+    /** Cards after the tab strip; on a Workspace form, without the pack. */
     get cardsTabs() {
         const cards = (this.data && this.data.cards) || [];
         const at = cards.findIndex((card) => card.kind === "notebook");
-        return at < 0 ? [] : cards.slice(at + 1);
+        if (at < 0) {
+            return [];
+        }
+        const out = [];
+        let inPack = false;
+        for (const card of cards.slice(at + 1)) {
+            if (card.kind === "pack") {
+                inPack = true;
+            } else if (card.kind === "pack_end") {
+                inPack = false;
+            } else if (!inPack) {
+                out.push(card);
+            }
+        }
+        return out;
+    }
+
+    /** The Workspace pack's own cards (between its two markers). */
+    get cardsPack() {
+        const cards = (this.data && this.data.cards) || [];
+        const start = cards.findIndex((card) => card.kind === "pack");
+        const end = cards.findIndex((card) => card.kind === "pack_end");
+        return start < 0 || end < start ? [] : cards.slice(start + 1, end);
+    }
+
+    /** Workspace: what sits above the tabs (the header), the other tabs,
+     *  and the areas drawn by the system — the last kept apart, wherever
+     *  they sit on the form. */
+    get wsHead() {
+        return this.cardsBefore.filter((card) => card.kind !== "zone");
+    }
+
+    get wsTabs() {
+        return this.cardsTabs.filter((card) => card.kind !== "zone");
+    }
+
+    get wsZones() {
+        return this.cardsBefore.concat(this.cardsTabs).filter((card) => card.kind === "zone");
+    }
+
+    get wsPlaceLine() {
+        return _t("In the %s tab, after the standard cards.", this.packTitle);
+    }
+
+    get packTitle() {
+        const marker = ((this.data && this.data.cards) || []).find((card) => card.kind === "pack");
+        return marker ? marker.title : "";
     }
 
     cardSection(name) {
@@ -474,7 +538,7 @@ export class FormStudioEditor extends Component {
                   list_ok: Boolean(info.list_ok),
                   label_vi: info.label_vi || "",
                   help_vi: info.help_vi || "",
-                  options: clone(info.options || []),
+                  options: clone(info.options || []).map((o) => ({ ...o, label_vi: o.label_vi || "" })),
                   newOption: "",
               };
     }
@@ -508,7 +572,7 @@ export class FormStudioEditor extends Component {
             list_ok: true,
             label_vi: "",
             help_vi: "",
-            options: type === "selection" ? [{ label: "" }] : [],
+            options: type === "selection" ? [{ label: "", label_vi: "" }] : [],
             newOption: "",
             comodel: "",
         };
@@ -587,7 +651,7 @@ export class FormStudioEditor extends Component {
         if (!text) {
             return;
         }
-        this.state.form.options.push({ label: text });
+        this.state.form.options.push({ label: text, label_vi: "" });
         this.state.form.newOption = "";
     }
 
@@ -619,7 +683,9 @@ export class FormStudioEditor extends Component {
             list_ok: form.list_ok,
             label_vi: form.label_vi,
             help_vi: form.help_vi,
-            options: form.options.map((o) => o.label).filter((t) => (t || "").trim()),
+            options: form.options
+                .filter((o) => (o.label || "").trim())
+                .map((o) => ({ label: o.label, label_vi: o.label_vi || "" })),
             comodel: form.comodel,
         };
         this.state.busy = true;

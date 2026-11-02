@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- ================================================================
+         Form Studio on the Settings landing, after Field Requirements.
+         Shown to the people who may use Studio (and manage access, as the
+         tiles beside it); opens the field library.
+         ================================================================ -->
+    <t t-inherit="health_landing.AdminSettings" t-inherit-mode="extension">
+        <xpath expr="//div[@t-on-click='openFieldRequirements']" position="after">
+            <div class="admin-settings-tile o_fs_settings_tile"
+                 t-if="state.canManageAccess and fsTile.ok" t-on-click="openFormStudio">
+                <div class="admin-tile-icon fs-tile-icon" t-out="fsTileIcon"/>
+                <div class="admin-tile-label">Form Studio</div>
+                <div class="admin-tile-desc">Add fields to the Client, Contact and Incident screens</div>
+                <i class="fa fa-chevron-right admin-tile-arrow"/>
+            </div>
+        </xpath>
+    </t>
+
+</templates>

@@ -15,16 +15,30 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_form_studio
+#. odoo-javascript
+#: code:addons/health_form_studio/static/src/xml/admin_settings.xml:0
+msgid "Add fields to the Client, Contact and Incident screens"
+msgstr "Thêm trường cho màn hình Khách hàng, Liên hệ và Sự cố"
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Builds the client's name."
+msgstr "Dùng để tạo tên khách hàng."
+
+#. module: health_form_studio
 #: model:fs.link.target,label:health_form_studio.fs_target_catchment
 msgid "Catchment area"
 msgstr "Khu vực phụ trách"
 
 #. module: health_form_studio
+#: model:fs.host,name:health_form_studio.fs_host_client
 #: model:fs.link.target,label:health_form_studio.fs_target_client
 msgid "Client"
 msgstr "Khách hàng"
 
 #. module: health_form_studio
+#: model:fs.host,name:health_form_studio.fs_host_contact
 #: model:fs.link.target,label:health_form_studio.fs_target_contact
 msgid "Contact"
 msgstr "Liên hệ"
@@ -32,8 +46,32 @@ msgstr "Liên hệ"
 #. module: health_form_studio
 #. odoo-python
 #: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Contact history"
+msgstr "Lịch sử liên hệ"
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
 msgid "Counters"
 msgstr "Bộ đếm"
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Decides which team can see this client."
+msgstr "Quyết định nhóm nào được xem khách hàng này."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Decides which team can see this contact."
+msgstr "Quyết định nhóm nào được xem liên hệ này."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Decides who works this contact."
+msgstr "Quyết định ai phụ trách liên hệ này."
 
 #. module: health_form_studio
 #: model:ir.model.fields,field_description:health_form_studio.field_fs_host__display_name
@@ -46,6 +84,18 @@ msgstr "Tên hiển thị"
 #: code:addons/health_form_studio/models/fs_host.py:0
 msgid "Drawn by the system."
 msgstr "Do hệ thống tạo."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Drives pricing."
+msgstr "Dùng để tính giá."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Drives the contact workflow."
+msgstr "Điều khiển quy trình xử lý liên hệ."
 
 #. module: health_form_studio
 #. odoo-python
@@ -65,6 +115,8 @@ msgid "Field Requirements rules: %s"
 msgstr "Quy tắc Yêu cầu trường dữ liệu: %s"
 
 #. module: health_form_studio
+#. odoo-javascript
+#: code:addons/health_form_studio/static/src/xml/admin_settings.xml:0
 #: model:cms.sidebar.item,name:health_form_studio.item_admin_form_studio
 #: model:ir.model,name:health_form_studio.model_fs_studio
 msgid "Form Studio"
@@ -84,6 +136,18 @@ msgstr "ID"
 #. module: health_form_studio
 #. odoo-python
 #: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Identifies the client everywhere."
+msgstr "Nhận diện khách hàng ở mọi nơi."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Identifies the contact."
+msgstr "Nhận diện liên hệ."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
 msgid "Identifies the incident on every report."
 msgstr "Định danh sự cố trên mọi báo cáo."
 
@@ -95,13 +159,32 @@ msgstr "Sự cố"
 #. module: health_form_studio
 #. odoo-python
 #: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Links the client to their facility."
+msgstr "Liên kết khách hàng với cơ sở của họ."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Links the contact to a client."
+msgstr "Liên kết liên hệ với một khách hàng."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
 msgid "Links the incident to the client record."
 msgstr "Liên kết sự cố với hồ sơ khách hàng."
 
 #. module: health_form_studio
+#: model:fs.host,pwa_label:health_form_studio.fs_host_client
 #: model:fs.host,pwa_label:health_form_studio.fs_host_incident
 msgid "Nurse app"
 msgstr "Ứng dụng điều dưỡng"
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "People"
+msgstr "Người liên quan"
 
 #. module: health_form_studio
 #: model:ir.model,name:health_form_studio.model_fs_host
@@ -121,5 +204,53 @@ msgstr "Nhân viên"
 #. module: health_form_studio
 #. odoo-python
 #: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Stored encrypted by the system."
+msgstr "Hệ thống lưu ở dạng mã hóa."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Used for age, consent and insurance."
+msgstr "Dùng cho tuổi, đồng ý và bảo hiểm."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
 msgid "Used for statutory reporting deadlines."
 msgstr "Dùng cho thời hạn báo cáo theo quy định."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Used in channel reports."
+msgstr "Dùng trong báo cáo kênh."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Used on clinical records."
+msgstr "Dùng trong hồ sơ lâm sàng."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Used on insurance claims."
+msgstr "Dùng trong hồ sơ bảo hiểm."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Used to reach the client and by the messaging channels."
+msgstr "Dùng để liên lạc với khách hàng và cho các kênh nhắn tin."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Used to reach the contact."
+msgstr "Dùng để liên lạc với liên hệ."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Written by the website and ads tracking."
+msgstr "Do website và theo dõi quảng cáo ghi lại."

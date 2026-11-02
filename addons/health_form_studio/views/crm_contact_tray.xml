@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ================================================================
+         The "Not filled yet" tray on the Contact record's Overview.
+
+         The Contact screen ships no tray: none of its own cards can be fully
+         empty (the form's comment says so). A card added by Form Studio can
+         be, so the tray is placed after the pack here — overlay data, not a
+         Studio layout. With no Studio card it governs nothing and draws
+         nothing (it marks itself empty), so the Overview looks exactly as
+         before.
+         ================================================================ -->
+    <record id="view_crm_contact_form_fs_tray" model="ir.ui.view">
+        <field name="name">crm.lead.form.crm.center.fs.tray</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="health_crm.view_crm_contact_form_crm_center"/>
+        <field name="mode">extension</field>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='overview']/div[hasclass('ws-pack')]" position="after">
+                <widget name="ws_fold_tray"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
