@@ -51,6 +51,17 @@ export class OpsBookingFormController extends FormController {
             { clearBreadcrumbs: true });
     }
 
+    // The header's "Dashboard" breadcrumb calls navigateTo('dashboard'); the
+    // Client header's controller has the same method and route.
+    navigateTo(page) {
+        const routes = {
+            dashboard: 'health_fieldservice.action_ops_command_center',
+        };
+        if (routes[page]) {
+            this.actionService.doAction(routes[page], { clearBreadcrumbs: true });
+        }
+    }
+
     openAssignStaff() {
         this.actionService.doAction({
             type: 'ir.actions.client',
