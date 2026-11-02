@@ -60,16 +60,48 @@
 #       added to end. -d (copy files) is independent of -D and affects them all.
 #   -w  lock wait in seconds (default 3600)
 #
+# THE POST-UPGRADE CHECK (since FS-H5, 2026-11-03). After every -m/-i upgrade
+# that succeeded, and after any -x script, WITH THE SERVICE STILL DOWN, the
+# wrapper runs /usr/local/lib/carejiox/postcheck.py (source:
+# .agent/workflows/carejiox-postcheck.py) in an odoo shell on the same
+# database and shows its lines:
+#   ==> studio: checked <n> layouts, broken <m>, host problems <k>, encrypted values <v>
+#       broken: <model> layout <id> — <reason>      (Form Studio switched it off)
+#       host: <name> — <problem>
+#   ==> jobs: <a> active                              (any database but the template)
+#   ==> jobs: <a> active (template: switched off <a> → 0)   (the golden template)
+# The template is the database named by `biz_tenants.template_db` on the
+# master (the registered default `carejiox_template` when the master has no
+# such setting); the check switches ITS scheduled jobs off through the
+# platform's own routine, so nobody has to remember the UPDATE any more. On
+# the template any encrypted value is a failure too: a clinic made from it gets
+# a new database secret and could never read it. Set CAREJIOX_IS_TEMPLATE=1 in
+# the caller's environment to treat another database as the template (a
+# rehearsal on a clone).
+#
 # EXIT CODE is odoo-bin's, so `|| echo FAILED` works. The service is restarted
 # even when the upgrade fails — a broken registry is better diagnosed with the
-# log than with a dead port.
+# log than with a dead port. When the upgrade succeeded but the post-check did
+# not, the wrapper prints `==> POSTCHECK FAILED (exit=3) — read the lines
+# above` and exits 3 — and STILL starts the service: a switched-off Studio
+# layout is a safe state, a stopped clinic is not.
+#
+# REHEARSAL: CAREJIOX_DEPLOY_CONF=<file> runs odoo-bin with another config
+# file (a clone's private addons tree). Never set it for a live deploy.
 set -uo pipefail
 
 MODULES=""; INSTALL=""; TESTTAGS=""; DO_DEPLOY=0; SKIP_UPGRADE=0; LOCK_WAIT=3600
 SHELLFILE=""
 ADDONS=/odoo/odoo-server/addons
-CONF=/etc/odoo-server.conf
+CONF=${CAREJIOX_DEPLOY_CONF:-/etc/odoo-server.conf}
 DB=carejiox
+# The master: the only database that knows which one is the template.
+MASTER_DB=carejiox
+# What the product registers as the template when the master has no setting
+# (health_tenancy/models/registrations.py).
+DEFAULT_TEMPLATE=carejiox_template
+POSTCHECK=/usr/local/lib/carejiox/postcheck.py
+IS_TEMPLATE=${CAREJIOX_IS_TEMPLATE:-}
 LOCK=/tmp/carejiox-deploy.lock
 # The hostname the post-restart health check asks for. Since H3 the server
 # routes by hostname (dbfilter = ^%d$), so the old check — plain
@@ -110,6 +142,14 @@ if [ -n "$SHELLFILE" ] && [ -z "$MODULES" ] && [ -z "$INSTALL" ]; then
   SKIP_UPGRADE=1
 fi
 
+# An upgrade without its post-check is the old habit this file replaces:
+# refuse before anything is stopped.
+if [ "$SKIP_UPGRADE" -eq 0 ] && [ ! -r "$POSTCHECK" ]; then
+  echo "carejiox-deploy: the post-upgrade check $POSTCHECK is missing —" \
+       "install it from .agent/workflows/carejiox-postcheck.py first" >&2
+  exit 2
+fi
+
 run() {
   local rc=0
 
@@ -121,6 +161,24 @@ run() {
     return 2
   fi
   echo "==> database: $DB"
+
+  # Which database is the golden template? Only the master knows, and it
+  # must be asked BEFORE the service stops (psql, not the ORM). A caller may
+  # force it (CAREJIOX_IS_TEMPLATE=1) for a rehearsal on a clone.
+  local template
+  template=$(sudo -u postgres psql -d "$MASTER_DB" -Atc \
+    "SELECT value FROM ir_config_parameter WHERE key='biz_tenants.template_db'" \
+    2>/dev/null | head -1)
+  template=${template:-$DEFAULT_TEMPLATE}
+  if [ "$IS_TEMPLATE" = "1" ]; then
+    echo "==> $DB is treated as the golden template (CAREJIOX_IS_TEMPLATE=1)"
+  else
+    IS_TEMPLATE=0
+    if [ "$DB" = "$template" ]; then
+      IS_TEMPLATE=1
+      echo "==> $DB is the golden template"
+    fi
+  fi
 
   # EVERY module named on EITHER list. A first install copied from nowhere is
   # a first install of whatever happened to be on the box already.
@@ -150,6 +208,7 @@ run() {
     sleep 2
   done
 
+  local upgraded=0 checkrc=0
   if [ "$SKIP_UPGRADE" -eq 0 ]; then
     local args="-c $CONF -d $DB --stop-after-init"
     [ -n "$MODULES" ] && args="$args -u $MODULES"
@@ -174,6 +233,7 @@ run() {
     sudo su - odoo -s /bin/bash -c "/odoo/odoo-server/odoo-bin $args" >/dev/null 2>&1
     rc=$?
     echo "==> odoo-bin exit=$rc"
+    [ "$rc" -eq 0 ] && upgraded=1
   fi
 
   # THE SERVICE IS STILL DOWN HERE, WHICH IS THE POINT. A script that rewrites
@@ -192,6 +252,20 @@ run() {
     echo "==> SKIPPING $SHELLFILE — the upgrade before it failed (exit=$rc)"
   fi
 
+  # THE POST-UPGRADE CHECK — still with the service down, only after an
+  # upgrade that succeeded. Its lines are shown, never swallowed.
+  if [ "$upgraded" -eq 1 ]; then
+    echo "==> post-upgrade check (service down)"
+    sudo su - odoo -s /bin/bash -c \
+      "CAREJIOX_IS_TEMPLATE=$IS_TEMPLATE CAREJIOX_MASTER_DB=$MASTER_DB \
+        /odoo/odoo-server/odoo-bin shell -c $CONF -d $DB --no-http \
+        --logfile=/var/log/odoo/odoo-shell.log < $POSTCHECK"
+    checkrc=$?
+    if [ "$checkrc" -ne 0 ]; then
+      echo "==> POSTCHECK FAILED (exit=$checkrc) — read the lines above"
+    fi
+  fi
+
   echo "==> starting odoo"
   sudo service odoo-server start >/dev/null 2>&1
   sleep 14
@@ -205,13 +279,20 @@ run() {
     sudo grep -aE 'ParseError|does not exist|Failed to load registry|CRITICAL|FAIL:|ERROR: test' \
       /var/log/odoo/odoo-server.log | tail -8
   fi
+  # odoo-bin's (or the -x script's) failure wins; otherwise the check's 3.
+  if [ "$rc" -eq 0 ] && [ "$checkrc" -ne 0 ]; then
+    rc=3
+  fi
   return $rc
 }
 
 echo "==> waiting for the deploy lock (up to ${LOCK_WAIT}s)"
 flock -w "$LOCK_WAIT" "$LOCK" bash -c "$(declare -f run); MODULES='$MODULES' INSTALL='$INSTALL' \
   TESTTAGS='$TESTTAGS' DO_DEPLOY=$DO_DEPLOY SKIP_UPGRADE=$SKIP_UPGRADE ADDONS='$ADDONS' \
-  CONF='$CONF' DB='$DB' SHELLFILE='$SHELLFILE' HEALTH_HOST='$HEALTH_HOST' run"
+  CONF='$CONF' DB='$DB' SHELLFILE='$SHELLFILE' HEALTH_HOST='$HEALTH_HOST' \
+  MASTER_DB='$MASTER_DB' DEFAULT_TEMPLATE='$DEFAULT_TEMPLATE' POSTCHECK='$POSTCHECK' \
+  IS_TEMPLATE='$IS_TEMPLATE' run"
 RC=$?
 [ $RC -eq 1 ] && echo "==> NOTE: exit 1 with tests enabled usually means a test failed."
+[ $RC -eq 3 ] && echo "==> NOTE: exit 3 is the post-upgrade check; the service was started."
 exit $RC

@@ -341,6 +341,18 @@ ssh VietUcUAT 'carejiox-deploy -D hhh -m health_base'                # one clini
 ssh VietUcUAT 'carejiox-deploy -m health_base -t /health_base'        # with tests
 ```
 
+**Every upgrade now ends with a check, printed before the service starts
+(since FS-H5, 2026-11-03).** After a successful `-m`/`-i` the wrapper runs
+`/usr/local/lib/carejiox/postcheck.py` on the same database and prints two
+lines: `==> studio: checked … layouts, broken …, host problems …, encrypted
+values …` and `==> jobs: … active`. Exit code **3** with `==> POSTCHECK FAILED
+(exit=3) — read the lines above` means the upgrade worked but something needs
+reading — a Studio layout that no longer fits its screen (Studio switched it
+off), a screen Studio can no longer use, or, on the blank system, an encrypted
+value or a scheduled job still on; the service is started anyway. On the blank
+system the wrapper switches the scheduled jobs off ITSELF and prints
+`(template: switched off N → 0)`.
+
 **Tests must name the database, and the wrapper now does it for you.** Routing
 is by hostname, and a browser-style test calls `127.0.0.1` — which the
 application reads as a database called `127`, so every request comes back 404
@@ -421,7 +433,15 @@ What makes it a template rather than just another database:
   turns exactly those back on for the new clinic. This matters because the
   application now serves *every* database on the machine: a template with live
   jobs would sit there sending things, all day, for a clinic that does not exist.
-  **Re-check this after every upgrade of the template.**
+  **Re-check this after every upgrade of the template.** Since FS-H5 the deploy
+  wrapper does it for you: `carejiox-deploy -D carejiox_template …` switches the
+  jobs off through the platform's own routine and prints `==> jobs: N active
+  (template: switched off N → 0)`; anything but `→ 0` makes it exit 3.
+* **It holds no client data at all** — no identity numbers, no Form Studio
+  health fields, no files. Each system encrypts with its own secret, and a
+  clinic made from the template gets a new one, so it could never read an
+  encrypted value made on the template. The deploy check reports `encrypted
+  values N` on the template and exits 3 when N is not 0.
 * **Its administrator account is archived**, and there is a passwordless
   break-glass account (`platform.recovery@carejiox.com`) for the day a clinic
   locks itself out.

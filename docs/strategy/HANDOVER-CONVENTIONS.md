@@ -51,6 +51,22 @@ ssh VietUcUAT 'carejiox-deploy -x /tmp/script.py'              # odoo shell, ser
 ssh VietUcUAT 'carejiox-deploy -D carejiox_template -m health_theme'  # the template
 ```
 
+**Every upgrade ends with a post-check (since FS-H5).** After a successful
+`-m`/`-i` (and after any `-x`), with the service still down, the wrapper runs
+`/usr/local/lib/carejiox/postcheck.py` (source
+`.agent/workflows/carejiox-postcheck.py`) in an `odoo-bin shell` on the same
+database and prints `==> studio: checked <n> layouts, broken <m>, host
+problems <k>, encrypted values <v>` (plus one line per broken layout or host
+problem) and `==> jobs: <a> active`. Exit code **3** (`==> POSTCHECK FAILED
+(exit=3) — read the lines above`) means the upgrade itself worked but a Studio
+layout was switched off, a host has problems, or — on the golden template — an
+encrypted value exists or a job is still on; the service is started anyway. On
+the template (named by `biz_tenants.template_db` on the master, default
+`carejiox_template`) the wrapper now switches the scheduled jobs off itself,
+through `biz.tenants._quiet_template`, and prints `(template: switched off N →
+0)` — the hand-written `UPDATE ir_cron` after a template upgrade is retired.
+Copy the lines into a phase report verbatim.
+
 `-D` names the database (default `carejiox`). **A code change that alters a
 `depends` is a deploy step on EVERY database on this cluster**, not only the
 master — loop `-D` over `carejiox`, `carejiox_template` and every live tenant,

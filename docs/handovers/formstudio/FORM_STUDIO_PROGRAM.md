@@ -212,10 +212,11 @@ Field metadata (`fs.field.meta`): `field_id` (cascade), `vis` (`all|staff|admin`
   `biz_form_studio/published` so open forms reload.
 - **Upgrade safety (the rail that matters most on a shared addons tree)**: a Studio view whose
   anchor disappears after a module upgrade makes the whole form fail to load. Therefore:
-  (a) `fs.layout.validate_all()` re-renders and `_check_xml`s every layout; on failure it sets the
+  (a) `fs.studio.validate_all()` re-renders and `_check_xml`s every layout; on failure it sets the
   view `active=False`, moves orphaned fields to the `pack_end` section, and logs + emails the clinic
-  admin; (b) `carejiox-deploy` gets a post-upgrade step calling `validate_all()` on every DB it
-  touched (conventions §2 — add to the wrapper, ledger entry); (c) tests in `health_form_studio`
+  admin; (b) `carejiox-deploy` gets a post-upgrade step calling `fs.studio.validate_all()` on every
+  DB it touched (conventions §2 — shipped in FS-H5 as `.agent/workflows/carejiox-postcheck.py`,
+  ledger §5.296); (c) tests in `health_form_studio`
   pin the host anchors (like `health_cms_coverage/tests/test_cms_consolidation.py` pins tabs).
 
 ### 3.4 Hosts (what a screen declares to Studio)
@@ -279,7 +280,8 @@ unmarked field".
 ### 3.9 Tenancy
 Layouts and manual fields are per database. The golden template's layouts seed every new tenant
 (clone). A tenant's own changes never flow back. `biz_tenants` "In step with master" must run
-`validate_all()` after each tenant upgrade (same wrapper hook as §3.3).
+`fs.studio.validate_all()` after each tenant upgrade (same wrapper hook as §3.3; the wrapper's
+post-check does it for every `-D` it upgrades since FS-H5).
 
 ---
 
