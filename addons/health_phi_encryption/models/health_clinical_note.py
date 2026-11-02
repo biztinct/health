@@ -21,13 +21,13 @@ class HealthClinicalNote(models.Model):
     _phi_map = NOTE_PHI_MAP
 
     # --- encrypted storage -------------------------------------------------
-    clinical_notes_enc = fields.Text('Clinical Notes (encrypted)')
-    diagnosis_enc = fields.Text('Diagnosis (encrypted)')
-    treatment_performed_enc = fields.Text('Treatment Performed (encrypted)')
-    medications_prescribed_enc = fields.Text('Medications Prescribed (encrypted)')
-    vital_signs_enc = fields.Text('Vital Signs (encrypted)')
-    patient_condition_before_enc = fields.Text('Condition Before (encrypted)')
-    patient_condition_after_enc = fields.Text('Condition After (encrypted)')
+    clinical_notes_enc = fields.Text('Clinical Notes (encrypted)', exportable=False)
+    diagnosis_enc = fields.Text('Diagnosis (encrypted)', exportable=False)
+    treatment_performed_enc = fields.Text('Treatment Performed (encrypted)', exportable=False)
+    medications_prescribed_enc = fields.Text('Medications Prescribed (encrypted)', exportable=False)
+    vital_signs_enc = fields.Text('Vital Signs (encrypted)', exportable=False)
+    patient_condition_before_enc = fields.Text('Condition Before (encrypted)', exportable=False)
+    patient_condition_after_enc = fields.Text('Condition After (encrypted)', exportable=False)
 
     # --- exposed fields (names/labels unchanged) ----------------------------
     clinical_notes = fields.Html(

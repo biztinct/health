@@ -103,3 +103,72 @@ class TestPhiEncryption(TransactionCase):
         self.assertEqual(phi_crypto.decrypt(self.env, 'legacy plaintext'), 'legacy plaintext')
         broken = phi_crypto.PREFIX + 'AAAA'
         self.assertEqual(phi_crypto.decrypt(self.env, broken), phi_crypto.DECRYPT_ERROR_MARKER)
+
+
+PARTNER_COLUMNS = (
+    'allergies_enc', 'medical_history_enc', 'intake_diagnosis_enc',
+    'intake_notes_enc', 'healthcare_notes_enc', 'emergency_contact_name_enc',
+    'emergency_contact_phone_enc', 'emergency_contact_relation_enc',
+    'emergency_contact_relationship_enc', 'national_id_enc',
+    'national_id_bidx', 'cccd_number_enc', 'cccd_number_bidx')
+NOTE_COLUMNS = (
+    'clinical_notes_enc', 'diagnosis_enc', 'treatment_performed_enc',
+    'medications_prescribed_enc', 'vital_signs_enc',
+    'patient_condition_before_enc', 'patient_condition_after_enc')
+
+
+@tagged('post_install', '-at_install')
+class TestPhiColumnsNotExportMaterial(TransactionCase):
+
+    def test_70_the_standard_encrypted_columns_are_not_export_material(self):
+        """T70 (FS-H5) — the 13 client and 7 clinical-note storage columns
+        say `exportable: False`, so the export dialog and the analytics
+        catalogue leave them out; the fields people see stay exportable and
+        still read and write for somebody who is not an administrator."""
+        from odoo.tests import new_test_user
+        Partner = self.env['res.partner']
+        desc = Partner.fields_get(list(PARTNER_COLUMNS), ['exportable'])
+        self.assertEqual(sorted(desc), sorted(PARTNER_COLUMNS))
+        for name in PARTNER_COLUMNS:
+            self.assertIs(desc[name]['exportable'], False, name)
+        note = self.env['health.clinical.note'].fields_get(
+            list(NOTE_COLUMNS), ['exportable'])
+        self.assertEqual(sorted(note), sorted(NOTE_COLUMNS))
+        for name in NOTE_COLUMNS:
+            self.assertIs(note[name]['exportable'], False, name)
+        # nothing else about the columns changed: no group, still copied
+        for name in PARTNER_COLUMNS:
+            field = Partner._fields[name]
+            self.assertFalse(field.groups, name)
+            self.assertTrue(field.store, name)
+        visible = Partner.fields_get(
+            ['allergies', 'national_id', 'cccd_number'], ['exportable'])
+        for name, value in visible.items():
+            self.assertIs(value['exportable'], True, name)
+        # read and write as an Owner (not an administrator)
+        province = (self.env['health.catchment.province'].search([], limit=1)
+                    or self.env['health.catchment.province'].create({
+                        'name': 'PHI70 Province', 'province_code': 'P70'}))
+        user = new_test_user(
+            self.env, login='phi70_owner',
+            groups='base.group_user,health_base.group_healthcare_owner')
+        self.assertFalse(user.has_group('base.group_system'))
+        partner = Partner.create({
+            'name': 'PHI70 Patient', 'is_patient': True,
+            'catchment_province_id': province.id,
+            'allergies': 'Latex', 'national_id': '079000000070'})
+        self.env.invalidate_all()
+        mine = partner.with_user(user)
+        self.assertEqual(mine.read(['allergies', 'national_id'])[0][
+            'allergies'], 'Latex')
+        mine.write({'allergies': 'Latex, iodine'})
+        self.env.invalidate_all()
+        self.assertEqual(partner.allergies, 'Latex, iodine')
+        self.env.flush_all()
+        self.env.cr.execute(
+            "SELECT allergies_enc FROM res_partner WHERE id = %s",
+            (partner.id,))
+        self.assertTrue(self.env.cr.fetchone()[0].startswith(phi_crypto.PREFIX))
+        # exporting the visible field still works
+        data = partner.export_data(['name', 'allergies'])
+        self.assertEqual(data['datas'], [['PHI70 Patient', 'Latex, iodine']])

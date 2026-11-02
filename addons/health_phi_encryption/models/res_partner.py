@@ -33,19 +33,19 @@ class ResPartner(models.Model):
     _phi_map = PARTNER_PHI_MAP
 
     # --- encrypted storage -------------------------------------------------
-    allergies_enc = fields.Text('Known Allergies (encrypted)')
-    medical_history_enc = fields.Text('Medical History (encrypted)')
-    intake_diagnosis_enc = fields.Text('Intake Diagnosis (encrypted)')
-    intake_notes_enc = fields.Text('Intake Notes (encrypted)')
-    healthcare_notes_enc = fields.Text('Healthcare Notes (encrypted)')
-    emergency_contact_name_enc = fields.Text('Emergency Contact Name (encrypted)')
-    emergency_contact_phone_enc = fields.Text('Emergency Contact Phone (encrypted)')
-    emergency_contact_relation_enc = fields.Text('Emergency Contact Relation (encrypted)')
-    emergency_contact_relationship_enc = fields.Text('Emergency Contact Relationship (encrypted)')
-    national_id_enc = fields.Text('National ID (encrypted)')
-    national_id_bidx = fields.Char('National ID Index', index=True)
-    cccd_number_enc = fields.Text('CCCD Number (encrypted)')
-    cccd_number_bidx = fields.Char('CCCD Number Index', index=True)
+    allergies_enc = fields.Text('Known Allergies (encrypted)', exportable=False)
+    medical_history_enc = fields.Text('Medical History (encrypted)', exportable=False)
+    intake_diagnosis_enc = fields.Text('Intake Diagnosis (encrypted)', exportable=False)
+    intake_notes_enc = fields.Text('Intake Notes (encrypted)', exportable=False)
+    healthcare_notes_enc = fields.Text('Healthcare Notes (encrypted)', exportable=False)
+    emergency_contact_name_enc = fields.Text('Emergency Contact Name (encrypted)', exportable=False)
+    emergency_contact_phone_enc = fields.Text('Emergency Contact Phone (encrypted)', exportable=False)
+    emergency_contact_relation_enc = fields.Text('Emergency Contact Relation (encrypted)', exportable=False)
+    emergency_contact_relationship_enc = fields.Text('Emergency Contact Relationship (encrypted)', exportable=False)
+    national_id_enc = fields.Text('National ID (encrypted)', exportable=False)
+    national_id_bidx = fields.Char('National ID Index', index=True, exportable=False)
+    cccd_number_enc = fields.Text('CCCD Number (encrypted)', exportable=False)
+    cccd_number_bidx = fields.Char('CCCD Number Index', index=True, exportable=False)
 
     # --- exposed fields (same names/labels as before — views unchanged) ----
     allergies = fields.Text(
