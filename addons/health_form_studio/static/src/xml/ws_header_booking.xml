@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- ================================================================
+         The Studio button on the Booking record.
+
+         The screen hides the standard control panel and draws its own top
+         bar, so the button the core puts beside the cog is never seen
+         there. The same markup (biz_form_studio.StudioButton) is called
+         from the bar's right-hand slot, just left of the save indicator.
+         The controller extends the form controller, so the core's patch
+         already gives it `fsCanEdit`, `fsIcon` and `openFormStudio`.
+
+         One file per screen: each file extends ONE top bar and hangs only
+         on that bar's own classes, which is what the screens' own guard
+         tests read file by file.
+         ================================================================ -->
+    <t t-inherit="health_fieldservice.OpsBookingFormView" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('ops-header-right')]/t[@t-if='canEdit']" position="before">
+            <t t-call="biz_form_studio.StudioButton"/>
+        </xpath>
+    </t>
+
+</templates>

@@ -17,8 +17,18 @@ msgstr ""
 #. module: health_form_studio
 #. odoo-javascript
 #: code:addons/health_form_studio/static/src/xml/admin_settings.xml:0
-msgid "Add fields to the Client, Contact and Incident screens"
-msgstr "Thêm trường cho màn hình Khách hàng, Liên hệ và Sự cố"
+msgid "Add fields to the Booking, Client, Contact and Incident screens"
+msgstr "Thêm trường cho màn hình Lịch hẹn, Khách hàng, Liên hệ và Sự cố"
+
+#. module: health_form_studio
+#: model:fs.host,name:health_form_studio.fs_host_booking
+msgid "Booking"
+msgstr "Lịch hẹn"
+
+#. module: health_form_studio
+#: model:fs.host,list_name:health_form_studio.fs_host_booking
+msgid "Bookings"
+msgstr "Lịch hẹn"
 
 #. module: health_form_studio
 #. odoo-python
@@ -38,6 +48,11 @@ msgid "Client"
 msgstr "Khách hàng"
 
 #. module: health_form_studio
+#: model:fs.host,list_name:health_form_studio.fs_host_client
+msgid "Clients"
+msgstr "Khách hàng"
+
+#. module: health_form_studio
 #: model:fs.host,name:health_form_studio.fs_host_contact
 #: model:fs.link.target,label:health_form_studio.fs_target_contact
 msgid "Contact"
@@ -50,10 +65,27 @@ msgid "Contact history"
 msgstr "Lịch sử liên hệ"
 
 #. module: health_form_studio
+#: model:fs.host,list_name:health_form_studio.fs_host_contact
+msgid "Contacts"
+msgstr "Liên hệ"
+
+#. module: health_form_studio
 #. odoo-python
 #: code:addons/health_form_studio/models/fs_host.py:0
 msgid "Counters"
 msgstr "Bộ đếm"
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Decides the service and its price."
+msgstr "Quyết định dịch vụ và giá của dịch vụ."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Decides which team can see this booking."
+msgstr "Quyết định nhóm nào được xem lịch hẹn này."
 
 #. module: health_form_studio
 #. odoo-python
@@ -66,6 +98,12 @@ msgstr "Quyết định nhóm nào được xem khách hàng này."
 #: code:addons/health_form_studio/models/fs_host.py:0
 msgid "Decides which team can see this contact."
 msgstr "Quyết định nhóm nào được xem liên hệ này."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Decides who does the visit."
+msgstr "Quyết định ai thực hiện lượt thăm."
 
 #. module: health_form_studio
 #. odoo-python
@@ -90,6 +128,12 @@ msgstr "Do hệ thống tạo."
 #: code:addons/health_form_studio/models/fs_host.py:0
 msgid "Drives pricing."
 msgstr "Dùng để tính giá."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Drives the booking workflow."
+msgstr "Điều khiển quy trình của lịch hẹn."
 
 #. module: health_form_studio
 #. odoo-python
@@ -136,6 +180,12 @@ msgstr "ID"
 #. module: health_form_studio
 #. odoo-python
 #: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Identifies the booking."
+msgstr "Dùng để nhận diện lịch hẹn."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
 msgid "Identifies the client everywhere."
 msgstr "Nhận diện khách hàng ở mọi nơi."
 
@@ -157,6 +207,17 @@ msgid "Incident"
 msgstr "Sự cố"
 
 #. module: health_form_studio
+#: model:fs.host,list_name:health_form_studio.fs_host_incident
+msgid "Incidents"
+msgstr "Sự cố"
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Links the booking to the client."
+msgstr "Liên kết lịch hẹn với khách hàng."
+
+#. module: health_form_studio
 #. odoo-python
 #: code:addons/health_form_studio/models/fs_host.py:0
 msgid "Links the client to their facility."
@@ -175,6 +236,7 @@ msgid "Links the incident to the client record."
 msgstr "Liên kết sự cố với hồ sơ khách hàng."
 
 #. module: health_form_studio
+#: model:fs.host,pwa_label:health_form_studio.fs_host_booking
 #: model:fs.host,pwa_label:health_form_studio.fs_host_client
 #: model:fs.host,pwa_label:health_form_studio.fs_host_incident
 msgid "Nurse app"
@@ -197,6 +259,12 @@ msgid "Service or package"
 msgstr "Dịch vụ hoặc gói"
 
 #. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Shown to the care team in the nurse app."
+msgstr "Hiển thị cho nhóm chăm sóc trong ứng dụng điều dưỡng."
+
+#. module: health_form_studio
 #: model:fs.link.target,label:health_form_studio.fs_target_employee
 msgid "Staff member"
 msgstr "Nhân viên"
@@ -210,8 +278,20 @@ msgstr "Hệ thống lưu ở dạng mã hóa."
 #. module: health_form_studio
 #. odoo-python
 #: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Used by the schedule, routes and the nurse app."
+msgstr "Được dùng bởi lịch làm việc, tuyến đường và ứng dụng điều dưỡng."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
 msgid "Used for age, consent and insurance."
 msgstr "Dùng cho tuổi, đồng ý và bảo hiểm."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Used for quotes, invoices and commission."
+msgstr "Được dùng cho báo giá, hóa đơn và hoa hồng."
 
 #. module: health_form_studio
 #. odoo-python
@@ -248,6 +328,12 @@ msgstr "Dùng để liên lạc với khách hàng và cho các kênh nhắn tin
 #: code:addons/health_form_studio/models/fs_host.py:0
 msgid "Used to reach the contact."
 msgstr "Dùng để liên lạc với liên hệ."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Written by the nurse app when the visit starts and ends."
+msgstr "Do ứng dụng điều dưỡng ghi khi lượt thăm bắt đầu và kết thúc."
 
 #. module: health_form_studio
 #. odoo-python

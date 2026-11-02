@@ -21,6 +21,16 @@
  * Drag and drop is HTML5 (as in the concept page); every move also has a
  * button in the right panel, so nothing needs a mouse.
  *
+ * THE SCREEN IS IN THE ADDRESS. Once a screen has loaded, its record type,
+ * form and record are written into the action's state (`fs_model`, `fs_view`,
+ * `fs_res` — `model` and `res_id`-like keys belong to the router and are not
+ * kept), so reloading the browser inside Studio opens the same screen again.
+ *
+ * LIST COLUMNS. When the host names a list, a field's "show as a column"
+ * switch makes it a column of that list once it is placed. The switch is
+ * saved with the field (like "Required", it redraws the published layouts at
+ * once); the publish sheet lists the columns a new placement adds or removes.
+ *
  * TWO KINDS OF SCREEN. A standard form takes a section above the tabs or at
  * the bottom. A Workspace form (`host.kit === "ws"`) is a pack of cards in
  * one tab: the schematic draws that pack as a grid of its own cards (open
@@ -87,10 +97,13 @@ export class FormStudioEditor extends Component {
         this.actionService = useService("action");
         this.notification = useService("notification");
         this.ic = ic;
+        // Opened from a form: `model` / `view_id` / `res_id`. Reloaded: the
+        // same screen comes back from the address as `fs_model` / `fs_view` /
+        // `fs_res` (see `rememberScreen`).
         const params = (this.props.action && this.props.action.params) || {};
-        this.model = params.model || false;
-        this.viewId = params.view_id || false;
-        this.resId = params.res_id || false;
+        this.model = params.model || params.fs_model || false;
+        this.viewId = Number(params.view_id || params.fs_view) || false;
+        this.resId = Number(params.res_id || params.fs_res) || false;
         this.state = useState({
             loading: true,
             error: "",
@@ -145,10 +158,31 @@ export class FormStudioEditor extends Component {
                 this.state.sheet = "draft";
             }
             this.state.error = "";
+            this.rememberScreen();
         } catch (error) {
             this.state.error = errorText(error, _t("Studio could not open this screen."));
         }
         this.state.loading = false;
+    }
+
+    /** Put the screen in the address, so a reload opens it again. The keys
+     *  are Studio's own: the router keeps `model`, `resId`, `action` and
+     *  `active_id` for itself and would drop them. Written before the first
+     *  paint, the action manager carries them into the address when it
+     *  mounts the editor. */
+    rememberScreen() {
+        if (typeof this.props.updateActionState !== "function") {
+            return;
+        }
+        const screen = { fs_model: this.model, fs_view: this.viewId };
+        if (this.resId) {
+            screen.fs_res = this.resId;
+        }
+        try {
+            this.props.updateActionState(screen);
+        } catch {
+            // The address is a convenience; the editor works without it.
+        }
     }
 
     /** Fresh field list and history after a server change; the working
@@ -367,6 +401,76 @@ export class FormStudioEditor extends Component {
         return this.host.pwa_label || _t("Mobile app");
     }
 
+    // ============================================================ list columns
+    get hasList() {
+        return Boolean(this.host.list_title);
+    }
+
+    get listSwitchLabel() {
+        return _t("Show as a column in the %s list", this.host.list_title || "");
+    }
+
+    /** Why the field being edited can never be a column ('' if it can). */
+    get listReason() {
+        const form = this.state.form;
+        const sel = this.state.sel;
+        if (!form || !sel) {
+            return "";
+        }
+        if (form.phi) {
+            return _t("Health information is never a column.");
+        }
+        if (sel.kind === "new") {
+            const item = this.typeMap[sel.type];
+            return (item && item.list_reason) || "";
+        }
+        const info = this.fields[sel.name];
+        return (info && !info.phi && info.list_reason) || "";
+    }
+
+    /** The columns a description gives the list, in screen order. */
+    columnsOf(sections) {
+        if (!this.hasList) {
+            return [];
+        }
+        const out = [];
+        for (const sec of shape(sections)) {
+            for (const name of sec.fields) {
+                const info = this.fields[name];
+                if (info && !info.std && info.list_ok && !info.phi && !out.includes(name)) {
+                    out.push(name);
+                }
+            }
+        }
+        return out;
+    }
+
+    /** Publish sheet lines for the columns this publish adds or removes. */
+    get columnChanges() {
+        const before = this.columnsOf(this.state.published);
+        const after = this.columnsOf(this.state.sections);
+        const list = this.host.list_title || "";
+        const label = (name) => (this.fields[name] ? this.fields[name].display : name);
+        const out = [];
+        for (const name of after) {
+            if (!before.includes(name)) {
+                out.push({ icon: "table", text: _t("Column added: %(field)s (%(list)s list)", { field: label(name), list }) });
+            }
+        }
+        for (const name of before) {
+            if (!after.includes(name)) {
+                out.push({ icon: "minusCircle", text: _t("Column removed: %(field)s (%(list)s list)", { field: label(name), list }) });
+            }
+        }
+        return out;
+    }
+
+    get columnWarning() {
+        return _t(
+            "Columns are shown to everyone who may see the field; each person can hide them from the column chooser. Saved column choices for this list are reset by this publish."
+        );
+    }
+
     // ============================================================ changes
     get changes() {
         const fields = this.fields;
@@ -569,7 +673,7 @@ export class FormStudioEditor extends Component {
             required: false,
             phi: false,
             pwa: false,
-            list_ok: true,
+            list_ok: false,
             label_vi: "",
             help_vi: "",
             options: type === "selection" ? [{ label: "", label_vi: "" }] : [],
@@ -624,7 +728,7 @@ export class FormStudioEditor extends Component {
         if (!this.state.form) {
             return;
         }
-        if (key === "list_ok" && this.state.form.phi) {
+        if (key === "list_ok" && this.listReason) {
             return;
         }
         this.setForm(key, !this.state.form[key]);
@@ -680,7 +784,7 @@ export class FormStudioEditor extends Component {
             required: form.required,
             phi: form.phi,
             pwa: form.pwa,
-            list_ok: form.list_ok,
+            list_ok: form.list_ok && !this.listReason,
             label_vi: form.label_vi,
             help_vi: form.help_vi,
             options: form.options
@@ -785,8 +889,18 @@ export class FormStudioEditor extends Component {
                 out.push({ key: `s:${sec.id}`, label: sec.title || _t("New section") });
             }
         }
+        // the open cards, by the title the screen shows (in the reader's
+        // language), and only those the schematic found open
+        const shown = {};
+        for (const card of (this.data && this.data.cards) || []) {
+            if (card.kind === "std" && card.open) {
+                shown[card.name] = card.title;
+            }
+        }
         for (const card of this.host.sections || []) {
-            out.push({ key: `c:${card.name}`, label: card.title || card.name });
+            if (card.name in shown) {
+                out.push({ key: `c:${card.name}`, label: shown[card.name] || card.title || card.name });
+            }
         }
         out.push({ key: "new", label: _t("A new section") });
         return out;

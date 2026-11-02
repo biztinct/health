@@ -1,21 +1,23 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Healthcare: Form Studio',
-    'summary': 'Form Studio on the clinic screens: the Client, Contact and '
-               'Incident forms, the clinic administrator as the gate, the '
-               'Settings entry',
+    'summary': 'Form Studio on the clinic screens: the Booking, Client, '
+               'Contact and Incident forms and their lists, the clinic '
+               'administrator as the gate, the Settings entry',
     'description': """
 The clinic's side of Form Studio. Data only, plus two small hooks:
 
   * who may open Studio (the clinic administrator), and the groups behind
     "Staff" and "Admins";
   * the screens that support Studio, with their locked fields and the areas
-    shown dimmed: the Incident form, and the Client and Contact records
-    (Workspace forms: new sections become cards at the end of the Overview
-    pack, and fold into "Not filled yet" when empty);
-  * the Studio button in the Client and Contact records' own top bars (both
-    hide the standard control panel), and the "Not filled yet" tray on the
-    Contact Overview, which had none;
+    shown dimmed: the Incident form, and the Booking, Client and Contact
+    records (Workspace forms: new sections become cards at the end of the
+    Overview pack, and fold into "Not filled yet" when empty);
+  * the list each of those screens' records appear in (Bookings, Clients,
+    Contacts, Incidents) and the column new columns follow;
+  * the Studio button in the Booking, Client and Contact records' own top
+    bars (they hide the standard control panel), and the "Not filled yet"
+    tray on the Contact Overview, which had none;
   * the records a "Link to a record" field may point at (staff member,
     facility, client, contact, service or package, catchment area);
   * the Form Studio entry in the Settings section of the left menu, for the
@@ -24,7 +26,7 @@ The clinic's side of Form Studio. Data only, plus two small hooks:
     in the reader's language;
   * Field Requirements rules counted as a place a field is still used.
 """,
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.2.0',
     'category': 'Healthcare',
     'license': 'LGPL-3',
     'author': 'Biztinct',
@@ -50,7 +52,9 @@ The clinic's side of Form Studio. Data only, plus two small hooks:
     'assets': {
         'web.assets_backend': [
             'health_form_studio/static/src/scss/ws_headers.scss',
-            'health_form_studio/static/src/xml/ws_headers.xml',
+            'health_form_studio/static/src/xml/ws_header_client.xml',
+            'health_form_studio/static/src/xml/ws_header_contact.xml',
+            'health_form_studio/static/src/xml/ws_header_booking.xml',
             'health_form_studio/static/src/xml/admin_settings.xml',
             'health_form_studio/static/src/js/admin_settings.js',
         ],

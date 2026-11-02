@@ -22,6 +22,15 @@ pack's own cards carry, plus two attributes the "Not filled yet" tray reads:
 decide whether it is empty). A field dropped into an open card of a Workspace
 form also marks that card with `data-fs-fields`, so the tray never folds a
 card while a Studio field in it holds a value.
+
+A LAYOUT ALSO KEEPS A LIST VIEW. When the host names the list its records
+appear in (`fs.host.list_view_xmlid` + `list_anchor`), every placed field whose
+"show in lists" switch is on becomes a column of that list, right after the
+anchor column, in the order the fields sit on the screen. That second view is
+written in the same transaction as the form's, kept in the history next to
+it, and switched off together with it: one switch, one reason, never half a
+layout. With no columns the view stays (empty and inactive), so its id is
+stable for the history.
 """
 import logging
 
@@ -31,7 +40,8 @@ from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.addons.base.models.ir_model import MODULE_UNINSTALL_FLAG
 
-from .fs_common import ANCHOR_NAME_RE, FS_PREFIX, SECTION_ID_RE
+from .fs_common import (ANCHOR_NAME_RE, FS_PREFIX, NO_LIST_TYPES,
+                        SECTION_ID_RE)
 
 _logger = logging.getLogger(__name__)
 
@@ -51,6 +61,9 @@ WS_CARD_ICON = 'clipboard-list'
 #: Types that take the pack's "—" placeholder, like the cards around them.
 WS_NO_PLACEHOLDER = ('boolean', 'binary')
 
+#: An empty extension: what a layout's list view holds while it has no column.
+EMPTY_ARCH = '<data/>'
+
 
 class FsLayout(models.Model):
     _name = 'fs.layout'
@@ -65,6 +78,8 @@ class FsLayout(models.Model):
     sections = fields.Json(default=list)
     version = fields.Integer(default=0, tracking=True)
     view_id = fields.Many2one('ir.ui.view', ondelete='set null', copy=False)
+    list_view_id = fields.Many2one('ir.ui.view', ondelete='set null',
+                                   copy=False)
     published_by = fields.Many2one('res.users', ondelete='set null')
     published_at = fields.Datetime()
     state = fields.Selection(
@@ -243,6 +258,10 @@ class FsLayout(models.Model):
                         "The card \"%s\" no longer accepts fields.", card))
                 if ws:
                     expr = "//div[@name='%s']/group" % card
+                    if len(combined.xpath(expr)) != 1:
+                        raise UserError(_(
+                            "The card \"%s\" cannot take fields: it has no "
+                            "field group.", card))
                     card_fields.setdefault(card, []).extend(names)
                 else:
                     expr = "//group[@name='%s']" % card
@@ -333,6 +352,104 @@ class FsLayout(models.Model):
             self.view_id.sudo().update_field_translations(
                 'arch_db', {'vi_VN': terms})
 
+    # ------------------------------------------------------------------
+    #  The list columns
+    # ------------------------------------------------------------------
+    @api.model
+    def _column_names(self, sections, model):
+        """The fields placed in `sections` whose switch makes them a column,
+        in the order they sit on the screen (section order, then field
+        order). Health information, files and long text never are, whatever
+        a stored switch says."""
+        placed = []
+        for sec in sections or []:
+            for f in sorted(sec.get('fields') or [],
+                            key=lambda f: f.get('order', 0)):
+                if f.get('name') and f['name'] not in placed:
+                    placed.append(f['name'])
+        if not placed:
+            return []
+        Model = self.env[model]
+        metas = self.env['fs.field.meta'].sudo().search(
+            [('model', '=', model), ('name', 'in', placed)])
+        ok = {m.name for m in metas if m.list_ok and not m.phi}
+        return [n for n in placed if n in ok and n in Model._fields
+                and Model._fields[n].type not in NO_LIST_TYPES]
+
+    @api.model
+    def _render_list_arch(self, names, host, list_view):
+        """The list view's arch: one xpath after the host's anchor column,
+        holding one column per name. No names: an empty extension."""
+        if not names:
+            return EMPTY_ARCH
+        Model = self.env[host.model]
+        try:
+            combined = etree.fromstring(list_view.get_combined_arch())
+        except Exception as exc:  # noqa: BLE001 — said in the user's words
+            raise UserError(_(
+                "The list changed: %s", str(exc) or exc.__class__.__name__)
+            ) from exc
+        expr = "//field[@name='%s']" % host.list_anchor
+        if len(combined.xpath(expr)) != 1:
+            raise UserError(_(
+                "The list changed: the column \"%s\" that new columns go "
+                "after is not there.", host.list_anchor))
+        root = etree.Element('data')
+        xp = etree.SubElement(root, 'xpath', expr=expr, position='after')
+        currency = None
+        for name in names:
+            if name not in Model._fields:
+                raise UserError(_(
+                    "The field %s no longer exists. Reload Studio.", name))
+            field = Model._fields[name]
+            node = etree.SubElement(xp, 'field', name=name, optional='show')
+            if field.type == 'selection':
+                # like the lists' own status columns
+                node.set('widget', 'badge')
+            if field.type == 'monetary':
+                currency = getattr(field, 'currency_field', None) or 'currency_id'
+        # A money column shows its currency only when the list reads the
+        # currency field; most lists do not, so it is read, never shown.
+        # Always written (a list that already reads it reads it twice, which
+        # is harmless): whether "the list" has it cannot be told apart from
+        # this layout's own copy in the combined arch, and the arch must not
+        # depend on what the previous version wrote.
+        if currency and currency in Model._fields:
+            etree.SubElement(xp, 'field', name=currency,
+                             column_invisible='1')
+        return etree.tostring(root, pretty_print=True, encoding='unicode')
+
+    def _write_list_view(self, arch, list_view):
+        """Create or rewrite this layout's list view. Active only while it
+        holds a column; never deleted while the layout exists."""
+        self.ensure_one()
+        active = arch != EMPTY_ARCH
+        company = self.company_id
+        vals = {
+            'name': 'Form Studio list: %s' % self.model,
+            'key': 'biz_form_studio.list.%s.%s' % (
+                self.model, company.id if company else 'all'),
+            'model': self.model,
+            'type': 'list',
+            'mode': 'extension',
+            'priority': 200,
+            'inherit_id': list_view.id,
+            'active': active,
+            'arch': arch,
+        }
+        View = self.env['ir.ui.view'].sudo().with_context(lang='en_US')
+        if self.list_view_id:
+            self.list_view_id.sudo().with_context(lang='en_US').write(vals)
+        else:
+            self.sudo().list_view_id = View.create(vals)
+
+    def _empty_list_view(self):
+        """The host stopped declaring a list: keep the view, empty and off."""
+        self.ensure_one()
+        if self.list_view_id:
+            self.list_view_id.sudo().with_context(lang='en_US').write(
+                {'arch': EMPTY_ARCH, 'active': False})
+
     def _diff(self, old, new):
         """(+added, -removed, moved) between two descriptions."""
         def where(sections):
@@ -353,6 +470,12 @@ class FsLayout(models.Model):
         base_view = self.base_view_id.sudo()
         clean = self._clean_sections(sections, self.model, host)
         arch = self._render_arch(clean, host, base_view)
+        # the list is drawn before anything is written: a list that cannot
+        # take the columns refuses the whole publish, never half of it
+        list_view = host._list_view()
+        list_arch = self._render_list_arch(
+            self._column_names(clean, self.model), host, list_view
+        ) if list_view else False
         old = self.sections or []
         added, removed, moved = self._diff(old, clean)
         version = self.version + 1
@@ -366,11 +489,16 @@ class FsLayout(models.Model):
             'broken_reason': False,
         })
         self._write_view(arch, host)
+        if list_view:
+            self._write_list_view(list_arch, list_view)
+        else:
+            self._empty_list_view()
         self.env['fs.layout.history'].sudo().create({
             'layout_id': self.id,
             'version': version,
             'sections': clean,
             'arch': arch,
+            'list_arch': list_arch or False,
             'published_by': user.id,
             'published_at': fields.Datetime.now(),
         })
@@ -393,33 +521,49 @@ class FsLayout(models.Model):
         self.env.registry.registry_invalidated = True
         _logger.info("Form Studio: uid %s published %s version %s",
                      self.env.uid, self.model, version)
-        return {'version': version, 'view_id': self.view_id.id}
+        return {'version': version, 'view_id': self.view_id.id,
+                'list_view_id': self.list_view_id.id or False}
 
     # ------------------------------------------------------------------
     #  The validator
     # ------------------------------------------------------------------
     def _validate_one(self, host):
-        """Re-draw against today's form. Returns None, or why it failed."""
+        """Re-draw against today's form and today's list. Returns None, or
+        why it failed (a list failure says so)."""
         self.ensure_one()
         if not self.view_id or not self.sections:
             return None
+        stage = 'form'
         try:
             with self.env.cr.savepoint():
-                arch = self._render_arch(
-                    self._clean_sections(self.sections, self.model, host),
-                    host, self.base_view_id.sudo())
+                clean = self._clean_sections(self.sections, self.model, host)
+                arch = self._render_arch(clean, host, self.base_view_id.sudo())
                 self.view_id.sudo().with_context(lang='en_US').write(
                     {'arch': arch, 'active': True})
                 self.base_view_id.sudo()._get_combined_arch()
+                stage = 'list'
+                list_view = host._list_view()
+                if list_view:
+                    list_arch = self._render_list_arch(
+                        self._column_names(clean, self.model), host, list_view)
+                    self._write_list_view(list_arch, list_view)
+                    if list_arch != EMPTY_ARCH:
+                        list_view._get_combined_arch()
+                else:
+                    self._empty_list_view()
         except Exception as exc:  # noqa: BLE001 — any failure switches it off
             self.env.invalidate_all()
-            return str(exc) or exc.__class__.__name__
+            reason = str(exc) or exc.__class__.__name__
+            if stage == 'list' and not reason.startswith(
+                    _("The list changed: %s", '')):
+                reason = _("The list changed: %s", reason)
+            return reason
         return None
 
     def _switch_off(self, reason):
         self.ensure_one()
-        if self.view_id:
-            self.view_id.sudo().write({'active': False})
+        # the form's view and the list's together: never half a layout
+        (self.view_id | self.list_view_id).sudo().write({'active': False})
         self.sudo().write({'state': 'broken', 'broken_reason': reason})
         self.sudo().message_post(body=_(
             "This layout is switched off because the screen changed. "
@@ -455,6 +599,7 @@ class FsLayoutHistory(models.Model):
     version = fields.Integer(required=True)
     sections = fields.Json(default=list)
     arch = fields.Text()
+    list_arch = fields.Text()
     published_by = fields.Many2one('res.users', ondelete='set null')
     published_at = fields.Datetime()
 

@@ -21,8 +21,8 @@ from odoo.exceptions import AccessError, UserError
 from odoo.tools.translate import LazyTranslate
 
 from .fs_common import (DEFAULT_GATE, FS_PREFIX, NAME_RE, PARAM_GATE,
-                        PARAM_REQUIRED_RULES, PHI_WARN_TYPES, TYPES, slugify,
-                        vis_group_xmlid)
+                        PARAM_REQUIRED_RULES, PHI_WARN_TYPES, TYPES,
+                        card_title, has_class, slugify, vis_group_xmlid)
 
 _logger = logging.getLogger(__name__)
 _lt = LazyTranslate(__name__)
@@ -218,7 +218,8 @@ class FsStudio(models.AbstractModel):
             label, hint, icon = TYPE_INFO[key]
             item = {'key': key, 'label': self.env._(label),
                     'hint': self.env._(hint), 'icon': icon,
-                    'disabled': False, 'reason': ''}
+                    'disabled': False, 'reason': '',
+                    'list_reason': self.env['fs.field.meta']._list_reason(key)}
             if key == 'monetary' and not host.money_ok:
                 item['disabled'] = True
                 item['hint'] = _("not on this screen")
@@ -287,19 +288,6 @@ class FsStudio(models.AbstractModel):
                       if isinstance(c, dict)}
         cards, seen_zones, counter = [], set(), [0]
 
-        def has_class(node, cls):
-            return cls in (node.get('class') or '').split()
-
-        def ws_title(card):
-            """A Workspace card's title is the text of the LAST `div` of its
-            `.vu-card__title` (the first one is the icon)."""
-            for head in card:
-                if head.tag == 'div' and has_class(head, 'vu-card__title'):
-                    divs = [d for d in head if d.tag == 'div']
-                    if divs:
-                        return ''.join(divs[-1].itertext()).strip()
-            return ''
-
         def ws_pack(page):
             for child in page:
                 if child.tag == 'div' and has_class(child, 'ws-pack'):
@@ -361,6 +349,10 @@ class FsStudio(models.AbstractModel):
                     for page in child:
                         if not isinstance(page.tag, str) or page.tag != 'page':
                             continue
+                        # a tab that is never shown is not drawn here either
+                        if (page.get('invisible') or '').strip() in (
+                                '1', 'True', 'true'):
+                            continue
                         pack = None
                         if ws and page.get('name') == host.pack_page:
                             pack = ws_pack(page)
@@ -378,11 +370,14 @@ class FsStudio(models.AbstractModel):
                                         or not has_class(card, 'vu-detail-card')
                                         or cname.startswith('fs_')):
                                     continue
+                                # a card takes fields into its group: one
+                                # without (a lone note field) is never open
                                 cards.append({
                                     'kind': 'std', 'key': key(), 'name': cname,
-                                    'title': ws_title(card) or open_cards.get(
+                                    'title': card_title(card) or open_cards.get(
                                         cname, {}).get('title') or t_details,
-                                    'open': cname in open_cards,
+                                    'open': cname in open_cards and bool(
+                                        card.xpath('./group')),
                                     'tab': False, 'pack': True,
                                     'fields': collect(card, [])})
                             cards.append({'kind': 'pack_end', 'key': key()})
@@ -478,7 +473,9 @@ class FsStudio(models.AbstractModel):
                 'vis': (meta and meta.vis) or field.fs_vis or 'all',
                 'phi': bool(meta and meta.phi),
                 'pwa': bool(meta and meta.pwa),
-                'list_ok': bool(meta.list_ok) if meta else True,
+                'list_ok': bool(meta and meta.list_ok),
+                'list_reason': self.env['fs.field.meta']._list_reason(
+                    field.ttype, bool(meta and meta.phi)),
                 'label_vi': (meta and meta.label_vi) or '',
                 'help_vi': (meta and meta.help_vi) or '',
                 'warned_phi': bool(meta and meta.warned_phi),
@@ -554,6 +551,8 @@ class FsStudio(models.AbstractModel):
                 'base_view_id': base.id,
                 'pack_page': host.pack_page or False,
                 'pack_tail': host.pack_tail or False,
+                # what the list is called ('' = this screen has no list)
+                'list_title': host._list_title(),
             },
             'layout': {
                 'id': layout.id or False,
@@ -684,13 +683,16 @@ class FsStudio(models.AbstractModel):
                 self._write_options_vi(
                     {opt: labels_vi.get(opt.name) for opt in options})
         phi = bool(spec.get('phi'))
+        # a column only when asked for, and never one the list cannot hold
+        list_ok = bool(spec.get('list_ok')) and not self.env[
+            'fs.field.meta']._list_reason(ftype, phi)
         meta = self.env['fs.field.meta'].sudo().create({
             'field_id': field.id,
             'vis': vis,
             'phi': phi,
             'pwa': bool(spec.get('pwa')),
             'required': required,
-            'list_ok': False if phi else spec.get('list_ok', True) is not False,
+            'list_ok': list_ok,
             'label_vi': (spec.get('label_vi') or '').strip() or False,
             'help_vi': (spec.get('help_vi') or '').strip() or False,
             'created_by': self.env.uid,
@@ -837,8 +839,12 @@ class FsStudio(models.AbstractModel):
         for key in ('phi', 'pwa', 'list_ok'):
             if key in spec:
                 mvals[key] = bool(spec[key])
-        if mvals.get('phi', meta.phi):
+        if self.env['fs.field.meta']._list_reason(
+                field.ttype, mvals.get('phi', meta.phi)):
             mvals['list_ok'] = False
+        # A column is a rule of the list, like "Required" is a rule of the
+        # form: switching it redraws the layouts that place the field.
+        column_changed = mvals.get('list_ok', meta.list_ok) != meta.list_ok
         for key in ('label_vi', 'help_vi'):
             if key in spec:
                 mvals[key] = (spec.get(key) or '').strip() or False
@@ -849,14 +855,25 @@ class FsStudio(models.AbstractModel):
         if mvals:
             meta.write(mvals)
         self._write_vi(field, spec.get('label_vi'), spec.get('help_vi'))
+        notes = []
         if republish:
             # the rule lives on the screen: draw the screens that show it again
             if required:
-                note = _("Field \"%s\" is now required.", en.field_description)
+                notes.append(_("Field \"%s\" is now required.",
+                               en.field_description))
             else:
-                note = _("Field \"%s\" is no longer required.",
-                         en.field_description)
-            self._republish_with(model, name, note)
+                notes.append(_("Field \"%s\" is no longer required.",
+                               en.field_description))
+        if column_changed:
+            if mvals['list_ok']:
+                notes.append(_("Field \"%s\" is now a list column.",
+                               en.field_description))
+            else:
+                notes.append(_("Field \"%s\" is no longer a list column.",
+                               en.field_description))
+        if notes:
+            self._republish_with(model, name, ' '.join(notes),
+                                 lists_only=not republish)
         self._audit(host, _("Field \"%(label)s\" changed by %(who)s.",
                             label=en.field_description,
                             who=self.env.user.name))
@@ -868,12 +885,18 @@ class FsStudio(models.AbstractModel):
                    for f in sec.get('fields') or [])
 
     @api.model
-    def _republish_with(self, model, name, note):
+    def _republish_with(self, model, name, note, lists_only=False):
+        """Draw again every layout that places `name`. `lists_only`: only
+        the screens that have a list (a column switch changes nothing on a
+        screen without one)."""
         for layout in self.env['fs.layout'].sudo().search(
                 [('model', '=', model)]):
             host = self._host_of_layout(layout)
-            if host and self._placed(layout, name):
-                layout._publish(layout.sections, host, note=note)
+            if not host or not self._placed(layout, name):
+                continue
+            if lists_only and not host._list_view():
+                continue
+            layout._publish(layout.sections, host, note=note)
 
     @api.model
     def _fs_extra_references(self, field):
@@ -1046,7 +1069,19 @@ class FsStudio(models.AbstractModel):
                                'reason': reason})
             elif layout.state == 'broken':
                 layout.sudo().write({'state': 'ok', 'broken_reason': False})
-        return {'checked': len(layouts), 'broken': broken}
+        # The hosts themselves: an open card that can no longer take a field,
+        # a list or its anchor column that no longer resolves. Reported and
+        # logged, never raised: the screens keep working, and a layout that
+        # depended on the missing piece was switched off above.
+        hosts = []
+        for host in self.env['fs.host'].sudo().search([]):
+            problems = host._problems()
+            if problems:
+                hosts.append({'host_id': host.id, 'model': host.model,
+                              'name': host._title(), 'problems': problems})
+                _logger.warning("Form Studio: host %s (%s): %s", host.id,
+                                host.model, '; '.join(problems))
+        return {'checked': len(layouts), 'broken': broken, 'hosts': hosts}
 
     # ==================================================================
     #  Visibility after the settings change

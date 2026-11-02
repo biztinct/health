@@ -8,10 +8,10 @@
        named lt / gt / lte / gte / and / or / not / in (R1): the card loop is
        `cd`, the field loop is `fname`, the section loop is `sec`, the type
        loop is `tp`, the option loop is `opt`, the target loop is `tg`, the
-       change loop is `chg`, the history loop is `hv`, the reference loop is
-       `rf`. No `t-set` is named like a getter of the component (ledger
-       §5.249): the per-chip drop target is `dropAt`, the field being edited
-       is `ff`.
+       change loop is `chg`, the column loop is `col`, the history loop is
+       `hv`, the reference loop is `rf`. No `t-set` is named like a getter
+       of the component (ledger §5.249): the per-chip drop target is
+       `dropAt`, the field being edited is `ff`, the column lines are `cols`.
        ==================================================================== -->
   <t t-name="biz_form_studio.Studio">
     <div class="bzk fs-studio">
@@ -403,14 +403,19 @@
                 t-att-aria-label="pwaLabel" t-on-click="() => this.toggle('pwa')"/>
       </div>
 
-      <div class="fs-row">
+      <!-- A column of the screen's list, once the field is placed. Shown
+           only when the screen has a list; disabled, with the reason, for a
+           field that can never be one. -->
+      <div t-if="hasList" class="fs-row">
         <div class="fs-row__tx">
-          <div class="fs-row__t">Show in lists</div>
-          <div class="fs-row__d" t-if="state.form.phi">Health information is never offered as a list column.</div>
-          <div class="fs-row__d" t-else="">Offered as a column people can switch on in lists.</div>
+          <div class="fs-row__t"><t t-out="ic('table', 13)"/> <t t-esc="listSwitchLabel"/></div>
+          <div class="fs-row__d" t-if="listReason" t-esc="listReason"/>
+          <div class="fs-row__d" t-else="">Placed after the last column. Each person can hide it from the column chooser.</div>
         </div>
-        <button type="button" role="switch" class="fs-sw" t-att-aria-checked="state.form.list_ok ? 'true' : 'false'"
-                t-att-disabled="state.form.phi" aria-label="Show in lists" t-on-click="() => this.toggle('list_ok')"/>
+        <button type="button" role="switch" class="fs-sw"
+                t-att-aria-checked="state.form.list_ok and !listReason ? 'true' : 'false'"
+                t-att-disabled="listReason ? 'disabled' : false" t-att-aria-label="listSwitchLabel"
+                t-on-click="() => this.toggle('list_ok')"/>
       </div>
 
       <div class="fs-actions">
@@ -523,6 +528,11 @@
           <t t-foreach="changes" t-as="chg" t-key="chg_index">
             <div class="fs-chg"><span class="fs-chg__ic" t-out="ic(chg.icon, 14)"/><span t-esc="chg.text"/></div>
           </t>
+          <t t-set="cols" t-value="columnChanges"/>
+          <t t-foreach="cols" t-as="col" t-key="col_index">
+            <div class="fs-chg fs-chg--col"><span class="fs-chg__ic" t-out="ic(col.icon, 14)"/><span t-esc="col.text"/></div>
+          </t>
+          <p t-if="cols.length" class="fs-sheet__note" t-esc="columnWarning"/>
         </div>
         <div class="bzk-modal__foot">
           <span class="bzk-modal__sp"/>

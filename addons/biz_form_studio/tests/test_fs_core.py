@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""FS-H1 core tests (handover §5, tests 1–12).
+"""Core tests: FS-H1 (tests 1–12), FS-H2 (17–27), FS-H3 (33–44).
 
 The core is tested on a NEUTRAL model — `res.partner` with a throwaway host on
 `base.view_partner_form` — so nothing here depends on a product's screens. The
@@ -20,7 +20,7 @@ from lxml import etree
 
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.modules.module import get_module_path
-from odoo.tests import TransactionCase, tagged
+from odoo.tests import HttpCase, TransactionCase, tagged
 
 TOUCHED = ('res.partner', 'account.move')
 
@@ -725,6 +725,381 @@ class TestFsWorkspace(_FsWsCase):
 
 
 # =========================================================================
+#  T33–T42 — card titles in any tag, list columns (FS-H3)
+# =========================================================================
+#: A Workspace form whose card titles are `<span>`s behind a pencil, with a
+#: card that holds its one field directly (no field group).
+SPAN_ARCH = """
+<form>
+  <sheet>
+    <div class="ws-page">
+      <div class="ws-main">
+        <notebook>
+          <page string="Overview" name="fsx_ov">
+            <div class="ws-pack">
+              <div class="vu-detail-card ws-card" name="span_card">
+                <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil"/></span>
+                <div class="vu-card__title">
+                  <span class="vu-section__icon" data-icon="calendar"/>
+                  <span>Visit</span>
+                </div>
+                <group><field name="email"/></group>
+              </div>
+              <div class="vu-detail-card ws-card" name="note_card">
+                <div class="vu-card__title">
+                  <span class="vu-section__icon" data-icon="file-text"/>
+                  <span>Notes</span>
+                </div>
+                <field name="comment" nolabel="1"/>
+              </div>
+            </div>
+          </page>
+        </notebook>
+      </div>
+    </div>
+  </sheet>
+</form>
+"""
+
+#: A list of the neutral model; new columns go after `email`.
+LIST_ARCH = """
+<list string="Partners test">
+  <field name="name"/>
+  <field name="email"/>
+  <field name="phone"/>
+</list>
+"""
+
+
+@tagged('post_install', '-at_install')
+class TestFsCardTitles(_FsCase):
+
+    def test_33_titles_are_read_whatever_their_tags(self):
+        """T33 — a `<span>` title, a `<div>` title and a mixed one; the
+        pencil beside the title is not part of it."""
+        from odoo.addons.biz_form_studio.models.fs_common import card_title
+        span = etree.fromstring(
+            '<div class="vu-detail-card" name="a">'
+            '<span class="vu-detail-card__edit-trigger"><i class="fa"/>Edit</span>'
+            '<div class="vu-card__title"><span class="vu-section__icon" '
+            'data-icon="calendar"/><span>Visit</span></div><group/></div>')
+        self.assertEqual(card_title(span), 'Visit')
+        div = etree.fromstring(
+            '<div class="vu-detail-card" name="b"><div class="vu-card__title">'
+            '<div class="vu-section__icon" data-icon="tag"/><div>Identity</div>'
+            '</div><group/></div>')
+        self.assertEqual(card_title(div), 'Identity')
+        mixed = etree.fromstring(
+            '<div class="vu-detail-card" name="c"><div class="vu-card__title">'
+            '<span class="vu-section__icon" data-icon="tag"/> Care <div>'
+            '<b>team</b></div>\n  </div><group/></div>')
+        self.assertEqual(card_title(mixed), 'Care team')
+        self.assertEqual(card_title(etree.fromstring('<div><group/></div>')), '')
+        # and through the schematic of a real form
+        view = self.env['ir.ui.view'].create({
+            'name': 'fsx span form', 'model': 'res.partner', 'type': 'form',
+            'priority': 99, 'arch': SPAN_ARCH})
+        self.env['ir.model.data'].create({
+            'module': 'biz_form_studio_test', 'name': 'fsx_span_form',
+            'model': 'ir.ui.view', 'res_id': view.id})
+        self.env['fs.host'].create({
+            'model': 'res.partner', 'kit': 'ws', 'pack_page': 'fsx_ov',
+            'base_view_xmlid': 'biz_form_studio_test.fsx_span_form',
+            'sections': [{'name': 'span_card', 'title': 'Fallback'}]})
+        cards = {c.get('name'): c for c in self.Studio.get_studio(
+            'res.partner', view.id)['cards'] if c.get('pack')}
+        self.assertEqual(cards['span_card']['title'], 'Visit')
+        self.assertTrue(cards['span_card']['open'])
+        self.assertEqual(cards['note_card']['title'], 'Notes')
+
+    def test_34_an_open_card_without_a_field_group_is_refused(self):
+        """T34 — a host that opens a card holding its field directly is
+        refused by the host check, naming the card; the schematic shows the
+        card closed; the writer refuses to drop a field into it."""
+        view = self.env['ir.ui.view'].create({
+            'name': 'fsx span form', 'model': 'res.partner', 'type': 'form',
+            'priority': 99, 'arch': SPAN_ARCH})
+        self.env['ir.model.data'].create({
+            'module': 'biz_form_studio_test', 'name': 'fsx_span_form',
+            'model': 'ir.ui.view', 'res_id': view.id})
+        host = self.env['fs.host'].create({
+            'model': 'res.partner', 'kit': 'ws', 'pack_page': 'fsx_ov',
+            'base_view_xmlid': 'biz_form_studio_test.fsx_span_form',
+            'sections': [{'name': 'span_card', 'title': 'Visit'},
+                         {'name': 'note_card', 'title': 'Notes'}]})
+        with self.assertRaisesRegex(UserError, 'note_card'):
+            host._check_sections()
+        res = self.Studio.validate_all()
+        mine = [h for h in res['hosts'] if h['host_id'] == host.id]
+        self.assertTrue(mine and 'note_card' in mine[0]['problems'][0])
+        cards = {c.get('name'): c for c in self.Studio.get_studio(
+            'res.partner', view.id)['cards'] if c.get('pack')}
+        self.assertFalse(cards['note_card']['open'])
+        a = self.make('Alpha')
+        with self.assertRaisesRegex(UserError, 'cannot take fields'):
+            self.Studio.publish('res.partner', view.id, [self.section(
+                'n1', [a], anchor={'kind': 'card', 'name': 'note_card'})])
+        # the card that has a group takes it
+        self.Studio.publish('res.partner', view.id, [self.section(
+            'n1', [a], anchor={'kind': 'card', 'name': 'span_card'})])
+        combined = etree.fromstring(view.get_combined_arch())
+        self.assertTrue(combined.xpath(
+            "//div[@name='span_card']/group/field[@name='%s']" % a))
+
+
+class _FsListCase(_FsCase):
+    """The neutral host with a list of its own."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.list_view = cls.env['ir.ui.view'].create({
+            'name': 'fsx partner list', 'model': 'res.partner',
+            'type': 'list', 'priority': 99, 'arch': LIST_ARCH})
+        cls.env['ir.model.data'].create({
+            'module': 'biz_form_studio_test', 'name': 'fsx_list',
+            'model': 'ir.ui.view', 'res_id': cls.list_view.id})
+        cls.host.write({'list_view_xmlid': 'biz_form_studio_test.fsx_list',
+                        'list_anchor': 'email'})
+        cls.sysadmin = cls.env['res.users'].create({
+            'name': 'FS3 system admin', 'login': 'fs3_sysadmin',
+            'group_ids': [(6, 0, [cls.env.ref('base.group_user').id,
+                                  cls.env.ref('base.group_system').id])],
+        })
+        cls.plain = cls.env['res.users'].create({
+            'name': 'FS3 plain user', 'login': 'fs3_plain',
+            'group_ids': [(6, 0, [cls.env.ref('base.group_user').id])],
+        })
+
+    def _layout(self):
+        return self.env['fs.layout'].search(
+            [('model', '=', 'res.partner'),
+             ('base_view_id', '=', self.view.id)])
+
+    def publish(self, sections):
+        return self.Studio.publish('res.partner', self.view.id, sections)
+
+    def list_combined(self, user=None):
+        if user:
+            res = self.env['res.partner'].with_user(user).get_views(
+                [(self.list_view.id, 'list')])
+            return etree.fromstring(res['views']['list']['arch'])
+        return etree.fromstring(self.list_view.get_combined_arch())
+
+    def columns(self, arch):
+        """Field names of the list, in order."""
+        return [f.get('name') for f in arch.xpath('/list/field')]
+
+
+@tagged('post_install', '-at_install')
+class TestFsListColumns(_FsListCase):
+
+    def test_35_the_list_writer(self):
+        """T35 — placed fields with the switch on become columns: ONE xpath
+        on the anchor's name, `after`, in section then field order,
+        `optional="show"`, a dropdown drawn as a badge, nothing else added."""
+        slot = self.make('Slot', 'selection', options=['Morning', 'Evening'],
+                         list_ok=True)
+        code = self.make('Code', list_ok=True)
+        quiet = self.make('Quiet')
+        self.publish([self.section('s1', [code, quiet]),
+                      self.section('s2', [slot])])
+        layout = self._layout()
+        view = layout.list_view_id
+        self.assertTrue(view.active)
+        self.assertEqual((view.type, view.mode, view.priority, view.inherit_id),
+                         ('list', 'extension', 200, self.list_view))
+        arch = etree.fromstring(view.arch_db)
+        xps = arch.xpath('//xpath')
+        self.assertEqual(len(xps), 1)
+        self.assertEqual((xps[0].get('expr'), xps[0].get('position')),
+                         ("//field[@name='email']", 'after'))
+        cols = xps[0].xpath('./field')
+        self.assertEqual([c.get('name') for c in cols], [code, slot])
+        self.assertEqual({c.get('optional') for c in cols}, {'show'})
+        self.assertIsNone(cols[0].get('widget'))
+        self.assertEqual(cols[1].get('widget'), 'badge')
+        self.assertEqual(self.columns(self.list_combined()),
+                         ['name', 'email', code, slot, 'phone'])
+        if 'currency_id' in self.env['res.partner']._fields:
+            money = self.make('Deposit', 'monetary', list_ok=True)
+            self.publish([self.section('s3', [money])])
+            node = etree.fromstring(layout.list_view_id.arch_db).xpath(
+                "//field[@name='%s']" % money)[0]
+            self.assertIsNone(node.get('widget'))
+
+    def test_36_what_is_never_a_column(self):
+        """T36 — health information, files and long text: the switch is off
+        with its reason, whatever is asked; a switched-on field that is not
+        on the screen is no column; taking it off the screen removes it."""
+        Meta = self.env['fs.field.meta']
+        phi = self.make('Allergy', phi=True, list_ok=True)
+        scan = self.make('Scan', 'binary', list_ok=True)
+        note = self.make('Long note', 'text', list_ok=True)
+        for name in (phi, scan, note):
+            self.assertFalse(Meta.search([('name', '=', name)]).list_ok, name)
+        self.Studio.update_field('res.partner', note, {'list_ok': True})
+        self.assertFalse(Meta.search([('name', '=', note)]).list_ok)
+        with self.assertRaises(ValidationError):
+            Meta.search([('name', '=', scan)]).write({'list_ok': True})
+        info = self.Studio.get_studio('res.partner', self.view.id)['fields']
+        self.assertEqual(info[phi]['list_reason'],
+                         'Health information is never a column.')
+        self.assertEqual(info[scan]['list_reason'],
+                         'Files cannot be list columns.')
+        self.assertEqual(info[note]['list_reason'],
+                         'Long text cannot be a list column.')
+        placed = self.make('Placed', list_ok=True)
+        unplaced = self.make('Unplaced', list_ok=True)
+        self.publish([self.section('s1', [phi, scan, note, placed])])
+        cols = self.columns(self.list_combined())
+        self.assertIn(placed, cols)
+        for name in (phi, scan, note, unplaced):
+            self.assertNotIn(name, cols)
+        self.publish([self.section('s1', [phi, scan, note])])
+        self.assertNotIn(placed, self.columns(self.list_combined()))
+
+    def test_37_who_may_see_a_column(self):
+        """T37 — an Admins-only column is absent from the list a plain user
+        receives and present for an administrator: the server drops it."""
+        secret = self.make('Internal code', vis='admin', list_ok=True)
+        open_ = self.make('Public code', list_ok=True)
+        self.publish([self.section('s1', [secret, open_])])
+        plain = self.columns(self.list_combined(self.plain))
+        self.assertNotIn(secret, plain)
+        self.assertIn(open_, plain)
+        admin = self.columns(self.list_combined(self.sysadmin))
+        self.assertIn(secret, admin)
+        self.assertIn(open_, admin)
+
+    def test_38_no_column_keeps_an_empty_switched_off_view(self):
+        """T38 — no column: the list view is empty and switched off; the
+        switch on a placed field redraws the layout at once (like Required)
+        and the view comes back with the same id; off again, it is off."""
+        a = self.make('Alpha')
+        self.publish([self.section('s1', [a])])
+        layout = self._layout()
+        view = layout.list_view_id
+        self.assertTrue(view)
+        self.assertFalse(view.active)
+        root = etree.fromstring(view.arch_db)
+        self.assertEqual((root.tag, len(root)), ('data', 0))
+        self.assertNotIn(a, self.columns(self.list_combined()))
+        version = layout.version
+        self.Studio.update_field('res.partner', a, {'list_ok': True})
+        self.assertEqual(layout.version, version + 1)
+        self.assertEqual(layout.list_view_id, view)
+        self.assertTrue(view.active)
+        self.assertIn(a, self.columns(self.list_combined()))
+        self.Studio.update_field('res.partner', a, {'list_ok': False})
+        self.assertEqual(layout.list_view_id, view)
+        self.assertFalse(view.active)
+
+    def test_39_history_and_going_back_keep_the_list(self):
+        """T39 — every version keeps its list arch; going back restores both
+        arches; the version numbers run on."""
+        a = self.make('Alpha', list_ok=True)
+        b = self.make('Beta', list_ok=True)
+        self.publish([self.section('s1', [a, b])])
+        self.publish([self.section('s1', [b])])
+        layout = self._layout()
+        res = self.Studio.rollback(layout.id, 1)
+        self.assertEqual(res['version'], 3)
+        hist = {h.version: h for h in self.env['fs.layout.history'].search(
+            [('layout_id', '=', layout.id)])}
+        self.assertEqual(sorted(hist), [1, 2, 3])
+        self.assertNotEqual(hist[2].list_arch, hist[1].list_arch)
+        self.assertEqual(hist[3].list_arch, hist[1].list_arch)
+        self.assertEqual(hist[3].arch, hist[1].arch)
+        self.assertEqual(layout.list_view_id.arch_db.strip(),
+                         hist[1].list_arch.strip())
+        self.assertEqual(layout.view_id.arch_db.strip(), hist[1].arch.strip())
+        self.assertEqual(self.columns(self.list_combined()),
+                         ['name', 'email', a, b, 'phone'])
+
+    def test_40_a_list_that_moved_switches_the_whole_layout_off(self):
+        """T40 — the anchor column is renamed underneath (as an upgrade
+        would): the validator switches the WHOLE layout off, form and list,
+        with a reason that names the list; the list itself still draws."""
+        a = self.make('Alpha', list_ok=True)
+        self.publish([self.section('s1', [a])])
+        layout = self._layout()
+        renamed = LIST_ARCH.replace('name="email"', 'name="website"')
+        # straight into the table: an ORM write would re-check the layout's
+        # list view against it and refuse
+        self.env.cr.execute(
+            "UPDATE ir_ui_view SET arch_db = jsonb_build_object('en_US', %s) "
+            "WHERE id = %s", [renamed, self.list_view.id])
+        self.env.invalidate_all()
+        res = self.Studio.validate_all()
+        broken = [b for b in res['broken'] if b['layout_id'] == layout.id]
+        self.assertTrue(broken)
+        self.assertIn('list', broken[0]['reason'].lower())
+        self.assertEqual(layout.state, 'broken')
+        self.assertIn('list', layout.broken_reason.lower())
+        self.assertFalse(layout.view_id.active)
+        self.assertFalse(layout.list_view_id.active)
+        self.assertEqual(self.columns(self.list_combined()),
+                         ['name', 'website', 'phone'])
+        self.assertFalse(self.combined().xpath("//field[@name='%s']" % a))
+        # and the host says why, without raising
+        mine = [h for h in res['hosts'] if h['host_id'] == self.host.id]
+        self.assertTrue(mine and 'email' in mine[0]['problems'][0])
+
+    def test_41_the_host_declares_a_real_list(self):
+        """T41 — a list without its anchor (and the other way round) is
+        refused when saved; a view that is not a list, and an anchor that is
+        not in the list, are refused by the host check."""
+        with self.assertRaises(ValidationError):
+            self.env['fs.host'].create({
+                'model': 'res.partner', 'base_view_xmlid': 'base.view_partner_form',
+                'list_view_xmlid': 'biz_form_studio_test.fsx_list'})
+        with self.assertRaises(ValidationError):
+            self.env['fs.host'].create({
+                'model': 'res.partner', 'base_view_xmlid': 'base.view_partner_form',
+                'list_anchor': 'email'})
+        not_a_list = self.env['fs.host'].create({
+            'model': 'res.partner', 'base_view_xmlid': 'base.view_partner_form',
+            'list_view_xmlid': 'base.view_partner_form', 'list_anchor': 'email'})
+        with self.assertRaisesRegex(UserError, 'not a list'):
+            not_a_list._check_list()
+        self.assertFalse(not_a_list._list_view())
+        no_anchor = self.env['fs.host'].create({
+            'model': 'res.partner', 'base_view_xmlid': 'base.view_partner_form',
+            'list_view_xmlid': 'biz_form_studio_test.fsx_list',
+            'list_anchor': 'website'})
+        with self.assertRaisesRegex(UserError, 'website'):
+            no_anchor._check_list()
+        self.host._check_list()
+        self.assertEqual(self.host._list_problems(), [])
+
+    def test_42_the_editor_learns_the_list(self):
+        """T42 — `get_studio` names the list (its own title, or the host's
+        word for it) and says, per field, whether it is a column and why it
+        may not be."""
+        a = self.make('Alpha', list_ok=True)
+        b = self.make('Beta')
+        note = self.make('Long note', 'text')
+        data = self.Studio.get_studio('res.partner', self.view.id)
+        self.assertEqual(data['host']['list_title'], 'Partners test')
+        self.assertTrue(data['fields'][a]['list_ok'])
+        self.assertFalse(data['fields'][b]['list_ok'])
+        self.assertEqual(data['fields'][a]['list_reason'], '')
+        self.assertEqual(data['fields'][note]['list_reason'],
+                         'Long text cannot be a list column.')
+        types = {t['key']: t for t in data['types']}
+        self.assertEqual(types['binary']['list_reason'],
+                         'Files cannot be list columns.')
+        self.assertEqual(types['char']['list_reason'], '')
+        self.host.list_name = 'Partners'
+        data = self.Studio.get_studio('res.partner', self.view.id)
+        self.assertEqual(data['host']['list_title'], 'Partners')
+        self.host.write({'list_view_xmlid': False, 'list_anchor': False})
+        data = self.Studio.get_studio('res.partner', self.view.id)
+        self.assertEqual(data['host']['list_title'], '')
+
+
+# =========================================================================
 #  T12 — the source gates
 # =========================================================================
 _ROOT = get_module_path('biz_form_studio')
@@ -851,3 +1226,72 @@ class TestFsSourceGates(TransactionCase):
                     'models/fs_host.py', 'static/src/js/studio/studio_editor.js',
                     'static/src/xml/studio/studio_editor.xml'):
             self.assertIn(rel, sources)
+
+
+    def test_43_the_gates_cover_the_fs_h3_files(self):
+        """T43 — the gates above (12a–12f) run over every file FS-H3
+        touched; the editor keeps its screen under its own keys."""
+        sources = {os.path.relpath(p, _ROOT) for p in _all_sources()}
+        for rel in ('models/fs_common.py', 'models/fs_field_meta.py',
+                    'models/fs_layout.py', 'models/fs_host.py',
+                    'static/src/js/studio/studio_editor.js',
+                    'static/src/xml/studio/studio_editor.xml',
+                    'static/src/scss/studio.scss'):
+            self.assertIn(rel, sources)
+        js = _src('static', 'src', 'js', 'studio', 'studio_editor.js')
+        self.assertIn('updateActionState(screen)', js)
+        for key in ('fs_model', 'fs_view', 'fs_res'):
+            self.assertIn('params.%s' % key, js)
+        # the list writer never anchors on a label or a position
+        layout = _src('models', 'fs_layout.py')
+        self.assertIn("//field[@name='%s']", layout)
+        self.assertNotIn('@string=', layout)
+
+
+@tagged('post_install', '-at_install')
+class TestFsEditorAddress(HttpCase):
+    """T44 — reloading inside Studio opens the same screen.
+
+    The editor writes `fs_model` / `fs_view` / `fs_res` into the action's
+    state once a screen has loaded; the router keeps four keys for itself
+    (`model`, `resId`, `action`, `active_id`) and drops them from that state,
+    which is why the editor's keys are its own. A reload is a fresh load of
+    the address those keys produce: the tour starts THERE and checks the
+    editor shows the screen, not the "open a screen" notice. Without a
+    browser on the machine the tour is skipped by the framework; the address
+    contract below is checked either way."""
+
+    def test_44_a_reload_opens_the_same_screen(self):
+        ICP = self.env['ir.config_parameter'].sudo()
+        ICP.set_param('biz_form_studio.gate_group', 'base.group_system')
+        view = self.env.ref('base.view_partner_form')
+        self.env['fs.host'].create({
+            'name': 'Partner sheet', 'model': 'res.partner',
+            'base_view_xmlid': 'base.view_partner_form'})
+        self.env['res.users'].create({
+            'name': 'FS3 tour admin', 'login': 'fs3_tour_admin',
+            'password': 'fs3_tour_admin',
+            'group_ids': [(6, 0, [self.env.ref('base.group_user').id,
+                                  self.env.ref('base.group_system').id])],
+        })
+        partner = self.env['res.partner'].search([], limit=1)
+        # the router's own keys, read from the file the browser is served
+        web = get_module_path('web')
+        with open(os.path.join(web, 'static', 'src', 'core', 'browser',
+                               'router.js'), encoding='utf-8') as fh:
+            match = re.search(r'PATH_KEYS\s*=\s*\[([^\]]*)\]', fh.read())
+        self.assertTrue(match, 'the router no longer declares PATH_KEYS')
+        reserved = set(re.findall(r'"([^"]+)"', match.group(1)))
+        self.assertIn('model', reserved)
+        self.assertFalse(reserved & {'fs_model', 'fs_view', 'fs_res'})
+        url = ('/odoo/action-biz_form_studio.studio?fs_model=res.partner'
+               '&fs_view=%s&fs_res=%s' % (view.id, partner.id))
+        self.authenticate('fs3_tour_admin', 'fs3_tour_admin')
+        res = self.url_open(url)
+        self.assertEqual(res.status_code, 200)
+        data = self.make_jsonrpc_request(
+            '/web/dataset/call_kw/fs.studio/get_studio',
+            {'model': 'fs.studio', 'method': 'get_studio',
+             'args': ['res.partner', view.id], 'kwargs': {}})
+        self.assertEqual(data['host']['title'], 'Partner sheet')
+        self.start_tour(url, 'biz_form_studio_reload', login='fs3_tour_admin')

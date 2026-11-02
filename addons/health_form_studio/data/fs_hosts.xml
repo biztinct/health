@@ -28,6 +28,9 @@
                 {'name': 'button_box', 'title': 'Counters', 'reason': 'Drawn by the system.'},
             ]"/>
             <field name="pwa_label">Nurse app</field>
+            <field name="list_view_xmlid">health_incident.view_health_incident_list</field>
+            <field name="list_anchor">open_action_count</field>
+            <field name="list_name">Incidents</field>
         </record>
 
         <!-- ==========================================================
@@ -73,6 +76,11 @@
                 {'name': 'people_panel', 'title': 'People', 'reason': 'Drawn by the system.'},
             ]"/>
             <field name="pwa_label">Nurse app</field>
+            <!-- the Clients list is the default client list everywhere (like
+                 the form): a Client column shows wherever that list does -->
+            <field name="list_view_xmlid">health_fieldservice.view_health_client_list_ops</field>
+            <field name="list_anchor">total_assignments</field>
+            <field name="list_name">Clients</field>
         </record>
 
         <!-- ==========================================================
@@ -118,6 +126,84 @@
                 {'name': 'contact_history', 'title': 'Contact history', 'reason': 'Drawn by the system.'},
             ]"/>
             <field name="pwa_label" eval="False"/>
+            <field name="list_view_xmlid">health_crm.view_crm_contact_list_crm_center</field>
+            <field name="list_anchor">user_id</field>
+            <field name="list_name">Contacts</field>
+        </record>
+
+        <!-- ==========================================================
+             The Booking record (Workspace form, the booking's default
+             form). New sections become cards at the END of the Overview
+             pack, after Notes: the pack has no trailing widget. Notes is
+             not open (it holds its one field without a field group), and
+             the two cards other modules add to the pack (payment summary,
+             legacy audit) are not declared: they stay closed. The people
+             panel carries no name=, so the only locked area is Counters.
+             The Bookings list opens second on the Bookings screen (the
+             calendar is first); columns go after Priority.
+             ========================================================== -->
+        <record id="fs_host_booking" model="fs.host">
+            <field name="name">Booking</field>
+            <field name="model">health.fieldservice.order</field>
+            <field name="base_view_xmlid">health_fieldservice.view_health_fso_form_ops</field>
+            <field name="kit">ws</field>
+            <field name="pack_page">overview</field>
+            <field name="pack_tail" eval="False"/>
+            <field name="sections" eval="[
+                {'name': 'visit_card', 'title': 'Visit'},
+                {'name': 'location_details_card', 'title': 'Location details'},
+                {'name': 'care_team_card', 'title': 'Care team'},
+                {'name': 'commission_fees_card', 'title': 'Pricing'},
+                {'name': 'additional_charges_card', 'title': 'Additional charges'},
+            ]"/>
+            <field name="locked_fields" eval="{
+                'state': 'Drives the booking workflow.',
+                'stage_id': 'Drives the booking workflow.',
+                'priority': 'Drives the booking workflow.',
+                'scheduled_datetime': 'Used by the schedule, routes and the nurse app.',
+                'scheduled_duration': 'Used by the schedule, routes and the nurse app.',
+                'estimated_end_datetime': 'Used by the schedule, routes and the nurse app.',
+                'assigned_staff_ids': 'Decides who does the visit.',
+                'lead_staff_id': 'Decides who does the visit.',
+                'assigned_doctor_ids': 'Decides who does the visit.',
+                'assignment_ids': 'Decides who does the visit.',
+                'team_id': 'Decides who does the visit.',
+                'patient_id': 'Links the booking to the client.',
+                'crm_lead_id': 'Links the booking to the client.',
+                'service_type': 'Decides the service and its price.',
+                'category_of_service_id': 'Decides the service and its price.',
+                'service_location': 'Decides the service and its price.',
+                'facility_id': 'Decides which team can see this booking.',
+                'catchment_province_id': 'Decides which team can see this booking.',
+                'patient_catchment_province_id': 'Decides which team can see this booking.',
+                'sale_order_id': 'Used for quotes, invoices and commission.',
+                'invoice_id': 'Used for quotes, invoices and commission.',
+                'currency_id': 'Used for quotes, invoices and commission.',
+                'service_fee_vnd': 'Used for quotes, invoices and commission.',
+                'commission_amount': 'Used for quotes, invoices and commission.',
+                'commission_due_to': 'Used for quotes, invoices and commission.',
+                'commission_percentage': 'Used for quotes, invoices and commission.',
+                'commission_duration': 'Used for quotes, invoices and commission.',
+                'base_price': 'Used for quotes, invoices and commission.',
+                'total_price': 'Used for quotes, invoices and commission.',
+                'travel_charge': 'Used for quotes, invoices and commission.',
+                'urgency_charge': 'Used for quotes, invoices and commission.',
+                'equipment_charge': 'Used for quotes, invoices and commission.',
+                'after_hours_charge': 'Used for quotes, invoices and commission.',
+                'parking_charge': 'Used for quotes, invoices and commission.',
+                'actual_start_datetime': 'Written by the nurse app when the visit starts and ends.',
+                'actual_end_datetime': 'Written by the nurse app when the visit starts and ends.',
+                'name': 'Identifies the booking.',
+                'booking_user_id': 'Identifies the booking.',
+                'patient_notes': 'Shown to the care team in the nurse app.',
+            }"/>
+            <field name="locked_zones" eval="[
+                {'name': 'button_box', 'title': 'Counters', 'reason': 'Drawn by the system.'},
+            ]"/>
+            <field name="pwa_label">Nurse app</field>
+            <field name="list_view_xmlid">health_fieldservice.view_health_fso_list_ops</field>
+            <field name="list_anchor">priority</field>
+            <field name="list_name">Bookings</field>
         </record>
     </data>
 </odoo>

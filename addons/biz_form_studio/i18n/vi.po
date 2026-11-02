@@ -34,6 +34,12 @@ msgstr "Đã bỏ qua %s trường đã bị xóa."
 
 #. module: biz_form_studio
 #. odoo-python
+#: code:addons/biz_form_studio/models/fs_host.py:0
+msgid "%s is not a list of this screen's records."
+msgstr "%s không phải là danh sách bản ghi của màn hình này."
+
+#. module: biz_form_studio
+#. odoo-python
 #: code:addons/biz_form_studio/models/fs_studio.py:0
 msgid "0, 1, 2…"
 msgstr "0, 1, 2…"
@@ -57,6 +63,15 @@ msgid "A Workspace screen needs the tab whose cards receive new sections."
 msgstr "Màn hình Workspace cần có thẻ (tab) chứa các thẻ nhận mục mới."
 
 #. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_fs_field_meta__list_ok
+msgid ""
+"A column of the screen's list once the field is placed on the screen. Never "
+"for health information, files or long text."
+msgstr ""
+"Thành một cột trong danh sách của màn hình khi trường đã được đặt lên màn "
+"hình. Không bao giờ áp dụng cho thông tin sức khỏe, tệp hoặc văn bản dài."
+
+#. module: biz_form_studio
 #. odoo-python
 #: code:addons/biz_form_studio/models/fs_studio.py:0
 msgid "A dropdown needs at least one option."
@@ -75,6 +90,16 @@ msgstr ""
 #: code:addons/biz_form_studio/models/fs_studio.py:0
 msgid "A field's type cannot be changed."
 msgstr "Không thể đổi loại của trường."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_host.py:0
+msgid ""
+"A list needs the name of the column new columns go after, and that column "
+"needs its list."
+msgstr ""
+"Danh sách cần tên của cột mà các cột mới được đặt sau, và cột đó cần có "
+"danh sách của nó."
 
 #. module: biz_form_studio
 #. odoo-javascript
@@ -303,6 +328,30 @@ msgid "Close"
 msgstr "Đóng"
 
 #. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Column added: %(field)s (%(list)s list)"
+msgstr "Thêm cột: %(field)s (danh sách %(list)s)"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Column removed: %(field)s (%(list)s list)"
+msgstr "Bỏ cột: %(field)s (danh sách %(list)s)"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid ""
+"Columns are shown to everyone who may see the field; each person can hide "
+"them from the column chooser. Saved column choices for this list are reset "
+"by this publish."
+msgstr ""
+"Các cột hiện cho mọi người được phép xem trường; mỗi người có thể ẩn chúng "
+"trong mục chọn cột. Lần xuất bản này sẽ đặt lại các lựa chọn cột đã lưu của "
+"danh sách này."
+
+#. module: biz_form_studio
 #: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__company_id
 msgid "Company"
 msgstr "Công ty"
@@ -524,8 +573,20 @@ msgstr "Trường \"%s\" đã bị xóa."
 #. module: biz_form_studio
 #. odoo-python
 #: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Field \"%s\" is no longer a list column."
+msgstr "Trường \"%s\" không còn là cột của danh sách."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
 msgid "Field \"%s\" is no longer required."
 msgstr "Trường \"%s\" không còn bắt buộc."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Field \"%s\" is now a list column."
+msgstr "Trường \"%s\" giờ là một cột của danh sách."
 
 #. module: biz_form_studio
 #. odoo-python
@@ -572,6 +633,12 @@ msgstr "Trường chưa hiển thị"
 #: code:addons/biz_form_studio/models/fs_studio.py:0
 msgid "File"
 msgstr "Tệp"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_field_meta.py:0
+msgid "Files cannot be list columns."
+msgstr "Tệp không thể là cột của danh sách."
 
 #. module: biz_form_studio
 #. odoo-javascript
@@ -677,9 +744,11 @@ msgstr "Thông tin sức khỏe"
 
 #. module: biz_form_studio
 #. odoo-javascript
-#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
-msgid "Health information is never offered as a list column."
-msgstr "Thông tin sức khỏe không bao giờ được dùng làm cột trong danh sách."
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_field_meta.py:0
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Health information is never a column."
+msgstr "Thông tin sức khỏe không bao giờ là một cột."
 
 #. module: biz_form_studio
 #. odoo-javascript
@@ -800,6 +869,31 @@ msgid "Links to"
 msgstr "Liên kết tới"
 
 #. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__list_anchor
+msgid "List Anchor"
+msgstr "Cột neo của danh sách"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout_history__list_arch
+msgid "List Arch"
+msgstr "Cấu trúc danh sách"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__list_name
+msgid "List Name"
+msgstr "Tên danh sách"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__list_view_id
+msgid "List View"
+msgstr "Giao diện danh sách"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__list_view_xmlid
+msgid "List View Xmlid"
+msgstr "Mã giao diện danh sách"
+
+#. module: biz_form_studio
 #. odoo-python
 #: code:addons/biz_form_studio/models/fs_studio.py:0
 msgid "List of records"
@@ -826,6 +920,12 @@ msgstr "Vùng bị khóa"
 #: code:addons/biz_form_studio/models/fs_studio.py:0
 msgid "Long text"
 msgstr "Văn bản dài"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_field_meta.py:0
+msgid "Long text cannot be a list column."
+msgstr "Văn bản dài không thể là cột của danh sách."
 
 #. module: biz_form_studio
 #: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__created_by
@@ -926,6 +1026,11 @@ msgid "Name"
 msgstr "Tên"
 
 #. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_fs_host__list_anchor
+msgid "Name of the last visible column; new columns go after it."
+msgstr "Tên của cột hiển thị cuối cùng; các cột mới được đặt sau cột này."
+
+#. module: biz_form_studio
 #. odoo-javascript
 #: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
 msgid "New field"
@@ -1012,12 +1117,6 @@ msgstr "Số tin nhắn cần xử lý"
 #: model:ir.model.fields,help:biz_form_studio.field_fs_layout__message_has_error_counter
 msgid "Number of messages with delivery error"
 msgstr "Số tin nhắn bị lỗi gửi"
-
-#. module: biz_form_studio
-#. odoo-javascript
-#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
-msgid "Offered as a column people can switch on in lists."
-msgstr "Có thể bật làm cột trong danh sách."
 
 #. module: biz_form_studio
 #. odoo-python
@@ -1117,6 +1216,14 @@ msgstr "Hãy chọn loại cho trường mới."
 #: code:addons/biz_form_studio/models/fs_studio.py:0
 msgid "Pick what this field links to from the list."
 msgstr "Hãy chọn trong danh sách trường này liên kết tới đâu."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid ""
+"Placed after the last column. Each person can hide it from the column "
+"chooser."
+msgstr "Đặt sau cột cuối cùng. Mỗi người có thể ẩn nó trong mục chọn cột."
 
 #. module: biz_form_studio
 #. odoo-python
@@ -1315,6 +1422,12 @@ msgstr "Nhiều bản ghi"
 
 #. module: biz_form_studio
 #. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Show as a column in the %s list"
+msgstr "Hiện thành cột trong danh sách %s"
+
+#. module: biz_form_studio
+#. odoo-javascript
 #: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
 #: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__list_ok
 msgid "Show in lists"
@@ -1467,6 +1580,19 @@ msgstr "Phiên bản đó không còn tồn tại."
 
 #. module: biz_form_studio
 #. odoo-python
+#: code:addons/biz_form_studio/models/fs_host.py:0
+#: code:addons/biz_form_studio/models/fs_layout.py:0
+msgid "The card \"%s\" cannot take fields: it has no field group."
+msgstr "Thẻ \"%s\" không nhận được trường: thẻ không có nhóm trường."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_host.py:0
+msgid "The card \"%s\" is not on the screen any more."
+msgstr "Thẻ \"%s\" không còn trên màn hình."
+
+#. module: biz_form_studio
+#. odoo-python
 #: code:addons/biz_form_studio/models/fs_layout.py:0
 msgid "The card \"%s\" no longer accepts fields."
 msgstr "Thẻ \"%s\" không còn nhận trường mới."
@@ -1480,6 +1606,15 @@ msgid ""
 msgstr ""
 "Các thẻ của màn hình này đã thay đổi vị trí nên Studio không thể đặt mục "
 "mới. Mở Studio để sửa bố cục."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_host.py:0
+msgid ""
+"The column \"%(column)s\" is not in the list exactly once (found %(count)s)."
+msgstr ""
+"Cột \"%(column)s\" không có đúng một lần trong danh sách (tìm thấy "
+"%(count)s)."
 
 #. module: biz_form_studio
 #. odoo-javascript
@@ -1524,6 +1659,12 @@ msgid "The field library could not be opened."
 msgstr "Không mở được thư viện trường."
 
 #. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_host.py:0
+msgid "The form of the %s screen no longer exists."
+msgstr "Biểu mẫu của màn hình %s không còn tồn tại."
+
+#. module: biz_form_studio
 #: model:ir.model.fields,help:biz_form_studio.field_fs_host__base_view_xmlid
 msgid "The form the Studio layout extends."
 msgstr "Màn hình mà bố cục Studio mở rộng."
@@ -1539,6 +1680,33 @@ msgstr "Không xuất bản được bố cục."
 #: code:addons/biz_form_studio/models/fs_layout.py:0
 msgid "The layout could not be read. Reload Studio."
 msgstr "Không đọc được bố cục. Hãy tải lại Studio."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_host.py:0
+msgid "The list %s no longer exists."
+msgstr "Danh sách %s không còn tồn tại."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_layout.py:0
+msgid "The list changed: %s"
+msgstr "Danh sách đã thay đổi: %s"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_layout.py:0
+msgid ""
+"The list changed: the column \"%s\" that new columns go after is not there."
+msgstr ""
+"Danh sách đã thay đổi: không còn cột \"%s\" mà các cột mới được đặt sau."
+
+#. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_fs_host__list_view_xmlid
+msgid "The list this screen's records appear in. Empty: no list columns."
+msgstr ""
+"Danh sách hiển thị bản ghi của màn hình này. Để trống: không có cột danh "
+"sách."
 
 #. module: biz_form_studio
 #. odoo-python
@@ -1735,6 +1903,15 @@ msgstr "Không thể đổi nơi liên kết trỏ tới."
 #: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
 msgid "What people see beside the value"
 msgstr "Người dùng thấy bên cạnh dữ liệu"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_fs_host__list_name
+msgid ""
+"What the list is called in Studio (\"the Bookings list\"). Empty: the list's"
+" own title, else the screen's name."
+msgstr ""
+"Tên của danh sách trong Studio (\"danh sách Lịch hẹn\"). Để trống: dùng "
+"tiêu đề của chính danh sách, nếu không có thì dùng tên màn hình."
 
 #. module: biz_form_studio
 #: model:ir.model.fields,help:biz_form_studio.field_fs_host__pwa_label

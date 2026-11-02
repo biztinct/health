@@ -3,6 +3,8 @@
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
+from .fs_common import NO_LIST_TYPES
+
 
 class FsFieldMeta(models.Model):
     _name = 'fs.field.meta'
@@ -22,7 +24,10 @@ class FsFieldMeta(models.Model):
         default=False,
         help="Must be filled on the screen. A rule of the screen, not of the "
              "database: records made elsewhere are not refused.")
-    list_ok = fields.Boolean(string='Show in lists', default=True)
+    list_ok = fields.Boolean(
+        string='Show in lists', default=False,
+        help="A column of the screen's list once the field is placed on the "
+             "screen. Never for health information, files or long text.")
     label_vi = fields.Char(string='Vietnamese label')
     help_vi = fields.Char(string='Vietnamese help text')
     sequence = fields.Integer(default=10)
@@ -39,8 +44,12 @@ class FsFieldMeta(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        ttypes = {f.id: f.ttype for f in self.env['ir.model.fields'].sudo()
+                  .browse([v['field_id'] for v in vals_list
+                           if v.get('field_id')]).exists()}
         for vals in vals_list:
-            if vals.get('phi'):
+            if vals.get('phi') or ttypes.get(vals.get('field_id')) in \
+                    NO_LIST_TYPES:
                 vals['list_ok'] = False
         records = super().create(vals_list)
         records._check_phi_list()
@@ -53,10 +62,27 @@ class FsFieldMeta(models.Model):
         self._check_phi_list()
         return res
 
+    @api.model
+    def _list_reason(self, ttype, phi=False):
+        """Why a field of this type can never be a list column ('' when it
+        can)."""
+        if phi:
+            return _("Health information is never a column.")
+        if ttype == 'binary':
+            return _("Files cannot be list columns.")
+        if ttype == 'text':
+            return _("Long text cannot be a list column.")
+        return ''
+
     @api.constrains('phi', 'list_ok')
     def _check_phi_list(self):
         for meta in self:
-            if meta.phi and meta.list_ok:
+            if not meta.list_ok:
+                continue
+            if meta.phi:
                 raise ValidationError(_(
                     "A field that holds health information cannot be offered "
                     "as a list column."))
+            reason = self._list_reason(meta.field_id.ttype)
+            if reason:
+                raise ValidationError(reason)

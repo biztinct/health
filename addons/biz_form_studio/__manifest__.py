@@ -31,10 +31,19 @@ WHAT IT DOES
     like the pack's own cards and marked so the "Not filled yet" tray folds it
     while it is empty. A product whose form draws its own top bar calls the
     `biz_form_studio.StudioButton` template from it.
+  * **List columns.** A host may also name the list its records appear in and
+    the column new columns follow. A placed field whose "show in lists" switch
+    is on is then a column of that list (one more inherited view per layout,
+    published, rolled back and switched off together with the form's). Health
+    information, files and long text are never columns; who may see a column
+    is who may see the field.
+  * **The editor keeps its screen in the address**, so reloading the browser
+    inside Studio opens the same screen again.
 
 WHAT A PRODUCT SUPPLIES
 
-  * `fs.host` records — the screens that support Studio;
+  * `fs.host` records — the screens that support Studio, and for each the
+    list its records appear in (optional);
   * `fs.link.target` records — the records a "Link to a record" field may
     point at (none are shipped here);
   * three settings read at call time: `biz_form_studio.gate_group` (who may
@@ -45,7 +54,7 @@ IT SEEDS NOTHING AND NAMES NOBODY. No host, no target, no menu entry: a
 product decides which screens support Studio and where the field library sits
 in its own navigation.
 """,
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.2.0',
     'category': 'Technical',
     'license': 'LGPL-3',
     'author': 'Biztinct',
@@ -66,6 +75,9 @@ in its own navigation.
             'biz_form_studio/static/src/xml/studio/studio_editor.xml',
             'biz_form_studio/static/src/js/library.js',
             'biz_form_studio/static/src/xml/library.xml',
+        ],
+        'web.assets_tests': [
+            'biz_form_studio/static/tests/tours/studio_reload.js',
         ],
     },
     'installable': True,

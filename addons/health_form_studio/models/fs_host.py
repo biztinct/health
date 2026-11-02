@@ -52,6 +52,24 @@ HOST_TEXT = {
     'Written by the website and ads tracking.':
         _lt('Written by the website and ads tracking.'),
     'Contact history': _lt('Contact history'),
+    # Booking
+    'Drives the booking workflow.': _lt('Drives the booking workflow.'),
+    'Used by the schedule, routes and the nurse app.':
+        _lt('Used by the schedule, routes and the nurse app.'),
+    'Decides who does the visit.': _lt('Decides who does the visit.'),
+    'Links the booking to the client.':
+        _lt('Links the booking to the client.'),
+    'Decides the service and its price.':
+        _lt('Decides the service and its price.'),
+    'Decides which team can see this booking.':
+        _lt('Decides which team can see this booking.'),
+    'Used for quotes, invoices and commission.':
+        _lt('Used for quotes, invoices and commission.'),
+    'Written by the nurse app when the visit starts and ends.':
+        _lt('Written by the nurse app when the visit starts and ends.'),
+    'Identifies the booking.': _lt('Identifies the booking.'),
+    'Shown to the care team in the nurse app.':
+        _lt('Shown to the care team in the nurse app.'),
 }
 
 

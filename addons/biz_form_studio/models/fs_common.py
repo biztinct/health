@@ -10,6 +10,9 @@ A one-row SELECT on a core table is safe at any point of the boot.
 import re
 import unicodedata
 
+# Pure helpers below also serve the schematic reader and the list writer:
+# `card_title` and `has_class` take lxml elements and need no environment.
+
 #: Every field this module creates starts with this. Core only demands `x_`;
 #: the extra `fs_` is how Studio recognises its own fields and nobody else's.
 FS_PREFIX = 'x_fs_'
@@ -37,6 +40,37 @@ TYPES = ('char', 'text', 'integer', 'float', 'monetary', 'boolean', 'date',
 #: Types whose free text or file is the likeliest place for sensitive
 #: information to land unmarked: they get the one-time warning.
 PHI_WARN_TYPES = ('text', 'binary')
+
+#: Types that are never a list column: a file has nothing to show in a cell,
+#: and long text overflows one.
+NO_LIST_TYPES = ('binary', 'text')
+
+
+def has_class(node, cls):
+    return cls in (node.get('class') or '').split()
+
+
+def card_title(card):
+    """The title of a Workspace card, whatever tags it is written in.
+
+    A card's title is the text of its `.vu-card__title` child: a `<div>` on
+    some screens, `<span>`s on others, sometimes both. The icon inside it
+    (`.vu-section__icon`) has no text of its own and is skipped, and so is the
+    card's pencil (`.vu-detail-card__edit-trigger`), which sits beside the
+    title. Whitespace is collapsed. '' when the card has no title.
+    """
+    skip = ('vu-section__icon', 'vu-detail-card__edit-trigger')
+    for head in card:
+        if not isinstance(head.tag, str) or not has_class(head, 'vu-card__title'):
+            continue
+        parts = [head.text or '']
+        for child in head:
+            if isinstance(child.tag, str) and not any(
+                    has_class(child, cls) for cls in skip):
+                parts.append(''.join(child.itertext()))
+            parts.append(child.tail or '')
+        return ' '.join(''.join(parts).split())
+    return ''
 
 
 def slugify(text, limit=40):

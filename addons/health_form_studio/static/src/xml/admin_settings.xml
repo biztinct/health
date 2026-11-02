@@ -12,7 +12,7 @@
                  t-if="state.canManageAccess and fsTile.ok" t-on-click="openFormStudio">
                 <div class="admin-tile-icon fs-tile-icon" t-out="fsTileIcon"/>
                 <div class="admin-tile-label">Form Studio</div>
-                <div class="admin-tile-desc">Add fields to the Client, Contact and Incident screens</div>
+                <div class="admin-tile-desc">Add fields to the Booking, Client, Contact and Incident screens</div>
                 <i class="fa fa-chevron-right admin-tile-arrow"/>
             </div>
         </xpath>
