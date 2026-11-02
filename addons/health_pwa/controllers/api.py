@@ -7,6 +7,8 @@ from odoo import http, fields, _
 from odoo.http import request
 from odoo.exceptions import ValidationError, UserError, AccessError
 
+from .sync import studio_app_fields
+
 _logger = logging.getLogger(__name__)
 
 
@@ -567,6 +569,9 @@ class HealthPWAAPIController(http.Controller):
                 },
                 'created_date': order.create_date,
                 'updated_date': order.write_date,
+                # Form Studio fields switched on for the app (read-only)
+                'custom_fields': studio_app_fields(
+                    'health.fieldservice.order', order).get(order.id, []),
             }
 
             # Add confirmation requirements info

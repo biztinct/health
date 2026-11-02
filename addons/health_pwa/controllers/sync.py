@@ -36,6 +36,25 @@ def _selection_labels(record, field_name):
     return dict(record._fields[field_name]._description_selection(record.env))
 
 
+def studio_app_fields(model, records):
+    """Fields an administrator added in Form Studio and switched on for the
+    app, read-only: `{record id: [{name, label, value, type}]}` with each
+    value already written out for display in the reader's language.
+
+    Form Studio decides which fields qualify (switched on, placed on the
+    published screen, never health information, never admins-only); this
+    only asks. Without Form Studio, or if asking fails, every record gets an
+    empty list — the app's own data never depends on it."""
+    env = records.env
+    if not records or 'fs.studio' not in env:
+        return {}
+    try:
+        return env['fs.studio'].app_fields(model, records)
+    except Exception:  # noqa: BLE001 — never break a sync over extra fields
+        _logger.exception("PWA: custom fields for %s could not be read", model)
+        return {}
+
+
 class HealthPWASyncController(http.Controller):
     """Data synchronization endpoints for offline PWA functionality.
 
@@ -326,8 +345,13 @@ class HealthPWASyncController(http.Controller):
     # ------------------------------------------------------------------
     # Per-model change builders (all reads sudo, scope enforced by caller)
     # ------------------------------------------------------------------
-    def _patient_record(self, patient):
-        """Per-record dict — shape unchanged from the pre-scope endpoint."""
+    def _patient_record(self, patient, custom_fields=None):
+        """Per-record dict — shape unchanged from the pre-scope endpoint,
+        plus `custom_fields` (Form Studio fields switched on for the app;
+        computed for this one record when the caller did not batch them)."""
+        if custom_fields is None:
+            custom_fields = studio_app_fields(
+                'res.partner', patient).get(patient.id, [])
         return {
             'id': patient.id,
             'name': patient.name,
@@ -352,6 +376,7 @@ class HealthPWASyncController(http.Controller):
             'emergency_contact_phone': patient.emergency_contact_phone,
             'last_visit_date': patient.last_visit_date,
             'next_visit_date': patient.next_visit_date,
+            'custom_fields': custom_fields,
             'created_date': patient.create_date,
             'updated_date': patient.write_date,
             'is_deleted': False,
@@ -383,7 +408,9 @@ class HealthPWASyncController(http.Controller):
         union_ids = set(changed_in_scope.ids) | set(in_scope_orders.mapped('patient_id').ids)
         patients = Partner.browse(sorted(union_ids))
 
-        patient_records = [self._patient_record(p) for p in patients]
+        custom = studio_app_fields('res.partner', patients)
+        patient_records = [self._patient_record(p, custom.get(p.id, []))
+                           for p in patients]
 
         _logger.info("Sync: %s scoped patients", len(patient_records))
         return {
@@ -392,8 +419,12 @@ class HealthPWASyncController(http.Controller):
             'records': patient_records,
         }
 
-    def _fso_record(self, order):
-        """Per-record dict — shape unchanged from the pre-scope endpoint."""
+    def _fso_record(self, order, custom_fields=None):
+        """Per-record dict — shape unchanged from the pre-scope endpoint,
+        plus `custom_fields` (as `_patient_record`)."""
+        if custom_fields is None:
+            custom_fields = studio_app_fields(
+                'health.fieldservice.order', order).get(order.id, [])
         return {
             'id': order.id,
             'name': order.name,
@@ -426,6 +457,7 @@ class HealthPWASyncController(http.Controller):
             'actual_end_datetime': order.actual_end_datetime if hasattr(order, 'actual_end_datetime') else None,
             'actual_duration': order.actual_duration if hasattr(order, 'actual_duration') else None,
             'address': order.service_address,  # Add duplicate for compatibility
+            'custom_fields': custom_fields,
             'created_date': order.create_date,
             'updated_date': order.write_date,
             'is_deleted': False,
@@ -511,8 +543,10 @@ class HealthPWASyncController(http.Controller):
         in_scope_sorted = in_scope_active.sorted(
             key=lambda o: o.scheduled_datetime or datetime.min, reverse=True)
         capped = len(in_scope_sorted) > FSO_UPSERT_CAP
-        for order in in_scope_sorted[:FSO_UPSERT_CAP]:
-            records.append(self._fso_record(order))
+        upserts = in_scope_sorted[:FSO_UPSERT_CAP]
+        custom = studio_app_fields('health.fieldservice.order', upserts)
+        for order in upserts:
+            records.append(self._fso_record(order, custom.get(order.id, [])))
         upsert_count = min(len(in_scope_sorted), FSO_UPSERT_CAP)
 
         # Hard-delete tombstones (§2.3). On the 30-day fallback window use a

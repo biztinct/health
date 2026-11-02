@@ -27,6 +27,8 @@ const APP_VI_FALLBACK_TRANSLATIONS = {
   'Finalize and sign this clinical note? Once signed it becomes a permanent, locked medical record and cannot be edited.': 'Hoàn tất và ký ghi chú lâm sàng này? Sau khi ký, ghi chú trở thành hồ sơ bệnh án cố định, bị khóa và không thể chỉnh sửa.',
   // EMR "Notes to sign" home card (emr-record-spine phase 1.7) — VN-first fallback.
   'Notes to sign': 'Ghi chú cần ký',
+  // Form Studio "More details" block (FS-H4) — VN-first fallback.
+  'More details': 'Chi tiết thêm',
   'overdue': 'quá hạn',
   'Patient': 'Bệnh nhân',
 };
@@ -3714,6 +3716,16 @@ window.healthPWA = {
                   </div>
                 </div>
 
+                <!-- More details: Form Studio fields switched on for the app
+                     (read-only, from the booking detail API). -->
+                <div v-if="selectedBookingDetail.custom_fields && selectedBookingDetail.custom_fields.length" class="detail-section">
+                  <h4 class="section-title">{{ _t('More details') }}</h4>
+                  <div v-for="cf in selectedBookingDetail.custom_fields" :key="cf.name" class="detail-row">
+                    <span class="label">{{ cf.label }}</span>
+                    <span class="value" style="white-space: pre-line; overflow-wrap: anywhere;">{{ cf.value }}</span>
+                  </div>
+                </div>
+
                 <!-- Intake Summary Button -->
                 <button @click="toggleIntakeSummaryModal" class="btn-intake-summary">
                   <i class="material-icons">description</i>
@@ -5086,7 +5098,10 @@ window.healthPWA = {
           error,
           formatDate,
           formatAge,
-          getStatusColor
+          getStatusColor,
+          // the template's "Recent Orders" list calls it; without it the
+          // whole client screen failed to draw for a client with orders
+          displayDbValue
         };
       },
       template: `
@@ -5214,6 +5229,24 @@ window.healthPWA = {
                   <div class="info-item full-width" v-if="patient.medical_history">
                     <label>{{ _t('Medical History') }}</label>
                     <span>{{ patient.medical_history }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- More details: fields an administrator added in Form Studio
+                   and switched on for the app (read-only; values arrive
+                   written out for display). Older cached records carry no
+                   custom_fields and show nothing. -->
+              <div class="info-section" v-if="patient.custom_fields && patient.custom_fields.length">
+                <h3>
+                  <i class="material-icons">notes</i>
+                  {{ _t('More details') }}
+                </h3>
+                <div class="info-grid">
+                  <div v-for="cf in patient.custom_fields" :key="cf.name"
+                       :class="['info-item', cf.type === 'text' ? 'full-width' : '']">
+                    <label>{{ cf.label }}</label>
+                    <span style="white-space: pre-line; overflow-wrap: anywhere;">{{ cf.value }}</span>
                   </div>
                 </div>
               </div>

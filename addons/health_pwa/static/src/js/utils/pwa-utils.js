@@ -6,6 +6,7 @@ window.PWAUtils = {
   i18n: {
     vi: {
       // UI Labels
+      'More details': 'Chi tiết thêm',
       'Day': 'Ngày',
       'Week': 'Tuần',
       'Month': 'Tháng',
