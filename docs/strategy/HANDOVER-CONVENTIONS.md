@@ -3836,3 +3836,96 @@ a no-op.
     (`backend_04_typography_responsive.scss`). Out of scope and still on
     their own fonts: the PWA (Roboto), portal/family QWeb pages, e-mail
     templates and invoice PDFs. (TYPEFACE BUILD, 2026-11-02.)
+- **§5.265 — `ir.model.fields.selection` REFUSES SUDO COMMANDS: `selection_ids`
+    commands written under `sudo()` are re-run as the person who made the
+    request, and a non-administrator is refused.** The model sets
+    `_allow_sudo_commands = False`; `fields_relational._check_sudo_commands`
+    then does `comodel.sudo(False).with_user(env.transaction.default_env.uid)`
+    for every x2many command aimed at it. So
+    `env['ir.model.fields'].sudo().create({..., 'selection_ids':
+    [Command.create(...)]})` works in a shell and in every `with_user` test
+    (the transaction's origin user is the superuser there) and fails in the
+    browser for a clinic administrator with *"You are not allowed to create
+    'Fields Selection'"*. Create or write the option rows DIRECTLY
+    (`env['ir.model.fields.selection'].sudo().create([...])`) — a direct
+    call keeps the sudo. And test it over HTTP (`make_jsonrpc_request` as the
+    real persona, `HttpCase`): `with_user` cannot reproduce anything decided
+    by the transaction's origin user. (FORM STUDIO FS-H1, found in browser QA;
+    `health_form_studio/tests/test_fs_health.py::test_14b`.)
+- **§5.266 — a manual field made `required=True` on a table that already has
+    rows can never get its NOT NULL, and logs an ERROR on every registry
+    build trying.** `init_models` runs `ALTER … SET NOT NULL`, PostgreSQL
+    refuses (`column "x_fs_…" … contains null values`), `odoo.schema` logs it
+    at ERROR — and does so again on every restart and every worker reload.
+    Worse, the ORM then refuses every create that omits the field, which on a
+    host model means the mobile app and the API start failing: a business
+    change by the back door. Form Studio's "Required" is therefore a rule of
+    the SCREEN (`required="1"` on the field node of the generated view, kept
+    in `fs.field.meta.required`; switching it republishes the layouts that
+    show the field), never `ir.model.fields.required`. (FS-H1.)
+- **§5.267 — a test that creates a custom field must rebuild the registry
+    AFTER the savepoint rollback, or the next test reads a column that does
+    not exist.** Rolling the test transaction back removes the
+    `ir_model_fields` row and the column, not the Python field the registry
+    built from them; the framework only resets the registry at the END of the
+    class. Register `self.addCleanup(self._rebuild)` BEFORE
+    `super().setUp()` — cleanups run last-in-first-out, so it then runs after
+    the savepoint is closed — and in it call
+    `self.registry._setup_models__(self.cr, [touched models])`.
+    (`biz_form_studio/tests/test_fs_core.py::_FsCase`.) (FS-H1.)
+- **§5.268 — `_()` inside a nested function finds no language and returns the
+    English: "no translation language detected, skipping translation".**
+    `_()` reads the language off the calling frame (`self.env`, `cr`,
+    `context`); a helper defined inside a method has none of those in its own
+    frame. Translate before the nested function (assign the strings to
+    locals) or call `self.env._(...)`. Found by the warning line in a test
+    log, not by a test. (FS-H1.)
+- **§5.269 — the web client keeps every screen's layout in the browser,
+    keyed on the server's registry version, so a change to a VIEW alone is
+    seen by other people one page load late.** `get_views` is cached on disk
+    (`orm.cache({type: "disk"})`, IndexedDB named after
+    `session.registry_hash`) and served stale-while-revalidate: the first
+    load after somebody rewrites a view shows the old arch and only then
+    stores the new one. Writing an `ir.ui.view` does not change the registry
+    version. Anything that rewrites a view for everybody at runtime (Form
+    Studio's publish, rollback and validator) sets
+    `env.registry.registry_invalidated = True`, which bumps the version, gives
+    every browser a new cache, and makes "everyone sees it on their next page
+    load" true. The publishing tab itself also fires
+    `rpcBus.trigger("CLEAR-CACHES", "get_views")` and then
+    `action.restore()`; restoring a form controller re-mounts the View, which
+    re-reads the arch — no `window.location.reload()` needed. (FS-H1.)
+- **§5.270 — a translated field written under a Vietnamese reader's context
+    replaces the Vietnamese copy and leaves the English untouched.**
+    `ir.ui.view.arch_db`, `ir.model.fields.field_description`/`help` and
+    `ir.model.fields.selection.name` are translated fields: `write()` with
+    `lang='vi_VN'` in the context updates the vi_VN value only. Code that
+    writes a SOURCE at runtime on a user's behalf must write with
+    `with_context(lang='en_US')`, and put the Vietnamese in with
+    `update_field_translations(field, {'vi_VN': …})` (for an arch: a dict of
+    `{english term: vietnamese term}`), then `registry.clear_cache()` so the
+    label caches (`get_field_string`) read it. (FS-H1.)
+- **§5.271 — the repo-wide i18n gate reads the addons tree health_base sits
+    in, so on a clone with a private addons tree it does not see the new
+    modules, and on the live tree it is RED today for a reason nobody
+    introduced in code.** `health_base/tests/test_i18n_catalogues.py` walks
+    `dirname(health_base)`. (a) A rehearsal that keeps new modules in a
+    private tree must copy `health_base` into that tree too (an identical
+    copy) for G1/G2 to cover them. (b) The live tree holds twelve macOS
+    AppleDouble files (`._*`, e.g. `health_pwa/i18n/._vi_VN.po`, dated
+    2026-10-29; others in `health_pwa/models`, `advanced_pricing`), copied
+    by a Mac `scp` without `COPYFILE_DISABLE=1`. G1c reports the `.po` one as
+    "a catalogue Odoo will never read" and G1/G1b/G2 crash with
+    `UnicodeDecodeError` on it, so the gate fails on the master with no code
+    change. Copy with `COPYFILE_DISABLE=1` (handover §7 already says so);
+    removing the twelve files is a separate, sanctioned clean-up. (FS-H1.)
+- **§5.272 — a CMS screen that should keep the left menu WITHOUT lighting an
+    entry needs a switched-off menu entry that names its tag.** The shell
+    keeps itself only for action tags some `cms.sidebar.item` claims
+    (`get_match_keys`, which deliberately reads inactive entries too); an
+    unclaimed tag drops the person into the bare backend. A drawn entry that
+    claims it also lights itself and switches the section (Form Studio's
+    editor jumped from Clinical to Settings). An `active=False` entry
+    claiming the tag keeps the shell, lights nothing and leaves the section
+    where the person was (`health_form_studio.item_form_studio_editor`).
+    (FS-H1.)
