@@ -1,0 +1,125 @@
+# Vietnamese translation of health_form_studio (FS-H1).
+# Generated from the framework's own export of the module, so every
+# entry carries its `#. module:`, its marker and its occurrence exactly
+# as the loader reads them, then translated.
+msgid ""
+msgstr ""
+"Project-Id-Version: Form Studio 19.0 health_form_studio\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: Vietnamese\n"
+"Language: vi_VN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_form_studio
+#: model:fs.link.target,label:health_form_studio.fs_target_catchment
+msgid "Catchment area"
+msgstr "Khu vực phụ trách"
+
+#. module: health_form_studio
+#: model:fs.link.target,label:health_form_studio.fs_target_client
+msgid "Client"
+msgstr "Khách hàng"
+
+#. module: health_form_studio
+#: model:fs.link.target,label:health_form_studio.fs_target_contact
+msgid "Contact"
+msgstr "Liên hệ"
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Counters"
+msgstr "Bộ đếm"
+
+#. module: health_form_studio
+#: model:ir.model.fields,field_description:health_form_studio.field_fs_host__display_name
+#: model:ir.model.fields,field_description:health_form_studio.field_fs_studio__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Drawn by the system."
+msgstr "Do hệ thống tạo."
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Drives the incident workflow."
+msgstr "Điều khiển quy trình xử lý sự cố."
+
+#. module: health_form_studio
+#: model:fs.link.target,label:health_form_studio.fs_target_facility
+msgid "Facility"
+msgstr "Cơ sở"
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_studio.py:0
+msgid "Field Requirements rules: %s"
+msgstr "Quy tắc Yêu cầu trường dữ liệu: %s"
+
+#. module: health_form_studio
+#: model:cms.sidebar.item,name:health_form_studio.item_admin_form_studio
+#: model:ir.model,name:health_form_studio.model_fs_studio
+msgid "Form Studio"
+msgstr "Form Studio"
+
+#. module: health_form_studio
+#: model:cms.sidebar.item,name:health_form_studio.item_form_studio_editor
+msgid "Form Studio editor"
+msgstr "Trình chỉnh sửa Form Studio"
+
+#. module: health_form_studio
+#: model:ir.model.fields,field_description:health_form_studio.field_fs_host__id
+#: model:ir.model.fields,field_description:health_form_studio.field_fs_studio__id
+msgid "ID"
+msgstr "ID"
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Identifies the incident on every report."
+msgstr "Định danh sự cố trên mọi báo cáo."
+
+#. module: health_form_studio
+#: model:fs.host,name:health_form_studio.fs_host_incident
+msgid "Incident"
+msgstr "Sự cố"
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Links the incident to the client record."
+msgstr "Liên kết sự cố với hồ sơ khách hàng."
+
+#. module: health_form_studio
+#: model:fs.host,pwa_label:health_form_studio.fs_host_incident
+msgid "Nurse app"
+msgstr "Ứng dụng điều dưỡng"
+
+#. module: health_form_studio
+#: model:ir.model,name:health_form_studio.model_fs_host
+msgid "Screen that supports Form Studio"
+msgstr "Màn hình hỗ trợ Form Studio"
+
+#. module: health_form_studio
+#: model:fs.link.target,label:health_form_studio.fs_target_product
+msgid "Service or package"
+msgstr "Dịch vụ hoặc gói"
+
+#. module: health_form_studio
+#: model:fs.link.target,label:health_form_studio.fs_target_employee
+msgid "Staff member"
+msgstr "Nhân viên"
+
+#. module: health_form_studio
+#. odoo-python
+#: code:addons/health_form_studio/models/fs_host.py:0
+msgid "Used for statutory reporting deadlines."
+msgstr "Dùng cho thời hạn báo cáo theo quy định."

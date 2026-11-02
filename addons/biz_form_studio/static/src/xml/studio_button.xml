@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- ================================================================
+         The Studio door, right after the cog, inside the control panel's
+         additional-actions slot of every full-page form.
+         ================================================================ -->
+    <t t-inherit="web.FormView" t-inherit-mode="extension">
+        <xpath expr="//t[@t-set-slot='control-panel-additional-actions']/CogMenu" position="after">
+            <button t-if="fsCanEdit" type="button"
+                    class="btn btn-secondary o_fs_studio_btn"
+                    title="Add fields to this screen and place them"
+                    t-on-click.stop="openFormStudio">
+                <t t-out="fsIcon"/>
+                <span>Studio</span>
+            </button>
+        </xpath>
+    </t>
+
+</templates>

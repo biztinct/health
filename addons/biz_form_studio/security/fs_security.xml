@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ================================================================
+         WHO MAY CHANGE A LAYOUT IS A SETTING, NOT A GROUP IN THIS FILE.
+         The gate (biz_form_studio.gate_group) is read at call time, so no
+         access row can name it: every write goes through the fs.studio
+         facade, which checks the gate and only then writes with sudo().
+         The rows below only let people with a login READ what the facade
+         shows them, and keep a draft private to the person who wrote it.
+         ================================================================ -->
+    <record id="rule_fs_layout_draft_own" model="ir.rule">
+        <field name="name">Form Studio: a draft belongs to its author</field>
+        <field name="model_id" ref="model_fs_layout_draft"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="rule_fs_layout_draft_system" model="ir.rule">
+        <field name="name">Form Studio: the system administrator sees every draft</field>
+        <field name="model_id" ref="model_fs_layout_draft"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+    </record>
+</odoo>

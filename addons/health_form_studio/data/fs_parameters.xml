@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ================================================================
+         Who may open Studio on a clinic, and who "Staff" and "Admins" are.
+         Owner decision 2026-11-02: the clinic administrator, never the
+         platform's system administrator. noupdate="0": these are this
+         module's own settings, written again on every upgrade.
+         ================================================================ -->
+    <data noupdate="0">
+        <record id="param_gate_group" model="ir.config_parameter">
+            <field name="key">biz_form_studio.gate_group</field>
+            <field name="value">health_access.group_clinic_admin</field>
+        </record>
+        <record id="param_group_staff" model="ir.config_parameter">
+            <field name="key">biz_form_studio.group_staff</field>
+            <field name="value">health_base.group_healthcare_base</field>
+        </record>
+        <record id="param_group_admin" model="ir.config_parameter">
+            <field name="key">biz_form_studio.group_admin</field>
+            <field name="value">health_access.group_clinic_admin</field>
+        </record>
+        <record id="param_required_rules_action" model="ir.config_parameter">
+            <field name="key">biz_form_studio.required_rules_action</field>
+            <field name="value">health_landing.action_admin_field_req</field>
+        </record>
+    </data>
+</odoo>

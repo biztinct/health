@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+  <!-- ====================================================================
+       The field library. Loops: the screen loop is `hs`, the row loop is
+       `rw` (R1: never lt / gt / lte / gte / and / or / not / in).
+       ==================================================================== -->
+  <t t-name="biz_form_studio.Library">
+    <div class="bzk bzk-page fs-library">
+      <div class="bzk-wrap">
+        <div class="fs-lib-head">
+          <span class="fs-lib-head__ic" t-out="ic('wandSparkles', 20)"/>
+          <div>
+            <div class="bzk-h1">Form Studio</div>
+            <div class="bzk-sub">Every field made in Studio, on every screen that supports it.</div>
+          </div>
+        </div>
+
+        <div t-if="state.loading" class="bzk-busy"><div class="bzk-spin"/></div>
+        <div t-elif="state.error" class="bzk-panel"><div class="bzk-empty" t-esc="state.error"/></div>
+        <t t-else="">
+          <div class="bzk-panel fs-lib-panel">
+            <div class="fs-lib-tools">
+              <div class="bzk-chips">
+                <button type="button" t-att-class="'bzk-fchip' + (!state.screen ? ' on' : '')"
+                        t-on-click="() => this.state.screen = ''">
+                  All screens <span class="c" t-esc="state.data.rows.length"/>
+                </button>
+                <t t-foreach="hosts" t-as="hs" t-key="hs.model">
+                  <button type="button" t-att-class="'bzk-fchip' + (state.screen === hs.model ? ' on' : '')"
+                          t-on-click="() => this.setScreen(hs.model)">
+                    <t t-esc="hs.title"/> <span class="c" t-esc="countFor(hs.model)"/>
+                  </button>
+                </t>
+              </div>
+              <span class="fs-bar__sp"/>
+              <t t-foreach="hosts" t-as="hs" t-key="hs.model">
+                <button t-if="!state.screen or state.screen === hs.model" type="button" class="bzk-btn bzk-btn-sm outline"
+                        t-on-click="() => this.openStudio(hs.model, hs.view_id)">
+                  <t t-out="ic('wandSparkles', 13)"/> <t t-esc="openLabel(hs.title)"/>
+                </button>
+              </t>
+            </div>
+
+            <div t-if="!rows.length" class="bzk-empty" t-esc="emptyHint"/>
+            <div t-else="" class="bzk-tablewrap">
+              <table class="bzk-table fs-lib-table">
+                <thead>
+                  <tr>
+                    <th>Screen</th>
+                    <th>Field</th>
+                    <th>Type</th>
+                    <th>Who sees it</th>
+                    <th>Health information</th>
+                    <th>In lists</th>
+                    <th t-esc="state.data.pwa_label"/>
+                    <th>Filled</th>
+                    <th>Created</th>
+                    <th/>
+                  </tr>
+                </thead>
+                <tbody>
+                  <t t-foreach="rows" t-as="rw" t-key="rw.model + '.' + rw.name">
+                    <tr>
+                      <td t-esc="rw.screen"/>
+                      <td class="fs-lib-name" t-esc="rw.label"/>
+                      <td t-esc="rw.type_label"/>
+                      <td t-esc="visLabel(rw.vis)"/>
+                      <td>
+                        <span t-if="rw.phi" class="bzk-badge ok"><t t-out="ic('shield', 11)"/> Yes</span>
+                        <span t-else="" class="fs-muted">No</span>
+                      </td>
+                      <td><span t-att-class="rw.list_ok ? '' : 'fs-muted'"><t t-if="rw.list_ok">Yes</t><t t-else="">No</t></span></td>
+                      <td><span t-att-class="rw.pwa ? '' : 'fs-muted'"><t t-if="rw.pwa">Yes</t><t t-else="">No</t></span></td>
+                      <td>
+                        <span class="fs-fill">
+                          <i t-att-style="'--p:' + fillPct(rw) + '%'"/>
+                          <span t-esc="filled(rw)"/>
+                        </span>
+                      </td>
+                      <td>
+                        <span t-esc="rw.created_by"/>
+                        <span class="fs-muted fs-lib-date" t-esc="rw.created_on"/>
+                      </td>
+                      <td class="fs-lib-act">
+                        <button type="button" class="bzk-btn bzk-btn-sm ghost"
+                                t-on-click="() => this.openStudio(rw.model, rw.view_id)">
+                          <t t-out="ic('external', 12)"/> Open in Studio
+                        </button>
+                      </td>
+                    </tr>
+                  </t>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </t>
+      </div>
+    </div>
+  </t>
+
+</templates>

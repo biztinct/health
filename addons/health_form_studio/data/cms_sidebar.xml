@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ================================================================
+         Settings > Form Studio, for the Owner and Admin roles.
+         The icon is a font-awesome class BY CONTRACT of cms.sidebar.item
+         (the one exception to the mask-icon rule). Both Studio screens are
+         listed as matching tags, so the left menu stays on screen and keeps
+         this entry highlighted inside the editor too. The hook places the
+         entry under the "Master data" heading when that heading exists.
+         ================================================================ -->
+    <data noupdate="0">
+        <record id="item_admin_form_studio" model="cms.sidebar.item">
+            <field name="name">Form Studio</field>
+            <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+            <field name="sequence">88</field>
+            <field name="icon">fa fa-magic</field>
+            <field name="action_xmlid">biz_form_studio.action_fs_library</field>
+            <field name="action_tag">biz_form_studio.library</field>
+            <field name="match_action_tags">biz_form_studio.library</field>
+            <field name="match_action_xmlids">biz_form_studio.action_fs_library</field>
+            <field name="biz_role_ids" eval="[(6, 0, [ref('health_access.role_admin'), ref('health_access.role_owner')])]"/>
+        </record>
+
+        <!-- The editor keeps the left menu WITHOUT moving it. An entry that is
+             switched off is never drawn, but its tags still tell the shell
+             "this screen belongs to the menu" (get_match_keys reads inactive
+             entries on purpose). So the editor opened from an incident stays
+             under Clinical, with nothing wrongly lit. -->
+        <record id="item_form_studio_editor" model="cms.sidebar.item">
+            <field name="name">Form Studio editor</field>
+            <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+            <field name="sequence">89</field>
+            <field name="icon">fa fa-magic</field>
+            <field name="action_tag">biz_form_studio.studio</field>
+            <field name="match_action_tags">biz_form_studio.studio</field>
+            <field name="match_action_xmlids">biz_form_studio.action_fs_studio</field>
+            <field name="active" eval="False"/>
+        </record>
+    </data>
+</odoo>

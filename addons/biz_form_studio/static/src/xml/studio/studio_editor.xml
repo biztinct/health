@@ -1,0 +1,585 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+  <!-- ====================================================================
+       The Studio editor.
+
+       Comments ruled with `=`, never a doubled hyphen. No `t-as` variable is
+       named lt / gt / lte / gte / and / or / not / in (R1): the card loop is
+       `cd`, the field loop is `fname`, the section loop is `sec`, the type
+       loop is `tp`, the option loop is `opt`, the target loop is `tg`, the
+       change loop is `chg`, the history loop is `hv`, the reference loop is
+       `rf`. No `t-set` is named like a getter of the component (ledger
+       §5.249): the per-chip drop target is `dropAt`, the field being edited
+       is `ff`.
+       ==================================================================== -->
+  <t t-name="biz_form_studio.Studio">
+    <div class="bzk fs-studio">
+      <div class="fs-bar">
+        <span class="fs-tag"><t t-out="ic('wandSparkles', 15)"/> Form Studio</span>
+        <span t-if="data" class="fs-tag fs-tag--soft" t-esc="host.title"/>
+        <span t-if="data" class="fs-bar__ver" t-esc="versionLabel"/>
+        <span t-if="data" class="fs-bar__changes" t-esc="changeCount"/>
+        <span class="fs-bar__sp"/>
+        <button t-if="data and data.history.length" type="button" class="fs-barbtn"
+                t-on-click="openHistory">
+          <t t-out="ic('history', 15)"/><span>Previous versions</span>
+        </button>
+        <button t-if="data" type="button" class="fs-barbtn" t-att-disabled="!dirty"
+                t-on-click="discard">
+          <t t-out="ic('undo', 15)"/><span>Discard</span>
+        </button>
+        <button t-if="data" type="button" class="fs-barbtn fs-barbtn--primary"
+                t-att-disabled="!changes.length or state.busy" t-on-click="openPublish">
+          <t t-out="ic('upload', 15)"/><span>Publish</span>
+        </button>
+        <button type="button" class="fs-barbtn fs-barbtn--icon" title="Back to the record"
+                aria-label="Back to the record" t-on-click="() => this.goBack()">
+          <t t-out="ic('x', 17)"/>
+        </button>
+      </div>
+
+      <div t-if="state.loading" class="bzk-busy"><div class="bzk-spin"/></div>
+      <div t-elif="state.error" class="fs-error">
+        <div class="bzk-empty" t-esc="state.error"/>
+        <button type="button" class="bzk-btn ghost" t-on-click="() => this.goBack()">Back</button>
+      </div>
+      <t t-else="">
+        <div t-if="data.layout.state === 'broken'" class="fs-broken">
+          <t t-out="ic('alert', 15)"/>
+          <span>This layout is switched off because the screen changed. Open Studio to repair it.</span>
+        </div>
+        <div class="fs-work">
+          <!-- ================================================ palette -->
+          <aside class="fs-panel fs-palette">
+            <div class="fs-ptabs" role="tablist">
+              <button type="button" role="tab" t-att-aria-selected="state.palTab === 'new' ? 'true' : 'false'"
+                      t-on-click="() => this.state.palTab = 'new'">New field</button>
+              <button type="button" role="tab" t-att-aria-selected="state.palTab === 'hidden' ? 'true' : 'false'"
+                      t-on-click="() => this.state.palTab = 'hidden'">
+                Fields not shown <span t-if="notShown.length" class="fs-count" t-esc="notShown.length"/>
+              </button>
+            </div>
+            <t t-if="state.palTab === 'new'">
+              <div class="fs-eyebrow">Drag a type onto the screen</div>
+              <div class="fs-tiles">
+                <t t-foreach="data.types" t-as="tp" t-key="tp.key">
+                  <div t-att-class="'fs-tile' + (tp.disabled ? ' is-off' : '')"
+                       t-att-draggable="tp.disabled ? 'false' : 'true'"
+                       t-att-title="tp.reason"
+                       role="button" tabindex="0"
+                       t-on-dragstart="(ev) => this.onDragStart(ev, {kind: 'type', type: tp.key})"
+                       t-on-dragend="onDragEnd"
+                       t-on-click="() => this.onTileClick(tp.key)"
+                       t-on-keydown="(ev) => ev.key === 'Enter' and this.onTileClick(tp.key)">
+                    <span class="fs-tile__ic" t-out="ic(tp.icon, 16)"/>
+                    <span class="fs-tile__tx">
+                      <span class="fs-tile__nm" t-esc="tp.label"/>
+                      <span class="fs-tile__hint" t-esc="tp.hint"/>
+                    </span>
+                  </div>
+                </t>
+              </div>
+              <p class="fs-hint">A new field is added to every record of this screen the moment you add it. Its type cannot be changed afterwards. Nobody sees it on the screen until you press Publish.</p>
+            </t>
+            <t t-else="">
+              <div class="fs-eyebrow">Made in Studio, not on this screen</div>
+              <div t-if="!notShown.length" class="fs-hint">Every field made in Studio is on the screen.</div>
+              <div class="fs-hidden-list">
+                <t t-foreach="notShown" t-as="fname" t-key="fname">
+                  <t t-set="dropAt" t-value="false"/>
+                  <t t-call="biz_form_studio.StudioChip"/>
+                </t>
+              </div>
+              <p t-if="notShown.length" class="fs-hint">Drag one onto the screen, or click it and choose where it goes.</p>
+            </t>
+          </aside>
+
+          <!-- ================================================ the screen -->
+          <main class="fs-canvas" t-on-click.self="clearSelection">
+            <div class="fs-screen">
+              <t t-foreach="cardsBefore" t-as="cd" t-key="cd.key">
+                <t t-call="biz_form_studio.StudioCard"/>
+              </t>
+              <t t-foreach="sectionsAt('before')" t-as="sec" t-key="sec.id">
+                <t t-call="biz_form_studio.StudioSection"/>
+              </t>
+              <t t-if="host.has_notebook" t-call="biz_form_studio.StudioAddSection"/>
+              <div t-if="cardsTabs.length" class="fs-tabs-label">
+                <t t-out="ic('layers', 13)"/> Tabs
+              </div>
+              <t t-foreach="cardsTabs" t-as="cd" t-key="cd.key">
+                <t t-call="biz_form_studio.StudioCard"/>
+              </t>
+              <t t-foreach="sectionsAt('end')" t-as="sec" t-key="sec.id">
+                <t t-call="biz_form_studio.StudioSection"/>
+              </t>
+              <t t-if="!host.has_notebook" t-call="biz_form_studio.StudioAddSection"/>
+            </div>
+            <p class="fs-foot"><b>You are in Studio.</b> Drag a type from the left into a section, then click a field to change its label, who sees it and whether it holds health information. Nothing changes for anyone until you press Publish.</p>
+          </main>
+
+          <!-- ================================================ settings -->
+          <aside class="fs-panel fs-props">
+            <t t-if="state.sel and state.sel.kind === 'new'">
+              <t t-set="ff" t-value="false"/>
+              <t t-call="biz_form_studio.StudioFieldForm"/>
+            </t>
+            <t t-elif="selField and selField.std">
+              <div class="fs-props__body">
+                <div class="fs-eyebrow">Standard field</div>
+                <div class="fs-std-name">
+                  <span t-out="fieldIcon(state.sel.name)"/>
+                  <span t-esc="selField.display"/>
+                </div>
+                <div class="fs-kv"><span>Type</span><b t-esc="selField.type_label"/></div>
+                <div t-if="selField.required" class="fs-kv"><span>Required</span><b>Yes</b></div>
+                <div class="fs-lockbox">
+                  <t t-out="ic('lock', 14)"/>
+                  <span t-esc="selField.reason"/>
+                </div>
+              </div>
+            </t>
+            <t t-elif="selField">
+              <t t-set="ff" t-value="selField"/>
+              <t t-call="biz_form_studio.StudioFieldForm"/>
+            </t>
+            <t t-elif="selSection">
+              <t t-call="biz_form_studio.StudioSectionForm"/>
+            </t>
+            <t t-else="">
+              <div class="fs-props__empty">
+                <span class="fs-props__empty-ic" t-out="ic('wandSparkles', 22)"/>
+                <p>Click a field on the screen to change it, or drag a type from the left to add one.</p>
+              </div>
+            </t>
+          </aside>
+        </div>
+      </t>
+
+      <t t-call="biz_form_studio.StudioSheets"/>
+    </div>
+  </t>
+
+  <!-- ==================================================== the add zone -->
+  <t t-name="biz_form_studio.StudioAddSection">
+    <div t-att-class="zoneClass('add', 'fs-add')" role="button" tabindex="0"
+         t-on-click="() => this.selectSection(this.addSection().id)"
+         t-on-keydown="(ev) => ev.key === 'Enter' and this.selectSection(this.addSection().id)"
+         t-on-dragover="(ev) => this.onDragOver(ev, 'add')"
+         t-on-dragleave="(ev) => this.onDragLeave(ev, 'add')"
+         t-on-drop="(ev) => this.onDrop(ev, {newSection: true})">
+      <t t-out="ic('plus', 15)"/>
+      <span>Add a section</span>
+      <small>or drop a type or a field here</small>
+    </div>
+  </t>
+
+  <!-- ==================================================== a field chip -->
+  <t t-name="biz_form_studio.StudioChip">
+    <div t-att-class="chipClass(fname)"
+         t-att-draggable="fields[fname].std ? 'false' : 'true'"
+         t-att-title="fields[fname].std ? fields[fname].reason : fields[fname].type_label"
+         role="button" tabindex="0"
+         t-on-click.stop="() => this.selectField(fname)"
+         t-on-keydown="(ev) => ev.key === 'Enter' and this.selectField(fname)"
+         t-on-dragstart="(ev) => this.onDragStart(ev, {kind: 'field', name: fname})"
+         t-on-dragend="onDragEnd"
+         t-on-dragover="(ev) => dropAt and this.onDragOver(ev, 'f:' + fname)"
+         t-on-dragleave="(ev) => dropAt and this.onDragLeave(ev, 'f:' + fname)"
+         t-on-drop="(ev) => dropAt and this.onDrop(ev, dropAt)">
+      <span t-if="!fields[fname].std" class="fs-chip__grip" t-out="ic('gripVertical', 12)"/>
+      <span class="fs-chip__ic" t-out="fieldIcon(fname)"/>
+      <span class="fs-chip__lab" t-esc="fields[fname].display"/>
+      <span class="fs-chip__marks">
+        <span t-if="fields[fname].locked" class="fs-mark" t-out="ic('lock', 12)"/>
+        <span t-if="fields[fname].phi" class="fs-mark fs-mark--phi" title="Health information" t-out="ic('shield', 12)"/>
+        <span t-if="fields[fname].vis and fields[fname].vis !== 'all'" class="fs-mark" t-att-title="visLabel(fields[fname].vis)" t-out="ic('eyeOff', 12)"/>
+        <span t-if="fields[fname].pwa" class="fs-mark" t-att-title="pwaLabel" t-out="ic('smartphone', 12)"/>
+        <span t-if="!fields[fname].std" class="fs-badge">custom</span>
+      </span>
+    </div>
+  </t>
+
+  <!-- ==================================================== a card of the screen -->
+  <t t-name="biz_form_studio.StudioCard">
+    <div t-if="cd.kind === 'zone'" class="fs-card fs-card--zone">
+      <div class="fs-card__hd">
+        <span class="fs-card__ic fs-card__ic--muted" t-out="ic('lock', 14)"/>
+        <h3 t-esc="cd.title"/>
+        <span class="fs-pill fs-pill--locked">Locked</span>
+      </div>
+      <p class="fs-card__note" t-esc="cd.reason"/>
+    </div>
+    <div t-elif="cd.kind === 'std'"
+         t-att-class="'fs-card fs-card--std' + (cd.open ? ' is-open' : '') + (state.dragOver === 'c:' + cd.name ? ' is-over' : '')"
+         t-on-dragover="(ev) => cd.open and this.onDragOver(ev, 'c:' + cd.name)"
+         t-on-dragleave="(ev) => cd.open and this.onDragLeave(ev, 'c:' + cd.name)"
+         t-on-drop="(ev) => cd.open and this.onDrop(ev, {card: cd.name})">
+      <div class="fs-card__hd">
+        <span class="fs-card__ic fs-card__ic--muted" t-out="ic(cd.tab ? 'table' : 'layers', 14)"/>
+        <h3 t-esc="cd.title"/>
+        <span t-if="cd.open" class="fs-pill fs-pill--open">Open card</span>
+        <span t-elif="cd.tab" class="fs-pill">Tab</span>
+        <span t-else="" class="fs-pill">Standard</span>
+      </div>
+      <div class="fs-card__body">
+        <t t-foreach="cd.fields" t-as="fname" t-key="fname">
+          <t t-set="dropAt" t-value="false"/>
+          <t t-call="biz_form_studio.StudioChip"/>
+        </t>
+        <t t-if="cd.open">
+          <t t-foreach="fieldNames(cardSection(cd.name))" t-as="fname" t-key="fname">
+            <t t-set="dropAt" t-value="{card: cd.name, index: fname_index}"/>
+            <t t-call="biz_form_studio.StudioChip"/>
+          </t>
+          <div class="fs-drop">Drop a field here</div>
+        </t>
+        <div t-if="!cd.fields.length and !cd.open" class="fs-card__empty">No fields shown here.</div>
+      </div>
+    </div>
+  </t>
+
+  <!-- ==================================================== a Studio section -->
+  <t t-name="biz_form_studio.StudioSection">
+    <div t-att-class="'fs-card fs-card--studio' + (state.sel and state.sel.kind === 'section' and state.sel.id === sec.id ? ' is-sel' : '') + (state.dragOver === 'sec:' + sec.id ? ' is-over' : '')"
+         t-on-dragover="(ev) => this.onDragOver(ev, 'sec:' + sec.id)"
+         t-on-dragleave="(ev) => this.onDragLeave(ev, 'sec:' + sec.id)"
+         t-on-drop="(ev) => this.onDrop(ev, {sectionId: sec.id})">
+      <div class="fs-card__hd" t-on-click="() => this.selectSection(sec.id)">
+        <span class="fs-card__ic" t-out="ic('layers', 14)"/>
+        <input type="text" class="fs-card__title" t-att-value="sec.title"
+               placeholder="Section title" aria-label="Section title"
+               t-on-input="(ev) => this.setSectionTitle(sec, ev)"
+               t-on-click.stop="() => this.selectSection(sec.id)"/>
+        <span class="fs-pill fs-pill--new">New section</span>
+      </div>
+      <div class="fs-card__body">
+        <t t-foreach="fieldNames(sec)" t-as="fname" t-key="fname">
+          <t t-set="dropAt" t-value="{sectionId: sec.id, index: fname_index}"/>
+          <t t-call="biz_form_studio.StudioChip"/>
+        </t>
+        <div class="fs-drop">Drop a field here</div>
+      </div>
+    </div>
+  </t>
+
+  <!-- ==================================================== the field form -->
+  <!-- `ff` is the saved field (false while a new one is being made). -->
+  <t t-name="biz_form_studio.StudioFieldForm">
+    <div class="fs-props__body">
+      <div class="fs-eyebrow" t-if="!ff">New field</div>
+      <div class="fs-eyebrow" t-else="">Field made in Studio</div>
+
+      <div t-if="ff and state.phiNote === state.sel.name" class="bzk-note fs-phinote">
+        <p>Do not put health information in a field that is not marked as health information.</p>
+        <button type="button" class="bzk-btn bzk-btn-sm ghost" t-on-click="ackPhi">Got it</button>
+      </div>
+
+      <label class="fs-lab">Label
+        <input type="text" class="fs-input" t-model="state.form.label" placeholder="What people see beside the value"/>
+      </label>
+      <label class="fs-lab">Vietnamese label
+        <input type="text" class="fs-input" t-model="state.form.label_vi"/>
+      </label>
+      <label class="fs-lab">Help text
+        <textarea class="fs-input fs-textarea" t-model="state.form.help" placeholder="Shown when someone points at the label"/>
+      </label>
+      <label class="fs-lab">Vietnamese help text
+        <textarea class="fs-input fs-textarea" t-model="state.form.help_vi"/>
+      </label>
+
+      <div class="fs-kv">
+        <span>Type</span>
+        <b><t t-out="typeIcon(ff ? ff.type : state.sel.type)"/> <t t-esc="ff ? ff.type_label : typeMap[state.sel.type].label"/></b>
+      </div>
+
+      <t t-if="(ff ? ff.type : state.sel.type) === 'many2one'">
+        <label t-if="!ff" class="fs-lab">Links to
+          <select class="fs-input" t-model="state.form.comodel">
+            <option value="">Choose…</option>
+            <t t-foreach="data.link_targets" t-as="tg" t-key="tg.model">
+              <option t-att-value="tg.model" t-esc="tg.label"/>
+            </t>
+          </select>
+        </label>
+        <div t-else="" class="fs-kv"><span>Links to</span><b t-esc="ff.comodel_label"/></div>
+      </t>
+
+      <t t-if="(ff ? ff.type : state.sel.type) === 'selection'">
+        <div class="fs-lab">Options</div>
+        <div class="fs-options">
+          <t t-foreach="state.form.options" t-as="opt" t-key="opt_index">
+            <div t-att-class="'fs-option' + (opt.retired ? ' is-retired' : '')">
+              <input type="text" class="fs-input" t-model="opt.label" aria-label="Option"/>
+              <button t-if="opt.value" type="button" class="bzk-btn bzk-btn-sm ghost"
+                      title="Hidden from new picks after the next release"
+                      t-on-click="() => this.toggleRetired(opt_index)">
+                <t t-if="opt.retired">Bring back</t><t t-else="">Retire</t>
+              </button>
+              <button t-else="" type="button" class="bzk-btn bzk-btn-sm ghost" aria-label="Remove"
+                      t-on-click="() => this.removeNewOption(opt_index)">
+                <t t-out="ic('x', 12)"/>
+              </button>
+            </div>
+          </t>
+          <div class="fs-option">
+            <input type="text" class="fs-input" t-model="state.form.newOption"
+                   placeholder="Add an option" t-on-keydown="onOptionKey"/>
+            <button type="button" class="bzk-btn bzk-btn-sm ghost" t-on-click="addOption">
+              <t t-out="ic('plus', 12)"/> Add
+            </button>
+          </div>
+        </div>
+      </t>
+
+      <div class="fs-lab">Who sees it</div>
+      <div class="bzk-seg fs-seg">
+        <button type="button" t-att-class="'bzk-segbtn' + (state.form.vis === 'all' ? ' on' : '')" t-on-click="() => this.setForm('vis', 'all')">Everyone</button>
+        <button type="button" t-att-class="'bzk-segbtn' + (state.form.vis === 'staff' ? ' on' : '')" t-on-click="() => this.setForm('vis', 'staff')">Staff</button>
+        <button type="button" t-att-class="'bzk-segbtn' + (state.form.vis === 'admin' ? ' on' : '')" t-on-click="() => this.setForm('vis', 'admin')">Admins</button>
+      </div>
+
+      <div class="fs-row">
+        <div class="fs-row__tx">
+          <div class="fs-row__t">Required</div>
+          <div class="fs-row__d">This screen will not save without a value. Records added elsewhere, such as from the mobile app, are not refused.</div>
+        </div>
+        <button type="button" role="switch" class="fs-sw" t-att-aria-checked="state.form.required ? 'true' : 'false'"
+                aria-label="Required" t-on-click="() => this.toggle('required')"/>
+      </div>
+      <button t-if="data.required_rules_action" type="button" class="fs-link" t-on-click="openRequiredRules">
+        Per-role or per-stage rules: open Field Requirements
+      </button>
+
+      <div class="fs-row">
+        <div class="fs-row__tx">
+          <div class="fs-row__t"><t t-out="ic('shield', 13)"/> Health information</div>
+          <div class="fs-row__d" t-if="state.form.phi">Kept out of lists and shown with a shield. Exports, reports and the mobile app leave it out from a later release.</div>
+          <div class="fs-row__d" t-else="">Switch on for anything about a person's health.</div>
+        </div>
+        <button type="button" role="switch" class="fs-sw" t-att-aria-checked="state.form.phi ? 'true' : 'false'"
+                aria-label="Health information" t-on-click="() => this.toggle('phi')"/>
+      </div>
+
+      <div class="fs-row">
+        <div class="fs-row__tx">
+          <div class="fs-row__t" t-esc="pwaLabel"/>
+          <div class="fs-row__d">Shown, read-only, in the mobile app from a later release.</div>
+        </div>
+        <button type="button" role="switch" class="fs-sw" t-att-aria-checked="state.form.pwa ? 'true' : 'false'"
+                t-att-aria-label="pwaLabel" t-on-click="() => this.toggle('pwa')"/>
+      </div>
+
+      <div class="fs-row">
+        <div class="fs-row__tx">
+          <div class="fs-row__t">Show in lists</div>
+          <div class="fs-row__d" t-if="state.form.phi">Health information is never offered as a list column.</div>
+          <div class="fs-row__d" t-else="">Offered as a column people can switch on in lists.</div>
+        </div>
+        <button type="button" role="switch" class="fs-sw" t-att-aria-checked="state.form.list_ok ? 'true' : 'false'"
+                t-att-disabled="state.form.phi" aria-label="Show in lists" t-on-click="() => this.toggle('list_ok')"/>
+      </div>
+
+      <div class="fs-actions">
+        <t t-if="!ff">
+          <button type="button" class="bzk-btn primary" t-att-disabled="state.busy" t-on-click="createField">
+            <t t-out="ic('plus', 14)"/> Add field
+          </button>
+          <button type="button" class="bzk-btn ghost" t-on-click="clearSelection">Cancel</button>
+        </t>
+        <t t-else="">
+          <button type="button" class="bzk-btn primary" t-att-disabled="!formDirty or state.busy" t-on-click="saveField">
+            <t t-out="ic('save', 14)"/> Save changes
+          </button>
+        </t>
+      </div>
+
+      <t t-if="ff">
+        <div class="fs-sep"/>
+        <div class="fs-eyebrow">Where it sits</div>
+        <t t-if="sectionOf(state.sel.name)">
+          <div class="fs-move">
+            <button type="button" class="bzk-btn bzk-btn-sm ghost" t-on-click="() => this.moveField(state.sel.name, -1)">
+              <t t-out="ic('arrowUp', 12)"/> Move up
+            </button>
+            <button type="button" class="bzk-btn bzk-btn-sm ghost" t-on-click="() => this.moveField(state.sel.name, 1)">
+              <t t-out="ic('arrowDown', 12)"/> Move down
+            </button>
+          </div>
+          <label class="fs-lab">Move to section…
+            <select class="fs-input" t-on-change="(ev) => this.onMoveTo(state.sel.name, ev)">
+              <t t-foreach="moveTargets" t-as="tg" t-key="tg.key">
+                <option t-att-value="tg.key" t-att-selected="tg.key === currentTarget(state.sel.name)" t-esc="tg.label"/>
+              </t>
+            </select>
+          </label>
+          <button type="button" class="fs-link" t-on-click="() => this.takeOff(state.sel.name)">Take it off this screen</button>
+        </t>
+        <t t-else="">
+          <p class="fs-hint fs-hint--flush">Not on the screen yet.</p>
+          <label class="fs-lab">Put it in…
+            <select class="fs-input" t-on-change="(ev) => this.onMoveTo(state.sel.name, ev)">
+              <option value="">Choose…</option>
+              <t t-foreach="moveTargets" t-as="tg" t-key="tg.key">
+                <option t-att-value="tg.key" t-esc="tg.label"/>
+              </t>
+            </select>
+          </label>
+        </t>
+        <div class="fs-sep"/>
+        <button type="button" class="bzk-btn danger fs-danger" t-on-click="openDelete">
+          <t t-out="ic('trash', 14)"/> Delete this field…
+        </button>
+      </t>
+    </div>
+  </t>
+
+  <!-- ==================================================== the section form -->
+  <t t-name="biz_form_studio.StudioSectionForm">
+    <div class="fs-props__body">
+      <div class="fs-eyebrow">Section</div>
+      <label class="fs-lab">Section title
+        <input type="text" class="fs-input" t-att-value="selSection.title"
+               t-on-input="(ev) => this.setSectionTitle(selSection, ev)"/>
+      </label>
+      <label class="fs-lab">Vietnamese title
+        <input type="text" class="fs-input" t-att-value="selSection.title_vi"
+               t-on-input="(ev) => this.setSectionTitleVi(selSection, ev)"/>
+      </label>
+      <t t-if="host.has_notebook">
+        <div class="fs-lab">Where it sits</div>
+        <div class="bzk-seg fs-seg">
+          <button type="button" t-att-class="'bzk-segbtn' + (selSection.anchor.kind === 'before_notebook' ? ' on' : '')"
+                  t-on-click="() => this.setSectionAnchor(selSection, 'before_notebook')">Above the tabs</button>
+          <button type="button" t-att-class="'bzk-segbtn' + (selSection.anchor.kind === 'sheet_end' ? ' on' : '')"
+                  t-on-click="() => this.setSectionAnchor(selSection, 'sheet_end')">At the bottom</button>
+        </div>
+      </t>
+      <div class="fs-move">
+        <button type="button" class="bzk-btn bzk-btn-sm ghost" t-on-click="() => this.moveSection(selSection, -1)">
+          <t t-out="ic('arrowUp', 12)"/> Move up
+        </button>
+        <button type="button" class="bzk-btn bzk-btn-sm ghost" t-on-click="() => this.moveSection(selSection, 1)">
+          <t t-out="ic('arrowDown', 12)"/> Move down
+        </button>
+      </div>
+      <div class="fs-sep"/>
+      <button type="button" class="bzk-btn danger fs-danger" t-att-disabled="selSection.fields.length"
+              t-on-click="() => this.deleteSection(selSection)">
+        <t t-out="ic('trash', 14)"/> Delete this section
+      </button>
+      <p t-if="selSection.fields.length" class="fs-hint fs-hint--flush">Move its fields out first.</p>
+    </div>
+  </t>
+
+  <!-- ==================================================== sheets -->
+  <t t-name="biz_form_studio.StudioSheets">
+    <div t-if="state.sheet === 'publish'" class="bzk-modal-scrim" t-on-click.self="closeSheet">
+      <div class="bzk-modal is-narrow fs-sheet" role="dialog" aria-modal="true">
+        <div class="bzk-modal__head">
+          <div>
+            <div class="bzk-modal__ttl">Publish this layout?</div>
+            <div class="bzk-modal__sub">Everyone sees it on their next page load.</div>
+          </div>
+        </div>
+        <div class="bzk-modal__body fs-sheet__body">
+          <t t-foreach="changes" t-as="chg" t-key="chg_index">
+            <div class="fs-chg"><span class="fs-chg__ic" t-out="ic(chg.icon, 14)"/><span t-esc="chg.text"/></div>
+          </t>
+        </div>
+        <div class="bzk-modal__foot">
+          <span class="bzk-modal__sp"/>
+          <button type="button" class="bzk-btn ghost" t-on-click="closeSheet">Cancel</button>
+          <button type="button" class="bzk-btn primary" t-att-disabled="state.busy" t-on-click="publish">
+            <t t-out="ic('upload', 14)"/> Publish for everyone
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div t-if="state.sheet === 'delete'" class="bzk-modal-scrim" t-on-click.self="closeSheet">
+      <div class="bzk-modal is-narrow fs-sheet" role="dialog" aria-modal="true">
+        <div class="bzk-modal__head">
+          <div>
+            <div class="bzk-modal__ttl">Delete this field…</div>
+            <div class="bzk-modal__sub" t-if="selField" t-esc="selField.display"/>
+          </div>
+        </div>
+        <div class="bzk-modal__body fs-sheet__body">
+          <div t-if="!state.refs" class="bzk-busy"><div class="bzk-spin"/></div>
+          <t t-else="">
+            <p class="fs-sheet__lead"><t t-esc="valueSentence"/> <t t-esc="deleteWarning"/></p>
+            <t t-foreach="state.refs" t-as="rf" t-key="rf_index">
+              <div t-if="rf.kind !== 'values'" t-att-class="'fs-chg' + (rf.blocker ? ' is-blocker' : '')">
+                <span class="fs-chg__ic" t-out="ic(rf.blocker ? 'alert' : 'layers', 14)"/>
+                <span t-esc="rf.label"/>
+              </div>
+            </t>
+            <p t-if="blockers.length" class="fs-sheet__warn">Remove the field from the places marked above first.</p>
+            <label t-else="" class="fs-lab">Type DELETE to confirm
+              <input type="text" class="fs-input" autocomplete="off" t-att-value="state.deleteText"
+                     t-on-input="onDeleteText"/>
+            </label>
+          </t>
+        </div>
+        <div class="bzk-modal__foot">
+          <span class="bzk-modal__sp"/>
+          <button type="button" class="bzk-btn ghost" t-on-click="closeSheet">Cancel</button>
+          <button type="button" class="bzk-btn danger" t-att-disabled="!canDelete" t-on-click="deleteField">
+            <t t-out="ic('trash', 14)"/> Delete field
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div t-if="state.sheet === 'history'" class="bzk-modal-scrim" t-on-click.self="closeSheet">
+      <div class="bzk-modal is-narrow fs-sheet" role="dialog" aria-modal="true">
+        <div class="bzk-modal__head">
+          <div>
+            <div class="bzk-modal__ttl">Previous versions</div>
+            <div class="bzk-modal__sub">Going back publishes that version again, for everyone.</div>
+          </div>
+        </div>
+        <div class="bzk-modal__body fs-sheet__body">
+          <t t-foreach="data.history" t-as="hv" t-key="hv.version">
+            <div class="fs-hist">
+              <div class="fs-hist__tx">
+                <b>Version <t t-esc="hv.version"/></b>
+                <span><t t-esc="hv.published_by"/> · <t t-esc="when(hv.published_at)"/></span>
+              </div>
+              <span t-if="hv.version === data.layout.version" class="fs-pill fs-pill--open">Current</span>
+              <t t-elif="state.rollbackTo === hv.version">
+                <button type="button" class="bzk-btn bzk-btn-sm primary" t-att-disabled="state.busy" t-on-click="rollback">Publish it again</button>
+              </t>
+              <button t-else="" type="button" class="bzk-btn bzk-btn-sm ghost" t-on-click="() => this.askRollback(hv.version)">
+                <t t-out="ic('rotate', 12)"/> <t t-esc="goBackLabel(hv.version)"/>
+              </button>
+            </div>
+          </t>
+        </div>
+        <div class="bzk-modal__foot">
+          <span class="bzk-modal__sp"/>
+          <button type="button" class="bzk-btn ghost" t-on-click="closeSheet">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <div t-if="state.sheet === 'draft'" class="bzk-modal-scrim">
+      <div class="bzk-modal is-narrow fs-sheet" role="dialog" aria-modal="true">
+        <div class="bzk-modal__head">
+          <div>
+            <div class="bzk-modal__ttl">You have changes that are not published</div>
+            <div class="bzk-modal__sub">They were kept from the last time you used Studio on this screen.</div>
+          </div>
+        </div>
+        <div class="bzk-modal__foot">
+          <span class="bzk-modal__sp"/>
+          <button type="button" class="bzk-btn ghost" t-on-click="startFresh">Start from the published layout</button>
+          <button type="button" class="bzk-btn primary" t-on-click="continueDraft">Continue your draft</button>
+        </div>
+      </div>
+    </div>
+  </t>
+
+</templates>

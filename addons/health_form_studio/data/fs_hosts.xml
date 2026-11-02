@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ================================================================
+         The Incident form: the first screen that supports Studio.
+
+         sections = [] on purpose. The form's <group>s carry no name=, so
+         there is no open card an administrator may drop into; Studio adds
+         its own sections (above the tabs, or at the bottom).
+         The reasons below are translated by models/fs_host.py.
+         ================================================================ -->
+    <data noupdate="0">
+        <record id="fs_host_incident" model="fs.host">
+            <field name="name">Incident</field>
+            <field name="model">health.incident</field>
+            <field name="base_view_xmlid">health_incident.view_health_incident_form</field>
+            <field name="kit">vu</field>
+            <field name="sections" eval="[]"/>
+            <field name="locked_fields" eval="{
+                'name': 'Identifies the incident on every report.',
+                'state': 'Drives the incident workflow.',
+                'client_id': 'Links the incident to the client record.',
+                'incident_datetime': 'Used for statutory reporting deadlines.',
+            }"/>
+            <field name="locked_zones" eval="[
+                {'name': 'button_box', 'title': 'Counters', 'reason': 'Drawn by the system.'},
+            ]"/>
+            <field name="pwa_label">Nurse app</field>
+        </record>
+    </data>
+</odoo>

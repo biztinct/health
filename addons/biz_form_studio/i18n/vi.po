@@ -1,0 +1,1841 @@
+# Vietnamese translation of biz_form_studio (FS-H1).
+# Generated from the framework's own export of the module, so every
+# entry carries its `#. module:`, its marker and its occurrence exactly
+# as the loader reads them, then translated.
+msgid ""
+msgstr ""
+"Project-Id-Version: Form Studio 19.0 biz_form_studio\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: Vietnamese\n"
+"Language: vi_VN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "%s changes"
+msgstr "%s thay đổi"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "%s deleted fields were left out."
+msgstr "Đã bỏ qua %s trường đã bị xóa."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "0, 1, 2…"
+msgstr "0, 1, 2…"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "1 change"
+msgstr "1 thay đổi"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "12.5"
+msgstr "12,5"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "A dropdown needs at least one option."
+msgstr "Danh sách chọn cần ít nhất một lựa chọn."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_field_meta.py:0
+msgid ""
+"A field that holds health information cannot be offered as a list column."
+msgstr ""
+"Trường chứa thông tin sức khỏe không thể được dùng làm cột trong danh sách."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "A field's type cannot be changed."
+msgstr "Không thể đổi loại của trường."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid ""
+"A new field is added to every record of this screen the moment you add it. "
+"Its type cannot be changed afterwards. Nobody sees it on the screen until "
+"you press Publish."
+msgstr ""
+"Trường mới được thêm vào mọi bản ghi của màn hình này ngay khi bạn thêm. Sau"
+" đó không thể đổi loại của trường. Không ai thấy trường trên màn hình cho "
+"đến khi bạn bấm Xuất bản."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "A new section"
+msgstr "Một mục mới"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_layout.py:0
+msgid "A published version cannot be changed."
+msgstr "Không thể sửa một phiên bản đã xuất bản."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_layout.py:0
+msgid "A published version cannot be deleted."
+msgstr "Không thể xóa một phiên bản đã xuất bản."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Above the tabs"
+msgstr "Phía trên các thẻ"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__message_needaction
+msgid "Action Needed"
+msgstr "Cần xử lý"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__active
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_link_target__active
+msgid "Active"
+msgstr "Đang hoạt động"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Add"
+msgstr "Thêm"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Add %s"
+msgstr "Thêm %s"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Add a section"
+msgstr "Thêm mục"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Add an option"
+msgstr "Thêm lựa chọn"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Add field"
+msgstr "Thêm trường"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio_button.xml:0
+msgid "Add fields to this screen and place them"
+msgstr "Thêm trường vào màn hình này và sắp xếp chúng"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/library.js:0
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+#: model:ir.model.fields.selection,name:biz_form_studio.selection__fs_field_meta__vis__admin
+msgid "Admins"
+msgstr "Quản trị"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/library.xml:0
+msgid "All screens"
+msgstr "Tất cả màn hình"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout_history__arch
+msgid "Arch"
+msgstr "Cấu trúc"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "At the bottom"
+msgstr "Ở cuối"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__message_attachment_count
+msgid "Attachment Count"
+msgstr "Số tệp đính kèm"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Automatic actions: %s"
+msgstr "Thao tác tự động: %s"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Back"
+msgstr "Quay lại"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Back to the record"
+msgstr "Về bản ghi"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Back to version %(old)s, published as version %(new)s."
+msgstr "Đã quay về phiên bản %(old)s, xuất bản thành phiên bản %(new)s."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid ""
+"Back to version %(old)s, published as version %(new)s. Fields deleted since "
+"then were left out."
+msgstr ""
+"Đã quay về phiên bản %(old)s, xuất bản thành phiên bản %(new)s. Các trường "
+"đã bị xóa từ đó được bỏ qua."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Back to version %s."
+msgstr "Quay về phiên bản %s."
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__base_view_id
+msgid "Base View"
+msgstr "Màn hình gốc"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__base_view_xmlid
+msgid "Base View Xmlid"
+msgstr "Mã màn hình gốc"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Bring back"
+msgstr "Dùng lại"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__broken_reason
+msgid "Broken Reason"
+msgstr "Lý do tắt"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__money_ok
+msgid "Can hold money"
+msgstr "Có thể chứa số tiền"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Cancel"
+msgstr "Hủy"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Choose a different label for this field."
+msgstr "Hãy chọn tên khác cho trường này."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Choose who sees this field."
+msgstr "Hãy chọn ai được xem trường này."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Choose…"
+msgstr "Chọn…"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid ""
+"Click a field on the screen to change it, or drag a type from the left to "
+"add one."
+msgstr ""
+"Bấm vào một trường trên màn hình để sửa, hoặc kéo một loại từ bên trái để "
+"thêm trường mới."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Close"
+msgstr "Đóng"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__company_id
+msgid "Company"
+msgstr "Công ty"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Continue your draft"
+msgstr "Tiếp tục bản nháp"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/library.xml:0
+msgid "Created"
+msgstr "Tạo"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__create_uid
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__create_uid
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__create_uid
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout_draft__create_uid
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout_history__create_uid
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_link_target__create_uid
+msgid "Created by"
+msgstr "Người tạo"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__create_date
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__create_date
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__create_date
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout_draft__create_date
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout_history__create_date
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_link_target__create_date
+msgid "Created on"
+msgstr "Ngày tạo"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Current"
+msgstr "Hiện tại"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Date"
+msgstr "Ngày"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Date and time"
+msgstr "Ngày và giờ"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Decimal"
+msgstr "Số thập phân"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Delete field"
+msgstr "Xóa trường"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Delete this field…"
+msgstr "Xóa trường này…"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Delete this section"
+msgstr "Xóa mục này"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Deleting it removes those values for good."
+msgstr "Xóa trường sẽ xóa vĩnh viễn các dữ liệu đó."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Details"
+msgstr "Chi tiết"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Discard"
+msgstr "Hủy thay đổi"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__display_name
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__display_name
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__display_name
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout_draft__display_name
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout_history__display_name
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_link_target__display_name
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_studio__display_name
+#: model:ir.model.fields,field_description:biz_form_studio.field_ir_model_fields__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid ""
+"Do not put health information in a field that is not marked as health "
+"information."
+msgstr ""
+"Không nhập thông tin sức khỏe vào trường chưa được đánh dấu là thông tin sức"
+" khỏe."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid ""
+"Drag a type from the left into a section, then click a field to change its "
+"label, who sees it and whether it holds health information. Nothing changes "
+"for anyone until you press Publish."
+msgstr ""
+"Kéo một loại từ bên trái vào một mục, rồi bấm vào trường để đổi tên, chọn ai"
+" được xem và đánh dấu nếu có thông tin sức khỏe. Không có gì thay đổi với "
+"người khác cho đến khi bạn bấm Xuất bản."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Drag a type onto the screen"
+msgstr "Kéo một loại vào màn hình"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Drag one onto the screen, or click it and choose where it goes."
+msgstr "Kéo một trường vào màn hình, hoặc bấm vào trường và chọn vị trí."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Drop a field here"
+msgstr "Thả trường vào đây"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Dropdown"
+msgstr "Danh sách chọn"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Every field made in Studio is on the screen."
+msgstr "Mọi trường tạo trong Studio đều đã có trên màn hình."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/library.xml:0
+msgid "Every field made in Studio, on every screen that supports it."
+msgstr "Mọi trường tạo trong Studio, trên mọi màn hình hỗ trợ Studio."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/library.js:0
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+#: model:ir.model.fields.selection,name:biz_form_studio.selection__fs_field_meta__vis__all
+msgid "Everyone"
+msgstr "Mọi người"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Everyone sees it on their next page load."
+msgstr "Mọi người sẽ thấy khi tải lại trang."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/library.xml:0
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__field_id
+msgid "Field"
+msgstr "Trường"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Field \"%(label)s\" added by %(who)s."
+msgstr "Trường \"%(label)s\" được %(who)s thêm."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Field \"%(label)s\" changed by %(who)s."
+msgstr "Trường \"%(label)s\" được %(who)s sửa."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Field \"%(label)s\" deleted by %(who)s. %(count)s records had a value."
+msgstr "Trường \"%(label)s\" bị %(who)s xóa. %(count)s bản ghi đã có dữ liệu."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Field \"%(label)s\" deleted by %(who)s. 1 record had a value."
+msgstr "Trường \"%(label)s\" bị %(who)s xóa. 1 bản ghi đã có dữ liệu."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Field \"%s\" deleted."
+msgstr "Trường \"%s\" đã bị xóa."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Field \"%s\" is no longer required."
+msgstr "Trường \"%s\" không còn bắt buộc."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Field \"%s\" is now required."
+msgstr "Trường \"%s\" giờ là bắt buộc."
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__name
+msgid "Field Name"
+msgstr "Tên trường"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Field deleted. %s records had a value."
+msgstr "Đã xóa trường. %s bản ghi đã có dữ liệu."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Field deleted. 1 record had a value."
+msgstr "Đã xóa trường. 1 bản ghi đã có dữ liệu."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Field made in Studio"
+msgstr "Trường tạo trong Studio"
+
+#. module: biz_form_studio
+#: model:ir.model,name:biz_form_studio.model_ir_model_fields
+msgid "Fields"
+msgstr "Trường"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Fields not shown"
+msgstr "Trường chưa hiển thị"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "File"
+msgstr "Tệp"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/library.xml:0
+msgid "Filled"
+msgstr "Đã điền"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__publish_version
+msgid "First published in version"
+msgstr "Xuất bản lần đầu ở phiên bản"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__message_follower_ids
+msgid "Followers"
+msgstr "Người theo dõi"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Người theo dõi (Đối tác)"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/library.js:0
+#: code:addons/biz_form_studio/static/src/js/studio_button.js:0
+#: code:addons/biz_form_studio/static/src/xml/library.xml:0
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+#: model:ir.actions.client,name:biz_form_studio.action_fs_library
+#: model:ir.actions.client,name:biz_form_studio.action_fs_studio
+#: model:ir.model,name:biz_form_studio.model_fs_studio
+msgid "Form Studio"
+msgstr "Form Studio"
+
+#. module: biz_form_studio
+#: model:ir.model,name:biz_form_studio.model_fs_layout_draft
+msgid "Form Studio draft"
+msgstr "Bản nháp Form Studio"
+
+#. module: biz_form_studio
+#: model:ir.model,name:biz_form_studio.model_fs_field_meta
+msgid "Form Studio field settings"
+msgstr "Thiết lập trường Form Studio"
+
+#. module: biz_form_studio
+#: model:ir.model,name:biz_form_studio.model_fs_layout
+msgid "Form Studio layout"
+msgstr "Bố cục Form Studio"
+
+#. module: biz_form_studio
+#: model:ir.model,name:biz_form_studio.model_fs_layout_history
+msgid "Form Studio published version"
+msgstr "Phiên bản đã xuất bản của Form Studio"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Formatted text"
+msgstr "Văn bản định dạng"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Give the field a label."
+msgstr "Hãy đặt tên cho trường."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Go back to version %s"
+msgstr "Quay về phiên bản %s"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Going back publishes that version again, for everyone."
+msgstr "Quay về sẽ xuất bản lại phiên bản đó cho mọi người."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Got it"
+msgstr "Đã hiểu"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__has_message
+msgid "Has Message"
+msgstr "Có tin nhắn"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/library.xml:0
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__phi
+msgid "Health information"
+msgstr "Thông tin sức khỏe"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Health information is never offered as a list column."
+msgstr "Thông tin sức khỏe không bao giờ được dùng làm cột trong danh sách."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Help text"
+msgstr "Văn bản trợ giúp"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Hidden from new picks after the next release"
+msgstr "Bị ẩn khỏi lựa chọn mới sau bản phát hành tới"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__id
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__id
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__id
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout_draft__id
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout_history__id
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_link_target__id
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_studio__id
+#: model:ir.model.fields,field_description:biz_form_studio.field_ir_model_fields__id
+msgid "ID"
+msgstr "ID"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_fs_layout__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Nếu được chọn, tin nhắn mới cần bạn chú ý."
+
+#. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_fs_layout__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Nếu được chọn, một số tin nhắn bị lỗi gửi."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/library.xml:0
+msgid "In lists"
+msgstr "Trong danh sách"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__message_is_follower
+msgid "Is Follower"
+msgstr "Là người theo dõi"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid ""
+"Kept out of lists and shown with a shield. Exports, reports and the mobile "
+"app leave it out from a later release."
+msgstr ""
+"Không hiển thị trong danh sách và được đánh dấu bằng biểu tượng khiên. Xuất "
+"dữ liệu, báo cáo và ứng dụng di động sẽ bỏ trường này từ một bản phát hành "
+"sau."
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__kit
+msgid "Kit"
+msgstr "Kiểu màn hình"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_link_target__label
+msgid "Label"
+msgstr "Tên trường"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__write_uid
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__write_uid
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__write_uid
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout_draft__write_uid
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout_history__write_uid
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_link_target__write_uid
+msgid "Last Updated by"
+msgstr "Người cập nhật cuối"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__write_date
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__write_date
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__write_date
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout_draft__write_date
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout_history__write_date
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_link_target__write_date
+msgid "Last Updated on"
+msgstr "Cập nhật lần cuối"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout_draft__layout_id
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout_history__layout_id
+msgid "Layout"
+msgstr "Bố cục"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_layout.py:0
+msgid "Layout of %s"
+msgstr "Bố cục của %s"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Link to a record"
+msgstr "Liên kết bản ghi"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Links to"
+msgstr "Liên kết tới"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "List of records"
+msgstr "Danh sách bản ghi"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Locked"
+msgstr "Đã khóa"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__locked_fields
+msgid "Locked Fields"
+msgstr "Trường bị khóa"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__locked_zones
+msgid "Locked Zones"
+msgstr "Vùng bị khóa"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Long text"
+msgstr "Văn bản dài"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__created_by
+msgid "Made by"
+msgstr "Người tạo"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Made in Studio, not on this screen"
+msgstr "Tạo trong Studio, chưa có trên màn hình"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__message_has_error
+msgid "Message Delivery error"
+msgstr "Lỗi gửi tin nhắn"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__message_ids
+msgid "Messages"
+msgstr "Tin nhắn"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__pwa
+msgid "Mobile app"
+msgstr "Ứng dụng di động"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__model
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__model
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_link_target__model
+msgid "Model"
+msgstr "Loại bản ghi"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__model
+msgid "Model Name"
+msgstr "Tên loại bản ghi"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Money"
+msgstr "Tiền"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Move %s"
+msgstr "Di chuyển %s"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Move down"
+msgstr "Chuyển xuống"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Move its fields out first."
+msgstr "Hãy chuyển các trường của mục ra trước."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Move section: %s"
+msgstr "Di chuyển mục: %s"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Move to section…"
+msgstr "Chuyển sang mục…"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Move up"
+msgstr "Chuyển lên"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_fs_field_meta__required
+msgid ""
+"Must be filled on the screen. A rule of the screen, not of the database: "
+"records made elsewhere are not refused."
+msgstr ""
+"Phải điền trên màn hình. Đây là quy tắc của màn hình, không phải của cơ sở "
+"dữ liệu: bản ghi tạo ở nơi khác không bị từ chối."
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__name
+msgid "Name"
+msgstr "Tên"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "New field"
+msgstr "Trường mới"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "New order of sections"
+msgstr "Thứ tự mục mới"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "New section"
+msgstr "Mục mới"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "New section: %s"
+msgstr "Mục mới: %s"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/library.xml:0
+msgid "No"
+msgstr "Không"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "No changes yet"
+msgstr "Chưa có thay đổi"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/library.js:0
+msgid "No custom fields yet. Open one of these screens and press Studio: %s."
+msgstr ""
+"Chưa có trường tùy chỉnh. Mở một trong các màn hình sau và bấm Studio: %s."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "No fields shown here."
+msgstr "Không có trường nào ở đây."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/library.js:0
+msgid "No screen supports Studio yet."
+msgstr "Chưa có màn hình nào hỗ trợ Studio."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Not on the screen yet."
+msgstr "Chưa có trên màn hình."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Not published yet"
+msgstr "Chưa xuất bản"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Số thao tác"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__message_has_error_counter
+msgid "Number of errors"
+msgstr "Số lỗi"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_fs_layout__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Số tin nhắn cần xử lý"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_fs_layout__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Số tin nhắn bị lỗi gửi"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Offered as a column people can switch on in lists."
+msgstr "Có thể bật làm cột trong danh sách."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_layout.py:0
+msgid "Only fields made in Studio can be placed."
+msgstr "Chỉ có thể đặt các trường tạo trong Studio."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/library.js:0
+msgid "Open %s in Studio"
+msgstr "Mở %s trong Studio"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Open a screen that supports Studio and press Studio."
+msgstr "Mở một màn hình hỗ trợ Studio và bấm Studio."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Open card"
+msgstr "Thẻ mở"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_fs_host__sections
+msgid ""
+"Open cards a field may be dropped into: [{name, title}]. Empty: Studio may "
+"only add new sections."
+msgstr ""
+"Các thẻ mở có thể thả trường vào: [{name, title}]. Để trống: Studio chỉ được"
+" thêm mục mới."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/library.xml:0
+msgid "Open in Studio"
+msgstr "Mở trong Studio"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Option"
+msgstr "Lựa chọn"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Options"
+msgstr "Các lựa chọn"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid ""
+"Part of the standard screen. It cannot be moved or hidden in this release."
+msgstr ""
+"Thuộc màn hình chuẩn. Không thể di chuyển hay ẩn trong bản phát hành này."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Per-role or per-stage rules: open Field Requirements"
+msgstr "Quy tắc theo vai trò hoặc theo giai đoạn: mở Yêu cầu trường dữ liệu"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Pick a type for the new field."
+msgstr "Hãy chọn loại cho trường mới."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Pick what this field links to from the list."
+msgstr "Hãy chọn trong danh sách trường này liên kết tới đâu."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Placed on %s"
+msgstr "Đặt trên %s"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Previous versions"
+msgstr "Phiên bản trước"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Publish"
+msgstr "Xuất bản"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Publish for everyone"
+msgstr "Xuất bản cho mọi người"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Publish it again"
+msgstr "Xuất bản lại"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Publish this layout?"
+msgstr "Xuất bản bố cục này?"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__published_at
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout_history__published_at
+msgid "Published At"
+msgstr "Xuất bản lúc"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__published_by
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout_history__published_by
+msgid "Published By"
+msgstr "Người xuất bản"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_layout.py:0
+msgid ""
+"Published version %(version)s by %(who)s: +%(added)s fields, −%(removed)s "
+"fields, %(moved)s moved."
+msgstr ""
+"%(who)s đã xuất bản phiên bản %(version)s: +%(added)s trường, −%(removed)s "
+"trường, %(moved)s di chuyển."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Published. Everyone sees it on their next page load."
+msgstr "Đã xuất bản. Mọi người sẽ thấy khi tải lại trang."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Put it in…"
+msgstr "Đặt vào…"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__pwa_label
+msgid "Pwa Label"
+msgstr "Tên ứng dụng di động"
+
+#. module: biz_form_studio
+#: model:ir.model,name:biz_form_studio.model_fs_link_target
+msgid "Record type a Studio link may point at"
+msgstr "Loại bản ghi mà liên kết Studio có thể trỏ tới"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Records with a value"
+msgstr "Bản ghi có dữ liệu"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Remove"
+msgstr "Bỏ"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Remove section: %s"
+msgstr "Bỏ mục: %s"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Remove the field from the places marked above first."
+msgstr "Hãy bỏ trường khỏi những nơi được đánh dấu ở trên trước."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Rename section: %s"
+msgstr "Đổi tên mục: %s"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__required
+msgid "Required"
+msgstr "Bắt buộc"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Retire"
+msgstr "Ngừng dùng"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__retired_values
+msgid "Retired options"
+msgstr "Lựa chọn ngừng dùng"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Save changes"
+msgstr "Lưu thay đổi"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Saved export lists: %s"
+msgstr "Danh sách xuất dữ liệu đã lưu: %s"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Saved filters: %s"
+msgstr "Bộ lọc đã lưu: %s"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Saved. The field's settings apply everywhere at once."
+msgstr "Đã lưu. Thiết lập của trường áp dụng ở mọi nơi ngay lập tức."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/library.xml:0
+msgid "Screen"
+msgstr "Màn hình"
+
+#. module: biz_form_studio
+#: model:ir.model,name:biz_form_studio.model_fs_host
+msgid "Screen that supports Form Studio"
+msgstr "Màn hình hỗ trợ Form Studio"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Section"
+msgstr "Mục"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Section title"
+msgstr "Tên mục"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_host__sections
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__sections
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout_draft__sections
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout_history__sections
+msgid "Sections"
+msgstr "Các mục"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__sequence
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_link_target__sequence
+msgid "Sequence"
+msgstr "Thứ tự"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Several records"
+msgstr "Nhiều bản ghi"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__list_ok
+msgid "Show in lists"
+msgstr "Hiển thị trong danh sách"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Shown when someone points at the label"
+msgstr "Hiện khi người dùng trỏ vào tên trường"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Shown, read-only, in the mobile app from a later release."
+msgstr "Hiển thị chỉ xem trong ứng dụng di động từ một bản phát hành sau."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Someone else published a newer version. Reload Studio to see it."
+msgstr "Người khác vừa xuất bản phiên bản mới hơn. Hãy tải lại Studio để xem."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/library.js:0
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+#: model:ir.model.fields.selection,name:biz_form_studio.selection__fs_field_meta__vis__staff
+msgid "Staff"
+msgstr "Nhân viên"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Standard"
+msgstr "Chuẩn"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Standard field"
+msgstr "Trường chuẩn"
+
+#. module: biz_form_studio
+#: model:ir.model.fields.selection,name:biz_form_studio.selection__fs_host__kit__vu
+msgid "Standard form"
+msgstr "Màn hình chuẩn"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Start from the published layout"
+msgstr "Bắt đầu từ bố cục đã xuất bản"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__state
+msgid "State"
+msgstr "Trạng thái"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Status bar"
+msgstr "Thanh trạng thái"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Structured data"
+msgstr "Dữ liệu có cấu trúc"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio_button.xml:0
+msgid "Studio"
+msgstr "Studio"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Studio could not check where this field is used."
+msgstr "Studio không kiểm tra được trường này đang được dùng ở đâu."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Studio could not open this screen."
+msgstr "Studio không mở được màn hình này."
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_ir_model_fields__fs_vis
+msgid "Studio visibility"
+msgstr "Phạm vi hiển thị Studio"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Switch on for anything about a person's health."
+msgstr "Bật cho mọi thông tin về sức khỏe của một người."
+
+#. module: biz_form_studio
+#: model:ir.model.fields.selection,name:biz_form_studio.selection__fs_layout__state__broken
+msgid "Switched off"
+msgstr "Đã tắt"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Tab"
+msgstr "Thẻ"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Tabs"
+msgstr "Các thẻ"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Take %s off the screen"
+msgstr "Bỏ %s khỏi màn hình"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Take it off this screen"
+msgstr "Bỏ khỏi màn hình này"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Text"
+msgstr "Văn bản"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "That version could not be published."
+msgstr "Không xuất bản được phiên bản đó."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "That version no longer exists."
+msgstr "Phiên bản đó không còn tồn tại."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_layout.py:0
+msgid "The card \"%s\" no longer accepts fields."
+msgstr "Thẻ \"%s\" không còn nhận trường mới."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "The draft could not be discarded."
+msgstr "Không hủy được bản nháp."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_layout.py:0
+msgid "The field \"%s\" is placed twice."
+msgstr "Trường \"%s\" được đặt hai lần."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_layout.py:0
+msgid "The field %s no longer exists. Reload Studio."
+msgstr "Trường %s không còn tồn tại. Hãy tải lại Studio."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "The field could not be added."
+msgstr "Không thêm được trường."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "The field could not be deleted."
+msgstr "Không xóa được trường."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "The field could not be saved."
+msgstr "Không lưu được trường."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/library.js:0
+msgid "The field library could not be opened."
+msgstr "Không mở được thư viện trường."
+
+#. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_fs_host__base_view_xmlid
+msgid "The form the Studio layout extends."
+msgstr "Màn hình mà bố cục Studio mở rộng."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "The layout could not be published."
+msgstr "Không xuất bản được bố cục."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_layout.py:0
+msgid "The layout could not be read. Reload Studio."
+msgstr "Không đọc được bố cục. Hãy tải lại Studio."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid ""
+"The option \"%(option)s\" is used on %(count)s records, so it cannot be "
+"removed. Retire it instead: it is then hidden from new picks after the next "
+"release."
+msgstr ""
+"Lựa chọn \"%(option)s\" đang được dùng trên %(count)s bản ghi nên không thể "
+"bỏ. Hãy ngừng dùng lựa chọn này: nó sẽ bị ẩn khỏi lựa chọn mới sau bản phát "
+"hành tới."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "The screen no longer supports Studio."
+msgstr "Màn hình không còn hỗ trợ Studio."
+
+#. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_fs_field_meta__model
+msgid "The technical name of the model this field belongs to"
+msgstr "Tên kỹ thuật của loại bản ghi chứa trường này"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "There is nothing new to publish."
+msgstr "Không có gì mới để xuất bản."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "They were kept from the last time you used Studio on this screen."
+msgstr ""
+"Các thay đổi này được giữ từ lần trước bạn dùng Studio trên màn hình này."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "This field has a value on 1 record."
+msgstr "Trường này có dữ liệu trên 1 bản ghi."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "This field has values on %s records."
+msgstr "Trường này có dữ liệu trên %s bản ghi."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "This field is still used by: %s. Remove it there first."
+msgstr "Trường này vẫn đang được dùng bởi: %s. Hãy bỏ trường ở đó trước."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "This field was not made in Studio."
+msgstr "Trường này không được tạo trong Studio."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_layout.py:0
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid ""
+"This layout is switched off because the screen changed. Open Studio to "
+"repair it."
+msgstr "Bố cục này đã tắt vì màn hình thay đổi. Mở Studio để sửa."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "This layout no longer exists."
+msgstr "Bố cục này không còn tồn tại."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "This screen does not support Studio."
+msgstr "Màn hình này không hỗ trợ Studio."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "This screen has no currency, so it cannot hold an amount of money."
+msgstr "Màn hình này không có đơn vị tiền tệ nên không thể chứa số tiền."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_layout.py:0
+msgid "This screen has no place for new sections."
+msgstr "Màn hình này không có chỗ cho mục mới."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid ""
+"This screen will not save without a value. Records added elsewhere, such as "
+"from the mobile app, are not refused."
+msgstr ""
+"Màn hình này sẽ không lưu nếu thiếu dữ liệu. Bản ghi thêm ở nơi khác, như từ"
+" ứng dụng di động, không bị từ chối."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Title"
+msgstr "Tiêu đề"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/library.xml:0
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Type"
+msgstr "Loại"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Type DELETE to confirm"
+msgstr "Gõ DELETE để xác nhận"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Type DELETE to confirm."
+msgstr "Gõ DELETE để xác nhận."
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout_draft__user_id
+msgid "User"
+msgstr "Người dùng"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__version
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout_history__version
+msgid "Version"
+msgstr "Phiên bản"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Version %s"
+msgstr "Phiên bản %s"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__help_vi
+msgid "Vietnamese help text"
+msgstr "Văn bản trợ giúp tiếng Việt"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__label_vi
+msgid "Vietnamese label"
+msgstr "Tên tiếng Việt"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Vietnamese title"
+msgstr "Tên mục tiếng Việt"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_layout__view_id
+msgid "View"
+msgstr "Màn hình"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__warned_phi
+msgid "Warning shown"
+msgstr "Đã hiện cảnh báo"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "What a link points at cannot be changed."
+msgstr "Không thể đổi nơi liên kết trỏ tới."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "What people see beside the value"
+msgstr "Người dùng thấy bên cạnh dữ liệu"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_fs_host__pwa_label
+msgid ""
+"What the mobile app switch is called on this screen. Empty: \"Mobile app\"."
+msgstr ""
+"Tên của nút bật ứng dụng di động trên màn hình này. Để trống: \"Ứng dụng di "
+"động\"."
+
+#. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_fs_host__name
+msgid ""
+"What the screen is called in Studio. Empty: the record type's own name."
+msgstr "Tên màn hình trong Studio. Để trống: dùng tên của loại bản ghi."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Where it sits"
+msgstr "Vị trí"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_ir_model_fields__fs_vis
+msgid ""
+"Who sees a field made in Form Studio: all, staff or admin. Empty on every "
+"other field."
+msgstr ""
+"Ai được xem trường tạo trong Form Studio: mọi người, nhân viên hay quản trị."
+" Để trống với mọi trường khác."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/library.xml:0
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+#: model:ir.model.fields,field_description:biz_form_studio.field_fs_field_meta__vis
+msgid "Who sees it"
+msgstr "Ai được xem"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Whole number"
+msgstr "Số nguyên"
+
+#. module: biz_form_studio
+#: model:ir.model.fields.selection,name:biz_form_studio.selection__fs_layout__state__ok
+msgid "Working"
+msgstr "Đang hoạt động"
+
+#. module: biz_form_studio
+#: model:ir.model.fields.selection,name:biz_form_studio.selection__fs_host__kit__ws
+msgid "Workspace form"
+msgstr "Màn hình làm việc"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/library.xml:0
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "Yes"
+msgstr "Có"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "Yes / No"
+msgstr "Có / Không"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "You are in Studio."
+msgstr "Bạn đang ở trong Studio."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "You do not have access to Form Studio for this screen."
+msgstr "Bạn không có quyền dùng Form Studio cho màn hình này."
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "You have changes that are not published"
+msgstr "Bạn có thay đổi chưa xuất bản"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/js/studio/studio_editor.js:0
+msgid "Your changes are kept as a draft until you publish them."
+msgstr "Thay đổi của bạn được giữ làm bản nháp cho đến khi bạn xuất bản."
+
+#. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_fs_host__locked_zones
+msgid "[{name, title, reason}] areas shown dimmed."
+msgstr "[{name, title, reason}] vùng hiển thị mờ."
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "a day"
+msgstr "một ngày"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "a day and an hour"
+msgstr "một ngày và giờ"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "a document or photo"
+msgstr "tài liệu hoặc ảnh"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "a tick box"
+msgstr "ô đánh dấu"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "an amount"
+msgstr "một số tiền"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "another record"
+msgstr "bản ghi khác"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "custom"
+msgstr "tùy chỉnh"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "not on this screen"
+msgstr "không có trên màn hình này"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "notes"
+msgstr "ghi chú"
+
+#. module: biz_form_studio
+#. odoo-javascript
+#: code:addons/biz_form_studio/static/src/xml/studio/studio_editor.xml:0
+msgid "or drop a type or a field here"
+msgstr "hoặc thả một loại hay một trường vào đây"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "pick one"
+msgstr "chọn một"
+
+#. module: biz_form_studio
+#. odoo-python
+#: code:addons/biz_form_studio/models/fs_studio.py:0
+msgid "short, one line"
+msgstr "ngắn, một dòng"
+
+#. module: biz_form_studio
+#: model:ir.model.fields,help:biz_form_studio.field_fs_host__locked_fields
+msgid "{field name: why it cannot be changed}"
+msgstr "{tên trường: lý do không thể thay đổi}"

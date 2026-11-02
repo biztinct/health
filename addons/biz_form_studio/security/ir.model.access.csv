@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_fs_host_user,fs.host user,model_fs_host,base.group_user,1,0,0,0
+access_fs_host_system,fs.host system,model_fs_host,base.group_system,1,1,1,1
+access_fs_link_target_user,fs.link.target user,model_fs_link_target,base.group_user,1,0,0,0
+access_fs_link_target_system,fs.link.target system,model_fs_link_target,base.group_system,1,1,1,1
+access_fs_field_meta_user,fs.field.meta user,model_fs_field_meta,base.group_user,1,0,0,0
+access_fs_field_meta_system,fs.field.meta system,model_fs_field_meta,base.group_system,1,1,1,1
+access_fs_layout_user,fs.layout user,model_fs_layout,base.group_user,1,0,0,0
+access_fs_layout_system,fs.layout system,model_fs_layout,base.group_system,1,1,1,1
+access_fs_layout_draft_user,fs.layout.draft user,model_fs_layout_draft,base.group_user,1,0,0,0
+access_fs_layout_draft_system,fs.layout.draft system,model_fs_layout_draft,base.group_system,1,1,1,1
+access_fs_layout_history_user,fs.layout.history user,model_fs_layout_history,base.group_user,1,0,0,0
+access_fs_layout_history_system,fs.layout.history system,model_fs_layout_history,base.group_system,1,0,1,1

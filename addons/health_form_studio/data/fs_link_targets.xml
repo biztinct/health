@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- What a "Link to a record" field may point at, in the clinic's words.
+         Every model was checked on a copy of the live database. -->
+    <data noupdate="0">
+        <record id="fs_target_employee" model="fs.link.target">
+            <field name="model">hr.employee</field>
+            <field name="label">Staff member</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="fs_target_facility" model="fs.link.target">
+            <field name="model">health.facility</field>
+            <field name="label">Facility</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="fs_target_client" model="fs.link.target">
+            <field name="model">res.partner</field>
+            <field name="label">Client</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="fs_target_contact" model="fs.link.target">
+            <field name="model">crm.lead</field>
+            <field name="label">Contact</field>
+            <field name="sequence">40</field>
+        </record>
+        <record id="fs_target_product" model="fs.link.target">
+            <field name="model">product.product</field>
+            <field name="label">Service or package</field>
+            <field name="sequence">50</field>
+        </record>
+        <record id="fs_target_catchment" model="fs.link.target">
+            <field name="model">health.catchment.province</field>
+            <field name="label">Catchment area</field>
+            <field name="sequence">60</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ================================================================
+         Two doors, no menu. An ir.actions.client RECORD rather than a bare
+         tag, so a breadcrumb back to either screen carries its name.
+         Where the field library sits in the navigation is the product's
+         decision, so this module puts it on no menu at all.
+         ================================================================ -->
+    <record id="action_fs_studio" model="ir.actions.client">
+        <field name="name">Form Studio</field>
+        <field name="tag">biz_form_studio.studio</field>
+        <field name="target">current</field>
+    </record>
+
+    <record id="action_fs_library" model="ir.actions.client">
+        <field name="name">Form Studio</field>
+        <field name="tag">biz_form_studio.library</field>
+        <field name="target">current</field>
+    </record>
+</odoo>
