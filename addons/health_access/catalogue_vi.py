@@ -74,7 +74,7 @@ VI = {
     "sync. It opens no clinical record.":
         "Phụ trách tiền bạc: hóa đơn, hồ sơ bảo hiểm, thuế, hóa đơn đỏ và đồng "
         "bộ kế toán. Vai trò này không mở hồ sơ lâm sàng nào.",
-    "Admin": "Quản trị viên",
+    "Office Admin": "Quản trị văn phòng",
     "Adds colleagues, switches them off and says which role each of them "
     "holds. It carries no clinical or financial access of its own, and never "
     "the system administrator permission.":
@@ -148,6 +148,13 @@ VI = {
     "mistake. It never destroys anything.":
         "Đưa một hồ sơ ra khỏi tầm sử dụng hằng ngày và đưa nó trở lại nếu đó "
         "là nhầm lẫn. Không bao giờ phá hủy thứ gì.",
+    "Export lists": "Xuất danh sách",
+    "Take a list out of the system as a spreadsheet file. Health "
+    "information stays out of every export whatever the list, and nothing "
+    "can be changed this way.":
+        "Lấy một danh sách ra khỏi hệ thống dưới dạng tệp bảng tính. Thông tin "
+        "sức khỏe luôn nằm ngoài mọi lần xuất dù là danh sách nào, và không "
+        "thể thay đổi gì theo cách này.",
     "Own the clinic's data": "Làm chủ dữ liệu của phòng khám",
     "The last word on what happens to a record, including permanently "
     "removing one. It is not the system administrator permission and never "

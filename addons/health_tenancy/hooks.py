@@ -32,7 +32,7 @@ DOORS = (
     {
         'xmlid': 'health_tenancy.item_admin_about',
         'action': 'biz_tenancy.action_biz_tenancy_about',
-        'roles': ('Owner', 'Admin'),
+        'roles': ('Owner', 'Office Admin'),
     },
     {
         'xmlid': 'health_tenancy.item_admin_customers',

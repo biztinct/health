@@ -200,4 +200,4 @@ class TestTheAdminIsNotEverybody(RailGateCase):
         self.assertTrue(item.biz_role_ids,
                         'the Access home entry is open to everybody')
         self.assertEqual(
-            set(item.biz_role_ids.mapped('name')), {'Owner', 'Admin'})
+            set(item.biz_role_ids.mapped('name')), {'Owner', 'Office Admin'})

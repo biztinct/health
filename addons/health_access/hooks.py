@@ -174,6 +174,15 @@ ABILITIES = [
      'carries it.',
      ('health_base.group_healthcare_owner',)),
 
+    # Owner ruling 2026-11-03 (after Form Studio): Owners may export lists.
+    # Health information marked in Form Studio and the encrypted identity
+    # columns stay out of every export, whoever holds this.
+    ('export-lists', 'admin', 135, 'Export lists',
+     'Take a list out of the system as a spreadsheet file. Health '
+     'information stays out of every export whatever the list, and nothing '
+     'can be changed this way.',
+     ('base.group_allow_export',)),
+
     ('patient-portal', 'clinical', 140, 'Use the patient portal',
      'Reach the pages a patient and their family are shown. It grants nothing '
      'inside the clinic itself.',
@@ -364,7 +373,7 @@ ROLE_NOTES = {
         'description': "Owns the money: invoices, claims, tax, red invoices "
                        "and the accounting sync. It opens no clinical record.",
     },
-    'Admin': {
+    'Office Admin': {
         'area': 'admin',
         'description': "Adds colleagues, switches them off and says which role "
                        "each of them holds. It carries no clinical or "
@@ -388,7 +397,7 @@ ROLE_XMLIDS = {
     'Nurse': 'role_nurse',
     'Doctor': 'role_doctor',
     'Accountant': 'role_accountant',
-    'Admin': 'role_admin',
+    'Office Admin': 'role_admin',
     'CRM': 'role_crm',
 }
 
@@ -403,7 +412,7 @@ FRESH_ROLE_ABILITIES = {
               'crm-work', 'crm-manage', 'invoicing-work', 'invoicing-manage',
               'insurance-claims', 'misa-sync', 'tax-compliance', 'red-invoice',
               'accounting-invoices', 'staff-records', 'sales-all-leads',
-              'user-admin', 'analytics-build'),
+              'user-admin', 'analytics-build', 'export-lists'),
     'Operations Manager': (
         'sign-in', 'care-base', 'reception', 'nursing', 'head-nursing',
         'doctoring', 'sales', 'ops-manage', 'finance-work', 'care-manage',
@@ -424,7 +433,7 @@ FRESH_ROLE_ABILITIES = {
                    'invoicing-work', 'invoicing-manage', 'insurance-claims',
                    'misa-sync', 'tax-compliance', 'red-invoice',
                    'accounting-invoices', 'sales-manage', 'analytics-build'),
-    'Admin': ('sign-in', 'user-admin'),
+    'Office Admin': ('sign-in', 'user-admin'),
     'CRM': ('sign-in', 'care-base', 'ops-manage', 'sales', 'crm-work',
             'crm-manage', 'sales-manage'),
 }
@@ -452,6 +461,19 @@ LEGACY_ADMIN_GROUP = 'health_user_admin.group_health_user_admin'
 ANALYTICS_ROLES = ('Owner', 'Operations Manager', 'Branch Manager',
                    'Accountant')
 ANALYTICS_ABILITY = 'analytics-build'
+
+#: Who may export lists — owner ruling 2026-11-03: Owners only.
+EXPORT_ROLES = ('Owner',)
+EXPORT_ABILITY = 'export-lists'
+
+#: The Admin role's name — owner ruling 2026-11-03. The role adds colleagues
+#: and hands out roles; it opens no client, contact or booking of its own, and
+#: "Admin" made people expect that it would. Its fixed name underneath
+#: (`health_access.role_admin`) does not change.
+ADMIN_ROLE_NAME = 'Office Admin'
+ADMIN_ROLE_NAME_VI = 'Quản trị văn phòng'
+OLD_ADMIN_ROLE_NAME = 'Admin'
+OLD_ADMIN_ROLE_NAME_VI = 'Quản trị viên'
 
 
 # =============================================================================
@@ -931,7 +953,7 @@ def _branch_heads(menus):
 # the roles are there to point at.
 # =============================================================================
 ADMIN_ITEM_XMLID = 'health_access.item_admin_access'
-ADMIN_ITEM_ROLES = ('Owner', 'Admin')
+ADMIN_ITEM_ROLES = ('Owner', 'Office Admin')
 
 #: THE DOORS ADDED WHEN THE BAR ABOVE THE SCREEN WAS PUT AWAY.
 #:
@@ -953,7 +975,7 @@ NEW_ITEM_ROLES = {
         'Owner', 'Operations Manager'),
     'health_access.item_ops_employee_development': ('Owner', 'Branch Manager'),
     'health_access.item_ops_coaching': ('Owner', 'Branch Manager'),
-    'health_access.item_admin_training': ('Owner', 'Admin'),
+    'health_access.item_admin_training': ('Owner', 'Office Admin'),
 }
 
 #: The two screens "Channels (setup)" merely BORROWED before either had a door
@@ -1235,27 +1257,35 @@ def _carry_analytics(env):
     and nobody is taken out of the permission — losing a role has never removed
     a permission on this system and this is not the place to start.
     """
+    return _grant_ability_to_roles(env, ANALYTICS_ABILITY, ANALYTICS_ROLES,
+                                   'build reports')
+
+
+def _grant_ability_to_roles(env, key, role_names, what):
+    """Add the ability `key` to every role in `role_names`, and FIRST give its
+    permission to everybody who holds the rest of the role — so nobody stops
+    holding their role the moment it grows (the order problem `_carry_analytics`
+    describes). Additive, idempotent, self-repairing. Returns the number of
+    roles that gained the ability."""
     ability = env['biz.access.ability'].sudo().with_context(
-        active_test=False).search([('technical_key', '=', ANALYTICS_ABILITY)],
-                                  limit=1)
+        active_test=False).search([('technical_key', '=', key)], limit=1)
     if not ability:
         _logger.warning(
-            'health_access: retirement — the "%s" ability is not on this '
-            'database (the reporting module may not be installed), so no role '
-            'was given it', ANALYTICS_ABILITY)
+            'health_access: the "%s" ability is not on this database (its '
+            'module may not be installed), so no role was given it', key)
         return 0
-    reporting = ability.group_ids
+    permission = ability.group_ids
 
     added, granted = [], []
-    for name in ANALYTICS_ROLES:
+    for name in role_names:
         role = role_by_name(env, name)
         if not role:
             continue
-        # THE HOLDERS OF THE ROLE WITHOUT THE REPORTING PERMISSION. Worked out
-        # before anything is written, and re-worked out on every run, so this
-        # says the same thing whether the ability was added a second ago or a
+        # THE HOLDERS OF THE ROLE WITHOUT THE PERMISSION. Worked out before
+        # anything is written, and re-worked out on every run, so this says
+        # the same thing whether the ability was added a second ago or a
         # release ago.
-        needed = set((role.group_ids - reporting).ids)
+        needed = set((role.group_ids - permission).ids)
         candidates = env['res.users'].sudo().search(
             [('active', '=', True), ('share', '=', False)])
         due = [u for u in candidates
@@ -1266,7 +1296,7 @@ def _carry_analytics(env):
             added.append(role.name)
 
         for user in due:
-            missing = reporting.filtered(
+            missing = permission.filtered(
                 lambda g: g.id not in set(user.all_group_ids.ids))
             if not missing:
                 continue
@@ -1275,12 +1305,67 @@ def _carry_analytics(env):
             granted.append(user.login or str(user.id))
 
     _logger.info(
-        'health_access: retirement — %s role(s) gained "build reports" (%s); '
-        '%s person(s) needed the permission itself so as not to stop holding '
-        'their role: %s',
-        len(added), ', '.join(added) or 'none', len(set(granted)),
+        'health_access: %s role(s) gained "%s" (%s); %s person(s) needed the '
+        'permission itself so as not to stop holding their role: %s',
+        len(added), what, ', '.join(added) or 'none', len(set(granted)),
         ', '.join(sorted(set(granted))) or 'none')
     return len(added)
+
+
+def grant_export(env):
+    """Owner ruling 2026-11-03: Owners may export lists. Written as the
+    "export lists" ability on the Owner role, the same way reports were."""
+    return _grant_ability_to_roles(env, EXPORT_ABILITY, EXPORT_ROLES,
+                                   'export lists')
+
+
+def rename_admin_role(env):
+    """Owner ruling 2026-11-03: the role called "Admin" is "Office Admin".
+
+    Renames the seeded row where it still carries the seed's words, in English
+    and (where Vietnamese is active) in Vietnamese; a row somebody has already
+    reworded is left alone. The fixed name underneath does not change.
+    Returns 1 when a row was renamed."""
+    Role = env['biz.access.role'].sudo().with_context(active_test=False)
+    if Role.with_context(lang='en_US').search_count(
+            [('name', '=', ADMIN_ROLE_NAME)]):
+        return 0
+    role = Role.with_context(lang='en_US').search(
+        [('name', '=', OLD_ADMIN_ROLE_NAME)], limit=1)
+    if not role:
+        role = env.ref('health_access.role_admin', raise_if_not_found=False)
+        if not role or (role.with_context(lang='en_US').name or '').strip() \
+                != OLD_ADMIN_ROLE_NAME:
+            return 0
+    role.with_context(lang='en_US').write({'name': ADMIN_ROLE_NAME})
+    from .catalogue_vi import LANG, _lang_active          # noqa: PLC0415
+    if _lang_active(env):
+        vi = role.with_context(lang=LANG)
+        if (vi.name or '').strip() in ('', OLD_ADMIN_ROLE_NAME,
+                                       OLD_ADMIN_ROLE_NAME_VI, ADMIN_ROLE_NAME):
+            vi.write({'name': ADMIN_ROLE_NAME_VI})
+    _logger.info('health_access: the "%s" role is now called "%s"',
+                 OLD_ADMIN_ROLE_NAME, ADMIN_ROLE_NAME)
+    return 1
+
+
+def retire_demo_login(env):
+    """Owner ruling 2026-11-03: the `demo` login the demonstration data left
+    behind is switched off — where it exists, is still on, and has never
+    signed in. Archived, not deleted. Returns 1 when it was switched off."""
+    user = env['res.users'].sudo().with_context(active_test=False).search(
+        [('login', '=', 'demo')], limit=1)
+    if not user or not user.active:
+        return 0
+    signed_in = env['res.users.log'].sudo().search_count(
+        [('create_uid', '=', user.id)])
+    if signed_in:
+        _logger.warning('health_access: the demo login has signed in %s '
+                        'time(s); left on for somebody to look at', signed_in)
+        return 0
+    user.write({'active': False})
+    _logger.info('health_access: the demo login (id %s) is switched off', user.id)
+    return 1
 
 
 def model_behind(env, item):

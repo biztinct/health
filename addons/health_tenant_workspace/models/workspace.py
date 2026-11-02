@@ -160,7 +160,7 @@ class Workspace(models.AbstractModel):
             if 'biz_tenant_identity' not in tags:
                 customers.sudo().write({'match_action_tags': ','.join(tags + ['biz_tenant_identity'])})
         section = self.env.ref('health_cms_sidebar.section_admin')
-        roles = self.env['biz.access.role'].sudo().search([('name','in',['Owner','Admin'])])
+        roles = self.env['biz.access.role'].sudo().search([('name','in',['Owner','Office Admin'])])
         for suffix, title, tag, sequence in [('company','Your company','health_tenant_company',81),('setup','Clinic setup','health_tenant_setup',82),('history','Activity history','health_tenant_history',83)]:
             action = self.env.ref('health_tenant_workspace.action_'+suffix)
             xmlid = 'health_tenant_workspace.item_'+suffix
