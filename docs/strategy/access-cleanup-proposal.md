@@ -4,6 +4,14 @@ Written 2026-11-03 at the end of the Form Studio work. Nothing in this document 
 the live systems: it lays out what is true today and asks you to decide. Each decision is a few
 clicks in Settings › Access once you have made it.
 
+## Decided 2026-11-03 (and done the same day)
+
+The owner read this proposal and ruled: **Owners only** may export lists (an "Export lists" ability
+now sits on the Owner role); the **demo login is switched off**; the **Admin role is renamed "Office
+Admin"** ("Quản trị văn phòng") rather than widened; the seven stray Mac files and the empty old plain
+health columns are **removed**. The rest of this document is the picture as it was before those
+changes.
+
 ## In short
 
 1. **Nobody in the clinic can export a list today.** The "Export" choice in a list's action menu is

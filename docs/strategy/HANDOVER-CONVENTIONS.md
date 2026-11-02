@@ -4226,3 +4226,31 @@ a no-op.
     invoices (`res.partner.invoice_ids`); Nurse opens clients of their area
     but only their own bookings; Accountant and CRM open contacts and
     bookings but not clients. (FS-H5, access proposal.)
+- **§5.306 — roles are looked up BY NAME in three modules; renaming a seeded
+    role means renaming it everywhere at once.** `health_access.hooks`
+    (`ROLE_NOTES`, `ROLE_XMLIDS`, `FRESH_ROLE_ABILITIES`, `ADMIN_ITEM_ROLES`,
+    `NEW_ITEM_ROLES`, `role_by_name`), `health_tenancy/hooks.py` (`DOORS`
+    roles) and `health_tenant_workspace/models/workspace.py` (`_seed_navigation`)
+    all match a role by its English name; `catalogue_vi.apply_catalogue_vi`
+    keys the Vietnamese words on the English name too, and leaves a row alone
+    whose translation differs from the source — so a rename must write the
+    Vietnamese itself (`hooks.rename_admin_role`). The role's xmlid
+    (`health_access.role_admin`) is what the sidebar data files point at and
+    does not change. Done 2026-11-03 for "Admin" → "Office Admin" (owner
+    ruling). (Post-FS-H5 owner decisions.)
+- **§5.307 — giving a role a new ability is `_grant_ability_to_roles`, never a
+    bare `ability_ids` write.** Adding an ability makes the role BIGGER, and
+    holding a role means holding all of it, so the people who hold the rest of
+    the role must get the new permission FIRST or they stop holding the role
+    (the "build reports" lesson, `_carry_analytics`). The helper does it in
+    that order, additively and idempotently; `grant_export` (Owners →
+    `base.group_allow_export`, owner ruling 2026-11-03) is the second caller.
+    (Post-FS-H5 owner decisions.)
+- **§5.308 — §5.302's empty plain health columns are DROPPED since
+    `health_phi_encryption` 19.0.1.2.0** (18 columns on `res_partner` and
+    `health_clinical_note`, on carejiox, carejiox_template and hhh, owner ruling
+    2026-11-03). The migration drops a column only when its field is now
+    non-stored and the column holds no value; anything else is kept and named
+    in the log. The `demo` login (carejiox user 5, never signed in) was archived
+    by `health_access` 19.0.1.9.0 at the same time. (Post-FS-H5 owner
+    decisions.)
