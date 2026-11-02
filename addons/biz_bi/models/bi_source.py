@@ -31,7 +31,7 @@ class BiSource(models.Model):
 
     name = fields.Char(required=True, translate=True)
     type = fields.Selection([
-        ('odoo_model', 'Odoo Model'),
+        ('odoo_model', 'System records'),
         ('sql_view', 'SQL View'),
         ('csv', 'CSV / Excel Upload'),
         ('external', 'External Connector'),
@@ -40,7 +40,7 @@ class BiSource(models.Model):
 
     # odoo_model
     model_id = fields.Many2one('ir.model', ondelete='cascade',
-                               string='Odoo Model')
+                               string='Record type')
     model_name = fields.Char(related='model_id.model', store=True,
                              string='Technical Model')
 
@@ -93,7 +93,7 @@ class BiSource(models.Model):
 
     _sql_constraints = [
         ('model_uniq', 'unique(model_id)',
-         'A source already exists for this Odoo model.'),
+         'A source already exists for this record type.'),
     ]
 
     @api.depends('type')
@@ -108,7 +108,7 @@ class BiSource(models.Model):
         for source in self:
             if source.type == 'odoo_model':
                 if not source.model_id:
-                    raise ValidationError(_("An Odoo model is required."))
+                    raise ValidationError(_("Choose a record type."))
                 if self.env[source.model_name]._abstract:
                     raise ValidationError(
                         _("Abstract models cannot be used as sources."))

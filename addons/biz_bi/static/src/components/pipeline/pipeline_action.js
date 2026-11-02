@@ -13,6 +13,14 @@ const STEP_TYPES = [
     { type: "dedupe", label: _t("Remove Duplicates") },
 ];
 
+// What a source is, in the reader's words: the stored type code is never shown.
+const SOURCE_TYPE_LABELS = [
+    { type: "odoo_model", label: _t("System records") },
+    { type: "sql_view", label: _t("SQL view") },
+    { type: "csv", label: _t("Spreadsheet upload") },
+    { type: "external", label: _t("External connector") },
+];
+
 const FILTER_OPS = ["eq", "neq", "gt", "gte", "lt", "lte", "like_i",
                     "is_set", "is_null"];
 const CAST_TARGETS = ["numeric", "integer", "date", "timestamp",
@@ -214,6 +222,11 @@ export class PipelineAction extends Component {
     stepTypeLabel(type) {
         const entry = STEP_TYPES.find((s) => s.type === type);
         return entry ? entry.label : type;
+    }
+
+    sourceTypeLabel(type) {
+        const entry = SOURCE_TYPE_LABELS.find((s) => s.type === type);
+        return entry ? entry.label : "";
     }
 }
 

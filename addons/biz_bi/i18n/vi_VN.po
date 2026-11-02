@@ -978,3 +978,45 @@ msgstr ""
 #: code:addons/biz_bi/models/bi_query_engine.py:0
 msgid "This field is not available to analytics."
 msgstr "Trường này không được dùng cho phân tích."
+
+#. module: biz_bi
+#. odoo-python
+#: model:ir.model.fields.selection,name:biz_bi.selection__bi_source__type__odoo_model
+msgid "System records"
+msgstr "Bản ghi hệ thống"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "SQL view"
+msgstr "Khung nhìn SQL"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Spreadsheet upload"
+msgstr "Tải lên bảng tính"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "External connector"
+msgstr "Kết nối bên ngoài"
+
+#. module: biz_bi
+#. odoo-python
+#: model:ir.model.fields,field_description:biz_bi.field_bi_source__model_id
+msgid "Record type"
+msgstr "Loại bản ghi"
+
+#. module: biz_bi
+#. odoo-python
+#: code:addons/biz_bi/models/bi_source.py:0
+msgid "A source already exists for this record type."
+msgstr "Đã có một nguồn cho loại bản ghi này."
+
+#. module: biz_bi
+#. odoo-python
+#: code:addons/biz_bi/models/bi_source.py:0
+msgid "Choose a record type."
+msgstr "Hãy chọn một loại bản ghi."

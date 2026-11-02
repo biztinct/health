@@ -12,7 +12,7 @@
                         <option t-foreach="state.sources" t-as="src" t-key="src.id"
                                 t-att-value="src.id"
                                 t-att-selected="src.id === state.sourceId">
-                            <t t-esc="src.name"/> (<t t-esc="src.type"/>)
+                            <t t-esc="src.name"/> (<t t-esc="sourceTypeLabel(src.type)"/>)
                         </option>
                     </select>
                     <span t-if="state.editor and state.editor.applied and !state.dirty"
