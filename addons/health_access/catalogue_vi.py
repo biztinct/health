@@ -48,6 +48,13 @@ VI = {
         "Điều hành công việc hằng ngày: lịch phân ca, các lượt thăm khám, con "
         "người và tiền bạc đi kèm. Mọi thứ chủ sở hữu tiếp cận được, trừ quyết "
         "định cuối cùng về việc xóa hồ sơ.",
+    # The sentence since 19.0.1.8.0 (scoped to the assigned catchment area).
+    "Runs the day: the roster, the visits, the people and the money that "
+    "follows them, within their assigned catchment area. Does not carry the "
+    "Owner permission.":
+        "Điều hành công việc hằng ngày: lịch phân ca, các lượt thăm khám, con "
+        "người và tiền bạc đi kèm, trong khu vực được giao. Không mang quyền "
+        "Chủ sở hữu.",
     "Branch Manager": "Quản lý chi nhánh",
     "Coaches and reviews one branch's team. It opens the performance screens "
     "and nothing clinical or financial.":
