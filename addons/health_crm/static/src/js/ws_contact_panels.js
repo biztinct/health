@@ -214,8 +214,11 @@ export class WsContactGlance extends WsContactPanel {
         rows.push({
             key: "follow",
             label: _t("Follow-up"),
-            value: f.follow ? relativeDay(dayDiff(f.follow, now)) : _t("None"),
-            cls: f.follow ? (f.followOverdue ? "is-warn" : "") : "is-quiet",
+            // a follow-up date left on a contact that is booked, lost or spam
+            // is history, not a pending call
+            value: !f.follow ? _t("None") : (f.following || f.status === "active")
+                ? relativeDay(dayDiff(f.follow, now)) : _t("Closed"),
+            cls: f.follow && (f.following || f.status === "active") ? (f.followOverdue ? "is-warn" : "") : "is-quiet",
         });
 
         rows.push({
@@ -340,7 +343,9 @@ export class WsContactNext extends WsContactPanel {
             };
         }
         if (f.status === "lost_booking") {
-            return { kind: "stop", title: _t("Booking cancelled."), hint: "", buttons: [] };
+            // the same status closes an enquiry that never booked (UAT CT-04)
+            const title = f.lastBooking ? _t("Booking cancelled.") : _t("Closed without a booking.");
+            return { kind: "stop", title, hint: "", buttons: [] };
         }
         if (f.status === "spam") {
             return { kind: "spam", title: _t("Marked as spam."), hint: "", buttons: [] };

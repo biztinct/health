@@ -9584,3 +9584,15 @@ msgstr "Tổng quan nhanh"
 #: code:addons/health_crm/static/src/xml/ws_contact_panels.xml:0
 msgid "Next step"
 msgstr "Bước tiếp theo"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "Closed"
+msgstr "Đã đóng"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "Closed without a booking."
+msgstr "Đã đóng, không đặt lịch."

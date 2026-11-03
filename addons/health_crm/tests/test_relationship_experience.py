@@ -38,11 +38,15 @@ class TestClientRelationshipExperience(TransactionCase):
     def test_status_tracks_the_relationship_lifecycle(self):
         self.assertEqual(self.relation.relationship_status, 'active')
 
-        self.relation.start_date = fields.Date.today() + timedelta(days=1)
+        # the status compares with the user's calendar day (context_today), so
+        # the test must too: UTC 'tomorrow' is already 'today' in a timezone
+        # ahead of UTC for part of every day
+        today = fields.Date.context_today(self.relation)
+        self.relation.start_date = today + timedelta(days=1)
         self.assertEqual(self.relation.relationship_status, 'scheduled')
 
-        self.relation.start_date = fields.Date.today() - timedelta(days=10)
-        self.relation.end_date = fields.Date.today() - timedelta(days=1)
+        self.relation.start_date = today - timedelta(days=10)
+        self.relation.end_date = today - timedelta(days=1)
         self.assertEqual(self.relation.relationship_status, 'ended')
 
         self.relation.active = False
