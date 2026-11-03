@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Health Flow Dashboard',
-    'version': '19.0.2.1.1',
+    'version': '19.0.2.1.2',
     'category': 'Healthcare',
     'summary': 'Interactive circular workflow dashboard for healthcare operations',
     'description': """

@@ -314,7 +314,7 @@ export class HubSpokeWidget extends Component {
             view_mode: "form",
             target: "current",
             context: {
-                'form_view_ref': 'health_base.view_health_patient_form',
+                'form_view_ref': 'health_fieldservice.view_health_patient_form_ops',
             },
         });
     }

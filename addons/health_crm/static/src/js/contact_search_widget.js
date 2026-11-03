@@ -109,7 +109,7 @@ export const contactSearchService = {
                         res_id: record.id,
                         view_mode: 'form',
                         views: [[false, 'form']],
-                        context: { 'form_view_ref': 'health_base.view_health_patient_form' },
+                        context: { 'form_view_ref': 'health_fieldservice.view_health_patient_form_ops' },
                         target: 'current',
                     });
                 } else {

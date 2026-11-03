@@ -591,7 +591,8 @@ class HealthFlowWizard(models.TransientModel):
 
             list_view = self.env.ref('health_base.view_health_patient_tree', raise_if_not_found=False)
             kanban_view = self.env.ref('health_base.view_health_patient_kanban', raise_if_not_found=False)
-            form_view = self.env.ref('health_base.view_health_patient_form', raise_if_not_found=False)
+            form_view = self.env.ref('health_fieldservice.view_health_patient_form_ops', raise_if_not_found=False) \
+                or self.env.ref('health_base.view_health_patient_form', raise_if_not_found=False)
             search_view = self.env.ref('health_base.view_health_patient_search', raise_if_not_found=False)
 
             action = {
@@ -632,7 +633,8 @@ class HealthFlowWizard(models.TransientModel):
     @api.model
     def _get_client_new_action(self):
         """Open client form in create mode (full-page, Option A)."""
-        form_view = self.env.ref('health_base.view_health_patient_form', raise_if_not_found=False)
+        form_view = self.env.ref('health_fieldservice.view_health_patient_form_ops', raise_if_not_found=False) \
+                or self.env.ref('health_base.view_health_patient_form', raise_if_not_found=False)
         action = {
             'type': 'ir.actions.act_window',
             'name': _('New Client'),
@@ -1009,7 +1011,8 @@ class HealthFlowWizard(models.TransientModel):
                 action.setdefault('target', 'current')
                 return self._ensure_action_name(action, _('Client Dashboard'))
 
-            view = self.env.ref('health_base.view_health_patient_form', raise_if_not_found=False)
+            view = self.env.ref('health_fieldservice.view_health_patient_form_ops', raise_if_not_found=False) \
+                or self.env.ref('health_base.view_health_patient_form', raise_if_not_found=False)
             action = {
                 'type': 'ir.actions.act_window',
                 'name': _('Client'),

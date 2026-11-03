@@ -3697,8 +3697,9 @@ class HealthFieldServiceOrderUnified(models.Model):
             'res_model': 'res.partner',
             'res_id': self.patient_id.id,
             'view_mode': 'form',
-            'view_id': self.env.ref('health_base.view_health_patient_form').id,
-            'target': 'new',
+            # The Clients screen is a full-page workspace, not a pop-up.
+            'view_id': self.env.ref('health_fieldservice.view_health_patient_form_ops').id,
+            'target': 'current',
         }
 
     def action_open_client_form(self):

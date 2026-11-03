@@ -109,7 +109,7 @@
                                     <span class="vu-summary-row__label">Name</span>
                                     <span class="vu-summary-row__value">
                                         <field name="patient_id" readonly="1"
-                                               context="{'form_view_ref': 'health_base.view_health_patient_form'}"
+                                               context="{'form_view_ref': 'health_fieldservice.view_health_patient_form_ops'}"
                                                options="{'no_open': False}"/>
                                     </span>
                                 </div>
