@@ -82,8 +82,13 @@
             '|',
             '&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False),
             '&amp;', ('primary_facility_id.catchment_province_id', '=', user.catchment_province_id.id), ('primary_facility_id.catchment_province_id', '!=', False),
-            '|', '|', ('is_patient', '=', True), ('is_caregiver', '=', True), '|', ('is_payer', '=', True), ('is_referrer', '=', True)
+            '|', '|', '|', '|', ('is_patient', '=', True), ('is_caregiver', '=', True), ('is_payer', '=', True), ('is_referrer', '=', True),
+            '|', '|', '|', ('is_representative', '=', True), ('is_client_representative', '=', True),
+            ('is_legal_guardian', '=', True), ('is_emergency_contact', '=', True)
         ]</field>
+        <!-- The New Contact wizard offers representative, guardian and emergency
+             contact callers too; booking for one creates that person's partner,
+             which this rule refused (UAT CT-05, 2026-11-04). Same area rule. -->
         <field name="groups" eval="[(4, ref('group_health_crm_user'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>

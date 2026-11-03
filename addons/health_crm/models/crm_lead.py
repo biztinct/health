@@ -1523,6 +1523,10 @@ class HealthLead(models.Model):
             'city': self.city,
             'zip': self.zip,
             'country_id': self.country_id.id if self.country_id else False,
+            # the representative belongs to the client's area: the catchment
+            # rules let staff create and read only their own area's people
+            'catchment_province_id': (self.patient_id.catchment_province_id
+                                      or self.catchment_province_id).id or False,
         }
         return self.env['res.partner'].create(rep_vals)
 
