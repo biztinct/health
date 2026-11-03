@@ -4160,7 +4160,7 @@ msgstr "Theo dõi Số lượng"
 #: model:ir.model.fields,field_description:health_crm.field_crm_lead__follow_up_notes
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
 msgid "Follow-up Notes"
-msgstr "Theo dõi Ghi chú"
+msgstr "Ghi chú theo dõi"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_lead_reason__category__follow_up
@@ -5510,7 +5510,7 @@ msgstr "Hoạt động tiếp theo"
 #: model:ir.model.fields,field_description:health_crm.field_crm_lead__next_follow_up_date
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
 msgid "Next Follow-up Date"
-msgstr "Tiếp theo Theo dõi Ngày"
+msgstr "Ngày giờ theo dõi tiếp theo"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_booking_services_wizard_form

@@ -233,6 +233,14 @@
                                             <group>
                                                 <field name="contact_status" readonly="1"/>
                                                 <field name="contact_outcome" placeholder="—"/>
+                                                <!-- UAT CT-03/CT-04: the follow-up and the no-booking
+                                                     reason are entered here, not only through the API -->
+                                                <field name="next_follow_up_date" placeholder="—"
+                                                       invisible="contact_status in ('booking', 'service_used', 'existing', 'spam')"/>
+                                                <field name="follow_up_notes" placeholder="—"
+                                                       invisible="contact_status in ('booking', 'service_used', 'existing', 'spam')"/>
+                                                <field name="booking_lost_reason" placeholder="—"
+                                                       invisible="contact_status == 'spam' or contact_outcome not in ('booking_lost', 'rejected')"/>
                                             </group>
                                         </div>
 
