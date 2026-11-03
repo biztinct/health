@@ -327,7 +327,7 @@
                     <div class="nc-field">
                         <label class="nc-label">Service Interest</label>
                         <div class="nc-service-grid">
-                            <t t-foreach="serviceOptions" t-as="svc" t-key="svc.key">
+                            <t t-foreach="state.serviceOptions" t-as="svc" t-key="svc.key">
                                 <button t-attf-class="nc-service-card #{state.serviceInterest === svc.key ? 'active' : ''}"
                                         t-on-click="() => this.setService(svc.key)">
                                     <i t-attf-class="fa #{svc.icon}"/>

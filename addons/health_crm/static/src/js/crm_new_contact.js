@@ -27,16 +27,24 @@ const RELATIONSHIP_OPTIONS = [
     { key: "client_representative", label: _t("Client Representative") },
 ];
 
-const SERVICE_OPTIONS = [
-    { key: "home_visit", label: _t("Home Visit"), icon: "fa-home" },
-    { key: "clinic_visit", label: _t("Clinic Visit"), icon: "fa-hospital-o" },
-    { key: "consultation", label: _t("Consultation"), icon: "fa-comments" },
-    { key: "follow_up", label: _t("Follow-up"), icon: "fa-refresh" },
-    { key: "emergency", label: _t("Emergency"), icon: "fa-ambulance" },
-    { key: "preventive", label: _t("Preventive"), icon: "fa-shield" },
-    { key: "rehabilitation", label: _t("Rehabilitation"), icon: "fa-heartbeat" },
-    { key: "palliative", label: _t("Palliative"), icon: "fa-medkit" },
-];
+// Service Interest buttons come from the client-editable list (health.lookup.value,
+// category service_interest), the same list the contact screen offers. A built-in
+// list drifted from it: "Consultation" saved as "Medical Examination" and four
+// buttons (Follow-up, Emergency, Preventive, Rehabilitation) had no matching
+// code, so the contact was saved with no service at all. Icons by code; the
+// value sent stays the lookup code, which the server resolves to the record.
+const SERVICE_ICONS = {
+    home_visit: "fa-home",
+    clinic_visit: "fa-hospital-o",
+    consultation: "fa-stethoscope",
+    wound_care: "fa-plus-square",
+    injection: "fa-eyedropper",
+    iv_infusion: "fa-tint",
+    palliative: "fa-medkit",
+    personal_care: "fa-user",
+    lab_test: "fa-flask",
+    imaging_procedures: "fa-camera",
+};
 
 const PRIORITY_OPTIONS = [
     { key: "routine", label: _t("Routine") },
@@ -76,7 +84,6 @@ class CrmNewContact extends Component {
 
         this.modeOptions = MODE_OPTIONS;
         this.relationshipOptions = RELATIONSHIP_OPTIONS;
-        this.serviceOptions = SERVICE_OPTIONS;
         this.priorityOptions = PRIORITY_OPTIONS;
         this.step3Actions = STEP3_ACTIONS;
         this.activityTypeOptions = ACTIVITY_TYPE_OPTIONS;
@@ -117,6 +124,7 @@ class CrmNewContact extends Component {
             clinicalPriority: "routine",
             contactReasonId: false,
             contactReasons: [],
+            serviceOptions: [],
 
             // Client search
             clientSearchResults: [],
@@ -143,6 +151,7 @@ class CrmNewContact extends Component {
             await Promise.all([
                 this._loadProvinces(),
                 this._loadContactReasons(),
+                this._loadServiceOptions(),
                 this._loadDefaultProvince(),
                 this._loadActivityTypeIds(),
             ]);
@@ -228,6 +237,20 @@ class CrmNewContact extends Component {
                 { order: "name asc" }
             );
             this.state.contactReasons = reasons;
+        } catch (_e) { /* ignore */ }
+    }
+
+    async _loadServiceOptions() {
+        try {
+            const values = await this.orm.searchRead(
+                "health.lookup.value",
+                [["category_code", "=", "service_interest"]],
+                ["code", "name"],
+                { order: "sequence asc, id asc" }
+            );
+            this.state.serviceOptions = values.map((v) => ({
+                key: v.code, label: v.name, icon: SERVICE_ICONS[v.code] || "fa-medkit",
+            }));
         } catch (_e) { /* ignore */ }
     }
 

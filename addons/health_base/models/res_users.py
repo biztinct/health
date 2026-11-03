@@ -63,6 +63,17 @@ class ResUsers(models.Model):
                 and not user.has_group('health_base.group_healthcare_owner')
             )
 
+    def write(self, vals):
+        res = super().write(vals)
+        if 'catchment_province_id' in vals:
+            # The global catchment rules read user.catchment_province_id, and
+            # ir.rule caches each user's evaluated domain. Core only drops that
+            # cache for group/company changes, so a new area did not apply
+            # until a restart: the user could not open the contacts they had
+            # just created in the new area (UAT 2026-11-04).
+            self.env.registry.clear_cache()
+        return res
+
     is_duty_doctor = fields.Boolean('Is Duty Doctor', default=False)
     is_head_nurse = fields.Boolean('Is Head Nurse', default=False)
 
