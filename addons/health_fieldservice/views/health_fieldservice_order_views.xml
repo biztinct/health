@@ -1104,7 +1104,7 @@
                                             <field name="name" readonly="1" class="d-inline"/>
                                             <span class="ws-hero__sep" invisible="not patient_id">·</span>
                                             <field name="patient_id" readonly="1" class="d-inline ws-hero__client"
-                                                   context="{'form_view_ref': 'health_base.view_health_patient_form'}"
+                                                   context="{'form_view_ref': 'health_fieldservice.view_health_patient_form_ops'}"
                                                    options="{'no_open': False}"/>
                                         </h1>
                                         <field name="state" widget="badge" class="vu-hero-state-badge ws-hero__state"
@@ -1786,7 +1786,7 @@
                                         <div class="vu-client-card__details">
                                             <div class="vu-client-card__name">
                                                 <field name="patient_id" readonly="1"
-                                                       context="{'form_view_ref': 'health_base.view_health_patient_form'}"
+                                                       context="{'form_view_ref': 'health_fieldservice.view_health_patient_form_ops'}"
                                                        options="{'no_open': False}"/>
                                             </div>
                                             <div class="vu-client-card__contact">
