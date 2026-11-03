@@ -223,7 +223,10 @@ export class WsContactGlance extends WsContactPanel {
 
         rows.push({
             key: "booking",
-            label: _t("Last booking"),
+            // last_booking_date is the client's last COMPLETED visit, not this
+            // contact's booking: "Last booking 6 days ago" on a contact booked a
+            // minute earlier read as wrong (UAT CT-05)
+            label: _t("Last visit"),
             value: f.lastBooking ? relativeDay(dayDiff(f.lastBooking, now)) : _t("None"),
             cls: f.lastBooking ? "" : "is-quiet",
         });
@@ -329,7 +332,7 @@ export class WsContactNext extends WsContactPanel {
                 kind: "calendar",
                 title: _t("Appointment scheduled."),
                 hint: f.lastBooking
-                    ? _t("Last booking %s.", relativeDay(dayDiff(f.lastBooking, now)).toLowerCase())
+                    ? _t("Last visit %s.", relativeDay(dayDiff(f.lastBooking, now)).toLowerCase())
                     : "",
                 buttons: f.clientId ? [openClient] : [],
             };

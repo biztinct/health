@@ -184,7 +184,7 @@
                             <widget name="ws_journey" state_field="contact_status"
                                     steps="active,lead,booking,existing"
                                     labels="New,Following up,Booked,Client"
-                                    date_fields="contact_datetime,,last_booking_date,"
+                                    date_fields="contact_datetime,,,"
                                     aliases="thinking:lead,recontact:lead,service_used:existing"
                                     terminal="lost_booking,spam"/>
 

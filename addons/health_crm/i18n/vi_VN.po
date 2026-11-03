@@ -9596,3 +9596,15 @@ msgstr "Đã đóng"
 #: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
 msgid "Closed without a booking."
 msgstr "Đã đóng, không đặt lịch."
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "Last visit"
+msgstr "Lần khám gần nhất"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
+msgid "Last visit %s."
+msgstr "Lần khám gần nhất: %s."
