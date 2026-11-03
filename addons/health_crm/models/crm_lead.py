@@ -884,13 +884,21 @@ class HealthLead(models.Model):
                 return rel.client_id
         return Partner
 
+    def _readable_client_partner(self):
+        """`_resolve_client_partner`, empty when the current user may not read
+        that client (another catchment area). The contact itself stays
+        readable, so one cross-area client must blank its own cells rather
+        than raise an AccessError over the whole Contacts list."""
+        self.ensure_one()
+        return self.sudo()._resolve_client_partner().with_env(self.env)._filtered_access('read')
+
     @api.depends('patient_id', 'contact_relationship_type', 'partner_id',
                  'partner_id.is_patient')
     def _compute_related_client_name(self):
         """Name of the client record this contact belongs to — empty until one
         exists (the free-text name captured at intake is NOT a client)."""
         for lead in self:
-            lead.related_client_name = lead._resolve_client_partner().name or False
+            lead.related_client_name = lead._readable_client_partner().name or False
 
     @api.depends('patient_id.patient_code', 'contact_relationship_type',
                  'partner_id', 'partner_id.is_patient')
@@ -898,7 +906,7 @@ class HealthLead(models.Model):
         """The client's patient code — empty until a client record exists.
         Never falls back to unique_contact_code: that is the CONTACT's id."""
         for lead in self:
-            lead.client_patient_code = lead._resolve_client_partner().patient_code or False
+            lead.client_patient_code = lead._readable_client_partner().patient_code or False
 
     @api.depends('patient_id.patient_code', 'contact_relationship_type',
                  'partner_id', 'partner_id.is_patient')
@@ -906,7 +914,7 @@ class HealthLead(models.Model):
         """Patient ID for outreach — the client's patient_code, empty until the
         client record exists."""
         for lead in self:
-            lead.patient_display_id = lead._resolve_client_partner().patient_code or ''
+            lead.patient_display_id = lead._readable_client_partner().patient_code or ''
 
     @api.depends('create_date')
     def _compute_days_open(self):
@@ -993,12 +1001,31 @@ class HealthLead(models.Model):
         
         # Create records and conditionally handle relationships
         records = super().create(vals_list)
-        
+        records._catchment_from_client()
+
         for record in records:
             if record._should_process_relationship():
                 record._process_contact_relationship()
-        
+
         return records
+
+    def _catchment_from_client(self):
+        """A contact with no area takes its client's area (the client as the
+        Client Name column resolves it, else the linked partner).
+
+        The catchment rules let a user read area-less contacts but only their
+        own area's clients, so an area-less contact linked to another area's
+        client showed up in a list whose client cells that user cannot read.
+        An area already on the contact is never overwritten.
+        Written through the base write so `city` and the relationship hooks
+        are not re-run for an area the user never chose.
+        """
+        for lead in self.filtered(lambda l: not l.catchment_province_id):
+            sudo_lead = lead.sudo()
+            area = (sudo_lead._resolve_client_partner().catchment_province_id
+                    or sudo_lead.partner_id.catchment_province_id)
+            if area:
+                super(HealthLead, lead).write({'catchment_province_id': area.id})
     
     # =========================================================================
     # Vietnamese phone validation — enforced AT LEAD CREATION TIME
@@ -1170,7 +1197,9 @@ class HealthLead(models.Model):
                 vals['health_contact_outcome'] = vals['contact_outcome']
         
         result = super().write(vals)
-        
+        if vals.get('partner_id') or vals.get('patient_id') or vals.get('catchment_province_id') is False:
+            self._catchment_from_client()
+
         # If relationship fields were changed, reprocess relationships only when conditions are met
         if any(field in vals for field in ['contact_relationship_type', 'client_name', 'name', 'contact_outcome', 'health_contact_outcome', 'stage_id']):
             for record in self:
