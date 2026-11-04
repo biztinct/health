@@ -4349,3 +4349,11 @@ a no-op.
 - **§5.319 — `health_fieldservice/i18n/vi_VN.po` has a duplicate msgid**
     (the Booking Notes card title, lines ~1370 and ~16020): `msgfmt` refuses
     the file; Odoo's reader keeps the last. Pre-existing. (UAT, 2026-11-04.)
+- **§5.320 — the product catalogue's region filter never fires on carejiox.**
+    `sale.order._get_product_catalog_domain` (advanced_pricing) maps the
+    province NAME `'Hanoi'` / `'Ho Chi Minh City'` to the code suffix, but the
+    live provinces are named "Hà Nội" / "TP. Hồ Chí Minh", so every quote's
+    catalogue lists both regions. The nurse app's Add service window filters
+    by the suffix of the visit's own lines instead (`_hanoi` / `_tphcm`), seen
+    working on BK3851 after the first deploy listed `_tphcm` items for a Hà
+    Nội client. The office catalogue is unchanged (pre-existing). (UAT, 2026-11-04.)
