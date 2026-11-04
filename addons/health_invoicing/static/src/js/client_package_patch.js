@@ -54,7 +54,7 @@ shortcutRegistry.add("packages", {
         const tab = document.querySelector('.o_form_renderer .o_notebook_headers a.nav-link[name="active_packages"]');
         if (tab) {
             tab.click();
-            tab.scrollIntoView({ block: "nearest", behavior: "smooth" });
+            tab.scrollIntoView({ block: "start", behavior: "smooth" });
             return;
         }
         return runPartnerMethod(env, partnerId, "action_view_service_packages");

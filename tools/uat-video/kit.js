@@ -362,6 +362,10 @@ class Kit {
 
   async _signIn(login, password, pwa) {
     const p = this.page;
+    // after a sign-out the page may list remembered accounts instead of the form
+    const another = p.getByText('Use another user', { exact: true });
+    await p.locator('#login').filter({ visible: true }).or(another).first().waitFor({ timeout: 15000 }).catch(() => {});
+    if (await another.isVisible().catch(() => false)) await this.click(another, 1200);
     await this.type(p.locator('#login'), login);
     await this.type(p.locator('#password'), password);
     await Promise.all([p.waitForURL(pwa ? /health_pwa/ : /\/bizapp/, { timeout: 45000 }), this.click(p.locator('button.btn-primary:has-text("Log in")'), 0)]);

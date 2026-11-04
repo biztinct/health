@@ -53,3 +53,24 @@ class ProductProduct(models.Model):
         """
         self.ensure_one()
         return self.product_tmpl_id.action_view_package_instances()
+
+    def write(self, vals):
+        """Archiving a package template must not need stock rights.
+
+        stock's `product.product.write` toggles the variant's restocking rules
+        (`orderpoint_ids`) whenever `active` changes, reading them as the
+        current user — so an Owner without Inventory rights could not archive a
+        package template from Master Data ("not allowed to access Minimum
+        Inventory Rule", UAT 2026-11-04). A healthcare package has no stock and
+        no restocking rules, so for those variants alone the write runs with
+        elevated rights, after checking the user may write them at all.
+        """
+        if 'active' in vals and 'stock.warehouse.orderpoint' in self.env \
+                and not self.env['stock.warehouse.orderpoint'].has_access('read'):
+            packages = self.filtered(lambda p: p.type == 'healthcare_package')
+            if packages:
+                packages.check_access('write')
+                super(ProductProduct, packages.sudo()).write(vals)
+                rest = self - packages
+                return super(ProductProduct, rest).write(vals) if rest else True
+        return super().write(vals)

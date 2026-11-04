@@ -68,7 +68,7 @@
         <field name="res_model">product.template</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[('type', '=', 'healthcare_package')]</field>
-        <field name="context">{'default_type': 'healthcare_package', 'default_sale_ok': True, 'default_purchase_ok': False}</field>
+        <field name="context">{'default_type': 'healthcare_package', 'default_sale_ok': True, 'default_purchase_ok': False, 'default_list_price': 0}</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_package_template_list')}),
             (0, 0, {'view_mode': 'form', 'view_id': ref('view_admin_package_template_form')})]"/>

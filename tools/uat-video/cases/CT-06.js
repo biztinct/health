@@ -1,47 +1,44 @@
-// CT-06 Prepaid service package: entered, reserved, completed once, cancelled visit released.
-// Two people in one recording: the Owner (office) and the Hanoi nurse (nurse app), who
-// completes visit 1.
+// CT-06 Prepaid service package: a template defined in Master Data, bought from the
+// client record, a reserved visit completed once by the nurse, a cancelled visit released.
+// Three people in one recording: the Owner (template), the Hanoi Operations Manager
+// (purchase, bookings, cancellation) and the Hanoi nurse (completes visit 1 in the nurse app).
 const c = require('./common');
 const owner = c.users.owner;
+const om = c.users.omhn;
 const nurse = { login: 'nurse_hn', password: c.pw('nurse_hn'), role: 'Nurse, Hanoi', role_vi: 'Điều dưỡng Hà Nội', name: 'Client UAT nurse_hn' };
 const client = 'Nguyễn Văn An';
 const clientCode = '01_0000126';
-const clientPhone = '0900000100';
-const pkgName = `UAT-VID Three clinic visits ${new Date(Date.now() + 7 * 3600e3).toISOString().slice(11, 16).replace(':', '')}`;
-const note = 'Three prepaid clinic visits (UAT video evidence)';
+const tplName = `UAT-VID Three clinic visits ${new Date(Date.now() + 7 * 3600e3).toISOString().slice(11, 16).replace(':', '')}`;
+const terms = 'Three clinic visits, valid 12 weeks (UAT video evidence)';
 const clinicalNote = 'UAT ONLY - clinic visit 1 of the prepaid package';
 const STOP = process.env.CT06_STOP || '';
 
-// The package screen's counters, read from the form.
-async function counts(kit) {
-  const v = await kit.fieldValues(['total_services', 'consumed_services', 'remaining_services']);
-  const n = (x) => Number(String(x).replace(/[^\d]/g, '')) || 0;
-  return { total: n(v.total_services), used: n(v.consumed_services), left: n(v.remaining_services) };
-}
-
 module.exports = {
   meta: {
-    id: 'CT-06', title: 'Prepaid package: entered, used once, cancelled visit released', short: 'Prepaid package',
-    title_vi: 'Gói trả trước: nhập gói, dùng một lần, hủy lịch được hoàn lại',
+    id: 'CT-06', title: 'Prepaid package: bought for a client, used once, cancelled visit released', short: 'Prepaid package',
+    title_vi: 'Gói trả trước: mua cho khách hàng, dùng một lần, hủy lịch được hoàn lại',
     criterion: 'Enter a prepaid package with its value and number of visits; a reserved visit uses one, completing it does not use a second, and cancelling a reserved visit gives it back.',
-    data: `Client ${client} (${clientCode}); package “${pkgName}”: 3 clinic visits, 1,500,000 ₫; nurse ${nurse.login} completes visit 1 in the nurse app`,
+    data: `Template “${tplName}”: Clinic Visit, 3 visits, 1,500,000 ₫; bought for ${client} (${clientCode}) with invoice and cash payment; nurse ${nurse.login} completes visit 1`,
     expected: 'Package retains value, correct reservation/completion usage and balance.',
     role: 'Owner', role_vi: 'Chủ sở hữu', login: owner.login, password: owner.password,
   },
   proofVi: {
-    'Package saved: 3 visits, 1,500,000 ₫, 3 left': 'Đã lưu gói: 3 lượt, 1.500.000 ₫, còn 3',
+    'Template saved: 3 visits, 1,500,000 ₫, 500,000 ₫ a visit': 'Đã lưu mẫu: 3 lượt, 1.500.000 ₫, 500.000 ₫ mỗi lượt',
+    'Checkout: 1,500,000 ₫, invoice and cash payment': 'Thanh toán: 1.500.000 ₫, hóa đơn và tiền mặt',
+    'Package bought': 'Đã mua gói',
+    'Client’s package: 3 left': 'Gói của khách hàng: còn 3',
     'Visit 1 booked from the package': 'Đã đặt lượt 1 từ gói',
     'Visit 2 booked from the package': 'Đã đặt lượt 2 từ gói',
-    'Visit 1 reserved: 2 of 3 left': 'Đã giữ chỗ lượt 1: còn 2/3',
+    'No “price is 0” warning on a package visit': 'Không cảnh báo “giá 0” với lượt trả bằng gói',
+    'Visit 1 reserved: 2 left': 'Giữ chỗ lượt 1: còn 2',
     'Nurse app: visit paid from the package': 'Ứng dụng điều dưỡng: lượt khám trả bằng gói',
     'Visit started': 'Đã bắt đầu lượt khám',
-    'Clinical note saved': 'Đã lưu ghi chú lâm sàng',
+    'Clinical note saved, at Vietnam time': 'Đã lưu ghi chú lâm sàng, theo giờ Việt Nam',
     'Visit completed': 'Đã hoàn thành lượt khám',
     'After completion: still 2 left (not counted twice)': 'Sau khi hoàn thành: vẫn còn 2 (không trừ hai lần)',
     'Visit 2 reserved: 1 left': 'Giữ chỗ lượt 2: còn 1',
     'Visit 2 cancelled': 'Đã hủy lượt 2',
     'Cancelled visit given back: 2 left': 'Lượt bị hủy được hoàn lại: còn 2',
-    'Package history shows each step': 'Lịch sử gói ghi lại từng bước',
   },
 
   async run(kit) {
@@ -50,49 +47,70 @@ module.exports = {
     const next = () => ++n;
     await kit.login();
 
-    // ---------------------------------------------------------------- the package
-    await kit.step(next(), 'Open Finance › Service Packages and create a new package', 'Mở Tài chính › Gói dịch vụ và tạo gói mới');
-    await kit.area('Finance');
-    await kit.click(c.sidebar(p, 'Service Packages'), 2500);
-    await kit.click(p.locator('.o_list_button_add, button').filter({ hasText: /^\s*New\s*$/ }).first(), 2500);
+    // ---------------------------------------------------------------- Owner: the template
+    await kit.step(next(), 'Settings › Master Data › Package Templates › New', 'Cài đặt › Dữ liệu gốc › Mẫu gói dịch vụ › Mới');
+    await kit.area('Settings');
+    await kit.click(c.sidebar(p, 'Master Data'), 2500);
+    await kit.click(p.getByText('Package Templates', { exact: true }).filter({ visible: true }).first(), 2500);
+    await kit.click(p.locator('.o_list_button_add, button').filter({ hasText: /^\s*New\s*$/ }).filter({ visible: true }).first(), 2500);
 
-    await kit.step(next(), `“${pkgName}” for ${client}: Clinic Visit, 3 visits, 1,500,000 ₫`, `“${pkgName}” cho ${client}: Khám tại phòng khám, 3 lượt, 1.500.000 ₫`);
-    await kit.type(p.locator('.oe_title [name=name] input'), pkgName, 400);
-    await kit.type(c.field(p, 'patient_id').locator('input'), client, 1500);
-    await kit.click(p.locator('.o-autocomplete--dropdown-item').filter({ hasText: client }).first(), 1000);
-    await kit.select(c.field(p, 'service_type'), 'Clinic Visit');
-    await kit.type(c.field(p, 'total_services').locator('input'), '3');
-    await kit.type(c.field(p, 'package_price').locator('input'), '1500000');
-    await kit.type(c.field(p, 'package_notes').locator('textarea'), note, 600);
+    await kit.step(next(), `“${tplName}”: Clinic Visit, 3 visits, at the clinic, 1,500,000 ₫`, `“${tplName}”: Khám tại phòng khám, 3 lượt, tại phòng khám, 1.500.000 ₫`);
+    await kit.type(p.locator('.oe_title [name=name] input'), tplName, 400);
+    await m2o(kit, 'healthcare_package_type_id', 'Clinic', 'Clinic Visit');
+    await kit.type(c.field(p, 'healthcare_service_count').locator('input'), '3');
+    await m2o(kit, 'healthcare_service_location_id', 'clinic', 'At clinic');
+    await kit.type(c.field(p, 'list_price').locator('input'), '1500000');
+    await kit.type(c.field(p, 'healthcare_terms').locator('textarea'), terms, 500);
 
-    await kit.step(next(), 'Save the package', 'Lưu gói');
+    await kit.step(next(), 'Save the template', 'Lưu mẫu');
     await kit.click(c.saveBtn(p), 2500);
-    kit.records['Package'] = pkgName;
-    await kit.proof(p.locator('.o_form_sheet').first(), 'Package saved: 3 visits, 1,500,000 ₫, 3 left', async (t) => {
-      const k = await counts(kit);
-      const v = await kit.fieldValues(['name', 'package_price']);
-      // saved, not just typed: the address carries the new record's number
-      return /action-\d+\/\d+$/.test(p.url()) && k.total === 3 && k.left === 3
-        && /1,500,000/.test(v.package_price) && v.name === pkgName;
+    kit.records['Template'] = tplName;
+    await kit.proof(p.locator('.o_form_sheet').first(), 'Template saved: 3 visits, 1,500,000 ₫, 500,000 ₫ a visit', async (t) => {
+      const v = await kit.fieldValues(['healthcare_service_count', 'list_price', 'healthcare_price_per_visit']);
+      return /action-\d+\/\d+$/.test(p.url()) && v.healthcare_service_count === '3'
+        && /1,500,000/.test(v.list_price) && /500,000/.test(v.healthcare_price_per_visit + t);
     });
-    if (STOP === 'package') return;
+    if (STOP === 'template') return;
+
+    // ---------------------------------------------------------------- OM: buy it for the client
+    await kit.switchUser(next(), om, false);
+    await openClient(kit, next);
+    await kit.step(next(), 'Quick actions › Buy a package: choose the template', 'Thao tác nhanh › Mua gói: chọn mẫu');
+    await kit.click(p.getByRole('button', { name: /Buy a package/ }).first(), 2500);
+    await kit.click(p.locator('.pw-card--product', { hasText: tplName }).first(), 900);
+    await kit.click(p.locator('.pw-btn--success').filter({ visible: true }).first(), 2500);
+
+    await kit.step(next(), 'Create the invoice and take the cash payment now', 'Tạo hóa đơn và thu tiền mặt ngay');
+    await kit.click(p.locator('.pp-option', { hasText: 'Process Payment Now' }).first(), 1200);
+    const checkout = p.locator('.pp-dialog').first();
+    await kit.proof(checkout, 'Checkout: 1,500,000 ₫, invoice and cash payment', async (t) => {
+      const on = await checkout.locator('.pp-toggle--on').count();
+      const amount = await checkout.locator('input').last().inputValue().catch(() => '');
+      return on === 2 && /1[.,]?500[.,]?000/.test(t + ' ' + amount);
+    });
+    await kit.click(p.locator('.pw-btn', { hasText: 'Purchase Package' }).first(), 2500);
+    await kit.proof(p.locator('.o_notification').filter({ hasText: 'purchased' }).first(), 'Package bought', tplName);
+    kit.records['Package'] = `${tplName} (${client})`;
+
+    await packagesTab(kit, next);
+    await kit.proof(pkgCard(p), 'Client’s package: 3 left', (t) => /3\s*left/i.test(t) && /0\s*\/\s*3\s*used/i.test(t));
+    if (STOP === 'purchase') return;
 
     // ---------------------------------------------------------------- visit 1: reserved
-    const v1 = await bookFromPackage(kit, next, 'Visit 1', nurse.name);
+    const v1 = await bookFromClient(kit, next, 'Visit 1', nurse.name);
     kit.records['Visit 1'] = v1.bk;
-    await openPackage(kit, next);
-    await kit.proof(p.locator('.o_form_sheet').first(), 'Visit 1 reserved: 2 of 3 left', async () => {
-      const k = await counts(kit); return k.total === 3 && k.left === 2;
-    });
+    await openClient(kit, next);
+    await packagesTab(kit, null);
+    await kit.proof(pkgCard(p), 'Visit 1 reserved: 2 left', (t) => /2\s*left/i.test(t));
     if (STOP === 'booking') return;
 
-    // ---------------------------------------------------------------- visit 1: the nurse completes it
+    // ---------------------------------------------------------------- nurse completes visit 1
     await kit.switchUser(next(), nurse, true);
     await kit.step(next(), `Open today’s visit for ${client} (${v1.hm})`, `Mở lượt khám hôm nay của ${client} (${v1.hm})`);
     const card = p.locator('.booking-card', { hasText: clientCode }).filter({ hasText: v1.hm }).first();
     await kit.click(card.locator('.booking-patient-name'), 2500);
     await kit.proof(p.getByText('Scheduled Visit', { exact: true }).locator('xpath=..').first(),
-      'Nurse app: visit paid from the package', (t) => t.includes(pkgName));
+      'Nurse app: visit paid from the package', (t) => t.includes(tplName));
 
     await kit.step(next(), 'Start Service', 'Bắt đầu dịch vụ');
     await kit.click(p.locator('button').filter({ hasText: /^\s*Start Service\s*$/ }).filter({ visible: true }).first(), 3500);
@@ -103,7 +121,16 @@ module.exports = {
     await kit.click(p.locator('button').filter({ hasText: /Add New Clinical Note/ }).filter({ visible: true }).first(), 2500);
     await kit.type(p.getByPlaceholder('Enter clinical notes...'), clinicalNote, 600);
     await kit.click(p.locator('button').filter({ hasText: /Confirm and Save/ }).filter({ visible: true }).first(), 3500);
-    await kit.proof(p.getByText(clinicalNote).first().locator('xpath=..'), 'Clinical note saved', clinicalNote);
+    // the note's time must read on the Vietnam clock (it showed UTC before 2026-11-04)
+    await kit.proof(p.getByText(clinicalNote).first().locator('xpath=..'), 'Clinical note saved, at Vietnam time', (t) => {
+      const now = new Date(Date.now() + 7 * 3600e3);
+      const m = t.match(/(\d{1,2}):(\d{2})(?::\d{2})?\s*(AM|PM)?/i);
+      if (!t.includes(clinicalNote) || !m) return false;
+      let h = Number(m[1]);
+      if (m[3]) h = (h % 12) + (m[3].toUpperCase() === 'PM' ? 12 : 0);
+      const diff = Math.abs((h * 60 + Number(m[2])) - (now.getUTCHours() * 60 + now.getUTCMinutes()));
+      return diff <= 5 || diff >= 1435;
+    });
     await kit.click(p.locator('button').filter({ hasText: /^\s*close\s*$/ }).filter({ visible: true }).last(), 1500);
 
     await kit.step(next(), 'Complete Service (no next appointment needed)', 'Hoàn thành dịch vụ (không cần hẹn lần sau)');
@@ -112,23 +139,21 @@ module.exports = {
     if (await cancelNext.count()) await kit.click(cancelNext, 2500);
     await kit.proof(p.locator('.booking-card', { hasText: clientCode }).filter({ hasText: v1.hm }).first(), 'Visit completed', /COMPLETED/);
 
-    // ---------------------------------------------------------------- back to the office
-    await kit.switchUser(next(), owner, false);
-    await openPackage(kit, next);
-    await kit.proof(p.locator('.o_form_sheet').first(), 'After completion: still 2 left (not counted twice)', async () => {
-      const k = await counts(kit); return k.total === 3 && k.left === 2 && k.used === 1;
-    });
+    // ---------------------------------------------------------------- OM: balance, visit 2, cancel
+    await kit.switchUser(next(), om, false);
+    await openClient(kit, next);
+    await packagesTab(kit, null);
+    await kit.proof(pkgCard(p), 'After completion: still 2 left (not counted twice)', (t) => /2\s*left/i.test(t) && /1\s*\/\s*3\s*used/i.test(t));
 
-    // ---------------------------------------------------------------- visit 2: reserved, then cancelled
-    const v2 = await bookFromPackage(kit, next, 'Visit 2', null);
+    const v2 = await bookFromClient(kit, next, 'Visit 2', null);
     kit.records['Visit 2'] = v2.bk;
-    await openPackage(kit, next);
-    await kit.proof(p.locator('.o_form_sheet').first(), 'Visit 2 reserved: 1 left', async () => {
-      const k = await counts(kit); return k.left === 1;
-    });
+    const bookingUrl = p.url();
+    await openClient(kit, next);
+    await packagesTab(kit, null);
+    await kit.proof(pkgCard(p), 'Visit 2 reserved: 1 left', (t) => /1\s*left/i.test(t));
 
     await kit.step(next(), `The client cancels visit 2 (${v2.bk}): More › Cancel Booking`, `Khách hàng hủy lượt 2 (${v2.bk}): Thêm › Hủy lịch hẹn`);
-    await p.goto(v2.url);
+    await p.goto(bookingUrl);
     await kit.hold(3500);
     await kit.click(p.locator('.ws-hero button, .o_form_view button').filter({ hasText: /^\s*More\s*$/ }).filter({ visible: true }).first(), 900);
     await kit.click(p.locator('.dropdown-item, .o-dropdown-item').filter({ hasText: /^\s*Cancel Booking\s*$/ }).filter({ visible: true }).first(), 2000);
@@ -141,32 +166,51 @@ module.exports = {
     await kit.click(dlg.locator('button[name=action_confirm_cancellation]'), 3500);
     await kit.proof(p.locator('.ws-hero').first(), 'Visit 2 cancelled', /Cancel/i);
 
-    await openPackage(kit, next);
-    await kit.proof(p.locator('.o_form_sheet').first(), 'Cancelled visit given back: 2 left', async () => {
-      const k = await counts(kit); return k.total === 3 && k.left === 2;
-    });
-    await kit.proof(p.locator('.o-mail-Chatter, .o-mail-Thread').first(), 'Package history shows each step',
-      (t) => /Service Reserved/i.test(t) && /Released/i.test(t));
+    await openClient(kit, next);
+    await packagesTab(kit, null);
+    await kit.proof(pkgCard(p), 'Cancelled visit given back: 2 left', (t) => /2\s*left/i.test(t) && /1\s*\/\s*3\s*used/i.test(t));
   },
 };
 
-// Operations › Clients › Book: Clinic Visit from the package, today at the first free
-// slot an hour or more from now, optionally with the nurse assigned and leading.
-async function bookFromPackage(kit, next, label, staff) {
+// A many2one: type, then pick the option.
+async function m2o(kit, name, typed, option) {
   const p = kit.page;
-  const vi = label === 'Visit 1' ? 'Lượt 1' : 'Lượt 2';
-  await kit.step(next(), `${label}: Operations › Clients › ${client} › Book (+)`, `${vi}: Vận hành › Khách hàng › ${client} › Đặt lịch (+)`);
+  await kit.type(c.field(p, name).locator('input'), typed, 1200);
+  await kit.click(p.locator('.o-autocomplete--dropdown-item').filter({ hasText: option }).first(), 800);
+}
+
+const pkgCard = (p) => p.locator('.ap-card', { hasText: tplName }).first();
+
+// Operations › Clients › open the Hanoi client.
+async function openClient(kit, next) {
+  const p = kit.page;
+  await kit.step(next(), `Operations › Clients › open ${client}`, `Vận hành › Khách hàng › mở ${client}`);
   await kit.area('Operations');
   await kit.click(c.sidebar(p, 'Clients'), 2500);
   await kit.type(p.locator('.o_searchview_input'), client, 300);
   await p.keyboard.press('Enter');
   await kit.hold(2000);
-  // the Hanoi client (an HCMC client has the same name); the row's Book button is the "+" icon
-  await kit.click(p.locator('tr.o_data_row', { hasText: clientPhone }).locator('button[name=action_create_fso]').first(), 4000);
+  await kit.click(p.locator('tr.o_data_row', { hasText: client }).locator('td[name=name]').first(), 4000);
+}
 
-  await kit.step(next(), 'Clinic Visit at the Hanoi clinic, paid from the prepaid package', 'Khám tại phòng khám Hà Nội, trả bằng gói trả trước');
+// Quick actions › Packages: the client's Active Packages tab.
+async function packagesTab(kit, next) {
+  const p = kit.page;
+  if (next) await kit.step(next(), 'Quick actions › Packages', 'Thao tác nhanh › Gói dịch vụ');
+  await kit.click(p.getByRole('button', { name: /^\s*Packages\s*$/ }).first(), 2500);
+  await pkgCard(p).waitFor({ timeout: 10000 }).catch(() => {});
+}
+
+// From the client screen: New booking → Clinic Visit paid from the package, today at the
+// first free slot an hour or more from now; optionally the nurse assigned and leading.
+async function bookFromClient(kit, next, label, staff) {
+  const p = kit.page;
+  const vi = label === 'Visit 1' ? 'Lượt 1' : 'Lượt 2';
+  if (label === 'Visit 2') await openClient(kit, next);
+  await kit.step(next(), `${label}: New booking — Clinic Visit at the Hanoi clinic, paid from the package`, `${vi}: Đặt lịch mới — khám tại phòng khám Hà Nội, trả bằng gói`);
+  await kit.click(p.locator('.ws-hero button, .o_form_view button').filter({ hasText: /^\s*New booking\s*$/ }).filter({ visible: true }).first(), 4000);
   await c.qbFill(kit, { service: 'Clinic Visit', duration: '1 hour', facility: 'HN_PK_PKGDVU', location: 'Clinic' });
-  const opt = (await c.qbGroup(p, 'Prepaid Package').locator('option').allInnerTexts()).find((t) => t.startsWith(pkgName));
+  const opt = (await c.qbGroup(p, 'Prepaid Package').locator('option').allInnerTexts()).find((t) => t.startsWith(tplName));
   if (!opt) throw new Error('package not offered in Quick Booking');
   await kit.select(c.qbGroup(p, 'Prepaid Package'), opt.trim());
   const day = await c.qbPickDay(kit, 0);
@@ -183,14 +227,10 @@ async function bookFromPackage(kit, next, label, staff) {
   const done = p.locator('.qb-modal-actions').locator('xpath=..');
   await kit.proof(done, `${label} booked from the package`, /BK\d+/);
   const bk = ((await done.innerText()).match(/BK\d{3,}/) || [''])[0];
-  await kit.click(p.locator('.qb-modal-confirm'), 4000);
+  await kit.click(p.locator('.qb-modal-confirm'), 4500);
+  if (label === 'Visit 1') {
+    await kit.proof(p.locator('.ws-hero').first(), 'No “price is 0” warning on a package visit',
+      async (t) => t.includes(bk) && !/price is 0/i.test(await p.locator('body').innerText()));
+  }
   return { bk, hm, when: c.shownTime(day, hm), url: p.url() };
-}
-
-async function openPackage(kit, next) {
-  const p = kit.page;
-  await kit.step(next(), 'Open the package', 'Mở gói');
-  await kit.area('Finance');
-  await kit.click(c.sidebar(p, 'Service Packages'), 2500);
-  await kit.click(c.listRow(p, pkgName).locator('td').nth(1), 3000);
 }

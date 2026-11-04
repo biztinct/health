@@ -450,7 +450,7 @@
                             <div class="vu-section">
                                 <div class="vu-detail-card">
                                     <div class="vu-card__title">
-                                        <span class="vu-section__icon" data-icon="gift"/>
+                                        <span class="vu-section__icon" data-icon="package"/>
                                         <span>Packages</span>
                                     </div>
                                     <p class="text-muted">
