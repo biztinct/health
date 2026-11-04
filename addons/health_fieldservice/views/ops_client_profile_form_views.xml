@@ -195,6 +195,7 @@
                                         <div>Care</div>
                                     </div>
                                     <group>
+                                        <field name="visit_close_status" invisible="not visit_close_status"/>
                                         <field name="patient_category_id" placeholder="—"/>
                                         <field name="catchment_province_id" required="1"/>
                                         <field name="primary_facility_id" placeholder="—"

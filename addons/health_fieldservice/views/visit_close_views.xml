@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- The visit's closing answers from the nurse app (owner UAT 2026-11-04,
+         MB-07): another visit wanted or not, the reason, who answered and
+         when, and who got the follow-up task. A separate extension so the
+         workspace view's own arch is untouched. Card title uses block
+         elements, so "Visit close" is one plain translation term. -->
+    <record id="view_health_fso_form_ops_visit_close" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.form.ops.visit.close</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_fso_form_ops"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='notes_card']" position="after">
+                <div class="vu-detail-card ws-card" name="visit_close_card"
+                     invisible="not visit_close_answer">
+                    <div class="vu-card__title">
+                        <div class="vu-section__icon" data-icon="clipboard-list"/>
+                        <div>Visit close</div>
+                    </div>
+                    <group>
+                        <field name="visit_close_answer"/>
+                        <field name="visit_close_reason" placeholder="—"/>
+                        <field name="visit_close_follow_up"/>
+                        <field name="visit_close_follow_up_user_ids" widget="many2many_tags"
+                               invisible="not visit_close_follow_up"/>
+                        <field name="visit_close_by_id" options="{'no_open': True}"/>
+                        <field name="visit_close_date"/>
+                    </group>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

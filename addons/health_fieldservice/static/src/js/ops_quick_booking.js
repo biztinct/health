@@ -776,6 +776,12 @@ class OpsQuickBooking extends Component {
         }
     }
 
+    /** "30 min" / "1h" / "1.5h" for the summary lines (30-minute visits, UAT 2026-11-04). */
+    get durationLabel() {
+        const h = this.state.durationHours;
+        return h < 1 ? Math.round(h * 60) + " min" : h + "h";
+    }
+
     // =========================================================================
     // NAVIGATION
     // =========================================================================

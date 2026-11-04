@@ -410,6 +410,43 @@ class ResPartner(models.Model):
             'total_payments': len(payments),
         }
 
+    # The latest closing answer of this client's visits (nurse app), in one
+    # line for the client screen: "No further visits wanted — <reason>,
+    # <date>, by <nurse>" (owner UAT 2026-11-04, MB-07). Worked out as the
+    # superuser from the bookings (a reader of the client may not read every
+    # booking), per reader language and time zone, never stored.
+    visit_close_status = fields.Char(
+        string='Further visits', compute='_compute_visit_close_status', compute_sudo=True)
+
+    @api.depends_context('lang', 'tz')
+    def _compute_visit_close_status(self):
+        import pytz
+        FSO = self.env['health.fieldservice.order'].sudo()
+        try:
+            tz = pytz.timezone(self.env.context.get('tz') or self.env.user.tz or 'Asia/Ho_Chi_Minh')
+        except pytz.UnknownTimeZoneError:
+            tz = pytz.timezone('Asia/Ho_Chi_Minh')
+        for partner in self:
+            partner.visit_close_status = False
+            if not partner.id or not partner.is_patient:
+                continue
+            last = FSO.search([('patient_id', '=', partner.id),
+                               ('visit_close_answer', '!=', False)],
+                              order='visit_close_date desc, id desc', limit=1)
+            if not last:
+                continue
+            label = dict(last._fields['visit_close_answer']._description_selection(self.env)).get(
+                last.visit_close_answer, '')
+            when = pytz.utc.localize(last.visit_close_date).astimezone(tz).strftime('%d/%m/%Y') \
+                if last.visit_close_date else ''
+            parts = [label + (' — ' + last.visit_close_reason if last.visit_close_reason else '')]
+            if when:
+                parts.append(when)
+            if last.visit_close_by_id:
+                parts.append(self.env._('by %s', last.visit_close_by_id.name))
+            parts.append(last.name)
+            partner.visit_close_status = ', '.join(p for p in parts if p)
+
     def get_booking_timeline_data(self):
         self.ensure_one()
         FSO = self.env['health.fieldservice.order']

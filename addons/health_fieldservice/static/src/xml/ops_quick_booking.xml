@@ -140,6 +140,7 @@
                                 <div class="qb-form-group">
                                     <div class="qb-form-label">Duration</div>
                                     <select class="qb-form-input" t-on-change="onDurationChange">
+                                        <option value="0.5">30 minutes</option>
                                         <option value="1">1 hour</option>
                                         <option value="2" selected="">2 hours</option>
                                         <option value="3">3 hours</option>
@@ -431,7 +432,7 @@
                                 </div>
                                 <div class="qb-summary-row">
                                     <span class="qb-sum-label">Service</span>
-                                    <span class="qb-sum-value"><t t-esc="serviceLabel"/> (<t t-esc="state.durationHours"/>h)</span>
+                                    <span class="qb-sum-value"><t t-esc="serviceLabel"/> (<t t-esc="durationLabel"/>)</span>
                                 </div>
                                 <div class="qb-summary-row">
                                     <span class="qb-sum-label">Date &amp; Time</span>
@@ -513,7 +514,7 @@
                             <div class="qb-modal-info-grid">
                                 <div class="qb-modal-info-item">
                                     <span class="qb-mi-label">Service</span>
-                                    <span class="qb-mi-value"><t t-esc="state.creationResult.service_label"/> (<t t-esc="state.durationHours"/>h)</span>
+                                    <span class="qb-mi-value"><t t-esc="state.creationResult.service_label"/> (<t t-esc="durationLabel"/>)</span>
                                 </div>
                                 <div class="qb-modal-info-item">
                                     <span class="qb-mi-label">Date &amp; Time</span>

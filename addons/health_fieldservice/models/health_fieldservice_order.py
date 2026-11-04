@@ -59,6 +59,14 @@ def _selection_fso_state(model):
     ]
 
 
+def _selection_visit_close_answer(model):
+    # The nurse's closing question in the nurse app: is another visit wanted?
+    return [
+        ('next_visit', model.env._('Next visit booked')),
+        ('no_further', model.env._('No further visits wanted')),
+    ]
+
+
 def _selection_service_location(model):
     # Labels follow the legacy service-location wording (Dịch vụ tại).
     return [
@@ -977,6 +985,23 @@ class HealthFieldServiceOrderUnified(models.Model):
     # Additional workflow fields
     patient_contact_confirmed = fields.Boolean('Patient Contact Confirmed', default=False,
                                               help='client has been contacted and confirmed the appointment')
+
+    # ------------------------------------------------------------------
+    # The visit's closing answers (nurse app, after Complete): another visit
+    # wanted or not, the reason, who answered and when, and who got the
+    # follow-up task (owner UAT 2026-11-04, MB-07). Before this they only
+    # went into the client's free-text "assignment_notes", shown nowhere.
+    # ------------------------------------------------------------------
+    visit_close_answer = fields.Selection(
+        _selection_visit_close_answer, string='Further visits', readonly=True,
+        copy=False, tracking=True)
+    visit_close_reason = fields.Char('Reason / note', readonly=True, copy=False)
+    visit_close_follow_up = fields.Boolean('Follow-up requested', readonly=True, copy=False)
+    visit_close_follow_up_user_ids = fields.Many2many(
+        'res.users', 'fso_visit_close_follow_up_user_rel', 'fso_id', 'user_id',
+        string='Follow-up sent to', readonly=True, copy=False)
+    visit_close_by_id = fields.Many2one('res.users', 'Answered by', readonly=True, copy=False)
+    visit_close_date = fields.Datetime('Answered on', readonly=True, copy=False)
 
     is_rescheduled = fields.Boolean(
         'Rescheduled', default=False, copy=False, tracking=True,
@@ -3073,6 +3098,92 @@ class HealthFieldServiceOrderUnified(models.Model):
             'assigned_staff_ids': [s['id'] for s in assigned_staff],
             'staff_list': staff_list,
         }
+
+    # ------------------------------------------------------------------
+    # Visit close: answers + the follow-up task
+    # ------------------------------------------------------------------
+    def _visit_close_area(self):
+        self.ensure_one()
+        return (self.patient_catchment_province_id
+                or self.facility_id.catchment_province_id
+                or self.patient_id.catchment_province_id)
+
+    def _follow_up_recipients(self):
+        """Who gets a follow-up task for this visit (owner ruling 2026-11-04):
+        the Operations Manager(s) of the booking's area — a person employed
+        as Operations Manager whose login works in that area — else the
+        Owner (of that area first). Empty only when the clinic has neither."""
+        self.ensure_one()
+        area = self._visit_close_area()
+        Users = self.env['res.users'].sudo()
+        oms = self.env['hr.employee'].sudo().search([
+            ('is_om_role', '=', True), ('user_id', '!=', False),
+            ('user_id.active', '=', True), ('user_id.share', '=', False),
+        ]).mapped('user_id')
+        if area:
+            in_area = oms.filtered(lambda u: u.catchment_province_id == area)
+            if in_area:
+                return in_area.sorted('id')
+        owner_group = self.env.ref('health_base.group_healthcare_owner', raise_if_not_found=False)
+        if not owner_group:
+            return Users
+        owners = Users.search([
+            ('active', '=', True), ('share', '=', False),
+            ('all_group_ids', 'in', owner_group.ids),
+        ], order='id')
+        if area and owners.filtered(lambda u: u.catchment_province_id == area):
+            return owners.filtered(lambda u: u.catchment_province_id == area)[:1]
+        return owners[:1]
+
+    def action_record_visit_close(self, answer, reason='', need_follow_up=False):
+        """Store the nurse's closing answers on the booking, and when a
+        follow-up is wanted give the area's Operations Manager a task.
+
+        Returns {'follow_up_users': [names]}. Raises UserError when a
+        follow-up was asked for and no task could be created — the app must
+        never report success for a task nobody got."""
+        self.ensure_one()
+        if answer not in ('next_visit', 'no_further'):
+            raise UserError(self.env._('Unknown answer for the next visit.'))
+        reason = (reason or '').strip()
+        recipients = self.env['res.users']
+        if need_follow_up:
+            recipients = self._follow_up_recipients()
+            if not recipients:
+                raise UserError(self.env._(
+                    'No Operations Manager or Owner was found for this area, so the '
+                    'follow-up task could not be created.'))
+        vals = {
+            'visit_close_answer': answer,
+            'visit_close_reason': reason,
+            'visit_close_follow_up': bool(need_follow_up),
+            'visit_close_follow_up_user_ids': [(6, 0, recipients.ids)],
+            'visit_close_by_id': self.env.user.id,
+            'visit_close_date': fields.Datetime.now(),
+        }
+        # The answering nurse may edit her own visit; the follow-up task is a
+        # system action on somebody else's to-do list.
+        self.sudo().write(vals)
+        if need_follow_up:
+            todo = self.env.ref('mail.mail_activity_data_todo', raise_if_not_found=False)
+            target = self.sudo().patient_id or self.sudo()
+            label = dict(_selection_visit_close_answer(self)).get(answer, answer)
+            note = Markup('<p>%s</p><p>%s</p><p>%s</p>') % (
+                self.env._('Booking: %s', self.name),
+                self.env._('Answer: %(answer)s — %(reason)s', answer=label, reason=reason or '—'),
+                self.env._('Answered by %s', self.env.user.name))
+            made = self.env['mail.activity']
+            for user in recipients:
+                made |= target.activity_schedule(
+                    activity_type_id=todo.id if todo else False,
+                    summary=self.env._('Follow up with %s', self.patient_id.name or self.name),
+                    note=note,
+                    date_deadline=fields.Date.today() + timedelta(days=1),
+                    user_id=user.id,
+                )
+            if not made:
+                raise UserError(self.env._('The follow-up task could not be created.'))
+        return {'follow_up_users': recipients.mapped('name')}
 
     def _reschedule_local_label(self, dt):
         """'04/11/2026 14:30' in the booking's time zone (Vietnam by default)."""

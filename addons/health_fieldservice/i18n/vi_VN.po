@@ -16297,3 +16297,105 @@ msgstr "Phí gửi xe (nhân viên)"
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_client_list_ops
 msgid "Second phone"
 msgstr "Số điện thoại 2"
+
+#. module: health_fieldservice
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__visit_close_answer
+#: model:ir.model.fields,field_description:health_fieldservice.field_res_partner__visit_close_status
+msgid "Further visits"
+msgstr "Lượt khám tiếp theo"
+
+#. module: health_fieldservice
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__visit_close_reason
+msgid "Reason / note"
+msgstr "Lý do / ghi chú"
+
+#. module: health_fieldservice
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__visit_close_follow_up
+msgid "Follow-up requested"
+msgstr "Cần theo dõi"
+
+#. module: health_fieldservice
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__visit_close_follow_up_user_ids
+msgid "Follow-up sent to"
+msgstr "Đã giao theo dõi cho"
+
+#. module: health_fieldservice
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__visit_close_by_id
+msgid "Answered by"
+msgstr "Người trả lời"
+
+#. module: health_fieldservice
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__visit_close_date
+msgid "Answered on"
+msgstr "Thời điểm trả lời"
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
+msgid "Next visit booked"
+msgstr "Đã đặt lượt khám tiếp theo"
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
+msgid "No further visits wanted"
+msgstr "Không cần thêm lượt khám"
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
+msgid "Unknown answer for the next visit."
+msgstr "Câu trả lời về lượt khám tiếp theo không hợp lệ."
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
+msgid "No Operations Manager or Owner was found for this area, so the follow-up task could not be created."
+msgstr "Không tìm thấy Quản lý vận hành hoặc Chủ sở hữu cho khu vực này nên không thể tạo việc theo dõi."
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
+msgid "Booking: %s"
+msgstr "Lịch hẹn: %s"
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
+msgid "Answer: %(answer)s — %(reason)s"
+msgstr "Trả lời: %(answer)s — %(reason)s"
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
+msgid "Answered by %s"
+msgstr "Người trả lời: %s"
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
+msgid "Follow up with %s"
+msgstr "Theo dõi %s"
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
+msgid "The follow-up task could not be created."
+msgstr "Không thể tạo việc theo dõi."
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/res_partner.py:0
+msgid "by %s"
+msgstr "bởi %s"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops_visit_close
+msgid "Visit close"
+msgstr "Kết thúc lượt khám"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/xml/ops_quick_booking.xml:0
+msgid "30 minutes"
+msgstr "30 phút"

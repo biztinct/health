@@ -14,7 +14,10 @@ Server-side halves of items 3-9, 11 and 14:
 """
 from datetime import timedelta
 
+from unittest.mock import patch
+
 from odoo import fields
+from odoo.exceptions import UserError
 from odoo.tests import TransactionCase, new_test_user, tagged
 
 
@@ -258,3 +261,99 @@ class TestUatVideoFixes(TransactionCase):
         keys = [f['key'] for f in Order._quick_booking_pricing_factors(
             {'service_location': 'home', 'distance': 6.0})]
         self.assertIn('pin', keys)
+
+    # ---------------------------------------------------------------- round 3
+    def _om_user(self, login, area):
+        """A login employed as Operations Manager, working in `area`."""
+        user = new_test_user(self.env, login=login, groups='base.group_user')
+        user.write({'catchment_province_id': area.id})
+        emp = self.env['hr.employee'].create({'name': login, 'user_id': user.id})
+        Role = self.env['biz.access.role'] if 'biz.access.role' in self.env else None
+        role = False
+        if Role is not None and 'clinical_kind' in Role._fields:
+            role = Role.search([('clinical_kind', '=', 'operations_manager')], limit=1)
+        if role:
+            emp.job_role_id = role
+        else:
+            emp.write({'is_om_role': True})
+        self.assertTrue(emp.is_om_role)
+        return user
+
+    def test_r3_1_no_further_visits_is_stored_and_shown(self):
+        fso = self._booking()
+        res = fso.with_context(lang='en_US').action_record_visit_close(
+            'no_further', reason='Patient improved/recovered')
+        self.assertEqual(res['follow_up_users'], [])
+        self.assertEqual(fso.visit_close_answer, 'no_further')
+        self.assertEqual(fso.visit_close_reason, 'Patient improved/recovered')
+        self.assertEqual(fso.visit_close_by_id, self.env.user)
+        self.assertTrue(fso.visit_close_date)
+        self.assertFalse(fso.visit_close_follow_up)
+        status = self.patient.with_context(lang='en_US', tz='Asia/Ho_Chi_Minh').visit_close_status
+        self.assertIn('No further visits wanted — Patient improved/recovered', status)
+        self.assertIn(fso.name, status)
+        self.assertIn('by %s' % self.env.user.name, status)
+
+    def test_r3_1b_the_card_is_on_the_booking_and_the_line_on_the_client(self):
+        arch = self.env['health.fieldservice.order'].get_view(
+            self.env.ref('health_fieldservice.view_health_fso_form_ops').id, 'form')['arch']
+        self.assertIn('visit_close_card', arch)
+        self.assertIn('visit_close_answer', arch)
+        arch = self.env['res.partner'].get_view(
+            self.env.ref('health_fieldservice.view_health_patient_form_ops').id, 'form')['arch']
+        self.assertIn('visit_close_status', arch)
+
+    def test_r3_2_follow_up_goes_to_the_areas_operations_manager(self):
+        other = self.env['health.catchment.province'].create({'name': 'UAT Other Area', 'code': '75'})
+        here = self._om_user('uatfix_om_here', self.province)
+        there = self._om_user('uatfix_om_there', other)
+        fso = self._booking()
+        res = fso.action_record_visit_close('no_further', reason='Patient declined', need_follow_up=True)
+        self.assertIn(here.name, res['follow_up_users'])
+        self.assertNotIn(there.name, res['follow_up_users'])
+        self.assertIn(here, fso.visit_close_follow_up_user_ids)
+        acts = self.env['mail.activity'].search([
+            ('res_model', '=', 'res.partner'), ('res_id', '=', self.patient.id),
+            ('user_id', '=', here.id)])
+        self.assertTrue(acts, 'the area OM has a follow-up task')
+        self.assertFalse(self.env['mail.activity'].search([
+            ('res_model', '=', 'res.partner'), ('res_id', '=', self.patient.id),
+            ('user_id', '=', there.id)]))
+
+    def test_r3_2b_no_om_falls_back_to_an_owner_and_never_fakes_success(self):
+        fso = self._booking()
+        Emp = self.env['hr.employee']
+        with patch.object(type(Emp), 'search', lambda self_, *a, **k: Emp.browse()):
+            owners = fso._follow_up_recipients()
+        owner_group = self.env.ref('health_base.group_healthcare_owner')
+        self.assertTrue(owners, 'an Owner exists on this database')
+        self.assertTrue(all(owner_group in u.all_group_ids for u in owners))
+        with patch.object(type(fso), '_follow_up_recipients', lambda self_: self.env['res.users']):
+            with self.assertRaises(UserError):
+                fso.action_record_visit_close('no_further', reason='x', need_follow_up=True)
+
+    def test_r3_7_thirty_minute_quick_booking(self):
+        res = self.env['health.fieldservice.order'].action_create_from_quick_booking_owl({
+            'patient_id': self.patient.id,
+            'service_type': 'clinic_visit',
+            'duration_hours': 0.5,
+            'time_hour': 9.5,
+            'date': str(fields.Date.today() + timedelta(days=7)),
+            'facility_id': self.facility.id,
+            'service_location': 'clinic',
+            'draft_only': True,
+        })
+        self.assertTrue(res['success'], res)
+        fso = self.env['health.fieldservice.order'].browse(res['booking_id'])
+        self.assertEqual(fso.scheduled_duration, 30)
+        self.assertEqual(fso.estimated_end_datetime - fso.scheduled_datetime, timedelta(minutes=30))
+        self.assertEqual(fso.estimated_duration, 0.5)
+        product = self.env['product.product'].create(
+            {'name': 'UAT 30 min probe', 'type': 'service', 'list_price': 120000, 'sale_ok': True})
+        preview = self.env['health.fieldservice.order'].preview_quick_booking_pricing({
+            'patient_id': self.patient.id, 'service_type': 'clinic_visit',
+            'service_location': 'clinic', 'facility_id': self.facility.id,
+            'date': str(fields.Date.today() + timedelta(days=7)), 'time_hour': 9.5,
+            'duration_hours': 0.5, 'product_lines': [{'product_id': product.id, 'qty': 1}]})
+        self.assertEqual(len(preview['lines']), 1)
+        self.assertGreater(preview['lines'][0]['unit_price'], 0)
