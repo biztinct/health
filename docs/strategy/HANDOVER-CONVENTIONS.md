@@ -4352,7 +4352,7 @@ a no-op.
 - **§5.320 — the product catalogue's region filter never fires on carejiox.**
     `sale.order._get_product_catalog_domain` (advanced_pricing) maps the
     province NAME `'Hanoi'` / `'Ho Chi Minh City'` to the code suffix, but the
-    live provinces are named "Hà Nội" / "TP. Hồ Chí Minh", so every quote's
+    live provinces are named "Hà Nội" / "TPHCM", so every quote's
     catalogue lists both regions. The nurse app's Add service window filters
     by the suffix of the visit's own lines instead (`_hanoi` / `_tphcm`), seen
     working on BK3851 after the first deploy listed `_tphcm` items for a Hà
