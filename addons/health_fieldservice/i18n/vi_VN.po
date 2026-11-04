@@ -16238,3 +16238,32 @@ msgid ""
 msgstr ""
 "<span class=\"ws-ico\" data-icon=\"history\"/>\n"
 "                                            <span>Tạo lúc</span>"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
+msgid "Waiting for staff to accept"
+msgstr "Chờ nhân viên chấp nhận"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
+msgid "Next: Waiting for staff to accept"
+msgstr "Tiếp theo: Chờ nhân viên chấp nhận"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
+msgid ""
+"Staff are chosen. The visit moves on when they accept it in the nurse app."
+msgstr ""
+"Đã chọn nhân viên. Lịch hẹn sẽ chuyển bước khi nhân viên chấp nhận trên ứng "
+"dụng điều dưỡng."
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
+msgid "Change Staff"
+msgstr "Đổi nhân viên"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_booking_glance.js:0
+msgid "sent to %s"
+msgstr "đã gửi cho %s"

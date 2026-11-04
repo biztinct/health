@@ -611,7 +611,7 @@
 
                             <!-- ── CONFIRMED: Assign Staff ── -->
                             <div class="vu-action-card vu-action-card--primary vu-show-on-confirmed"
-                                 invisible="state != 'confirmed'">
+                                 invisible="state != 'confirmed' or has_staff_assigned">
                                 <div class="vu-action-card__title">
                                     <i class="fa fa-users"/> Next: Assign Staff
                                 </div>
@@ -622,6 +622,23 @@
                                     <button name="action_manual_assign_staff" type="object"
                                             class="vu-action-btn vu-action-btn--primary">
                                         <i class="fa fa-user-plus"/> Assign Staff
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- ── CONFIRMED with staff chosen: waiting for them to accept ── -->
+                            <div class="vu-action-card vu-action-card--primary vu-show-on-confirmed"
+                                 invisible="state != 'confirmed' or not has_staff_assigned">
+                                <div class="vu-action-card__title">
+                                    <i class="fa fa-hourglass-half"/> Next: Waiting for staff to accept
+                                </div>
+                                <div class="vu-action-card__subtitle">
+                                    Staff are chosen. The visit moves on when they accept it in the nurse app.
+                                </div>
+                                <div class="vu-action-card__actions">
+                                    <button name="action_manual_assign_staff" type="object"
+                                            class="vu-action-btn vu-action-btn--secondary">
+                                        <i class="fa fa-user-plus"/> Change Staff
                                     </button>
                                 </div>
                             </div>
@@ -1228,7 +1245,7 @@
                                 <!-- ── CONFIRMED: Assign Staff ── -->
                                 <div name="confirmed_assign_card"
                                      class="vu-action-card vu-action-card--primary vu-show-on-confirmed"
-                                     invisible="state != 'confirmed'">
+                                     invisible="state != 'confirmed' or has_staff_assigned">
                                     <div class="vu-action-card__supertitle">Next step</div>
                                     <div class="vu-action-card__title">
                                         Assign Staff
@@ -1241,6 +1258,27 @@
                                         <button name="action_manual_assign_staff" type="object"
                                                 class="vu-action-btn vu-action-btn--primary">
                                             <i class="fa fa-user-plus"/> Assign Staff
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- ── CONFIRMED with staff chosen: the booking moves to
+                                     Assigned when the staff accept it in the nurse app ── -->
+                                <div name="confirmed_awaiting_card"
+                                     class="vu-action-card vu-action-card--primary vu-show-on-confirmed"
+                                     invisible="state != 'confirmed' or not has_staff_assigned">
+                                    <div class="vu-action-card__supertitle">Next step</div>
+                                    <div class="vu-action-card__title">
+                                        Waiting for staff to accept
+                                    </div>
+                                    <div class="vu-action-card__subtitle">
+                                        Staff are chosen. The visit moves on when they accept it in the nurse app.
+                                    </div>
+                                    <widget name="ws_booking_hint"/>
+                                    <div class="vu-action-card__actions">
+                                        <button name="action_manual_assign_staff" type="object"
+                                                class="vu-action-btn vu-action-btn--secondary">
+                                            <i class="fa fa-user-plus"/> Change Staff
                                         </button>
                                     </div>
                                 </div>

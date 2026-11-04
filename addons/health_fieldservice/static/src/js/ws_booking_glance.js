@@ -332,6 +332,8 @@ export class WsBookingHint extends Component {
             const parts = [visit];
             if (!f.hasStaff) {
                 parts.push(_t("nobody assigned yet"));
+            } else if (f.staffNames.length) {
+                parts.push(_t("sent to %s", f.staffNames.join(", ")));
             }
             return parts.filter(Boolean).join(" · ");
         }

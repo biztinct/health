@@ -82,6 +82,12 @@ class ScribeCommon:
 
     def _make_job(self, note=None, audio=_AUDIO, mimetype='audio/webm'):
         note = note or self._make_note()
+        # Recording consent is a precondition of storing the audio at all
+        # (register_upload → require_consent under health_consent.enforce);
+        # the ai_processing consent the sweep checks stays per-test.
+        patient = note.order_id.patient_id
+        if not self.env['health.consent'].get_consent(patient, 'audio_recording'):
+            self._grant_consent('audio_recording', patient)
         return self.Job.register_upload(
             note.order_id, note, audio, mimetype, filename='rec.webm',
             duration_s=3.0)
@@ -125,13 +131,17 @@ class TestUpload(HttpCase, ScribeCommon):
         cls.nurse_emp = cls.env['hr.employee'].create(
             {'name': 'Scribe Nurse', 'user_id': cls.nurse.id})
 
-    def _assigned_note(self):
+    def _assigned_note(self, recording_consent=True):
         """A note whose FSO the nurse is assigned to — the production case (a
         nurse uploads audio for HER visit; the FSO record rule requires
-        catchment + assignment)."""
+        catchment + assignment). The client's audio_recording consent is on
+        file unless recording_consent=False: with health_consent.enforce on
+        (it is on carejiox) register_upload refuses an upload without it."""
         note = self._make_note()
         note.order_id.action_assign_staff_to_fso(
             self.nurse_emp.id, assignment_role='lead')
+        if recording_consent:
+            self._grant_consent('audio_recording')
         return note
 
     def _upload(self, note, ctype='audio/webm', payload=_AUDIO):
@@ -144,7 +154,7 @@ class TestUpload(HttpCase, ScribeCommon):
         note = self._assigned_note()
         self.authenticate(self.nurse.login, self.nurse.login)
         res = self._upload(note)
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 200, res.text)
         job = self.Job.sudo().search([('note_id', '=', note.id)])
         self.assertEqual(len(job), 1)
         self.assertEqual(job.state, 'pending')
@@ -155,6 +165,17 @@ class TestUpload(HttpCase, ScribeCommon):
             ('client_id', '=', self.patient.id),
             ('consent_type', '=', 'audio_recording')], limit=1)
         self.assertTrue(log)
+
+    def test_upload_without_recording_consent_refused(self):
+        """Enforcement on + no audio_recording consent → 403, nothing stored."""
+        self.env['ir.config_parameter'].sudo().set_param(
+            'health_consent.enforce', 'True')
+        note = self._assigned_note(recording_consent=False)
+        self.authenticate(self.nurse.login, self.nurse.login)
+        res = self._upload(note)
+        self.assertEqual(res.status_code, 403, res.text)
+        self.assertFalse(self.Job.sudo().search([('note_id', '=', note.id)]))
+        self.assertFalse(note.audio_ids)
 
     def test_non_audio_rejected(self):
         note = self._assigned_note()

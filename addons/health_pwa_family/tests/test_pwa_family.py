@@ -93,6 +93,9 @@ class PwaFamilyBase(HttpCase):
             'client_id': (patient or self.patient).id,
             'consent_type_id': self.env['health.lookup.value']._default_for('consent_type', 'data_sharing'), 'method': 'verbal',
             'verbal_witness_id': self.env.uid,
+            # health_consent.require_notice_evidence may be on (it is on carejiox):
+            # a grant then needs the notice that was shown to the client.
+            'notice_version': 'SYNTHETIC-TEST', 'notice_text': 'Synthetic test purpose notice',
             'effective_date': fields.Date.today()})
         consent.action_grant()
         return consent
