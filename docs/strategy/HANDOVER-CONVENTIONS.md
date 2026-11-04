@@ -4298,3 +4298,54 @@ a no-op.
     widget is a searchable menu (`.o_select_menu_item`) and datetimes type as
     `MM/DD/YYYY hh:mm:ss AM`. The Owner's Clients list (action 1430) searches
     names and books with `button[name=action_create_fso]`. (UAT, 2026-11-04.)
+- **§5.314 — no permission group tells an Operations Manager from an
+    Accountant.** On carejiox (checked 2026-11-04) the Operations Manager role
+    carries every group the Accountant role carries (Finance included), and
+    the Accountant role carries `group_healthcare_operations_manager`. So an OM
+    "holds" the Accountant role by group superset and sees all twelve
+    Owner+Accountant Finance sidebar entries, and `groups=` cannot hide a
+    button from OM while keeping it for Finance. The posted-invoice rule
+    (owner ruling, UAT item 17) is therefore `account.move.
+    _health_user_can_correct_posted`: Owner, or Finance WITHOUT
+    `group_healthcare_manager` (which OM and every role above it but Owner
+    holds), surfaced as the non-stored `health_can_correct_posted` flag on the
+    form/list and enforced in `button_draft`. Making the Accountant role bigger
+    with a new group would have dropped those twelve entries from every OM
+    (the §5.307 order problem in reverse). (UAT fixes, 2026-11-04.)
+- **§5.315 — client IDs stay `PP 0000YY` and a client made from a contact
+    KEEPS the contact's number** (owner re-ruling 2026-11-04, confirming the
+    2026-08 design; the client workbook's `CC_nnnnnYY` note A7 describes the
+    hand-loaded test clients only). A `CC_` client counter was coded and
+    withdrawn the same day; no live record was renumbered (the one BK-05
+    client briefly written as `01_0000826` is back to `01 597026`).
+- **§5.316 — the CRM role CAN create staff assignments; check the role's
+    groups, not the ACL file.** The `health.staff.assignment` ACL lists
+    nurse/OM/head-nurse/owner, which reads as "CRM cannot" — but on carejiox
+    the CRM role bundle carries `group_healthcare_operations_manager`
+    (`has_access('create')` is True for uat_crm), so Quick Booking's staff
+    and doctor assignments are created as the CRM user, no sudo needed.
+    `TestUatVideoFixes.test_07b` books as a user holding the live CRM role's
+    groups. (UAT, 2026-11-04.)
+- **§5.316b — distance prices only travel.** `sale.order.
+    _pricing_travel_distance` and the Quick Booking preview pass distance 0
+    to the rules when the visit is at the clinic or online
+    (`health.fieldservice.order._NO_TRAVEL_LOCATIONS`); the chip follows the
+    same rule. None of the 17 acceptance bookings (BK3832-3848) changes: every
+    clinic one already had distance 0. (UAT, 2026-11-04.)
+- **§5.317 — `mobile` is the SECOND phone.** The migration put the legacy
+    number in `mobile` and the CMS client list labelled `mobile` "Phone"
+    while the client screen's Phone is `phone`. Now: list Phone = `phone`,
+    "Second phone" = `mobile` (list optional, client screen Contact card).
+    The acceptance clients had `mobile` == `phone` from the test-data load;
+    restored/cleared from the workbook. (UAT item 18.)
+- **§5.318 — nurse-app endpoints that fail for nurses too (pre-existing).**
+    As nurse_hn on carejiox: `/health_pwa/api/patients` (record rule refuses
+    `health.facility`), `/api/future_bookings` (tz-aware datetime passed to a
+    naive field), `/api/config/clinic-phone` (`enable_offline_mode` missing on
+    `health.pwa.config`). The doctor-only failures were the stage/team reads
+    (fixed: read ACLs for the Doctor group). Up to 1.21.2 the app's header —
+    the only Accept/Decline bell — and nav were `display:none` from 1024 px.
+    (UAT items 1, 3.)
+- **§5.319 — `health_fieldservice/i18n/vi_VN.po` has a duplicate msgid**
+    (the Booking Notes card title, lines ~1370 and ~16020): `msgfmt` refuses
+    the file; Odoo's reader keeps the last. Pre-existing. (UAT, 2026-11-04.)
