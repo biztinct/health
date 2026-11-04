@@ -43,10 +43,13 @@ def _selection_priority(model):
 
 
 def _selection_fso_state(model):
-    # Labels follow the legacy booking-status wording (Trạng thái lịch hẹn).
+    # Labels follow the legacy booking-status wording (Trạng thái lịch hẹn),
+    # except 'confirmed': the status chip and the list must say what the
+    # progress bar says ("Confirmed"), owner UAT 2026-11-04 — it said
+    # "New Booking" on a confirmed booking.
     return [
         ('draft', model.env._('Draft')),
-        ('confirmed', model.env._('New Booking')),
+        ('confirmed', model.env._('Confirmed')),
         ('assigned', model.env._('Assigned')),
         ('in_progress', model.env._('In Progress')),
         ('completed', model.env._('Completed')),
@@ -558,8 +561,12 @@ class HealthFieldServiceOrderUnified(models.Model):
     def _inverse_assigned_staff(self):
         """Create/update staff assignments when assigned_staff_ids is modified"""
         for record in self:
+            # Declined/deferred assignments are history, not the current team:
+            # leave them alone (so a decline is never deleted by a later edit)
+            # and let a re-chosen person get a fresh assignment.
             current_staff_ids = set(record.assignment_ids.filtered(
-                lambda a: a.state != 'template' and a.assignment_role != 'doctor'
+                lambda a: a.state not in ('template', 'cancelled', 'deferred')
+                and a.assignment_role != 'doctor'
             ).mapped('staff_id.id'))
             new_staff_ids = set(record.assigned_staff_ids.ids)
 
@@ -573,7 +580,8 @@ class HealthFieldServiceOrderUnified(models.Model):
 
                 # Enforce single lead: first non-doctor is lead, subsequent are support
                 existing_lead = record.assignment_ids.filtered(
-                    lambda a: a.state != 'template' and a.assignment_role == 'lead'
+                    lambda a: a.state not in ('template', 'cancelled', 'deferred')
+                    and a.assignment_role == 'lead'
                 )
                 role = 'lead' if not existing_lead else 'support'
 
@@ -599,17 +607,22 @@ class HealthFieldServiceOrderUnified(models.Model):
             staff_to_remove = current_staff_ids - new_staff_ids
             if staff_to_remove:
                 assignments_to_remove = record.assignment_ids.filtered(
-                    lambda a: a.state != 'template' and a.staff_id.id in staff_to_remove
+                    lambda a: a.state not in ('template', 'cancelled', 'deferred')
+                    and a.assignment_role != 'doctor'
+                    and a.staff_id.id in staff_to_remove
                 )
                 assignments_to_remove.unlink()
 
-    @api.depends('assignment_ids.staff_id', 'assignment_ids.assignment_role')
+    @api.depends('assignment_ids.staff_id', 'assignment_ids.assignment_role', 'assignment_ids.state')
     def _compute_lead_staff(self):
         """Compute lead staff from assignment records"""
         for record in self:
-            # Filter for lead assignments - get the staff member from the first one
+            # Filter for lead assignments - get the staff member from the first one.
+            # A declined (cancelled) or deferred lead is no longer on the care
+            # team — same rule as _compute_assigned_staff.
             lead_assignment = record.assignment_ids.filtered(
-                lambda a: a.state != 'template' and a.assignment_role == 'lead'
+                lambda a: a.state not in ('template', 'cancelled', 'deferred')
+                and a.assignment_role == 'lead'
             )
 
             # Extract the first lead staff member if it exists
@@ -3002,47 +3015,47 @@ class HealthFieldServiceOrderUnified(models.Model):
             current_date = local_dt.strftime('%Y-%m-%d')
             current_hour = local_dt.hour + local_dt.minute / 60.0
 
-        assigned_staff = []
-        for assignment in self.sudo().assignment_ids.filtered(
-            lambda a: a.state not in ('cancelled', 'template')
-        ):
-            staff = assignment.staff_id
-            if staff:
-                assigned_staff.append({
-                    'id': staff.id,
-                    'name': staff.name,
-                    'job_title': staff.job_title or '',
-                    'initials': ''.join([p[0] for p in (staff.name or '').split() if p][:2]).upper(),
-                })
-
-        # Same filter as the booking wizard (get_quick_booking_staff):
-        # nurses/support staff only (exclude doctors), scoped to this
-        # booking's facility, with a fallback to all staff when nobody is
-        # linked to the facility.
-        Emp = self.env['hr.employee'].sudo()
-        facility_clause = []
-        if self.facility_id:
-            facility_clause = [('healthcare_facility_id', '=', self.facility_id.id)]
-            if not Emp.search_count([
-                ('is_healthcare_staff', '=', True),
-                ('employment_status', '=', 'active'),
-            ] + facility_clause):
-                facility_clause = []
-
-        staff_list = []
-        employees = Emp.search([
-            ('is_healthcare_staff', '=', True),
-            ('employment_status', '=', 'active'),
-            # nurse-only: staff must hold the Nurse access role.
-            ('is_nurse_role', '=', True),
-        ] + facility_clause, order='name')
-        for emp in employees:
-            staff_list.append({
+        def _chip(emp, is_doctor):
+            return {
                 'id': emp.id,
                 'name': emp.name,
                 'job_title': emp.job_title or '',
                 'initials': ''.join([p[0] for p in (emp.name or '').split() if p][:2]).upper(),
-            })
+                'is_doctor': bool(is_doctor),
+            }
+
+        assigned_staff = []
+        seen_assigned = set()
+        for assignment in self.sudo().assignment_ids.filtered(
+            lambda a: a.state not in ('cancelled', 'template', 'deferred')
+        ):
+            staff = assignment.staff_id
+            if staff and staff.id not in seen_assigned:
+                seen_assigned.add(staff.id)
+                assigned_staff.append(_chip(
+                    staff, assignment.assignment_role == 'doctor' or staff.is_doctor_role))
+
+        # Same lists as the booking wizard (get_quick_booking_staff): eligible
+        # nurses AND doctors, scoped to this booking's facility (fallback to
+        # all staff when nobody is linked to it).
+        lists = self.get_quick_booking_staff(
+            facility_id=self.facility_id.id if self.facility_id else False)
+        Emp = self.env['hr.employee'].sudo()
+        staff_list = []
+        listed = set()
+        for row in lists.get('staff_list', []):
+            staff_list.append(_chip(Emp.browse(row['id']), False))
+            listed.add(row['id'])
+        for row in lists.get('doctor_list', []):
+            if row['id'] not in listed:
+                staff_list.append(_chip(Emp.browse(row['id']), True))
+                listed.add(row['id'])
+        # Everybody currently on the booking gets a chip, so each one can be
+        # removed — even when they fall outside the eligible lists.
+        for chip in assigned_staff:
+            if chip['id'] not in listed:
+                staff_list.append(chip)
+                listed.add(chip['id'])
 
         return {
             'booking_id': self.id,
@@ -3060,6 +3073,35 @@ class HealthFieldServiceOrderUnified(models.Model):
             'assigned_staff_ids': [s['id'] for s in assigned_staff],
             'staff_list': staff_list,
         }
+
+    def _reschedule_local_label(self, dt):
+        """'04/11/2026 14:30' in the booking's time zone (Vietnam by default)."""
+        import pytz
+        if not dt:
+            return '—'
+        try:
+            tz = pytz.timezone(self.booking_timezone or 'Asia/Ho_Chi_Minh')
+        except Exception:
+            tz = pytz.timezone('Asia/Ho_Chi_Minh')
+        return pytz.utc.localize(dt).astimezone(tz).strftime('%d/%m/%Y %H:%M')
+
+    def _post_reschedule_history(self, old_datetime, added_ids=(), removed_ids=()):
+        """Leave a trace of a reschedule on the booking's history (chatter),
+        in the language of the person who did it."""
+        self.ensure_one()
+        Emp = self.env['hr.employee'].sudo()
+        lines = [self.env._(
+            'Rescheduled from %(old)s to %(new)s',
+            old=self._reschedule_local_label(old_datetime),
+            new=self._reschedule_local_label(self.scheduled_datetime))]
+        if added_ids:
+            lines.append(self.env._(
+                'Staff added: %s', ', '.join(Emp.browse(list(added_ids)).mapped('name'))))
+        if removed_ids:
+            lines.append(self.env._(
+                'Staff removed: %s', ', '.join(Emp.browse(list(removed_ids)).mapped('name'))))
+        body = Markup('<br/>').join(lines)
+        self.message_post(body=body, subtype_xmlid='mail.mt_note')
 
     def action_cancel_booking(self):
         """Cancel the booking - opens wizard for structured cancellation"""
@@ -3139,7 +3181,7 @@ class HealthFieldServiceOrderUnified(models.Model):
 
         old_datetime = fso.scheduled_datetime
         old_staff_ids = set(fso.assignment_ids.filtered(
-            lambda a: a.state not in ('cancelled', 'template')
+            lambda a: a.state not in ('cancelled', 'template', 'deferred')
         ).mapped('staff_id.id'))
 
         hour = int(new_time_hour)
@@ -3157,13 +3199,17 @@ class HealthFieldServiceOrderUnified(models.Model):
 
         new_staff_set = set(new_staff_ids) if new_staff_ids else set()
         staff_changed = new_staff_set != old_staff_ids
+        removed_staff = set()
+        added_staff = set()
 
-        if staff_changed and new_staff_set:
+        # Every assigned person is a removable chip on the screen, so an empty
+        # selection is a real choice ("nobody") when somebody was assigned.
+        if staff_changed:
             removed_staff = old_staff_ids - new_staff_set
             added_staff = new_staff_set - old_staff_ids
 
             for assignment in fso.assignment_ids.filtered(
-                lambda a: a.state not in ('cancelled', 'template') and a.staff_id.id in removed_staff
+                lambda a: a.state not in ('cancelled', 'template', 'deferred') and a.staff_id.id in removed_staff
             ):
                 staff = assignment.staff_id
                 assignment.write({'state': 'cancelled'})
@@ -3186,9 +3232,19 @@ class HealthFieldServiceOrderUnified(models.Model):
                     continue
                 duration_mins = fso.scheduled_duration or 60
                 end_dt = fso.scheduled_datetime + timedelta(minutes=duration_mins)
+                # A doctor joins as doctor; the first nurse with no active
+                # lead becomes lead, the rest support.
+                if staff.is_doctor_role:
+                    role = 'doctor'
+                else:
+                    has_lead = fso.assignment_ids.filtered(
+                        lambda a: a.state not in ('cancelled', 'template', 'deferred')
+                        and a.assignment_role == 'lead')
+                    role = 'support' if has_lead else 'lead'
                 self.env['health.staff.assignment'].create({
                     'fso_id': fso.id,
                     'staff_id': staff_id,
+                    'assignment_role': role,
                     'assignment_date': fso.scheduled_datetime,
                     'planned_start_time': fso.scheduled_datetime,
                     'planned_end_time': end_dt,
@@ -3196,10 +3252,13 @@ class HealthFieldServiceOrderUnified(models.Model):
                 })
                 fso._send_staff_reschedule_notification(staff, old_datetime=old_datetime)
 
-            for assignment in fso.assignment_ids.filtered(
-                lambda a: a.state not in ('cancelled', 'template') and a.staff_id.id in (old_staff_ids & new_staff_set)
-            ):
-                pass
+        if fso.primary_doctor_id and fso.primary_doctor_id.id in removed_staff:
+            # The doctor chip was removed: drop the booking's doctor too, or
+            # the care team would keep showing him.
+            fso.primary_doctor_id = False
+
+        if old_datetime != fso.scheduled_datetime or added_staff or removed_staff:
+            fso._post_reschedule_history(old_datetime, added_staff, removed_staff)
 
         tz_str = local_tz
         new_local = pytz.utc.localize(fso.scheduled_datetime).astimezone(local_tz)
@@ -5036,10 +5095,12 @@ class HealthFieldServiceOrderUnified(models.Model):
         return preview
 
     @api.model
-    def action_create_recurring_from_owl(self, patient_id, service_type, duration_hours, time_hour, facility_id, pattern, selected_days, start_date, occurrences, notes='', product_lines=None, staff_id=False, doctor_id=False, package_id=False, assigned_staff_ids=None, draft_only=False):
+    def action_create_recurring_from_owl(self, patient_id, service_type, duration_hours, time_hour, facility_id, pattern, selected_days, start_date, occurrences, notes='', product_lines=None, staff_id=False, doctor_id=False, package_id=False, assigned_staff_ids=None, draft_only=False, lead_id=False, service_location=False, service_address=''):
         """Create recurring FSO bookings from the OWL wizard.
         Creates bookings with quotes, confirms them, and assigns staff — all in one step.
-        If draft_only=True, creates bookings in draft state without confirming or assigning staff."""
+        If draft_only=True, creates bookings in draft state without confirming or assigning staff.
+        Like the single-booking path, every booking carries its originating
+        contact (`lead_id`) and the visit location / address."""
         if not patient_id or not service_type or not facility_id:
             return {'success': False, 'error': 'Missing required fields.'}
 
@@ -5092,6 +5153,12 @@ class HealthFieldServiceOrderUnified(models.Model):
             current += timedelta(days=1)
             iteration += 1
 
+        service_location = service_location or self._quick_booking_location_for(service_type)
+        service_address = (service_address or '').strip()
+        # crm.lead belongs to health_crm (not a dependency): touch it only
+        # when a contact was actually passed in.
+        lead = self.env['crm.lead'].browse(lead_id).exists() if lead_id else False
+
         created_ids = []
         for d in dates:
             local_dt = datetime.combine(d, datetime.min.time()).replace(hour=hours, minute=minutes)
@@ -5105,9 +5172,17 @@ class HealthFieldServiceOrderUnified(models.Model):
                 'scheduled_datetime': utc_dt,
                 'scheduled_duration': int(duration_hours * 60),
                 'intake_notes': notes or '',
+                'service_location': service_location,
             }
+            if service_address:
+                vals['service_address'] = service_address
+            if lead:
+                vals['crm_lead_id'] = lead.id
             fso = self.create(vals)
             created_ids.append(fso.id)
+
+        if lead and not draft_only:
+            lead.write({'patient_id': patient_id, 'contact_outcome': 'service_booked'})
 
         fso_records = self.browse(created_ids)
         quote_summary = {}
@@ -5215,6 +5290,9 @@ class HealthFieldServiceOrderUnified(models.Model):
                     except Exception:
                         pass
 
+                if doctor_id:
+                    fso_rec._ensure_doctor_assignment(doctor_id)
+
         return {
             'success': True,
             'count': len(created_ids),
@@ -5266,6 +5344,9 @@ class HealthFieldServiceOrderUnified(models.Model):
                         })
                 except Exception:
                     pass
+
+            if doctor_id:
+                fso_rec._ensure_doctor_assignment(doctor_id)
 
         return {'success': True}
 
@@ -5408,6 +5489,10 @@ class HealthFieldServiceOrderUnified(models.Model):
         distance = 0.0
         if partner and getattr(partner, 'clinic_drive_distance_km', 0):
             distance = partner.clinic_drive_distance_km or 0.0
+        # Distance is travel: it feeds the price only when staff go to the
+        # client (owner ruling 2026-11-04), never for a clinic/online visit.
+        if vals.get('service_location') in self._NO_TRAVEL_LOCATIONS:
+            distance = 0.0
 
         base_context = {
             'partner_id': partner_id,
@@ -5498,7 +5583,8 @@ class HealthFieldServiceOrderUnified(models.Model):
             factors.append({'key': 'home', 'label': 'Home Visit'})
         elif loc == 'clinic':
             factors.append({'key': 'clinic', 'label': 'Clinic Visit'})
-        if ctx.get('distance'):
+        # Distance means travel: no chip for a visit at the clinic or online.
+        if ctx.get('distance') and loc not in self._NO_TRAVEL_LOCATIONS:
             factors.append({'key': 'pin', 'label': 'Distance: %.1f km' % ctx['distance']})
         if ctx.get('is_after_hours'):
             factors.append({'key': 'moon', 'label': 'After Hours'})
@@ -5623,6 +5709,44 @@ class HealthFieldServiceOrderUnified(models.Model):
 
         return {'slots': slots}
 
+    # Visits where nobody travels to the client: distance never prices them.
+    _NO_TRAVEL_LOCATIONS = ('clinic', 'online')
+
+    @api.model
+    def _quick_booking_location_for(self, service_type):
+        """Where a visit of this type happens, when the screen did not say."""
+        return {
+            'home_visit': 'home', 'clinic_visit': 'clinic', 'consultation': 'clinic',
+            'telemedicine': 'online', 'emergency': 'home', 'follow_up': 'home',
+            'preventive': 'clinic', 'rehabilitation': 'clinic', 'vaccination': 'clinic',
+            'diagnostic': 'clinic',
+        }.get(service_type, 'home')
+
+    def _ensure_doctor_assignment(self, doctor_id):
+        """The doctor chosen when booking is a real assignment (role doctor),
+        not only `primary_doctor_id`: he gets the offer in the nurse app,
+        "View Assignments" lists him and the care team agrees. Idempotent."""
+        Assignment = self.env['health.staff.assignment']
+        for fso in self:
+            if not doctor_id:
+                continue
+            if Assignment.search_count([
+                ('fso_id', '=', fso.id),
+                ('staff_id', '=', doctor_id),
+                ('state', 'not in', ['cancelled', 'template', 'deferred']),
+            ], limit=1):
+                continue
+            try:
+                with self.env.cr.savepoint():
+                    Assignment.create({
+                        'fso_id': fso.id,
+                        'staff_id': doctor_id,
+                        'assignment_role': 'doctor',
+                        'state': 'draft',
+                    })
+            except Exception as e:
+                _logger.warning('Booking %s: doctor assignment not created: %s', fso.name, e)
+
     @api.model
     def action_create_from_quick_booking_owl(self, vals):
         """Create a single FSO booking from the quick booking OWL wizard.
@@ -5681,13 +5805,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         local_dt = tz.localize(local_dt)
         utc_dt = local_dt.astimezone(pytz.UTC).replace(tzinfo=None)
 
-        location_map = {
-            'home_visit': 'home', 'clinic_visit': 'clinic', 'consultation': 'clinic',
-            'telemedicine': 'online', 'emergency': 'home', 'follow_up': 'home',
-            'preventive': 'clinic', 'rehabilitation': 'clinic', 'vaccination': 'clinic',
-            'diagnostic': 'clinic',
-        }
-        service_location = vals.get('service_location') or location_map.get(service_type, 'home')
+        service_location = vals.get('service_location') or self._quick_booking_location_for(service_type)
         service_address = (vals.get('service_address') or '').strip()
 
         fso_vals = {
@@ -5806,6 +5924,9 @@ class HealthFieldServiceOrderUnified(models.Model):
                         })
                 except Exception:
                     pass
+
+            if doctor_id:
+                fso._ensure_doctor_assignment(doctor_id)
 
         service_type_dict = _selection_labels(self, 'service_type')
         service_label = service_type_dict.get(service_type, service_type or '')

@@ -19,6 +19,9 @@ class OpsRecurringBooking extends Component {
 
         const context = this.props.action && this.props.action.context || {};
         this.patientId = context.active_id || context.default_patient_id || false;
+        // The contact the booking came from (set when opened from a contact),
+        // carried onto every booking like Quick Booking does.
+        this.leadId = context.default_lead_id || false;
 
         this.state = useState({
             isLoading: true,
@@ -427,6 +430,9 @@ class OpsRecurringBooking extends Component {
                     doctor_id: this.state.doctorId || false,
                     package_id: this.state.packageId || false,
                     assigned_staff_ids: this.state.assignedStaffIds.length > 0 ? this.state.assignedStaffIds : null,
+                    lead_id: this.leadId || false,
+                    service_location: this._serviceLocation(),
+                    service_address: this.state.patient.address || '',
                 }
             );
 
@@ -489,6 +495,9 @@ class OpsRecurringBooking extends Component {
                     package_id: false,
                     assigned_staff_ids: null,
                     draft_only: true,
+                    lead_id: this.leadId || false,
+                    service_location: this._serviceLocation(),
+                    service_address: this.state.patient.address || '',
                 }
             );
 

@@ -3,6 +3,7 @@ import { Component, useState, useExternalListener } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { _t } from "@web/core/l10n/translation";
 import { useService } from "@web/core/utils/hooks";
+import { deserializeDateTime } from "@web/core/l10n/dates";
 
 export class BookingStaffSheet extends Component {
     static template = "health_fieldservice.BookingStaffSheet";
@@ -87,11 +88,20 @@ export class BookingStaffSheet extends Component {
         return map[status] || status;
     }
 
-    formatTime(timeFloat) {
-        if (!timeFloat && timeFloat !== 0) return "";
-        const hours = Math.floor(timeFloat);
-        const minutes = Math.round((timeFloat - hours) * 60);
-        return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+    /** planned_start_time / planned_end_time are datetimes ("2026-11-05
+     *  07:00:00", UTC as stored), not float hours: read them as such and
+     *  show the reader's wall clock. A float is still accepted. */
+    formatTime(value) {
+        if (value === false || value === null || value === undefined || value === "") {
+            return "";
+        }
+        if (typeof value === "number") {
+            const hours = Math.floor(value);
+            const minutes = Math.round((value - hours) * 60);
+            return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+        }
+        const dt = deserializeDateTime(value);
+        return dt.isValid ? dt.toFormat("HH:mm") : "";
     }
 
     async openFullTimeline() {

@@ -16267,3 +16267,33 @@ msgstr "Đổi nhân viên"
 #: code:addons/health_fieldservice/static/src/js/ws_booking_glance.js:0
 msgid "sent to %s"
 msgstr "đã gửi cho %s"
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
+msgid "Rescheduled from %(old)s to %(new)s"
+msgstr "Đã dời lịch từ %(old)s sang %(new)s"
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
+msgid "Staff added: %s"
+msgstr "Nhân sự được thêm: %s"
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
+msgid "Staff removed: %s"
+msgstr "Nhân sự bị gỡ: %s"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ws_booking_glance.js:0
+msgid "Staff parking"
+msgstr "Phí gửi xe (nhân viên)"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_client_list_ops
+msgid "Second phone"
+msgstr "Số điện thoại 2"

@@ -976,9 +976,19 @@ class AdvancedPricingRule(models.Model):
         (e.g. 'Hanoi - Ultrasound - Is Service at home' -> 'Is Service at home')."""
         self.ensure_one()
         short = self.name or ''
-        parts = short.split(' - ')
+        parts = [p.strip() for p in short.split(' - ') if p.strip()]
+        # A trailing part that is only a number is a record reference left by
+        # whoever named the rule ("Client UAT - Subsequent units - 589"), not
+        # a description: never show "589" as the reason a price changed.
+        while len(parts) > 1 and parts[-1].isdigit():
+            parts.pop()
         if len(parts) >= 2:
             short = parts[-1]
+        elif parts:
+            short = parts[0]
+        if not short or short.isdigit():
+            short = dict(self._fields['action_type']._description_selection(self.env)).get(
+                self.action_type) or short
         return short
 
     def _pricing_rule_action_desc(self):
@@ -996,6 +1006,8 @@ class AdvancedPricingRule(models.Model):
             return '-%.0f%%' % (av * 100)
         if at == 'per_unit':
             return '+%s đ/unit' % '{:,.0f}'.format(av)
+        if at == 'subsequent_fixed':
+            return self.env._('%s đ from the 2nd unit', '{:,.0f}'.format(av))
         if at == 'percentage':
             return '%+g%%' % av
         return ''

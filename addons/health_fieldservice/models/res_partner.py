@@ -427,12 +427,21 @@ class ResPartner(models.Model):
             'follow_up': 'fa-refresh',
         }
 
+        # Show the reader's wall clock (the table below the cards already
+        # does): the stored value is naive UTC.
+        import pytz
+        try:
+            reader_tz = pytz.timezone(
+                self.env.context.get('tz') or self.env.user.tz or 'Asia/Ho_Chi_Minh')
+        except pytz.UnknownTimeZoneError:
+            reader_tz = pytz.timezone('Asia/Ho_Chi_Minh')
+
         bookings = []
         calendar_dots = {}
         for b in bookings_raw:
-            dt = b.scheduled_datetime
-            if not dt:
+            if not b.scheduled_datetime:
                 continue
+            dt = pytz.utc.localize(b.scheduled_datetime).astimezone(reader_tz)
             date_str = dt.strftime('%Y-%m-%d')
             month_key = dt.strftime('%Y-%m')
             day_key = str(dt.day)

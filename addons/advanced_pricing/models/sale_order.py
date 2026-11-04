@@ -411,6 +411,23 @@ class SaleOrder(models.Model):
             local = dt
         return local.hour + local.minute / 60.0
 
+    def _pricing_no_travel(self):
+        """True when nobody travels to the client (clinic or online visit).
+        Read from the booking itself: this order's own location field maps
+        'online' to 'remote' and the client's 'office' to 'clinic'."""
+        self.ensure_one()
+        no_travel = self.env['health.fieldservice.order']._NO_TRAVEL_LOCATIONS
+        if self.fso_id:
+            return self.fso_id.service_location in no_travel
+        return self.fso_service_location in ('clinic', 'remote')
+
+    def _pricing_travel_distance(self):
+        """The km price rules may charge for: none when nobody travels."""
+        self.ensure_one()
+        if self._pricing_no_travel():
+            return 0
+        return self.fso_distance or 0
+
     def _pricing_booking_context(self):
         """Everything price rules and condition checks read about this
         booking — ONE builder for the price, the rule chips, the breakdown
@@ -423,7 +440,9 @@ class SaleOrder(models.Model):
                               if l.product_id and not l.display_type],
             'partner_id': self.partner_id.id,
             'date_order': self.date_order,
-            'distance': self.fso_distance or 0,
+            # Distance is travel: it feeds the rules only when staff go to the
+            # client, never for a clinic or online visit (owner 2026-11-04).
+            'distance': self._pricing_travel_distance(),
             'appointment_hour': self.appointment_hour or 0,
             'is_weekend': self.is_weekend,
             'is_holiday': self.is_holiday,
@@ -884,7 +903,8 @@ class SaleOrder(models.Model):
                 factors.append(f'{self._factor_icon("home")} {_("Home Visit")}')
             elif loc == 'clinic':
                 factors.append(f'{self._factor_icon("clinic")} {_("Clinic Visit")}')
-            if self.fso_distance and self.fso_distance > 0:
+            # Distance means travel: no chip for a visit at the clinic or online.
+            if self.fso_distance and self.fso_distance > 0 and not self._pricing_no_travel():
                 factors.append(
                     f'{self._factor_icon("pin")} '
                     f'{_("Distance: %(distance).1f km", distance=self.fso_distance)}'
@@ -938,30 +958,11 @@ class SaleOrder(models.Model):
                 for rule in approved_rules.sorted('sequence'):
                     try:
                         if rule.evaluate_condition(line.product_id.id, self.partner_id.id, qty, ctx):
-                            # Format the rule description
-                            action_desc = ''
-                            if rule.action_type == 'add':
-                                action_desc = f'+{fmt(rule.action_value)} đ'
-                            elif rule.action_type == 'fixed':
-                                action_desc = f'→ {fmt(rule.action_value)} đ'
-                            elif rule.action_type == 'multiply':
-                                action_desc = f'×{rule.action_value}'
-                            elif rule.action_type == 'discount':
-                                action_desc = f'-{rule.action_value*100:.0f}%'
-                            elif rule.action_type == 'per_unit':
-                                action_desc = f'+{fmt(rule.action_value)} đ/unit'
-                            elif rule.action_type == 'percentage':
-                                action_desc = f'{rule.action_value:+g}%'
-
-                            # Short trigger name from rule name
-                            short_name = rule.name
-                            # Strip region prefix like "HCMC - Product Name - "
-                            parts = short_name.split(' - ')
-                            if len(parts) >= 3:
-                                short_name = parts[-1]  # Last segment is the trigger
-                            elif len(parts) == 2:
-                                short_name = parts[-1]
-
+                            # Same words as the structured breakdown and the
+                            # quick-booking preview (one implementation).
+                            from markupsafe import escape as _esc
+                            short_name = _esc(rule._pricing_rule_short_label())
+                            action_desc = _esc(rule._pricing_rule_action_desc())
                             rules_text.append(f'{short_name} <b>{action_desc}</b>')
                     except Exception:
                         pass
@@ -1045,7 +1046,7 @@ class SaleOrder(models.Model):
                 factors.append({'key': 'home', 'label': _('Home Visit')})
             elif loc == 'clinic':
                 factors.append({'key': 'clinic', 'label': _('Clinic Visit')})
-            if self.fso_distance and self.fso_distance > 0:
+            if self.fso_distance and self.fso_distance > 0 and not self._pricing_no_travel():
                 factors.append({
                     'key': 'pin',
                     'label': _('Distance: %.1f km', self.fso_distance),

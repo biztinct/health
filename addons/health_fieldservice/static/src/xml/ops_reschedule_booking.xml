@@ -180,6 +180,7 @@
                                     t-on-click="() => this.toggleAssignedStaff(staff.id)">
                                 <span class="rsb-chip-initials" t-esc="staff.initials"/>
                                 <span t-esc="staff.name"/>
+                                <span t-if="staff.is_doctor" class="rsb-chip-role">Doctor</span>
                                 <i t-if="isStaffAssigned(staff.id)" class="fa fa-check rsb-chip-check"/>
                             </button>
                         </t>

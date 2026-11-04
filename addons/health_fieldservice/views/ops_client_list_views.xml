@@ -14,7 +14,8 @@
                 <field name="deleted" column_invisible="1"/>
                 <field name="name" string="Client"/>
                 <field name="patient_code" string="Patient ID" optional="show"/>
-                <field name="mobile" string="Phone" optional="show"/>
+                <field name="phone" string="Phone" optional="show"/>
+                <field name="mobile" string="Second phone" optional="hide"/>
                 <field name="email" string="Email" optional="hide"/>
                 <field name="gender_id" string="Gender" optional="hide"/>
                 <field name="primary_facility_id" string="Facility" optional="hide"/>

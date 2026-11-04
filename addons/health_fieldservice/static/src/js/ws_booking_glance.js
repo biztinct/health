@@ -30,6 +30,7 @@ const NATIVE_DEPENDENCIES = [
     { name: "lead_staff_id", type: "many2one" },
     { name: "total_price", type: "monetary" },
     { name: "service_fee_vnd", type: "monetary" },
+    { name: "parking_charge", type: "monetary" },
     { name: "currency_id", type: "many2one" },
     { name: "sale_order_id", type: "many2one" },
     { name: "invoice_id", type: "many2one" },
@@ -44,9 +45,12 @@ const PRE_VISIT_STATES = ["confirmed", "assigned"];
 // What the client pays: the quote total (service_fee_vnd) plus the extra
 // charges. total_price is base_price + charges, and base_price is a legacy
 // field that is 0 on every booking, so total_price alone reads 0 on almost
-// every priced booking.
+// every priced booking. Parking is NOT the client's: it is paid back to the
+// staff member (owner UAT 2026-11-04), so it is left out and shown on its own.
 function bookingPrice(data) {
-    return (Number(data.service_fee_vnd) || 0) + (Number(data.total_price) || 0);
+    return (Number(data.service_fee_vnd) || 0)
+        + (Number(data.total_price) || 0)
+        - (Number(data.parking_charge) || 0);
 }
 const PAID_STATES = ["completed", "completed_pending_invoice", "closed"];
 
@@ -221,6 +225,17 @@ export class WsBookingGlance extends Component {
             value: f.money(price),
             cls: price ? "" : "is-quiet",
         });
+
+        // Parking — a staff reimbursement, never part of the client price
+        const parking = Number(f.data.parking_charge) || 0;
+        if (parking > 0) {
+            rows.push({
+                key: "parking",
+                label: _t("Staff parking"),
+                value: f.money(parking),
+                cls: "is-quiet",
+            });
+        }
 
         // Paid — invoicing module only, and only once there is an invoice
         if (f.has("total_paid_amount") && f.has("is_invoiced") && f.data.is_invoiced) {

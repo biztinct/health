@@ -4007,3 +4007,9 @@ msgstr "Đặt giá cho các đơn vị tiếp theo"
 #: model:ir.model.fields,field_description:advanced_pricing.field_product_pricelist__discount_on_base_only
 msgid "Discount on Base Price Only"
 msgstr "Chỉ giảm giá trên giá cơ bản"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/pricing_rule.py:0
+msgid "%s đ from the 2nd unit"
+msgstr "%s đ từ đơn vị thứ 2"
