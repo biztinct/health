@@ -18,13 +18,13 @@ module.exports = {
     id: 'CT-06', title: 'Prepaid package: bought for a client, used once, cancelled visit released', short: 'Prepaid package',
     title_vi: 'Gói trả trước: mua cho khách hàng, dùng một lần, hủy lịch được hoàn lại',
     criterion: 'Enter a prepaid package with its value and number of visits; a reserved visit uses one, completing it does not use a second, and cancelling a reserved visit gives it back.',
-    data: `Template “${tplName}”: Clinic Visit, 3 visits, 1,500,000 ₫; bought for ${client} (${clientCode}) with invoice and cash payment; nurse ${nurse.login} completes visit 1`,
+    data: `Template “${tplName}”: Clinic Visit, 3 visits, 1,500,000 ₫; bought for ${client} (${clientCode}) with an invoice and cash collected (settled on hand-in); nurse ${nurse.login} completes visit 1`,
     expected: 'Package retains value, correct reservation/completion usage and balance.',
     role: 'Owner', role_vi: 'Chủ sở hữu', login: owner.login, password: owner.password,
   },
   proofVi: {
     'Template saved: 3 visits, 1,500,000 ₫, 500,000 ₫ a visit': 'Đã lưu mẫu: 3 lượt, 1.500.000 ₫, 500.000 ₫ mỗi lượt',
-    'Checkout: 1,500,000 ₫, invoice and cash payment': 'Thanh toán: 1.500.000 ₫, hóa đơn và tiền mặt',
+    'Checkout: 1,500,000 ₫, invoice and cash collected': 'Thanh toán: 1.500.000 ₫, hóa đơn và đã thu tiền mặt',
     'Package bought': 'Đã mua gói',
     'Client’s package: 3 left': 'Gói của khách hàng: còn 3',
     'Visit 1 booked from the package': 'Đã đặt lượt 1 từ gói',
@@ -80,10 +80,10 @@ module.exports = {
     await kit.click(p.locator('.pw-card--product', { hasText: tplName }).first(), 900);
     await kit.click(p.locator('.pw-btn--success').filter({ visible: true }).first(), 2500);
 
-    await kit.step(next(), 'Create the invoice and take the cash payment now', 'Tạo hóa đơn và thu tiền mặt ngay');
+    await kit.step(next(), 'Create the invoice and record the cash payment (the invoice is settled when the cash is handed in, under Collections)', 'Tạo hóa đơn và ghi nhận tiền mặt (hóa đơn được tất toán khi nộp tiền, mục Thu tiền)');
     await kit.click(p.locator('.pp-option', { hasText: 'Process Payment Now' }).first(), 1200);
     const checkout = p.locator('.pp-dialog').first();
-    await kit.proof(checkout, 'Checkout: 1,500,000 ₫, invoice and cash payment', async (t) => {
+    await kit.proof(checkout, 'Checkout: 1,500,000 ₫, invoice and cash collected', async (t) => {
       const on = await checkout.locator('.pp-toggle--on').count();
       const amount = await checkout.locator('input').last().inputValue().catch(() => '');
       return on === 2 && /1[.,]?500[.,]?000/.test(t + ' ' + amount);
