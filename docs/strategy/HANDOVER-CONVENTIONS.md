@@ -4383,3 +4383,21 @@ a no-op.
     province_rule` is red on carejiox** (a Healthcare Administrator with an
     area reads only that province). Not related to the round-3 search-field
     change; reported, not fixed. (UAT round 3.)
+- **§5.326 — the automatic e-invoice on posting runs as a system step.**
+    `account.move.action_post` (health_redinvoice) calls
+    `move.sudo()._redinvoice_maybe_issue()`: a nurse posting at the end of a
+    visit cannot create `redinvoice.request`, and the failure used to be a log
+    line only (INV/2026/00019, 00025 stayed Pending with no request). sudo()
+    keeps the nurse as the user (request `create_uid`); nurses still have no
+    ACL on the model. A failure now writes `red_invoice_last_error` (and
+    Pending → Failed; never touches 'issuing'). No savepoint around the issue:
+    an issued state must never roll back (a re-issue duplicates a legal
+    e-invoice). `TestAutoIssueAsNurse` mocks `requests.post`. (UAT round 4.)
+- **§5.327 — nurse-app toasts sat on top of the notifications panel's ×**
+    (both top-right, toasts z-index 2000), so the × "did nothing" for 5 s after
+    Accept. Toasts move to the bottom while the panel is open (1.21.5).
+- **§5.328 — booking "Invoiced" is computed from `invoice_id`** (stored,
+    still writable for the older paths). The nurse-app completion linked the
+    invoice without setting the flag. health_invoicing 19.0.1.4.3 recomputed
+    18 bookings, 16 changed to ticked (BK4056 and the acceptance bookings
+    BK3833–BK3848). (UAT round 4.)

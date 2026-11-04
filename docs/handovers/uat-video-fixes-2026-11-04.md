@@ -135,3 +135,18 @@ Per defect: fixed / not fixed (why), files touched, test names + result, browser
    updates install reliably, without widening access.
 
 Nurse app version 1.21.3 → 1.21.4. Tests for 1, 2, 3, 7 at least.
+
+## 6. Round 4 (MB-10 helper; code + deploy in one go)
+1. **Invoices posted from the nurse app are never sent as e-invoices.** Posted
+   under the nurse's user, the automatic issue failed creating the e-invoice
+   request (nurses cannot) and the error was only logged (INV/2026/00025, 00019
+   stay "Pending"). Run the automatic issue with the rights it needs (nurse
+   still recorded as the user), no general nurse access; store a readable
+   error on the invoice when it fails. Test with the provider mocked. Do NOT
+   issue 00025 or 00019 (00025 is issued on screen in MB-10).
+2. **Nurse app: the notifications panel's × does not close it right after
+   Accept.** App 1.21.4 → 1.21.5.
+3. **Booking › Quote & Invoice: "Invoiced" unticked although the invoice is
+   posted** (BK4056 / INV/2026/00025).
+Do not touch BK4056, INV/2026/00025 or payment PBNK1/2026/00007.
+
