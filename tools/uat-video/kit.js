@@ -119,7 +119,10 @@ class Kit {
 
   // ------------------------------------------------------------ lifecycle
   async start() {
-    fs.rmSync(this.framesDir, { recursive: true, force: true });
+    // a run replaces the previous one's stills and error screen in this folder
+    for (const old of [this.framesDir, this.proofDir, path.join(this.outDir, 'error.png')]) {
+      fs.rmSync(old, { recursive: true, force: true });
+    }
     fs.mkdirSync(this.framesDir, { recursive: true });
     fs.mkdirSync(this.proofDir, { recursive: true });
     this.browser = await chromium.launch();
