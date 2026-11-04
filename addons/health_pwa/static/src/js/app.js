@@ -859,7 +859,10 @@ window.healthPWA = {
           </div>
           
           <!-- Notifications -->
-          <div class="notification-container" style="position: fixed; top: 70px; right: 1rem; z-index: 2000;">
+          <!-- While the notifications panel is open the toasts sit at the
+               bottom: at the top they covered the panel's close button, so
+               the × did nothing right after Accept (UAT 2026-11-04). -->
+          <div class="notification-container" :class="{ 'notification-container--low': state.notifPanelOpen }">
             <transition-group name="notification" tag="div">
               <div v-for="notification in state.notifications" 
                    :key="notification.id"

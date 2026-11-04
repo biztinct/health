@@ -10,6 +10,11 @@
   width: 100%;
 }
 
+.notification-container.notification-container--low {
+  top: auto;
+  bottom: calc(var(--bottom-nav-height, 60px) + 16px);
+}
+
 .notification {
   background: var(--card-color);
   border-radius: var(--border-radius);

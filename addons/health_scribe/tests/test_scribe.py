@@ -442,10 +442,10 @@ class TestShellAssets(HttpCase):
         res = self.url_open('/health_pwa')
         self.assertEqual(res.status_code, 200)
         body = res.text
-        self.assertIn('scribe.css?v=1.21.4', body)
-        self.assertIn('scribe.js?v=1.21.4', body)
-        self.assertIn('1.21.4', body)
+        self.assertIn('scribe.css?v=1.21.5', body)
+        self.assertIn('scribe.js?v=1.21.5', body)
+        self.assertIn('1.21.5', body)
         # Co-resident shell modules pinned to the same bumped version.
-        self.assertIn('daystrip.js?v=1.21.4', body)
-        self.assertIn('telehealth.js?v=1.21.4', body)
-        self.assertIn('ergo.css?v=1.21.4', body)
+        self.assertIn('daystrip.js?v=1.21.5', body)
+        self.assertIn('telehealth.js?v=1.21.5', body)
+        self.assertIn('ergo.css?v=1.21.5', body)
