@@ -27,11 +27,20 @@ class HealthFieldserviceOrder(models.Model):
         copy=False
     )
     
+    # Follows the booking's invoice (UAT 2026-11-04, BK4056: an invoice posted
+    # from the nurse app left "Invoiced" unticked — that path links the
+    # invoice without writing this flag). Stored and still writable, so the
+    # older paths that set it by hand keep working.
     is_invoiced = fields.Boolean(
         'Invoiced',
-        default=False,
+        compute='_compute_is_invoiced', store=True, readonly=False,
         help='Whether this FSO has been invoiced'
     )
+
+    @api.depends('invoice_id', 'invoice_id.state')
+    def _compute_is_invoiced(self):
+        for fso in self:
+            fso.is_invoiced = bool(fso.invoice_id) and fso.invoice_id.state != 'cancel'
     
     is_invoice_paid = fields.Boolean(
         'Invoice Paid',
