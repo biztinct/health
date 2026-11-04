@@ -32,9 +32,12 @@
                      buttons flow into every account.move form surface. -->
                 <field name="deleted" invisible="1"/>
                 <field name="active" invisible="1"/>
+                <field name="health_can_correct_posted" invisible="1"/>
+                <!-- A posted customer invoice is Finance's / the Owner's to
+                     correct (owner ruling 2026-11-04): hidden for the rest. -->
                 <button name="action_open_delete_wizard" type="object"
                         string="Delete" icon="fa-trash"
-                        invisible="deleted"/>
+                        invisible="deleted or (state == 'posted' and move_type in ('out_invoice', 'out_refund') and not health_can_correct_posted)"/>
                 <button name="action_open_restore_wizard" type="object"
                         string="Restore" icon="fa-undo"
                         groups="health_base.group_healthcare_custodian"
@@ -48,6 +51,9 @@
                         groups="health_base.group_healthcare_custodian"
                         invisible="active"/>
             </header>
+            <xpath expr="//header/button[@name='button_draft']" position="attributes">
+                <attribute name="invisible">not show_reset_to_draft_button or (state == 'posted' and move_type in ('out_invoice', 'out_refund') and not health_can_correct_posted)</attribute>
+            </xpath>
             
             <!-- Healthcare-specific fields temporarily commented out -->
             <!-- <xpath expr="//field[@name='partner_id']" position="after">
@@ -59,7 +65,7 @@
             
             <!-- Add Tax Authority Status in a separate group -->
             <notebook position="inside">
-                <page string="eInvoice Test" name="einvoice_test" invisible="move_type not in ['out_invoice', 'out_refund']">
+                <page string="eInvoice" name="einvoice_test" invisible="move_type not in ['out_invoice', 'out_refund']">
                     <p>Internal acceptance test only. No digital signature or tax-authority upload is performed.</p>
                     <button name="action_record_einvoice_test" type="object" string="Record eInvoice Test"
                             groups="health_base.group_healthcare_owner,health_base.group_healthcare_finance"

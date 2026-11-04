@@ -8218,3 +8218,14 @@ msgstr "Ghi nhận thử nghiệm hóa đơn điện tử"
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_invoice_form
 msgid "Internal acceptance test only. No digital signature or tax-authority upload is performed."
 msgstr "Chỉ thử nghiệm nghiệm thu nội bộ. Không ký số hoặc gửi đến cơ quan thuế."
+
+#. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_invoice_form
+msgid "eInvoice"
+msgstr "Hóa đơn điện tử"
+
+#. module: health_invoicing
+#. odoo-python
+#: code:addons/health_invoicing/models/account_move.py:0
+msgid "Only Finance or the Owner can reset a posted invoice to draft: %s"
+msgstr "Chỉ Kế toán hoặc Chủ sở hữu mới được đưa hóa đơn đã ghi sổ về nháp: %s"

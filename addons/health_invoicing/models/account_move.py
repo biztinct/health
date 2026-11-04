@@ -130,6 +130,48 @@ class HealthcareInvoice(models.Model):
                 'them to draft first: %s',
                 ', '.join(posted.mapped('display_name')[:5])))
 
+    # ------------------------------------------------------------------
+    # Who may correct a POSTED customer invoice (owner ruling 2026-11-04):
+    # Finance and the Owner keep "Reset to Draft" / "Delete"; an Operations
+    # Manager does not — posted invoices are also sent as e-invoices.
+    #
+    # Why this is not a plain `groups=`: on this build the Operations
+    # Manager role carries every permission the Accountant role carries
+    # (Finance included), and the Accountant role carries the Operations
+    # Manager group, so no single group tells them apart. What does: the
+    # Owner holds `group_healthcare_owner`; an Accountant holds Finance but
+    # NOT `group_healthcare_manager`, which the Operations Manager role (and
+    # every role above it except the Owner) does hold.
+    # ------------------------------------------------------------------
+    health_can_correct_posted = fields.Boolean(
+        compute='_compute_health_can_correct_posted',
+        help='Technical: the current user may reset or delete a posted customer invoice.')
+
+    @api.model
+    def _health_user_can_correct_posted(self):
+        user = self.env.user
+        if self.env.su or user._is_superuser() or user.has_group('base.group_system'):
+            return True
+        if user.has_group('health_base.group_healthcare_owner'):
+            return True
+        return (user.has_group('health_base.group_healthcare_finance')
+                and not user.has_group('health_base.group_healthcare_manager'))
+
+    @api.depends_context('uid')
+    def _compute_health_can_correct_posted(self):
+        allowed = self._health_user_can_correct_posted()
+        for move in self:
+            move.health_can_correct_posted = allowed
+
+    def button_draft(self):
+        guarded = self.filtered(
+            lambda m: m.state == 'posted' and m.move_type in ('out_invoice', 'out_refund'))
+        if guarded and not self._health_user_can_correct_posted():
+            raise UserError(_(
+                'Only Finance or the Owner can reset a posted invoice to draft: %s',
+                ', '.join(guarded.mapped('display_name')[:5])))
+        return super().button_draft()
+
     # Odoo 19 currently exposes static selection metadata in English through
     # fields_get. Callable selections return labels in the active user language.
     move_type = fields.Selection(selection=_selection_move_type)

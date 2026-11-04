@@ -193,9 +193,12 @@
                 <!-- Record lifecycle: Delete is a user function (posted moves
                      must be reversed first — server gate), Archive custodian. -->
                 <field name="deleted" column_invisible="1"/>
+                <field name="state" column_invisible="1"/>
+                <field name="move_type" column_invisible="1"/>
+                <field name="health_can_correct_posted" column_invisible="1"/>
                 <button name="action_open_delete_wizard" type="object"
                         icon="fa-trash" title="Delete (reason required; posted entries must be reversed first)"
-                        invisible="deleted"/>
+                        invisible="deleted or (state == 'posted' and move_type in ('out_invoice', 'out_refund') and not health_can_correct_posted)"/>
                 <button name="action_open_restore_wizard" type="object"
                         icon="fa-undo" title="Restore this deleted record"
                         groups="health_base.group_healthcare_custodian"
