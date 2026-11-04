@@ -7,7 +7,7 @@
 //   <widget name="ws_booking_hint"/>                     one muted line
 // Pure display, computed in the browser from the booking's own fields: no
 // server call, no write. Money fields that only exist with the invoicing module
-// (outstanding_amount, total_paid_amount, is_invoiced) are read only when the
+// (outstanding_amount, total_paid_amount, is_invoiced, is_package_service) are read only when the
 // record has them, and never declared as dependencies.
 // Prose is built with concatenation / _t placeholders, never template
 // literals (the minifier eats spaces after an interpolation, ledger §5.149).
@@ -267,8 +267,11 @@ export class WsBookingGlance extends Component {
             alerts.push({ key: "staff", tone: "warn", text });
         }
 
-        // 2. a price of zero on a booking whose visit is still ahead
-        if (PRE_VISIT_STATES.includes(f.state) && !bookingPrice(f.data)) {
+        // 2. a price of zero on a booking whose visit is still ahead — unless a
+        //    prepaid package pays for it, where zero is the right price
+        //    (is_package_service exists only with the invoicing module)
+        const prepaid = f.has("is_package_service") && f.data.is_package_service;
+        if (PRE_VISIT_STATES.includes(f.state) && !bookingPrice(f.data) && !prepaid) {
             alerts.push({
                 key: "price",
                 tone: "warn",

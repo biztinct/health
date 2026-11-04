@@ -27,6 +27,7 @@ const XMLID_TO_PAGE = {
     "health_landing.action_admin_lead_reasons": "master_data",
     "health_landing.action_admin_lost_reasons": "master_data",
     "health_landing.action_admin_service_categories": "master_data",
+    "health_landing.action_admin_package_templates": "master_data",
     "health_landing.action_admin_protocols": "master_data",
     "health_landing.action_admin_booking_stages": "master_data",
     "health_landing.action_admin_fs_teams": "master_data",

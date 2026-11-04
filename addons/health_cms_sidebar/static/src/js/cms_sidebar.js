@@ -926,6 +926,7 @@ const ALL_XMLIDS = new Set([
     "health_landing.action_admin_lead_reasons",
     "health_landing.action_admin_lost_reasons",
     "health_landing.action_admin_service_categories",
+    "health_landing.action_admin_package_templates",
     "health_landing.action_admin_protocols",
     "health_cms_sidebar.action_admin_medications",
     "health_cms_sidebar.action_admin_observation_types",

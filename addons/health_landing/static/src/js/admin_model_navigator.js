@@ -87,6 +87,8 @@ const TAB_GROUPS = [
                       model: "health.service.type", action: "health_landing.action_admin_service_types" },
                     { id: "service_categories", label: _t("Service Categories"), icon: "fa-folder-open",
                       model: "product.category", action: "health_landing.action_admin_service_categories" },
+                    { id: "package_templates", label: _t("Package Templates"), icon: "fa-gift",
+                      model: "product.template", action: "health_landing.action_admin_package_templates" },
                     { id: "urgency", label: _t("Urgency"), icon: "fa-exclamation-circle",
                       model: "health.urgency.level", action: "health_landing.action_admin_urgency" },
                     { id: "symptoms", label: _t("Symptoms"), icon: "fa-heartbeat",
@@ -152,8 +154,8 @@ const TAB_GROUPS = [
               model: "advanced.pricing.rule", action: "health_landing.action_admin_pricing_rules" },
             { id: "quick_edit", label: _t("Quick Edit"), icon: "fa-edit",
               model: "advanced.pricing.rule", action: "health_landing.action_admin_quick_edit_rules" },
-            { id: "packages", label: _t("Package Products"), icon: "fa-cube",
-              model: "product.template", action: "health_landing.action_admin_packages" },
+            // Package templates moved to Master Data › Care & Services
+            // (UAT 2026-11-04): they define what clients buy, not a price rule.
         ],
     },
     {

@@ -888,6 +888,10 @@ window.healthPWA = {
     // Create and mount Vue app
     const app = createApp(HealthApp);
     app.config.globalProperties._t = _t;
+    // Server datetimes are UTC without a zone mark: templates read them through
+    // parseOdooDateTime (a clinical note written 07:17 in Vietnam showed 12:17 AM)
+    app.config.globalProperties.parseOdooDateTime = parseOdooDateTime;
+    app.config.globalProperties.getPWALocale = getPWALocale;
     // Global initials helper (avatar text) available to every component template
     app.config.globalProperties.initials = (name) => {
       if (!name) return '?';
@@ -3964,7 +3968,7 @@ window.healthPWA = {
                       <span v-if="note.emr_state === 'final'" style="font-size:10px; font-weight:600; background:#e8f5e9; color:#2e7d32; padding:2px 6px; border-radius:10px;">{{ _t('Signed') }}</span>
                       <span v-else-if="note.emr_state === 'draft'" style="font-size:10px; font-weight:600; background:#fff3e0; color:#e65100; padding:2px 6px; border-radius:10px;">{{ _t('Draft') }}</span>
                     </span>
-                    <small style="color:#999; font-size:11px;">{{ new Date(note.date).toLocaleString() }}</small>
+                    <small style="color:#999; font-size:11px;">{{ parseOdooDateTime(note.date).toLocaleString(getPWALocale()) }}</small>
                   </div>
                   <div style="font-size:12px; color:#1565C0; margin-bottom:4px;">{{ note.author_role }}</div>
                   <div v-if="note.clinical_notes" style="font-size:13px; color:#333; margin-bottom:4px; white-space:pre-line; max-height:60px; overflow:hidden; text-overflow:ellipsis;">{{ note.clinical_notes.replace(/<[^>]*>/g, '') }}</div>
@@ -3990,7 +3994,7 @@ window.healthPWA = {
               <div style="background:#f8f9fa; border-radius:8px; padding:12px; margin-bottom:12px;">
                 <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
                   <strong>{{ viewingClinicalNote.author }}</strong>
-                  <small style="color:#999;">{{ new Date(viewingClinicalNote.date).toLocaleString() }}</small>
+                  <small style="color:#999;">{{ parseOdooDateTime(viewingClinicalNote.date).toLocaleString(getPWALocale()) }}</small>
                 </div>
                 <div style="font-size:12px; color:#1565C0;">{{ viewingClinicalNote.author_role }}</div>
               </div>
@@ -4001,7 +4005,7 @@ window.healthPWA = {
                   <i class="material-icons" style="font-size:16px;">lock</i>{{ _t('Signed medical record — locked') }}
                 </div>
                 <div v-if="viewingClinicalNote.signed_by" style="font-size:12px; color:#555; margin-top:2px;">
-                  {{ _t('Signed by') }} {{ viewingClinicalNote.signed_by }}<span v-if="viewingClinicalNote.signed_datetime"> · {{ new Date(viewingClinicalNote.signed_datetime).toLocaleString() }}</span>
+                  {{ _t('Signed by') }} {{ viewingClinicalNote.signed_by }}<span v-if="viewingClinicalNote.signed_datetime"> · {{ parseOdooDateTime(viewingClinicalNote.signed_datetime).toLocaleString(getPWALocale()) }}</span>
                 </div>
               </div>
               <div v-else-if="viewingClinicalNote.emr_state === 'draft'" style="margin-bottom:12px;">
@@ -5364,7 +5368,8 @@ window.healthPWA = {
         
         const formatDateTime = (dateTimeStr) => {
           if (!dateTimeStr) return _t('Unscheduled');
-          const date = new Date(dateTimeStr);
+          // server datetimes are UTC without a zone mark; new Date() read them as local
+          const date = parseOdooDateTime(dateTimeStr);
           return date.toLocaleDateString(getPWALocale()) + ' ' + date.toLocaleTimeString(getPWALocale(), { hour: '2-digit', minute: '2-digit' });
         };
         
@@ -5518,7 +5523,8 @@ window.healthPWA = {
 
         const formatDateTime = (dateTimeStr) => {
           if (!dateTimeStr) return _t('Unscheduled');
-          const date = new Date(dateTimeStr);
+          // server datetimes are UTC without a zone mark; new Date() read them as local
+          const date = parseOdooDateTime(dateTimeStr);
           return date.toLocaleDateString(getPWALocale()) + ' ' + date.toLocaleTimeString(getPWALocale(), { hour: '2-digit', minute: '2-digit' });
         };
 

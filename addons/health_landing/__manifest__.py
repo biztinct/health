@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Healthcare Landing Dashboard',
-    'version': '19.0.1.4.3',
+    'version': '19.0.1.4.4',
     'category': 'Healthcare',
     'summary': 'Modern landing dashboard with icon-driven navigation for VAFHS Healthcare System',
     'description': """
@@ -66,6 +66,7 @@ Design inspired by modern SaaS applications with emphasis on usability and visua
 
         # Admin Center
         'views/admin_center_views.xml',
+        'views/admin_package_template_views.xml',
         'views/master_data_lifecycle_views.xml',
         'views/admin_center_menus.xml',
     ],

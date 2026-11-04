@@ -114,19 +114,18 @@
                     <!-- Package Title -->
                     <div class="oe_title">
                         <h1 class="d-flex justify-content-between align-items-center">
-                            <!-- typed when no template is chosen; a template names
-                                 it on save ("<template> - <client>"). Read-only
-                                 everywhere, a package without a template could not
-                                 be saved at all (UAT CT-06, 2026-11-04). -->
-                            <field name="name" class="o_text_overflow" placeholder="Package Name"
-                                   readonly="product_template_id"/>
+                            <field name="name" class="o_text_overflow" placeholder="Package Name" readonly="1"/>
                         </h1>
                     </div>
                     
                     <!-- Main Package Information -->
                     <group>
                         <group string="Package Details">
-                            <field name="product_template_id" 
+                            <!-- A package is always sold from a template (Master Data ›
+                                 Package Templates): the template sets the visits, price
+                                 and validity and names the package on save. Required
+                                 here, not on the column: older rows have none. -->
+                            <field name="product_template_id" required="1"
                                    options="{'no_create': True, 'no_edit': True}"
                                    help="Select a healthcare package product template"/>
                             <field name="patient_id" options="{'no_create': True}"/>

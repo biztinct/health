@@ -267,11 +267,10 @@
         .fa { font-size: 12px; }
     }
 
+    // Labels stay visible (icon-only rows were unreadable, UAT 2026-11-04);
+    // only the spacing tightens. Delete / Archive have no label by design.
     .ops-cl-btn {
-        padding: 4px 6px !important;
-        font-size: 0 !important;
-        gap: 0 !important;
-
-        .fa { font-size: 12px !important; }
+        padding: 3px 6px !important;
+        gap: 3px !important;
     }
 }

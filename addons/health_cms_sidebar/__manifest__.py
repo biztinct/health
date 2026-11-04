@@ -1,6 +1,6 @@
 {
     'name': 'Health CMS Sidebar',
-    'version': '19.0.1.10.1',
+    'version': '19.0.1.10.2',
     'category': 'Healthcare',
     'summary': 'Unified sidebar for all healthcare centers (CRM, Operations, Finance, Admin)',
     'author': 'Biztinct',

@@ -3852,3 +3852,81 @@ msgstr "Tuần này"
 #: code:addons/health_landing/static/src/js/admin_dashboard.js:0
 msgid "Today"
 msgstr "Hôm nay"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_admin_package_template_list
+#: model:ir.actions.act_window,name:health_landing.action_admin_package_templates
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
+msgid "Package Templates"
+msgstr "Mẫu gói dịch vụ"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_admin_package_template_form
+msgid "Package Template"
+msgstr "Mẫu gói dịch vụ"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_admin_package_template_list
+#: model_terms:ir.ui.view,arch_db:health_landing.view_admin_package_template_form
+msgid "Package"
+msgstr "Gói"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_admin_package_template_list
+#: model_terms:ir.ui.view,arch_db:health_landing.view_admin_package_template_form
+msgid "Visits"
+msgstr "Số lượt"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_admin_package_template_list
+#: model_terms:ir.ui.view,arch_db:health_landing.view_admin_package_template_form
+msgid "Package Price"
+msgstr "Giá gói"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_admin_package_template_list
+#: model_terms:ir.ui.view,arch_db:health_landing.view_admin_package_template_form
+msgid "Price per Visit"
+msgstr "Giá mỗi lượt"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_admin_package_template_list
+#: model_terms:ir.ui.view,arch_db:health_landing.view_admin_package_template_form
+msgid "Location"
+msgstr "Địa điểm"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_admin_package_template_list
+msgid "Valid (weeks)"
+msgstr "Hiệu lực (tuần)"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_admin_package_template_form
+msgid "Valid for (weeks)"
+msgstr "Hiệu lực (tuần)"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_admin_package_template_form
+msgid "What is included"
+msgstr "Bao gồm"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_admin_package_template_form
+msgid "Price"
+msgstr "Giá"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_admin_package_template_form
+msgid "Terms"
+msgstr "Điều khoản"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_admin_package_template_form
+msgid "e.g. Three clinic visits"
+msgstr "VD: Ba lượt khám tại phòng khám"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_admin_package_template_form
+msgid "What the client receives, cancellation and refund terms..."
+msgstr "Khách hàng nhận được gì, điều khoản hủy và hoàn tiền..."

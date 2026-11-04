@@ -48,7 +48,17 @@ shortcutRegistry.add("packages", {
     label: _t("Packages"),
     icon: "package",
     sequence: 70,
-    run: (env, partnerId) => runPartnerMethod(env, partnerId, "action_view_service_packages"),
+    // The client screen's own Active Packages tab (gauges, balances) rather than
+    // the plain package list; the list stays the fallback off this screen.
+    run: (env, partnerId) => {
+        const tab = document.querySelector('.o_form_renderer .o_notebook_headers a.nav-link[name="active_packages"]');
+        if (tab) {
+            tab.click();
+            tab.scrollIntoView({ block: "nearest", behavior: "smooth" });
+            return;
+        }
+        return runPartnerMethod(env, partnerId, "action_view_service_packages");
+    },
 });
 shortcutRegistry.add("payments", {
     key: "payments",

@@ -9,6 +9,13 @@ import { ProductCatalogDialog } from "./product_catalog_dialog";
 import { ClientMatchDialog } from "./client_match_dialog";
 import { AddressDialog } from "@health_base/js/address_dialog";
 
+// The calendar day on the user's clock as YYYY-MM-DD. toISOString() is the UTC
+// day, which in Vietnam (UTC+7) is still yesterday until 07:00: the calendar
+// marked the wrong day as today, pre-selected it and let it be booked.
+function localDateStr(d) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 const SERVICE_LOCATION_MAP = {
     home_visit: { label: _t('Patient Home'), icon: 'fa-home', cls: 'home' },
     clinic_visit: { label: _t('Clinic'), icon: 'fa-hospital-o', cls: 'clinic' },
@@ -72,7 +79,7 @@ class OpsQuickBooking extends Component {
         this.dayNames = DAY_NAMES;
 
         const today = new Date();
-        const todayStr = today.toISOString().split('T')[0];
+        const todayStr = localDateStr(today);
 
         this.state = useState({
             isLoading: true,
@@ -420,7 +427,7 @@ class OpsQuickBooking extends Component {
         if (startWeekday < 0) startWeekday = 6;
 
         const today = new Date();
-        const todayStr = today.toISOString().split('T')[0];
+        const todayStr = localDateStr(today);
 
         const days = [];
         for (let i = 0; i < startWeekday; i++) {
