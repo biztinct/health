@@ -105,3 +105,33 @@ Pre-existing failures elsewhere are not yours; report them.
 ## 4. Report back
 Per defect: fixed / not fixed (why), files touched, test names + result, browser-verified
 (what you saw). Anything you think the owner must decide. New ledger entries.
+
+## 5. Round 3 (nurse-app helper, MB; owner decisions binding)
+1. **MB-07: the "no future visits" answer is shown nowhere.** Store the visit's
+   closing answers on the booking (another visit wanted?, reason/note, who,
+   when, who got the follow-up) and show them on the booking (workspace
+   Overview) and on the client screen ("No further visits wanted — <reason>,
+   <date>, by <nurse>"). Vietnamese for every label.
+2. **"Need to Follow up" ticked → nothing happens, app says success.** The task
+   goes to the area's Operations Manager (booking's catchment area; fallback
+   the Owner). Never report success when no task was created.
+3. **Invoice Tax Authority / MISA tab: raw error on every invoice**
+   (`'account.move' object has no attribute 'patient_id'`). Use the invoice's
+   booking client / partner, clear the stored error, test; never send anything
+   to a tax authority or MISA from tests.
+4. **"Receive Payment" pre-fills the demo bank account** "BANK134567890 - BNP
+   Paribas". Remove it (nothing pre-filled); delete nothing posted.
+5. **Invoices search: name + Enter finds nothing** (default field was
+   Catchment Area). Client name first.
+6. **Nurse app loses the running visit timer after a reload.** Restore from the
+   visit's actual start.
+7. **Quick Booking: 30-minute duration** (slots, price, end time).
+8. **Nurse-app errors that also hit nurses** (patient list, future bookings,
+   clinic phone): fix if contained.
+
+9. **Nurse-app updates fail: "Failed to update a ServiceWorker …
+   service-worker.js?v=1.21.3: The script resource is behind a redirect"**
+   (doctor_hn and nurse_hn). Find why the script URL redirects and fix it so
+   updates install reliably, without widening access.
+
+Nurse app version 1.21.3 → 1.21.4. Tests for 1, 2, 3, 7 at least.
