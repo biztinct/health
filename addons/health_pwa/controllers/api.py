@@ -422,7 +422,7 @@ class HealthPWAAPIController(http.Controller):
                 contact = order.patient_id.main_contact_id
                 primary_contact = {
                     'name': contact.name,
-                    'phone': contact.mobile or contact.phone,
+                    'phone': contact.phone or contact.mobile,
                     'relationship': _('Designated contact'),
                 }
             if not primary_contact and order.patient_id:
@@ -438,7 +438,7 @@ class HealthPWAAPIController(http.Controller):
                     contact_partner = contacts[0].representative_id
                     primary_contact = {
                         'name': contact_partner.name,
-                        'phone': contact_partner.mobile or contact_partner.phone,
+                        'phone': contact_partner.phone or contact_partner.mobile,
                         'relationship': contacts[0].relationship_type or 'Emergency Contact',
                     }
 
@@ -446,7 +446,7 @@ class HealthPWAAPIController(http.Controller):
             if not primary_contact and order.patient_id:
                 primary_contact = {
                     'name': order.patient_id.name,
-                    'phone': order.patient_id.mobile or order.patient_id.phone,
+                    'phone': order.patient_id.phone or order.patient_id.mobile,
                     'relationship': 'Patient',
                 }
 
@@ -458,6 +458,7 @@ class HealthPWAAPIController(http.Controller):
                         'id': line.id,
                         'product_name': line.product_id.name if line.product_id else line.name,
                         'quantity': float(line.product_uom_qty),
+                        'uom': line.product_uom_id.name or '',
                         'unit_price': float(line.price_unit),
                         'discount': float(line.discount) if line.discount else 0.0,
                         'discount_reason': line.discount_reason if hasattr(line, 'discount_reason') and line.discount_reason else '',
@@ -518,7 +519,7 @@ class HealthPWAAPIController(http.Controller):
                 # Intake notes fields
                 'referring_doctor_id': order.referring_doctor_id.id if hasattr(order, 'referring_doctor_id') and order.referring_doctor_id else None,
                 'referring_doctor_name': order.referring_doctor_id.name if hasattr(order, 'referring_doctor_id') and order.referring_doctor_id else '',
-                'referring_doctor_phone': (order.referring_doctor_id.mobile or order.referring_doctor_id.phone or '') if hasattr(order, 'referring_doctor_id') and order.referring_doctor_id else '',
+                'referring_doctor_phone': (order.referring_doctor_id.phone or order.referring_doctor_id.mobile or '') if hasattr(order, 'referring_doctor_id') and order.referring_doctor_id else '',
                 'goal_of_care': (order.goal_of_care or '') if hasattr(order, 'goal_of_care') else '',
                 'required_equipment': (order.required_equipment or '') if hasattr(order, 'required_equipment') else '',
                 'intake_notes': (order.intake_notes or '') if hasattr(order, 'intake_notes') else '',
@@ -1266,6 +1267,7 @@ class HealthPWAAPIController(http.Controller):
                     'product_name': line.product_id.name if line.product_id else line.name,
                     'description': line.name,
                     'quantity': float(line.product_uom_qty),
+                    'uom': line.product_uom_id.name or '',
                     'unit_price': float(line.price_unit),
                     'discount': float(line.discount) if hasattr(line, 'discount') else 0.0,
                     'discount_reason': line.discount_reason if hasattr(line, 'discount_reason') else '',
@@ -1527,6 +1529,7 @@ class HealthPWAAPIController(http.Controller):
                     'product_name': line.product_id.name if line.product_id else line.name,
                     'description': line.name,
                     'quantity': float(line.product_uom_qty),
+                    'uom': line.product_uom_id.name or '',
                     'unit_price': float(line.price_unit),
                     'discount': float(line.discount) if hasattr(line, 'discount') else 0.0,
                     'discount_reason': line.discount_reason if hasattr(line, 'discount_reason') else '',
@@ -1744,7 +1747,7 @@ class HealthPWAAPIController(http.Controller):
                     'patient_name': patient.name if patient else 'Unknown',
                     'patient_id': patient.id if patient else None,
                     'patient_code': patient.patient_code if patient else None,
-                    'patient_phone': patient.mobile or patient.phone if patient else None,
+                    'patient_phone': patient.phone or patient.mobile if patient else None,
                     'service_type': service_type_label,
                     'appointment_type': appointment_type,
                     'scheduled_datetime': fso.scheduled_datetime,
@@ -1902,6 +1905,7 @@ class HealthPWAAPIController(http.Controller):
                             'product_id': line.product_id.id,
                             'product_name': line.product_id.name if line.product_id else line.name,
                             'quantity': float(line.product_uom_qty),
+                            'uom': line.product_uom_id.name or '',
                             'unit_price': float(line.price_unit),
                         })
                 response_data['quote_items'] = quote_items
@@ -2265,7 +2269,7 @@ class HealthPWAAPIController(http.Controller):
                         'scheduled_datetime': fso.scheduled_datetime,
                         'service_type': fso._get_service_type_label() if hasattr(fso, '_get_service_type_label') else fso.service_type,
                         'state': fso.state,
-                        'phone': fso.patient_id.mobile or fso.patient_id.phone if fso.patient_id else '',
+                        'phone': fso.patient_id.phone or fso.patient_id.mobile if fso.patient_id else '',
                         'address': fso.service_address or '',
                         # A name only: a doctor (no HR rights) reading the
                         # staff record directly was refused (UAT 2026-11-04).

@@ -4321,7 +4321,7 @@ window.healthPWA = {
                       <!-- Row 2: Qty, Disc%, Price, Total -->
                       <div class="invoice-item-row-details">
                         <div class="detail-cell qty-cell">
-                          <label>{{ _t('Qty') }}</label>
+                          <label>{{ _t('Qty') }}<span v-if="line.uom" class="qty-unit"> · {{ line.uom }}</span></label>
                           <input
                             type="number"
                             v-model.number="line.quantity"

@@ -92,6 +92,8 @@ class TestVisitAddService(HttpCase):
         self.assertEqual(line.product_uom_qty, 2)
         self.assertGreater(body['data']['quote']['amount_total'], total_before)
         self.assertIn('AS Added At Visit', [l['product_name'] for l in body['data']['quote']['order_lines']])
+        # round 5: each line carries its unit for "View service"
+        self.assertTrue(all('uom' in l for l in body['data']['quote']['order_lines']))
         history = ' '.join(self.order.message_ids.mapped('body'))
         self.assertIn('AS Added At Visit', history)
         self.assertIn('× 2', history)
