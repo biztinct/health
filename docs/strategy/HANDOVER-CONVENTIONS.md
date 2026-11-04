@@ -4254,3 +4254,47 @@ a no-op.
     in the log. The `demo` login (carejiox user 5, never signed in) was archived
     by `health_access` 19.0.1.9.0 at the same time. (Post-FS-H5 owner
     decisions.)
+- **§5.309 — a user's catchment change must clear the registry cache.**
+    `ir.rule._compute_domain` is ormcached per uid and core drops it only for
+    group/company changes; the catchment rules read
+    `user.catchment_province_id`, so a moved user kept the old area until a
+    restart. `health_base` `res.users.write` now clears it when the area
+    changes (`TestCatchmentAreaChange`). A test user for any catchment rule
+    needs a role that carries a partner rule (receptionist/nurse/doctor/manager):
+    `base.group_user` alone sees only its own partner, so such a test passes
+    and fails for the wrong reason. (UAT video evidence, 2026-11-04.)
+- **§5.310 — a list column computed through another record must filter by
+    access, not raise.** Contacts › All Dates raised for HCMC / area-less users
+    because `related_client_name` read a Hà Nội client through an area-less or
+    HCMC contact. `crm.lead._readable_client_partner` resolves with sudo and
+    keeps the client only if `_filtered_access('read')`; non-stored, so per
+    viewer, nothing leaks. Area-less contacts also take their client's area
+    (`_catchment_from_client`, on create and on partner_id/patient_id).
+    Non-owner staff with NO area see nothing from the CMS sidebar
+    (`[0,'=',1]`, fail-closed) — test accounts need an area. (UAT, 2026-11-04.)
+- **§5.311 — every caller type the New Contact wizard offers must be
+    creatable by the CRM partner rule.** Converting a representative /
+    guardian / emergency-contact contact creates that person's partner; the
+    rule allowed only patient/caregiver/payer/referrer, so Quick Booking failed
+    for every CRM login. Rule widened (same own-area condition) and the
+    representative takes the client's area (`TestRepresentativeBookingAccess`).
+    Every CRM login holds both CRM groups; the user-only relation rule
+    (`client_id.user_id = me`) is narrower and left as is. (UAT, 2026-11-04.)
+- **§5.312 — UI copies of a client-editable vocabulary drift.** The New
+    Contact wizard's hard-coded Service Interest buttons no longer matched
+    `health.lookup.value` (service_interest): one saved the wrong value, four
+    saved nothing. Load the lookup (code + translated name) instead of a JS
+    constant. Likewise a field that is `required` must not be `readonly` on
+    the only screen that creates the record (service package name: now
+    `readonly="product_template_id"`). (UAT, 2026-11-04.)
+- **§5.313 — screen evidence tooling: `tools/uat-video`.** Playwright drives
+    carejiox (page only: no address bar, so no framework URL), overlays are
+    injected into the page, frames come from CDP screencast at 1.5× and
+    ffmpeg (npm `ffmpeg-static`; Homebrew is unsupported on this Mac) makes a
+    1080p H.264 MP4 with a switchable Vietnamese mov_text track. Every proof is
+    an assertion; the end card reads FAIL if any proof misses. Read input
+    values (`kit.fieldValues`), never `innerText`, for form fields; check a
+    save by the record id in the URL, not by the form's values; the selection
+    widget is a searchable menu (`.o_select_menu_item`) and datetimes type as
+    `MM/DD/YYYY hh:mm:ss AM`. The Owner's Clients list (action 1430) searches
+    names and books with `button[name=action_create_fso]`. (UAT, 2026-11-04.)

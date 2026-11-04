@@ -1,0 +1,4 @@
+node_modules/
+scout-out/
+state.json
+accounts.local.json
