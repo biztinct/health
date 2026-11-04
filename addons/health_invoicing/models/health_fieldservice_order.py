@@ -169,15 +169,27 @@ class HealthFieldserviceOrder(models.Model):
             else:
                 fso.package_service_value = 0.0
     
-    @api.depends('payment_transaction_ids')
+    def _counted_payment_transactions(self):
+        """The payment records that really are money received: not cancelled
+        or failed, and — when an accounting payment stands behind one — only
+        while that payment is posted (UAT 2026-11-04: a cancelled payment kept
+        counting, BK4056 showed Total Paid 420,000 for 210,000 received)."""
+        self.ensure_one()
+        return self.payment_transaction_ids.filtered(
+            lambda t: t.status not in ('cancelled', 'failed')
+            and (not t.payment_id or t.payment_id.state in ('in_process', 'paid')))
+
+    @api.depends('payment_transaction_ids', 'payment_transaction_ids.status',
+                 'payment_transaction_ids.payment_id.state')
     def _compute_payment_count(self):
         for fso in self:
-            fso.payment_transaction_count = len(fso.payment_transaction_ids)
+            fso.payment_transaction_count = len(fso._counted_payment_transactions())
     
-    @api.depends('invoice_id', 'payment_transaction_ids')
+    @api.depends('invoice_id', 'payment_transaction_ids', 'payment_transaction_ids.amount',
+                 'payment_transaction_ids.status', 'payment_transaction_ids.payment_id.state')
     def _compute_payment_summary(self):
         for fso in self:
-            fso.total_paid_amount = sum(fso.payment_transaction_ids.mapped('amount'))
+            fso.total_paid_amount = sum(fso._counted_payment_transactions().mapped('amount'))
             
             if fso.invoice_id:
                 fso.outstanding_amount = fso.invoice_id.amount_residual

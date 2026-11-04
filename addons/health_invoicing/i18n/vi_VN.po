@@ -5236,6 +5236,7 @@ msgid "Payment transactions will appear here."
 msgstr "Các giao dịch thanh toán sẽ hiển thị tại đây."
 
 #. module: health_invoicing
+#. odoo-python
 #. odoo-javascript
 #: code:addons/health_invoicing/static/src/xml/fin_dashboard.xml:0
 #: code:addons/health_invoicing/static/src/xml/fin_sidebar.xml:0
@@ -5244,6 +5245,7 @@ msgstr "Các giao dịch thanh toán sẽ hiển thị tại đây."
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_ar_transaction_log_search
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_partner_patient_form_invoicing
 #: code:addons/health_invoicing/static/src/js/client_package_patch.js:0
+#: code:addons/health_invoicing/models/account_move.py:0
 msgid "Payments"
 msgstr "Các khoản thanh toán"
 
@@ -8229,3 +8231,15 @@ msgstr "Hóa đơn điện tử"
 #: code:addons/health_invoicing/models/account_move.py:0
 msgid "Only Finance or the Owner can reset a posted invoice to draft: %s"
 msgstr "Chỉ Kế toán hoặc Chủ sở hữu mới được đưa hóa đơn đã ghi sổ về nháp: %s"
+
+#. module: health_invoicing
+#. odoo-python
+#: code:addons/health_invoicing/models/health_payment_transaction.py:0
+msgid "Payment Cancelled"
+msgstr "Đã hủy thanh toán"
+
+#. module: health_invoicing
+#. odoo-python
+#: code:addons/health_invoicing/models/account_payment.py:0
+msgid "Draft entry of cancelled payment %s"
+msgstr "Bút toán nháp của thanh toán đã hủy %s"

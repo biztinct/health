@@ -82,10 +82,41 @@ class HealthcarePayment(models.Model):
         copy=False
     )
 
+    # ------------------------------------------------------------------
+    # Cancel / reset (UAT 2026-11-04, PBNK1/2026/00007)
+    # ------------------------------------------------------------------
+    def _health_transactions(self):
+        return self.env['health.payment.transaction'].sudo().search(
+            [('payment_id', 'in', self.ids)])
+
+    def action_cancel(self):
+        """A cancel removes the payment's own DRAFT journal entry (standard
+        behaviour). The record-lifecycle guard refused that unless the entry
+        had first been marked Deleted, so a cancel needed a manual soft
+        delete. The draft entry of the payment being cancelled is part of the
+        cancel itself: removed after the user's own right to delete it is
+        checked, and written to the lifecycle log. Posted entries are not
+        touched here — the standard cancel handles them, as the user."""
+        draft_moves = self.move_id.filtered(lambda m: m.state == 'draft')
+        if draft_moves:
+            draft_moves.check_access('unlink')
+            reason = _('Draft entry of cancelled payment %s',
+                       ', '.join(self.mapped('name')))
+            draft_moves.with_context(archive_reason=reason)._health_log_archive('purge')
+            draft_moves.sudo().unlink()
+        res = super().action_cancel()
+        # The PAY record follows: cancelled, never counted as paid.
+        self._health_transactions().filtered(
+            lambda t: t.status != 'cancelled').write({'status': 'cancelled'})
+        return res
+
     def action_post(self):
         """Override action_post to log payments to AR Transaction Log
         and auto-create health.payment.transaction records."""
         result = super().action_post()
+        # A payment posted again after a cancel brings its PAY record back.
+        self.filtered(lambda p: p.state in ('paid', 'in_process'))._health_transactions().filtered(
+            lambda t: t.status == 'cancelled').write({'status': 'reconciled'})
         for payment in self:
             # Odoo 19 states: draft, in_process, paid, canceled, rejected
             # After action_post, state will be 'in_process' or 'paid' (never 'posted')

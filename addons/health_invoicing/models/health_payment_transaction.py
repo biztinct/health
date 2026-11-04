@@ -33,6 +33,9 @@ def _selection_payment_status(model):
         ('reconciled', model.env._('Reconciled in AR')),
         ('failed', model.env._('Payment Failed')),
         ('refunded', model.env._('Refunded')),
+        # The accounting payment behind it was cancelled (UAT 2026-11-04):
+        # kept for the trail, never counted as paid.
+        ('cancelled', model.env._('Payment Cancelled')),
     ]
 
 

@@ -396,6 +396,20 @@ class HealthcareInvoice(models.Model):
         for record in self:
             record.red_invoice_enabled = enabled
 
+    # The invoice's "Payments" button counted a CANCELLED payment that is
+    # still linked to it (UAT 2026-11-04: INV/2026/00025 said "2 Payments" for
+    # one payment received). Count — and list — only payments that stand.
+    @api.depends('reconciled_payment_ids', 'reconciled_payment_ids.state')
+    def _compute_payment_count(self):
+        for invoice in self:
+            invoice.payment_count = len(invoice.reconciled_payment_ids.filtered(
+                lambda p: p.state not in ('canceled', 'rejected')))
+
+    def open_payments(self):
+        payments = self.reconciled_payment_ids.filtered(
+            lambda p: p.state not in ('canceled', 'rejected'))
+        return payments._get_records_action(name=_("Payments"))
+
     def _health_patient(self):
         """The client this invoice is for: the booking's client, else the
         invoiced partner. account.move has no `patient_id` — reading it made
