@@ -88,6 +88,11 @@ class HealthcareQuotePanel extends Component {
     final(line) {
         return line.data.price_unit || 0;
     }
+    /** The line's unit (Wound, Visit, Injection…), as the invoice shows it. */
+    unitName(line) {
+        const uom = line.data.product_uom_id;
+        return (uom && (uom.display_name || uom[1])) || this.info(line).uom || "";
+    }
     qty(line) {
         return line.data.product_uom_qty || 0;
     }

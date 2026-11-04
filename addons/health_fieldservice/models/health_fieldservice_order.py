@@ -303,7 +303,31 @@ class HealthFieldServiceOrderUnified(models.Model):
     
     # Patient Quick Info (for easy access)
     patient_code = fields.Char('Patient ID', related='patient_id.patient_code', readonly=True)
-    patient_phone = fields.Char('Patient Phone', related='patient_id.mobile', readonly=True)
+    # The client's MAIN phone (`phone`, the client screen's "Phone"), falling
+    # back to the second one only when there is no main number. It used to be
+    # `mobile`, which is the client's SECOND phone (ledger §5.317) — the
+    # booking's People panel showed 0900000212 for Trần Thị Bình instead of
+    # 0900000101 (UAT 2026-11-04).
+    patient_phone = fields.Char(
+        'Patient Phone', compute='_compute_patient_phones', compute_sudo=True,
+        search='_search_patient_phone')
+    patient_second_phone = fields.Char(
+        'Second phone', compute='_compute_patient_phones', compute_sudo=True)
+
+    @api.depends('patient_id.phone', 'patient_id.mobile')
+    def _compute_patient_phones(self):
+        for rec in self:
+            main = rec.patient_id.phone or rec.patient_id.mobile or False
+            second = rec.patient_id.mobile if rec.patient_id.phone else False
+            rec.patient_phone = main
+            rec.patient_second_phone = second if second and second != main else False
+
+    def _search_patient_phone(self, operator, value):
+        if operator in ('=', '!=') and not value:
+            # "has no phone" / "has a phone"
+            empty = ['&', ('patient_id.phone', 'in', [False, '']), ('patient_id.mobile', 'in', [False, ''])]
+            return empty if operator == '=' else ['!'] + empty
+        return ['|', ('patient_id.phone', operator, value), ('patient_id.mobile', operator, value)]
     patient_email = fields.Char('Patient Email', related='patient_id.email', readonly=True)
     patient_age = fields.Char('Patient Age', related='patient_id.age_display', readonly=True)
     patient_national_id = fields.Char('National ID', related='patient_id.national_id', readonly=True)
@@ -4319,7 +4343,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             'name': p.name or '' if p else '',
             'initials': patient_initials,
             'code': p.patient_code or '' if p else '',
-            'phone': p.mobile or p.phone or '' if p else '',
+            'phone': p.phone or p.mobile or '' if p else '',
             'email': p.email or '' if p else '',
             'address': b.patient_address_display or '',
             'age': p.age_display or '' if p else '',

@@ -357,3 +357,40 @@ class TestUatVideoFixes(TransactionCase):
             'duration_hours': 0.5, 'product_lines': [{'product_id': product.id, 'qty': 1}]})
         self.assertEqual(len(preview['lines']), 1)
         self.assertGreater(preview['lines'][0]['unit_price'], 0)
+
+    # ---------------------------------------------------------------- round 5
+    def test_r5_1_booking_shows_the_main_phone(self):
+        self.patient.write({'phone': '0900000101', 'mobile': '0900000212'})
+        fso = self._booking()
+        self.assertEqual(fso.patient_phone, '0900000101')
+        self.assertEqual(fso.patient_second_phone, '0900000212')
+        Order = self.env['health.fieldservice.order']
+        self.assertIn(fso, Order.search([('patient_phone', 'ilike', '0900000101')]))
+        self.assertIn(fso, Order.search([('patient_phone', 'ilike', '0900000212')]))
+        # only a second number on file: it is the phone, no second line
+        self.patient.write({'phone': False})
+        fso.invalidate_recordset()
+        self.assertEqual(fso.patient_phone, '0900000212')
+        self.assertFalse(fso.patient_second_phone)
+        arch = Order.get_view(self.env.ref('health_fieldservice.view_health_fso_form_ops').id, 'form')['arch']
+        self.assertIn('patient_second_phone', arch)
+
+    def test_r5_2_nurse_banner_only_for_restricted_nurses(self):
+        view = self.env.ref('health_fieldservice.view_healthcare_quote_form_custom')
+        nurse = new_test_user(self.env, login='uatfix_r5_nurse',
+                              groups='base.group_user,health_base.group_healthcare_nurse,sales_team.group_sale_salesman')
+        om = new_test_user(self.env, login='uatfix_r5_om', groups=','.join([
+            'base.group_user', 'health_base.group_healthcare_nurse',
+            'health_base.group_healthcare_operations_manager', 'sales_team.group_sale_salesman']))
+        Quote = self.env['sale.order']
+        self.assertIn('Nurse Access', Quote.with_user(nurse).get_view(view.id, 'form')['arch'])
+        self.assertNotIn('Nurse Access', Quote.with_user(om).get_view(view.id, 'form')['arch'])
+
+    def test_r5_3_quote_dialog_always_shows_the_unit(self):
+        view = self.env.ref('health_fieldservice.view_healthcare_quote_form_custom')
+        om = new_test_user(self.env, login='uatfix_r5_om2', groups=','.join([
+            'base.group_user', 'health_base.group_healthcare_operations_manager',
+            'sales_team.group_sale_salesman']))
+        arch = self.env['sale.order'].with_user(om).get_view(view.id, 'form')['arch']
+        self.assertIn('name="product_uom_id"', arch, 'the Unit column is there without the multi-unit setting')
+

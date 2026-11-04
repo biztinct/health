@@ -58,6 +58,7 @@
                                        t-on-change="(ev) => this.onQtyInput(line, ev)"/>
                                 <button class="hfq-step" t-if="!readonly" t-on-click="() => this.incQty(line)" aria-label="Increase">+</button>
                             </div>
+                            <span class="hfq-unit" t-if="unitName(line)" t-esc="unitName(line)"/>
                             <div class="hfq-subtotal" t-esc="fmt(subtotal(line))"/>
                             <button class="hfq-del" t-if="!readonly" t-on-click="() => this.removeLine(line)" title="Remove">
                                 <span class="hf-wt-ico hf-ico-trash"/>

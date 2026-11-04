@@ -245,7 +245,7 @@ class ResPartner(models.Model):
             'name': partner.name or '',
             'initials': initials,
             'patient_code': partner.patient_code or '',
-            'phone': partner.mobile or partner.phone or '',
+            'phone': partner.phone or partner.mobile or '',
             'email': partner.email or '',
             'address': partner.vietnamese_address if hasattr(partner, 'vietnamese_address') and partner.vietnamese_address else (partner.contact_address_complete or ''),
             'age_gender': age_gender,

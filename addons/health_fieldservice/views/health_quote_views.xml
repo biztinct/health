@@ -18,7 +18,11 @@
                             invisible="not context.get('invoicing_mode')"
                             help="Create invoice from this quote"/>
                     
-                    <div class="alert alert-info" role="alert" groups="health_base.group_healthcare_nurse">
+                    <!-- Only for nurses who really are limited to quantities and
+                         discounts: Operations Managers and Owners also carry the
+                         nurse group, and saw this banner wrongly (UAT 2026-11-04). -->
+                    <div class="alert alert-info" role="alert"
+                         groups="health_base.group_healthcare_nurse,!health_base.group_healthcare_operations_manager">
                         <strong>Nurse Access:</strong> You can only edit quantities and discounts in this quote.
                     </div>
                     
@@ -58,7 +62,9 @@
                                                 <field name="name" string="Description"/>
                                                 <field name="product_uom_qty" string="Qty" 
                                                        context="{'partner_id': parent.partner_id, 'quantity': product_uom_qty, 'pricelist': parent.pricelist_id, 'uom': product_uom_id, 'company_id': parent.company_id}"/>
-                                                <field name="product_uom_id" string="UoM" groups="uom.group_uom" optional="show"/>
+                                                <!-- Always shown (Wound, Visit, Injection…), like the
+                                                     invoice; was behind the multi-unit setting. -->
+                                                <field name="product_uom_id" string="Unit" readonly="1"/>
                                                 <field name="price_unit" string="Unit Price"/>
                                                 <field name="discount" string="Disc.%" groups="sale.group_discount_per_so_line" optional="show"/>
                                                 <field name="price_subtotal" string="Subtotal" widget="monetary"/>

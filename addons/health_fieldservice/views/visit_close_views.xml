@@ -30,4 +30,22 @@
             </xpath>
         </field>
     </record>
+
+    <!-- People panel: the client's second phone on its own labelled line,
+         under the main phone (UAT 2026-11-04; the panel used to show the
+         second phone AS the phone). -->
+    <record id="view_health_fso_form_ops_second_phone" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.form.ops.second.phone</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_fso_form_ops"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[contains(@class, 'ws-panel--people')]//span[contains(@class, 'vu-client-card__contact-item')][field[@name='patient_phone']]" position="after">
+                <span class="vu-client-card__contact-item vu-client-card__contact-item--second"
+                      invisible="not patient_second_phone">
+                    <span class="vu-client-card__contact-label">Second phone</span>
+                    <field name="patient_second_phone" widget="phone" readonly="1"/>
+                </span>
+            </xpath>
+        </field>
+    </record>
 </odoo>

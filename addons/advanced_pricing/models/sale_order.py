@@ -991,7 +991,10 @@ class SaleOrder(models.Model):
                 )
 
             html.append(f'<td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;font-weight:bold;">{fmt(final_price)} đ</td>')
-            html.append(f'<td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;">{qty:.0f}</td>')
+            # The unit (Wound, Visit, Injection…) as on the invoice (UAT 2026-11-04).
+            from markupsafe import escape as _esc_uom
+            uom_name = _esc_uom(line.product_uom_id.name or '') if line.product_uom_id else ''
+            html.append(f'<td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;">{qty:g} {uom_name}</td>')
             html.append(f'<td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;font-weight:bold;">{fmt(subtotal)} đ</td>')
             html.append('</tr>')
 
@@ -1088,6 +1091,7 @@ class SaleOrder(models.Model):
                 'base': base_price,
                 'final': final_price,
                 'qty': qty,
+                'uom': line.product_uom_id.name or '',
                 'subtotal': line.price_subtotal,
                 'rules': rules,
                 'warnings': warnings_by_line.get(line.id, []),

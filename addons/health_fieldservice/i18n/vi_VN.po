@@ -16295,6 +16295,8 @@ msgstr "Phí gửi xe (nhân viên)"
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_client_list_ops
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops_second_phone
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__patient_second_phone
 msgid "Second phone"
 msgstr "Số điện thoại 2"
 
@@ -16399,3 +16401,8 @@ msgstr "Kết thúc lượt khám"
 #: code:addons/health_fieldservice/static/src/xml/ops_quick_booking.xml:0
 msgid "30 minutes"
 msgstr "30 phút"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_healthcare_quote_form_custom
+msgid "Unit"
+msgstr "Đơn vị"

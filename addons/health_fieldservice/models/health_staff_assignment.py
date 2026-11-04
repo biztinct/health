@@ -1772,7 +1772,7 @@ class HealthStaffAssignment(models.Model):
                 'assignment_id': assignment.id,
                 'appointment_id': apt.id,
                 'patient_name': apt.patient_id.name,
-                'patient_phone': apt.patient_id.mobile or apt.patient_id.phone,
+                'patient_phone': apt.patient_id.phone or apt.patient_id.mobile,
                 'service_type': apt.appointment_type_id.name,
                 'appointment_date': apt.appointment_date,
                 'estimated_duration': apt.appointment_type_id.duration_minutes,
