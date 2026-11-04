@@ -2,3 +2,4 @@ node_modules/
 scout-out/
 state.json
 accounts.local.json
+mb_state.json

@@ -238,6 +238,40 @@ module.exports = {
 - Deploys: always `carejiox-deploy` (shared server, one lock). Nurse app changes need
   the PWA version bump (5 template pins + test pins).
 
+**Learned recording Bookings / Assignment / Nurse app (4 Nov; details at the top of
+`cases/bk_common.js`, `as_common.js`, `mb_common.js`)**
+- Contact hero "Book" is `button[data-action=book]`. Add Services: first unit
+  `.pcd-add-btn`, more units via the stepper `.pcd-qty-btn`.
+- The Bookings menu opens a calendar: click `.o_switch_view.o_list` before a row.
+  After Quick Booking the URL is `/bizapp/health.fieldservice.order/<id>/…`.
+- "View Invoice" switches the rail to Finance: `kit.area('Operations')` before the next
+  booking search. The payment page after Receive Payment has no left menu: go back with
+  the top "Invoices" link, then move the pointer off the rail (its flyout covers rows).
+- Tag fields: `kit.fieldValues` returns '' (it reads the empty search box) — read text.
+- A client's pulsing "New booking" button never settles: click with a fallback
+  (`as_common.clickRetry`). Lists re-render after a search: wait for the row.
+- Nurse app: after Accept close the panel (bell or ×), the "Notifications Blocked"
+  banner returns after every reload, native `alert()`s can't be captured (caption the
+  exact text), tall popups scroll (prove one part at a time; a box below the popup
+  edge shows nothing).
+- Labels known only at run time: add to `kit._proofVi` during the run.
+- Before re-recording a test, archive the previous final's bookings (locked slots,
+  extra visits in the nurse's day list). Draft quotes and clinical notes cannot be
+  archived.
+- **Money steps are one-shot.** Completing a visit posts the invoice (and sends a test
+  e-invoice); a payment can only be shown once. Practise finance steps on an OLD
+  record, stopping at the dialog with Discard (`MB07_STOP`, `MB09_STOP`,
+  `MB09_REHEARSE`), rehearse the after-payment navigation view-only, and only then
+  take the final. Reversing a test payment (reset to draft + cancel) needs the owner's
+  OK every time; a cancelled payment's number is reused by the next one.
+- **Recording in parallel (3 helpers, 4 Nov):** separate visit days per batch (BK 1–3
+  days ahead, AS 5–9, MB today), separate clients (AS Vũ Thị Khánh; MB the HCMC client
+  Đặng Thị Quỳnh with om_hcm/nurse_hcm), own `*_common.js` and state file, own scratch
+  folder, never kill processes by name. Helpers never change product code or deploy:
+  they report defects; the lead fixes and deploys only when nobody is recording (a
+  deploy restarts the site). Several recordings at once make videos longer (slower
+  screens), not worse.
+
 ## 10. carejiox test identities and data
 
 | Login | Role on screen | Notes |
@@ -246,13 +280,24 @@ module.exports = {
 | `om_hn` | Operations Manager, Hanoi | books, buys packages, cancels |
 | `uat_owner` | Owner | master data, archiving |
 | `nurse_hn` | Nurse, Hanoi (employee "Client UAT nurse_hn") | facility HN_PK_PKGDVU; nurse app at `/health_pwa` |
+| `doctor_hn` | Doctor, Hanoi | HN_PK_PKGDVU; accepts offers in the nurse app; sees every visit in his area (owner decision) |
+| `om_hcm` | Operations Manager, HCMC | |
+| `nurse_hcm` | Nurse, HCMC | TPHCM_PK_CSTNVU |
 
 - Main fictional client: **Nguyễn Văn An**, ID `01_0000126`, Hà Nội.
 - Price list for the client test data: "Client UAT 20261013 V01.01 (VND)".
 - Bookings list: `/bizapp/action-1433` (open a booking at `/bizapp/action-1433/<id>`);
   Contacts `/bizapp/action-1438`; Owner Clients `/bizapp/action-1430`.
 
-## 11. Bookings BK-01..BK-05 — head start (verify on screen; these are plans, not facts)
+## 11. Recorded so far (all PASS, 4 Nov 2026)
+
+Contacts CT-01..06 · Bookings BK-01..05 · Assignment AS-01..03 · Cancellation /
+rescheduling CR-01..02 · Nurse app MB-01..10, each with a combined video, and
+`CareJioX_Acceptance_Results_20261104_Video_Evidence_v2.xlsx` (latest copy — start the
+next batch's sheet from it). Not yet recorded: CH-07, AR-01..06, RP, UM, FM, NA, AU and the
+TC-01..17 client cases. The original BK plan is kept below for reference.
+
+### Bookings BK-01..BK-05 — original head start
 
 | Test | Expected (verbatim) | Role | On-screen story to consider |
 |---|---|---|---|

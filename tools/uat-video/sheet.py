@@ -3,9 +3,11 @@ run.json files the recordings leave in each test folder.
 
 usage:
   python3 sheet.py <source.xlsx> <out.xlsx> [--root <evidence root>]
-                   [--combined "<combined video name>.mp4"] [--notes notes.json]
+                   [--combined "[CT,BK=]<combined video name>.mp4" ...] [--notes notes.json]
                    [--sheet "Test Results"] [--date "4 Nov 2026"]
 
+--combined may be given once per combined video, prefixed with the test-ID groups
+it holds ("AS,CR=Assignment ... .mp4"); without a prefix it applies to every row.
 Rows are matched by the "Test ID" column. Only tests that have a run.json are
 written; other rows are left as they are. notes.json is {"CT-06": "Process: ..."}
 for a sentence that the run data cannot say (how the business does the step).
@@ -33,7 +35,7 @@ def main():
     ap.add_argument('--root', default=os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
         '../../outputs/carejiox-uat-20261029/video-evidence'))
-    ap.add_argument('--combined', default='')
+    ap.add_argument('--combined', action='append', default=[])
     ap.add_argument('--notes', default='')
     ap.add_argument('--sheet', default='Test Results')
     ap.add_argument('--date', default=(datetime.now(timezone.utc) + TZ_OFFSET).strftime('%-d %b %Y'))
@@ -47,6 +49,13 @@ def main():
                 r = json.load(fh)
             r['folder'] = d
             runs[r['id']] = r
+    combined = {}                      # test-ID group ('' = any) -> combined video name
+    for spec in a.combined:
+        groups, sep, name = spec.partition('=')
+        if not sep:
+            groups, name = '', spec
+        for g in groups.split(','):
+            combined[g.strip()] = name
     notes = {}
     if a.notes:
         with open(a.notes, encoding='utf-8') as fh:
@@ -78,12 +87,13 @@ def main():
         verdict = 'PASS' if r['passed'] else 'FAIL'
         recs = '; '.join(f'{k}: {v}' for k, v in r.get('records', {}).items())
         rel = f"video-evidence/{r['folder']}/{r['file']}"
+        whole = combined.get(tid.split('-')[0], combined.get(''))
         text = (f"{verdict} — retested on screen on {SITE}, {a.date} ({TZ_LABEL}); "
                 f"{good} of {n} on-screen checks matched."
                 + (f" Records: {recs}." if recs else '')
                 + (f" {notes[tid]}" if tid in notes else '')
                 + f"\nVideo: {rel}  ({round(r['seconds'])} s)."
-                + (f" Also chapter {tid} of “{a.combined}”." if a.combined else '')
+                + (f" Also chapter {tid} of “{whole}”." if whole else '')
                 + f" Still images of each check: video-evidence/{r['folder']}/proof-screenshots/")
         if not r['passed']:
             text += ' Not matched: ' + '; '.join(
