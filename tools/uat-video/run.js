@@ -3,12 +3,12 @@
 const path = require('path');
 const fs = require('fs');
 const { Kit, safeName } = require('./kit');
+const CFG = require('./config');
 
 (async () => {
   const id = process.argv[2];
   const oi = process.argv.indexOf('--out');
-  const root = oi > 0 ? process.argv[oi + 1]
-    : path.resolve(__dirname, '../../outputs/carejiox-uat-20261029/video-evidence');
+  const root = oi > 0 ? process.argv[oi + 1] : CFG.evidenceRoot;
   const tc = require(`./cases/${id}.js`);
   const outDir = path.join(root, safeName(`${tc.meta.id} ${tc.meta.title}`));
   fs.mkdirSync(outDir, { recursive: true });

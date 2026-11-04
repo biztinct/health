@@ -9,11 +9,12 @@ const { execFileSync } = require('child_process');
 const FFMPEG = require('ffmpeg-static');
 const fs = require('fs');
 const path = require('path');
+const CFG = require('./config');
 
-const BASE = 'https://carejiox.com';
+const BASE = CFG.base;
 const VIEW = { width: 1280, height: 720 };
 const SCALE = 1.5;                       // 1280x720 layout captured at 1920x1080
-const TZ = 'Asia/Ho_Chi_Minh';
+const TZ = CFG.timezone;
 const FPS = 25;
 
 // ---------------------------------------------------------------- overlay (in page)
@@ -80,7 +81,7 @@ const OVERLAY = `(() => {
     const s = JSON.parse(sessionStorage.getItem('uv-state') || '{}');
     const now = new Intl.DateTimeFormat('en-GB', { timeZone: '${TZ}', day: '2-digit', month: 'short', year: 'numeric',
       hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(new Date());
-    b.innerHTML = (s.badge || '') + ' &nbsp;·&nbsp; <b>' + now + '</b> Vietnam time';
+    b.innerHTML = (s.badge || '') + ' &nbsp;·&nbsp; <b>' + now + '</b> ${CFG.tzLabel}';
   };
   window.__uvRender = () => {
     const s = JSON.parse(sessionStorage.getItem('uv-state') || '{}');
@@ -123,15 +124,15 @@ class Kit {
     fs.mkdirSync(this.proofDir, { recursive: true });
     this.browser = await chromium.launch();
     this.context = await this.browser.newContext({
-      viewport: VIEW, deviceScaleFactor: SCALE, locale: 'en-US', timezoneId: TZ,
-      permissions: ['geolocation', 'notifications'], geolocation: { latitude: 21.0136, longitude: 105.8487 },
+      viewport: VIEW, deviceScaleFactor: SCALE, locale: CFG.locale, timezoneId: TZ,
+      permissions: ['geolocation', 'notifications'], geolocation: CFG.geolocation,
     });
     await this.context.addInitScript(OVERLAY);
     this.page = await this.context.newPage();
     this.page.setDefaultTimeout(20000);
     // Surface what a screen refuses quietly: failed calls and script errors.
     this.page.on('response', async (r) => {
-      if (!r.url().includes('/web/dataset/call_kw')) return;
+      if (!r.url().includes(CFG.rpcPath)) return;
       try { const j = await r.json(); if (j.error) console.log('  RPC ERROR', r.url().split('/').slice(-2).join('/'), '—', (j.error.data && j.error.data.message || '').slice(0, 200)); } catch (e) { /* not json */ }
     });
     this.page.on('pageerror', (e) => console.log('  PAGE ERROR', e.message.slice(0, 200)));
@@ -142,7 +143,7 @@ class Kit {
       this.frames.push({ file, t: f.metadata.timestamp });
       try { await this.cdp.send('Page.screencastFrameAck', { sessionId: f.sessionId }); } catch (e) { /* closing */ }
     });
-    await this.page.goto(BASE + '/web/login');
+    await this.page.goto(BASE + CFG.loginPath);
     await this.cdp.send('Page.startScreencast', {
       format: 'jpeg', quality: 92, maxWidth: VIEW.width * SCALE, maxHeight: VIEW.height * SCALE, everyNthFrame: 1,
     });
@@ -176,9 +177,9 @@ class Kit {
     const rows = [
       ['Acceptance criterion', m.criterion],
       ['Signed in as', `${m.role} — user “${m.login}”`],
-      ['System', 'carejiox.com (live system), English, Vietnam time'],
+      ['System', CFG.systemLabel],
       ['Test data', m.data],
-      ['Recorded', `${now} (Vietnam time)`],
+      ['Recorded', `${now} (${CFG.tzLabel})`],
     ];
     const html = `<div class="k">Acceptance test evidence · ${esc(m.id)}</div><h1>${esc(m.title)}</h1>`
       + `<div class="sub">This recording repeats the test on the live screens, step by step. Green boxes mark the proof for each expected result.</div>`
@@ -202,7 +203,7 @@ class Kit {
       + `<div class="stamp ${ok ? '' : 'bad'}">${ok ? 'PASS' : 'FAIL'}</div>`
       + (failed.length ? `<div class="sub" style="margin-top:10px;color:#DC2626">Not matched: ${failed.map((f) => esc(f.label + ' — ' + f.detail)).join('; ')}</div>` : '');
     await this._state({ card: html, cap: '', n: '' });
-    this._cue('', ok ? 'Result: PASS' : 'Result: FAIL', ok ? 'Kết quả: ĐẠT' : 'Kết quả: KHÔNG ĐẠT');
+    this._cue('', ok ? 'Result: PASS' : 'Result: FAIL', ok ? CFG.sub.pass : CFG.sub.fail);
   }
 
   // ------------------------------------------------------------ actions
@@ -354,8 +355,8 @@ class Kit {
     await this.step(n, `Sign in as ${user.role} (${user.login})${pwa ? ' in the nurse app' : ''}`,
       `Đăng nhập với vai trò ${user.role_vi || user.role} (${user.login})${pwa ? ' trên ứng dụng điều dưỡng' : ''}`);
     await this._state({ badge: `${esc(this.meta.id)} · ${esc(this.meta.short || this.meta.title)} · ${esc(user.role)}` });
-    await p.goto(BASE + '/web/session/logout');
-    await p.goto(BASE + '/web/login' + (pwa ? '?redirect=%2Fhealth_pwa%3F%23%2Ftoday' : ''));
+    await p.goto(BASE + CFG.logoutPath);
+    await p.goto(BASE + CFG.loginPath + (pwa ? CFG.pwaLoginRedirect : ''));
     await this._state({});
     await this._signIn(user.login, user.password, pwa);
   }
@@ -368,7 +369,7 @@ class Kit {
     if (await another.isVisible().catch(() => false)) await this.click(another, 1200);
     await this.type(p.locator('#login'), login);
     await this.type(p.locator('#password'), password);
-    await Promise.all([p.waitForURL(pwa ? /health_pwa/ : /\/bizapp/, { timeout: 45000 }), this.click(p.locator('button.btn-primary:has-text("Log in")'), 0)]);
+    await Promise.all([p.waitForURL(pwa ? CFG.pwaLanding : CFG.landing, { timeout: 45000 }), this.click(p.locator('button.btn-primary:has-text("Log in")'), 0)]);
     await p.waitForLoadState('networkidle').catch(() => {});
     await this._state({});
     if (pwa) {
@@ -398,14 +399,16 @@ class Kit {
 
   // White-label guard: the brand word must never be on screen (overlay excluded).
   async brandCheck(where) {
-    const hit = await this.page.evaluate(() => {
+    const word = CFG.brandWord.source;
+    const hit = await this.page.evaluate((word) => {
       const root = document.getElementById('uv-root');
       // visible text only: scripts and hidden templates are not on screen
       const txt = [...document.body.querySelectorAll('*')].filter((e) => !root || !root.contains(e))
         .filter((e) => e.children.length === 0 && !/^(SCRIPT|STYLE|NOSCRIPT|TEMPLATE)$/.test(e.tagName)
           && e.getClientRects().length > 0).map((e) => e.innerText || '').join(' ');
-      return /odoo/i.test(txt) ? txt.match(/.{0,40}odoo.{0,40}/i)[0] : '';
-    });
+      const m = txt.match(new RegExp(`.{0,40}${word}.{0,40}`, 'i'));
+      return m ? m[0] : '';
+    }, word);
     if (hit) { console.log(`  BRAND WORD ON SCREEN at ${where}: ${hit}`); this.brandHits = (this.brandHits || []).concat(where); }
   }
 
@@ -424,15 +427,15 @@ class Kit {
     execFileSync(FFMPEG, ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', listFile,
       '-vf', `fps=${FPS},scale=1920:1080:flags=lanczos,format=yuv420p`, '-c:v', 'libx264', '-preset', 'slow',
       '-crf', String(this.crf || 24), '-tune', 'stillimage', '-movflags', '+faststart', raw]);
-    // Vietnamese captions as a switchable subtitle track (off by default).
+    // Second-language captions as a switchable subtitle track (off by default).
     const t0 = f[0].t;
     const srt = this._srt(t0, lastT, 'vi');
-    const srtFile = path.join(this.outDir, `${this.meta.id} captions - Vietnamese.srt`);
+    const srtFile = path.join(this.outDir, `${this.meta.id} captions - ${CFG.sub.file}.srt`);
     fs.writeFileSync(srtFile, srt);
     const out = path.join(this.outDir, base + '.mp4');
     for (const old of fs.readdirSync(this.outDir).filter((n) => n.endsWith('.mp4'))) fs.rmSync(path.join(this.outDir, old));
     execFileSync(FFMPEG, ['-y', '-loglevel', 'error', '-i', raw, '-i', srtFile, '-map', '0:v', '-map', '1:0',
-      '-c:v', 'copy', '-c:s', 'mov_text', '-metadata:s:s:0', 'language=vie', '-metadata:s:s:0', 'title=Tiếng Việt',
+      '-c:v', 'copy', '-c:s', 'mov_text', '-metadata:s:s:0', `language=${CFG.sub.code}`, '-metadata:s:s:0', `title=${CFG.sub.title}`,
       '-disposition:s:0', '0', '-metadata', `title=${base}`, '-movflags', '+faststart', out]);
     fs.writeFileSync(path.join(this.outDir, 'run.json'), JSON.stringify({
       id: this.meta.id, passed: ok, proofs: this.proofs, records: this.records, brandHits: this.brandHits || [],
@@ -448,7 +451,7 @@ class Kit {
       return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${x.toFixed(3).padStart(6, '0').replace('.', ',')}`; };
     return this.cues.map((c, i) => {
       const end = i + 1 < this.cues.length ? this.cues[i + 1].t : lastT;
-      const txt = (c.n ? `Bước ${c.n}: ` : '') + c[lang];
+      const txt = (c.n ? `${CFG.sub.step} ${c.n}: ` : '') + c[lang];
       return `${i + 1}\n${ts(c.t - t0)} --> ${ts(end - t0)}\n${txt}\n`;
     }).join('\n');
   }

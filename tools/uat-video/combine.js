@@ -1,13 +1,14 @@
 // Join recorded test videos into one MP4 with a chapter per test and one Vietnamese
 // subtitle track (each test's captions shifted to its place in the whole).
 // usage: node combine.js "<output name>" <test folder> [<test folder> ...]
-// Test folders are under the evidence root (default ../../outputs/carejiox-uat-20261029/video-evidence).
+// Test folders are under the evidence root (config.js evidenceRoot, or EVIDENCE_ROOT).
 const { execFileSync } = require('child_process');
 const FFMPEG = require('ffmpeg-static');
 const fs = require('fs');
 const path = require('path');
+const CFG = require('./config');
 
-const root = process.env.EVIDENCE_ROOT || path.resolve(__dirname, '../../outputs/carejiox-uat-20261029/video-evidence');
+const root = process.env.EVIDENCE_ROOT || CFG.evidenceRoot;
 const [outName, ...dirs] = process.argv.slice(2);
 
 const duration = (file) => {
@@ -49,9 +50,9 @@ const out = path.join(root, `${outName}.mp4`);
 execFileSync(FFMPEG, ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', path.join(tmp, 'list.txt'),
   '-i', path.join(tmp, 'vi.srt'), '-i', path.join(tmp, 'meta.txt'),
   '-map', '0:v', '-map', '1:0', '-map_metadata', '2', '-map_chapters', '2',
-  '-c:v', 'copy', '-c:s', 'mov_text', '-metadata:s:s:0', 'language=vie', '-metadata:s:s:0', 'title=Tiếng Việt',
+  '-c:v', 'copy', '-c:s', 'mov_text', '-metadata:s:s:0', `language=${CFG.sub.code}`, '-metadata:s:s:0', `title=${CFG.sub.title}`,
   '-movflags', '+faststart', out]);
-fs.copyFileSync(path.join(tmp, 'vi.srt'), path.join(root, `${outName} - Vietnamese captions.srt`));
+fs.copyFileSync(path.join(tmp, 'vi.srt'), path.join(root, `${outName} - ${CFG.sub.file} captions.srt`));
 fs.rmSync(tmp, { recursive: true, force: true });
 console.log(`${out} · ${(fs.statSync(out).size / 1048576).toFixed(1)} MB · ${Math.round(offset)} s · ${chapters.length} chapters`);
 chapters.forEach((c) => console.log(`  ${new Date(c.start * 1000).toISOString().slice(14, 19)}  ${c.title}`));
