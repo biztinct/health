@@ -4401,3 +4401,22 @@ a no-op.
     invoice without setting the flag. health_invoicing 19.0.1.4.3 recomputed
     18 bookings, 16 changed to ticked (BK4056 and the acceptance bookings
     BK3833–BK3848). (UAT round 4.)
+- **§5.329 — `patient_phone` on a booking is the MAIN phone.** It was related
+    to `patient_id.mobile` (the SECOND phone, §5.317); now `phone or mobile`
+    (compute + search), with `patient_second_phone` for the People panel.
+    Nurse-app / assignment payloads pick `phone or mobile` too. (UAT round 5.)
+- **§5.330 — every OM / Owner also holds the nurse group**, so a
+    `groups="…nurse"` element shows to them. "Only real nurses" is
+    `groups="health_base.group_healthcare_nurse,!health_base.group_healthcare_operations_manager"`.
+    (UAT round 5, quote dialog banner.)
+- **§5.331 — cancelling a payment unlinks its DRAFT journal entry (core), and
+    the lifecycle guard refused that unless the entry was marked Deleted.**
+    health_invoicing `account.payment.action_cancel` now removes the payment's
+    own draft entry itself (user's unlink right checked, purge logged, then
+    sudo unlink), then calls the standard cancel; posted entries are untouched.
+    The PAY record (`health.payment.transaction`) gets status "Payment
+    Cancelled"; the booking's Total Paid / count use only standing payments
+    (not cancelled/failed, linked payment posted), and the invoice's
+    "Payments" button ignores cancelled payments (core counts
+    `matched_payment_ids`, which keeps the cancelled one). PAY01371 set to
+    cancelled by hand on carejiox (BK4056 back to 210,000 ₫). (UAT round 5.)

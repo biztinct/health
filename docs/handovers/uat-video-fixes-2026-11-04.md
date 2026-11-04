@@ -150,3 +150,23 @@ Nurse app version 1.21.3 → 1.21.4. Tests for 1, 2, 3, 7 at least.
    posted** (BK4056 / INV/2026/00025).
 Do not touch BK4056, INV/2026/00025 or payment PBNK1/2026/00007.
 
+## 7. Round 5 (owner approved)
+1. **Booking › People panel shows the client's second phone** (`mobile`,
+   0900000212 for Trần Thị Bình) instead of the main phone (0900000101). Show
+   the main phone; the second phone may follow as its own labelled line.
+2. **The quote/service dialog shows "Nurse Access: you can only edit
+   quantities and discounts" to the Operations Manager and Owner.** Only to
+   nurse-role users who are actually restricted.
+3. **Quotes show no units** (Wound, Visit, Injection…), only invoices do. Show
+   the unit on the booking's Pricing tab, in the quote/service dialog, and in
+   the nurse app's "View service" lines (app 1.21.5 → 1.21.6).
+
+4. **Cancelling a customer payment leaves its PAY record counted.** Payment 62
+   (PBNK1/2026/00007, PAY01371, 210,000 ₫) was reset and cancelled — the
+   lifecycle guard first demanded its draft journal entry (move 2439) be
+   marked Deleted — and payment 63 (PAY01372) registered instead: BK4056 shows
+   Total Paid 420,000 ₫, INV/2026/00025 "2 Payments". (a) PAY record follows a
+   cancel/reset; Total Paid and counts use standing payments only; (b) the
+   normal cancel must work without the Deleted mark, posted protections
+   unchanged; (c) data: PAY01371 to the state the fixed code gives it. Do not
+   touch payment 63 / PAY01372 or the invoice otherwise.
