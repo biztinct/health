@@ -4357,3 +4357,29 @@ a no-op.
     by the suffix of the visit's own lines instead (`_hanoi` / `_tphcm`), seen
     working on BK3851 after the first deploy listed `_tphcm` items for a Hà
     Nội client. The office catalogue is unchanged (pre-existing). (UAT, 2026-11-04.)
+- **§5.321 — a service-worker script must never sit behind a sign-in.** The
+    browser re-checks it on its own (after sign-out, expired session, a login
+    switch); `auth='user'` answered with a 303 to /web/login and Chrome
+    refuses a worker "behind a redirect", so nurse-app updates silently never
+    installed. `/health_pwa/service-worker.js` is `auth='public'` (fixed code,
+    no user data, rendered sudo); the app and API stay `auth='user'`
+    (`TestServiceWorkerPublic`). (UAT round 3, 2026-11-04.)
+- **§5.322 — the tax/MISA steps on posting are a SIMULATOR on carejiox**
+    (`vietnamese_tax.use_mock_api=True`, no `misa.api_url`). They crashed on a
+    missing `patient_id` for every invoice; once fixed, the simulator would
+    have stored a random "submitted" reference on real invoices. With the
+    simulator on, the status now stays Draft with no error; MISA stays Not
+    Synced. Real e-invoicing is health_redinvoice. (UAT round 3.)
+- **§5.323 — the catchment search field went FIRST in every Owner/Admin
+    search view**, so "type a name + Enter" searched the area (Invoices found
+    nothing). `health_catchment_scope` now inserts it after the view's own
+    fields. (UAT round 3.)
+- **§5.324 — reading an employee's name as a doctor (no HR rights) is
+    refused** ("not available for employee public profiles": the fetch pulls
+    every stored employee field). Read names through `sudo()` when the caller
+    may already see the record that points to the employee (nurse-app future
+    bookings' lead staff). (UAT round 3.)
+- **§5.325 — `TestCatchmentScope.test_owner_and_admin_are_not_pinned_by_the_
+    province_rule` is red on carejiox** (a Healthcare Administrator with an
+    area reads only that province). Not related to the round-3 search-field
+    change; reported, not fixed. (UAT round 3.)
