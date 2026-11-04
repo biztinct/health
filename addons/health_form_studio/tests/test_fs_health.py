@@ -1138,7 +1138,7 @@ class TestFsHealthReach(TransactionCase):
 
     # T64 --------------------------------------------------------------
     def test_64_the_nurse_app_version_and_strings(self):
-        """T64 — the app's five version pins read 1.21.2; the new block's
+        """T64 — the app's five version pins read 1.21.3; the new block's
         title has its Vietnamese in both of the app's dictionaries; nothing
         added names the product underneath."""
         pwa = get_module_path('health_pwa')
@@ -1148,7 +1148,7 @@ class TestFsHealthReach(TransactionCase):
         pins = re.findall(r"(?:pwa_asset_version\">|version: '|PWA_SW_VERSION = '"
                           r"|Service Worker v|CACHE_VERSION = ')(\d+\.\d+\.\d+)",
                           tpl)
-        self.assertEqual(pins, ['1.21.2'] * 5)
+        self.assertEqual(pins, ['1.21.3'] * 5)
         with open(os.path.join(pwa, 'static', 'src', 'js', 'app.js'),
                   encoding='utf-8') as fh:
             app = fh.read()
@@ -1268,15 +1268,15 @@ PIN_FILES = (
     ('health_pwa_family', 'tests/test_pwa_family.py'),
     ('health_form_studio', 'tests/test_fs_health.py'),
 )
-APP_VERSION = '1.21.2'
+APP_VERSION = '1.21.3'
 
 
 @tagged('post_install', '-at_install')
 class TestFsNurseAppVersion(TransactionCase):
 
     def test_73_the_nurse_app_version_pins(self):
-        """T73 (FS-H5) — the five pins read 1.21.2; the five co-resident
-        test files pin 1.21.2 and no older version of the 1.21 line; the
+        """T73 (FS-H5) — the five pins read 1.21.3; the five co-resident
+        test files pin 1.21.3 and no older version of the 1.21 line; the
         service-worker script is kept out of the translatable terms."""
         pwa = get_module_path('health_pwa')
         with open(os.path.join(pwa, 'views', 'pwa_templates.xml'),

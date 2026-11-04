@@ -3025,6 +3025,35 @@ p {
   font-size: 1.2rem;
 }
 
+/* Add service button - on the visit as soon as it is started */
+.btn-add-service {
+  background: #0f766e;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-add-service:hover {
+  background: #115e59;
+}
+
+.btn-add-service:active {
+  transform: scale(0.98);
+}
+
+.btn-add-service i {
+  font-size: 1.2rem;
+}
+
 /* Payment Button - appears after quote verification */
 .btn-payment {
   background: #0891b2;
@@ -3763,6 +3792,75 @@ p {
 }
 
 /* Invoice Totals Section */
+.add-service-block {
+  margin: 12px 0;
+}
+
+.add-service-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+}
+
+.add-service-panel {
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid var(--border-color, #E0E0E0);
+  border-radius: 10px;
+  background: var(--card-color, #fff);
+}
+
+.add-service-note {
+  margin: 10px 0 0;
+  color: var(--text-secondary, #666);
+  font-size: 14px;
+}
+
+.add-service-error {
+  color: #C62828;
+}
+
+.add-service-list {
+  margin-top: 10px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.add-service-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-color, #E0E0E0);
+}
+
+.add-service-row:last-child {
+  border-bottom: none;
+}
+
+.add-service-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.add-service-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-primary, #222);
+}
+
+.add-service-meta {
+  font-size: 12px;
+  color: var(--text-secondary, #666);
+}
+
+.add-service-qty {
+  width: 56px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
 .invoice-totals {
   margin-top: var(--spacing-lg);
   padding-top: var(--spacing-md);

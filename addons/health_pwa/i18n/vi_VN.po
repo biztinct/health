@@ -2015,8 +2015,8 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/health_pwa/static/src/js/app.js:0
 msgid ""
-"Please fill in the clinical notes or take image of the notes to view Quote"
-msgstr "Vui lòng điền ghi chú lâm sàng hoặc chụp ảnh ghi chú để xem báo giá"
+"Please fill in the clinical notes or take image of the notes to view the service"
+msgstr "Vui lòng điền ghi chú lâm sàng hoặc chụp ảnh ghi chú để xem dịch vụ"
 
 #. module: health_pwa
 #. odoo-javascript
@@ -2317,8 +2317,8 @@ msgstr "Lịch hẹn sắp tới"
 #. module: health_pwa
 #. odoo-javascript
 #: code:addons/health_pwa/static/src/js/app.js:0
-msgid "View Quote"
-msgstr "Xem báo giá"
+msgid "View service"
+msgstr "Xem dịch vụ"
 
 #. module: health_pwa
 #. odoo-javascript
@@ -2841,3 +2841,27 @@ msgstr "Thông tin gỡ lỗi đã được ghi vào bảng điều khiển trì
 #: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Failed to get debug info: "
 msgstr "Không thể lấy thông tin gỡ lỗi: "
+
+#. module: health_pwa
+#. odoo-python
+#: code:addons/health_pwa/controllers/api.py:0
+msgid "Services can only be added while the visit is in progress."
+msgstr "Chỉ có thể thêm dịch vụ khi lượt khám đang diễn ra."
+
+#. module: health_pwa
+#. odoo-python
+#: code:addons/health_pwa/controllers/api.py:0
+msgid "Only staff assigned to this visit can add a service."
+msgstr "Chỉ nhân sự được phân công cho lượt khám này mới có thể thêm dịch vụ."
+
+#. module: health_pwa
+#. odoo-python
+#: code:addons/health_pwa/controllers/api.py:0
+msgid "Quantity must be more than 0."
+msgstr "Số lượng phải lớn hơn 0."
+
+#. module: health_pwa
+#. odoo-python
+#: code:addons/health_pwa/controllers/api.py:0
+msgid "Service added during the visit by %(who)s: %(service)s × %(qty)s"
+msgstr "Dịch vụ được thêm trong lượt khám bởi %(who)s: %(service)s × %(qty)s"

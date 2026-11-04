@@ -483,10 +483,17 @@
   .tablet-only { display: none; }
   .desktop-only { display: block; }
   
-  /* Hide mobile navigation on desktop */
-  .mobile-nav,
-  .mobile-header {
-    display: none;
+  /* Keep the header (back, title, the notification bell — the ONLY place
+     to accept or decline an offer) and the navigation on wide screens too:
+     they used to be hidden from 1024px up, which left a nurse on a laptop
+     with no way to answer an offer (UAT 2026-11-04). Same layout as tablet. */
+  .mobile-nav {
+    position: static;
+    box-shadow: none;
+    border-top: none;
+    border-bottom: 1px solid var(--border-color);
+    justify-content: center;
+    gap: var(--spacing-xl);
   }
   
   .mobile-content {

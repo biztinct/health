@@ -4,6 +4,7 @@ import json
 import logging
 from datetime import datetime, timedelta
 from odoo import http, fields, _
+from odoo.fields import Domain
 from odoo.http import request
 from odoo.exceptions import ValidationError, UserError, AccessError
 
@@ -1332,6 +1333,33 @@ class HealthPWAAPIController(http.Controller):
             # Build domain for product search
             domain = [('sale_ok', '=', True)]
 
+            # "Add service" during a visit (owner 2026-11-04): the client's
+            # price list — the visit quote's catalogue (region filter of the
+            # pricing module) and its prices.
+            visit_quote = request.env['sale.order']
+            catalog_domain = Domain.TRUE
+            order_id = kwargs.get('order_id')
+            if order_id:
+                try:
+                    visit = request.env['health.fieldservice.order'].browse(int(order_id)).exists()
+                except (TypeError, ValueError):
+                    visit = request.env['health.fieldservice.order']
+                if visit and visit.sale_order_id:
+                    visit_quote = visit.sale_order_id
+                    catalog_domain = Domain(visit_quote._get_product_catalog_domain())
+                    # The price list is regional (code suffix _hanoi / _tphcm,
+                    # as the pricing engine reads it): offer the region the
+                    # visit's own services come from, plus regionless items.
+                    codes = visit_quote.order_line.mapped('product_id.default_code')
+                    regions = {sfx for sfx in ('_hanoi', '_tphcm')
+                               if any((c or '').endswith(sfx) for c in codes)}
+                    if len(regions) == 1:
+                        sfx = regions.pop()
+                        catalog_domain &= (
+                            Domain('default_code', '=like', '%' + sfx)
+                            | (Domain('default_code', 'not ilike', '_hanoi')
+                               & Domain('default_code', 'not ilike', '_tphcm')))
+
             if search:
                 domain.extend([
                     '|',
@@ -1343,6 +1371,7 @@ class HealthPWAAPIController(http.Controller):
                 domain.append(('categ_id.name', '=', category))
 
             # Get products
+            domain = catalog_domain & Domain(domain)
             products = request.env['product.product'].search(
                 domain, limit=limit, offset=offset, order='name asc'
             )
@@ -1350,13 +1379,20 @@ class HealthPWAAPIController(http.Controller):
 
             # Prepare product data
             products_data = []
+            pricelist = visit_quote.pricelist_id if visit_quote else False
             for product in products:
+                price = product.list_price
+                if pricelist:
+                    try:
+                        price = pricelist._get_product_price(product, 1.0)
+                    except Exception:
+                        price = product.list_price
                 products_data.append({
                     'id': product.id,
                     'name': product.name,
                     'code': product.default_code,
                     'description': product.description_sale,
-                    'price': float(product.list_price),
+                    'price': float(price or 0.0),
                     'currency': product.currency_id.name if product.currency_id else 'VND',
                     'category': product.categ_id.name if product.categ_id else None,
                     'uom': product.uom_id.name if product.uom_id else None,
@@ -1375,6 +1411,20 @@ class HealthPWAAPIController(http.Controller):
 
         except Exception as e:
             return self._prepare_json_response(error=str(e), status_code=500)
+
+    def _visit_add_service_refusal(self, order):
+        """Why the current user may NOT add a service to this visit now, or
+        False. In progress only; assigned staff only (an active assignment —
+        not declined, deferred or a template)."""
+        if order.state != 'in_progress':
+            return _('Services can only be added while the visit is in progress.')
+        employee = request.env['hr.employee'].sudo().search(
+            [('user_id', '=', request.env.uid)], limit=1)
+        assigned = order.sudo().assignment_ids.filtered(
+            lambda a: a.state not in ('template', 'cancelled', 'deferred')).mapped('staff_id')
+        if not employee or employee not in assigned:
+            return _('Only staff assigned to this visit can add a service.')
+        return False
 
     @http.route('/health_pwa/api/fso/<int:order_id>/quote/update', type='http', auth='user', methods=['POST'], csrf=False)
     def api_fso_update_quote(self, order_id, **kwargs):
@@ -1408,9 +1458,19 @@ class HealthPWAAPIController(http.Controller):
             line_data = data.get('line_data', {})
 
             if action == 'add':
-                # Add new product line
+                # Add a service to the visit's quote (owner 2026-11-04): only
+                # while the visit is in progress, only by staff assigned to it.
+                refusal = self._visit_add_service_refusal(order)
+                if refusal:
+                    return self._prepare_json_response(error=refusal, status_code=403)
+
                 product_id = line_data.get('product_id')
-                quantity = line_data.get('quantity', 1.0)
+                try:
+                    quantity = float(line_data.get('quantity', 1.0) or 0)
+                except (TypeError, ValueError):
+                    quantity = 0
+                if quantity <= 0:
+                    return self._prepare_json_response(error=_('Quantity must be more than 0.'), status_code=400)
 
                 if not product_id:
                     return self._prepare_json_response(error=_('Product ID required'), status_code=400)
@@ -1419,13 +1479,27 @@ class HealthPWAAPIController(http.Controller):
                 if not product.exists():
                     return self._prepare_json_response(error=_('Product not found'), status_code=404)
 
-                # Create order line
+                price = product.list_price
+                if sale_order.pricelist_id:
+                    try:
+                        price = sale_order.pricelist_id._get_product_price(product, quantity)
+                    except Exception:
+                        price = product.list_price
+
+                # Create order line (advanced pricing re-prices the whole
+                # quote right below)
                 request.env['sale.order.line'].sudo().create({
                     'order_id': sale_order.id,
                     'product_id': product_id,
                     'product_uom_qty': quantity,
-                    'price_unit': product.list_price,
+                    'price_unit': price,
                 })
+                qty_label = ('%g' % quantity)
+                order.sudo().message_post(
+                    body=_('Service added during the visit by %(who)s: %(service)s × %(qty)s',
+                           who=request.env.user.name, service=product.display_name, qty=qty_label),
+                    author_id=request.env.user.partner_id.id,
+                    subtype_xmlid='mail.mt_note')
 
             elif action == 'update':
                 # Update existing line

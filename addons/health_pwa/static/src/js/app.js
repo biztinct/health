@@ -2,6 +2,15 @@
 
 const APP_VI_FALLBACK_TRANSLATIONS = {
   'Close': 'Đóng',
+  // Add a service during the visit (UAT 2026-11-04) — VN-first fallback.
+  'Add service': 'Thêm dịch vụ',
+  'Add': 'Thêm',
+  'Search services by name or code...': 'Tìm dịch vụ theo tên hoặc mã...',
+  'Service added': 'Đã thêm dịch vụ',
+  'Could not add the service': 'Không thể thêm dịch vụ',
+  'Save Quote first, then add a service': 'Lưu báo giá trước, sau đó thêm dịch vụ',
+  'Loading services...': 'Đang tải dịch vụ...',
+  'No services found': 'Không tìm thấy dịch vụ',
   'Upcoming Bookings': 'Lịch hẹn sắp tới',
   'No upcoming bookings scheduled': 'Chưa có lịch hẹn sắp tới',
   'Quick Complete': 'Hoàn tất nhanh',
@@ -2118,6 +2127,108 @@ window.healthPWA = {
           await loadProductCatalog();
         };
 
+        // ---------------------------------------------------------------
+        // Add a service to the visit's quote DURING the visit (owner
+        // decision 2026-11-04). Same product search as the next-visit form,
+        // scoped to this visit's price list (order_id), then the server adds
+        // the line, re-prices the quote and returns the new totals. The
+        // server refuses unless the visit is in progress and the user is
+        // assigned to it.
+        // ---------------------------------------------------------------
+        const showAddService = ref(false);
+        const addServiceQuery = ref('');
+        const addServiceProducts = ref([]);
+        const addServiceLoading = ref(false);
+        const addServiceError = ref(null);
+        const addServiceQty = ref({});
+        const addServiceBusy = ref(false);
+
+        // Available as soon as the visit is started (owner 2026-11-04) — not
+        // behind clinical notes — on a visit that has a quote to add to.
+        const canAddServiceToVisit = computed(() => {
+          const d = selectedBookingDetail.value;
+          if (!d) return false;
+          const started = d.state === 'in_progress'
+            || (serviceStartedForBooking.value && serviceStartedForBooking.value === selectedBookingId.value);
+          return !!(started && d.confirmation_requirements?.has_quote_with_items && !quoteVerified.value);
+        });
+
+        const loadAddServiceCatalog = async () => {
+          if (!selectedBookingId.value) return;
+          addServiceLoading.value = true;
+          addServiceError.value = null;
+          try {
+            let url = `/health_pwa/api/products/catalog?limit=50&order_id=${selectedBookingId.value}`;
+            if (addServiceQuery.value) {
+              url += `&search=${encodeURIComponent(addServiceQuery.value)}`;
+            }
+            const response = await fetch(url);
+            const result = await response.json();
+            if (result.success && result.data) {
+              addServiceProducts.value = result.data.products || [];
+            } else {
+              addServiceError.value = displayError(result.error) || _t('Could not add the service');
+            }
+          } catch (err) {
+            addServiceError.value = err.message;
+          } finally {
+            addServiceLoading.value = false;
+          }
+        };
+
+        const openAddService = async () => {
+          // Unsaved Qty/Discount edits in "View service" would be lost by the
+          // reload that follows an add: save them first.
+          if (showInvoiceModal.value && showSaveMessage.value) {
+            alert(_t('Save Quote first, then add a service'));
+            return;
+          }
+          showAddService.value = true;
+          if (!addServiceProducts.value.length) {
+            await loadAddServiceCatalog();
+          }
+        };
+
+        const notifyAddService = (message, type) => {
+          if (window.healthPWA && window.healthPWA.showNotification) {
+            window.healthPWA.showNotification(message, type);
+          } else {
+            alert(message);
+          }
+        };
+
+        const addServiceToVisit = async (product) => {
+          if (addServiceBusy.value || !selectedBookingId.value) return;
+          const qty = parseFloat(addServiceQty.value[product.id] || 1);
+          if (!(qty > 0)) return;
+          addServiceBusy.value = true;
+          try {
+            const response = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/quote/update`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'add', line_data: { product_id: product.id, quantity: qty } }),
+            });
+            const result = await response.json();
+            if (result.success) {
+              const bookingId = selectedBookingId.value;
+              if (showInvoiceModal.value) {
+                await loadQuoteData(bookingId);
+              }
+              addServiceQty.value[product.id] = 1;
+              showAddService.value = false;
+              // The quote changed: refresh the visit (buttons, one-tap state).
+              try { await fetchBookingDetail(bookingId); } catch (e) { /* keep the modal usable */ }
+              notifyAddService(_t('Service added'), 'success');
+            } else {
+              notifyAddService(displayError(result.error) || _t('Could not add the service'), 'error');
+            }
+          } catch (err) {
+            notifyAddService(_t('Could not add the service'), 'error');
+          } finally {
+            addServiceBusy.value = false;
+          }
+        };
+
         // Computed elapsed time for timer
         const elapsedTime = computed(() => {
           if (!selectedBookingDetail.value || !selectedBookingDetail.value.actual_start_datetime) return '00:00:00';
@@ -3356,6 +3467,18 @@ window.healthPWA = {
           loadProductCatalog,
           addProductToQuote,
           openProductCatalogModal,
+          // Add a service during the visit
+          showAddService,
+          addServiceQuery,
+          addServiceProducts,
+          addServiceLoading,
+          addServiceError,
+          addServiceQty,
+          addServiceBusy,
+          canAddServiceToVisit,
+          loadAddServiceCatalog,
+          openAddService,
+          addServiceToVisit,
           // Current user info
           currentUser,
           // Timezone conversion helper
@@ -3752,17 +3875,23 @@ window.healthPWA = {
                     <i class="material-icons">description</i>
                     <span>{{ _t('Clinical Notes') }}</span>
                   </button>
-                  <!-- View Quote Button (always visible, disabled when no quote or clinical notes incomplete) -->
+                  <!-- Add a service during the visit (owner 2026-11-04):
+                       as soon as the visit is started, not behind notes. -->
+                  <button v-if="canAddServiceToVisit" @click="openAddService" class="btn btn-add-service">
+                    <i class="material-icons">add_circle</i>
+                    <span>{{ _t('Add service') }}</span>
+                  </button>
+                  <!-- View service button (always visible, disabled when no quote or clinical notes incomplete) -->
                   <button @click="openInvoiceModal"
                           :disabled="!selectedBookingDetail?.confirmation_requirements?.has_quote_with_items || !isClinicalNotesComplete"
                           class="btn btn-invoice"
                           :title="!selectedBookingDetail?.confirmation_requirements?.has_quote_with_items
                             ? _t('No quote available')
                             : !isClinicalNotesComplete
-                            ? _t('Please fill in the clinical notes or take image of the notes to view Quote')
-                            : _t('View Quote')">
+                            ? _t('Please fill in the clinical notes or take image of the notes to view the service')
+                            : _t('View service')">
                     <i class="material-icons">receipt</i>
-                    <span>{{ _t('View Quote') }}</span>
+                    <span>{{ _t('View service') }}</span>
                   </button>
                   <!-- Complete Service Button (shown only when no quote) -->
                   <button v-if="!selectedBookingDetail?.confirmation_requirements?.has_quote_with_items"
@@ -4138,7 +4267,7 @@ window.healthPWA = {
             <div class="modal-header">
               <h3>
                 <i class="material-icons">receipt</i>
-                {{ _t('View Quote') }} <span v-if="quoteData" style="font-weight: 400; font-size: 14px; color: #666; margin-left: 4px;">{{ quoteData.name }}</span>
+                {{ _t('View service') }} <span v-if="quoteData" style="font-weight: 400; font-size: 14px; color: #666; margin-left: 4px;">{{ quoteData.name }}</span>
               </h3>
               <button @click="showInvoiceModal = false" class="modal-close">
                 <i class="material-icons">close</i>
@@ -4221,6 +4350,16 @@ window.healthPWA = {
                       </div>
                     </div>
                   </template>
+                </div>
+
+                <!-- Add a service during the visit: the main path is the
+                     separate button on the visit; this one opens the same
+                     window (server checks visit state + assignment). -->
+                <div v-if="canAddServiceToVisit" class="add-service-block">
+                  <button type="button" class="btn btn-secondary add-service-toggle" @click="openAddService">
+                    <i class="material-icons">add_circle</i>
+                    <span>{{ _t('Add service') }}</span>
+                  </button>
                 </div>
 
                 <!-- Totals Section -->
@@ -4645,6 +4784,53 @@ window.healthPWA = {
                 <i class="material-icons">check_circle</i>
                 {{ _t('Schedule Visit') }}
               </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add service modal (over the visit and over "View service") -->
+        <div v-if="showAddService" class="modal-overlay catalog-modal-overlay add-service-overlay" @click.self="showAddService = false">
+          <div class="modal-content product-catalog-modal add-service-modal">
+            <div class="modal-header">
+              <h3>
+                <i class="material-icons">add_circle</i>
+                {{ _t('Add service') }}
+              </h3>
+              <button @click="showAddService = false" class="modal-close">
+                <i class="material-icons">close</i>
+              </button>
+            </div>
+            <div v-if="selectedBookingDetail?.patient_name" class="client-name-banner">
+              <i class="material-icons">person</i>
+              <span>{{ selectedBookingDetail.patient_name }}</span>
+            </div>
+            <div class="modal-body">
+              <input type="text" v-model="addServiceQuery" class="form-control search-control-clean"
+                     :placeholder="_t('Search services by name or code...')" @keyup="loadAddServiceCatalog">
+              <p v-if="addServiceLoading" class="add-service-note">{{ _t('Loading services...') }}</p>
+              <p v-else-if="addServiceError" class="add-service-note add-service-error">{{ addServiceError }}</p>
+              <p v-else-if="!addServiceProducts.length" class="add-service-note">{{ _t('No services found') }}</p>
+              <div v-else class="add-service-list">
+                <div v-for="product in addServiceProducts" :key="product.id" class="add-service-row">
+                  <div class="add-service-info">
+                    <div class="add-service-name">{{ product.name }}</div>
+                    <div class="add-service-meta">
+                      <span v-if="product.code">{{ product.code }} · </span>{{ Number(product.price).toLocaleString() }} {{ product.currency }}
+                    </div>
+                  </div>
+                  <input type="number" min="1" step="1" class="editable-input add-service-qty"
+                         :value="addServiceQty[product.id] || 1"
+                         @input="addServiceQty[product.id] = $event.target.value"
+                         :aria-label="_t('Qty')">
+                  <button type="button" class="btn btn-primary btn-sm" :disabled="addServiceBusy" @click="addServiceToVisit(product)">
+                    <i class="material-icons">add</i>
+                    <span>{{ _t('Add') }}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button @click="showAddService = false" class="btn btn-secondary">{{ _t('Close') }}</button>
             </div>
           </div>
         </div>
