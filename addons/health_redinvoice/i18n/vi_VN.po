@@ -145,8 +145,8 @@ msgstr "Hủy thất bại: %s"
 #. module: health_redinvoice
 #. odoo-python
 #: code:addons/health_redinvoice/models/account_move.py:0
-msgid "Cancellation requested from Odoo"
-msgstr "Yêu cầu hủy từ Odoo"
+msgid "Cancellation requested by the issuer"
+msgstr "Bên phát hành yêu cầu hủy"
 
 #. module: health_redinvoice
 #. odoo-python
@@ -157,8 +157,8 @@ msgstr "Đã hủy"
 #. module: health_redinvoice
 #. odoo-python
 #: code:addons/health_redinvoice/models/account_move.py:0
-msgid "Cancelled from Odoo"
-msgstr "Đã hủy từ Odoo"
+msgid "Cancelled by the issuer"
+msgstr "Đã hủy bởi bên phát hành"
 
 #. module: health_redinvoice
 #: model:ir.model.fields.selection,name:health_redinvoice.selection__account_move__red_invoice_payment_method__1
@@ -1012,3 +1012,13 @@ msgstr "không xác định"
 
 #~ msgid "Credentials &amp; Defaults"
 #~ msgstr "Thông tin xác thực & Mặc định"
+
+#. module: health_redinvoice
+#. odoo-python
+#: code:addons/health_redinvoice/models/account_move.py:0
+msgid ""
+"The e-invoice could not be sent automatically when this invoice was posted:"
+" %s. Use \"Generate Red Invoice\" to try again."
+msgstr ""
+"Không thể tự động gửi hóa đơn điện tử khi ghi sổ hóa đơn này: %s. Hãy dùng "
+"\"Tạo hóa đơn đỏ\" để thử lại."

@@ -76,10 +76,29 @@ class AccountMove(models.Model):
         auto_issue = self.env['ir.config_parameter'].sudo().get_param('health_redinvoice.auto_issue', 'True') == 'True'
         if auto_issue:
             for move in self:
+                # The automatic issue is a SYSTEM step of posting: a nurse who
+                # posts at the end of a visit may not create e-invoice request
+                # records, and the step used to fail silently (UAT 2026-11-04,
+                # MB-10: INV/2026/00025 stayed "Pending" with no request).
+                # sudo() keeps the poster as the user (create_uid of the
+                # request = the nurse) and only lifts the access checks, for
+                # this one move just posted — nobody gains access to e-invoice
+                # records otherwise.
+                # No savepoint on purpose: once the provider has issued the
+                # invoice, its "issued" state must never be rolled back by a
+                # later step failing (a re-issue would duplicate a legal
+                # e-invoice).
                 try:
-                    move._redinvoice_maybe_issue()
+                    move.sudo()._redinvoice_maybe_issue()
                 except Exception as exc:  # do not block posting
                     _logger.warning("Red Invoice auto-issue skipped for %s: %s", move.name, exc)
+                    vals = {'red_invoice_last_error': _(
+                        'The e-invoice could not be sent automatically when this '
+                        'invoice was posted: %s. Use "Generate Red Invoice" to try again.',
+                        exc)}
+                    if move.red_invoice_state == 'pending':  # never touch 'issuing': the provider may have it
+                        vals['red_invoice_state'] = 'failed'
+                    move.sudo().write(vals)
         return res
 
     def action_redinvoice_generate(self):
@@ -377,9 +396,9 @@ class AccountMove(models.Model):
             'invoiceNo': self.red_invoice_no,
             'templateCode': self.red_invoice_template_code,
             'strIssueDate': fields.Date.to_string(self.invoice_date or fields.Date.context_today(self)),
-            'additionalReferenceDesc': _('Cancellation requested from Odoo'),
+            'additionalReferenceDesc': _('Cancellation requested by the issuer'),
             'additionalReferenceDate': int(datetime.datetime.now().timestamp() * 1000),
-            'reasonDelete': _('Cancelled from Odoo'),
+            'reasonDelete': _('Cancelled by the issuer'),
         }
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
         cookies, auth_headers = self._redinvoice_auth_cookies()
