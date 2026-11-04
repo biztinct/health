@@ -11,6 +11,7 @@ const APP_VI_FALLBACK_TRANSLATIONS = {
   'Save Quote first, then add a service': 'Lưu báo giá trước, sau đó thêm dịch vụ',
   'Loading services...': 'Đang tải dịch vụ...',
   'No services found': 'Không tìm thấy dịch vụ',
+  'Follow-up task sent to:': 'Đã giao việc theo dõi cho:',
   'Upcoming Bookings': 'Lịch hẹn sắp tới',
   'No upcoming bookings scheduled': 'Chưa có lịch hẹn sắp tới',
   'Quick Complete': 'Hoàn tất nhanh',
@@ -1798,6 +1799,12 @@ window.healthPWA = {
               result.data.required_equipment = cleanDisplayValue(result.data.required_equipment);
               result.data.intake_notes = cleanDisplayValue(result.data.intake_notes);
               selectedBookingDetail.value = result.data;
+              // A visit still In Progress after a reload keeps its running
+              // timer, counted from the visit's real start time (UAT MB).
+              if (result.data.state === 'in_progress' && result.data.actual_start_datetime) {
+                serviceStartedForBooking.value = selectedBookingId.value || bookingId;
+                startTimer();
+              }
               console.log('Loaded booking detail:', result.data);
               // One-tap eligibility (§2.5): re-check on every detail load.
               checkOnetapEligibility(bookingId, result.data.state);
@@ -3104,7 +3111,9 @@ window.healthPWA = {
             console.log('No future visit response:', data);
 
             if (data.success) {
-              alert(_t('Noted: Patient does not need future visits'));
+              const sentTo = (data.data && data.data.follow_up_to) || [];
+              alert(_t('Noted: Patient does not need future visits')
+                + (sentTo.length ? '\n' + _t('Follow-up task sent to:') + ' ' + sentTo.join(', ') : ''));
               showNextVisitModalA.value = false;
               // Close modal and refresh to show today's bookings
               completedBookingId.value = null;

@@ -94,45 +94,6 @@ class HealthPWAAPIController(http.Controller):
         except AccessError:
             return False
 
-    def _create_follow_up_activity(self, order, patient, reason_note):
-        """Create a follow-up activity on the patient for the operations manager of the patient's primary facility."""
-        try:
-            facility = patient.primary_facility_id if hasattr(patient, 'primary_facility_id') else False
-            if not facility:
-                _logger.warning('No primary facility for patient %s, cannot create follow-up activity', patient.name)
-                return
-
-            ops_manager_employee = facility.facility_manager_id if facility.facility_manager_id else False
-            if not ops_manager_employee:
-                _logger.warning('No operations manager for facility %s, cannot create follow-up activity', facility.name)
-                return
-
-            ops_manager_user = ops_manager_employee.user_id if ops_manager_employee.user_id else False
-            if not ops_manager_user:
-                _logger.warning('Operations manager %s has no linked user, cannot create follow-up activity', ops_manager_employee.name)
-                return
-
-            activity_type = request.env.ref('mail.mail_activity_data_todo', raise_if_not_found=False)
-            if not activity_type:
-                _logger.warning('Todo activity type not found')
-                return
-
-            tomorrow = fields.Date.today() + timedelta(days=1)
-
-            patient.activity_schedule(
-                activity_type_id=activity_type.id,
-                summary=f'Follow-up required: {patient.name}',
-                note=f'<p><strong>Follow-up Required</strong></p>'
-                     f'<p>Booking: {order.name}</p>'
-                     f'<p>Reason: {reason_note}</p>'
-                     f'<p>Please follow up with the client.</p>',
-                date_deadline=tomorrow,
-                user_id=ops_manager_user.id,
-            )
-            _logger.info('Follow-up activity created for patient %s, assigned to %s', patient.name, ops_manager_user.name)
-        except Exception as e:
-            _logger.error('Error creating follow-up activity: %s', str(e))
-
     def _serialize_clinical_notes(self, order):
         notes = []
         if hasattr(order, 'clinical_note_ids'):
@@ -226,7 +187,7 @@ class HealthPWAAPIController(http.Controller):
                     'address': patient.contact_address,
                     'image_url': f'/web/image/res.partner/{patient.id}/image_128' if patient.image_128 else None,
                     'visit_count': patient.visit_count,
-                    'primary_facility': patient.primary_facility_id.name if patient.primary_facility_id else None,
+                    'primary_facility': patient.primary_facility_id.sudo().name if patient.primary_facility_id else None,  # facility name only; its rule refuses other areas' facilities
                 })
             
             response_data = {
@@ -299,7 +260,7 @@ class HealthPWAAPIController(http.Controller):
                 'last_visit_date': patient.last_visit_date,
                 'next_visit_date': patient.next_visit_date,
                 'visit_count': patient.visit_count,
-                'primary_facility': patient.primary_facility_id.name if patient.primary_facility_id else None,
+                'primary_facility': patient.primary_facility_id.sudo().name if patient.primary_facility_id else None,  # facility name only; its rule refuses other areas' facilities
                 'primary_caregiver': patient.primary_caregiver_id.name if patient.primary_caregiver_id else None,
                 'image_url': f'/web/image/res.partner/{patient.id}/image_256' if patient.image_256 else None,
                 'recent_orders': orders_data,
@@ -1841,12 +1802,12 @@ class HealthPWAAPIController(http.Controller):
                     'from_config': False
                 }
             else:
+                # The config has no offline/GPS/photo switches (fields removed
+                # long ago): reading them raised on every call, so the Call
+                # button never got the clinic's number. Report what exists.
                 config_data = {
                     'clinic_phone_number': pwa_config.clinic_phone_number,
                     'clinic_name': pwa_config.clinic_name,
-                    'enable_offline_mode': pwa_config.enable_offline_mode,
-                    'enable_gps_tracking': pwa_config.enable_gps_tracking,
-                    'enable_photo_capture': pwa_config.enable_photo_capture,
                     'from_config': True
                 }
 
@@ -1999,14 +1960,23 @@ class HealthPWAAPIController(http.Controller):
                     'next_visit_date': False
                 })
 
-            # Create follow-up activity if requested
-            if need_follow_up:
-                self._create_follow_up_activity(order, patient, reason_note)
+            # The answer is stored on the visit (shown on the booking and the
+            # client screen) and a wanted follow-up becomes a task for the
+            # area's Operations Manager. If no task can be made this raises:
+            # the app must never be told "done" for a task nobody got.
+            try:
+                close = order.action_record_visit_close(
+                    'no_further', reason=reason if reason != 'Other' else f'{reason}: {other_reason_text}',
+                    need_follow_up=bool(need_follow_up))
+            except UserError as e:
+                request.env.cr.rollback()
+                return self._prepare_json_response(error=e.args[0] if e.args else str(e), status_code=400)
 
             return self._prepare_json_response(data={
                 'message': _('Visit cancellation reason recorded successfully'),
                 'patient_id': patient.id,
-                'follow_up_created': need_follow_up
+                'follow_up_created': bool(close.get('follow_up_users')),
+                'follow_up_to': close.get('follow_up_users') or [],
             })
 
         except Exception as e:
@@ -2197,6 +2167,9 @@ class HealthPWAAPIController(http.Controller):
 
             # Update patient's next_visit_date
             patient.write({'next_visit_date': next_visit_date})
+            # The closing answer, on the visit just finished (MB-07).
+            order.action_record_visit_close(
+                'next_visit', reason=' '.join(filter(None, [next_fso.name, str(next_visit_date or '')])))
 
             return self._prepare_json_response(data={
                 'message': _('Next visit scheduled successfully'),
@@ -2237,8 +2210,10 @@ class HealthPWAAPIController(http.Controller):
             # Find all future FSOs
             # Record rules will automatically filter by user assignments
             # First get all future FSOs, then filter out completed/cancelled ones
+            # Stored datetimes are naive UTC: compare with naive UTC "now"
+            # (an aware ISO string with +07:00 was refused by the ORM).
             all_future_fsos = request.env['health.fieldservice.order'].search([
-                ('scheduled_datetime', '>', now.isoformat()),
+                ('scheduled_datetime', '>', fields.Datetime.now()),
             ], order='scheduled_datetime asc')
 
             # Filter out completed/cancelled FSOs based on stage
@@ -2292,7 +2267,9 @@ class HealthPWAAPIController(http.Controller):
                         'state': fso.state,
                         'phone': fso.patient_id.mobile or fso.patient_id.phone if fso.patient_id else '',
                         'address': fso.service_address or '',
-                        'lead_staff_name': fso.lead_staff_id.name if fso.lead_staff_id else None,
+                        # A name only: a doctor (no HR rights) reading the
+                        # staff record directly was refused (UAT 2026-11-04).
+                        'lead_staff_name': fso.sudo().lead_staff_id.name or None,
                     })
 
             return self._prepare_json_response(data={'bookings_by_date': bookings_by_date})

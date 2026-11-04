@@ -389,11 +389,20 @@ class HealthPWAController(http.Controller):
         )
         return response
     
-    @http.route('/health_pwa/service-worker.js', type='http', auth='user')
+    # auth='public', not 'user' (UAT 2026-11-04, app 1.21.3): the browser
+    # re-fetches this script on its own to look for an update — after a
+    # sign-out, with an expired session, or while one login replaces another —
+    # and an auth='user' route answered those checks with a 303 to the login
+    # page; a service worker script "behind a redirect" is refused, so the
+    # update never installed. The script is the same fixed code for everybody
+    # (no user, record or setting in it, like the public manifest); every page
+    # and API it serves or caches stays auth='user'. Same pattern as the
+    # manifest route above.
+    @http.route('/health_pwa/service-worker.js', type='http', auth='public', sitemap=False)
     def service_worker(self, **kwargs):
         """Service Worker for offline functionality"""
         response = request.make_response(
-            request.env['ir.ui.view']._render_template('health_pwa.service_worker_js'),
+            request.env['ir.ui.view'].sudo()._render_template('health_pwa.service_worker_js'),
             headers=[
                 ('Content-Type', 'application/javascript'),
                 ('Cache-Control', 'no-cache'),

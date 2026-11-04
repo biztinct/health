@@ -17,7 +17,7 @@ class TestPwaErgo(HttpCase):
     # because no HttpCase in this repo had ever executed. Both are fixed in
     # this phase; the pin stays a hard literal on purpose (that is the
     # tripwire that forces the 5-place bump to be noticed).
-    PWA_VERSION = '1.21.3'
+    PWA_VERSION = '1.21.4'
 
     def test_01_shell_injects_ergo_assets(self):
         """The PWA shell serves ergo.css/ergo.js at the pinned version."""
