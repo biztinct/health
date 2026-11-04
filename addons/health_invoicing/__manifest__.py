@@ -1,6 +1,6 @@
 {
     'name': 'VAFHS Healthcare Invoicing Integration',
-    'version': '19.0.1.4.1',
+    'version': '19.0.1.4.2',
     'category': 'Healthcare/Accounting',
     'summary': 'Healthcare invoicing integration inheriting from standard Odoo accounting',
     'description': """

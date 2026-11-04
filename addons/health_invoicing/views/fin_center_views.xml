@@ -97,8 +97,10 @@
         <field name="model">account.move</field>
         <field name="arch" type="xml">
             <search string="Invoices">
-                <field name="name" string="Number"/>
+                <!-- The client first: typing a name + Enter searches the client
+                     (UAT 2026-11-04). -->
                 <field name="partner_id" string="Patient"/>
+                <field name="name" string="Number"/>
                 <field name="healthcare_service_type"/>
                 <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
                 <filter name="posted" string="Posted" domain="[('state', '=', 'posted'), ('payment_state', '=', 'not_paid')]"/>

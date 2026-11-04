@@ -116,14 +116,18 @@ class IrUiView(models.Model):
             # autocomplete, which is the thing this whole module is meant to
             # prevent.
             #
-            # It goes FIRST, not last: the search RNG wants every <field>
-            # ahead of the filters ("Element search has extra content: field"),
-            # and while runtime-injected arch is not RNG-validated, matching
-            # the schema keeps the client's own parsing on the happy path.
+            # It goes AFTER the view's own fields and ahead of the filters:
+            # the search RNG wants every <field> ahead of the filters ("Element
+            # search has extra content: field"), and the FIRST field is what a
+            # plain "type + Enter" searches — on Invoices that made a client's
+            # name search the catchment area and find nothing (UAT
+            # 2026-11-04). The view's own first field (client, number…) stays
+            # the default.
             node = etree.Element('field')
             node.set('name', field)
             node.set('string', _('Catchment Area'))
-            tree.insert(0, node)
+            own_fields = [i for i, child in enumerate(tree) if child.tag == 'field']
+            tree.insert(own_fields[-1] + 1 if own_fields else 0, node)
 
     @staticmethod
     def _catchment_filter(name, string, domain):

@@ -396,6 +396,14 @@ class HealthcareInvoice(models.Model):
         for record in self:
             record.red_invoice_enabled = enabled
 
+    def _health_patient(self):
+        """The client this invoice is for: the booking's client, else the
+        invoiced partner. account.move has no `patient_id` — reading it made
+        every tax/MISA run fail with a raw program error (UAT 2026-11-04)."""
+        self.ensure_one()
+        fso = self.fieldservice_order_id if 'fieldservice_order_id' in self._fields else False
+        return (fso and fso.patient_id) or self.partner_id
+
     def _is_red_invoice_enabled(self):
         """Helper: check if Red Invoice is enabled (for use in Python methods)"""
         return self.env['ir.config_parameter'].sudo().get_param(
@@ -555,7 +563,16 @@ class HealthcareInvoice(models.Model):
         
         if self.tax_authority_submission_status in ('submitted', 'accepted'):
             return True
-        
+
+        # No tax-authority connection is set up while the simulator is on:
+        # never record a made-up "submitted" with an invented reference on a
+        # real invoice. Leave it not submitted, with no error (UAT 2026-11-04).
+        if self.env['ir.config_parameter'].sudo().get_param(
+                'vietnamese_tax.use_mock_api', 'True') == 'True':
+            self.write({'tax_authority_submission_status': 'draft',
+                        'tax_submission_error': False})
+            return True
+
         try:
             self.tax_authority_submission_status = 'pending'
             
@@ -655,7 +672,7 @@ class HealthcareInvoice(models.Model):
             },
             'healthcare_service': {
                 'type': self.healthcare_service_type,
-                'patient_id': self.patient_id.id if self.patient_id else None,
+                'patient_id': self._health_patient().id or None,
                 'service_date': self.invoice_date.isoformat(),
             },
             'lines': [{
@@ -925,7 +942,7 @@ class HealthcareInvoice(models.Model):
             misa_token = misa_config.get_param('misa.api_token')
             
             if not misa_url or not misa_token:
-                self.misa_sync_status = 'not_synced'
+                self.write({'misa_sync_status': 'not_synced', 'misa_sync_error': False})
                 return False
             
             # Sync to MISA (mock implementation)
@@ -966,7 +983,7 @@ class HealthcareInvoice(models.Model):
             'Currency': self.currency_id.name,
             'HealthcareService': {
                 'ServiceType': self.healthcare_service_type,
-                'PatientID': self.patient_id.id if self.patient_id else None,
+                'PatientID': self._health_patient().id or None,
                 'StaffHours': self.staff_time_hours,
                 'EquipmentDays': self.equipment_rental_days,
             },
@@ -1048,8 +1065,8 @@ class HealthcareInvoice(models.Model):
             'invoice_id': self.id,
             'service_type': self.healthcare_service_type,
             'patient_info': {
-                'id': self.patient_id.id if self.patient_id else None,
-                'name': self.patient_id.name if self.patient_id else None,
+                'id': self._health_patient().id or None,
+                'name': self._health_patient().name or None,
             },
             'provider_info': {
                 'name': self.company_id.name,
