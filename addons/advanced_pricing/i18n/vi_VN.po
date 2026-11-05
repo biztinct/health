@@ -4107,3 +4107,9 @@ msgstr "Người dùng hiện tại được đổi giảm giá từng dòng c�
 #: model:ir.model.fields,field_description:advanced_pricing.field_health_fieldservice_order__quote_line_ids
 msgid "Quote Lines"
 msgstr "Dòng báo giá"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/sale_order.py:0
+msgid "%(pct)s%% discount on the catalogue price (%(base)s ₫)"
+msgstr "Giảm %(pct)s%% trên giá danh mục (%(base)s ₫)"

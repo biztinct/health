@@ -35,7 +35,9 @@ class SaleOrderLine(models.Model):
         res = super()._prepare_invoice_line(**optional_values)
 
         # Copy discount_reason from sale order line to invoice line
-        if self.discount_reason:
+        # advanced_pricing may already have written the discount in words
+        # (rule-adjusted line with a folded discount, UAT round 8): keep it.
+        if self.discount_reason and not res.get('discount_reason'):
             res['discount_reason'] = self.discount_reason
 
         return res

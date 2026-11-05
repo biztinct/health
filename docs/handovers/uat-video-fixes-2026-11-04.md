@@ -321,3 +321,18 @@ or default logic to settle when work resumes; browser check of the picker not co
 "Client UAT om_hn", the list is Client UAT om_hn / Client UAT owner / Nguyen Van Minh, a typo
 shows "No records" (no Create), dialog cancelled — PAY01370 still Cash Pending Delivery. MOH PDF
 for BK3832 downloads (1 page); report tab title "Viet Uc Care".
+
+## 10. Round 8 (5 Nov 2026, AR-01 blocker; coded + tested locally, deploy when the lead says)
+**Invoices lost the line discount.** Cause: `advanced_pricing` `sale.order.line._prepare_invoice_line`
+(pre-existing, not the round-6 code) folded every base-only discount into a net unit price with 0%
+(INV/2026/00028: 180,000 / 0%; 00003–00016 from 29 Oct the same; only 00002 kept 10%).
+Lead ruling (an invoice line must multiply out; no custom accounting totals):
+- **No rule adjustment** (unit price = catalogue price): the invoice line keeps the quote's unit
+  price, Discount % and reason — 200,000 × 1 at 10% = 180,000 (standard line math).
+- **Rule adjustment + discount** (TC-05/TC-08): folded as before (qty × unit = line total,
+  Discount 0) and the Discount Reason reads "10% discount on the catalogue price (450,000 ₫):
+  <reason>" (VI "Giảm 10% trên giá danh mục (450.000 ₫): …"). Rule-only lines unchanged.
+- No new invoice columns, no override of line/tax/move totals. health_invoicing keeps a reason
+  advanced_pricing already wrote. Invoice total = quote total in every case. Both office and
+  nurse-app completion invoices go through `sale.order._create_invoices`. Posted invoices
+  (incl. 00028) untouched.

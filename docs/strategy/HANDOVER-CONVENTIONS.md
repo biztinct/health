@@ -4502,3 +4502,12 @@ a no-op.
     with `resource.setrlimit(RLIMIT_AS, …)` + `force_report_rendering`; the shell
     without the limit renders fine. Also `web.basic_layout` already opens an
     `html_container` — never nest it in one. (UAT round 7.)
+- **§5.343 — invoice lines from a base-only-discount quote (lead ruling).**
+    `sale.order.line._prepare_invoice_line` (advanced_pricing): a line whose
+    unit price equals its catalogue price keeps the quote's unit price +
+    Discount % (standard math); a rule-adjusted line with a discount is folded
+    (`price_unit − base×disc%`, discount 0) and its `discount_reason` states the
+    discount in words with the catalogue amount. Never override invoice
+    line/tax/move totals for this; an invoice line must multiply out. Before
+    5 Nov EVERY such line was folded (INV/2026/00003–00028). health_invoicing's
+    reason copy only fills an empty reason. (UAT round 8.)

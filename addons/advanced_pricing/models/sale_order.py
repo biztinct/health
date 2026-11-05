@@ -1307,9 +1307,33 @@ class SaleOrderLine(models.Model):
         return super()._compute_amount()
 
     def _prepare_invoice_line(self, **optional_values):
+        """Invoice line from a quote line with a base-only discount (UAT round 8,
+        lead ruling): a legal invoice line must multiply out exactly, and the
+        accounting totals stay standard.
+
+        * No price-rule adjustment (unit price == catalogue price): the line
+          keeps the quote's unit price and Discount % (200,000 × 1 at 10% =
+          180,000) — standard line math gives the quote's amount.
+        * A rule adjustment AND a discount (TC-05/TC-08): the discount is folded
+          into the unit price (qty × unit = line total, Discount 0) and written
+          on the line in words: "10% discount on the catalogue price
+          (450,000 ₫): <reason>".
+        Either way the invoice total equals the quote total."""
         vals = super()._prepare_invoice_line(**optional_values)
-        if not self.display_type:
-            vals.update(self._base_discount_tax_values())
+        if self.display_type or not self._base_discount_tax_values():
+            return vals
+        currency = self.order_id.currency_id or self.env.company.currency_id
+        if not float_compare(self.price_unit, self.base_price or 0.0,
+                             precision_rounding=currency.rounding or 0.01):
+            vals.update({'price_unit': self.price_unit, 'discount': self.discount})
+            return vals
+        vals.update(self._base_discount_tax_values())
+        if 'discount_reason' in self.env['account.move.line']._fields:
+            base_total = (self.base_price or 0.0) * (vals.get('quantity') or self.product_uom_qty)
+            words = _('%(pct)s%% discount on the catalogue price (%(base)s ₫)',
+                      pct=f'{self.discount:g}', base=f'{base_total:,.0f}')
+            reason = getattr(self, 'discount_reason', '') or ''
+            vals['discount_reason'] = f'{words}: {reason}' if reason else words
         return vals
 
     def write(self, vals):
