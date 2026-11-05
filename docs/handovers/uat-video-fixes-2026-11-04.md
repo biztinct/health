@@ -316,3 +316,8 @@ the user can see (an OM cannot read every Owner's employee): live om_hn gets om_
 owner, Nguyen Van Minh. `TestCashHandoverLog.test_3` fails on its "defaults to me" line (the
 test OM user has no employee-read right, so he is filtered out of his own list) — test fixture
 or default logic to settle when work resumes; browser check of the picker not completed.
+**Resumed and finished (5 Nov):** test fixture fixed (the live OM role has Employees / Officer);
+`TestCashHandoverLog` 4/4 green. Browser, as om_hn on PAY01370: the box is pre-filled with
+"Client UAT om_hn", the list is Client UAT om_hn / Client UAT owner / Nguyen Van Minh, a typo
+shows "No records" (no Create), dialog cancelled — PAY01370 still Cash Pending Delivery. MOH PDF
+for BK3832 downloads (1 page); report tab title "Viet Uc Care".

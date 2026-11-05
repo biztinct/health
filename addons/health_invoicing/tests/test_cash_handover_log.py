@@ -11,7 +11,8 @@ from odoo import fields
 from odoo.exceptions import UserError
 from odoo.tests import TransactionCase, new_test_user, tagged
 
-OM_GROUPS = ('base.group_user,health_base.group_healthcare_operations_manager,'
+# As the live Operations Manager role (om_hn): Employees / Officer included.
+OM_GROUPS = ('base.group_user,hr.group_hr_user,health_base.group_healthcare_operations_manager,'
              'health_base.group_healthcare_manager')
 
 
