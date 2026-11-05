@@ -550,6 +550,7 @@ msgstr "huyết áp, nhiệt độ, nhịp tim, vv..."
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_service_packages_wizard__fso_id
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__fso_id
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__fso_id
+#: model:ir.model,name:health_landing.model_health_fieldservice_order
 msgid "Booking"
 msgstr "Lịch hẹn"
 
@@ -1673,12 +1674,6 @@ msgstr "Bảng điều khiển chăm sóc sức khỏe"
 #: model:ir.actions.act_window,name:health_landing.action_admin_facilities
 msgid "Healthcare Facilities"
 msgstr "Các cơ sở chăm sóc sức khỏe"
-
-#. module: health_landing
-#: model:ir.model,name:health_landing.model_health_fieldservice_order
-msgid "Healthcare Field Service Order (Unified Booking System)"
-msgstr ""
-"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__sale_order_id
@@ -3930,3 +3925,13 @@ msgstr "VD: Ba lượt khám tại phòng khám"
 #: model_terms:ir.ui.view,arch_db:health_landing.view_admin_package_template_form
 msgid "What the client receives, cancellation and refund terms..."
 msgstr "Khách hàng nhận được gì, điều khoản hủy và hoàn tiền..."
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_form_ops_pricing_discount_reason
+msgid "Discount Reason"
+msgstr "Lý do giảm giá"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_form_ops_pricing_discount_reason
+msgid "Required when there is a discount"
+msgstr "Bắt buộc khi có giảm giá"

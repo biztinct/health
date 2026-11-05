@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Booking › Pricing › Discounts: the quote line's mandatory discount
+         reason (health_invoicing) next to the Discount % (advanced_pricing).
+         Lives here because health_landing depends on both (UAT round 6, item 1). -->
+    <record id="view_health_fso_form_ops_pricing_discount_reason" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.form.ops.pricing.discount.reason</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id" ref="advanced_pricing.view_health_fso_form_ops_pricing"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='quote_line_ids']/list/field[@name='discount']" position="after">
+                <field name="discount_reason" string="Discount Reason"
+                       placeholder="Required when there is a discount"
+                       required="discount &gt; 0"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

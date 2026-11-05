@@ -86,6 +86,18 @@
   color:#1e293b; -moz-appearance:textfield;
 }
 .hfq-qty__input::-webkit-outer-spin-button, .hfq-qty__input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+/* office Discount % (UAT round 6) */
+.hfq-disc{ display:inline-flex; align-items:center; gap:4px; background:#f1f5f9; border-radius:9px; padding:3px 8px; }
+.hfq-disc__label{ font-size:11px; font-weight:600; color:#475569; text-transform:uppercase; letter-spacing:.03em; }
+.hfq-disc__input{
+  width:48px; text-align:right; border:1px solid #cbd5e1; border-radius:6px; background:#fff;
+  font-weight:700; font-size:13px; color:#1e293b; padding:2px 4px; -moz-appearance:textfield;
+}
+.hfq-disc__input[readonly]{ border-color:transparent; background:transparent; }
+.hfq-disc__pct{ font-size:12px; color:#475569; }
+.hfq-disc-reason{ display:flex; align-items:center; gap:8px; margin-top:6px; font-size:12px; color:#475569; }
+.hfq-disc-reason__label{ font-weight:600; white-space:nowrap; }
+.hfq-disc-reason__input{ flex:1 1 auto; min-width:160px; border:1px solid #cbd5e1; border-radius:6px; padding:3px 6px; font-size:12px; }
 .hfq-subtotal{ font-weight:800; font-size:14px; color:#0f172a; min-width:96px; text-align:right; }
 .hfq-del{ border:0; background:transparent; cursor:pointer; color:#cbd5e1; padding:4px; border-radius:7px; }
 .hfq-del:hover{ color:#e11d48; background:#fff1f2; }

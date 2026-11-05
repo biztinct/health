@@ -26,6 +26,34 @@
                     <group>
                         <field name="pricing_breakdown_html" nolabel="1" readonly="1"/>
                     </group>
+                    <!-- Office line discount (UAT round 6): Discount % per line for
+                         Operations Managers / Owners / CRM until the quote is invoiced. -->
+                    <div name="pricing_discounts" class="mt-3"
+                         groups="health_base.group_healthcare_operations_manager">
+                        <field name="quote_can_edit_discount" invisible="1"/>
+                        <div class="vu-card__title">
+                            <span class="vu-section__icon" data-icon="tag"/>
+                            <span>Discounts</span>
+                        </div>
+                        <div class="text-muted small mb-1" invisible="not quote_can_edit_discount">
+                            The discount is taken off the catalogue price × quantity only; price rule adjustments stay as they are.
+                        </div>
+                        <field name="quote_line_ids" nolabel="1"
+                               readonly="not quote_can_edit_discount"
+                               context="{'active_test': False}">
+                            <list editable="bottom" create="0" delete="0">
+                                <field name="display_type" column_invisible="1"/>
+                                <field name="currency_id" column_invisible="1"/>
+                                <field name="base_price" column_invisible="1"/>
+                                <field name="product_id" string="Service" readonly="1" options="{'no_open': True}"/>
+                                <field name="product_uom_qty" string="Qty" readonly="1"/>
+                                <field name="product_uom_id" string="Unit" readonly="1" options="{'no_open': True}"/>
+                                <field name="price_unit" string="Unit Price" readonly="1"/>
+                                <field name="discount" string="Discount %"/>
+                                <field name="price_subtotal" string="Subtotal" readonly="1" widget="monetary"/>
+                            </list>
+                        </field>
+                    </div>
                 </page>
             </xpath>
         </field>

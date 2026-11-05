@@ -66,7 +66,7 @@
                                                      invoice; was behind the multi-unit setting. -->
                                                 <field name="product_uom_id" string="Unit" readonly="1"/>
                                                 <field name="price_unit" string="Unit Price"/>
-                                                <field name="discount" string="Disc.%" groups="sale.group_discount_per_so_line" optional="show"/>
+                                                <field name="discount" string="Disc.%" groups="sale.group_discount_per_so_line,health_base.group_healthcare_operations_manager" optional="show"/>
                                                 <field name="price_subtotal" string="Subtotal" widget="monetary"/>
                                                 <field name="currency_id" column_invisible="True"/>
                                                 <field name="state" column_invisible="True"/>

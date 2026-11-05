@@ -10,7 +10,7 @@
             <!-- Add discount_reason field after discount in order lines -->
             <xpath expr="//field[@name='order_line']//field[@name='discount']" position="after">
                 <field name="discount_reason" string="Discount Reason"
-                       groups="sale.group_discount_per_so_line"
+                       groups="sale.group_discount_per_so_line,health_base.group_healthcare_operations_manager"
                        optional="show"
                        placeholder="Required when discount > 0"/>
             </xpath>

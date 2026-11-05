@@ -1,6 +1,14 @@
 # -*- coding: utf-8 -*-
+import logging
+
+from markupsafe import Markup
+
 from odoo import _, api, fields, models
+from odoo.exceptions import UserError
 from odoo.fields import Domain
+from odoo.tools import float_compare
+
+_logger = logging.getLogger(__name__)
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
@@ -35,6 +43,29 @@ class SaleOrder(models.Model):
                 or False
             )
     
+    # Office discount (UAT round 6, item 1): Operations Managers, Owners and
+    # the CRM booking role (all carry the OM group, HANDOVER §5.314/§5.316)
+    # may set a line Discount % until the quote is invoiced. Real nurses keep
+    # the nurse-app path only.
+    health_can_edit_discount = fields.Boolean(
+        'Can Change Discounts', compute='_compute_health_can_edit_discount',
+        help='The current user may change line discounts on this quote.')
+
+    def _health_is_invoiced(self):
+        """True when the quote has an invoice that is not cancelled."""
+        self.ensure_one()
+        # sudo: whether the quote is invoiced must not depend on the viewer's
+        # accounting rights.
+        return bool(self.sudo().invoice_ids.filtered(lambda m: m.state != 'cancel'))
+
+    @api.depends_context('uid')
+    @api.depends('state', 'invoice_ids.state')
+    def _compute_health_can_edit_discount(self):
+        office = self.env.user.has_group('health_base.group_healthcare_operations_manager')
+        for order in self:
+            order.health_can_edit_discount = bool(
+                office and order.state != 'cancel' and not order._health_is_invoiced())
+
     # Pricing configuration
     use_advanced_pricing = fields.Boolean('Use Advanced Pricing', 
                                          compute='_compute_use_advanced_pricing')
@@ -932,6 +963,10 @@ class SaleOrder(models.Model):
         html.append(f'<th style="padding:6px 8px;text-align:left;border-bottom:2px solid #dee2e6;">{_("Rules Applied")}</th>')
         html.append(f'<th style="padding:6px 8px;text-align:right;border-bottom:2px solid #dee2e6;">{_("Final Price")}</th>')
         html.append(f'<th style="padding:6px 8px;text-align:right;border-bottom:2px solid #dee2e6;">{_("Qty")}</th>')
+        # Discount % (on the catalogue price × qty only) when any line has one.
+        show_disc = any(l.discount for l in self.order_line if l.product_id)
+        if show_disc:
+            html.append(f'<th style="padding:6px 8px;text-align:right;border-bottom:2px solid #dee2e6;">{_("Discount")}</th>')
         html.append(f'<th style="padding:6px 8px;text-align:right;border-bottom:2px solid #dee2e6;">{_("Subtotal")}</th>')
         html.append('</tr></thead>')
         html.append('<tbody>')
@@ -995,13 +1030,15 @@ class SaleOrder(models.Model):
             from markupsafe import escape as _esc_uom
             uom_name = _esc_uom(line.product_uom_id.name or '') if line.product_uom_id else ''
             html.append(f'<td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;">{qty:g} {uom_name}</td>')
+            if show_disc:
+                html.append(f'<td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;">{(f"{line.discount:g}%") if line.discount else "-"}</td>')
             html.append(f'<td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;font-weight:bold;">{fmt(subtotal)} đ</td>')
             html.append('</tr>')
 
         html.append('</tbody>')
         html.append(f'<tfoot><tr style="background:#f8f9fa;font-weight:bold;">')
         html.append(
-            f'<td colspan="5" style="padding:6px 8px;text-align:right;border-top:2px solid #dee2e6;">'
+            f'<td colspan="{6 if show_disc else 5}" style="padding:6px 8px;text-align:right;border-top:2px solid #dee2e6;">'
             f'{_("Total")}</td>'
         )
         html.append(f'<td style="padding:6px 8px;text-align:right;border-top:2px solid #dee2e6;">{fmt(grand_total)} đ</td>')
@@ -1274,6 +1311,46 @@ class SaleOrderLine(models.Model):
         if not self.display_type:
             vals.update(self._base_discount_tax_values())
         return vals
+
+    def write(self, vals):
+        """A changed Discount % leaves a history note on the booking (or the
+        quote when there is no booking) and is refused once the quote has a
+        posted invoice (UAT round 6, item 1)."""
+        if 'discount' not in vals:
+            return super().write(vals)
+        new_disc = float(vals.get('discount') or 0.0)
+        changed = self.filtered(
+            lambda l: not l.display_type
+            and float_compare(l.discount or 0.0, new_disc, precision_digits=2) != 0)
+        if changed and not self.env.su:
+            posted = changed.order_id.sudo().invoice_ids.filtered(lambda m: m.state == 'posted')
+            if posted:
+                raise UserError(_(
+                    'This quote is already invoiced (%(invoice)s): its discounts '
+                    'can no longer change.', invoice=', '.join(posted.mapped('name'))))
+        old = {l.id: l.discount or 0.0 for l in changed}
+        res = super().write(vals)
+        for line in changed:
+            line._post_discount_note(old[line.id])
+        return res
+
+    def _post_discount_note(self, old_discount):
+        self.ensure_one()
+        order = self.order_id
+        service = self.product_id.display_name or self.name or ''
+        body = Markup('%s') % _(
+            'Discount on %(service)s (%(quote)s) changed from %(old)s%% to %(new)s%%.',
+            service=service, quote=order.name,
+            old=f'{old_discount:g}', new=f'{self.discount or 0.0:g}')
+        reason = getattr(self, 'discount_reason', False)
+        if reason and self.discount:
+            body += Markup('<br/>') + _('Reason: %s', reason)
+        target = order.fso_id or order
+        try:
+            target.message_post(body=body, message_type='comment',
+                                subtype_xmlid='mail.mt_note')
+        except Exception:  # noqa: BLE001 — a note must never block the edit
+            _logger.info('Discount history note failed for line %s', self.id, exc_info=True)
 
     def _pricing_engine(self):
         """Resolve the pricing engine for this line's order (pricelist or default)."""

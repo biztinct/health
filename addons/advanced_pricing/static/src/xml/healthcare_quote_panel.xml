@@ -40,6 +40,15 @@
                                 </span>
                                 <span class="hfq-noadj" t-if="!hasAdjustment(line)">No adjustments</span>
                             </div>
+                            <!-- discount reason (required by the quote when a discount is given) -->
+                            <div class="hfq-disc-reason" t-if="hasReason(line) and discount(line) > 0">
+                                <span class="hfq-disc-reason__label">Discount reason</span>
+                                <input t-if="canEditDiscount" class="hfq-disc-reason__input" type="text"
+                                       placeholder="Required when there is a discount"
+                                       t-att-value="reason(line)"
+                                       t-on-change="(ev) => this.onReasonInput(line, ev)"/>
+                                <span t-else="" class="hfq-disc-reason__text" t-esc="reason(line) or '-'"/>
+                            </div>
                             <!-- price list conditions not met: warn, never block -->
                             <div class="hfq-warnings" t-if="warnings(line).length">
                                 <t t-foreach="warnings(line)" t-as="w" t-key="w_index">
@@ -59,6 +68,15 @@
                                 <button class="hfq-step" t-if="!readonly" t-on-click="() => this.incQty(line)" aria-label="Increase">+</button>
                             </div>
                             <span class="hfq-unit" t-if="unitName(line)" t-esc="unitName(line)"/>
+                            <!-- Discount % on catalogue price × qty (office users, UAT round 6) -->
+                            <div class="hfq-disc" t-if="showDiscount(line)">
+                                <span class="hfq-disc__label">Discount</span>
+                                <input class="hfq-disc__input" type="number" min="0" max="100" step="any"
+                                       t-att-readonly="canEditDiscount ? false : 'readonly'"
+                                       t-att-value="discount(line)"
+                                       t-on-change="(ev) => this.onDiscountInput(line, ev)"/>
+                                <span class="hfq-disc__pct">%</span>
+                            </div>
                             <div class="hfq-subtotal" t-esc="fmt(subtotal(line))"/>
                             <button class="hfq-del" t-if="!readonly" t-on-click="() => this.removeLine(line)" title="Remove">
                                 <span class="hf-wt-ico hf-ico-trash"/>

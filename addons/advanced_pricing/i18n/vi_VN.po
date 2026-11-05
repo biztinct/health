@@ -4013,3 +4013,97 @@ msgstr "Chỉ giảm giá trên giá cơ bản"
 #: code:addons/advanced_pricing/models/pricing_rule.py:0
 msgid "%s đ from the 2nd unit"
 msgstr "%s đ từ đơn vị thứ 2"
+
+#. module: advanced_pricing
+#. odoo-javascript
+#. odoo-python
+#: code:addons/advanced_pricing/models/sale_order.py:0
+#: code:addons/advanced_pricing/static/src/xml/healthcare_quote_panel.xml:0
+msgid "Discount"
+msgstr "Giảm giá"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/sale_order.py:0
+msgid "This quote is already invoiced (%(invoice)s): its discounts can no longer change."
+msgstr "Báo giá này đã được xuất hoá đơn (%(invoice)s): không thể thay đổi giảm giá nữa."
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/sale_order.py:0
+msgid "Discount on %(service)s (%(quote)s) changed from %(old)s%% to %(new)s%%."
+msgstr "Giảm giá cho %(service)s (%(quote)s) đã đổi từ %(old)s%% thành %(new)s%%."
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/sale_order.py:0
+msgid "Reason: %s"
+msgstr "Lý do: %s"
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/healthcare_quote_panel.xml:0
+msgid "Discount reason"
+msgstr "Lý do giảm giá"
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/healthcare_quote_panel.xml:0
+msgid "Required when there is a discount"
+msgstr "Bắt buộc khi có giảm giá"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_health_fso_form_ops_pricing
+msgid "Discounts"
+msgstr "Giảm giá"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_health_fso_form_ops_pricing
+msgid "The discount is taken off the catalogue price × quantity only; price rule adjustments stay as they are."
+msgstr "Giảm giá chỉ tính trên giá danh mục × số lượng; các điều chỉnh theo quy tắc giá giữ nguyên."
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_health_fso_form_ops_pricing
+msgid "Service"
+msgstr "Dịch vụ"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_health_fso_form_ops_pricing
+msgid "Qty"
+msgstr "SL"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_health_fso_form_ops_pricing
+msgid "Unit"
+msgstr "Đơn vị"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_health_fso_form_ops_pricing
+msgid "Unit Price"
+msgstr "Đơn giá"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_health_fso_form_ops_pricing
+msgid "Discount %"
+msgstr "Giảm giá %"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_health_fso_form_ops_pricing
+msgid "Subtotal"
+msgstr "Thành tiền"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__health_can_edit_discount
+#: model:ir.model.fields,field_description:advanced_pricing.field_health_fieldservice_order__quote_can_edit_discount
+msgid "Can Change Discounts"
+msgstr "Được đổi giảm giá"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_sale_order__health_can_edit_discount
+msgid "The current user may change line discounts on this quote."
+msgstr "Người dùng hiện tại được đổi giảm giá từng dòng của báo giá này."
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_health_fieldservice_order__quote_line_ids
+msgid "Quote Lines"
+msgstr "Dòng báo giá"

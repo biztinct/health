@@ -88,6 +88,11 @@
             <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="after">
                 <field name="base_price" column_invisible="1"/>
             </xpath>
+            <!-- Office discount (UAT round 6): the panel shows the Discount %
+                 box only when this is true (OM / Owner / CRM, not invoiced). -->
+            <xpath expr="//field[@name='order_line']" position="before">
+                <field name="health_can_edit_discount" invisible="1"/>
+            </xpath>
             <!-- The panel renders its own totals; hide the duplicate native footer. -->
             <xpath expr="//group[@name='sale_total']" position="attributes">
                 <attribute name="invisible">1</attribute>

@@ -30,6 +30,15 @@ class HealthFieldserviceOrder(models.Model):
     pricing_other_service_failed = fields.Boolean(
         related='sale_order_id.other_service_failed', readonly=False)
 
+    # Office line discount on the booking's Pricing tab (UAT round 6, item 1):
+    # the quote's own lines, edited in place (write goes to sale.order.line,
+    # which keeps the history note and the invoiced guard).
+    quote_line_ids = fields.One2many(
+        'sale.order.line', string='Quote Lines',
+        related='sale_order_id.order_line', readonly=False)
+    quote_can_edit_discount = fields.Boolean(
+        'Can Change Discounts', related='sale_order_id.health_can_edit_discount')
+
     # --- Quick booking: same facts, context and warnings as the saved quote ---
     @api.model
     def _quick_booking_booking_facts(self, partner, product_lines, vals, date_obj, time_hour):

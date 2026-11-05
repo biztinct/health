@@ -147,7 +147,26 @@ class HealthcareQuotePanel extends Component {
     }
     async onDiscountInput(line, ev) {
         const d = Math.min(100, Math.max(0, parseFloat(ev.target.value) || 0));
+        ev.target.value = d;
         await line.update({ discount: d });
+    }
+    async onReasonInput(line, ev) {
+        await line.update({ discount_reason: ev.target.value || false });
+    }
+
+    // ---- office discount (OM / Owner / CRM while not invoiced; the server
+    //      flag health_can_edit_discount decides, UAT round 6) ----
+    get canEditDiscount() {
+        return !this.readonly && !!this.order.data.health_can_edit_discount;
+    }
+    showDiscount(line) {
+        return this.canEditDiscount || this.discount(line) > 0;
+    }
+    hasReason(line) {
+        return "discount_reason" in line.data;
+    }
+    reason(line) {
+        return line.data.discount_reason || "";
     }
     async removeLine(line) {
         await this.lineList.delete(line);
