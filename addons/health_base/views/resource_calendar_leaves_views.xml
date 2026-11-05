@@ -11,6 +11,7 @@
                   decoration-info="holiday_type_code == 'national'"
                   decoration-muted="not is_pricing_holiday">
                 <field name="holiday_type_code" column_invisible="True" invisible="1"/>
+                <field name="active" column_invisible="True"/>
                 <field name="name"/>
                 <field name="date_from"/>
                 <field name="date_to"/>
@@ -30,6 +31,8 @@
         <field name="arch" type="xml">
             <form string="Public Holiday">
                 <sheet>
+                    <field name="active" invisible="1"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
                     <div class="oe_title">
                         <h1>
                             <field name="name" placeholder="Holiday Name (e.g., TET Nguyen Dan 2025)"/>
@@ -117,6 +120,7 @@
                 <field name="name"/>
                 <field name="holiday_type_id"/>
                 <field name="province_id"/>
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
             </search>
         </field>
     </record>
@@ -127,7 +131,7 @@
         <field name="res_model">resource.calendar.leaves</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[('resource_id', '=', False), ('calendar_id', '=', False)]</field>
-        <field name="context">{'default_resource_id': False, 'default_calendar_id': False, 'default_is_pricing_holiday': True, 'search_default_pricing_holidays': 1, 'search_default_upcoming': 1}</field>
+        <field name="context">{'default_resource_id': False, 'default_calendar_id': False, 'default_is_pricing_holiday': True}</field>
         <field name="view_ids" eval="[(5, 0, 0),
                                       (0, 0, {'view_mode': 'list', 'view_id': ref('view_healthcare_public_holiday_list')}),
                                       (0, 0, {'view_mode': 'form', 'view_id': ref('view_healthcare_public_holiday_form')})]"/>

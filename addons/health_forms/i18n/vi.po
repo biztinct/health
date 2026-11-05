@@ -659,12 +659,6 @@ msgid "Head of state — client names the current head of state"
 msgstr "Nguyên thủ quốc gia - khách hàng nêu tên nguyên thủ quốc gia hiện tại"
 
 #. module: health_forms
-#: model:ir.model,name:health_forms.model_health_fieldservice_order
-msgid "Healthcare Field Service Order (Unified Booking System)"
-msgstr ""
-"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
-
-#. module: health_forms
 #: model:ir.model.fields,field_description:health_forms.field_health_form_question__help
 msgid "Help"
 msgstr "Giúp đỡ"

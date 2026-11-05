@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Healthcare — Catchment Area Scope',
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.2.0',
     'category': 'Healthcare',
     'summary': 'Every list, kanban, calendar and timeline opens filtered to the '
                'user\'s own catchment area, and says so. Owners may switch area.',

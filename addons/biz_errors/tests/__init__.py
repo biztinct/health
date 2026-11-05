@@ -3,3 +3,4 @@
 # live route table.
 from . import error_routes
 from . import test_breakdown_screens
+from . import test_plain_access_errors

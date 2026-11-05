@@ -253,9 +253,8 @@ msgstr "Múi giờ Fso"
 
 #. module: health_self_booking
 #: model:ir.model,name:health_self_booking.model_health_fieldservice_order
-msgid "Healthcare Field Service Order (Unified Booking System)"
-msgstr ""
-"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
+msgid "Booking"
+msgstr "Lịch hẹn"
 
 #. module: health_self_booking
 #: model_terms:ir.ui.view,arch_db:health_self_booking.selfbook_page

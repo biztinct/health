@@ -105,3 +105,33 @@ msgstr "Trang chủ"
 #: model_terms:ir.ui.view,arch_db:biz_errors.b500
 msgid "Something went wrong"
 msgstr "Đã xảy ra sự cố"
+
+#. module: biz_errors
+#. odoo-python
+#: code:addons/biz_errors/models/ir_access_errors.py:0
+msgid "record"
+msgstr "bản ghi"
+
+#. module: biz_errors
+#. odoo-python
+#: code:addons/biz_errors/models/ir_access_errors.py:0
+msgid "You do not have access to this %(thing)s. Ask your administrator if you need it."
+msgstr "Bạn không có quyền truy cập %(thing)s này. Hãy hỏi quản trị viên nếu bạn cần."
+
+#. module: biz_errors
+#. odoo-python
+#: code:addons/biz_errors/models/ir_access_errors.py:0
+msgid "You cannot change this %(thing)s. Ask your administrator if you need it."
+msgstr "Bạn không thể thay đổi %(thing)s này. Hãy hỏi quản trị viên nếu bạn cần."
+
+#. module: biz_errors
+#. odoo-python
+#: code:addons/biz_errors/models/ir_access_errors.py:0
+msgid "You cannot create a new %(thing)s. Ask your administrator if you need it."
+msgstr "Bạn không thể tạo %(thing)s mới. Hãy hỏi quản trị viên nếu bạn cần."
+
+#. module: biz_errors
+#. odoo-python
+#: code:addons/biz_errors/models/ir_access_errors.py:0
+msgid "You cannot delete this %(thing)s. Ask your administrator if you need it."
+msgstr "Bạn không thể xoá %(thing)s này. Hãy hỏi quản trị viên nếu bạn cần."

@@ -1126,6 +1126,7 @@ msgstr "Cần xử lý"
 #: model:ir.model.fields.selection,name:health_base.selection__res_partner__patient_status__active
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_catchment_province_search
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+#: model:ir.model.fields,field_description:health_base.field_resource_calendar_leaves__active
 msgid "Active"
 msgstr "Đang hoạt động"
 
@@ -1314,6 +1315,8 @@ msgstr "Lưu trữ (người giám sát)"
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_archive_log_search
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_search
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_form
 msgid "Archived"
 msgstr "Đã lưu trữ"
 
@@ -6680,3 +6683,31 @@ msgstr "× 100,000 ="
 #: code:addons/health_base/static/src/components/relationship_hierarchy/relationship_hierarchy.js:0
 msgid "Remove Relationship"
 msgstr "Xóa mối quan hệ"
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/health_audit_log.py:0
+msgid "This record can no longer be opened."
+msgstr "Không thể mở bản ghi này nữa."
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/health_audit_log.py:0
+msgid "This record no longer exists."
+msgstr "Bản ghi này không còn tồn tại."
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/health_audit_log.py:0
+msgid "You do not have access to this record."
+msgstr "Bạn không có quyền truy cập bản ghi này."
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_list
+msgid "Open"
+msgstr "Mở"
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_list
+msgid "Open this record"
+msgstr "Mở bản ghi này"

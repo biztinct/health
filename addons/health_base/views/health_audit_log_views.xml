@@ -15,7 +15,12 @@
                 <field name="date" string="When" widget="datetime"/>
                 <field name="user_id" string="Changed By" widget="many2one_avatar_user"/>
                 <field name="model_name" string="Module"/>
+                <field name="model" column_invisible="1"/>
+                <field name="res_id" column_invisible="1"/>
                 <field name="record_name" string="Record"/>
+                <!-- Opens the changed record when the viewer may read it (UAT round 6). -->
+                <button name="action_open_record" type="object" string="Open"
+                        class="btn-link" title="Open this record"/>
                 <field name="field_name" string="Field Changed"/>
                 <field name="old_value" string="From" optional="show"/>
                 <field name="new_value" string="To"/>

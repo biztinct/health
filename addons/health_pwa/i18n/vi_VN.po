@@ -108,6 +108,7 @@ msgstr "Đã đặt lịch"
 
 #. module: health_pwa
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_staff_notification__fso_id
+#: model:ir.model,name:health_pwa.model_health_fieldservice_order
 msgid "Booking"
 msgstr "Lịch hẹn"
 
@@ -488,12 +489,6 @@ msgstr "Cấu hình Health PWA"
 #: model_terms:ir.ui.view,arch_db:health_pwa.debug_shell
 msgid "Health PWA Debug Information"
 msgstr "Thông tin gỡ lỗi Health PWA"
-
-#. module: health_pwa
-#: model:ir.model,name:health_pwa.model_health_fieldservice_order
-msgid "Healthcare Field Service Order (Unified Booking System)"
-msgstr ""
-"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
 
 #. module: health_pwa
 #: model:ir.model.fields,field_description:health_pwa.field_health_fieldservice_order__id

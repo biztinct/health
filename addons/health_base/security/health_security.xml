@@ -313,4 +313,20 @@
         <field name="value">True</field>
     </record>
     
+    <!-- Public holidays (UAT round 6, item 8): the Owner creates, edits and
+         archives COMPANY-WIDE holidays — no resource, no working-hours
+         calendar — which is exactly what pricing reads as a holiday. Staff
+         time off (a resource) stays outside this rule; reading is unchanged,
+         and deleting stays with system administrators. -->
+    <record id="rule_public_holiday_owner_manage" model="ir.rule">
+        <field name="name">Public holidays: Owner manages company-wide holidays</field>
+        <field name="model_id" ref="resource.model_resource_calendar_leaves"/>
+        <field name="domain_force">[('resource_id', '=', False), ('calendar_id', '=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
 </odoo>

@@ -519,9 +519,8 @@ msgstr "Sức khỏe API Quản lý truy cập cổng"
 
 #. module: health_api_gateway
 #: model:ir.model,name:health_api_gateway.model_health_fieldservice_order
-msgid "Healthcare Field Service Order (Unified Booking System)"
-msgstr ""
-"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
+msgid "Booking"
+msgstr "Lịch hẹn"
 
 #. module: health_api_gateway
 #: model:ir.model,name:health_api_gateway.model_health_payment_transaction

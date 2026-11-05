@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
 
 
 class HealthcareCalendarLeaves(models.Model):
@@ -45,6 +46,10 @@ class HealthcareCalendarLeaves(models.Model):
         help='Leave blank for national holidays, or specify province for regional holidays',
         tracking=True
     )
+
+    # Archive instead of delete (UAT round 6, item 8): an archived public
+    # holiday no longer prices or blocks a day, and its history stays.
+    active = fields.Boolean('Active', default=True)
 
     is_pricing_holiday = fields.Boolean(
         'Apply to Pricing',

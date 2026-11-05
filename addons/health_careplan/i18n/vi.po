@@ -751,9 +751,8 @@ msgstr "Có nhiệm vụ kế hoạch chăm sóc mở"
 
 #. module: health_careplan
 #: model:ir.model,name:health_careplan.model_health_fieldservice_order
-msgid "Healthcare Field Service Order (Unified Booking System)"
-msgstr ""
-"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
+msgid "Booking"
+msgstr "Lịch hẹn"
 
 #. module: health_careplan
 #: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_goal__priority__high

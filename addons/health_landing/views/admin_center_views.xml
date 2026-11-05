@@ -822,12 +822,18 @@
     </record>
 
     <!-- Public Holidays -->
+    <!-- Company-wide holidays only (no resource, no working-hours calendar):
+         staff time off is not a public holiday (UAT round 6, item 8). -->
     <record id="action_admin_holidays" model="ir.actions.act_window">
         <field name="name">Public Holidays</field>
         <field name="res_model">resource.calendar.leaves</field>
         <field name="view_mode">list,form</field>
+        <field name="domain">[('resource_id', '=', False), ('calendar_id', '=', False)]</field>
+        <field name="context">{'default_resource_id': False, 'default_calendar_id': False, 'default_is_pricing_holiday': True}</field>
+        <field name="search_view_id" ref="health_base.view_healthcare_public_holiday_search"/>
         <field name="view_ids" eval="[(5, 0, 0),
-            (0, 0, {'view_mode': 'list', 'view_id': ref('health_base.view_healthcare_public_holiday_list')})]"/>
+            (0, 0, {'view_mode': 'list', 'view_id': ref('health_base.view_healthcare_public_holiday_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('health_base.view_healthcare_public_holiday_form')})]"/>
     </record>
 
     <!-- Audit Log -->

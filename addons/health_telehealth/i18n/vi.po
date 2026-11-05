@@ -201,9 +201,8 @@ msgstr "Gặp sự cố? Gọi"
 
 #. module: health_telehealth
 #: model:ir.model,name:health_telehealth.model_health_fieldservice_order
-msgid "Healthcare Field Service Order (Unified Booking System)"
-msgstr ""
-"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
+msgid "Booking"
+msgstr "Lịch hẹn"
 
 #. module: health_telehealth
 #: model:ir.model.fields,field_description:health_telehealth.field_health_fieldservice_order__id
