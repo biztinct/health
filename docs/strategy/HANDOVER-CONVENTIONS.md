@@ -4481,3 +4481,24 @@ a no-op.
     archives instead of deleting. Note: hr_holidays time-off rows carry
     `is_pricing_holiday = True` (field default) — harmless only because
     pricing also requires no resource/calendar. (UAT round 6.)
+- **§5.340 — "who is an Operations Manager" in code = `group_healthcare_manager`,
+    not the OM group** (the CRM and Accountant roles carry the OM group,
+    §5.314/§5.316; Manager implies OM and is held by OM, Branch Manager, admin
+    and Owner). The cash-recipient picker uses it plus the Owner group, area-
+    filtered, minus `base.group_system`. Gotcha: `('all_group_ids', 'not in',
+    ids)` on res.users does NOT exclude (computed field) — filter in Python.
+    Never set `is_healthcare_staff` on an OM employee: it means visit staff and
+    puts them in Quick Booking staff lists. (UAT round 7.)
+- **§5.341 — report HTML `<title>` fell back to the framework name**
+    (`web.report_layout`, `web.report_preview_layout`); biz_debranding
+    `report_layout_brand_title` / `report_preview_layout_brand_title` use the
+    brand parameter, else "Report". `env` is in the report render values;
+    `request` is not always. (UAT round 7.)
+- **§5.342 — never put a `data:` image in a PDF report BODY on carejiox.** The
+    PDF engine (unpatched Qt) under the worker memory limit (`limit_memory_hard`
+    1.6 GB, inherited as RLIMIT_AS) dies with std::bad_alloc (exit -6) on any
+    body `data:` image, even 1×1 px; header-html images are fine. Use a URL
+    (`/logo.png?company=<id>`, `/web/image/...`). Reproduce in an odoo shell
+    with `resource.setrlimit(RLIMIT_AS, …)` + `force_report_rendering`; the shell
+    without the limit renders fine. Also `web.basic_layout` already opens an
+    `html_container` — never nest it in one. (UAT round 7.)

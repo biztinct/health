@@ -114,6 +114,11 @@ class TestUatRound6(TransactionCase):
         self.assertIn(self.doctor.name, html)
         self.assertIn('Wound dressed, client stable.', html)
         self.assertNotIn('San Francisco', html)
+        # ONE html document: a nested one made the PDF engine run out of
+        # memory on the server (UAT round 7).
+        self.assertEqual(html.count('<head>'), 1)
+        self.assertEqual(html.count('class="article"'), 1)
+        self.assertNotIn('src="data:', html, 'no data: images in a PDF body')
         # Placeholder street parts never print.
         self.assertNotIn('-, ', booking._moh_report_address(self.facility))
 

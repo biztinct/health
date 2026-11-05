@@ -53,6 +53,35 @@ class TestBrandTitleSource(TransactionCase):
 
 
 @tagged("post_install", "-at_install")
+class TestReportTitle(TransactionCase):
+    """UAT round 7: a report opened as HTML never titles its tab with the
+    framework's name — it reads the report's own title, else the brand."""
+
+    def test_05_report_layouts_fall_back_to_the_brand(self):
+        for xmlid in ("web.report_layout", "web.report_preview_layout"):
+            html = str(self.env["ir.qweb"]._render(xmlid, {"env": self.env}))
+            title = _title(html)
+            self.assertEqual(title, brand_name(self.env), xmlid)
+            self.assertNotIn(FRAMEWORK, title, xmlid)
+
+    def test_06_a_report_title_is_kept(self):
+        html = str(self.env["ir.qweb"]._render(
+            "web.report_layout", {"env": self.env, "title": "BK3832"}))
+        self.assertEqual(_title(html), "BK3832")
+
+    def test_07_a_real_report_preview_is_branded(self):
+        report = self.env.ref("health_fieldservice.action_report_moh_single",
+                              raise_if_not_found=False)
+        booking = self.env["health.fieldservice.order"].search([], limit=1) \
+            if "health.fieldservice.order" in self.env else None
+        if not report or not booking:
+            self.skipTest("no booking report on this database")
+        html, _fmt = self.env["ir.actions.report"]._render_qweb_html(report.report_name, booking.ids)
+        html = html.decode() if isinstance(html, bytes) else html
+        self.assertNotIn(FRAMEWORK, _title(html))
+
+
+@tagged("post_install", "-at_install")
 class TestBrandTitleServed(HttpCase):
 
     def test_04_start_page_is_titled_with_the_brand(self):

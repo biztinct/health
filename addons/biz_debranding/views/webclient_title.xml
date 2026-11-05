@@ -14,4 +14,20 @@
             <title t-out="title or (request and request.env['ir.config_parameter'].sudo().get_param('biz_debranding.brand_name')) or 'Viet Uc Care'"/>
         </xpath>
     </template>
+
+    <!-- A report opened as HTML (the on-screen preview) titled its tab with
+         the framework's name: `web.report_layout` and
+         `web.report_preview_layout` fall back to it when the report passes no
+         title. Same rule as above: the report's own title, else the brand,
+         else "Report" (UAT round 7). PDFs never had it. -->
+    <template id="report_layout_brand_title" inherit_id="web.report_layout" priority="99">
+        <xpath expr="//title" position="replace">
+            <title t-out="title or (env and env['ir.config_parameter'].sudo().get_param('biz_debranding.brand_name')) or 'Report'"/>
+        </xpath>
+    </template>
+    <template id="report_preview_layout_brand_title" inherit_id="web.report_preview_layout" priority="99">
+        <xpath expr="//title" position="replace">
+            <title t-out="title or (env and env['ir.config_parameter'].sudo().get_param('biz_debranding.brand_name')) or 'Report'"/>
+        </xpath>
+    </template>
 </odoo>

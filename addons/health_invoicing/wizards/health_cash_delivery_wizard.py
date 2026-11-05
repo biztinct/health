@@ -52,9 +52,61 @@ class HealthCashDeliveryWizard(models.TransientModel):
         'hr.employee',
         string='Operations Manager',
         required=True,
-        domain="[('is_healthcare_staff', '=', True)]",
+        domain="[('id', 'in', om_candidate_ids)]",
         help='Operations Manager receiving the cash'
     )
+    # Who may receive the cash (UAT round 7): the Operations Managers of the
+    # payment's catchment area, and the Owners. `is_healthcare_staff` marks
+    # visit staff (nurses/doctors) and is never set on an OM.
+    om_candidate_ids = fields.Many2many(
+        'hr.employee', compute='_compute_om_candidate_ids',
+        string='Possible Recipients')
+
+    @api.depends('transaction_id')
+    def _compute_om_candidate_ids(self):
+        for wizard in self:
+            wizard.om_candidate_ids = self._cash_recipients(wizard.transaction_id)
+
+    @api.model
+    def _cash_recipients(self, transaction):
+        """Employees whose user is an Operations Manager (or higher, which
+        leaves out the CRM and Accountant roles that also carry the OM group,
+        HANDOVER §5.314/§5.316) in the payment's area — else the user's — plus
+        every Owner. System administrators (the platform operator) are not
+        cash recipients."""
+        Users = self.env['res.users'].sudo()
+        om = self.env.ref('health_base.group_healthcare_operations_manager')
+        manager = self.env.ref('health_base.group_healthcare_manager')
+        owner = self.env.ref('health_base.group_healthcare_owner')
+        system = self.env.ref('base.group_system')
+        area = (transaction.sudo().catchment_province_id if transaction else False) \
+            or self.env.user.catchment_province_id
+        managers = Users.search([
+            ('share', '=', False),
+            ('all_group_ids', 'in', om.ids),
+            ('all_group_ids', 'in', manager.ids),
+        ])
+        # ('all_group_ids', 'not in', …) does not exclude on this computed
+        # field: filter the platform operator out in Python.
+        managers = managers.filtered(lambda u: system not in u.all_group_ids)
+        if area:
+            managers = managers.filtered(
+                lambda u: u.catchment_province_id == area or owner in u.all_group_ids)
+        employees = self.env['hr.employee'].sudo().search([
+            ('user_id', 'in', managers.ids), ('active', '=', True)])
+        # Only people the user may see: the picker reads their names as the
+        # user (an OM cannot read every Owner's employee record).
+        return employees.with_env(self.env)._filtered_access('read')
+
+    @api.model
+    def default_get(self, fields_list):
+        res = super().default_get(fields_list)
+        if 'om_employee_id' in fields_list and not res.get('om_employee_id'):
+            txn = self.env['health.payment.transaction'].browse(res.get('transaction_id') or [])
+            me = self.env.user.employee_id
+            if me and me in self._cash_recipients(txn.exists()):
+                res['om_employee_id'] = me.id
+        return res
     
     delivery_date = fields.Datetime(
         'Delivery Date & Time',
@@ -129,6 +181,10 @@ class HealthCashDeliveryWizard(models.TransientModel):
         
         if self.transaction_id.payment_method != 'cash':
             raise UserError(_('Only cash payments require delivery confirmation.'))
+
+        if self.om_employee_id not in self._cash_recipients(self.transaction_id):
+            raise UserError(_('%s cannot receive this cash: choose an Operations Manager '
+                              'of this area or the Owner.', self.om_employee_id.name))
         
         # Process cash delivery - simplified approach
         update_vals = {

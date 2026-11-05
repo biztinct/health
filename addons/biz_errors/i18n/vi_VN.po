@@ -135,3 +135,9 @@ msgstr "Bạn không thể tạo %(thing)s mới. Hãy hỏi quản trị viên 
 #: code:addons/biz_errors/models/ir_access_errors.py:0
 msgid "You cannot delete this %(thing)s. Ask your administrator if you need it."
 msgstr "Bạn không thể xoá %(thing)s này. Hãy hỏi quản trị viên nếu bạn cần."
+
+#. module: biz_errors
+#. odoo-python
+#: code:addons/biz_errors/models/ir_actions_report.py:0
+msgid "The PDF could not be created. Please try again in a moment; if it keeps failing, contact support."
+msgstr "Không thể tạo tệp PDF. Vui lòng thử lại sau giây lát; nếu vẫn lỗi, hãy liên hệ bộ phận hỗ trợ."

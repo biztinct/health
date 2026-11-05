@@ -8298,3 +8298,14 @@ msgstr "Nộp tiền mặt"
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_ar_transaction_log_form
 msgid "Cash Hand-in"
 msgstr "Nộp tiền mặt"
+
+#. module: health_invoicing
+#. odoo-python
+#: code:addons/health_invoicing/wizards/health_cash_delivery_wizard.py:0
+msgid "%s cannot receive this cash: choose an Operations Manager of this area or the Owner."
+msgstr "%s không thể nhận số tiền mặt này: hãy chọn Quản lý vận hành của khu vực này hoặc Chủ sở hữu."
+
+#. module: health_invoicing
+#: model:ir.model.fields,field_description:health_invoicing.field_health_cash_delivery_wizard__om_candidate_ids
+msgid "Possible Recipients"
+msgstr "Người nhận hợp lệ"

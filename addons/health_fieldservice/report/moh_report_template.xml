@@ -5,17 +5,24 @@
     <template id="report_moh_document">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
-                <t t-call="web.basic_layout">
+                <!-- One article per booking, inside the ONE html_container above.
+                     (web.basic_layout opens its own html_container: nested in this one
+                     it doubled the page and made the PDF engine run out of memory
+                     under the server's worker limit — UAT round 7.) -->
+                <div class="article" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
                     <div class="page">
                     <!-- Company + clinic, printed in the body so the on-screen
                          preview and the PDF carry the same text (UAT round 6). The
                          company's "Company Details" setting held demo text, which the
                          standard layout printed. -->
                     <t t-set="moh_company" t-value="o._moh_report_company()"/>
+                    <!-- Logo by URL, never a data: URI: the server's PDF engine (unpatched
+                         Qt, worker memory limit) aborts on ANY data: image in the page
+                         body (std::bad_alloc), even 1×1 px (UAT round 7). -->
                     <table style="width: 100%; margin-bottom: 14px; border-bottom: 1px solid #999;">
                         <tr>
                             <td style="width: 55%; vertical-align: top; padding-bottom: 8px;">
-                                <img t-if="moh_company.logo" t-att-src="image_data_uri(moh_company.logo)"
+                                <img t-if="moh_company.logo" t-att-src="'/logo.png?company=%s' % moh_company.id"
                                      style="max-height: 56px; max-width: 200px; display: block; margin-bottom: 4px;" alt="Logo"/>
                                 <div><strong t-esc="moh_company.name"/></div>
                                 <div style="font-size: 11px;" t-esc="o._moh_report_address(moh_company.partner_id)"/>
@@ -192,7 +199,7 @@
                         <p>Vietnam-Australia Family Health Service Company Limited (VAFHS)</p>
                     </div>
                     </div>
-                </t>
+                </div>
             </t>
         </t>
     </template>
@@ -200,9 +207,9 @@
     <!-- MOH Report Template for Multiple Bookings -->
     <template id="report_moh_document_multi">
         <t t-call="web.html_container">
-            <t t-call="web.basic_layout">
+            <t t-set="o" t-value="docs[:1]"/>
+            <div class="article" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
                 <div class="page">
-                <t t-set="o" t-value="docs[:1]"/>
                 <!-- Company + clinic, printed in the body so the on-screen
                      preview and the PDF carry the same text (UAT round 6). The
                      company's "Company Details" setting held demo text, which the
@@ -211,7 +218,7 @@
                 <table style="width: 100%; margin-bottom: 14px; border-bottom: 1px solid #999;">
                     <tr>
                         <td style="width: 55%; vertical-align: top; padding-bottom: 8px;">
-                            <img t-if="moh_company.logo" t-att-src="image_data_uri(moh_company.logo)"
+                            <img t-if="moh_company.logo" t-att-src="'/logo.png?company=%s' % moh_company.id"
                                  style="max-height: 56px; max-width: 200px; display: block; margin-bottom: 4px;" alt="Logo"/>
                             <div><strong t-esc="moh_company.name"/></div>
                             <div style="font-size: 11px;" t-esc="o._moh_report_address(moh_company.partner_id)"/>
@@ -341,7 +348,7 @@
                     <p>Total Records / Tổng số bản ghi: <strong><span t-esc="len(docs)"/></strong></p>
                 </div>
                 </div>
-            </t>
+            </div>
         </t>
     </template>
 

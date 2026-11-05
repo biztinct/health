@@ -8,7 +8,11 @@ customer payment or a change to the invoice balance. carejiox has no separate
 journal), so the row carries no journal entry.
 """
 from odoo import fields
-from odoo.tests import TransactionCase, tagged
+from odoo.exceptions import UserError
+from odoo.tests import TransactionCase, new_test_user, tagged
+
+OM_GROUPS = ('base.group_user,health_base.group_healthcare_operations_manager,'
+             'health_base.group_healthcare_manager')
 
 
 @tagged('post_install', '-at_install')
@@ -37,8 +41,13 @@ class TestCashHandoverLog(TransactionCase):
         cls.invoice.action_post()
         cls.fso.invoice_id = cls.invoice
         Emp = cls.env['hr.employee']
+        cls.area = facility.catchment_province_id
         cls.nurse = Emp.create({'name': 'Hand-in Probe Nurse', 'is_healthcare_staff': True})
-        cls.om = Emp.create({'name': 'Hand-in Probe OM', 'is_healthcare_staff': True})
+        # The receiving Operations Manager: an OM user of this area with an
+        # employee that is NOT visit staff (UAT round 7).
+        om_user = new_test_user(cls.env, login='handin_probe_om', groups=OM_GROUPS)
+        om_user.catchment_province_id = cls.area
+        cls.om = Emp.create({'name': 'Hand-in Probe OM', 'user_id': om_user.id})
         cash = cls.env['account.journal'].search(
             [('type', '=', 'cash'), ('company_id', '=', cls.invoice.company_id.id)], limit=1)
         # Pay Now › Cash in the nurse app: a standard cash payment, then the
@@ -100,3 +109,52 @@ class TestCashHandoverLog(TransactionCase):
         self._hand_in(auto_reconcile=True)
         self.assertEqual(len(self._rows()), 1)
         self.assertEqual(self.env['account.payment'].search_count([]), payments_before)
+
+    # ------------------------------------------------------------ round 7
+    def test_3_recipient_picker_offers_area_oms_and_owners_only(self):
+        """Mark Cash Delivered to OM: the "Operations Manager" picker lists the
+        area's Operations Managers (default: me) and the Owners — never visit
+        staff, never the CRM/Accountant roles, never another area's OM."""
+        Emp = self.env['hr.employee']
+        other_area = self.env['health.catchment.province'].create(
+            {'name': 'Hand-in Other Area', 'code': 'HOA'})
+        om_other_user = new_test_user(self.env, login='handin_probe_om_b', groups=OM_GROUPS)
+        om_other_user.catchment_province_id = other_area
+        om_other = Emp.create({'name': 'Hand-in Probe OM B', 'user_id': om_other_user.id})
+        owner_user = new_test_user(self.env, login='handin_probe_owner', groups=(
+            'base.group_user,health_base.group_healthcare_owner'))
+        owner = Emp.create({'name': 'Hand-in Probe Owner', 'user_id': owner_user.id})
+        crm_user = new_test_user(self.env, login='handin_probe_crm', groups=(
+            'base.group_user,health_base.group_healthcare_operations_manager'))
+        crm_user.catchment_province_id = self.area
+        crm = Emp.create({'name': 'Hand-in Probe CRM', 'user_id': crm_user.id})
+
+        sysadmin_user = new_test_user(self.env, login='handin_probe_sysadmin', groups=(
+            'base.group_user,base.group_system,health_base.group_healthcare_owner'))
+        sysadmin = Emp.create({'name': 'Hand-in Probe Platform', 'user_id': sysadmin_user.id})
+
+        om_user = self.om.user_id
+        Wizard = self.env['health.cash.delivery.wizard'].with_user(om_user).with_context(
+            default_transaction_id=self.txn.id)
+        defaults = Wizard.default_get(['transaction_id', 'om_employee_id'])
+        self.assertEqual(defaults.get('om_employee_id'), self.om.id, 'defaults to me')
+
+        offered = self.env['health.cash.delivery.wizard']._cash_recipients(self.txn)
+        self.assertIn(self.om, offered)
+        self.assertIn(owner, offered)
+        for absent in (om_other, self.nurse, crm, sysadmin):
+            self.assertNotIn(absent, offered, absent.name)
+        self.assertFalse(self.om.is_healthcare_staff, 'OMs are not made visit staff')
+
+        wizard = self.env['health.cash.delivery.wizard'].create({
+            'transaction_id': self.txn.id, 'om_employee_id': om_other.id,
+            'om_receipt_number': 'R7-WRONG-AREA', 'amount_verified': True,
+            'auto_reconcile_ar': False})
+        with self.assertRaises(UserError):
+            wizard.action_confirm_cash_delivery()
+
+    def test_4_picker_cannot_create_employees(self):
+        arch = self.env['health.cash.delivery.wizard'].get_view(view_type='form')['arch']
+        self.assertIn("'no_create': True", arch)
+        self.assertIn("('id', 'in', om_candidate_ids)",
+                      self.env['health.cash.delivery.wizard']._fields['om_employee_id'].domain)

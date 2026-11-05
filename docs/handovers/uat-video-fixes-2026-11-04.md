@@ -290,3 +290,29 @@ know (new field names/anchors). Ledger §5.332+.
    model is "Booking" / "Lịch hẹn". 123 older history entries keep the old stored text
    "Healthcare Field Service Order (Unified Booking System) created" (not rewritten).
 Ledger §5.332–§5.339.
+
+## 9. Round 7 (5 Nov 2026, owner approved; coded + tested, deploy when the lead says)
+1. **Mark Cash Delivered to OM › "Operations Manager" picker** offered nurses/doctors (filter
+   `is_healthcare_staff`) and "Create …". Now it lists employees whose user holds the
+   Healthcare Manager group (= Operations Manager role and above; this leaves out the CRM and
+   Accountant roles, which carry the OM group too) in the payment's catchment area (else the
+   user's), **plus every Owner** (cash may plausibly go to the Owner), minus system
+   administrators (the platform operator). Defaults to the current user when he is one. No
+   create / create-and-edit / open. Confirming with anyone else is refused. OM employees keep
+   `is_healthcare_staff` False. For PAY01351 (Hà Nội) the list is: Client UAT om_hn, Client UAT
+   owner, Nguyen Van Minh (Branch Manager), Owner, Trainer. The round-6 Handover row is unchanged.
+2. **HTML report tab title** read the framework name (`web.report_layout` /
+   `web.report_preview_layout` fallback). biz_debranding now falls back to the brand name
+   ("Viet Uc Care"), else "Report"; a report's own title is kept.
+3. **MOH report PDF failed ("PDF creation failed", message showed a server folder path).** Cause:
+   the round-6 logo was a `data:` image in the page body; the server's PDF engine (unpatched Qt,
+   under the worker memory limit) aborts with std::bad_alloc on ANY `data:` image in a body, even
+   1×1 px. Logo now loads from `/logo.png?company=<id>`; the template no longer nests a second
+   html container. biz_errors now replaces PDF-engine failures with "The PDF could not be
+   created. Please try again in a moment; if it keeps failing, contact support." (VI included;
+   full detail in the server log; admins keep it; business messages pass through).
+**Status at the owner's pause:** everything above is deployed. The picker also keeps only people
+the user can see (an OM cannot read every Owner's employee): live om_hn gets om_hn, Client UAT
+owner, Nguyen Van Minh. `TestCashHandoverLog.test_3` fails on its "defaults to me" line (the
+test OM user has no employee-read right, so he is filtered out of his own list) — test fixture
+or default logic to settle when work resumes; browser check of the picker not completed.

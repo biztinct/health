@@ -29,7 +29,11 @@
                     <!-- Delivery Details -->
                     <group string="Cash Delivery Details">
                         <group>
-                            <field name="om_employee_id" placeholder="Select Operations Manager..."/>
+                            <!-- Operations Managers of the area + Owners only; never create
+                                 an employee from here (UAT round 7). -->
+                            <field name="om_candidate_ids" invisible="1"/>
+                            <field name="om_employee_id" placeholder="Select Operations Manager..."
+                                   options="{'no_create': True, 'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                             <field name="delivery_date"/>
                         </group>
                         <group>

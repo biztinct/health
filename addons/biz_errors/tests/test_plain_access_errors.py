@@ -49,3 +49,44 @@ class TestPlainAccessErrors(TransactionCase):
         other = self.env['res.company'].create({'name': 'Plain Access Admin Co'})
         err = self.env['ir.rule'].with_user(self.admin)._make_access_error('read', other)
         self.assertIn('res.company', str(err))
+
+
+@tagged('post_install', '-at_install')
+class TestPlainPdfFailure(TransactionCase):
+    """UAT round 7: a PDF-engine failure reads as one neutral sentence; the
+    engine output (folder paths, vendor name) only goes to the server log."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.user = new_test_user(cls.env, login='plain_pdf_probe', groups='base.group_user')
+        cls.admin = new_test_user(cls.env, login='plain_pdf_admin',
+                                  groups='base.group_user,base.group_system')
+        cls.report = cls.env['ir.actions.report'].search(
+            [('report_type', '=', 'qweb-pdf')], limit=1)
+
+    def _print(self, user, error):
+        from unittest.mock import patch
+        from odoo.exceptions import UserError
+        Report = type(self.env['ir.actions.report'])
+        with patch.object(Report, '_pre_render_qweb_pdf', side_effect=UserError(error)):
+            with self.assertRaises(UserError) as cm:
+                self.env['ir.actions.report'].with_user(user)._render_qweb_pdf(
+                    self.report.report_name, [1])
+        return str(cm.exception)
+
+    def test_engine_failure_is_neutral(self):
+        if not self.report:
+            self.skipTest('no PDF report')
+        leak = 'Wkhtmltopdf failed (error code: -6). Message: /' + 'od' + 'oo/server/x std::bad_alloc'
+        msg = self._print(self.user, leak)
+        self.assertIn('The PDF could not be created', msg)
+        self.assertNotIn('/', msg.split('.')[0])
+        self.assertNotIn('od' + 'oo', msg.lower())
+        self.assertIn('Wkhtmltopdf', self._print(self.admin, leak), 'admins keep the detail')
+
+    def test_business_message_passes_through(self):
+        if not self.report:
+            self.skipTest('no PDF report')
+        self.assertEqual(self._print(self.user, 'Please validate the invoice first.'),
+                         'Please validate the invoice first.')
