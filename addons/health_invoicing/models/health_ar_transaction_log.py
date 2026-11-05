@@ -463,6 +463,29 @@ class HealthARTransactionLog(models.Model):
             self._create_from_move(move)
 
     @api.model
+    def _payment_own_booking(self, payment):
+        Booking = self.env['health.fieldservice.order']
+        pay = payment.sudo()
+        if 'fieldservice_order_id' in pay._fields and pay.fieldservice_order_id:
+            return pay.fieldservice_order_id
+        txns = self.env['health.payment.transaction'].sudo().search(
+            [('payment_id', '=', pay.id)])
+        if pay.health_transaction_id:
+            txns |= pay.health_transaction_id
+        for candidates in (txns.mapped('fso_id'),
+                           txns.mapped('invoice_id.fieldservice_order_id'),
+                           pay.reconciled_invoice_ids.mapped('fieldservice_order_id')):
+            if len(candidates) == 1:
+                return candidates
+        if self.env.context.get('active_model') == 'account.move':
+            moves = self.env['account.move'].sudo().browse(
+                self.env.context.get('active_ids') or []).exists()
+            candidates = moves.mapped('fieldservice_order_id')
+            if len(candidates) == 1:
+                return candidates
+        return Booking
+
+    @api.model
     def _create_from_payment(self, payment):
         """Create log entry from a posted account.payment."""
         if not payment:
@@ -486,56 +509,15 @@ class HealthARTransactionLog(models.Model):
                 if line.credit > 0 and not credit_account:
                     credit_account = line.account_id.id
 
-        # Try to find booking from reconciled invoices
-        booking = False
-        crm_lead = False
-        facility = False
-        if payment.reconciled_invoice_ids:
-            for inv in payment.reconciled_invoice_ids:
-                if hasattr(inv, 'fieldservice_order_id') and inv.fieldservice_order_id:
-                    booking = inv.fieldservice_order_id
-                    if hasattr(booking, 'crm_lead_id'):
-                        crm_lead = booking.crm_lead_id
-                    if hasattr(booking, 'facility_id'):
-                        facility = booking.facility_id
-                    break
-
-        # Fallback: find invoices from the context (Register Payment wizard source)
-        if not booking:
-            active_ids = self.env.context.get('active_ids', [])
-            active_model = self.env.context.get('active_model', '')
-            if active_model == 'account.move' and active_ids:
-                invoices = self.env['account.move'].browse(active_ids)
-                for inv in invoices:
-                    if hasattr(inv, 'fieldservice_order_id') and inv.fieldservice_order_id:
-                        booking = inv.fieldservice_order_id
-                        if hasattr(booking, 'crm_lead_id'):
-                            crm_lead = booking.crm_lead_id
-                        if hasattr(booking, 'facility_id'):
-                            facility = booking.facility_id
-                        break
-
-        # Fallback: find most recent invoice for the same partner that has a booking
-        if not booking and payment.partner_id:
-            partner_invoices = self.env['account.move'].search([
-                ('partner_id', '=', payment.partner_id.id),
-                ('move_type', '=', 'out_invoice'),
-                ('fieldservice_order_id', '!=', False),
-            ], order='id desc', limit=1)
-            if partner_invoices:
-                booking = partner_invoices.fieldservice_order_id
-                if hasattr(booking, 'crm_lead_id'):
-                    crm_lead = booking.crm_lead_id
-                if hasattr(booking, 'facility_id'):
-                    facility = booking.facility_id
-
-        # Fallback: check payment's own fieldservice_order_id
-        if not booking and hasattr(payment, 'fieldservice_order_id') and payment.fieldservice_order_id:
-            booking = payment.fieldservice_order_id
-            if hasattr(booking, 'crm_lead_id'):
-                crm_lead = booking.crm_lead_id
-            if hasattr(booking, 'facility_id'):
-                facility = booking.facility_id
+        # The payment's OWN booking (UAT round 9): the payment's booking, else
+        # its PAY record's, else the PAY record's invoice's, else the invoice(s)
+        # it paid when they share one booking, else the Register Payment
+        # wizard's invoices. Never the client's latest booking: a refund
+        # (nothing reconciled) was filed on the client's newest booking
+        # (row 1557: BK4107 instead of BK4087). Unresolved stays empty.
+        booking = self._payment_own_booking(payment)
+        crm_lead = booking.crm_lead_id if booking and 'crm_lead_id' in booking._fields else False
+        facility = booking.facility_id if booking and 'facility_id' in booking._fields else False
 
         self.create({
             'crm_event_id': crm_lead.id if crm_lead else False,

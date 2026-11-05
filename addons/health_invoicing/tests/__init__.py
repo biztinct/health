@@ -5,3 +5,4 @@ from . import test_tax_misa_patient
 from . import test_booking_invoiced_flag
 from . import test_payment_cancel
 from . import test_cash_handover_log
+from . import test_ar_log_booking

@@ -150,16 +150,19 @@ class HealthcarePayment(models.Model):
         invoice = False
         patient = self.partner_id
 
+        if self.fieldservice_order_id:
+            booking = self.fieldservice_order_id
+
         if self.reconciled_invoice_ids:
             for inv in self.reconciled_invoice_ids:
                 if not invoice:
                     invoice = inv
-                if hasattr(inv, 'fieldservice_order_id') and inv.fieldservice_order_id:
+                if not booking and hasattr(inv, 'fieldservice_order_id') and inv.fieldservice_order_id:
                     booking = inv.fieldservice_order_id
                     break
 
         # Fallback: find invoices from the context (Register Payment wizard source)
-        if not booking:
+        if not booking or not invoice:
             active_ids = self.env.context.get('active_ids', [])
             active_model = self.env.context.get('active_model', '')
             if active_model == 'account.move' and active_ids:
@@ -167,21 +170,13 @@ class HealthcarePayment(models.Model):
                 for inv in ctx_invoices:
                     if not invoice:
                         invoice = inv
-                    if hasattr(inv, 'fieldservice_order_id') and inv.fieldservice_order_id:
+                    if not booking and hasattr(inv, 'fieldservice_order_id') and inv.fieldservice_order_id:
                         booking = inv.fieldservice_order_id
                         break
 
-        # Fallback: find most recent invoice for the same partner that has a booking
-        if not booking and patient:
-            partner_invoices = self.env['account.move'].search([
-                ('partner_id', '=', patient.id),
-                ('move_type', '=', 'out_invoice'),
-                ('fieldservice_order_id', '!=', False),
-            ], order='id desc', limit=1)
-            if partner_invoices:
-                booking = partner_invoices.fieldservice_order_id
-                if not invoice:
-                    invoice = partner_invoices
+        # No guessing (UAT round 9, lead ruling): the client's latest invoice
+        # is NOT this payment's booking or invoice. What the payment itself
+        # does not give stays empty.
 
         # Fallback: check payment's own fieldservice_order_id (advance payments)
         if not booking and self.fieldservice_order_id:

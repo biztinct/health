@@ -4511,3 +4511,17 @@ a no-op.
     line/tax/move totals for this; an invoice line must multiply out. Before
     5 Nov EVERY such line was folded (INV/2026/00003–00028). health_invoicing's
     reason copy only fills an empty reason. (UAT round 8.)
+- **§5.344 — never derive a document's booking from "the client's latest
+    booking/invoice".** The AR log's payment rows did (a refund landed on the
+    newest booking). Resolve from the document itself
+    (`health.ar.transaction.log._payment_own_booking`) or leave it empty.
+    `account.payment._create_health_payment_transaction` follows the same rule
+    since round 9 (payment's own booking first; no partner fallback). (UAT round 9.)
+- **§5.345 — list export file names** come from
+    `web.controllers.export.ExportFormat.filename` ("<name> (<model>)");
+    biz_debranding subclasses `CSVExport` / `ExcelExport` (non-route method
+    override, no route redeclared) to use the readable name only. (UAT round 9.)
+- **§5.346 — an export HttpCase on carejiox needs `base.group_allow_export`
+    and a record the test user may read** (its own partner: the company
+    partner is hidden by the partner rules); create the user ONCE (setUp), a
+    second `new_test_user` with the same login fails. (UAT round 9.)

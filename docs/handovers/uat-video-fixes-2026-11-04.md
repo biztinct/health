@@ -336,3 +336,25 @@ Lead ruling (an invoice line must multiply out; no custom accounting totals):
   advanced_pricing already wrote. Invoice total = quote total in every case. Both office and
   nurse-app completion invoices go through `sale.order._create_invoices`. Posted invoices
   (incl. 00028) untouched.
+
+## 11. Round 9 (6 Nov 2026, AR-06 blockers; coded + tested locally, deploy when the lead says)
+1. **AR log refund row on the wrong booking.** `health.ar.transaction.log._create_from_payment`
+   tried reconciled invoices, then the wizard's invoices, then **the client's latest invoice**,
+   and only last the payment's own booking — a refund (nothing reconciled) landed on the newest
+   booking (row 1557: BK4107 instead of BK4087). Now `_payment_own_booking`: the payment's
+   booking → its PAY record's → the PAY record's invoice's → the one booking of the invoices it
+   paid → the Register Payment wizard's invoices → **empty**; never the latest booking.
+   Data (health_invoicing 19.0.1.4.5 migration, dry-run on live): of 24 payment/refund rows only
+   **1557 → BK4087** changes, and (lead ruling) **row 1465** (PCSH1/2026/00009, PAY01364, invoice
+   INV/2026/00017 without a booking) loses its unconfirmed BK3833 (empty).
+   Same rule for the automatic PAY record (`account.payment._create_health_payment_transaction`):
+   the payment's own booking first, then the invoices it paid / the Register Payment invoices;
+   no "client's latest invoice" fallback for booking or invoice — empty if nothing gives one.
+   Existing PAY records: none has a booking that neither its payment nor its invoice confirms.
+   Four auto-created PAY records point at an invoice their payment is no longer reconciled with
+   (PAY01349 → INV/2026/00002/BK3834, PCSH1/2026/00001; PAY01371, PAY01372, PAY01379 →
+   INV/2026/00025/BK4056, PBNK1/2026/00007): all explained by a later refund / cancel undoing the
+   reconciliation, not a guess as far as the data shows. Not changed.
+2. **Export file names** read "AR Transaction Log (health.ar.transaction.log).xlsx". biz_debranding
+   now names every list export (xlsx and csv) after the readable name only, in the user's
+   language: "AR Transaction Log.xlsx".
