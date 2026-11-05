@@ -3,3 +3,7 @@ scout-out/
 state.json
 accounts.local.json
 mb_state.json
+ar_state.json
+adm_state.json
+tchn_state.json
+tchcm_state.json

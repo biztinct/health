@@ -272,6 +272,38 @@ module.exports = {
   deploy restarts the site). Several recordings at once make videos longer (slower
   screens), not worse.
 
+**Learned 5 Nov (AR / admin / client-case helpers)**
+- Each helper's scouting browser needs its OWN debugging port (two helpers on one port
+  drove each other's browser and signed each other out).
+- Contacts: the "Today" filter comes back after a cancelled New Contact; click
+  "All Dates" before counting.
+- The MOH report PDF has no text layer: prove its content on the on-screen preview.
+- Cash at completion (nurse app Pay Now › Cash) marks the invoice paid at once; the cash
+  shows "Cash Pending Delivery" until the hand-in. (Package purchase cash is different:
+  invoice stays unpaid until Collections.) Create Refund on a payment has no confirm step.
+- Credit notes are not in Finance › Invoices: reach them from their invoice.
+- An invoice opened from a booking/payment renders a different screen from Finance ›
+  Invoices: anchor proofs for both.
+- Client cases are re-priced live on a date exactly 35 days after the client's date
+  (same weekday/time), no staff, cancelled after; fictional pricing holidays
+  "CLIENT UAT ONLY …" 19 Oct (id 222) and 23 Nov 2026 (id 224).
+- Booking durations offer 30 min / 1–4 h only: book the nearest step, then type the exact
+  minutes on the booking and save (caption it).
+- **A recording keeps running if its helper is cut off (usage limit)** and the video then
+  holds one frozen frame for the whole pause (one TC-13 take ran 87 min). Check each
+  final's `seconds` in run.json is sensible before trusting it. Chain recordings with a
+  bash script (zsh breaks `echo =====` and word splitting).
+- Nurse app: when the client already has a later visit, completion shows "Next
+  Appointment Details" instead of "Schedule Next Appointment?" — press Cancel. View
+  service stays disabled until the visit has a clinical note.
+- Finance lists (Payments, AR Transactions, Receivables): Enter does not search the
+  client — pick "Search Client for…". Audit Log needs "Search Record for".
+- Invoice lines hide Disc.% by default: switch the column on before proving a discount.
+  Credit notes are not in Finance › Invoices; Create Refund has no confirm step.
+- Recording after ~19:30 Vietnam time: book the next day and open that day in the nurse
+  app's day view.
+- Playwright `hasText` joins table cells without spaces: `/\bInvoice\b/` never matches.
+
 ## 10. carejiox test identities and data
 
 | Login | Role on screen | Notes |
@@ -293,9 +325,14 @@ module.exports = {
 
 Contacts CT-01..06 · Bookings BK-01..05 · Assignment AS-01..03 · Cancellation /
 rescheduling CR-01..02 · Nurse app MB-01..10, each with a combined video, and
-`CareJioX_Acceptance_Results_20261104_Video_Evidence_v2.xlsx` (latest copy — start the
-next batch's sheet from it). Not yet recorded: CH-07, AR-01..06, RP, UM, FM, NA, AU and the
-TC-01..17 client cases. The original BK plan is kept below for reference.
+`CareJioX_Acceptance_Results_20261104_Video_Evidence_v2.xlsx`.
+**5–6 Nov 2026 (4 parallel helpers, all PASS):** AR-01..06, UM-01..03, FM-01/02, AU-01, NA-01,
+NA-03, TC-01..17, combined as "Money owed and payments AR-01 to AR-06", "Users, fields, audit and
+new activities UM-01 to NA-03", "Client cases Hanoi TC-01 to TC-09", "Client cases Ho Chi Minh City
+TC-10 to TC-17". Latest sheet: `CareJioX_Acceptance_Results_20261106_Video_Evidence_v3.xlsx`
+(57 rows; sheet.py now dates each row by its video). Fixes found on the way: handover rounds 6–9.
+Not yet recorded: CH-07, RP-01/02 (CH-01..06, FM-03, NA-02 are on hold/blocked).
+The original BK plan is kept below for reference.
 
 ### Bookings BK-01..BK-05 — original head start
 

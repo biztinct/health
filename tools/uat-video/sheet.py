@@ -7,7 +7,8 @@ usage:
                    [--sheet "Test Results"] [--date "4 Nov 2026"]
 
 --combined may be given once per combined video, prefixed with the test-ID groups
-it holds ("AS,CR=Assignment ... .mp4"); without a prefix it applies to every row.
+or single test IDs it holds ("AS,CR=Assignment ... .mp4", "TC-01,TC-02=..."); a
+test ID beats its group; without a prefix it applies to every row.
 Rows are matched by the "Test ID" column. Only tests that have a run.json are
 written; other rows are left as they are. notes.json is {"CT-06": "Process: ..."}
 for a sentence that the run data cannot say (how the business does the step).
@@ -38,7 +39,8 @@ def main():
     ap.add_argument('--combined', action='append', default=[])
     ap.add_argument('--notes', default='')
     ap.add_argument('--sheet', default='Test Results')
-    ap.add_argument('--date', default=(datetime.now(timezone.utc) + TZ_OFFSET).strftime('%-d %b %Y'))
+    ap.add_argument('--date', default='',
+                    help='retest date for every row; default: the day each video was written')
     a = ap.parse_args()
 
     runs = {}
@@ -87,8 +89,11 @@ def main():
         verdict = 'PASS' if r['passed'] else 'FAIL'
         recs = '; '.join(f'{k}: {v}' for k, v in r.get('records', {}).items())
         rel = f"video-evidence/{r['folder']}/{r['file']}"
-        whole = combined.get(tid.split('-')[0], combined.get(''))
-        text = (f"{verdict} — retested on screen on {SITE}, {a.date} ({TZ_LABEL}); "
+        whole = combined.get(tid, combined.get(tid.split('-')[0], combined.get('')))
+        when = a.date or (datetime.fromtimestamp(
+            os.path.getmtime(os.path.join(a.root, r['folder'], r['file'])), timezone.utc)
+            + TZ_OFFSET).strftime('%-d %b %Y')
+        text = (f"{verdict} — retested on screen on {SITE}, {when} ({TZ_LABEL}); "
                 f"{good} of {n} on-screen checks matched."
                 + (f" Records: {recs}." if recs else '')
                 + (f" {notes[tid]}" if tid in notes else '')
