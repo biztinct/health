@@ -170,3 +170,123 @@ Do not touch BK4056, INV/2026/00025 or payment PBNK1/2026/00007.
    normal cancel must work without the Deleted mark, posted protections
    unchanged; (c) data: PAY01371 to the state the fixed code gives it. Do not
    touch payment 63 / PAY01372 or the invoice otherwise.
+
+## 8. Round 6 (5 Nov 2026 — owner approved all nine; recorders are PAUSED, so code AND deploy)
+Found by the AR / ADMIN / TC-HN / TC-HCM recording helpers. Nobody is recording: deploy
+once at the end (one `carejiox-deploy` call for all modules) and browser-verify. Do NOT touch
+bookings BK4066/BK4067/BK4068 (AR final takes pending), the source bookings BK3832–BK3848, or
+any posted invoice / payment. Rules of §0 apply (white-label, Vietnamese for every new string,
+PWA version bump if health_pwa changes, never loosen a rule, local commits only).
+
+1. **Operations Manager / Owner cannot give a line discount in the office.** The workspace
+   booking's View Quote dialog and the Pricing tab have no discount input; only the nurse
+   app's View service has one (helpers say the quote dialog already has save code for a
+   discount but never renders the box). Add an editable Discount % per line for office users
+   (OM, Owner, CRM booking roles) while the quote is not yet invoiced; recompute the line and
+   totals at once; history note on change. The resulting line MUST equal how the client's
+   29 Oct quotes store it — read S04293 (TC-02), S04294 (TC-03), S04296 (TC-05), S04299
+   (TC-08), S04303/S04305/S04308 (TC-12/14/17): the workbook formula is
+   `qty × base + adjustment − discount% × (qty × base)` (discount on the base only, NOT on
+   rule adjustments: e.g. TC-05 đd_240 2×150,000 + 50,000 − 10%×300,000 = 320,000;
+   TC-08 đd_060 3×150,000 − 200,000 − 10%×450,000 = 205,000). Prove with tests for those
+   two lines and a plain one (TC-02 bs_040 300,000 − 10% = 270,000). Nurse restrictions stay
+   as they are.
+2. **A booking's driving distance cannot be changed, and 0-km clients get a road distance
+   computed.** Booking field `travel_distance` ("Driving Distance") is read-only and seeded
+   from the client (`clinic_drive_distance_km`); Trần Thị Bình is 6 km but the workbook's
+   TC-05 visit is 0 km (+50,000 ₫ wrongly). Nguyễn Văn An / Phạm Thị Dung are stored 0.00 but
+   their bookings show 2.08 / 5.76 km (`_update_travel_distance`, health_fieldservice_order.py
+   ~1861). Owner decision: (a) the OM/Owner can set the booking's distance on the booking
+   (a visit at another address), pricing recomputes, history note "Distance changed from X
+   to Y km"; a later address/geo recompute must not overwrite a manual value; (b) when the
+   client has a stored distance that was set on purpose — including 0 — the booking uses it
+   instead of a computed road distance. If "0 set on purpose" cannot be told apart from
+   "never set" without a new marker, add the marker (e.g. set when the client's distance is
+   written by a user/import) — do not treat every 0 as unknown or every 0 as zero blindly;
+   explain your choice. Clinic/online visits keep distance 0 for pricing (4 Nov ruling).
+3. **HCMC clinic TPHCM_PK_CSTNVU sits in central Vietnam (latitude ≈16.76)**, so Ngô Thanh
+   Mai's booking shows "Driving Distance 932 km". Correct the facility's coordinates from its
+   own stored street address (geocode it the way the system does; sanity: HCMC ≈ lat 10.7–10.9,
+   lon 106.6–106.8). Check the Hanoi clinic too. Do NOT recompute clients' stored distances
+   (they are the client's test data) and do not rewrite completed bookings.
+4. **Cash hand-in from nurse to Operations Manager is not in the accounting log.** The
+   hand-in (Mark Cash Delivered / Confirm Cash Delivery; PAY01351 on 29 Oct is an example)
+   records recipient, time and receipt on the cash record but writes no row in the AR
+   transaction log that AR-06 shows. Make the hand-in appear in that log: amount, from
+   (nurse), to (OM), time, receipt reference, source payment/invoice. If the company's chart
+   has separate accounts for cash held by staff vs cash at the front desk, post an internal
+   transfer between them; if not, write the log row without a journal entry and say so. It
+   must NOT create a customer payment or change any invoice balance. Tests.
+5. **Nurses get "doesn't have 'read' access to: User (res.users)" on the messages screen's
+   "Search conversations"** (nurse_hn, nurse_hcm). Make the search work for nurses without
+   widening their access beyond what the search needs (names/avatars of people they may
+   chat with; no other user fields). Test as a nurse user.
+6. **MOH report (booking › Print › MOH Report, BK3832):** no clinic anywhere (should show the
+   booking's clinic/facility, e.g. HN_PK_PKGDVU name + address); "Doctor" shows "-" though
+   the booking's staff is "Client UAT doctor_hn" (use the assigned / lead staff); notes "-"
+   (use the visit's completion / clinical summary if one exists, else "-"). The on-screen
+   preview header shows "My Company (San Francisco), 8000 Marina Blvd…": use the booking's
+   company (VIET UC). The PDF has no text layer — fine, but make sure the HTML preview and PDF
+   carry the same content. Nothing is sent to the Ministry.
+7. **Audit Log (Settings › Records › Audit Log): the "Record" column is always blank.** Fill
+   it with the record's readable name (e.g. "BK3832", "INV/2026/00025") and make it open the
+   record where the viewer has access. Existing rows too, if the model + id are stored.
+8. **The Owner cannot create a public holiday** (Master Data › Public Holidays,
+   resource.calendar.leaves create → access error for uat_owner). Allow the Owner to create/
+   edit/archive COMPANY-WIDE holidays (no resource, no calendar), not employees' time off.
+   The list currently also shows staff "Time Off" rows (e.g. "Mitchell Admin"): the Public
+   Holidays screen must list public holidays only. The fictional holiday id 224 (23 Nov) and
+   222 (19 Oct) must stay.
+9. **Technical wording a client sees.** (a) Access-refused messages show the technical model
+   name "(health.fieldservice.order)" and the "top-secret records … freshly baked cookies"
+   joke: for non-admin users replace with a plain message in EN/VI, e.g. "You do not have
+   access to this booking. Ask your administrator if you need it." (keep the technical detail
+   in the server log; global seam, see biz_debrand). (b) Booking history says "Healthcare
+   Field Service Order (Unified Booking System) created": the model's user-facing name should
+   be "Booking" (VI "Đặt lịch"/existing term) everywhere a user sees it — check that nothing
+   keys on the description string.
+
+Report back per §4, plus the exact screen path for each fix and anything the recorders must
+know (new field names/anchors). Ledger §5.332+.
+
+### Round 6 results (5 Nov 2026, deployed and browser-checked on carejiox.com)
+1. **Discount — fixed.** Booking › View Quote: each service card has a **Discount** box (%) and,
+   when above 0, a **Discount reason** box (required). Booking › **Pricing** tab › new
+   **Discounts** table (Service, Qty, Unit, Unit Price, **Discount %**, **Discount Reason**,
+   Subtotal), editable by OM / Owner / CRM until the quote has an invoice; the breakdown table
+   gains a Discount column when a line has one. History note on the booking: "Discount on
+   <service> (<quote>) changed from 0% to 10%." Tests TC-05 320,000 / TC-08 205,000 /
+   TC-02 270,000 pass (`advanced_pricing:TestOfficeDiscount`).
+2. **Distance — fixed.** Booking › Overview › Location Details › **Driving Distance** is an input
+   for OM/Owner (not completed/cancelled/invoiced); after a change it shows "(set by hand)",
+   history "Distance changed from 6.00 to 0.00 km", the quote re-prices, and no address/geo
+   recompute overwrites it. Client distances written by a person/import are marked "set on
+   purpose" (`clinic_distance_method = 'manual'`, 12 test clients) and used even at 0. Existing
+   bookings were NOT rewritten (Nguyễn Văn An's open bookings still show 2.08 km, incl.
+   BK4066–68): set them by hand if a recording needs it.
+3. **HCMC clinics — fixed (data + geocoder).** All three TPHCM clinics (PK_CSTNVU, NS_Thu_Duc,
+   NS_Tan_Thuan) were at 16.7558, 106.5725; now 10.7737, 106.7166 (Photon "Ho Chi Minh City",
+   their stored street is only "-"). Hanoi clinics checked: 21.0283, 105.8540 (correct). No client
+   distance or completed booking recomputed.
+4. **Cash hand-in in the AR log — fixed.** Confirm Cash Receipt writes one AR Transaction Log row:
+   Event Type **Handover**, Amount, **Handed Over By**, **Received By**, **Receipt**, date/time,
+   Payment, Invoice, Posting Path `HANDOVER→NURSE_CASH→OM`, no journal entry (carejiox has no
+   separate staff-cash account in use), no payment, no balance change. Search filter
+   "Cash Hand-ins". Earlier hand-ins (e.g. PAY01351) were not back-filled.
+5. **Nurse "Search conversations" — fixed.** Lists only people the user may see (same area or no
+   area); the users rule is unchanged (`health_catchment_scope:TestDiscussSearchScope`).
+6. **MOH report — fixed.** Company (VIET UC + address + logo) and **Clinic / Phòng khám** (name +
+   address) at the top of the page body; Doctor = booking doctor → assigned doctor → lead staff;
+   Notes = completion notes → clinical summary. Preview and PDF share the same body (no layout
+   header). The demo "My Company (San Francisco)" text lives in the company's Company Details
+   setting and still prints on invoices — owner/data decision.
+7. **Audit Log — fixed.** Record shows e.g. "Lý Minh Tâm (BK4072)" (searchable) for all rows;
+   new **Open** button opens the record when the viewer may read it.
+8. **Public holidays — fixed.** Master Data › Public Holidays lists company-wide holidays only (10,
+   incl. ids 222 and 224); the Owner can create, edit and archive them (gear › Archive; filter
+   "Archived"); staff time off stays out of reach. Deleting stays with system administrators.
+9. **Wording — fixed.** Refusals read "You do not have access to this booking. Ask your
+   administrator if you need it." / "Bạn không có quyền truy cập lịch hẹn này…"; the booking
+   model is "Booking" / "Lịch hẹn". 123 older history entries keep the old stored text
+   "Healthcare Field Service Order (Unified Booking System) created" (not rewritten).
+Ledger §5.332–§5.339.

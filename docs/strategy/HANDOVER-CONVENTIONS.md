@@ -4420,3 +4420,64 @@ a no-op.
     "Payments" button ignores cancelled payments (core counts
     `matched_payment_ids`, which keeps the cancelled one). PAY01371 set to
     cancelled by hand on carejiox (BK4056 back to 210,000 ₫). (UAT round 5.)
+- **§5.332 — the office line discount is `sale.order.health_can_edit_discount`.**
+    Any holder of `group_healthcare_operations_manager` (OM, Owner, CRM role,
+    Accountant role — §5.314/§5.316) while the quote has no invoice that is not
+    cancelled. The quote panel (`hf_quote_panel`) shows Discount % + Discount
+    reason only on that flag; the booking's Pricing tab edits the same lines
+    through `quote_line_ids` (related `sale_order_id.order_line`,
+    `readonly=False`: a `Command.update` writes the line, the inverse re-sets
+    the same set). `sale.order.line.write` posts "Discount on … changed from
+    X% to Y%" on the booking and refuses a change once a POSTED invoice exists.
+    `discount` / `discount_reason` were behind `sale.group_discount_per_so_line`
+    (0 users on carejiox), so they were never even loaded for office users.
+    The math was already right (`discount_on_base_only`, §pricelist 7).
+    (UAT round 6.)
+- **§5.333 — "client distance set on purpose" is `clinic_distance_method =
+    'manual'`.** A float cannot tell a typed 0 from never-set through the ORM
+    (NULL reads as 0.0). Every write/create of `clinic_drive_distance_km`
+    WITHOUT a method is marked manual (the road lookup always sends one);
+    `_update_travel_distance` uses a manual client value even at 0 (same
+    facility only). health_base 19.0.1.8.6 marked the 12 test-data clients
+    (method NULL, value NOT NULL). A booking distance typed by an OM/Owner sets
+    `travel_distance_manual` and is never recomputed; only
+    `_update_travel_distance` may write `travel_distance` without the user
+    check (context `skip_travel_recompute`). (UAT round 6.)
+- **§5.334 — the seeded clinics have street "-", and Photon matched "-, Hồ Chí
+    Minh" to the Ho Chi Minh Highway (lat 16.76).** All three TPHCM clinics sat
+    there (932 km bookings). `_geocode_facility_address` drops placeholder
+    streets and, with no street left, asks for `osm_tag=place`. (UAT round 6.)
+- **§5.335 — Discuss "Search conversations" reads each staff user as the
+    searcher** (hr_holidays adds `main_user_id → employee_ids` without sudo);
+    `rule_res_users_catchment` hides other-area staff → AccessError for every
+    nurse and OM. health_catchment_scope overrides
+    `res.partner._search_for_channel_invite` to list only partners whose user
+    the searcher may read. The rule is unchanged. (UAT round 6.)
+- **§5.336 — access refusals are plain sentences (biz_errors).**
+    `ir.rule._make_access_error` / `ir.model.access._make_access_error` build
+    core's message (logged), then return "You do not have access to this
+    <model name>. Ask your administrator if you need it." for anyone without
+    `base.group_system`. The model name is `ir.model.name` in the user's
+    language — so a model's `_description` IS user-facing text: the booking's is
+    now "Booking" / "Lịch hẹn" (was "Healthcare Field Service Order (Unified
+    Booking System)"; 21 .po files carried the old msgid). (UAT round 6.)
+- **§5.337 — the MOH report no longer uses `web.external_layout`.** The
+    company's "Company Details" (res.company 1) holds DEMO text "My Company (San
+    Francisco), 8000 Marina Blvd…", which every external-layout report prints
+    (invoices too). The MOH templates print company + clinic in the body
+    (`web.basic_layout`), so preview and PDF match. Fixing the company setting
+    itself is an owner/data decision. (UAT round 6.)
+- **§5.338 — the Audit Log "Record" read `mail_message.subject`, which
+    tracking messages never have.** `record_name` is now computed from
+    `model`/`res_id` (display name if the viewer may read it, else
+    "<model> #id"), with a search method; an "Open" button opens the record.
+    The post_init hook's second copy of the view SQL is gone (it now calls
+    `init()`). `resource.calendar.leaves` has no `mail.thread`, so holidays are
+    still not audited. (UAT round 6.)
+- **§5.339 — public holidays = `resource_id` AND `calendar_id` empty.** The
+    Master Data action had no domain (listed staff time off). Owner rule
+    `rule_public_holiday_owner_manage` (write/create, no read/unlink) on exactly
+    that domain; `active` added to `resource.calendar.leaves` so the Owner
+    archives instead of deleting. Note: hr_holidays time-off rows carry
+    `is_pricing_holiday = True` (field default) — harmless only because
+    pricing also requires no resource/calendar. (UAT round 6.)
