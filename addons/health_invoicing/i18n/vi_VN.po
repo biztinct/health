@@ -1089,6 +1089,7 @@ msgstr "Kiểm tra huyết áp"
 #: model:ir.model.fields,field_description:health_invoicing.field_health_service_billing__fieldservice_order_id
 #: model:ir.model.fields,field_description:health_invoicing.field_health_service_package_wizard__fso_id
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_ar_transaction_log_list
+#: model:ir.model,name:health_invoicing.model_health_fieldservice_order
 msgid "Booking"
 msgstr "Lịch hẹn"
 
@@ -2713,12 +2714,6 @@ msgid "Healthcare Accounts Receivable Trends"
 msgstr "Các khoản tiền chăm sóc sức khỏe"
 
 #. module: health_invoicing
-#: model:ir.model,name:health_invoicing.model_health_fieldservice_order
-msgid "Healthcare Field Service Order (Unified Booking System)"
-msgstr ""
-"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
-
-#. module: health_invoicing
 #: model:ir.actions.act_window,name:health_invoicing.action_healthcare_invoices
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_invoices_list
 msgid "Healthcare Invoices"
@@ -3135,6 +3130,8 @@ msgstr "Dòng công việc thanh toán không hợp lệ được chọn."
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_ar_transaction_log__event_type__invoice
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_overdue_list
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_ar_payments_tree
+#: model:ir.model.fields,field_description:health_invoicing.field_health_ar_transaction_log__invoice_id
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_ar_transaction_log_list
 msgid "Invoice"
 msgstr "Hóa đơn"
 
@@ -8243,3 +8240,61 @@ msgstr "Đã hủy thanh toán"
 #: code:addons/health_invoicing/models/account_payment.py:0
 msgid "Draft entry of cancelled payment %s"
 msgstr "Bút toán nháp của thanh toán đã hủy %s"
+
+#. module: health_invoicing
+#: model:ir.model.fields,field_description:health_invoicing.field_health_ar_transaction_log__handed_over_by_id
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_ar_transaction_log_list
+msgid "Handed Over By"
+msgstr "Người giao"
+
+#. module: health_invoicing
+#: model:ir.model.fields,field_description:health_invoicing.field_health_ar_transaction_log__received_by_id
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_ar_transaction_log_list
+msgid "Received By"
+msgstr "Người nhận"
+
+#. module: health_invoicing
+#: model:ir.model.fields,field_description:health_invoicing.field_health_ar_transaction_log__receipt_reference
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_ar_transaction_log_list
+msgid "Receipt"
+msgstr "Biên nhận"
+
+#. module: health_invoicing
+#: model:ir.model.fields,field_description:health_invoicing.field_health_ar_transaction_log__cash_record_id
+msgid "Cash Record"
+msgstr "Bản ghi tiền mặt"
+
+#. module: health_invoicing
+#: model:ir.model.fields,help:health_invoicing.field_health_ar_transaction_log__handed_over_by_id
+msgid "Staff member who handed the cash over (cash hand-in rows)."
+msgstr "Nhân viên đã giao tiền mặt (dòng nộp tiền mặt)."
+
+#. module: health_invoicing
+#: model:ir.model.fields,help:health_invoicing.field_health_ar_transaction_log__received_by_id
+msgid "Operations Manager who received the cash (cash hand-in rows)."
+msgstr "Quản lý vận hành đã nhận tiền mặt (dòng nộp tiền mặt)."
+
+#. module: health_invoicing
+#: model:ir.model.fields,help:health_invoicing.field_health_ar_transaction_log__receipt_reference
+msgid "Receipt number given at the cash hand-in."
+msgstr "Số biên nhận khi nộp tiền mặt."
+
+#. module: health_invoicing
+#: model:ir.model.fields,help:health_invoicing.field_health_ar_transaction_log__invoice_id
+msgid "Invoice the handed-over cash paid."
+msgstr "Hoá đơn mà số tiền mặt đã nộp thanh toán."
+
+#. module: health_invoicing
+#: model:ir.model.fields,help:health_invoicing.field_health_ar_transaction_log__cash_record_id
+msgid "Payment record (PAY…) of the cash that was handed over."
+msgstr "Bản ghi thanh toán (PAY…) của số tiền mặt đã nộp."
+
+#. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_ar_transaction_log_search
+msgid "Cash Hand-ins"
+msgstr "Nộp tiền mặt"
+
+#. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_ar_transaction_log_form
+msgid "Cash Hand-in"
+msgstr "Nộp tiền mặt"

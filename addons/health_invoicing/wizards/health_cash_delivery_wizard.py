@@ -153,6 +153,14 @@ class HealthCashDeliveryWizard(models.TransientModel):
         # Create bank deposit record if requested
         if self.create_bank_deposit:
             self._create_bank_deposit_record(ar_payment)
+
+        # The hand-in itself goes into the AR transaction log (UAT round 6,
+        # item 4): amount, from the nurse, to the OM, time, receipt, source
+        # payment/invoice. No journal entry unless the Cash-in-Transit path
+        # above posted one; never a customer payment.
+        settlement = ar_payment if (ar_payment and ar_payment._name == 'account.move') else None
+        self.env['health.ar.transaction.log']._log_cash_handover(
+            self.transaction_id, move=settlement)
         
         # Generate comprehensive success message
         success_message = f"""

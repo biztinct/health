@@ -242,6 +242,75 @@ class HealthARTransactionLog(models.Model):
         readonly=True,
     )
 
+    # Cash hand-in (nurse -> Operations Manager), UAT round 6 item 4. The
+    # hand-in moves cash between staff: on carejiox there is no separate
+    # "cash held by staff" account (the nurse-app cash payment already sits in
+    # the Cash journal), so the row carries no journal entry and changes no
+    # balance — it records who, to whom, when and on which receipt.
+    handed_over_by_id = fields.Many2one(
+        'hr.employee', string='Handed Over By', readonly=True,
+        help='Staff member who handed the cash over (cash hand-in rows).')
+    received_by_id = fields.Many2one(
+        'hr.employee', string='Received By', readonly=True,
+        help='Operations Manager who received the cash (cash hand-in rows).')
+    receipt_reference = fields.Char(
+        'Receipt', readonly=True,
+        help='Receipt number given at the cash hand-in.')
+    invoice_id = fields.Many2one(
+        'account.move', string='Invoice', readonly=True,
+        help='Invoice the handed-over cash paid.')
+    cash_record_id = fields.Many2one(
+        'health.payment.transaction', string='Cash Record', readonly=True,
+        index='btree_not_null',
+        help='Payment record (PAY…) of the cash that was handed over.')
+
+    @api.model
+    def _log_cash_handover(self, txn, move=None):
+        """One 'handover' row per cash record when the Operations Manager
+        confirms the hand-in. Never creates a payment or touches a balance.
+        Reuses (and completes) the row the Cash-in-Transit path already wrote
+        for its settlement entry, so the hand-in is logged exactly once."""
+        Log = self.sudo()
+        txn = txn.sudo()
+        row = Log.search([('cash_record_id', '=', txn.id),
+                          ('event_type', '=', 'handover')], limit=1)
+        if not row and move:
+            row = Log.search([('move_id', '=', move.id),
+                              ('event_type', '=', 'handover')], limit=1)
+        when = txn.cash_delivery_date or fields.Datetime.now()
+        booking = txn.fso_id
+        vals = {
+            'handed_over_by_id': txn.collected_by_id.id or False,
+            'received_by_id': txn.received_by_om_id.id or False,
+            'receipt_reference': txn.om_receipt_number or False,
+            'invoice_id': txn.invoice_id.id or False,
+            'cash_record_id': txn.id,
+            'payment_id': txn.payment_id.id or False,
+        }
+        if row:
+            row.write(vals)
+            return row
+        amount = abs(txn.amount or 0.0)
+        vals.update({
+            'event_type': 'handover',
+            'transaction_datetime': when,
+            'posting_date': fields.Date.context_today(self, when),
+            'company_id': (txn.invoice_id.company_id or txn.payment_id.company_id
+                           or self.env.company).id,
+            'amount': amount,
+            'currency_id': (txn.currency_id or self.env.company.currency_id).id,
+            'amount_in_words': _amount_to_vietnamese_words(amount),
+            'move_id': move.id if move else False,
+            'partner_id': txn.patient_id.id or False,
+            'booking_id': booking.id or False,
+            'crm_event_id': booking.crm_lead_id.id if booking and 'crm_lead_id' in booking._fields else False,
+            'facility_id': booking.facility_id.id if booking else False,
+            'prepared_by': self.env.user.id,
+            'posting_path': 'HANDOVER→NURSE_CASH→OM',
+            'status': 'posted',
+        })
+        return Log.create(vals)
+
     @api.depends('company_id')
     def _compute_entity_code(self):
         for rec in self:

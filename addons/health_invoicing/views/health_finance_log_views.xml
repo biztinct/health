@@ -139,6 +139,10 @@
                 <field name="credit_account_id" string="Credit Account"/>
                 <field name="amount" string="Amount" sum="Total"/>
                 <field name="currency_id" column_invisible="1"/>
+                <field name="handed_over_by_id" string="Handed Over By" optional="show"/>
+                <field name="received_by_id" string="Received By" optional="show"/>
+                <field name="receipt_reference" string="Receipt" optional="show"/>
+                <field name="invoice_id" string="Invoice" optional="hide"/>
                 <field name="amount_in_words" string="Amount in Words" optional="hide"/>
                 <field name="posting_path" string="Posting Path" optional="show"/>
                 <field name="prepared_by" string="Prepared By" optional="show"/>
@@ -167,6 +171,7 @@
                 <filter name="invoices" string="Invoices" domain="[('event_type', '=', 'invoice')]"/>
                 <filter name="payments" string="Payments" domain="[('event_type', '=', 'payment')]"/>
                 <filter name="refunds" string="Refunds" domain="[('event_type', 'in', ('refund', 'credit_note'))]"/>
+                <filter name="handovers" string="Cash Hand-ins" domain="[('event_type', '=', 'handover')]"/>
                 <filter name="group_event" string="Event Type" context="{'group_by': 'event_type'}"/>
                 <filter name="group_partner" string="Client" context="{'group_by': 'partner_id'}"/>
                 <filter name="group_catchment_province" string="Catchment Area"
@@ -212,6 +217,17 @@
                             <field name="booking_id"/>
                             <field name="crm_event_id"/>
                             <field name="facility_id"/>
+                        </group>
+                    </group>
+                    <group string="Cash Hand-in" invisible="event_type != 'handover'">
+                        <group>
+                            <field name="handed_over_by_id"/>
+                            <field name="received_by_id"/>
+                            <field name="receipt_reference"/>
+                        </group>
+                        <group>
+                            <field name="cash_record_id"/>
+                            <field name="invoice_id"/>
                         </group>
                     </group>
                 </sheet>
