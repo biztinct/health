@@ -4170,6 +4170,7 @@ msgstr "Số lượng được đặt không thể vượt quá dung lượng."
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_search
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_list_ops
+#: model:ir.model,name:health_fieldservice.model_health_fieldservice_order
 msgid "Booking"
 msgstr "Lịch hẹn"
 
@@ -7743,12 +7744,6 @@ msgstr "Dịch vụ chăm sóc sức khỏe"
 #: model:ir.module.category,description:health_fieldservice.module_category_health_fieldservice
 msgid "Healthcare Field Service Management System"
 msgstr "Hệ thống quản lý dịch vụ chăm sóc sức khỏe"
-
-#. module: health_fieldservice
-#: model:ir.model,name:health_fieldservice.model_health_fieldservice_order
-msgid "Healthcare Field Service Order (Unified Booking System)"
-msgstr ""
-"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
 
 #. module: health_fieldservice
 #: model:ir.model,name:health_fieldservice.model_health_fieldservice_team
@@ -16406,3 +16401,46 @@ msgstr "30 phút"
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_healthcare_quote_form_custom
 msgid "Unit"
 msgstr "Đơn vị"
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
+msgid "Distance changed from %(old)s to %(new)s km"
+msgstr "Quãng đường đã đổi từ %(old)s thành %(new)s km"
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
+msgid "Only an Operations Manager or the Owner can change the driving distance of a booking."
+msgstr "Chỉ Quản lý vận hành hoặc Chủ sở hữu mới được đổi quãng đường lái xe của lịch hẹn."
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
+msgid "The driving distance of %s can no longer change: the booking is completed, cancelled or invoiced."
+msgstr "Không thể đổi quãng đường lái xe của %s nữa: lịch hẹn đã hoàn thành, đã huỷ hoặc đã xuất hoá đơn."
+
+#. module: health_fieldservice
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__travel_distance_manual
+msgid "Distance Set by Hand"
+msgstr "Quãng đường nhập tay"
+
+#. module: health_fieldservice
+#: model:ir.model.fields,help:health_fieldservice.field_health_fieldservice_order__travel_distance_manual
+msgid "The driving distance was changed by hand on this booking; address or location changes no longer recompute it."
+msgstr "Quãng đường lái xe đã được sửa tay trên lịch hẹn này; thay đổi địa chỉ hoặc vị trí sẽ không tính lại nữa."
+
+#. module: health_fieldservice
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__can_edit_travel_distance
+msgid "Can Change Distance"
+msgstr "Được đổi quãng đường"
+
+#. module: health_fieldservice
+#: model:ir.model.fields,help:health_fieldservice.field_health_fieldservice_order__can_edit_travel_distance
+msgid "The current user may change the driving distance of this booking."
+msgstr "Người dùng hiện tại được đổi quãng đường lái xe của lịch hẹn này."
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
+msgid "(set by hand)"
+msgstr "(nhập tay)"

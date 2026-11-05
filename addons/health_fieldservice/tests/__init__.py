@@ -4,3 +4,4 @@ from . import test_sh1_public_acl
 from . import test_ws_booking_form
 from . import test_ws_client_form
 from . import test_uat_video_fixes
+from . import test_uat_round6

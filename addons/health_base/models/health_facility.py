@@ -344,12 +344,18 @@ class Facility(models.Model):
         """Geocode facility address using Photon API"""
         self.ensure_one()
 
-        # Build address string
+        # Build address string. A placeholder street ("-") is no address: the
+        # seeded clinics carry one, and "-, Hồ Chí Minh" matched the Ho Chi
+        # Minh Highway in central Vietnam (UAT round 6, item 3).
+        def _real(part):
+            return part and part.strip().strip('-./').strip()
+
         address_parts = []
-        if self.street:
+        if _real(self.street):
             address_parts.append(self.street)
-        if self.street2:
+        if _real(self.street2):
             address_parts.append(self.street2)
+        city_only = not address_parts
         if self.city:
             address_parts.append(self.city)
         if self.state_id:
@@ -377,6 +383,10 @@ class Facility(models.Model):
             if self.country_id and self.country_id.code == 'VN':
                 params['lat'] = 16.0
                 params['lon'] = 106.0
+            # No street: look for the place (city/town), never a road named
+            # after it.
+            if city_only:
+                params['osm_tag'] = 'place'
 
             # Add proper headers to avoid 403 errors
             headers = {

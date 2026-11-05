@@ -91,7 +91,9 @@ class HealthFieldServiceOrderUnified(models.Model):
     TECHNICAL: FSO = BOOKING (complete service order from start to finish)
     """
     _name = 'health.fieldservice.order'
-    _description = 'Healthcare Field Service Order (Unified Booking System)'
+    # What a person sees (history "… created", access messages, exports):
+    # "Booking" / "Lịch hẹn" (UAT round 6, item 9b). Nothing keys on it.
+    _description = 'Booking'
     _inherit = ['mail.thread', 'mail.activity.mixin', 'portal.mixin', 'health.lifecycle.mixin']
     _order = 'scheduled_datetime desc, priority desc, create_date desc'
     _rec_name = 'display_name'
@@ -945,6 +947,15 @@ class HealthFieldServiceOrderUnified(models.Model):
     
     # Travel Information
     travel_distance = fields.Float('Travel Distance (km)', help='Distance to service location')
+    # Set by an Operations Manager / Owner on the booking (a visit at another
+    # address): an address/geo recompute never overwrites it (UAT round 6).
+    travel_distance_manual = fields.Boolean(
+        'Distance Set by Hand', copy=False, readonly=True,
+        help='The driving distance was changed by hand on this booking; '
+             'address or location changes no longer recompute it.')
+    can_edit_travel_distance = fields.Boolean(
+        'Can Change Distance', compute='_compute_can_edit_travel_distance',
+        help='The current user may change the driving distance of this booking.')
     travel_time_minutes = fields.Integer('Travel Time (Minutes)', help='Estimated travel time')
     travel_fee = fields.Monetary('Travel Fee', help='Additional fee for travel')
     
@@ -1749,7 +1760,15 @@ class HealthFieldServiceOrderUnified(models.Model):
     
     def write(self, vals):
         """Handle state changes and automation triggers with stage-state synchronization"""
-        
+
+        # A driving distance typed on the booking (UAT round 6, item 2): only
+        # office users, never on an invoiced/closed booking; it sticks.
+        old_travel = None
+        if 'travel_distance' in vals and not self.env.context.get('skip_travel_recompute'):
+            self._check_can_set_travel_distance()
+            old_travel = {r.id: r.travel_distance or 0.0 for r in self}
+            vals = dict(vals, travel_distance_manual=True)
+
         # Handle stage transitions with validation
         if 'stage_id' in vals and vals['stage_id']:
             new_stage = self.env['health.fieldservice.stage'].browse(vals['stage_id'])
@@ -1856,7 +1875,105 @@ class HealthFieldServiceOrderUnified(models.Model):
             for record in self:
                 record._update_travel_distance()
 
+        if old_travel is not None:
+            for record in self:
+                old_km, new_km = old_travel.get(record.id, 0.0), record.travel_distance or 0.0
+                if abs(old_km - new_km) < 0.005:
+                    continue
+                record.message_post(
+                    body=_('Distance changed from %(old)s to %(new)s km',
+                           old=f'{old_km:.2f}', new=f'{new_km:.2f}'),
+                    message_type='comment', subtype_xmlid='mail.mt_note')
+                record._refresh_quote_distance_pricing()
+
         return result
+
+    # Booking states in which the distance can no longer be changed by hand.
+    _TRAVEL_LOCKED_STATES = ('completed', 'completed_pending_invoice', 'cancelled', 'closed')
+
+    @api.depends_context('uid')
+    @api.depends('state', 'invoice_id')
+    def _compute_can_edit_travel_distance(self):
+        office = self.env.user.has_group('health_base.group_healthcare_operations_manager')
+        for fso in self:
+            fso.can_edit_travel_distance = bool(
+                office and fso.state not in self._TRAVEL_LOCKED_STATES and not fso.invoice_id)
+
+    def _check_can_set_travel_distance(self):
+        if self.env.su:
+            return
+        if not self.env.user.has_group('health_base.group_healthcare_operations_manager'):
+            raise UserError(_('Only an Operations Manager or the Owner can change the '
+                              'driving distance of a booking.'))
+        for fso in self:
+            if fso.state in self._TRAVEL_LOCKED_STATES or fso.invoice_id:
+                raise UserError(_('The driving distance of %s can no longer change: '
+                                  'the booking is completed, cancelled or invoiced.', fso.name))
+
+    def _refresh_quote_distance_pricing(self):
+        """Re-price an advanced-pricing quote after the distance changed."""
+        self.ensure_one()
+        if self.env.context.get('skip_quote_recalc'):
+            return
+        so = self.sale_order_id
+        if so and getattr(so, 'use_advanced_pricing', False) and \
+                hasattr(so, 'action_post_service_recalc'):
+            try:
+                so.action_post_service_recalc()
+            except Exception as e:  # noqa: BLE001
+                _logger.info('Quote recalc after distance update failed: %s', e)
+
+    # ------------------------------------------------------------------
+    # MOH report helpers (UAT round 6, item 6)
+    # ------------------------------------------------------------------
+    def _moh_report_company(self):
+        """The booking's company: its quote's, else its invoice's, else the
+        user's current company (a booking has no company field of its own)."""
+        self.ensure_one()
+        s = self.sudo()
+        return (s.sale_order_id.company_id or s.invoice_id.company_id
+                or self.env.company)
+
+    @api.model
+    def _moh_report_address(self, rec):
+        """One-line address of a partner or a clinic, skipping placeholder
+        parts ("-") the seeded clinics carry."""
+        if not rec:
+            return ''
+        rec = rec.sudo()
+        parts = []
+        for fname in ('street', 'street2', 'city'):
+            val = (rec[fname] if fname in rec._fields else '') or ''
+            if val.strip().strip('-./').strip() and val.strip() not in parts:
+                parts.append(val.strip().rstrip(','))
+        state = rec.state_id.name if 'state_id' in rec._fields and rec.state_id else ''
+        if state and state not in parts:
+            parts.append(state)
+        country = rec.country_id.name if 'country_id' in rec._fields and rec.country_id else ''
+        if country:
+            parts.append(country)
+        return ', '.join(parts)
+
+    def _moh_report_doctor_name(self):
+        """Who delivered the visit: the booking's doctor, else an assigned
+        doctor, else the lead staff, else the first assigned staff member
+        (declined/cancelled assignments are not on the care team)."""
+        self.ensure_one()
+        s = self.sudo()  # employee names; see HANDOVER §5.324
+        emp = (s.primary_doctor_id or s.assigned_doctor_ids[:1]
+               or s.lead_staff_id or s.assigned_staff_ids[:1])
+        return emp.name or ''
+
+    def _moh_report_notes(self):
+        """The visit's completion notes, else its clinical summary."""
+        self.ensure_one()
+        from odoo.tools import html2plaintext
+        for value in (self.completion_notes,
+                      html2plaintext(self.clinical_notes or '').strip(),
+                      self.follow_up_notes):
+            if value and value.strip():
+                return value.strip()
+        return ''
 
     def _update_travel_distance(self):
         """Compute & store the one-way driving distance (facility -> client) on
@@ -1868,10 +1985,15 @@ class HealthFieldServiceOrderUnified(models.Model):
             fac, pat = fso.facility_id, fso.patient_id
             if not (fac and pat):
                 continue
+            # A distance typed on the booking is never overwritten (UAT round 6).
+            if fso.travel_distance_manual:
+                continue
             km = mins = None
+            # The client's own distance from this clinic: a looked-up one, or
+            # one set on purpose (by a person / import), which counts even at 0.
             if (pat.primary_facility_id and pat.primary_facility_id.id == fac.id
-                    and pat.clinic_drive_distance_km):
-                km, mins = pat.clinic_drive_distance_km, pat.clinic_drive_minutes
+                    and (pat.clinic_drive_distance_km or pat._has_manual_clinic_distance())):
+                km, mins = pat.clinic_drive_distance_km or 0.0, pat.clinic_drive_minutes
             elif (fac.latitude and fac.longitude
                   and pat.partner_latitude and pat.partner_longitude):
                 res = geo_utils.driving_distance(
@@ -1887,15 +2009,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             })
             # Refresh distance-based pricing on an existing advanced-pricing quote
             # (skipped during bulk backfill of historical bookings).
-            if self.env.context.get('skip_quote_recalc'):
-                continue
-            so = fso.sale_order_id
-            if so and getattr(so, 'use_advanced_pricing', False) and \
-                    hasattr(so, 'action_post_service_recalc'):
-                try:
-                    so.action_post_service_recalc()
-                except Exception as e:  # noqa: BLE001
-                    _logger.info('Quote recalc after distance update failed: %s', e)
+            fso._refresh_quote_distance_pricing()
 
     def _handle_state_change(self, new_state):
         """Handle automation based on state changes"""

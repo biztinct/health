@@ -5,8 +5,27 @@
     <template id="report_moh_document">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
-                <t t-call="web.external_layout">
+                <t t-call="web.basic_layout">
                     <div class="page">
+                    <!-- Company + clinic, printed in the body so the on-screen
+                         preview and the PDF carry the same text (UAT round 6). The
+                         company's "Company Details" setting held demo text, which the
+                         standard layout printed. -->
+                    <t t-set="moh_company" t-value="o._moh_report_company()"/>
+                    <table style="width: 100%; margin-bottom: 14px; border-bottom: 1px solid #999;">
+                        <tr>
+                            <td style="width: 55%; vertical-align: top; padding-bottom: 8px;">
+                                <img t-if="moh_company.logo" t-att-src="image_data_uri(moh_company.logo)"
+                                     style="max-height: 56px; max-width: 200px; display: block; margin-bottom: 4px;" alt="Logo"/>
+                                <div><strong t-esc="moh_company.name"/></div>
+                                <div style="font-size: 11px;" t-esc="o._moh_report_address(moh_company.partner_id)"/>
+                            </td>
+                            <td style="width: 45%; vertical-align: top; text-align: right; padding-bottom: 8px;">
+                                <div><strong>Clinic / Phòng khám:</strong> <span t-esc="o.facility_id.name or '-'"/></div>
+                                <div style="font-size: 11px;" t-esc="o._moh_report_address(o.facility_id) or '-'"/>
+                            </td>
+                        </tr>
+                    </table>
                     <!-- Report Header -->
                     <div class="text-center mb-4">
                         <h3 style="margin-bottom: 5px;">
@@ -35,8 +54,7 @@
                         </div>
                         <div class="col-6">
                             <strong>Doctor / Bác sĩ:</strong>
-                            <span t-if="o.primary_doctor_id" t-field="o.primary_doctor_id.name"/>
-                            <span t-else="">-</span>
+                            <span t-esc="o._moh_report_doctor_name() or '-'"/>
                         </div>
                     </div>
 
@@ -141,8 +159,7 @@
                                     <span t-else="">-</span>
                                 </td>
                                 <td style="border: 1px solid black; padding: 8px; vertical-align: top;">
-                                    <span t-if="o.completion_notes" t-field="o.completion_notes"/>
-                                    <span t-else="">-</span>
+                                    <span style="white-space: pre-line;" t-esc="o._moh_report_notes() or '-'"/>
                                 </td>
                             </tr>
                         </tbody>
@@ -162,8 +179,8 @@
                                 <p><strong>Doctor Signature / Chữ ký bác sĩ</strong></p>
                                 <div style="height: 80px;"></div>
                                 <p>_______________________</p>
-                                <p t-if="o.primary_doctor_id">
-                                    <span t-field="o.primary_doctor_id.name"/>
+                                <p t-if="o._moh_report_doctor_name()">
+                                    <span t-esc="o._moh_report_doctor_name()"/>
                                 </p>
                             </div>
                         </div>
@@ -183,8 +200,30 @@
     <!-- MOH Report Template for Multiple Bookings -->
     <template id="report_moh_document_multi">
         <t t-call="web.html_container">
-            <t t-call="web.external_layout">
+            <t t-call="web.basic_layout">
                 <div class="page">
+                <t t-set="o" t-value="docs[:1]"/>
+                <!-- Company + clinic, printed in the body so the on-screen
+                     preview and the PDF carry the same text (UAT round 6). The
+                     company's "Company Details" setting held demo text, which the
+                     standard layout printed. -->
+                <t t-set="moh_company" t-value="o._moh_report_company()"/>
+                <table style="width: 100%; margin-bottom: 14px; border-bottom: 1px solid #999;">
+                    <tr>
+                        <td style="width: 55%; vertical-align: top; padding-bottom: 8px;">
+                            <img t-if="moh_company.logo" t-att-src="image_data_uri(moh_company.logo)"
+                                 style="max-height: 56px; max-width: 200px; display: block; margin-bottom: 4px;" alt="Logo"/>
+                            <div><strong t-esc="moh_company.name"/></div>
+                            <div style="font-size: 11px;" t-esc="o._moh_report_address(moh_company.partner_id)"/>
+                        </td>
+                        <td style="width: 45%; vertical-align: top; text-align: right; padding-bottom: 8px;">
+                            <t t-foreach="docs.mapped('facility_id')" t-as="fac">
+                                <div><strong>Clinic / Phòng khám:</strong> <span t-esc="fac.name"/></div>
+                                <div style="font-size: 11px;" t-esc="o._moh_report_address(fac) or '-'"/>
+                            </t>
+                        </td>
+                    </tr>
+                </table>
                 <!-- Report Header -->
                 <div class="text-center mb-4">
                     <h3 style="margin-bottom: 5px;">
@@ -280,7 +319,7 @@
                                     <span t-else="">-</span>
                                 </td>
                                 <td style="border: 1px solid black; padding: 5px;">
-                                    <span t-if="o.diagnosis" t-raw="o.diagnosis[:50]"/>
+                                    <span t-if="o.diagnosis" t-esc="o.diagnosis[:50]"/>
                                     <span t-else="">-</span>
                                 </td>
                                 <td style="border: 1px solid black; padding: 5px;">
@@ -288,8 +327,7 @@
                                     <span t-else="">-</span>
                                 </td>
                                 <td style="border: 1px solid black; padding: 5px;">
-                                    <span t-if="o.primary_doctor_id" t-field="o.primary_doctor_id.name"/>
-                                    <span t-else="">-</span>
+                                    <span t-esc="o._moh_report_doctor_name() or '-'"/>
                                 </td>
                             </tr>
                         </t>

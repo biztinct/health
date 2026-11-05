@@ -578,6 +578,11 @@ class ResPartner(models.Model):
         if ('partner_latitude' in vals or 'partner_longitude' in vals) and 'date_localization' not in vals:
             vals['date_localization'] = fields.Date.today()
 
+        # A distance written by a person or an import (not by the road-distance
+        # lookup, which always sends its method) is a value set on purpose —
+        # including 0 — and bookings use it as is (UAT round 6, item 2).
+        self._mark_manual_clinic_distance(vals)
+
         # Auto-geocode BEFORE write when Vietnamese address fields change
         address_fields = [
             'house_number', 'sub_alley_number', 'alley_number', 'street', 'street2',
@@ -630,10 +635,24 @@ class ResPartner(models.Model):
                     partner._update_clinic_distance()
         return result
 
-    @api.depends('clinic_drive_distance_km', 'clinic_drive_minutes')
+    # `clinic_distance_method` value for a distance set on purpose (by a user
+    # or an import) rather than looked up (google / osrm / approx).
+    MANUAL_DISTANCE_METHOD = 'manual'
+
+    @api.model
+    def _mark_manual_clinic_distance(self, vals):
+        if 'clinic_drive_distance_km' in vals and 'clinic_distance_method' not in vals:
+            vals['clinic_distance_method'] = self.MANUAL_DISTANCE_METHOD
+
+    def _has_manual_clinic_distance(self):
+        self.ensure_one()
+        return self.clinic_distance_method == self.MANUAL_DISTANCE_METHOD
+
+    @api.depends('clinic_drive_distance_km', 'clinic_drive_minutes', 'clinic_distance_method')
     def _compute_clinic_distance_display(self):
         for p in self:
-            if p.clinic_drive_distance_km:
+            # A 0 set on purpose is shown ("0.0 km"); a never-looked-up one is not.
+            if p.clinic_drive_distance_km or p.clinic_distance_method == p.MANUAL_DISTANCE_METHOD:
                 mins = (' · ~%d min' % round(p.clinic_drive_minutes)) if p.clinic_drive_minutes else ''
                 p.clinic_distance_display = '%.1f km%s' % (p.clinic_drive_distance_km, mins)
             else:
@@ -947,6 +966,7 @@ class ResPartner(models.Model):
                         vals[fname] = normalize_vn_phone(vals[fname])
             # Derive the denormalized `city` string from District + City parts.
             self._vn_apply_city_from_parts(vals)
+            self._mark_manual_clinic_distance(vals)
 
         partners = super().create(vals_list)
         

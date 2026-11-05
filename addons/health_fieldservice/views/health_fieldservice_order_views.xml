@@ -1417,8 +1417,13 @@
                                         <field name="patient_address_display" string="Address" readonly="1"/>
                                         <label for="travel_distance" string="Driving Distance"/>
                                         <div>
-                                            <field name="travel_distance" readonly="1" nolabel="1" class="d-inline"/> km
-                                            <span invisible="not travel_time_minutes"> · ~<field name="travel_time_minutes" readonly="1" nolabel="1" class="d-inline"/> min</span>
+                                            <!-- Editable by OM / Owner until completed or invoiced
+                                                 (UAT round 6); a typed value sticks. -->
+                                            <field name="can_edit_travel_distance" invisible="1"/>
+                                            <field name="travel_distance_manual" invisible="1"/>
+                                            <field name="travel_distance" readonly="not can_edit_travel_distance" nolabel="1" class="d-inline" style="max-width: 7em;"/> km
+                                            <span invisible="not travel_time_minutes or travel_distance_manual"> · ~<field name="travel_time_minutes" readonly="1" nolabel="1" class="d-inline"/> min</span>
+                                            <span class="text-muted small" invisible="not travel_distance_manual"> (set by hand)</span>
                                         </div>
                                     </group>
                                 </div>
