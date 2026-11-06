@@ -141,3 +141,99 @@ msgstr "Bạn không thể xoá %(thing)s này. Hãy hỏi quản trị viên n�
 #: code:addons/biz_errors/models/ir_actions_report.py:0
 msgid "The PDF could not be created. Please try again in a moment; if it keeps failing, contact support."
 msgstr "Không thể tạo tệp PDF. Vui lòng thử lại sau giây lát; nếu vẫn lỗi, hãy liên hệ bộ phận hỗ trợ."
+
+#. module: biz_errors
+#. odoo-python
+#: code:addons/biz_errors/models/ir_access_errors.py:0
+msgid "booking"
+msgstr "lịch hẹn"
+
+#. module: biz_errors
+#. odoo-python
+#: code:addons/biz_errors/models/ir_access_errors.py:0
+msgid "contact"
+msgstr "liên hệ"
+
+#. module: biz_errors
+#. odoo-python
+#: code:addons/biz_errors/models/ir_access_errors.py:0
+msgid "quote"
+msgstr "báo giá"
+
+#. module: biz_errors
+#. odoo-python
+#: code:addons/biz_errors/models/ir_access_errors.py:0
+msgid "payment"
+msgstr "khoản thanh toán"
+
+#. module: biz_errors
+#. odoo-python
+#: code:addons/biz_errors/models/ir_access_errors.py:0
+msgid "payment record"
+msgstr "bản ghi thanh toán"
+
+#. module: biz_errors
+#. odoo-python
+#: code:addons/biz_errors/models/ir_access_errors.py:0
+msgid "staff record"
+msgstr "hồ sơ nhân viên"
+
+#. module: biz_errors
+#. odoo-python
+#: code:addons/biz_errors/models/ir_access_errors.py:0
+msgid "clinical note"
+msgstr "ghi chú lâm sàng"
+
+#. module: biz_errors
+#. odoo-python
+#: code:addons/biz_errors/models/ir_access_errors.py:0
+msgid "facility"
+msgstr "cơ sở"
+
+#. module: biz_errors
+#. odoo-python
+#: code:addons/biz_errors/models/ir_access_errors.py:0
+msgid "incident"
+msgstr "sự cố"
+
+#. module: biz_errors
+#. odoo-python
+#: code:addons/biz_errors/models/ir_access_errors.py:0
+msgid "user account"
+msgstr "tài khoản người dùng"
+
+#. module: biz_errors
+#. odoo-python
+#: code:addons/biz_errors/models/ir_access_errors.py:0
+msgid "client"
+msgstr "khách hàng"
+
+#. module: biz_errors
+#. odoo-python
+#: code:addons/biz_errors/models/ir_access_errors.py:0
+msgid "invoice"
+msgstr "hóa đơn"
+
+#. module: biz_errors
+#. odoo-python
+#: code:addons/biz_errors/models/ir_access_errors.py:0
+msgid "You do not have access to this information. Ask your administrator if you need it."
+msgstr "Bạn không có quyền truy cập thông tin này. Hãy hỏi quản trị viên nếu bạn cần."
+
+#. module: biz_errors
+#. odoo-python
+#: code:addons/biz_errors/models/ir_access_errors.py:0
+msgid "You cannot change this information. Ask your administrator if you need it."
+msgstr "Bạn không thể thay đổi thông tin này. Hãy hỏi quản trị viên nếu bạn cần."
+
+#. module: biz_errors
+#. odoo-python
+#: code:addons/biz_errors/models/ir_access_errors.py:0
+msgid "You cannot add this information. Ask your administrator if you need it."
+msgstr "Bạn không thể thêm thông tin này. Hãy hỏi quản trị viên nếu bạn cần."
+
+#. module: biz_errors
+#. odoo-python
+#: code:addons/biz_errors/models/ir_access_errors.py:0
+msgid "You cannot delete this information. Ask your administrator if you need it."
+msgstr "Bạn không thể xoá thông tin này. Hãy hỏi quản trị viên nếu bạn cần."

@@ -45,6 +45,36 @@ class TestPlainAccessErrors(TransactionCase):
         msg = self._acl_message(self.user)
         self.assertIn('Bạn không có quyền truy cập', msg)
 
+    # UAT round 11, item 1: never "this fields" / a technical description.
+    def test_technical_model_gets_the_neutral_sentence(self):
+        with self.assertRaises(AccessError) as cm:
+            self.env['ir.model.fields'].with_user(self.user).check_access('write')
+        msg = str(cm.exception)
+        self.assertEqual(msg, 'You cannot change this information. '
+                              'Ask your administrator if you need it.')
+        msg = self._acl_message(self.user)
+        self.assertEqual(msg, 'You do not have access to this information. '
+                              'Ask your administrator if you need it.')
+
+    def test_known_records_are_named(self):
+        from odoo.addons.biz_errors.models.ir_access_errors import _plain_access_error
+        tech = AccessError('technical')
+        if 'health.fieldservice.order' in self.env:
+            msg = str(_plain_access_error(self.env(user=self.user), 'health.fieldservice.order',
+                                          'read', tech))
+            self.assertIn('this booking.', msg)
+        other = self.env['res.partner'].create({'name': 'R11 other'})
+        msg = str(_plain_access_error(self.env(user=self.user), 'res.partner', 'write', tech,
+                                      records=other))
+        self.assertIn('this information', msg, 'a contact that is not a client')
+        msg = str(_plain_access_error(self.env(user=self.user), 'zalo.config', 'read', tech))
+        self.assertIn('this information', msg)
+
+    def test_neutral_sentence_in_vietnamese(self):
+        self.env['res.lang']._activate_lang('vi_VN')
+        self.user.lang = 'vi_VN'
+        self.assertIn('thông tin này', self._acl_message(self.user))
+
     def test_admin_keeps_the_technical_message(self):
         other = self.env['res.company'].create({'name': 'Plain Access Admin Co'})
         err = self.env['ir.rule'].with_user(self.admin)._make_access_error('read', other)
