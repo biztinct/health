@@ -513,3 +513,50 @@ Rules of §0 apply. Form Studio (biz_form_studio / health_form_studio) MAY be ch
    (do not create a new nurse payment on live for this: use the tests, and existing records).
 
 Write "### Round 11 results" below this section.
+
+### Round 11 results (6 Nov 2026, deployed 12:15–12:30 AEDT and browser-checked on carejiox.com)
+1. **"this fields" — fixed.** A refusal no longer uses the record type's technical description. Known
+   records are named: booking, client (a client contact), contact, quote, invoice (customer invoices),
+   payment, payment record, staff record, clinical note, facility, incident, user account (VI: lịch hẹn,
+   khách hàng, liên hệ, báo giá, hóa đơn, …). Everything else gets: "You do not have access to this
+   information. Ask your administrator if you need it." (also "You cannot change / add / delete this
+   information."; VI "Bạn không có quyền truy cập thông tin này. …"). Checked: uat_owner on field
+   definitions → "You cannot change this information. …"; nurse_hn on an HCMC booking → "You do not have
+   access to this booking. …". System administrators keep the technical text. No data. Tests
+   `biz_errors:TestPlainAccessErrors`.
+2. **Form Studio empty draft + hidden error — fixed.** After Delete field the Care-card placement is left
+   empty; the editor counted it as a change. The editor and the server now compare only what is drawn
+   (sections with fields): closing with × after a delete stores no draft and shows no "kept as a draft"
+   message; an older draft that no longer differs is removed (on save and on delete). Leaving the editor
+   after a delete clears the cached screens like Publish does, and every open tab of every staff member
+   is told (via the live-update channel) to read the screens again. Checked as uat_owner on Nguyễn Văn
+   An's Client form (Studio › Text in Care › Add field › Publish › Studio › field › Delete this field ›
+   DELETE › ×): bar "No changes yet", only the toast "Field deleted. 0 records had a value.", 0 draft rows,
+   no server error in this tab or in a second open tab that then opened another client. Note: the Client
+   layout is now at **version 8** (my two probe runs: fields "R11 probe field" / "… two", both deleted).
+   One empty draft from my first run was deleted by hand. Tests `biz_form_studio:TestFsLayouts`
+   (new test_11c), TestFsFields, TestFsWorkspace; `/health_form_studio` 25/25.
+3. **Office cash "Cash Pending Delivery" — fixed.** Only cash a nurse/doctor took in the field is "Cash
+   Pending Delivery" (round-10 rule: the collector named on the record, else the payment's own evidence,
+   else whoever records it). Cash recorded by an office user is received at once: "Payment Collected", then
+   "Reconciled in AR" once its payment is posted (the state an office transfer gets) — never in
+   Operations › Collections (Cash Pending Delivery), no hand-in. Prepaid-package cash taken at the office
+   now gets its cash payment at once (before, every cash package waited for a hand-in to be paid).
+   Data (custody state only): PAY01355, 01357, 01359, 01360, 01363, 01364 → Reconciled in AR (all recorded
+   by uat_owner, payment posted). **Left as they are:** PAY01366–PAY01370 (om_hn, prepaid packages on the
+   trial invoices INV/2026/00020–00024): no accounting payment exists yet — the hand-in is what creates it,
+   so changing their state would leave those invoices unpaid with nothing to pay them. Lead/owner to decide
+   (hand them in, or cancel the trial invoices). PAY01365 (nurse_hn) stays pending. Checked as uat_owner:
+   Operations › Collections lists PAY01365 and the five prepaid ones only; Finance › All payments shows
+   PAY01355 … 01363 "Reconciled in AR". I did not record a new office cash payment on live: every open
+   invoice belongs to recorded AR test data (balances would change); the office/nurse paths are covered by
+   `health_invoicing:TestCashCustody` (5 tests), and TestCashHandoverLog (fixture now names the nurse as
+   collector, as the business flow does).
+
+**Tests:** all green after fixes — biz_errors (all), biz_form_studio TestFsLayouts/TestFsFields/TestFsWorkspace
+(28), health_form_studio (25), health_invoicing TestCashCustody, TestCashHandoverLog, TestArLogPostingPath,
+TestArLogBooking. Along the way: TestCashHandoverLog failed once on my first version of the rule (a collector
+set in the same save was ignored — fixed in code, not in the test); three Form Studio nurse-app version
+checks failed because the box still had OLD test files of health_form_studio, health_pwa_daystrip,
+health_scribe, health_pwa_ergo, health_pwa_family (pins 1.21.2; repo has 1.21.6) — deployed those test files
+(only the tests differed). Ledger §5.354–§5.357.

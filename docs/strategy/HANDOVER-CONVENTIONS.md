@@ -4568,3 +4568,33 @@ a no-op.
     the list's From/To use widget `audit_value` (health_base), which formats
     datetime values with the same formatter as every list column, in the
     viewer's zone. Stored text stays UTC (exports show UTC). (UAT round 10.)
+- **§5.354 — never build a sentence from `ir.model` names.** "this <model
+    description>" read "this fields", "this zalo oa configuration". biz_errors
+    `_record_noun`: a short list of record kinds known by name (booking, client
+    when the records are patients, invoice for customer invoices, …), else the
+    neutral "this information" sentence (EN/VI). Admins keep core's text.
+    (UAT round 11.)
+- **§5.355 — Form Studio "changed?" compares what is DRAWN.** Sections with no
+    fields (a new empty section or an emptied card placement) draw nothing; the
+    editor's `dirty` and the server's `save_draft` (`fs.layout._drawn_shape`)
+    both ignore them, else Delete field left an empty draft + "kept as a
+    draft" toast. Leaving after a delete must `CLEAR-CACHES get_views` (the
+    record's cached arch still names the deleted field → background
+    "Invalid field" on web_read). Publish/delete also `_bus_send` to
+    `base.group_user` ('biz_form_studio/changed') and `form_studio` service
+    clears the cache in every open tab. (UAT round 11.)
+- **§5.356 — cash custody follows who took the cash.** `health.payment.
+    transaction.create/write` turn a requested 'pending_delivery' into
+    'collected' (create) / keep the current state (write) unless the cash was
+    taken in the field (`_cash_taken_in_field`: collector named — incl. in the
+    same write —, else the payment's evidence, else the recorder). Prepaid
+    package cash at the office makes its cash-journal payment at once (journal
+    map gained 'cash'). Gotcha: for cash that has NO accounting payment yet the
+    hand-in (`health.cash.delivery.wizard`) is what creates the payment — never
+    clear such a record's pending state by data fix alone. (UAT round 11.)
+- **§5.357 — the wrapper runs tests only for modules it upgrades** (`-t
+    /mod:Class` with `mod` not in `-m` runs 0 tests and says so). And nurse-app
+    version bumps that only touch co-resident test pins were committed without
+    deploying those modules: the box kept old test files of health_form_studio,
+    health_pwa_daystrip, health_scribe, health_pwa_ergo, health_pwa_family
+    (fixed 6 Nov). Deploy every module whose test file you change. (UAT round 11.)
