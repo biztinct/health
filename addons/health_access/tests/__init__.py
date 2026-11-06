@@ -15,3 +15,4 @@ from . import test_ar3_vietnamese
 from . import test_doctor_bookings
 from . import test_om_catchment
 from . import test_owner_decisions
+from . import test_uat_round10

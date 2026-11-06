@@ -47,6 +47,14 @@ class HrEmployee(models.Model):
         string='Role', compute='_compute_role_flags', store=True,
     )
 
+    # Set when the staff record was archived BECAUSE its login was switched
+    # off (UAT round 10, item 2); switching the login back on restores only
+    # these, never a staff record archived for another reason.
+    archived_with_login = fields.Boolean(
+        string='Archived with their login', readonly=True, copy=False,
+        help='This staff record was archived because their login was '
+             'switched off. Switching the login back on restores it.')
+
     @api.depends('user_id', 'user_id.job_role_id')
     def _compute_job_role(self):
         for emp in self:

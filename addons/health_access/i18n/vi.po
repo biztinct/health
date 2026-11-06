@@ -1060,3 +1060,29 @@ msgstr "name@vietuccare.com"
 #: code:addons/health_access/wizard/set_job.py:0
 msgid "nothing in particular"
 msgstr "không có gì cụ thể"
+
+#. module: health_access
+#: model:ir.model.fields,field_description:health_access.field_hr_employee__archived_with_login
+msgid "Archived with their login"
+msgstr "Lưu trữ cùng tài khoản đăng nhập"
+
+#. module: health_access
+#: model:ir.model.fields,help:health_access.field_hr_employee__archived_with_login
+msgid ""
+"This staff record was archived because their login was switched off. "
+"Switching the login back on restores it."
+msgstr ""
+"Hồ sơ nhân viên này được lưu trữ vì tài khoản đăng nhập của họ đã bị tắt. "
+"Bật lại tài khoản sẽ khôi phục hồ sơ."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/res_users.py:0
+msgid "Their login was switched back on."
+msgstr "Tài khoản đăng nhập của họ đã được bật lại."
+
+#. module: health_access
+#. odoo-python
+#: code:addons/health_access/models/res_users.py:0
+msgid "Their login was switched off."
+msgstr "Tài khoản đăng nhập của họ đã bị tắt."

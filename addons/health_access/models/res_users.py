@@ -31,10 +31,34 @@ an owner, and the roster still knows it.
 
 import logging
 
+import pytz
+from babel.core import get_global
+
 from odoo import _, api, fields, models
 from odoo.exceptions import AccessError
 
 _logger = logging.getLogger(__name__)
+
+
+def canonical_tz(name):
+    """The IANA name for a zone a browser reported (UAT round 10, item 1).
+
+    Chromium's `Intl` answers with the CLDR id, which for some zones is an old
+    IANA alias: Vietnam is "Asia/Saigon", India "Asia/Calcutta". CLDR's alias
+    table maps the IANA names TO those ids, so the IANA name is the alias of
+    the reported id that pytz lists as a common zone. Unknown names come back
+    unchanged.
+    """
+    if not name or name in pytz.common_timezones_set:
+        return name
+    try:
+        aliases = get_global('zone_aliases')
+    except Exception:                                        # noqa: BLE001
+        aliases = {}
+    for alias, cldr_id in aliases.items():
+        if cldr_id == name and alias in pytz.common_timezones_set:
+            return alias
+    return name
 
 #: The sentence under the field on every form that shows it. Written once.
 JOB_HELP = ("The role this person is employed as. It decides what the "
@@ -71,13 +95,97 @@ class ResUsers(models.Model):
         way to know what it was, and the removal has to name the role that is
         going rather than the one that arrived.
         """
+        switching = None
+        if 'active' in vals:
+            # Only the users whose state actually changes (UAT round 10, item 2).
+            switching = self.sudo().with_context(active_test=False).filtered(
+                lambda u: bool(u.active) != bool(vals['active']))
         if 'job_role_id' in vals:
             self._check_may_set_job(vals.get('job_role_id'))
             before = {user.id: user.job_role_id for user in self}
             result = super().write(vals)
             self._apply_job_role(before)
-            return result
-        return super().write(vals)
+        else:
+            result = super().write(vals)
+        if switching:
+            switching._sync_staff_with_login(bool(vals['active']))
+        return result
+
+    # ------------------------------------------- switched off = staff archived
+    def _sync_staff_with_login(self, active):
+        """Switching a login off archives their staff record(s); switching it
+        back on restores the ones archived BECAUSE of it (UAT round 10, item 2).
+
+        Every path that switches somebody off ends in this `write` — the
+        Access home's "Switch off", the list's Archive, a plain write — so it
+        is done here, once. As the system and by a plain write: no departure
+        wizard, and no HR right asked of whoever pressed the button. Only
+        staff records in one of the login's companies; never the platform's
+        own accounts (system administrators, the built-in logins).
+        """
+        if 'hr.employee' not in self.env:
+            return
+        users = self.sudo().with_context(active_test=False).filtered(
+            lambda u: not u._is_platform_account())
+        if not users:
+            return
+        Employee = self.env['hr.employee'].sudo().with_context(
+            active_test=False,
+            # The reason the archive log records for this staff record.
+            archive_reason=(_("Their login was switched back on.") if active
+                            else _("Their login was switched off.")))
+        for user in users:
+            domain = [('user_id', '=', user.id),
+                      ('company_id', 'in', user.company_ids.ids)]
+            if active:
+                staff = Employee.search(domain + [('active', '=', False),
+                                                  ('archived_with_login', '=', True)])
+                if staff:
+                    staff.write({'active': True, 'archived_with_login': False})
+            else:
+                staff = Employee.search(domain + [('active', '=', True)])
+                if staff:
+                    staff.write({'active': False, 'archived_with_login': True})
+
+    def _is_platform_account(self):
+        """System administrators and the logins the base install ships
+        (superuser, public, demo, template). Their staff records are never
+        archived or restored automatically."""
+        self.ensure_one()
+        if self.id == api.SUPERUSER_ID:
+            return True
+        if self.sudo().has_group('base.group_system'):
+            return True
+        xmlids = self.sudo().get_external_id().get(self.id) or ''
+        return xmlids.startswith('base.')
+
+    # ------------------------------------------------- time zone at sign-in
+    def _login(self, credential, user_agent_env):
+        """Keep the time zone somebody was given (UAT round 10, item 1).
+
+        Core writes the BROWSER's zone on a user's FIRST sign-in even when the
+        user already has one, so a colleague added with Asia/Ho_Chi_Minh
+        became Asia/Saigon (Chromium's name for Vietnam) — on the user and,
+        through hr's sync, on the staff record. Read the zone before, put it
+        back after. A user who had none keeps the browser's zone, under its
+        IANA name.
+        """
+        login = (credential or {}).get('login') if isinstance(credential, dict) else None
+        before = None
+        if login:
+            known = self.sudo().search(self._get_login_domain(login),
+                                       order=self._get_login_order(), limit=1)
+            if known:
+                before = known.tz or False
+        auth_info = super()._login(credential, user_agent_env)
+        uid = (auth_info or {}).get('uid')
+        if uid and before is not None:
+            user = self.sudo().browse(uid)
+            if before and user.tz != before:
+                user.tz = before
+            elif not before and user.tz and canonical_tz(user.tz) != user.tz:
+                user.tz = canonical_tz(user.tz)
+        return auth_info
 
     @api.model_create_multi
     def create(self, vals_list):
