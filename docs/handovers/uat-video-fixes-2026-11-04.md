@@ -358,3 +358,118 @@ Lead ruling (an invoice line must multiply out; no custom accounting totals):
 2. **Export file names** read "AR Transaction Log (health.ar.transaction.log).xlsx". biz_debranding
    now names every list export (xlsx and csv) after the readable name only, in the user's
    language: "AR Transaction Log.xlsx".
+
+## 12. Round 10 (6 Nov 2026 — owner approved all seven; nobody is recording, so code AND deploy)
+Found by the recording helpers on 5–6 Nov (videos are done and stay valid). Rules of §0 apply
+(white-label, Vietnamese for every new string, PWA version bump if health_pwa changes, never
+loosen a rule, local commits only). One `carejiox-deploy` call for all modules at the end, then
+browser-verify each item on carejiox.com. Do NOT touch posted invoices, payments, journal entries,
+source bookings BK3832–BK3848, or Form Studio (the lead records FM-03 with it right after you).
+Tell the lead before you deploy and when the site is back.
+
+1. **New user's time zone renamed.** A user created with `Asia/Ho_Chi_Minh` (Settings › People ›
+   Access & roles › People › Add a person) shows `Asia/Saigon` after the first sign-in, on the user
+   AND the linked staff record (3 of 3 new users; nurse_hn keeps Asia/Ho_Chi_Minh). Chromium's
+   `Intl` reports `Asia/Saigon` for Vietnam, so something writes the BROWSER zone over the chosen
+   one on first sign-in (find it: web client tz sync, PWA, a login hook, or employee tz sync).
+   Fix: never overwrite a zone the user already has; when a browser zone is stored (user had
+   none), store the canonical name (`Asia/Saigon` → `Asia/Ho_Chi_Minh`; generic alias→canonical
+   if cheap). Data: switch existing users/employees from Asia/Saigon to Asia/Ho_Chi_Minh (list
+   them in the report). Test.
+2. **Switching a user off leaves the staff record active**, so a switched-off nurse still counts as
+   staff (pickers, rosters, assignment lists). Owner rule: switching a user off archives their
+   linked staff record(s) (same company); switching the user back on restores the staff records
+   that were archived BECAUSE of it (not ones archived for other reasons — mark the cause). Must
+   not open the HR departure wizard or need HR rights the switching user lacks. Apply on every
+   path that switches a user off (Access & roles screen, archive action, write active=False).
+   Data: list active staff records whose only linked user is switched off; archive them (the
+   recording helpers' test users UAT Video User … were archived by hand already). Never touch the
+   platform admin / system users. Tests.
+3. **Audit Log shows times in world time (UTC).** Settings › Records › Audit Log: for date-time
+   fields (e.g. booking "Scheduled Date & Time") the From/To values show raw UTC
+   ("2026-11-12 02:00:00" for 09:00 Vietnam). Show them in the viewer's time zone, same format the
+   rest of the app uses; stored values stay as they are. The Activity history screen also says
+   its times are UTC — show local time and drop/adjust that text. Date-only fields unchanged.
+4. **Empty contact list text.** The empty Contacts list (CRM) says "Create an opportunity to start
+   playing with your pipeline." Replace with plain words for this screen, e.g. "No contacts yet.
+   Press New to record a call, chat or walk-in." (VI too). Check the other CRM/contact screens a
+   clinic user can reach for the same stock pipeline text and fix those too; nothing that says
+   "Odoo".
+5. **Booking Services card goes stale after a distance change.** Booking › Overview: after the
+   OM edits Driving Distance (round-6 input) and saves, the Services card keeps the old distance
+   chip and total (e.g. 6 km, 600,000 ₫) until a reload, while the price card already shows the
+   new figure. Refresh the Services card on the same event (any other card that shows price or
+   distance too).
+6. **History note shows raw code.** The booking note "Post-service price recalculated…" shows
+   `<br/>`, `<ul><li>` as text (escaped). Post it so it renders (Markup / proper body). Data: fix
+   existing notes of this kind so they render (list how many); no other notes.
+7. **Money log shows "NURSE_CASH" for a payment the Owner recorded.** Receivables › AR
+   Transactions: a cash payment recorded by the Owner/Finance in the office gets posting path
+   `NURSE_CASH`. (a) Work out the path from who actually received the cash (nurse app vs office
+   user) — do not guess; (b) the screen must never show raw codes: show readable labels
+   EN/VI (e.g. "Cash collected by nurse", "Cash received at the office", "Bank transfer",
+   "Hand-in: nurse → Operations Manager"). Keep the stored code if other code relies on it.
+   Data: correct existing AR log rows whose code is provably wrong (log rows only; never journal
+   entries/payments); list them.
+
+Report back per §4 (+ exact screen path per item, data rows changed, tests run). Ledger §5.347+.
+Write the results as "### Round 10 results" below this section.
+
+### Round 10 results (6 Nov 2026, deployed 11:10–11:17 AEDT and browser-checked on carejiox.com)
+1. **Time zone kept — fixed.** Cause: the core sign-in writes the browser's zone on a user's FIRST
+   sign-in even when one was chosen; Chromium calls Vietnam "Asia/Saigon". Now the chosen zone is kept;
+   a user with none gets the browser's zone under its proper name (Asia/Ho_Chi_Minh). Checked: a person
+   added with Asia/Ho_Chi_Minh (browser reported Asia/Saigon) still has Asia/Ho_Chi_Minh on the user and
+   the staff record after signing in. Data: users uat_video_1122, uat_video_1132 and their two staff
+   records moved to Asia/Ho_Chi_Minh (no other Asia/Saigon rows). Tests `health_access:TestFirstSignInTimeZone`.
+2. **Switch off = staff record archived — fixed.** Every way a login is switched off (Settings › People ›
+   Access & roles › person › Switch off, Archive, any plain change) archives their staff record(s) in
+   the same company, as the system (no departure form, no HR right needed), with the reason "Their login
+   was switched off." in the archive log. Switching back on restores only staff records archived this way
+   (marker "Archived with their login"). Platform admins and built-in logins are never touched. Data: 10
+   staff records archived (37 Tran Thi Lan, 38 Le Hoang Nam, 39 Pham Duc Anh, 40 Vo Thi Mai, 41 Hoang
+   Minh Tuan, 42 Do Thanh Ha, 44 Nguyen Thi Huong, 45 Tran Quoc Bao, 437 DS QA Nurse, 1383 QA PWA Nurse
+   Emp); Marc Demo (built-in demo login) left alone. Tests `health_access:TestSwitchOffArchivesStaff`.
+3. **Audit Log times — fixed.** Settings › Records › Audit Log: From/To of date-time fields show the
+   viewer's time and the app's usual format (BK4116 "Actual End Time": stored 2026-11-05 13:39:29 now
+   reads "Nov 5, 8:39 PM", same as the When column). Stored values unchanged; date-only and other values
+   unchanged; an export still gives the stored UTC text. Settings › Records › Activity history: times in
+   local time; the note now reads "Times are shown in your time zone. …" (VI too). Test
+   `health_base:TestAuditLogTimes`.
+4. **Empty contact list text — fixed.** CRM › Contacts › All contacts, empty: "No contacts yet." /
+   "Press New Contact to record a call, chat or walk-in." (the button is labelled "New Contact"; VI
+   "Chưa có liên hệ nào." / "Bấm Liên hệ mới …"). Same text on every other contact screen without its own
+   help; CRM › Activities empty: "No follow-ups to do." / "Plan a follow-up on a contact and it appears
+   here." Also: every stock empty-list help that named the framework ("… helps you track …" on stock
+   Contacts/Customers/Vendors/Opportunities) now uses the product name. Tests
+   `health_crm:TestEmptyContactsHelp`, `biz_debranding:TestEmptyHelp`.
+5. **Services card after a distance change — fixed.** Booking › Overview: the Services card reloads after
+   each save of the booking. Checked as om_hcm on BK4043: 6 → 15 km → saved: the card showed "Home Visit
+   Distance: 15.0 km" at once; back to 6 → "6.0 km" (this visit has no distance charge, so the total
+   stayed 200.000 ₫). BK4043 is back to 6 km; my test left two history notes ("Distance changed from 6.00
+   to 15.00 km" and back); the "set by hand" marker was cleared again. The price/attention cards already
+   read the saved record. JS only, no test.
+6. **History note shows raw code — fixed.** "Post-service price recalculated …" is posted as HTML ("Applied
+   rules:" then a bullet list; VI "Quy tắc đã áp dụng:"). Data: 6 notes rebuilt (3 quotes S04552,
+   S04555, S04592 + 3 bookings BK4077, BK4080, BK4104; message ids 175908/09, 175942/43, 176600/01); no
+   other notes. Checked on BK4077's history. Test `advanced_pricing:TestPostServiceNote`.
+7. **Money log codes — fixed.** Finance › AR Transactions › Posting Path now shows words, never codes:
+   "Cash collected by nurse", "Cash received at the office", "Cash refunded by nurse/at the office",
+   "Bank transfer", "Hand-in: nurse → Operations Manager", "Booking invoice", "Booking credit note",
+   "Invoice", "Credit note", "Other" (all VI). Who took the cash: the collector the office named, else the
+   payment record's collector, else whoever recorded the payment (the nurse app records as the nurse).
+   Stored codes kept (new code OFFICE_CASH; the raw field is now called "Posting Code"). Data: 12 log rows
+   NURSE_CASH → OFFICE_CASH (1436, 1437, 1438, 1455, 1457, 1459, 1460, 1463, 1465, 1553, 1557, 1577 — all
+   recorded by uat_owner with no nurse collector); 4 nurse rows unchanged (1469, 1537, 1539, 1575). No
+   journal entry, payment or PAY record touched. Note: the payment wizard still marks every cash payment
+   record "Cash Pending Delivery", office cash included (not changed). Test
+   `health_invoicing:TestArLogPostingPath`.
+
+**Tests:** first run 246 of 248 passed — the 2 were test-setup mistakes (a test client without an area;
+two staff records for one login), fixed and re-run: 20 of 20 (round-10 classes + TestArLogBooking +
+TestCashHandoverLog). Also green in the first run: all of `health_access` and `biz_debranding`,
+TestUatRound6Base, TestOfficeDiscount. Post-upgrade check: 1 layout, 0 broken.
+**For recorders:** new verification login "UAT Video User R10 11060019" (uat_r10_11060019) was created,
+signed in once and switched off (its staff record is archived) — same pattern as the earlier UAT Video
+Users. New labels: Posting Path words above; Activity history note text; empty Contacts text.
+Ledger §5.347–§5.353.

@@ -4525,3 +4525,46 @@ a no-op.
     and a record the test user may read** (its own partner: the company
     partner is hidden by the partner rules); create the user ONCE (setUp), a
     second `new_test_user` with the same login fails. (UAT round 9.)
+- **§5.347 — core writes the BROWSER's time zone on a user's FIRST sign-in,
+    even over a chosen one** (`res.users._login`: `if tz in all_timezones and
+    (not user.tz or not user.login_date): user.tz = tz`, tz from the `tz`
+    cookie). Chromium's `Intl` reports CLDR ids, so Vietnam arrives as
+    `Asia/Saigon` (hr then syncs it to the staff record). health_access
+    `_login` reads the zone before and puts it back; a user with none gets
+    `canonical_tz()` (babel `zone_aliases` reversed, IANA common name). Babel's
+    alias table maps IANA→CLDR, i.e. the OPPOSITE way round. (UAT round 10.)
+- **§5.348 — switching a login off archives its staff record** (health_access
+    `res.users.write`, every path: Access home, Archive, plain write). Plain
+    `hr.employee.write({'active': False})` as sudo — never `action_archive`
+    (returns the departure wizard and empties manager/coach links). Marker
+    `hr.employee.archived_with_login`; switching back on restores only marked
+    rows. Platform accounts (superuser, `base.group_system`, `base.*` xmlids)
+    are skipped. The archive log gets `archive_reason` via context. (UAT round 10.)
+- **§5.349 — a widget that loads server data must observe the record, not
+    props.** `onWillUpdateProps` never fires after a form save (same record
+    object). Use `useRecordObserver` keyed on `write_date` (declare it in the
+    widget's `fieldDependencies`) and skip while `record.dirty`. The booking's
+    `vu_services_packages` card was stale after a distance change. (UAT round 10.)
+- **§5.350 — chatter bodies built as `str` are escaped by `message_post`**:
+    "<br/>", "<ul><li>" showed as text. Build with `Markup` (`Markup('<li>%s</li>')
+    % value` escapes the value). Repairing stored notes: match the exact broken
+    shape and rebuild with Markup; never blanket-unescape. (UAT round 10.)
+- **§5.351 — AR log cash rows: who took the cash decides the code.** Every
+    cash payment was `NURSE_CASH`. Now `_cash_taken_by_field_staff`: the
+    collector the office named (context `health_cash_collected_by`), else the
+    PAY record's collector, else the user who recorded the payment;
+    visit staff = `is_healthcare_staff` employee or nurse/doctor job →
+    `NURSE_CASH`, otherwise `OFFICE_CASH`. Screens show `posting_path_label`
+    (plain words, EN/VI), never the stored code (`posting_path`, now labelled
+    "Posting Code"). Note: the payment wizard still marks EVERY cash PAY record
+    "Cash Pending Delivery" (nurse custody), office cash included. (UAT round 10.)
+- **§5.352 — empty-list help passes through `get_empty_list_help` of the
+    action's model** when the client reads the action, so biz_debranding's
+    `base.get_empty_list_help` takes the framework name out of every stock
+    help ("Odoo helps you track…" on Contacts/Customers/Vendors/Opportunities).
+    crm.lead's stock fallback ("Create an opportunity to start playing with
+    your pipeline.") is replaced in health_crm. (UAT round 10.)
+- **§5.353 — Audit Log date-times:** the SQL view now carries `field_type`;
+    the list's From/To use widget `audit_value` (health_base), which formats
+    datetime values with the same formatter as every list column, in the
+    viewer's zone. Stored text stays UTC (exports show UTC). (UAT round 10.)
