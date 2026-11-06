@@ -729,6 +729,10 @@
         <field name="domain">[('activity_ids', '!=', False)]</field>
         <field name="context">{'search_default_my_activities': 1, 'active_center': 'crm_center'}</field>
         <field name="target">current</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No follow-ups to do.</p>
+            <p>Plan a follow-up on a contact and it appears here.</p>
+        </field>
     </record>
 
     <!-- ===== BOOKINGS CALENDAR ===== -->

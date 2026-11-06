@@ -3,3 +3,4 @@ from . import brand_words
 from . import res_config_settings
 from . import mail_render_debrand
 from . import ir_http
+from . import empty_help_debrand

@@ -3,3 +3,4 @@ from . import test_debranding
 from . import test_word_debrand
 from . import test_brand_title
 from . import test_export_filename
+from . import test_empty_help

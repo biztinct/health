@@ -2,7 +2,7 @@
 # License LGPL-3.
 {
     "name": "Business Debranding (Viet Uc Care)",
-    "version": "19.0.1.4.0",
+    "version": "19.0.1.4.1",
     "category": "Debranding",
     "summary": "Orchestrates full white-labelling to the configured brand "
                "(default: Viet Uc Care). Seeds debranding params, favicon, "

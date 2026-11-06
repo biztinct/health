@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from markupsafe import Markup
+
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError, ValidationError
+from odoo.tools import is_html_empty
 from odoo.addons.health_base.models.phone_utils import normalize_vn_phone
 
 
@@ -144,6 +147,19 @@ class HealthLead(models.Model):
     """
     _name = 'crm.lead'
     _inherit = ['crm.lead', 'health.lifecycle.mixin']
+
+    @api.model
+    def get_empty_list_help(self, help_message):
+        """An empty contact screen speaks this product's words (UAT round 10,
+        item 4). The stock fallback ("Create an opportunity to start playing
+        with your pipeline." plus an email-gateway hint) showed on every
+        crm.lead screen without its own help. An action's own help wins."""
+        if is_html_empty(help_message):
+            help_message = Markup(
+                '<p class="o_view_nocontent_smiling_face">%s</p><p>%s</p>') % (
+                _('No contacts yet.'),
+                _('Press New Contact to record a call, chat or walk-in.'))
+        return super().get_empty_list_help(help_message)
 
     # Healthcare-specific service interest
     service_interest_id = fields.Many2one(

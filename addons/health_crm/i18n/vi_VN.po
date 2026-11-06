@@ -9608,3 +9608,25 @@ msgstr "Lần khám gần nhất"
 #: code:addons/health_crm/static/src/js/ws_contact_panels.js:0
 msgid "Last visit %s."
 msgstr "Lần khám gần nhất: %s."
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "No contacts yet."
+msgstr "Chưa có liên hệ nào."
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Press New Contact to record a call, chat or walk-in."
+msgstr "Bấm Liên hệ mới để ghi lại một cuộc gọi, tin nhắn hoặc khách đến trực tiếp."
+
+#. module: health_crm
+#: model_terms:ir.actions.act_window,help:health_crm.action_crm_activity_list
+msgid "No follow-ups to do."
+msgstr "Không có việc theo dõi nào cần làm."
+
+#. module: health_crm
+#: model_terms:ir.actions.act_window,help:health_crm.action_crm_activity_list
+msgid "Plan a follow-up on a contact and it appears here."
+msgstr "Lên lịch theo dõi trên một liên hệ và việc đó sẽ hiện ở đây."
