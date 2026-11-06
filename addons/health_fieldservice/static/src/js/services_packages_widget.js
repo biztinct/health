@@ -1,6 +1,7 @@
 /** @odoo-module **/
-import {Component, onWillStart, onWillUpdateProps, useState} from "@odoo/owl";
+import {Component, useState} from "@odoo/owl";
 import {useService} from "@web/core/utils/hooks";
+import {useRecordObserver} from "@web/model/relational_model/utils";
 import {registry} from "@web/core/registry";
 import {standardWidgetProps} from "@web/views/widgets/standard_widget_props";
 
@@ -26,8 +27,23 @@ export class ServicesPackagesWidget extends Component {
             loading: true,
             data: {...EMPTY_DATA},
         });
-        onWillStart(() => this.loadData());
-        onWillUpdateProps(() => this.loadData());
+        // Reload from the server whenever the SAVED booking changes (UAT
+        // round 10, item 5): after the OM edits Driving Distance and saves,
+        // the card showed the old distance chip and total until a reload,
+        // because the record object never changes identity. The card reads
+        // server figures, so it waits while the form has unsaved edits.
+        this._loadedKey = null;
+        useRecordObserver((record) => {
+            const d = record.data;
+            const key = [record.resId, d.write_date && String(d.write_date),
+                d.travel_distance, d.service_fee_vnd, d.total_price,
+                d.sale_order_id && d.sale_order_id.id].join("|");
+            if (record.dirty || key === this._loadedKey) {
+                return;
+            }
+            this._loadedKey = key;
+            return this.loadData();
+        });
     }
 
     get recordId() {
@@ -80,4 +96,12 @@ export class ServicesPackagesWidget extends Component {
 
 registry.category("view_widgets").add("vu_services_packages", {
     component: ServicesPackagesWidget,
+    fieldDependencies: [
+        {name: "write_date", type: "datetime"},
+        {name: "travel_distance", type: "float"},
+        {name: "service_fee_vnd", type: "monetary"},
+        {name: "total_price", type: "monetary"},
+        {name: "sale_order_id", type: "many2one"},
+        {name: "currency_id", type: "many2one"},
+    ],
 });
