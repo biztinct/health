@@ -670,6 +670,24 @@ class SaleOrder(models.Model):
                 }
             }
     
+    def _post_service_note_body(self, original_total, new_total, delta, chips):
+        """The chatter note of a post-service recalculation, as Markup so the
+        chatter renders the rule list instead of showing "<br/>", "<ul><li>"
+        as text (UAT round 10, item 6). Rule words are escaped by Markup %."""
+        rules_html = Markup()
+        if chips:
+            items = Markup().join(
+                Markup('<li><b>%s</b> %s</li>') % (c['desc'], c['label'])
+                for c in chips)
+            rules_html = Markup('<br/>%s<ul>%s</ul>') % (
+                _('Applied rules:'), items)
+        return Markup('%s') % _(
+            'Post-service price recalculated: %(old)s đ → %(new)s đ '
+            '(%(delta)s đ).',
+            old=f'{original_total:,.0f}', new=f'{new_total:,.0f}',
+            delta=f'{delta:+,.0f}',
+        ) + rules_html
+
     def action_post_service_recalc(self):
         """Recalculate pricing with post-service procedure counts and handle delta.
         
@@ -719,17 +737,8 @@ class SaleOrder(models.Model):
 
         # Post an audit note (with the rules) to the booking + quote chatter.
         if abs(delta) >= 0.01:
-            rules_html = ''
-            if applied_chips:
-                items = ''.join(
-                    '<li><b>%s</b> %s</li>' % (c['desc'], c['label']) for c in applied_chips)
-                rules_html = '<br/>Applied rules:<ul>%s</ul>' % items
-            body = _(
-                'Post-service price recalculated: %(old)s đ → %(new)s đ '
-                '(%(delta)s đ).',
-                old=f'{original_total:,.0f}', new=f'{new_total:,.0f}',
-                delta=f'{delta:+,.0f}',
-            ) + rules_html
+            body = self._post_service_note_body(
+                original_total, new_total, delta, applied_chips)
             try:
                 self.message_post(body=body)
                 if self.fso_id:

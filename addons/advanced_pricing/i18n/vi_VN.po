@@ -4113,3 +4113,9 @@ msgstr "Dòng báo giá"
 #: code:addons/advanced_pricing/models/sale_order.py:0
 msgid "%(pct)s%% discount on the catalogue price (%(base)s ₫)"
 msgstr "Giảm %(pct)s%% trên giá danh mục (%(base)s ₫)"
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/models/sale_order.py:0
+msgid "Applied rules:"
+msgstr "Quy tắc đã áp dụng:"

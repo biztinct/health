@@ -6,3 +6,4 @@ from . import test_catchment_access
 from . import test_rule_labels
 from . import test_no_travel_distance
 from . import test_office_discount
+from . import test_post_service_note
