@@ -182,7 +182,9 @@ class HealthPaymentCollectionWizard(models.TransientModel):
             self._show_manual_allocation_wizard(payment, transaction)
         
         # Update transaction status
-        if payment.state in ('paid', 'in_process') and self.payment_method != 'cash':
+        # Cash taken at the office is received at once, like a transfer;
+        # only field cash waits for its hand-in (UAT round 11).
+        if payment.state in ('paid', 'in_process') and transaction.status != 'pending_delivery':
             transaction.write({
                 'status': 'reconciled',
                 'ar_reconciliation_date': fields.Datetime.now()

@@ -259,7 +259,11 @@ class HealthPrepaidPackageWizard(models.TransientModel):
             transaction_id = transaction.id
             
             # Create AR payment for non-cash payments
-            if self.payment_method != 'cash' and invoice_id:
+            # Cash taken at the office is received at once: its payment is
+            # made now, like a transfer's (UAT round 11). Field cash gets its
+            # payment at the hand-in.
+            if invoice_id and (self.payment_method != 'cash'
+                               or transaction.status != 'pending_delivery'):
                 ar_payment = self._create_ar_payment(transaction, invoice)
                 transaction.payment_id = ar_payment.id
                 transaction.write({
@@ -346,6 +350,7 @@ class HealthPrepaidPackageWizard(models.TransientModel):
         """Create standard account.payment record for prepaid packages"""
         # Get appropriate journal based on payment method
         journal_type_map = {
+            'cash': 'cash',
             'bank_transfer': 'bank',
             'credit_card': 'bank',
             'qr_code': 'bank',

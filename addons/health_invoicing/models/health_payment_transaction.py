@@ -301,7 +301,48 @@ class HealthPaymentTransaction(models.Model):
         for vals in vals_list:
             if vals.get('name', _('New Transaction')) == _('New Transaction'):
                 vals['name'] = self.env['ir.sequence'].next_by_code('health.payment.transaction') or _('New Transaction')
+            # Only cash a nurse/doctor took in the field waits to be handed
+            # in (UAT round 11, item 3); cash taken at the office is received.
+            if vals.get('status') == 'pending_delivery' and not self._cash_taken_in_field(vals):
+                vals['status'] = 'collected'
         return super().create(vals_list)
+
+    def write(self, vals):
+        if vals.get('status') == 'pending_delivery':
+            # a collector named in the same write counts (it is who took it)
+            named = vals.get('collected_by_id')
+            office = self.filtered(lambda t: not t._cash_taken_in_field(collector_id=named))
+            if office:
+                rest = self - office
+                office_vals = {k: v for k, v in vals.items() if k != 'status'}
+                if office_vals:
+                    super(HealthPaymentTransaction, office).write(office_vals)
+                return super(HealthPaymentTransaction, rest).write(vals) if rest else True
+        return super().write(vals)
+
+    def _cash_taken_in_field(self, vals=None, collector_id=None):
+        """True when a nurse/doctor collected this cash in the field — the
+        round-10 "who received the cash" rule (UAT round 11, item 3): the
+        collector named on the record, else the payment's own evidence
+        (named collector, PAY collector, recorder), else whoever records it.
+        `vals` are a record-to-be's values (create)."""
+        Log = self.env['health.ar.transaction.log']
+        Employee = self.env['hr.employee'].sudo().with_context(active_test=False)
+        if vals is not None:
+            collector = Employee.browse(vals.get('collected_by_id') or []).exists()
+            payment = self.env['account.payment'].sudo().browse(vals.get('payment_id') or []).exists()
+            recorder = self.env.user
+        else:
+            self.ensure_one()
+            collector = (Employee.browse(collector_id).exists() if collector_id
+                         else self.sudo().collected_by_id)
+            payment = self.sudo().payment_id
+            recorder = self.sudo().create_uid or self.env.user
+        if collector:
+            return bool(collector.is_healthcare_staff)
+        if payment:
+            return Log._cash_taken_by_field_staff(payment)
+        return Log._is_field_staff_user(recorder)
     
     # Constraints and Validations
     @api.constrains('amount', 'transaction_type')
