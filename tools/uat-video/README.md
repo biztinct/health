@@ -331,7 +331,17 @@ NA-03, TC-01..17, combined as "Money owed and payments AR-01 to AR-06", "Users, 
 new activities UM-01 to NA-03", "Client cases Hanoi TC-01 to TC-09", "Client cases Ho Chi Minh City
 TC-10 to TC-17". Latest sheet: `CareJioX_Acceptance_Results_20261106_Video_Evidence_v3.xlsx`
 (57 rows; sheet.py now dates each row by its video). Fixes found on the way: handover rounds 6–9.
-Not yet recorded: CH-07, RP-01/02 (CH-01..06, FM-03, NA-02 are on hold/blocked).
+Not yet recorded: CH-07, RP-01/02 (CH-01..06, NA-02 are on hold/blocked).
+**6 Nov 2026:** FM-03 (Form Studio on the Client form, example field added, used by om_hn,
+deleted again; chapter 6 of the "Users, fields…" combined video). The client sheet is no longer
+written by sheet.py: v4/v5 (`…_Video_Evidence_v5.xlsx`) carry the client's short test names in
+column B and short plain wording in every column (owner's rule) — build the next version from v5
+and keep that style (short video text: "PASS – n of n checks…, date / Video: … / Also in: … /
+Still pictures…").
+- Form Studio: a dropped type creates nothing until "Add field"; Playwright `dragTo` works on
+  the HTML5 tiles. After "Delete field" the form is republished at once and Publish stays
+  disabled; leaving with × then keeps an EMPTY draft and the record re-reads the deleted field
+  once (background RPC error, nothing on screen). `node fm03_tidy.js` discards that draft.
 The original BK plan is kept below for reference.
 
 ### Bookings BK-01..BK-05 — original head start
