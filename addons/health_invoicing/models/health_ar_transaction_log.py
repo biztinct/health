@@ -225,10 +225,14 @@ class HealthARTransactionLog(models.Model):
         default=lambda self: self.env.user,
     )
     posting_path = fields.Char(
-        'Posting Path',
+        'Posting Code',
         readonly=True,
-        help='e.g. DELIVERY→PREPAID, DELIVERY→NURSE_CASH',
+        help='Internal code behind the Posting Path shown on screen.',
     )
+    # What the screens show instead of the stored code (UAT round 10, item 7):
+    # plain words in the viewer's language. The code stays stored.
+    posting_path_label = fields.Char(
+        'Posting Path', compute='_compute_posting_path_label')
     status = fields.Selection([
         ('draft', 'Draft'),
         ('posted', 'Posted'),
@@ -311,6 +315,37 @@ class HealthARTransactionLog(models.Model):
         })
         return Log.create(vals)
 
+    @api.depends('posting_path', 'event_type')
+    def _compute_posting_path_label(self):
+        for rec in self:
+            rec.posting_path_label = rec._posting_path_words(
+                rec.posting_path, rec.event_type)
+
+    def _posting_path_words(self, code, event_type):
+        """Plain words for a stored posting code; never the code itself."""
+        _t = self.env._
+        refund = event_type == 'refund'
+        credit = event_type == 'credit_note'
+        if code == 'HANDOVER→NURSE_CASH→OM':
+            return _t('Hand-in: nurse → Operations Manager')
+        if code == 'NURSE_CASH':
+            return _t('Cash refunded by nurse') if refund else _t('Cash collected by nurse')
+        if code == 'OFFICE_CASH':
+            return (_t('Cash refunded at the office') if refund
+                    else _t('Cash received at the office'))
+        if code == 'BANK_TRANSFER':
+            return _t('Bank transfer refund') if refund else _t('Bank transfer')
+        if code == 'DELIVERY→STANDARD':
+            return _t('Booking credit note') if credit else _t('Booking invoice')
+        if code == 'DELIVERY→PREPAID':
+            return (_t('Booking credit note (prepaid package)') if credit
+                    else _t('Booking invoice (prepaid package)'))
+        if code == 'INVOICE→STANDARD':
+            return _t('Invoice')
+        if code == 'REFUND→STANDARD':
+            return _t('Credit note')
+        return _t('Other') if code else ''
+
     @api.depends('company_id')
     def _compute_entity_code(self):
         for rec in self:
@@ -330,7 +365,11 @@ class HealthARTransactionLog(models.Model):
         if payment:
             journal = payment.journal_id
             if journal and journal.type == 'cash':
-                parts.append('NURSE_CASH')
+                # Who actually took the cash (UAT round 10, item 7): a nurse
+                # in the field, or somebody at the office. Not every cash
+                # payment is a nurse's.
+                parts.append('NURSE_CASH' if self._cash_taken_by_field_staff(payment)
+                             else 'OFFICE_CASH')
             elif journal and journal.type == 'bank':
                 parts.append('BANK_TRANSFER')
             else:
@@ -342,6 +381,44 @@ class HealthARTransactionLog(models.Model):
                 parts.append('STANDARD')
 
         return '→'.join(parts) if parts else 'OTHER'
+
+    @api.model
+    def _is_field_staff_user(self, user):
+        """A nurse or doctor who visits clients (their staff record says
+        visit staff, or their job is nurse/doctor)."""
+        user = user.sudo()
+        if not user:
+            return False
+        if any(user._fields.get(f) and user[f] for f in ('is_nurse_role', 'is_doctor_role')):
+            return True
+        return bool(self.env['hr.employee'].sudo().with_context(active_test=False).search_count(
+            [('user_id', '=', user.id), ('is_healthcare_staff', '=', True)], limit=1))
+
+    @api.model
+    def _cash_taken_by_field_staff(self, payment):
+        """True when a nurse/doctor took this cash, from the record itself:
+
+        1. the collector the office named when recording it (context
+           `health_cash_collected_by`, an employee id);
+        2. else the collector on its PAY record(s);
+        3. else whoever recorded the payment (the nurse app records as the
+           nurse; the office records as the office user).
+        """
+        Employee = self.env['hr.employee'].sudo().with_context(active_test=False)
+        named = self.env.context.get('health_cash_collected_by')
+        if named:
+            emp = Employee.browse(int(named)).exists()
+            if emp:
+                return bool(emp.is_healthcare_staff)
+        pay = payment.sudo()
+        txns = self.env['health.payment.transaction'].sudo().search(
+            [('payment_id', '=', pay.id)])
+        if 'health_transaction_id' in pay._fields and pay.health_transaction_id:
+            txns |= pay.health_transaction_id
+        collectors = txns.mapped('collected_by_id')
+        if collectors:
+            return any(collectors.mapped('is_healthcare_staff'))
+        return self._is_field_staff_user(pay.create_uid or self.env.user)
 
     @api.model
     def _create_from_move(self, move):

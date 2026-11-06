@@ -144,7 +144,8 @@
                 <field name="receipt_reference" string="Receipt" optional="show"/>
                 <field name="invoice_id" string="Invoice" optional="hide"/>
                 <field name="amount_in_words" string="Amount in Words" optional="hide"/>
-                <field name="posting_path" string="Posting Path" optional="show"/>
+                <!-- Plain words, never the stored code (UAT round 10). -->
+                <field name="posting_path_label" string="Posting Path" optional="show"/>
                 <field name="prepared_by" string="Prepared By" optional="show"/>
                 <field name="facility_id" string="Facility" optional="show"/>
                 <field name="status" string="Status"
@@ -193,7 +194,7 @@
                             <field name="transaction_id"/>
                             <field name="event_type"/>
                             <field name="status"/>
-                            <field name="posting_path"/>
+                            <field name="posting_path_label"/>
                         </group>
                         <group string="Dates">
                             <field name="transaction_datetime"/>

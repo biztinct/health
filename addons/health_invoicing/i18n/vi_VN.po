@@ -5417,7 +5417,7 @@ msgid "Posting Date"
 msgstr "Ngày ghi sổ"
 
 #. module: health_invoicing
-#: model:ir.model.fields,field_description:health_invoicing.field_health_ar_transaction_log__posting_path
+#: model:ir.model.fields,field_description:health_invoicing.field_health_ar_transaction_log__posting_path_label
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_ar_transaction_log_list
 msgid "Posting Path"
 msgstr "Quy trình ghi sổ"
@@ -7856,8 +7856,8 @@ msgstr "đã bàn giao cho quản lý vận hành"
 
 #. module: health_invoicing
 #: model:ir.model.fields,help:health_invoicing.field_health_ar_transaction_log__posting_path
-msgid "e.g. DELIVERY→PREPAID, DELIVERY→NURSE_CASH"
-msgstr "e.g. Đưa hàng→Đơn đặt hàng→NURSE_CASH"
+msgid "Internal code behind the Posting Path shown on screen."
+msgstr "Mã nội bộ phía sau Quy trình ghi sổ hiển thị trên màn hình."
 
 #. module: health_invoicing
 #. odoo-python
@@ -8309,3 +8309,80 @@ msgstr "%s không thể nhận số tiền mặt này: hãy chọn Quản lý v�
 #: model:ir.model.fields,field_description:health_invoicing.field_health_cash_delivery_wizard__om_candidate_ids
 msgid "Possible Recipients"
 msgstr "Người nhận hợp lệ"
+
+#. module: health_invoicing
+#: model:ir.model.fields,field_description:health_invoicing.field_health_ar_transaction_log__posting_path
+msgid "Posting Code"
+msgstr "Mã ghi sổ"
+
+#. module: health_invoicing
+#. odoo-python
+#: code:addons/health_invoicing/models/health_ar_transaction_log.py:0
+msgid "Hand-in: nurse → Operations Manager"
+msgstr "Bàn giao: điều dưỡng → Quản lý hoạt động"
+
+#. module: health_invoicing
+#. odoo-python
+#: code:addons/health_invoicing/models/health_ar_transaction_log.py:0
+msgid "Cash collected by nurse"
+msgstr "Tiền mặt do điều dưỡng thu"
+
+#. module: health_invoicing
+#. odoo-python
+#: code:addons/health_invoicing/models/health_ar_transaction_log.py:0
+msgid "Cash refunded by nurse"
+msgstr "Tiền mặt do điều dưỡng hoàn trả"
+
+#. module: health_invoicing
+#. odoo-python
+#: code:addons/health_invoicing/models/health_ar_transaction_log.py:0
+msgid "Cash received at the office"
+msgstr "Tiền mặt nhận tại văn phòng"
+
+#. module: health_invoicing
+#. odoo-python
+#: code:addons/health_invoicing/models/health_ar_transaction_log.py:0
+msgid "Cash refunded at the office"
+msgstr "Tiền mặt hoàn trả tại văn phòng"
+
+#. module: health_invoicing
+#. odoo-python
+#: code:addons/health_invoicing/models/health_ar_transaction_log.py:0
+msgid "Bank transfer"
+msgstr "Chuyển khoản ngân hàng"
+
+#. module: health_invoicing
+#. odoo-python
+#: code:addons/health_invoicing/models/health_ar_transaction_log.py:0
+msgid "Bank transfer refund"
+msgstr "Hoàn tiền qua chuyển khoản ngân hàng"
+
+#. module: health_invoicing
+#. odoo-python
+#: code:addons/health_invoicing/models/health_ar_transaction_log.py:0
+msgid "Booking invoice"
+msgstr "Hóa đơn lịch hẹn"
+
+#. module: health_invoicing
+#. odoo-python
+#: code:addons/health_invoicing/models/health_ar_transaction_log.py:0
+msgid "Booking credit note"
+msgstr "Hóa đơn hoàn tiền của lịch hẹn"
+
+#. module: health_invoicing
+#. odoo-python
+#: code:addons/health_invoicing/models/health_ar_transaction_log.py:0
+msgid "Booking invoice (prepaid package)"
+msgstr "Hóa đơn lịch hẹn (gói trả trước)"
+
+#. module: health_invoicing
+#. odoo-python
+#: code:addons/health_invoicing/models/health_ar_transaction_log.py:0
+msgid "Booking credit note (prepaid package)"
+msgstr "Hóa đơn hoàn tiền của lịch hẹn (gói trả trước)"
+
+#. module: health_invoicing
+#. odoo-python
+#: code:addons/health_invoicing/models/health_ar_transaction_log.py:0
+msgid "Credit note"
+msgstr "Hóa đơn hoàn tiền"

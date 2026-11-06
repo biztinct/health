@@ -4919,7 +4919,11 @@ class HealthFieldServiceOrderUnified(models.Model):
                 'journal_id': journal.id,
                 'payment_reference': ' | '.join(payment_ref_parts),
             }
-            payment = self.env['account.payment'].create(payment_vals)
+            # The collector the office named goes with the payment, so the
+            # AR log can tell a nurse's cash from the office's (UAT round 10).
+            Payment = self.env['account.payment'].with_context(
+                health_cash_collected_by=collected_by_id or False)
+            payment = Payment.create(payment_vals)
             payment.action_post()
 
             if self.invoice_id and self.invoice_id.state == 'posted':
