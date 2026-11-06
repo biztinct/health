@@ -22,8 +22,10 @@
                 <button name="action_open_record" type="object" string="Open"
                         class="btn-link" title="Open this record"/>
                 <field name="field_name" string="Field Changed"/>
-                <field name="old_value" string="From" optional="show"/>
-                <field name="new_value" string="To"/>
+                <!-- Date-time values in the viewer's time zone (UAT round 10). -->
+                <field name="field_type" column_invisible="1"/>
+                <field name="old_value" string="From" optional="show" widget="audit_value"/>
+                <field name="new_value" string="To" widget="audit_value"/>
                 
             </list>
         </field>

@@ -6711,3 +6711,8 @@ msgstr "Mở"
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_list
 msgid "Open this record"
 msgstr "Mở bản ghi này"
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_audit_log_view__field_type
+msgid "Field Type"
+msgstr "Loại trường"

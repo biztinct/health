@@ -3,6 +3,8 @@ import { Component, onWillStart, useState } from '@odoo/owl';
 import { registry } from '@web/core/registry';
 import { useService } from '@web/core/utils/hooks';
 import { _t } from '@web/core/l10n/translation';
+import { deserializeDateTime } from '@web/core/l10n/dates';
+import { formatDateTime } from '@web/views/fields/formatters';
 
 export class TenantWorkspace extends Component {
     static template = 'health_tenant_workspace.Workspace';
@@ -51,6 +53,9 @@ export class TenantWorkspace extends Component {
             return Object.entries(JSON.parse(detail)).map(([key,value])=>({key,label:this.labels[key] || ({country:_t('Country'),logo:_t('Company logo'),checks:_t('Checks')})[key] || key,before:typeof value==='object' ? value.before || '—' : '',after:typeof value==='object' ? value.after || '—' : value}));
         } catch { return []; }
     }
+    // Stored times are UTC; show them in the viewer's zone, formatted like
+    // every other date-time list column (UAT round 10, item 3).
+    localTime(value){if(!value)return '';const dt=deserializeDateTime(String(value).slice(0,19));return dt.isValid?formatDateTime(dt):value;}
     async loadHistory(){this.state.history=await this.orm.call('health.tenant.workspace','history',[this.state.source,this.state.query,this.state.offset]);}
     async search(){this.state.offset=0;await this.run(()=>this.loadHistory());}
     async page(delta){this.state.offset=Math.max(0,this.state.offset+delta);await this.run(()=>this.loadHistory());}

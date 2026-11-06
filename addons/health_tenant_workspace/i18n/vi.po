@@ -581,8 +581,8 @@ msgstr "Nội dung thay đổi"
 #. module: health_tenant_workspace
 #. odoo-javascript
 #: code:addons/health_tenant_workspace/static/src/workspace.xml:19
-msgid "Times are shown in UTC. Detailed clinical content and request payloads are not included."
-msgstr "Thời gian hiển thị theo UTC. Không bao gồm nội dung lâm sàng chi tiết và dữ liệu yêu cầu."
+msgid "Times are shown in your time zone. Detailed clinical content and request payloads are not included."
+msgstr "Thời gian hiển thị theo múi giờ của bạn. Không bao gồm nội dung lâm sàng chi tiết và dữ liệu yêu cầu."
 
 #. module: health_tenant_workspace
 #. odoo-javascript

@@ -27,6 +27,10 @@ class HealthAuditLogView(models.Model):
     record_name = fields.Char('Record', compute='_compute_record_name',
                               search='_search_record_name')
     field_name = fields.Char('Field Changed', readonly=True)
+    # The changed field's type: the list shows date-time values in the
+    # viewer's time zone (widget `audit_value`, UAT round 10 item 3); the
+    # stored From/To text stays UTC.
+    field_type = fields.Char('Field Type', readonly=True)
     old_value = fields.Char('Old Value', readonly=True)
     new_value = fields.Char('New Value', readonly=True)
 
@@ -96,6 +100,7 @@ class HealthAuditLogView(models.Model):
                     COALESCE(im.name->>'en_US', mm.model) as model_name,
                     mm.res_id,
                     COALESCE(mf.field_description->>'en_US', mf.name) as field_name,
+                    mf.ttype as field_type,
                     CASE
                         WHEN mf.ttype IN ('float', 'monetary') THEN mtv.old_value_float::text
                         WHEN mf.ttype IN ('integer', 'boolean') THEN mtv.old_value_integer::text

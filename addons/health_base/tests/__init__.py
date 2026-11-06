@@ -8,3 +8,4 @@ from . import test_vi_alias_mixin
 from . import test_lookup_values
 from . import test_catchment_area_change
 from . import test_uat_round6
+from . import test_uat_round10
