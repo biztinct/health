@@ -88,6 +88,15 @@ function sameShape(a, b) {
     return JSON.stringify(shape(a)) === JSON.stringify(shape(b));
 }
 
+/** What is drawn: sections that hold fields. An empty section — a new
+ *  section or a placement in an existing card — is kept in the description
+ *  but draws nothing, and the change list ignores it too, so it must not make
+ *  a layout "changed" (UAT round 11: after Delete field the empty Care-card
+ *  placement left behind kept an empty draft). */
+function drawn(sections) {
+    return (sections || []).filter((sec) => (sec.fields || []).length);
+}
+
 export class FormStudioEditor extends Component {
     static template = "biz_form_studio.Studio";
     static props = ["*"];
@@ -124,6 +133,7 @@ export class FormStudioEditor extends Component {
         });
         this._drag = null;
         this._draftTimer = null;
+        this._serverChanged = false;
         onWillStart(async () => {
             await this.load();
         });
@@ -652,7 +662,7 @@ export class FormStudioEditor extends Component {
     }
 
     get dirty() {
-        return !sameShape(this.state.sections, this.state.published);
+        return !sameShape(drawn(this.state.sections), drawn(this.state.published));
     }
 
     // ============================================================ layout ops
@@ -672,6 +682,19 @@ export class FormStudioEditor extends Component {
     }
 
     async saveDraft() {
+        if (!this.dirty) {
+            // Nothing differs from the published layout: no draft to keep,
+            // and an older one would only be stale. A draft still waiting
+            // for the person's choice (the draft sheet) is left alone.
+            if (!this.state.draft) {
+                try {
+                    await this.orm.silent.call("fs.studio", "discard_draft", [this.model, this.viewId]);
+                } catch {
+                    // A draft is a convenience.
+                }
+            }
+            return;
+        }
         try {
             await this.orm.silent.call("fs.studio", "save_draft", [
                 this.model,
@@ -1317,6 +1340,9 @@ export class FormStudioEditor extends Component {
             this.closeSheet();
             this.removeEverywhere(sel.name);
             this.clearSelection();
+            // The server republished without the field: the screen behind
+            // Studio must be read again when we leave (UAT round 11).
+            this._serverChanged = true;
             await this.refresh();
             this.state.sections = this.state.sections.filter(
                 (sec) => sec.anchor.kind !== "card" || (sec.fields || []).length
@@ -1335,15 +1361,21 @@ export class FormStudioEditor extends Component {
 
     // ============================================================ leaving
     async goBack(published = false) {
-        if (published) {
+        if (published || this._serverChanged) {
+            // Same as publish: the cached screen may still name a field
+            // that no longer exists (UAT round 11).
             rpcBus.trigger("CLEAR-CACHES", "get_views");
-        } else if (this.dirty) {
+        }
+        if (!published) {
             if (this._draftTimer) {
                 clearTimeout(this._draftTimer);
                 this._draftTimer = null;
             }
+            const dirty = this.dirty;
             await this.saveDraft();
-            this.notify(_t("Your changes are kept as a draft until you publish them."));
+            if (dirty) {
+                this.notify(_t("Your changes are kept as a draft until you publish them."));
+            }
         }
         try {
             await this.actionService.restore();

@@ -100,6 +100,35 @@ class FsLayout(models.Model):
     #  The writer
     # ------------------------------------------------------------------
     @api.model
+    def _drawn_shape(self, sections):
+        """What a description draws, for comparing two of them: per section
+        its id, titles, place and field names in order; empty sections (new
+        or a card placement) draw nothing and are left out (mirrors the
+        editor's `drawn` + `shape`)."""
+        out = []
+        for sec in sections or []:
+            anchor = sec.get('anchor') or {}
+            names = [f.get('name') if isinstance(f, dict) else f
+                     for f in sorted(sec.get('fields') or [],
+                                     key=lambda f: (f.get('order') or 0)
+                                     if isinstance(f, dict) else 0)]
+            if not names:
+                continue
+            out.append((sec.get('id'), sec.get('title') or '',
+                        sec.get('title_vi') or '',
+                        tuple(sorted(anchor.items())), tuple(names)))
+        return out
+
+    @api.model
+    def _broadcast_change(self, model):
+        """Tell every open tab of every staff member that `model`'s screens
+        changed, so cached screens naming a deleted field are read again
+        (UAT round 11). Sent after commit by the bus."""
+        group = self.env.ref('base.group_user', raise_if_not_found=False)
+        if group and hasattr(group, '_bus_send'):
+            group.sudo()._bus_send('biz_form_studio/changed', {'model': model})
+
+    @api.model
     def _clean_sections(self, sections, model, host=None):
         """Validate the client's description and return a normalised copy.
 
@@ -523,6 +552,7 @@ class FsLayout(models.Model):
         # the server's registry version. Bumping it makes "everyone sees it on
         # their next page load" true for the people who did not publish.
         self.env.registry.registry_invalidated = True
+        self._broadcast_change(self.model)
         _logger.info("Form Studio: uid %s published %s version %s",
                      self.env.uid, self.model, version)
         return {'version': version, 'view_id': self.view_id.id,

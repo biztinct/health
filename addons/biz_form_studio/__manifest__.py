@@ -71,7 +71,7 @@ IT SEEDS NOTHING AND NAMES NOBODY. No host, no target, no menu entry: a
 product decides which screens support Studio and where the field library sits
 in its own navigation.
 """,
-    'version': '19.0.1.4.0',
+    'version': '19.0.1.4.1',
     'category': 'Technical',
     'license': 'LGPL-3',
     'author': 'Biztinct',

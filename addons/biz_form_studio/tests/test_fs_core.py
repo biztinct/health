@@ -363,6 +363,51 @@ class TestFsLayouts(_FsCase):
         self.assertNotIn(a, self.env['res.partner'].fields_get())
         self.assertEqual(self._layout().version, 2)
 
+    def test_11c_no_empty_draft_after_delete(self):
+        """UAT round 11: after Delete field the published layout keeps an
+        empty section. Leaving the editor sends the same sections back: no
+        draft may be stored, and an older (stale) draft is removed. A real
+        change still makes a draft. Every open tab is told the screen
+        changed."""
+        a, b = self.make('Alpha'), self.make('Beta')
+        self.Studio.publish('res.partner', self.view.id,
+                            [self.section('sec1', [a]), self.section('sec2', [b])])
+        layout = self._layout()
+        Draft = self.env['fs.layout.draft']
+        # an earlier draft of this user, made before the delete
+        self.Studio.save_draft('res.partner', self.view.id,
+                               [self.section('sec2', [b]), self.section('sec1', [a])])
+        self.assertTrue(Draft.search([('layout_id', '=', layout.id)]))
+        sent = []
+        Group = type(self.env['res.groups'])
+        orig = Group._bus_send
+
+        def spy(groups, ntype, message, *args, **kwargs):
+            sent.append(ntype)
+            return orig(groups, ntype, message, *args, **kwargs)
+        from unittest.mock import patch
+        with patch.object(Group, '_bus_send', spy):
+            self.Studio.delete_field('res.partner', a, confirm='DELETE')
+        self.assertIn('biz_form_studio/changed', sent)
+        self.assertFalse(Draft.search([('layout_id', '=', layout.id)]),
+                         'the earlier draft only differed by the deleted field')
+        self.Studio.save_draft('res.partner', self.view.id,
+                               [self.section('sec2', [b]), self.section('sec1', [])])
+        # the editor drops the now-empty section; the server kept it
+        self.assertTrue(any(not sec.get('fields') for sec in layout.sections))
+        res = self.Studio.save_draft('res.partner', self.view.id,
+                                     [self.section('sec2', [b])])
+        self.assertFalse(res)
+        self.assertFalse(Draft.search([('layout_id', '=', layout.id)]),
+                         'no draft: nothing drawn differs; the stale one is gone')
+        # the FM-03 shape: a Care-card placement left empty draws nothing
+        self.assertEqual(layout._drawn_shape([{'id': 'c1', 'anchor': {'kind': 'card', 'name': 'x'},
+                                               'fields': []}]), [])
+        # a real change is still kept as a draft
+        self.assertTrue(self.Studio.save_draft(
+            'res.partner', self.view.id, [self.section('sec2', [b], 'Renamed')]))
+        self.assertTrue(Draft.search([('layout_id', '=', layout.id)]))
+
     def test_11b_history_is_append_only(self):
         a = self.make('Alpha')
         self.Studio.publish('res.partner', self.view.id,

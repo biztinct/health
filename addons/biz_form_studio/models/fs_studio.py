@@ -676,6 +676,12 @@ class FsStudio(models.AbstractModel):
         Draft = self.env['fs.layout.draft'].sudo()
         draft = Draft.search([('layout_id', '=', layout.id),
                               ('user_id', '=', self.env.uid)], limit=1)
+        # Nothing drawn differs from the published layout: there is no draft
+        # to keep, and an older one is stale (UAT round 11 — an "empty" draft
+        # was stored after Delete field).
+        if layout._drawn_shape(clean) == layout._drawn_shape(layout.sections):
+            draft.unlink()
+            return False
         if draft:
             draft.sections = clean
         else:
@@ -1333,6 +1339,10 @@ class FsStudio(models.AbstractModel):
             for draft in self.env['fs.layout.draft'].sudo().search(
                     [('layout_id', '=', layout.id)]):
                 draft.sections = self._strip(draft.sections, {name})
+                # a draft left with nothing but what is published is stale
+                if layout._drawn_shape(draft.sections) == \
+                        layout._drawn_shape(layout.sections):
+                    draft.unlink()
         companion = self._companion(field)
         meta.unlink()
         with self.env.cr.savepoint():
@@ -1349,6 +1359,7 @@ class FsStudio(models.AbstractModel):
                      "had a value.", label=label, who=self.env.user.name,
                      count=count)
         self._audit(host, body)
+        self.env['fs.layout']._broadcast_change(model)
         _logger.info("Form Studio: uid %s deleted %s.%s (%s values)",
                      self.env.uid, model, name, count)
         return {'count': count}
