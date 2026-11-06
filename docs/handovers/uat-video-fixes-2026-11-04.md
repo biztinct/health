@@ -473,3 +473,43 @@ TestUatRound6Base, TestOfficeDiscount. Post-upgrade check: 1 layout, 0 broken.
 signed in once and switched off (its staff record is archived) — same pattern as the earlier UAT Video
 Users. New labels: Posting Path words above; Activity history note text; empty Contacts text.
 Ledger §5.347–§5.353.
+
+## 13. Round 11 (6 Nov 2026 — owner approved all three; nobody is recording, code AND deploy)
+Rules of §0 apply. Form Studio (biz_form_studio / health_form_studio) MAY be changed this round
+(item 2 only). One deploy for all modules, browser-verify, local commits, ledger §5.354+.
+
+1. **"You do not have access to this fields."** The round-6 plain refusal message builds
+   "this <model name>" from the model's description; for plural/technical descriptions (seen on
+   `ir.model.fields` as uat_owner via RPC; check the others) the sentence is ungrammatical. Make
+   every refusal read correctly in EN and VI: a singular noun where the model's user-facing name
+   is a proper record name ("this booking", "this client"), else a neutral sentence ("You do not
+   have access to this information. Ask your administrator if you need it." / VI). Scan all
+   models a clinic user can hit for plural or technical descriptions; no "Odoo", no technical
+   model name. Tests.
+2. **Form Studio: closing the editor after "Delete field" leaves an empty draft and one hidden
+   server error.** Seen twice in FM-03 (Client form, uat_owner): after Delete field the server
+   republishes (bar "Version N · No changes yet", Publish disabled); pressing × then shows "Your
+   changes are kept as a draft until you publish them.", stores an `fs.layout.draft` with no real
+   change, and the record's `web_read` asks for the deleted field once ("Invalid field
+   'x_fs_preferred_visit_time' on 'res.partner'", nothing on screen). Fix: (a) never store a draft
+   (and never show that toast) when the sections equal the published layout; delete a stale draft
+   in that case; (b) after a field was deleted (or anything was published) leaving the editor
+   must clear the view caches the same way publish does, so the record never asks for a deleted
+   field. Also check other open tabs of the same user after a delete (registry_invalidated path).
+   Tests in the Studio suites; re-run FM-03-style flow in a browser (create, publish, delete,
+   close: no draft row, no error).
+3. **Cash taken at the office shows "Cash Pending Delivery".** Every cash payment's PAY record
+   (payment transaction / custody record, Finance › Payments) starts in "Cash Pending Delivery",
+   even when an office user (Owner / Finance / OM at the desk) records it — so it looks as if a
+   nurse still holds it, and it may sit in Operations › Collections › Pending Delivery. Rule: only
+   cash COLLECTED BY A NURSE/DOCTOR in the field (nurse app, or a payment whose collector is field
+   staff) is "pending delivery" until handed in; cash recorded by an office user is received at the
+   office at once (pick the existing state that means that, else add one with a plain label EN/VI,
+   e.g. "Received at office"), never listed under Pending Delivery, no hand-in needed. Use the same
+   "who received the cash" rule you used for the round-10 posting path. Data: correct existing PAY
+   records recorded by office users that still say Cash Pending Delivery (dry-run list first; custody
+   state only — never journal entries, payments, invoices or AR log amounts). Tests; browser check as
+   finance/owner (record cash at the office → not pending) and that nurse cash still goes pending
+   (do not create a new nurse payment on live for this: use the tests, and existing records).
+
+Write "### Round 11 results" below this section.
