@@ -1,0 +1,1174 @@
+{
+  "user": [
+    {
+      "key": "start",
+      "title": {
+        "en": "Start here: how the clinic works",
+        "vi": "Bắt đầu: cách phòng khám làm việc"
+      },
+      "topics": [
+        {
+          "key": "purpose",
+          "title": {
+            "en": "What CareJiyo helps you do",
+            "vi": "CareJiyo giúp bạn làm gì"
+          },
+          "body": {
+            "en": "CareJiyo brings the office and visiting care team into one system. CRM handles enquiries. Operations plans visits and staff. Clinical holds care information. Finance follows invoices and money received. The mobile app helps the assigned nurse or doctor work at the visit. Learn provides instructions and videos.\nA contact is someone who has enquired. A client is the person receiving care. A booking is one appointment. An assignment connects a staff member to that booking. A clinical note records the care given. An invoice records the charge; a payment records money received. These are linked records, not interchangeable names for the same thing.\nExample: a daughter calls for her father. Record the daughter as the caller or representative and the father as the client receiving care. Create the father's booking, assign the care team, record the visit, and check the resulting invoice. Keep the relationship clear so the right person is contacted and the right person receives care.\nRead chapters 1-2 first. Office staff then read bookings and scheduling; clinical staff read mobile and clinical records; finance staff read billing. Use the detailed task videos when you are ready to practise.",
+            "vi": "CareJiyo kết nối bộ phận văn phòng với nhóm chăm sóc tại nhà. CRM tiếp nhận yêu cầu. Điều phối sắp xếp lịch hẹn và nhân viên. Lâm sàng lưu thông tin chăm sóc. Tài chính theo dõi hóa đơn và tiền đã nhận. Ứng dụng di động giúp điều dưỡng hoặc bác sĩ được phân công làm việc tại buổi khám. Mục Học tập cung cấp hướng dẫn và video.\nLiên hệ là người đã gửi yêu cầu. Khách hàng là người được chăm sóc. Lịch hẹn là một buổi khám. Phân công gắn nhân viên với lịch hẹn đó. Ghi chú lâm sàng ghi lại việc chăm sóc. Hóa đơn ghi số tiền phải trả; khoản thanh toán ghi số tiền đã nhận. Đây là các hồ sơ liên kết với nhau, không phải các tên gọi khác nhau của cùng một hồ sơ.\nVí dụ: người con gái gọi đặt dịch vụ cho cha. Ghi người con là người gọi hoặc người đại diện và người cha là khách hàng được chăm sóc. Tạo lịch hẹn cho người cha, phân công nhóm chăm sóc, ghi nhận buổi khám và kiểm tra hóa đơn. Phân biệt rõ mối quan hệ để liên lạc đúng người và chăm sóc đúng người.\nĐọc chương 1-2 trước. Nhân viên văn phòng đọc tiếp phần lịch hẹn và điều phối; nhân viên y tế đọc phần di động và hồ sơ lâm sàng; kế toán đọc phần thanh toán. Xem video hướng dẫn công việc khi bạn sẵn sàng thực hành."
+          },
+          "image": null
+        },
+        {
+          "key": "login",
+          "title": {
+            "en": "Sign in and understand your access",
+            "vi": "Đăng nhập và hiểu quyền sử dụng"
+          },
+          "body": {
+            "en": "1. Open https://carejiox.com in Chrome. Use the individual login and password provided to you. The product is called CareJiyo; the current address remains carejiox.com.\n2. Check your name, language and clinic. Where available, choose English or Vietnamese using the language control. Check that dates and visit times use the clinic's timezone.\n3. Use Home to return to your starting page. Choose an area such as CRM, Operations, Clinical, Finance or Learn. Tabs inside the area open its screens.\n4. Check the Catchment Area filter before searching. A catchment is the geographic area your clinic serves. Operations Managers are restricted to their assigned catchments; changing a filter does not grant access to another area. Nurses and doctors also work within their permitted scope and assignments.\n5. If a menu or record is missing, check the date, search filter, catchment and assignment. Ask your manager to review access if it still cannot be found. Do not use a colleague's login.\nSome screens show the clinic's own name or logo. The same task can have a slightly different layout according to role, language and enabled features. Screenshots illustrate the controls; use the record details and status shown in your own session.",
+            "vi": "1. Mở https://carejiox.com bằng Chrome. Dùng tài khoản và mật khẩu cá nhân được cấp. Sản phẩm có tên CareJiyo; địa chỉ hiện tại vẫn là carejiox.com.\n2. Kiểm tra tên của bạn, ngôn ngữ và phòng khám. Nếu có bộ chọn ngôn ngữ, chọn tiếng Anh hoặc tiếng Việt. Kiểm tra ngày giờ lịch hẹn theo múi giờ của phòng khám.\n3. Dùng Trang chủ (Home) để trở về màn hình bắt đầu. Chọn khu vực như CRM, Điều phối, Lâm sàng, Tài chính hoặc Học tập. Các thẻ bên trong mở những màn hình tương ứng.\n4. Kiểm tra bộ lọc Khu vực phụ trách (Catchment Area) trước khi tìm kiếm. Đây là địa bàn phòng khám phục vụ. Quản lý điều phối chỉ được truy cập khu vực được giao; đổi bộ lọc không tạo thêm quyền. Điều dưỡng và bác sĩ cũng làm việc trong phạm vi và lịch được phân công.\n5. Nếu không thấy trình đơn hoặc hồ sơ, kiểm tra ngày, bộ lọc, khu vực và phân công. Nhờ quản lý kiểm tra quyền nếu vẫn không tìm thấy. Không dùng tài khoản của đồng nghiệp.\nMột số màn hình hiển thị tên hoặc logo riêng của phòng khám. Bố cục có thể khác đôi chút theo vai trò, ngôn ngữ và tính năng đã bật. Ảnh minh họa giúp nhận biết các điều khiển; hãy dựa vào thông tin và trạng thái trong phiên làm việc của bạn."
+          },
+          "image": null
+        },
+        {
+          "key": "common",
+          "title": {
+            "en": "Lists, forms, buttons and saved changes",
+            "vi": "Danh sách, biểu mẫu, nút và thay đổi đã lưu"
+          },
+          "body": {
+            "en": "Lists show many records; forms show one record. A search narrows the list. Filters select a group, such as today's bookings. Group By organises records under headings. Removing a filter makes more permitted records visible; it does not change the records.\n| Control | What it means |\n| New / Create | Open a blank record. Check for an existing record first. |\n| Save / Save manually | Store the entered changes. Read any validation message. |\n| Discard all changes | Abandon unsaved edits; it does not reverse an earlier saved change. |\n| Search / Filters | Find records by reference, person, date or status. |\n| List / Calendar / Graph / Pivot | Different ways to display the same permitted data. |\n| Chatter: Log note | Add an internal comment to the record history. |\n| Chatter: Send message | Send a message to the selected recipients; review them first. |\n| Activities | Set a follow-up owner and due date. |\n| Refresh | Reload the displayed information. |\nA star or highlighted field may indicate required information. Read the field label and help text. Select an existing dropdown value carefully; similarly named clients are not necessarily the same person. Before saving, check the client, reference, date and amount. Reopen important records to confirm the change was stored.",
+            "vi": "Danh sách hiển thị nhiều hồ sơ; biểu mẫu hiển thị một hồ sơ. Ô tìm kiếm thu hẹp danh sách. Bộ lọc chọn một nhóm, chẳng hạn lịch hẹn hôm nay. Nhóm theo (Group By) sắp hồ sơ dưới các tiêu đề. Bỏ bộ lọc chỉ hiển thị thêm hồ sơ trong phạm vi quyền, không làm thay đổi dữ liệu.\n| Điều khiển | Ý nghĩa |\n| Mới / Tạo (New / Create) | Mở hồ sơ trống. Tìm hồ sơ hiện có trước. |\n| Lưu / Lưu thủ công | Lưu thay đổi đã nhập. Đọc thông báo kiểm tra dữ liệu. |\n| Bỏ thay đổi (Discard all changes) | Bỏ phần chưa lưu; không hoàn tác thay đổi đã lưu trước đó. |\n| Tìm kiếm / Bộ lọc | Tìm theo mã, người, ngày hoặc trạng thái. |\n| Danh sách / Lịch / Biểu đồ / Bảng tổng hợp | Các cách xem cùng dữ liệu trong phạm vi quyền. |\n| Ghi chú nội bộ (Log note) | Thêm nhận xét vào lịch sử hồ sơ. |\n| Gửi tin nhắn (Send message) | Gửi cho người nhận được chọn; kiểm tra người nhận trước. |\n| Hoạt động (Activities) | Giao việc theo dõi và đặt hạn xử lý. |\n| Làm mới (Refresh) | Tải lại thông tin đang hiển thị. |\nDấu sao hoặc trường được tô nổi có thể chỉ thông tin bắt buộc. Đọc nhãn và hướng dẫn của trường. Chọn đúng giá trị trong danh sách; hai khách hàng trùng tên chưa chắc là một người. Trước khi lưu, kiểm tra khách hàng, mã hồ sơ, ngày và số tiền. Mở lại hồ sơ quan trọng để xác nhận đã lưu."
+          },
+          "image": null
+        },
+        {
+          "key": "handoffs",
+          "title": {
+            "en": "Know when your work is finished",
+            "vi": "Biết khi nào công việc đã hoàn tất"
+          },
+          "body": {
+            "en": "Each team hands a clear result to the next team. CRM hands over a correct client and request. Operations hands over an agreed booking, service details and accepted staff assignment. The clinician hands over a completed visit and accurate care record. Finance checks the invoice, records actual payments and follows the remaining balance.\nA booking marked Completed does not by itself prove that its invoice is paid. A payment marked collected does not necessarily mean field cash has reached the office. A saved note is not necessarily a signed final note. Always check the separate status for the work you are responsible for.\nAt the end of your shift, review unfinished activities, unassigned visits, incomplete notes and payments awaiting handover. Write the next action and responsible person clearly. If an action fails, record the reference and the exact message, then contact the appropriate colleague. Avoid repeatedly clicking a button that creates a booking, invoice or payment.",
+            "vi": "Mỗi bộ phận bàn giao một kết quả rõ ràng cho bộ phận tiếp theo. CRM bàn giao đúng khách hàng và yêu cầu. Điều phối bàn giao lịch hẹn đã thống nhất, dịch vụ và nhân viên đã nhận phân công. Nhân viên y tế bàn giao buổi khám hoàn tất và hồ sơ chăm sóc chính xác. Kế toán kiểm tra hóa đơn, ghi nhận tiền thực nhận và theo dõi số dư.\nLịch hẹn ở trạng thái Hoàn tất không tự chứng minh hóa đơn đã thanh toán. Khoản tiền được ghi là đã thu chưa chắc đã được bàn giao về văn phòng. Ghi chú đã lưu chưa chắc là ghi chú cuối cùng đã ký. Luôn kiểm tra trạng thái riêng của công việc bạn phụ trách.\nCuối ca, xem lại hoạt động chưa xong, lịch chưa có nhân viên, ghi chú chưa hoàn tất và tiền chờ bàn giao. Ghi rõ bước tiếp theo và người chịu trách nhiệm. Nếu thao tác lỗi, ghi mã hồ sơ cùng thông báo chính xác rồi liên hệ người phụ trách. Tránh bấm lặp lại nút tạo lịch hẹn, hóa đơn hoặc thanh toán."
+          },
+          "image": null
+        }
+      ],
+      "flow": {
+        "en": [
+          "Enquiry",
+          "Client and booking",
+          "Care team",
+          "Visit and care record",
+          "Invoice and payment",
+          "Follow-up"
+        ],
+        "vi": [
+          "Tiếp nhận yêu cầu",
+          "Khách hàng và lịch hẹn",
+          "Nhóm chăm sóc",
+          "Thăm khám và hồ sơ",
+          "Hóa đơn, thanh toán",
+          "Theo dõi"
+        ]
+      }
+    },
+    {
+      "key": "crm",
+      "title": {
+        "en": "CRM: enquiries and follow-up",
+        "vi": "CRM: tiếp nhận yêu cầu và theo dõi"
+      },
+      "topics": [
+        {
+          "key": "crm-dashboard",
+          "title": {
+            "en": "Read the CRM dashboard",
+            "vi": "Đọc bảng tổng quan CRM"
+          },
+          "body": {
+            "en": "Open CRM > Dashboard at the start of a shift. Choose the period and catchment first. The cards summarise contacts, follow-ups, leads, bookings and conversion. The pipeline chart groups contacts by stage; source information shows where enquiries came from. Recent Contacts and Upcoming Bookings provide shortcuts to individual records.\n1. Choose Today, This Week, This Month, All Dates or a custom range.\n2. Read each card's label. Some cards describe a specific period in their name; do not assume every count uses exactly the same date definition.\n3. Open a card or available drill-down to see the underlying records. Check dates and status before drawing conclusions.\n4. Refresh after changes and review the follow-up list.\nUse the dashboard to decide what needs attention, then do the work on the contact or booking. A high count is a prompt to investigate, not proof that every enquiry needs the same action.",
+            "vi": "Mở CRM > Bảng tổng quan khi bắt đầu ca. Chọn khoảng thời gian và khu vực trước. Các ô thống kê tóm tắt liên hệ, việc theo dõi, khách hàng tiềm năng, lịch hẹn và tỷ lệ chuyển đổi. Biểu đồ quy trình nhóm liên hệ theo giai đoạn; thông tin nguồn cho biết yêu cầu đến từ đâu. Liên hệ gần đây và Lịch hẹn sắp tới giúp mở nhanh hồ sơ.\n1. Chọn Hôm nay, Tuần này, Tháng này, Tất cả ngày hoặc khoảng tùy chọn.\n2. Đọc nhãn từng ô. Một số ô ghi rõ khoảng thời gian riêng; không mặc định mọi số liệu dùng cùng cách xác định ngày.\n3. Mở ô thống kê hoặc chức năng xem chi tiết để xem hồ sơ tạo nên số liệu. Kiểm tra ngày và trạng thái trước khi kết luận.\n4. Làm mới sau thay đổi và xem danh sách cần theo dõi.\nDùng bảng tổng quan để biết việc cần chú ý, rồi xử lý trên liên hệ hoặc lịch hẹn. Số lượng cao là dấu hiệu cần xem xét, không có nghĩa mọi yêu cầu cần cùng một cách xử lý."
+          },
+          "image": "crm-dashboard"
+        },
+        {
+          "key": "contacts",
+          "title": {
+            "en": "Record a contact without creating duplicates",
+            "vi": "Ghi liên hệ và tránh tạo trùng"
+          },
+          "body": {
+            "en": "Open CRM > Contacts > All contacts. Search the phone number and name before creating a contact. A returning caller may already have a client record and earlier bookings.\n1. Select New if no suitable contact exists. Enter the caller's details and the enquiry source.\n2. Identify who needs the service. If the caller represents someone else, record that relationship and the client's details separately.\n3. Record the requested service, location, urgency and notes that help the receiving team. Use approved dropdown values.\n4. Save and reopen the contact. Confirm the phone number, catchment and next action.\n5. If no appointment is agreed, use Log as Lead or the appropriate follow-up action. The contact can remain in the system without a booking.\nMark genuine junk enquiries as Spam only when appropriate. Do not use Spam to hide a difficult but genuine enquiry. If a booking is lost, use Booking Lost where available and record the reason. The contact's history should explain what happened.",
+            "vi": "Mở CRM > Liên hệ > Tất cả liên hệ. Tìm số điện thoại và tên trước khi tạo mới. Người gọi lại có thể đã có hồ sơ khách hàng và lịch hẹn cũ.\n1. Chọn Mới nếu chưa có liên hệ phù hợp. Nhập thông tin người gọi và nguồn yêu cầu.\n2. Xác định người cần dịch vụ. Nếu người gọi đại diện cho người khác, ghi riêng mối quan hệ và thông tin khách hàng.\n3. Ghi dịch vụ yêu cầu, địa điểm, mức khẩn và ghi chú cần thiết cho bộ phận tiếp nhận. Dùng giá trị được duyệt trong danh sách chọn.\n4. Lưu rồi mở lại liên hệ. Kiểm tra số điện thoại, khu vực và bước tiếp theo.\n5. Nếu chưa thống nhất lịch hẹn, dùng Ghi nhận khách hàng tiềm năng (Log as Lead) hoặc chức năng theo dõi phù hợp. Có thể lưu liên hệ mà chưa tạo lịch hẹn.\nChỉ đánh dấu Rác (Spam) khi đúng là yêu cầu không hợp lệ. Không dùng Spam để che một yêu cầu thật nhưng khó xử lý. Nếu mất cơ hội đặt lịch, dùng Booking Lost khi có và ghi lý do. Lịch sử liên hệ cần thể hiện rõ diễn biến."
+          },
+          "image": "contacts"
+        },
+        {
+          "key": "followup",
+          "title": {
+            "en": "Activities, escalation and booking handover",
+            "vi": "Hoạt động, chuyển xử lý và bàn giao đặt lịch"
+          },
+          "body": {
+            "en": "| Action | Use it when |\n| Log Activity / Schedule activity | A call, message, meeting or other follow-up is needed. |\n| Log as Lead | Keep a genuine enquiry for later follow-up. |\n| Escalate | The enquiry needs a manager, senior nurse or doctor. |\n| Book | The client is ready for an appointment; open the booking wizard. |\n| Booking Lost | A booking opportunity has fallen through; record why. |\n1. Open the contact and choose Log Activity. Set the activity type, person responsible, due date and a clear note.\n2. Find the item in CRM > Activities. Filter by type or date, do the follow-up, then record its outcome and complete the activity. Set a new activity if another follow-up is needed.\n3. For escalation, choose the appropriate receiving role and explain the question. Check that the enquiry reaches the intended person.\n4. For booking, confirm an existing client match before creating a new client. Enter the visit details and review the booking created. The booking reference is the handover to Operations.\nIf your role cannot create a booking, hand the contact to the authorised booking team. A completed activity closes that follow-up task; it does not automatically mean the whole enquiry has been resolved.",
+            "vi": "| Thao tác | Khi nào dùng |\n| Ghi hoạt động / Lên lịch hoạt động | Cần gọi, nhắn tin, họp hoặc theo dõi khác. |\n| Ghi nhận khách hàng tiềm năng | Giữ yêu cầu thật để tiếp tục theo dõi. |\n| Chuyển xử lý (Escalate) | Cần quản lý, điều dưỡng trưởng hoặc bác sĩ xử lý. |\n| Đặt lịch (Book) | Khách hàng sẵn sàng đặt hẹn; mở trình tạo lịch. |\n| Mất cơ hội đặt lịch (Booking Lost) | Không tiếp tục đặt lịch; ghi rõ lý do. |\n1. Mở liên hệ và chọn Ghi hoạt động. Chọn loại hoạt động, người phụ trách, hạn và nội dung rõ ràng.\n2. Tìm việc tại CRM > Hoạt động. Lọc theo loại hoặc ngày, thực hiện theo dõi, ghi kết quả rồi hoàn tất hoạt động. Tạo hoạt động mới nếu cần theo dõi tiếp.\n3. Khi chuyển xử lý, chọn đúng vai trò tiếp nhận và giải thích câu hỏi. Kiểm tra yêu cầu đến đúng người.\n4. Khi đặt lịch, xác nhận khách hàng đã có trước khi tạo khách hàng mới. Nhập chi tiết buổi khám và kiểm tra lịch vừa tạo. Mã lịch hẹn là thông tin bàn giao cho Điều phối.\nNếu vai trò của bạn không được tạo lịch, chuyển liên hệ cho nhóm đặt lịch có quyền. Hoàn tất một hoạt động chỉ đóng việc theo dõi đó, không tự có nghĩa toàn bộ yêu cầu đã được giải quyết."
+          },
+          "image": "activities"
+        },
+        {
+          "key": "carecommand",
+          "title": {
+            "en": "Care Command, channel inboxes and phone",
+            "vi": "Care Command, hộp thư kênh và điện thoại"
+          },
+          "body": {
+            "en": "Care Command brings available conversations into a work queue. Use its filters to find the conversation, open its thread, read the history and identify the correct person before replying or assigning responsibility. A linked contact or booking supplies context; do not assume a similar name proves identity.\nChannel Center shows connected channels. Unrouted Contacts contains incoming items that still need a clinic, person or route. Channel messages and Channel audit help authorised staff trace delivery and routing. Availability depends on the clinic's connections. An empty inbox does not prove that every external account is connected.\nPhone > Calls shows call activity; Call backs supports return-call work; Recordings opens available recordings; Records from the phone system shows provider history. Check the number and permission before calling or opening a recording. Record the outcome on the relevant contact.\nIf an AI draft or reply template is available, read it, correct it and deliberately send it yourself. Check the recipient and channel before Send. Do not treat a suggested answer as confirmed clinical advice. Delivery errors should be handed to the channel administrator; avoid sending duplicates while the first message is still pending.",
+            "vi": "Care Command tập hợp các hội thoại hiện có thành hàng đợi xử lý. Dùng bộ lọc để tìm hội thoại, mở chuỗi tin, đọc lịch sử và xác định đúng người trước khi trả lời hoặc giao người phụ trách. Liên hệ hay lịch hẹn được gắn cung cấp bối cảnh; trùng tên chưa đủ để xác nhận danh tính.\nTrung tâm kênh hiển thị các kênh đã kết nối. Liên hệ chưa định tuyến chứa mục còn cần xác định phòng khám, người hoặc tuyến xử lý. Tin nhắn kênh và Nhật ký kênh giúp nhân viên có quyền kiểm tra việc gửi và định tuyến. Khả năng sử dụng phụ thuộc kết nối của phòng khám. Hộp thư trống không chứng minh mọi tài khoản bên ngoài đã kết nối.\nĐiện thoại > Cuộc gọi hiển thị hoạt động gọi; Gọi lại hỗ trợ công việc gọi lại; Bản ghi âm mở bản ghi hiện có; Hồ sơ từ hệ thống điện thoại hiển thị lịch sử nhà cung cấp. Kiểm tra số và quyền trước khi gọi hoặc mở bản ghi. Ghi kết quả vào liên hệ phù hợp.\nNếu có bản nháp AI hoặc mẫu trả lời, đọc, sửa rồi chủ động gửi. Kiểm tra người nhận và kênh trước khi Gửi. Không xem gợi ý là tư vấn lâm sàng đã được xác nhận. Chuyển lỗi gửi cho quản trị kênh; tránh gửi trùng khi tin đầu vẫn đang chờ."
+          },
+          "image": null
+        },
+        {
+          "key": "attribution",
+          "title": {
+            "en": "Relationships, web enquiries and advertising",
+            "vi": "Mối quan hệ, yêu cầu từ web và quảng cáo"
+          },
+          "body": {
+            "en": "Relationships records how people are connected, such as a client and family representative. Confirm both people and the relationship before saving. A relationship record does not by itself grant access to health information.\nWeb & Ads > Web Touchpoints records available website attribution, such as source and campaign. Lead Analysis summarises enquiry flow. Google Ads displays information available from the connected account. These screens help answer which sources bring enquiries; they do not replace the contact's actual service request.\n1. Set the relevant dates and catchment where available.\n2. Open the linked enquiry to check what happened after arrival.\n3. Compare source labels consistently. Missing attribution may mean the source was not supplied.\n4. Raise connection or missing-data problems with the administrator. Do not create duplicate contacts to make a chart total change.\nOnly use a live channel when your clinic has enabled it. Continue to record a walk-in or manually received enquiry through the contact form when appropriate.",
+            "vi": "Mối quan hệ ghi cách các cá nhân liên quan với nhau, chẳng hạn khách hàng và người đại diện gia đình. Xác nhận đúng hai người và loại quan hệ trước khi lưu. Hồ sơ quan hệ không tự cấp quyền xem thông tin sức khỏe.\nWeb & Quảng cáo > Điểm tiếp xúc web ghi thông tin nguồn truy cập hiện có, như nguồn và chiến dịch. Phân tích khách hàng tiềm năng tổng hợp luồng yêu cầu. Google Ads hiển thị thông tin từ tài khoản đã kết nối. Các màn hình này giúp biết nguồn nào mang lại yêu cầu, không thay thế nhu cầu dịch vụ thực tế trong liên hệ.\n1. Chọn ngày và khu vực phù hợp nếu có bộ lọc.\n2. Mở yêu cầu liên kết để xem việc xử lý sau khi tiếp nhận.\n3. So sánh nhãn nguồn một cách nhất quán. Thiếu thông tin nguồn có thể do nguồn chưa được cung cấp.\n4. Báo vấn đề kết nối hoặc thiếu dữ liệu cho quản trị viên. Không tạo liên hệ trùng để làm thay đổi số liệu biểu đồ.\nChỉ dùng kênh trực tiếp khi phòng khám đã bật. Khi phù hợp, tiếp tục ghi yêu cầu đến trực tiếp hoặc nhận thủ công bằng biểu mẫu liên hệ."
+          },
+          "image": null
+        }
+      ],
+      "flow": {
+        "en": [
+          "Receive enquiry",
+          "Find existing person",
+          "Record need",
+          "Follow up or book",
+          "Check handover"
+        ],
+        "vi": [
+          "Nhận yêu cầu",
+          "Tìm người đã có",
+          "Ghi nhu cầu",
+          "Theo dõi hoặc đặt lịch",
+          "Kiểm tra bàn giao"
+        ]
+      }
+    },
+    {
+      "key": "booking",
+      "title": {
+        "en": "Clients, bookings and quotes",
+        "vi": "Khách hàng, lịch hẹn và báo giá"
+      },
+      "topics": [
+        {
+          "key": "client",
+          "title": {
+            "en": "The client profile and representative",
+            "vi": "Hồ sơ khách hàng và người đại diện"
+          },
+          "body": {
+            "en": "Open Operations > Clients and search before creating a record. The profile connects identity, contact details, address, bookings, packages and permitted clinical information. A client may have several visits and more than one representative.\n1. Confirm name, phone and another appropriate identifying detail. Do not choose a client solely because the name matches.\n2. Check the service address, district, catchment and facility. Review map location and distance if available. A map estimate can be wrong when the address is incomplete; confirm the actual destination.\n3. Review the representative and relationship. Keep the person receiving care separate from the person arranging or paying for it.\n4. Use the booking or invoice shortcuts to inspect history before creating new work.\n5. Update permitted details and save. Reopen the profile to confirm important corrections.\nClinical tabs, care plans, diagnoses, consent and family access appear according to your role and enabled features. Read only the information needed for your work. A profile total is a summary; open the underlying bookings or invoices to investigate a particular amount.",
+            "vi": "Mở Điều phối > Khách hàng và tìm trước khi tạo hồ sơ. Hồ sơ liên kết thông tin nhận diện, liên lạc, địa chỉ, lịch hẹn, gói dịch vụ và thông tin lâm sàng trong phạm vi quyền. Một khách hàng có thể có nhiều lần khám và nhiều người đại diện.\n1. Xác nhận tên, điện thoại và một thông tin nhận diện phù hợp khác. Không chọn chỉ vì trùng tên.\n2. Kiểm tra địa chỉ cung cấp dịch vụ, quận/huyện, khu vực và cơ sở. Xem vị trí bản đồ và khoảng cách nếu có. Địa chỉ thiếu có thể làm sai vị trí; xác nhận điểm đến thực tế.\n3. Kiểm tra người đại diện và mối quan hệ. Phân biệt người được chăm sóc với người đặt lịch hoặc thanh toán.\n4. Dùng lối tắt lịch hẹn hoặc hóa đơn để xem lịch sử trước khi tạo việc mới.\n5. Cập nhật thông tin trong phạm vi quyền và lưu. Mở lại để kiểm tra sửa đổi quan trọng.\nCác thẻ lâm sàng, kế hoạch chăm sóc, chẩn đoán, đồng ý và quyền gia đình xuất hiện theo vai trò và tính năng. Chỉ đọc thông tin cần cho công việc. Tổng số trên hồ sơ là bản tóm tắt; mở lịch hẹn hoặc hóa đơn gốc để kiểm tra một khoản cụ thể."
+          },
+          "image": "client-profile"
+        },
+        {
+          "key": "newbooking",
+          "title": {
+            "en": "Create one visit or several dates",
+            "vi": "Tạo một buổi khám hoặc nhiều ngày"
+          },
+          "body": {
+            "en": "A booking needs a client, service, place, scheduled time and duration. Create it from the client, contact booking wizard or Operations > Bookings, using the route available to your role.\n1. Find the correct client. Confirm whether the service is at home, at the clinic or online.\n2. Choose the facility, catchment, service type and exact visit address. Enter the scheduled date, time and expected duration.\n3. Add the required service lines, quantities and agreed details. For recurring or multiple-date work, review every date and avoid overlapping or duplicate visits.\n4. Save and check the booking reference. Open the quote and review charges before confirming the appointment.\n5. Confirm the booking when the details are agreed. Then arrange staff and check acceptance.\nUse list view to find records by reference or status; use calendar view to inspect timing. When searching a visit date, use the scheduled-visit field rather than assuming the record creation date is the visit date. After creating several dates, count the resulting bookings and check the first and last date.",
+            "vi": "Một lịch hẹn cần khách hàng, dịch vụ, địa điểm, giờ dự kiến và thời lượng. Tạo từ hồ sơ khách hàng, trình đặt lịch của liên hệ hoặc Điều phối > Lịch hẹn theo quyền của bạn.\n1. Tìm đúng khách hàng. Xác nhận dịch vụ tại nhà, tại phòng khám hay trực tuyến.\n2. Chọn cơ sở, khu vực, loại dịch vụ và địa chỉ chính xác. Nhập ngày, giờ và thời lượng dự kiến.\n3. Thêm dịch vụ, số lượng và chi tiết đã thống nhất. Với lịch lặp lại hoặc nhiều ngày, kiểm tra từng ngày để tránh trùng hoặc chồng lịch.\n4. Lưu và kiểm tra mã lịch hẹn. Mở báo giá, kiểm tra phí trước khi xác nhận hẹn.\n5. Xác nhận khi các chi tiết đã thống nhất. Sau đó phân công nhân viên và kiểm tra việc nhận lịch.\nDùng dạng danh sách để tìm theo mã hoặc trạng thái; dùng lịch để xem thời gian. Khi tìm ngày khám, dùng trường ngày dự kiến thay vì mặc định ngày tạo hồ sơ là ngày khám. Sau khi tạo nhiều ngày, đếm số lịch hẹn và kiểm tra ngày đầu, ngày cuối."
+          },
+          "image": "booking-calendar"
+        },
+        {
+          "key": "booking-screen",
+          "title": {
+            "en": "Read the booking screen and lifecycle",
+            "vi": "Đọc màn hình và vòng đời lịch hẹn"
+          },
+          "body": {
+            "en": "The booking screen brings together client, service, planned time, staff, clinical work and financial links. Its status tells you which stage has been reached. The Next Best Action panel offers an action appropriate to the current state; check the details before using it.\n| Stage or control | Meaning |\n| Draft / Created | Details are being prepared. |\n| Confirm Booking | Confirm the agreed appointment details. |\n| Assigned | Staff have been attached; check whether the assignment is accepted. |\n| Start Service / In Progress | Actual service has started and timing is recorded. |\n| Complete Service / Completed | Service work is finished; check notes, closing answers and invoice separately. |\n| Completed-Pending-Invoice | Service is finished but invoice work remains. |\n| View Quote / View Payments / View Assignments | Open the related records. |\n| Close | Finalise the booking when the required work has been completed. |\nThe system may create or link an invoice during completion, depending on the workflow. Open the linked invoice before using Create Invoice so you do not create a duplicate. A support staff member finishing their own assignment is not always the same as the lead completing the overall visit.",
+            "vi": "Màn hình lịch hẹn tập hợp khách hàng, dịch vụ, giờ dự kiến, nhân viên, công việc lâm sàng và liên kết tài chính. Trạng thái cho biết giai đoạn đã đạt. Khung Hành động tiếp theo đề xuất thao tác phù hợp trạng thái; kiểm tra chi tiết trước khi dùng.\n| Giai đoạn hoặc nút | Ý nghĩa |\n| Nháp / Đã tạo | Đang chuẩn bị thông tin. |\n| Xác nhận lịch hẹn (Confirm Booking) | Xác nhận chi tiết đã thống nhất. |\n| Đã phân công | Đã gắn nhân viên; cần kiểm tra họ đã nhận lịch chưa. |\n| Bắt đầu dịch vụ / Đang thực hiện | Dịch vụ thực tế đã bắt đầu và được ghi thời gian. |\n| Hoàn tất dịch vụ / Hoàn tất | Đã xong phần dịch vụ; kiểm tra riêng ghi chú, câu hỏi kết thúc và hóa đơn. |\n| Hoàn tất - Chờ hóa đơn | Đã xong dịch vụ nhưng còn việc lập hóa đơn. |\n| Xem báo giá / Thanh toán / Phân công | Mở hồ sơ liên quan. |\n| Đóng (Close) | Kết thúc lịch hẹn khi công việc bắt buộc đã hoàn thành. |\nHệ thống có thể tạo hoặc liên kết hóa đơn khi hoàn tất, tùy quy trình. Mở hóa đơn liên kết trước khi dùng Tạo hóa đơn để tránh trùng. Nhân viên hỗ trợ hoàn tất phần được giao không phải lúc nào cũng đồng nghĩa người phụ trách chính đã hoàn tất cả buổi khám."
+          },
+          "image": "booking-detail"
+        },
+        {
+          "key": "quote",
+          "title": {
+            "en": "Understand a quote and an added service",
+            "vi": "Hiểu báo giá và dịch vụ bổ sung"
+          },
+          "body": {
+            "en": "A quote explains the planned charge. The amount can depend on service, quantity, staff or service category, catchment, date, time, duration, travel and approved discounts. An invoice is the bill produced from the final charge.\n1. Open View Quote from the booking. Check the client, currency and all service lines.\n2. Compare quantities, unit prices, extra time, travel charges and discounts with the agreed service. Check the breakdown rather than only the grand total.\n3. If a service is added during the visit, use Add Service or the available service-line action. Select the actual service and quantity; do not disguise it as a discount or a manual payment.\n4. Save or recalculate using the available quote action. Review the updated amount and any resulting invoice lines.\n5. Tell the responsible office colleague if an invoice already exists and an adjustment is required.\nDo not assume that a fee in an example is today's clinic price. A missing tariff, incorrect catchment or wrong visit time should be investigated before billing. Ask the authorised pricing administrator to correct configuration; regular users should not change the master price list to make a single quote look right.",
+            "vi": "Báo giá giải thích phí dự kiến. Số tiền có thể phụ thuộc dịch vụ, số lượng, nhóm nhân viên hoặc dịch vụ, khu vực, ngày, giờ, thời lượng, đi lại và chiết khấu được duyệt. Hóa đơn là chứng từ tính phí theo giá trị cuối cùng.\n1. Mở Xem báo giá từ lịch hẹn. Kiểm tra khách hàng, tiền tệ và từng dòng dịch vụ.\n2. Đối chiếu số lượng, đơn giá, thời gian thêm, phí đi lại và chiết khấu với dịch vụ đã thống nhất. Xem bảng phân tích, không chỉ tổng tiền.\n3. Nếu bổ sung dịch vụ tại buổi khám, dùng Thêm dịch vụ (Add Service) hoặc thao tác dòng dịch vụ hiện có. Chọn đúng dịch vụ và số lượng; không ghi thay bằng chiết khấu hoặc thanh toán thủ công.\n4. Lưu hoặc tính lại bằng nút có trên báo giá. Kiểm tra số tiền cập nhật và các dòng hóa đơn phát sinh.\n5. Báo đồng nghiệp văn phòng phụ trách nếu đã có hóa đơn và cần điều chỉnh.\nKhông mặc định giá trong ví dụ là giá hiện tại của phòng khám. Cần kiểm tra biểu phí thiếu, khu vực sai hoặc giờ khám sai trước khi lập hóa đơn. Nhờ quản trị giá có quyền sửa cấu hình; người dùng thông thường không nên đổi bảng giá gốc chỉ để sửa một báo giá."
+          },
+          "image": null
+        },
+        {
+          "key": "changes",
+          "title": {
+            "en": "Reschedule, cancel and avoid duplicate work",
+            "vi": "Đổi lịch, hủy và tránh công việc trùng"
+          },
+          "body": {
+            "en": "To reschedule, open the existing booking and choose Reschedule. Check the new time, duration and available staff. If changing the nurse, confirm the old and new assignments. Reopen the booking and inspect the calendar after saving. Where schedule dragging is enabled, moving a block is a real reschedule, not just a visual change; review the confirmation and warnings.\nTo cancel, use Cancel Booking and record the real reason. Check that assignment and notification outcomes agree with the cancellation. Do not delete the client because one visit is cancelled. For work already completed or billed, ask Operations and Finance to handle the appropriate correction instead of trying to hide the history.\nIf the browser reports an error or times out, search the booking reference before creating it again. If the appointment moved successfully but a message failed, fix the communication separately. The booking, assignment, invoice and outgoing message each have their own record of what happened.",
+            "vi": "Để đổi lịch, mở lịch hẹn hiện có và chọn Đổi lịch (Reschedule). Kiểm tra giờ mới, thời lượng và nhân viên phù hợp. Nếu đổi điều dưỡng, xác nhận cả phân công cũ và mới. Mở lại lịch hẹn, xem trên lịch sau khi lưu. Khi có tính năng kéo trên lịch nhân viên, di chuyển khối là đổi lịch thật, không chỉ đổi cách hiển thị; đọc xác nhận và cảnh báo.\nĐể hủy, dùng Hủy lịch hẹn và ghi lý do thực tế. Kiểm tra kết quả phân công và thông báo phù hợp việc hủy. Không xóa khách hàng chỉ vì một buổi khám bị hủy. Với công việc đã hoàn tất hoặc đã lập hóa đơn, nhờ Điều phối và Tài chính xử lý điều chỉnh thích hợp thay vì che lịch sử.\nNếu trình duyệt báo lỗi hoặc hết thời gian chờ, tìm mã lịch hẹn trước khi tạo lại. Nếu đổi lịch thành công nhưng tin nhắn thất bại, xử lý phần thông báo riêng. Lịch hẹn, phân công, hóa đơn và tin nhắn gửi đi đều có hồ sơ diễn biến riêng."
+          },
+          "image": null
+        }
+      ],
+      "flow": {
+        "en": [
+          "Find client",
+          "Plan service and time",
+          "Review quote",
+          "Confirm",
+          "Assign staff",
+          "Track visit"
+        ],
+        "vi": [
+          "Tìm khách hàng",
+          "Chọn dịch vụ, thời gian",
+          "Kiểm tra báo giá",
+          "Xác nhận",
+          "Phân công",
+          "Theo dõi buổi khám"
+        ]
+      }
+    },
+    {
+      "key": "schedule",
+      "title": {
+        "en": "Operations: staffing and the working day",
+        "vi": "Điều phối: nhân sự và ngày làm việc"
+      },
+      "topics": [
+        {
+          "key": "ops-dashboard",
+          "title": {
+            "en": "Use the Operations dashboard",
+            "vi": "Dùng bảng tổng quan Điều phối"
+          },
+          "body": {
+            "en": "Start in Operations > Dashboard. Choose the date, facility and catchment. Review bookings needing staff, visits in progress and completed work. The queue and timeline help you see the next action without opening every booking.\n1. Open an unassigned booking and confirm the required service, time and location.\n2. Check the staff roster, availability and workload. A free-looking slot is not enough if the employee lacks the required skills or travel time.\n3. Use Assign Staff or the inline assignment control. Check who is lead and who is support where multiple staff are needed.\n4. Verify acceptance. An offer or assignment is not proof the staff member has seen and accepted it.\n5. Review issues throughout the day and arrange a replacement when someone declines.\nUse the dashboard's links to open the actual booking. Refresh to see current information. A visit can be clinically finished while finance still has work to do; follow the correct queue for each outstanding item.",
+            "vi": "Bắt đầu tại Điều phối > Bảng tổng quan. Chọn ngày, cơ sở và khu vực. Xem lịch cần nhân viên, buổi khám đang thực hiện và công việc hoàn tất. Hàng đợi và trục thời gian giúp thấy bước tiếp theo mà không cần mở mọi lịch hẹn.\n1. Mở lịch chưa phân công, xác nhận dịch vụ, giờ và địa điểm.\n2. Kiểm tra lịch nhân viên, thời gian rảnh và khối lượng công việc. Khoảng trống trên lịch chưa đủ nếu nhân viên thiếu kỹ năng hoặc thời gian di chuyển.\n3. Dùng Phân công nhân viên hoặc bộ chọn ngay trên dòng. Kiểm tra người chính và người hỗ trợ khi cần nhiều người.\n4. Xác minh việc nhận lịch. Lời mời hoặc phân công chưa chứng minh nhân viên đã xem và chấp nhận.\n5. Theo dõi vấn đề trong ngày và bố trí người thay khi có từ chối.\nDùng liên kết trên bảng tổng quan để mở lịch hẹn thật. Làm mới để xem dữ liệu hiện tại. Một buổi khám có thể xong về chuyên môn nhưng còn việc tài chính; theo dõi đúng danh sách cho từng việc còn lại."
+          },
+          "image": "operations-dashboard"
+        },
+        {
+          "key": "staff-schedule",
+          "title": {
+            "en": "Staff Schedule, Time Off, Workload and Routes",
+            "vi": "Lịch nhân viên, Nghỉ phép, Khối lượng và Tuyến đường"
+          },
+          "body": {
+            "en": "Schedule > Staff Schedule shows work against staff and time. Use its date and view controls to find the right day. Open a block to check the linked booking. If draw-to-create is enabled, selecting a free time range starts booking creation; review the form before saving.\nTime Off records absence. Workload summarises how much work staff have. Routes checks whether travel between visits is feasible. Route warnings help planning; they do not automatically move visits or guarantee arrival times.\n1. Compare the requested visit with working hours, leave and existing assignments.\n2. Leave realistic travel time between locations. Investigate a route warning rather than ignoring it because there is no time overlap.\n3. Assign an eligible staff member and check the final schedule.\n4. After a change, verify all staff on a multi-person visit are still aligned with the visit time.\nIf a visit is declined, open the assignment or booking and choose a replacement. Confirm the replacement has accepted and the old assignment no longer appears as active work. Notify the responsible team of the final arrangement.",
+            "vi": "Lịch > Lịch nhân viên hiển thị công việc theo nhân viên và thời gian. Dùng bộ chọn ngày và cách xem để đến đúng ngày. Mở một khối để kiểm tra lịch hẹn liên kết. Nếu có tính năng kéo vùng trống để tạo lịch, thao tác đó mở bước tạo lịch hẹn; kiểm tra biểu mẫu trước khi lưu.\nNghỉ phép ghi thời gian vắng mặt. Khối lượng công việc tổng hợp mức tải. Tuyến đường kiểm tra khả năng di chuyển giữa các buổi khám. Cảnh báo tuyến đường hỗ trợ lập kế hoạch; không tự chuyển lịch và không bảo đảm giờ đến.\n1. Đối chiếu buổi khám với giờ làm, nghỉ phép và phân công hiện có.\n2. Chừa thời gian di chuyển thực tế. Kiểm tra cảnh báo tuyến đường, không bỏ qua chỉ vì giờ khám không chồng nhau.\n3. Phân công người phù hợp và kiểm tra lịch cuối cùng.\n4. Sau thay đổi, kiểm tra mọi nhân viên của buổi khám nhiều người vẫn cùng giờ hẹn.\nNếu nhân viên từ chối, mở phân công hoặc lịch hẹn để chọn người thay. Xác nhận người mới đã nhận và phân công cũ không còn là công việc đang có hiệu lực. Thông báo bố trí cuối cùng cho nhóm phụ trách."
+          },
+          "image": "staff-schedule"
+        },
+        {
+          "key": "exceptions",
+          "title": {
+            "en": "Exceptions, cash handover and staff development",
+            "vi": "Ngoại lệ, bàn giao tiền và phát triển nhân viên"
+          },
+          "body": {
+            "en": "Exceptions > First-visit offers helps follow assignment offers. Timecard mismatches highlights differences between visit times and attendance. Use Visit Times and Keep Attendance represent different decisions; check the evidence and your authority before choosing either. Neither button should be used simply to clear a warning.\nCollections tracks field cash awaiting handover. Count the money with the staff member, match the client and payment references, then use the authorised receiving action. A handover confirms movement of money already collected; it is not a second client payment.\nDevelopment > Employee development and Coaching support staff plans, objectives and coaching sessions. Open the person's plan, review agreed objectives and due dates, and record progress. Start Session and Complete Session track the coaching meeting. AI summaries or suggested actions need human review before use. Keep staff development information within its permitted audience.\nAt the end of the day, check unresolved offers, unfinished visits, timing exceptions, pending cash and important follow-ups. Record the next responsible person so work continues safely across shifts.",
+            "vi": "Ngoại lệ > Lời mời buổi khám đầu giúp theo dõi lời mời phân công. Chênh lệch bảng công nêu khác biệt giữa giờ khám và chấm công. Dùng giờ buổi khám (Use Visit Times) và Giữ giờ chấm công (Keep Attendance) là hai quyết định khác nhau; kiểm tra bằng chứng và quyền trước khi chọn. Không dùng nút chỉ để làm mất cảnh báo.\nThu tiền theo dõi tiền mặt ngoài hiện trường chờ bàn giao. Đếm tiền cùng nhân viên, đối chiếu khách hàng và mã thanh toán, rồi dùng thao tác nhận tiền có quyền. Bàn giao xác nhận di chuyển số tiền đã thu, không phải một lần khách hàng thanh toán nữa.\nPhát triển > Phát triển nhân viên và Huấn luyện hỗ trợ kế hoạch, mục tiêu và buổi hướng dẫn. Mở kế hoạch của nhân viên, xem mục tiêu cùng hạn đã thống nhất và ghi tiến độ. Bắt đầu phiên và Hoàn tất phiên theo dõi buổi huấn luyện. Bản tóm tắt hoặc hành động AI đề xuất cần được con người xem lại. Giữ thông tin phát triển nhân viên đúng phạm vi được phép.\nCuối ngày, kiểm tra lời mời chưa xử lý, buổi khám chưa xong, chênh lệch giờ, tiền chờ bàn giao và việc theo dõi quan trọng. Ghi người phụ trách tiếp theo để công việc liên tục giữa các ca."
+          },
+          "image": null
+        }
+      ],
+      "flow": {
+        "en": [
+          "Check demand",
+          "Check staff and travel",
+          "Assign",
+          "Staff accepts",
+          "Monitor exceptions",
+          "Handover"
+        ],
+        "vi": [
+          "Xem nhu cầu",
+          "Kiểm tra người và di chuyển",
+          "Phân công",
+          "Nhân viên nhận lịch",
+          "Xử lý ngoại lệ",
+          "Bàn giao"
+        ]
+      }
+    },
+    {
+      "key": "mobile",
+      "title": {
+        "en": "The nurse and doctor mobile app",
+        "vi": "Ứng dụng di động cho điều dưỡng và bác sĩ"
+      },
+      "topics": [
+        {
+          "key": "mobile-start",
+          "title": {
+            "en": "Open the app and find your visits",
+            "vi": "Mở ứng dụng và tìm lịch được giao"
+          },
+          "body": {
+            "en": "Open https://carejiox.com/health_pwa on your phone, or open the installed app. Sign in with your own staff account. If the browser offers installation, use its Install or Add to Home Screen option. Installation creates a convenient shortcut; it does not create a new account.\nBooking is the main work tab. Use Today, previous/next arrows or the date picker, then choose Day, Week or Month. Open a visit card to see its details. Confirm client, date, address, service and your assignment before acting.\nThe bell shows available notifications and assignment offers. Accept confirms you can take the work; use the decline action and reason if you cannot. Check with Operations if the expected visit is missing. An empty day does not mean the clinic has no appointments.\nUse EN / VI to choose the available interface language. Display modes can improve visibility in sunlight or increase touch targets for glove use. Help opens the relevant written guide and video beside your work; online content needs a connection.",
+            "vi": "Mở https://carejiox.com/health_pwa trên điện thoại hoặc mở ứng dụng đã cài. Đăng nhập bằng tài khoản cá nhân. Nếu trình duyệt có đề nghị cài, dùng Cài đặt hoặc Thêm vào màn hình chính. Cài đặt tạo lối mở thuận tiện, không tạo tài khoản mới.\nLịch hẹn là thẻ công việc chính. Dùng Hôm nay, mũi tên trước/sau hoặc bộ chọn ngày, rồi chọn Ngày, Tuần hoặc Tháng. Mở thẻ buổi khám để xem chi tiết. Xác nhận khách hàng, ngày, địa chỉ, dịch vụ và phân công của bạn trước khi thao tác.\nChuông hiển thị thông báo và lời mời phân công hiện có. Chấp nhận xác nhận bạn nhận việc; dùng thao tác từ chối và lý do nếu không thể nhận. Liên hệ Điều phối nếu thiếu lịch dự kiến. Ngày trống không có nghĩa phòng khám không có lịch hẹn.\nDùng EN / VI để chọn ngôn ngữ giao diện. Chế độ hiển thị giúp nhìn ngoài nắng hoặc tăng vùng chạm khi đeo găng. Hướng dẫn mở bài viết và video cạnh công việc; nội dung trực tuyến cần kết nối."
+          },
+          "image": "mobile-day"
+        },
+        {
+          "key": "mobile-visit",
+          "title": {
+            "en": "Carry out a visit step by step",
+            "vi": "Thực hiện buổi khám từng bước"
+          },
+          "body": {
+            "en": "1. Open the assigned visit. Read the client details and service instructions. Use Call or Map only after checking the intended person and destination.\n2. Use On my way where available when you actually begin travelling. It records a travel event; it does not start the service timer.\n3. At the correct location and when ready to provide care, choose Start Service. Supply required location permission or verification information if prompted. Confirm the visit is In Progress.\n4. Open Clinical Notes and record the work in the correct visit. Save, close the note panel and reopen it to confirm the note is retained.\n5. Complete any required observations, assessments, care-plan tasks or medication records that apply to this visit. Add an authorised extra service through the service action when needed.\n6. Answer the closing questions accurately. Choose Complete / Complete Service only when your work and required records are finished.\n7. Reopen the visit to check completion and the linked invoice, if your role can see it. If the status remains pending, read the message and ask Operations for the remaining action.\nIf multiple people attend, follow the lead/support responsibility shown in the assignment. Do not start or finish another person's work to remove an error.",
+            "vi": "1. Mở buổi khám được giao. Đọc thông tin khách hàng và hướng dẫn dịch vụ. Chỉ dùng Gọi hoặc Bản đồ sau khi kiểm tra đúng người, đúng điểm đến.\n2. Dùng Đang trên đường (On my way) khi có và khi thực sự bắt đầu di chuyển. Thao tác ghi sự kiện đi đường, không bắt đầu đồng hồ dịch vụ.\n3. Khi đến đúng nơi và sẵn sàng chăm sóc, chọn Bắt đầu dịch vụ. Cung cấp quyền vị trí hoặc thông tin xác minh bắt buộc nếu được yêu cầu. Kiểm tra trạng thái Đang thực hiện.\n4. Mở Ghi chú lâm sàng và ghi công việc trong đúng buổi khám. Lưu, đóng khung ghi chú rồi mở lại để xác nhận còn nội dung.\n5. Hoàn thành dấu hiệu sinh tồn, đánh giá, nhiệm vụ kế hoạch chăm sóc hoặc hồ sơ thuốc áp dụng cho buổi khám. Dùng thao tác dịch vụ để thêm dịch vụ bổ sung đã được phép khi cần.\n6. Trả lời đúng các câu hỏi kết thúc. Chỉ chọn Hoàn tất / Hoàn tất dịch vụ khi xong công việc và hồ sơ bắt buộc.\n7. Mở lại buổi khám để kiểm tra hoàn tất và hóa đơn liên kết nếu được xem. Nếu còn trạng thái chờ, đọc thông báo và hỏi Điều phối về việc còn lại.\nNếu nhiều người cùng tham gia, làm theo trách nhiệm chính/hỗ trợ trên phân công. Không bắt đầu hoặc hoàn tất phần của người khác chỉ để bỏ lỗi."
+          },
+          "image": "mobile-detail"
+        },
+        {
+          "key": "mobile-notes",
+          "title": {
+            "en": "Notes, voice input, signing and verification",
+            "vi": "Ghi chú, nhập giọng nói, ký và xác minh"
+          },
+          "body": {
+            "en": "Write factual observations and care performed in the correct client's visit. Voice input, when enabled, turns your recorded observations into draft text. Read the entire transcript, correct names, numbers and meaning, and save the reviewed note. A recording or transcript is not a signed clinical record.\nFinalize & Sign is a separate action for an authorised clinician. Check the content before signing. A final note is protected from ordinary editing; use the permitted addendum process for later corrections rather than overwriting the original.\nVisit verification may record check-in/out times, location and signatures. If location is unavailable or appears wrong, explain the issue and contact Operations. Do not invent coordinates or another person's signature. Online visits follow the configured telehealth workflow.\nFor a connection problem, read the app's connection or pending status. Some data can be available locally, but videos, live calls and server actions need connectivity. Reconnect, use Sync Data where available, and verify the record on reopening. Do not log out, clear browser data or reinstall while unsent work remains. If unsure whether an action was saved, check before entering it again.",
+            "vi": "Ghi quan sát thực tế và chăm sóc đã thực hiện trong đúng buổi khám của khách hàng. Nhập giọng nói, khi bật, chuyển lời ghi âm của bạn thành văn bản nháp. Đọc toàn bộ bản chép, sửa tên, số và ý nghĩa rồi lưu ghi chú đã kiểm tra. Bản ghi âm hoặc bản chép chưa phải hồ sơ lâm sàng đã ký.\nHoàn tất và ký (Finalize & Sign) là thao tác riêng của người có thẩm quyền. Kiểm tra nội dung trước khi ký. Ghi chú cuối cùng được bảo vệ khỏi sửa thông thường; dùng quy trình bổ sung được phép để sửa về sau thay vì ghi đè bản gốc.\nXác minh buổi khám có thể ghi giờ vào/ra, vị trí và chữ ký. Nếu không có vị trí hoặc vị trí sai, giải thích vấn đề và liên hệ Điều phối. Không tự bịa tọa độ hoặc ký thay người khác. Buổi khám trực tuyến theo quy trình khám từ xa đã cấu hình.\nKhi mất kết nối, đọc trạng thái mạng hoặc chờ đồng bộ. Một số dữ liệu có thể có trên máy, nhưng video, cuộc gọi trực tiếp và thao tác máy chủ cần mạng. Kết nối lại, dùng Đồng bộ dữ liệu nếu có rồi mở lại để kiểm tra. Không đăng xuất, xóa dữ liệu trình duyệt hoặc cài lại khi còn việc chưa gửi. Nếu không rõ đã lưu hay chưa, kiểm tra trước khi nhập lại."
+          },
+          "image": null
+        },
+        {
+          "key": "mobile-other",
+          "title": {
+            "en": "Patients, calls, family messages and profile",
+            "vi": "Khách hàng, cuộc gọi, tin gia đình và hồ sơ cá nhân"
+          },
+          "body": {
+            "en": "Patients provides a searchable list within your access. Open the correct person and review permitted information. Call opens the clinic contact route; the Call button on a visit refers to that visit's contact. Check the number before dialling.\nFamily Messages, where enabled on the visit, lets the care team read and respond to permitted family communication. Review the recipient and the message before sending. A post-visit update may be offered after completion; check its content and consent requirements. Do not promise that a message was delivered merely because it was drafted.\nProfile shows your signed-in identity and available sync/logout controls. Use Sync Data to request a refresh and inspect pending work. Log Out ends the session and can clear local patient information, so first confirm your changes have reached the server.\nNotifications depend on device permissions and the clinic's delivery setup. If notifications are blocked, use the app's instructions and continue to check your work list manually. A missing notification does not cancel an assignment.",
+            "vi": "Khách hàng cung cấp danh sách tìm kiếm trong phạm vi quyền. Mở đúng người và xem thông tin được phép. Thẻ Gọi mở cách liên hệ phòng khám; nút Gọi trên buổi khám liên hệ người của buổi khám đó. Kiểm tra số trước khi gọi.\nTin nhắn gia đình, khi được bật trong buổi khám, cho phép nhóm chăm sóc đọc và trả lời hội thoại được phép. Kiểm tra người nhận và nội dung trước khi gửi. Sau khi hoàn tất có thể có chức năng cập nhật cho gia đình; kiểm tra nội dung cùng yêu cầu đồng ý. Không khẳng định tin đã được giao chỉ vì đã có bản nháp.\nHồ sơ cá nhân cho biết danh tính đang đăng nhập và điều khiển đồng bộ/đăng xuất. Dùng Đồng bộ dữ liệu để yêu cầu làm mới và kiểm tra việc đang chờ. Đăng xuất kết thúc phiên và có thể xóa thông tin khách hàng lưu trên máy; trước đó cần xác nhận thay đổi đã lên máy chủ.\nThông báo phụ thuộc quyền thiết bị và thiết lập gửi của phòng khám. Nếu thông báo bị chặn, làm theo hướng dẫn trong ứng dụng và tiếp tục tự kiểm tra danh sách công việc. Không nhận thông báo không có nghĩa phân công đã bị hủy."
+          },
+          "image": "mobile-profile"
+        }
+      ],
+      "flow": {
+        "en": [
+          "Review assignment",
+          "Accept",
+          "Travel and arrive",
+          "Start visit",
+          "Record care",
+          "Complete and verify"
+        ],
+        "vi": [
+          "Xem phân công",
+          "Nhận lịch",
+          "Di chuyển, đến nơi",
+          "Bắt đầu",
+          "Ghi chăm sóc",
+          "Hoàn tất, kiểm tra"
+        ]
+      }
+    },
+    {
+      "key": "clinical",
+      "title": {
+        "en": "Clinical records and care coordination",
+        "vi": "Hồ sơ lâm sàng và phối hợp chăm sóc"
+      },
+      "topics": [
+        {
+          "key": "observations",
+          "title": {
+            "en": "Vitals and observations",
+            "vi": "Dấu hiệu sinh tồn và quan sát"
+          },
+          "body": {
+            "en": "Clinical > Observations stores structured measurements. Unlike a free-text note, each observation has a type, value, unit and time. This makes it possible to review trends and use the measurement in monitoring.\n1. Open the correct client or visit and create an observation through the available action.\n2. Choose the observation type. Enter the measured value in the displayed unit; do not guess or copy a previous measurement as a new reading.\n3. Check the effective date and time, performer, visit link and relevant method or position.\n4. Save and inspect the result, including any abnormal or alert indicator. If information was entered incorrectly, use the permitted correction or Entered in Error process rather than concealing the error.\n5. Follow the clinic's escalation procedure for concerning findings. Recording a value is not the same as notifying the responsible clinician.\nThe software supports recording and review. It does not decide the care to provide. Missing or old measurements should not be treated as current normal results.",
+            "vi": "Lâm sàng > Quan sát lưu các phép đo có cấu trúc. Khác ghi chú tự do, mỗi quan sát có loại, giá trị, đơn vị và thời điểm. Nhờ đó có thể xem xu hướng và dùng số đo trong theo dõi.\n1. Mở đúng khách hàng hoặc buổi khám và tạo quan sát bằng thao tác hiện có.\n2. Chọn loại quan sát. Nhập giá trị đã đo theo đơn vị hiển thị; không đoán hoặc chép số đo cũ thành kết quả mới.\n3. Kiểm tra thời điểm có hiệu lực, người thực hiện, liên kết buổi khám và phương pháp hoặc tư thế liên quan.\n4. Lưu, xem kết quả và dấu hiệu bất thường/cảnh báo. Nếu nhập sai, dùng quy trình sửa hoặc Đã nhập nhầm được phép thay vì che lỗi.\n5. Theo quy trình báo cáo của phòng khám khi có kết quả đáng lo. Ghi một giá trị không đồng nghĩa đã báo người phụ trách chuyên môn.\nPhần mềm hỗ trợ ghi nhận và xem xét, không quyết định chăm sóc cần thực hiện. Không xem kết quả thiếu hoặc cũ là kết quả bình thường hiện tại."
+          },
+          "image": "observations"
+        },
+        {
+          "key": "monitoring",
+          "title": {
+            "en": "Care Intelligence: worklist, alerts and NEWS2",
+            "vi": "Thông tin chăm sóc: danh sách ưu tiên, cảnh báo và NEWS2"
+          },
+          "body": {
+            "en": "The Worklist brings together clients who may need review, based on available monitoring signals. Open a row to inspect the reasons, dates and supporting observations. A ranking helps organise review; it is not a diagnosis.\nAlerts has separate states. Acknowledge means somebody has taken responsibility for reviewing it. Resolve records that the issue has been addressed. Dismiss records that the alert is not applicable, with the required explanation. Acknowledging does not mean the client's condition has improved.\nNEWS2 shows the available score and its component measurements. Review when those measurements were taken and whether the required components are present. Do not interpret missing data as a reassuring score. This manual explains the screen, not clinical thresholds or treatment decisions.\n1. Review the highest-priority or newest items according to your clinic's procedure.\n2. Confirm the client and evidence, then contact the appropriate clinician when needed.\n3. Record the action taken and update the alert through the permitted button.\n4. Arrange and document follow-up. Device or data-source problems should be reported separately from the clinical issue.",
+            "vi": "Danh sách ưu tiên tập hợp khách hàng có thể cần xem xét dựa trên tín hiệu theo dõi hiện có. Mở một dòng để xem lý do, ngày giờ và số đo hỗ trợ. Thứ hạng giúp tổ chức công việc, không phải chẩn đoán.\nCảnh báo có trạng thái riêng. Đã tiếp nhận (Acknowledge) nghĩa là có người nhận trách nhiệm xem xét. Giải quyết (Resolve) ghi việc đã xử lý. Bỏ qua có lý do (Dismiss) ghi cảnh báo không áp dụng, kèm giải thích bắt buộc. Tiếp nhận không có nghĩa tình trạng khách hàng đã cải thiện.\nNEWS2 hiển thị điểm hiện có và các số đo thành phần. Kiểm tra thời điểm đo và việc có đủ thành phần cần thiết không. Không xem dữ liệu thiếu là điểm an toàn. Sổ tay giải thích màn hình, không quy định ngưỡng lâm sàng hay quyết định điều trị.\n1. Xem mục ưu tiên cao hoặc mới nhất theo quy trình phòng khám.\n2. Xác nhận khách hàng và bằng chứng, liên hệ người phụ trách chuyên môn khi cần.\n3. Ghi hành động đã thực hiện và cập nhật cảnh báo bằng nút được phép.\n4. Bố trí, ghi nhận theo dõi tiếp. Báo riêng lỗi thiết bị hoặc nguồn dữ liệu với vấn đề lâm sàng."
+          },
+          "image": "care-intelligence"
+        },
+        {
+          "key": "careplans",
+          "title": {
+            "en": "Care plans and visit tasks",
+            "vi": "Kế hoạch chăm sóc và nhiệm vụ buổi khám"
+          },
+          "body": {
+            "en": "A care plan describes goals and planned activities over time. A visit task is a particular item to be completed during a visit. Open the client's Care Plans tab or the care-plan action available to your role. The visit's Visit Tasks tab shows the related work.\nAn authorised clinician prepares the plan, goals, activities and review dates. Activate makes the plan active. Start Review and Confirm Review record a planned review. Complete finishes the plan; Cancel Plan stops it through the appropriate process.\nDuring a visit, read each task and record the actual outcome. Mark Done means the task was performed. Mark Not Done records that it was not performed; provide the reason requested. Do not mark all tasks done simply to finish the screen. Reset to Pending is for a permitted correction, not for erasing what happened.\nCheck the client, active plan and visit before recording a result. If the plan is outdated or a task is unsuitable, contact the responsible clinician and document the issue. Changing a care plan is different from recording that a visit task was completed.",
+            "vi": "Kế hoạch chăm sóc mô tả mục tiêu và hoạt động dự kiến theo thời gian. Nhiệm vụ buổi khám là một việc cụ thể cần làm trong một lần khám. Mở thẻ Kế hoạch chăm sóc của khách hàng hoặc thao tác kế hoạch theo quyền. Thẻ Nhiệm vụ buổi khám hiển thị công việc liên quan.\nNgười phụ trách chuyên môn có quyền chuẩn bị kế hoạch, mục tiêu, hoạt động và ngày rà soát. Kích hoạt đưa kế hoạch vào sử dụng. Bắt đầu rà soát và Xác nhận rà soát ghi quá trình đánh giá lại. Hoàn tất kết thúc kế hoạch; Hủy kế hoạch dừng theo quy trình phù hợp.\nTrong buổi khám, đọc từng nhiệm vụ và ghi kết quả thật. Đánh dấu đã làm nghĩa là đã thực hiện. Đánh dấu chưa làm ghi việc không thực hiện; nhập lý do được yêu cầu. Không đánh dấu tất cả đã làm chỉ để xong màn hình. Đặt lại chờ xử lý dùng cho sửa đổi được phép, không để xóa diễn biến.\nKiểm tra khách hàng, kế hoạch đang hiệu lực và buổi khám trước khi ghi kết quả. Nếu kế hoạch cũ hoặc nhiệm vụ không phù hợp, liên hệ người phụ trách chuyên môn và ghi vấn đề. Sửa kế hoạch khác với ghi hoàn thành một nhiệm vụ buổi khám."
+          },
+          "image": null
+        },
+        {
+          "key": "medications",
+          "title": {
+            "en": "Medication orders and the administration register",
+            "vi": "Y lệnh thuốc và sổ thực hiện thuốc"
+          },
+          "body": {
+            "en": "Clinical > Medications > Orders contains medication instructions. The Administration Register records individual planned or actual administrations. An order is not evidence that a dose was given.\nAuthorised prescribers review the client, medication, dose, route, frequency, start/end dates and instructions. Activate brings an approved order into use. Put On Hold pauses it; Resume restarts it; Complete or Cancel ends the order as appropriate. Interaction warnings and acknowledgement require clinical review, not a routine click.\nFor a scheduled administration, confirm the correct client, visit, medicine and order before recording what happened. Record Given documents an administration actually performed. Record Not Given or Record Refused documents a different outcome and its reason. Cancel Slot is a scheduling action, not proof of administration.\nRead the saved outcome and time in the register. If you made an error or the order conflicts with the care instructions, stop and refer to the responsible clinician through the clinic's process. This screen records authorised medication work; it is not a guide to choosing medicines or doses.",
+            "vi": "Lâm sàng > Thuốc > Y lệnh chứa hướng dẫn dùng thuốc. Sổ thực hiện thuốc ghi từng lần dự kiến hoặc thực tế. Có y lệnh chưa phải bằng chứng đã dùng thuốc.\nNgười có quyền kê đơn kiểm tra khách hàng, thuốc, liều, đường dùng, tần suất, ngày bắt đầu/kết thúc và hướng dẫn. Kích hoạt đưa y lệnh đã duyệt vào sử dụng. Tạm ngưng dừng tạm; Tiếp tục mở lại; Hoàn tất hoặc Hủy kết thúc theo tình huống. Cảnh báo tương tác và xác nhận đã xem cần đánh giá chuyên môn, không chỉ bấm cho qua.\nVới một lần dùng thuốc dự kiến, xác nhận đúng khách hàng, buổi khám, thuốc và y lệnh trước khi ghi diễn biến. Ghi đã dùng (Record Given) ghi lần thực tế đã thực hiện. Ghi chưa dùng hoặc Ghi từ chối ghi kết quả khác cùng lý do. Hủy lượt là thao tác lịch, không chứng minh đã dùng thuốc.\nKiểm tra kết quả và giờ đã lưu trong sổ. Nếu nhập nhầm hoặc y lệnh mâu thuẫn hướng dẫn chăm sóc, dừng và chuyển người phụ trách chuyên môn theo quy trình. Màn hình ghi công việc thuốc được phép, không hướng dẫn chọn thuốc hoặc liều."
+          },
+          "image": "medication-order"
+        },
+        {
+          "key": "assessments",
+          "title": {
+            "en": "Assessments and clinical forms",
+            "vi": "Đánh giá và biểu mẫu lâm sàng"
+          },
+          "body": {
+            "en": "Clinical > Assessments and the visit's Assessments tab hold completed or in-progress forms. A published template defines the questions, answer types and any scoring.\n1. Open the correct visit and choose New Assessment where available. Select the applicable template and confirm the client.\n2. Answer every relevant question using the requested type: text, number, date, selection, photo or signature. Use the units shown.\n3. Review required questions and any score or band displayed. A calculated score is based on what was entered; incorrect inputs produce misleading results.\n4. Save unfinished work as permitted. Choose Complete only after reviewing the answers.\n5. Reopen the assessment and verify the status and links to any extracted observations.\nDo not change the template to avoid a question. Ask the responsible clinician or form administrator if a question is inappropriate or a required option is missing. A signature must be supplied by the appropriate person, not copied from another record.",
+            "vi": "Lâm sàng > Đánh giá và thẻ Đánh giá của buổi khám lưu biểu mẫu đang làm hoặc đã hoàn tất. Mẫu đã công bố quy định câu hỏi, kiểu trả lời và cách tính điểm nếu có.\n1. Mở đúng buổi khám, chọn Đánh giá mới nếu có. Chọn mẫu phù hợp và xác nhận khách hàng.\n2. Trả lời câu hỏi liên quan theo kiểu yêu cầu: văn bản, số, ngày, lựa chọn, ảnh hoặc chữ ký. Dùng đơn vị hiển thị.\n3. Xem câu hỏi bắt buộc và điểm hoặc mức phân loại. Điểm tính dựa trên dữ liệu đã nhập; nhập sai tạo kết quả gây hiểu nhầm.\n4. Lưu việc chưa xong theo chức năng được phép. Chỉ chọn Hoàn tất sau khi kiểm tra câu trả lời.\n5. Mở lại, xác minh trạng thái và liên kết đến quan sát được trích xuất nếu có.\nKhông đổi mẫu để tránh trả lời. Hỏi người phụ trách chuyên môn hoặc quản trị biểu mẫu nếu câu hỏi không phù hợp hay thiếu lựa chọn. Chữ ký phải do đúng người cung cấp, không sao chép từ hồ sơ khác."
+          },
+          "image": null
+        },
+        {
+          "key": "diagnoses",
+          "title": {
+            "en": "Notes, diagnoses and coding review",
+            "vi": "Ghi chú, chẩn đoán và duyệt mã"
+          },
+          "body": {
+            "en": "Clinical > Notes groups Unsigned Notes, Voice Notes and Coding Review. Unsigned Notes helps authorised clinicians find notes needing final review. Voice Notes shows available transcription jobs and their status. Check a failed or pending job before recording again.\nCoding Review holds suggested medical codes. An authorised reviewer reads the source note and proposed code, then uses Approve or Reject. Approval is a deliberate human decision; an AI suggestion is not automatically a confirmed diagnosis.\nThe client's Diagnoses tab links conditions to supporting information. Mark Resolved, Mark Inactive and Reactivate change the condition's clinical status. Only the appropriate clinician should make those changes. Read the evidence and date before interpreting the problem list.\nFor a signed note that needs correction, use the authorised addendum route. Keep the original account of events intact and explain the correction. If you cannot see a signing or diagnosis action, ask the responsible clinician rather than asking for broad access just to complete the screen.",
+            "vi": "Lâm sàng > Ghi chú nhóm Ghi chú chưa ký, Ghi chú giọng nói và Duyệt mã. Ghi chú chưa ký giúp người có quyền tìm nội dung cần kiểm tra cuối. Ghi chú giọng nói hiển thị tác vụ chép lời và trạng thái. Kiểm tra tác vụ lỗi hoặc chờ trước khi ghi âm lại.\nDuyệt mã chứa mã y khoa được gợi ý. Người duyệt có quyền đọc ghi chú nguồn và mã đề xuất, rồi chọn Chấp thuận hoặc Từ chối. Chấp thuận là quyết định chủ động của con người; gợi ý AI không tự trở thành chẩn đoán xác nhận.\nThẻ Chẩn đoán của khách hàng liên kết bệnh lý với thông tin hỗ trợ. Đã giải quyết, Không còn hoạt động và Kích hoạt lại đổi trạng thái lâm sàng. Chỉ người phụ trách chuyên môn phù hợp nên thực hiện. Đọc bằng chứng và ngày trước khi diễn giải danh sách bệnh lý.\nNếu ghi chú đã ký cần sửa, dùng đường bổ sung được phép. Giữ nguyên bản ghi diễn biến ban đầu và giải thích phần sửa. Nếu không thấy nút ký hoặc chẩn đoán, nhờ người phụ trách chuyên môn thay vì xin quyền rộng chỉ để hoàn tất màn hình."
+          },
+          "image": null
+        },
+        {
+          "key": "consents",
+          "title": {
+            "en": "Consent and permission to share",
+            "vi": "Sự đồng ý và quyền chia sẻ"
+          },
+          "body": {
+            "en": "Clinical > Consents helps review consent records, including those near expiry. Consent describes permission for a particular purpose; it is not a permanent blanket permission for every activity.\n1. Confirm the client, purpose, person giving consent, relationship and method.\n2. Record the required evidence, dates and validity details. Read the information with the appropriate person through the clinic's process.\n3. Use Grant only when valid consent has actually been obtained and you are authorised to record it.\n4. Check the active state and expiry before the related action. Withdraw records withdrawal; it does not erase the history.\n5. Print Consent Evidence can produce a record of the captured evidence where permitted.\nA relative listed on the profile does not automatically have permission to receive all records. If a family message, portal link or other action is blocked for consent, resolve the underlying permission with the responsible team. Do not bypass it by sending through an unrelated channel.",
+            "vi": "Lâm sàng > Đồng ý giúp xem hồ sơ đồng ý, kể cả hồ sơ gần hết hạn. Sự đồng ý áp dụng cho mục đích cụ thể, không phải quyền vô thời hạn cho mọi hoạt động.\n1. Xác nhận khách hàng, mục đích, người đồng ý, mối quan hệ và hình thức.\n2. Ghi bằng chứng, ngày và thời hạn bắt buộc. Giải thích thông tin với đúng người theo quy trình phòng khám.\n3. Chỉ dùng Cấp / Ghi nhận đồng ý (Grant) khi thực sự có đồng ý hợp lệ và bạn có quyền ghi nhận.\n4. Kiểm tra trạng thái hiệu lực và hạn trước hành động liên quan. Rút lại (Withdraw) ghi việc rút đồng ý, không xóa lịch sử.\n5. In bằng chứng đồng ý có thể tạo bản ghi bằng chứng khi được phép.\nNgười thân có tên trên hồ sơ không tự có quyền nhận toàn bộ hồ sơ. Nếu tin gia đình, liên kết cổng khách hàng hoặc thao tác khác bị chặn vì thiếu đồng ý, giải quyết quyền với nhóm phụ trách. Không lách bằng cách gửi qua kênh không liên quan."
+          },
+          "image": "consent"
+        },
+        {
+          "key": "incidents",
+          "title": {
+            "en": "Report an incident and follow corrective actions",
+            "vi": "Báo cáo sự cố và theo dõi khắc phục"
+          },
+          "body": {
+            "en": "Use Clinical > Incidents > Register to record an event affecting care or service safety. Attend to immediate needs through the clinic's normal response process first; entering a form is not an emergency notification.\n1. Create the incident with the correct client, visit, date/time, category, severity and factual description. Record immediate action and relevant evidence.\n2. Save and notify the responsible reviewer through the agreed route.\n3. The reviewer uses Start Review, then Start Investigation where needed. Record findings and assign corrective actions with an owner and due date.\n4. Use Corrective Actions to track work. Start and Mark Done describe the action's progress; attach or record evidence of completion.\n5. Close the incident only when the appropriate review and actions are complete. Fast-Close (Minor) is a restricted shortcut for qualifying minor cases, not a way to skip review of a serious event. Reopen is used when further work is needed.\nAnalysis summarises incident information. Check the date range and classification before comparing totals.",
+            "vi": "Dùng Lâm sàng > Sự cố > Sổ sự cố để ghi sự kiện ảnh hưởng chăm sóc hoặc an toàn dịch vụ. Trước hết xử lý nhu cầu tức thời theo quy trình phản ứng của phòng khám; nhập biểu mẫu không thay cho thông báo khẩn.\n1. Tạo sự cố với đúng khách hàng, buổi khám, ngày giờ, loại, mức độ và mô tả sự thật. Ghi hành động ban đầu và bằng chứng liên quan.\n2. Lưu, thông báo người phụ trách xem xét theo đường đã thống nhất.\n3. Người duyệt dùng Bắt đầu xem xét, rồi Bắt đầu điều tra khi cần. Ghi kết quả và giao hành động khắc phục có người phụ trách, hạn.\n4. Dùng Hành động khắc phục để theo dõi. Bắt đầu và Đánh dấu hoàn tất thể hiện tiến độ; ghi hoặc đính kèm bằng chứng hoàn thành.\n5. Chỉ đóng sự cố khi xong đánh giá và hành động phù hợp. Đóng nhanh (nhẹ) là lối tắt hạn chế cho trường hợp nhẹ đủ điều kiện, không để bỏ qua xem xét sự cố nghiêm trọng. Mở lại dùng khi còn việc cần làm.\nPhân tích tổng hợp thông tin sự cố. Kiểm tra khoảng ngày và phân loại trước khi so sánh số liệu."
+          },
+          "image": "incident"
+        }
+      ],
+      "flow": {
+        "en": [
+          "Confirm client",
+          "Record observations",
+          "Review care needs",
+          "Carry out authorised care",
+          "Document and sign",
+          "Follow up"
+        ],
+        "vi": [
+          "Xác nhận khách hàng",
+          "Ghi quan sát",
+          "Xem nhu cầu",
+          "Chăm sóc theo phân quyền",
+          "Ghi hồ sơ và ký",
+          "Theo dõi"
+        ]
+      }
+    },
+    {
+      "key": "family",
+      "title": {
+        "en": "Remote visits and family communication",
+        "vi": "Khám từ xa và liên lạc gia đình"
+      },
+      "topics": [
+        {
+          "key": "remote",
+          "title": {
+            "en": "Telehealth and self-booking",
+            "vi": "Khám từ xa và tự đặt lịch"
+          },
+          "body": {
+            "en": "For an online visit, confirm that the booking has the correct service type and time. Open the session or use Join Video when available. Check microphone/camera permissions and the intended participant before discussing care. The patient may enter through the session's waiting-room link. If the video provider is not configured or the connection fails, contact the clinic and record the agreed alternative; do not mark a visit complete merely because the call screen was opened.\nSelf-booking uses an invitation for a specific client. When the Send self-booking link action is available, confirm the recipient and the allowed services or dates before sending. The client uses the link to choose an offered slot. Check the resulting booking in Operations and arrange staff as required.\nA link is not evidence that it has been used. An offered slot is not the same as a completed visit. Use the booking and session status to confirm progress. Do not copy one client's private link to another person.",
+            "vi": "Với buổi khám trực tuyến, xác nhận đúng loại dịch vụ và giờ trên lịch hẹn. Mở phiên hoặc dùng Tham gia video khi có. Kiểm tra quyền mic/camera và đúng người tham gia trước khi trao đổi chăm sóc. Khách hàng có thể vào qua liên kết phòng chờ. Nếu nhà cung cấp video chưa được cấu hình hoặc kết nối lỗi, liên hệ phòng khám, ghi phương án thay thế đã thống nhất; không đánh dấu hoàn tất chỉ vì đã mở màn hình gọi.\nTự đặt lịch dùng lời mời dành cho khách hàng cụ thể. Khi có nút Gửi liên kết tự đặt lịch, xác nhận người nhận và dịch vụ/ngày được phép trước khi gửi. Khách hàng dùng liên kết chọn khung giờ được đề xuất. Kiểm tra lịch tạo ra trong Điều phối và bố trí nhân viên theo yêu cầu.\nCó liên kết chưa chứng minh đã được sử dụng. Khung giờ được đề xuất không phải buổi khám đã hoàn thành. Dùng trạng thái lịch hẹn và phiên để xác nhận tiến độ. Không sao chép liên kết riêng của khách hàng cho người khác."
+          },
+          "image": null
+        },
+        {
+          "key": "family-links",
+          "title": {
+            "en": "Family Inbox, visit links and My Care",
+            "vi": "Hộp thư gia đình, liên kết buổi khám và My Care"
+          },
+          "body": {
+            "en": "Family Inbox supports permitted two-way communication between the care team and a client's family. Open the thread, confirm the linked client and recipient, read earlier messages, then reply. Mark read records that a message was seen; it does not mean the requested work is complete.\nA family visit link provides a limited view of an individual visit. My Care is a client portal whose available information depends on the enabled features and permissions. Treat both as private links. Share only through the approved route with the intended recipient. If a link is wrong, expired or no longer appropriate, ask the authorised colleague to revoke or replace it.\n1. Check identity, relationship and active consent before sharing.\n2. Review the content of a visit update or outgoing reply.\n3. Send once and inspect the delivery or thread status.\n4. Record any action needed inside the client's care or booking record, not only in chat.\nA family message is not automatically an instruction to change care. Refer clinical questions and urgent concerns to the responsible clinician through the clinic's established process.",
+            "vi": "Hộp thư gia đình hỗ trợ liên lạc hai chiều được phép giữa nhóm chăm sóc và gia đình khách hàng. Mở hội thoại, xác nhận khách hàng và người nhận liên kết, đọc tin trước rồi trả lời. Đánh dấu đã đọc chỉ ghi đã xem tin, không có nghĩa việc được yêu cầu đã hoàn tất.\nLiên kết buổi khám cho gia đình cung cấp phạm vi xem giới hạn của một buổi khám. My Care là cổng khách hàng; thông tin có sẵn tùy tính năng và quyền. Coi cả hai là liên kết riêng tư. Chỉ chia sẻ theo cách được duyệt cho đúng người. Nếu liên kết sai, hết hạn hoặc không còn phù hợp, nhờ người có quyền thu hồi hoặc thay thế.\n1. Kiểm tra danh tính, mối quan hệ và đồng ý còn hiệu lực trước khi chia sẻ.\n2. Xem nội dung cập nhật buổi khám hoặc tin trả lời.\n3. Gửi một lần, kiểm tra trạng thái gửi hoặc hội thoại.\n4. Ghi công việc cần làm vào hồ sơ chăm sóc hoặc lịch hẹn, không chỉ trong trò chuyện.\nTin gia đình không tự là chỉ định thay đổi chăm sóc. Chuyển câu hỏi chuyên môn và vấn đề khẩn cho người phụ trách theo quy trình phòng khám."
+          },
+          "image": null
+        }
+      ],
+      "flow": {
+        "en": [
+          "Check identity and permission",
+          "Choose appropriate link or channel",
+          "Share deliberately",
+          "Review outcome",
+          "Follow up"
+        ],
+        "vi": [
+          "Kiểm tra người và quyền",
+          "Chọn liên kết hoặc kênh",
+          "Chủ động chia sẻ",
+          "Xem kết quả",
+          "Theo dõi"
+        ]
+      }
+    },
+    {
+      "key": "finance",
+      "title": {
+        "en": "Finance: invoices, payments and balances",
+        "vi": "Tài chính: hóa đơn, thanh toán và số dư"
+      },
+      "topics": [
+        {
+          "key": "finance-overview",
+          "title": {
+            "en": "Read Finance and invoice statuses",
+            "vi": "Đọc Tài chính và trạng thái hóa đơn"
+          },
+          "body": {
+            "en": "Finance > Dashboard summarises invoices, receivables, payments and field cash. Set the period first. Use an available card or list link to inspect the underlying records. Finance > Invoices is the working list of bills.\n| Label | Meaning for your work |\n| Draft | The bill is being prepared and must be reviewed. |\n| Posted | The invoice has been confirmed in the accounting record. |\n| Partial | A payment has been applied but a balance remains. |\n| Paid | The invoice's recorded balance has been settled. |\n| Overdue | A balance remains after the due date. |\n| Cancelled | The document has been cancelled through its permitted workflow. |\nDocument state and payment status are different. An invoice may be posted and only partly paid. Open it to check the client, invoice reference, due date, currency, service lines, taxes, total and amount due. An e-invoice's provider status is another separate status.\nDo not infer accounting or tax treatment from a dashboard label alone. Use the clinic's approved finance process and the detail shown on the underlying document.",
+            "vi": "Tài chính > Bảng tổng quan tóm tắt hóa đơn, công nợ, thanh toán và tiền mặt ngoài hiện trường. Chọn kỳ trước. Dùng ô thống kê hoặc liên kết danh sách để xem hồ sơ gốc. Tài chính > Hóa đơn là danh sách xử lý chứng từ tính phí.\n| Nhãn | Ý nghĩa công việc |\n| Nháp | Đang chuẩn bị hóa đơn, cần kiểm tra. |\n| Đã ghi sổ | Hóa đơn đã được xác nhận trong hồ sơ kế toán. |\n| Thanh toán một phần | Đã áp dụng khoản thanh toán nhưng còn dư nợ. |\n| Đã thanh toán | Số dư ghi nhận trên hóa đơn đã được tất toán. |\n| Quá hạn | Còn số phải trả sau ngày đến hạn. |\n| Đã hủy | Chứng từ đã được hủy theo quy trình cho phép. |\nTrạng thái chứng từ khác trạng thái thanh toán. Hóa đơn có thể đã ghi sổ nhưng mới trả một phần. Mở để kiểm tra khách hàng, mã hóa đơn, ngày đến hạn, tiền tệ, dòng dịch vụ, thuế, tổng và số còn nợ. Trạng thái nhà cung cấp hóa đơn điện tử lại là trạng thái riêng.\nKhông suy ra cách hạch toán hoặc xử lý thuế chỉ từ nhãn tổng quan. Theo quy trình tài chính được duyệt và chi tiết của chứng từ gốc."
+          },
+          "image": "finance-dashboard"
+        },
+        {
+          "key": "invoice",
+          "title": {
+            "en": "Review and issue the correct invoice",
+            "vi": "Kiểm tra và lập đúng hóa đơn"
+          },
+          "body": {
+            "en": "1. Open the booking and look for its existing invoice first. Completion may already have generated one.\n2. If invoice creation is required and permitted, use Create Invoice from the relevant booking or quote. Verify the correct client and source reference.\n3. Review service quantities, unit prices, discounts, travel or time charges, tax information and total. Compare with the final services actually recorded.\n4. Correct an editable draft through the appropriate process. If a posted document is wrong, use the approved credit/correction route instead of changing history.\n5. Confirm or Post only after review. Check the resulting invoice state and outstanding balance.\n6. Provide the permitted invoice or receipt to the correct recipient. Keep the internal invoice reference for later payment matching.\nDo not generate a second invoice because the first is unpaid or because an e-invoice request is pending. Those issues belong to payment follow-up or e-invoice processing.",
+            "vi": "1. Mở lịch hẹn và tìm hóa đơn đã có trước. Thao tác hoàn tất có thể đã tạo hóa đơn.\n2. Nếu cần tạo và bạn có quyền, dùng Tạo hóa đơn từ lịch hẹn hoặc báo giá liên quan. Xác minh đúng khách hàng và mã nguồn.\n3. Kiểm tra số lượng, đơn giá, chiết khấu, phí đi lại/thời gian, thông tin thuế và tổng. Đối chiếu dịch vụ cuối cùng đã ghi nhận.\n4. Sửa bản nháp còn được sửa theo quy trình. Nếu chứng từ đã ghi sổ bị sai, dùng cách điều chỉnh/ghi có được duyệt thay vì sửa lịch sử.\n5. Chỉ Xác nhận hoặc Ghi sổ sau kiểm tra. Xem trạng thái hóa đơn và số còn nợ sau thao tác.\n6. Cung cấp hóa đơn hoặc biên nhận được phép cho đúng người. Giữ mã hóa đơn nội bộ để khớp thanh toán về sau.\nKhông tạo hóa đơn thứ hai vì hóa đơn đầu chưa trả hoặc yêu cầu hóa đơn điện tử đang chờ. Những vấn đề đó thuộc theo dõi thanh toán hoặc xử lý hóa đơn điện tử."
+          },
+          "image": "invoice"
+        },
+        {
+          "key": "payments",
+          "title": {
+            "en": "Receive a payment or part payment",
+            "vi": "Nhận thanh toán toàn bộ hoặc một phần"
+          },
+          "body": {
+            "en": "Use Finance > Payments > Account Payment or the payment action on the relevant invoice, according to your role. Record money only when it has actually been received or verified through the approved process.\n1. Confirm the client and invoice reference. Check the amount still due.\n2. Enter the actual amount received, date, method and payment reference. Select the appropriate journal or receiving account when requested.\n3. Review how the amount is allocated. A smaller payment should leave the correct balance; it should not make the whole invoice appear paid.\n4. Confirm the action, then reopen the invoice and payment record. Check payment status, amount due and any reconciliation state.\n5. For bank transfer, match the bank evidence and reference before recording settlement. For cash, identify who received and holds the money.\nExample: an invoice is 1,000,000 VND and the client pays 400,000 VND. The remaining amount is 600,000 VND before any other approved adjustments. Record another actual payment later to settle that remaining amount; do not replace the first payment with the full invoice total.",
+            "vi": "Dùng Tài chính > Thanh toán > Thanh toán tài khoản hoặc thao tác thanh toán trên hóa đơn theo vai trò. Chỉ ghi tiền khi đã thực nhận hoặc xác minh theo quy trình được duyệt.\n1. Xác nhận khách hàng và mã hóa đơn. Kiểm tra số còn phải trả.\n2. Nhập số tiền thực nhận, ngày, phương thức và mã tham chiếu. Chọn sổ nhật ký hoặc tài khoản nhận phù hợp khi được yêu cầu.\n3. Kiểm tra cách phân bổ tiền. Khoản trả nhỏ hơn phải để lại số dư đúng, không làm cả hóa đơn thành đã trả.\n4. Xác nhận rồi mở lại hóa đơn và hồ sơ thanh toán. Xem trạng thái, số còn nợ và tình trạng đối chiếu.\n5. Với chuyển khoản, khớp bằng chứng ngân hàng và tham chiếu trước khi ghi tất toán. Với tiền mặt, xác định người nhận và giữ tiền.\nVí dụ: hóa đơn 1.000.000 VND, khách trả 400.000 VND. Còn 600.000 VND trước các điều chỉnh khác đã được duyệt. Ghi một khoản thực nhận khác về sau để tất toán; không đổi khoản đầu thành toàn bộ giá trị hóa đơn."
+          },
+          "image": "payments"
+        },
+        {
+          "key": "cash",
+          "title": {
+            "en": "Field cash, office receipt and reconciliation",
+            "vi": "Tiền mặt hiện trường, nhận tại văn phòng và đối chiếu"
+          },
+          "body": {
+            "en": "Cash In Transit and Operations > Collections show money collected by staff that still needs office handover. This is different from money the client still owes.\n1. The collector records the actual cash against the correct client or invoice through the permitted collection action.\n2. At handover, compare the listed payments and references with the cash physically received.\n3. Record the receiving/handover action only for the amount verified. Investigate differences rather than silently changing the invoice.\n4. Reopen the collection to confirm the holder or delivery state has changed. Finance completes any remaining reconciliation.\nPending Delivery means field cash has not yet completed the office handover. Delivered and Reconciled represent later steps where those statuses are used. Receiving field cash is not a new payment by the client: recording it twice would overstate money received.\nAt shift end, check outstanding collections by staff member and date, and document who will resolve any discrepancy.",
+            "vi": "Tiền đang chuyển và Điều phối > Thu tiền hiển thị tiền nhân viên đã thu nhưng còn phải bàn giao về văn phòng. Đây là khái niệm khác với tiền khách hàng còn nợ.\n1. Người thu ghi số tiền mặt thực tế vào đúng khách hàng hoặc hóa đơn bằng chức năng được phép.\n2. Khi bàn giao, đối chiếu danh sách khoản tiền và mã với tiền thực nhận.\n3. Chỉ ghi nhận bàn giao cho số đã xác minh. Điều tra chênh lệch thay vì tự sửa hóa đơn.\n4. Mở lại khoản thu để xác nhận người giữ hoặc trạng thái bàn giao đã đổi. Kế toán hoàn tất đối chiếu còn lại.\nChờ bàn giao nghĩa là tiền ngoài hiện trường chưa hoàn tất việc giao về văn phòng. Đã giao và Đã đối chiếu là các bước sau khi hệ thống dùng những trạng thái đó. Nhận tiền nhân viên bàn giao không phải khách hàng thanh toán lần mới; ghi hai lần sẽ làm tăng sai số tiền nhận.\nCuối ca, kiểm tra khoản chưa bàn giao theo nhân viên và ngày, ghi người sẽ xử lý chênh lệch."
+          },
+          "image": "collections"
+        },
+        {
+          "key": "ar",
+          "title": {
+            "en": "Receivables, refunds, credit and packages",
+            "vi": "Công nợ, hoàn tiền, ghi có và gói dịch vụ"
+          },
+          "body": {
+            "en": "Receivables > AR Dashboard summarises money owed. AR Transactions shows the detailed history. Overdue Clients focuses on unpaid balances past the due date. Filter by client and date, inspect the invoice and payment allocation, then arrange the appropriate follow-up.\nA credit note reduces or corrects an invoice through the approved accounting process. A cash refund records money returned. They are related but are not the same event. Use Refund / Credit with the correct original invoice, reason and amount, and verify both the corrected balance and actual money movement.\nService Packages represents prepaid service entitlements. Before selling or applying a package, check the client, included services, validity and remaining entitlement. Link usage to the right visit and inspect the remaining balance afterward. Buying a package is not the same as completing all of its visits. Do not apply an unrelated package just because it has unused value.\nFor finance exports, use the authorised export option and check the date range, company, record count and totals. An exported file for MISA or another system is not proof the destination has imported and reconciled it.",
+            "vi": "Công nợ > Tổng quan công nợ tóm tắt tiền còn phải thu. Giao dịch công nợ hiển thị lịch sử chi tiết. Khách hàng quá hạn tập trung số chưa trả sau hạn. Lọc theo khách hàng và ngày, xem hóa đơn cùng phân bổ thanh toán, rồi tổ chức theo dõi phù hợp.\nChứng từ ghi có giảm hoặc điều chỉnh hóa đơn theo quy trình kế toán được duyệt. Hoàn tiền ghi số thực trả lại. Hai việc liên quan nhưng không phải cùng một sự kiện. Dùng Hoàn tiền / Ghi có với đúng hóa đơn gốc, lý do và số tiền; xác minh cả số dư điều chỉnh lẫn tiền thực chuyển.\nGói dịch vụ thể hiện quyền sử dụng dịch vụ trả trước. Trước khi bán hoặc áp dụng gói, kiểm tra khách hàng, dịch vụ bao gồm, hạn và phần còn lại. Gắn lần sử dụng với đúng buổi khám rồi kiểm tra số còn lại. Mua gói không đồng nghĩa đã hoàn tất mọi buổi khám trong gói. Không áp dụng gói không phù hợp chỉ vì còn giá trị.\nKhi xuất tài chính, dùng chức năng được phép và kiểm tra kỳ, công ty, số hồ sơ cùng tổng. Tệp xuất cho MISA hoặc hệ thống khác không chứng minh nơi nhận đã nhập và đối chiếu thành công."
+          },
+          "image": "ar"
+        },
+        {
+          "key": "einvoice",
+          "title": {
+            "en": "VAT log, e-invoices and BHYT claims",
+            "vi": "Nhật ký VAT, hóa đơn điện tử và hồ sơ BHYT"
+          },
+          "body": {
+            "en": "VAT Log and Red Invoice Log help follow electronic-invoice processing. Read the provider reference, request status and error details. A local posted invoice is not proof that an external e-invoice was issued. If the request failed, investigate its cause and previous outcome before retrying; avoid duplicate issuance.\nBHYT Claims prepares a structured claim from an eligible completed visit and posted invoice. Review the client/card information, invoice link, coverage snapshot, line-by-line covered amounts and patient share. Mark Ready records readiness in this module; it is not confirmation that a national authority has received or accepted the claim. The implemented claim preparation does not itself provide the later national XML/submission workflow.\n1. Open the correct source document and verify the client's details.\n2. Review amounts and any validation issues with authorised finance staff.\n3. Use only the available approved workflow and inspect the resulting state.\n4. Keep provider or submission evidence distinct from local preparation status.\nAsk the responsible finance or integration administrator about a missing connection. Do not change clinical records or invent provider references to clear a financial validation error.",
+            "vi": "Nhật ký VAT và Nhật ký hóa đơn điện tử giúp theo dõi xử lý hóa đơn điện tử. Đọc mã nhà cung cấp, trạng thái yêu cầu và chi tiết lỗi. Hóa đơn nội bộ đã ghi sổ chưa chứng minh hóa đơn điện tử bên ngoài đã phát hành. Nếu yêu cầu thất bại, kiểm tra nguyên nhân và kết quả trước đó trước khi thử lại để tránh phát hành trùng.\nHồ sơ BHYT chuẩn bị yêu cầu có cấu trúc từ buổi khám đủ điều kiện đã hoàn tất và hóa đơn đã ghi sổ. Xem thông tin khách hàng/thẻ, liên kết hóa đơn, dữ liệu quyền lợi tại thời điểm lập, phần được chi trả từng dòng và phần khách hàng trả. Đánh dấu sẵn sàng chỉ ghi trạng thái trong phân hệ, không xác nhận cơ quan quốc gia đã nhận hoặc chấp thuận. Chức năng chuẩn bị hiện có không tự cung cấp quy trình XML/gửi lên cơ quan ở giai đoạn sau.\n1. Mở đúng chứng từ nguồn, xác minh thông tin khách hàng.\n2. Cùng nhân viên tài chính có quyền xem số tiền và lỗi kiểm tra.\n3. Chỉ dùng quy trình hiện có được duyệt, kiểm tra trạng thái sau đó.\n4. Phân biệt bằng chứng nhà cung cấp/tiếp nhận với trạng thái chuẩn bị nội bộ.\nHỏi người phụ trách tài chính hoặc tích hợp khi thiếu kết nối. Không sửa hồ sơ lâm sàng hoặc bịa mã nhà cung cấp để bỏ lỗi tài chính."
+          },
+          "image": null
+        }
+      ],
+      "flow": {
+        "en": [
+          "Review final services",
+          "Check invoice",
+          "Record actual payment",
+          "Match and reconcile",
+          "Follow remaining balance"
+        ],
+        "vi": [
+          "Kiểm tra dịch vụ cuối",
+          "Kiểm tra hóa đơn",
+          "Ghi tiền thực nhận",
+          "Đối chiếu",
+          "Theo dõi số còn nợ"
+        ]
+      }
+    },
+    {
+      "key": "reports",
+      "title": {
+        "en": "Reports, learning and everyday problem solving",
+        "vi": "Báo cáo, học tập và xử lý vấn đề hằng ngày"
+      },
+      "topics": [
+        {
+          "key": "analytics",
+          "title": {
+            "en": "Analytics and useful reports",
+            "vi": "Phân tích và báo cáo hữu ích"
+          },
+          "body": {
+            "en": "Analytics provides permitted dashboards and an Explore workspace. A dashboard answers a defined business question; its figures depend on the selected dates, company, catchment and dataset refresh.\n1. Open Analytics and choose the available dashboard relevant to your work.\n2. Read the title, measure and filters. Check whether the date refers to enquiry creation, scheduled service, invoice date or payment date.\n3. Use Explore to select available data and permitted measures, grouping or filters. Compare a small known set of records before relying on a new analysis.\n4. Check totals against the underlying record list where a drill-down is available. A graph shows a summary, not necessarily the same definition as another screen's card.\n5. Export or share only through the permitted controls and with the intended audience. Scheduled dashboards use the configured schedule and recipients.\nIf the data looks old, check the refresh information or ask the reporting administrator. Do not edit source bookings just to make a chart agree. A local report or preview, including an available MOH report, is not evidence of external submission or approval.",
+            "vi": "Phân tích cung cấp bảng điều khiển được phép và không gian Khám phá (Explore). Một bảng trả lời câu hỏi nghiệp vụ cụ thể; số liệu phụ thuộc ngày, công ty, khu vực và lần làm mới dữ liệu.\n1. Mở Phân tích, chọn bảng liên quan công việc.\n2. Đọc tiêu đề, chỉ tiêu và bộ lọc. Kiểm tra ngày đang nói đến ngày tạo yêu cầu, ngày khám dự kiến, ngày hóa đơn hay ngày thanh toán.\n3. Dùng Khám phá để chọn dữ liệu, chỉ tiêu, cách nhóm hoặc bộ lọc được phép. So sánh một nhóm hồ sơ nhỏ đã biết trước khi tin vào phân tích mới.\n4. Đối chiếu tổng với danh sách gốc khi có chức năng xem chi tiết. Biểu đồ là tổng hợp, chưa chắc dùng cùng định nghĩa với ô thống kê ở màn hình khác.\n5. Chỉ xuất hoặc chia sẻ bằng điều khiển được phép, cho đúng đối tượng. Bảng theo lịch dùng thời gian và người nhận đã cấu hình.\nNếu dữ liệu có vẻ cũ, xem thông tin làm mới hoặc hỏi quản trị báo cáo. Không sửa lịch hẹn nguồn để làm biểu đồ khớp. Báo cáo hoặc bản xem trước nội bộ, kể cả báo cáo MOH hiện có, không chứng minh đã nộp hay được bên ngoài chấp thuận."
+          },
+          "image": "analytics"
+        },
+        {
+          "key": "learning",
+          "title": {
+            "en": "Learn with guides, videos and the coach",
+            "vi": "Học qua hướng dẫn, video và trợ lý"
+          },
+          "body": {
+            "en": "Open Learn > Task guides and videos. Search by the task you want to do, such as a follow-up, assignment, clinical note or part payment. Use a topic filter to narrow the results.\nRead the goal and Before you begin, then follow the steps. Watch opens the walkthrough; chapter buttons jump to a particular action. Choose English or Vietnamese captions in the player. Reviewed and watched progress belongs to your own account.\nMy learning paths groups tasks by role. Work through a path, try its knowledge check and read the feedback. A wrong answer can be corrected and tried again. A recorded completion is learning progress, not a professional qualification or permission to perform a restricted action.\nAsk the coach uses the published guides to find instructions and link to the relevant topic or video chapter. It does not carry out the task, inspect the current patient's circumstances or give a clinical decision. If it cannot match the question, use search or ask a colleague.\nCare Coach > Guides and videos opens relevant help beside a backend screen. In the mobile app, Help opens instructions without leaving the current task. Use these shortcuts when a button or next step is unfamiliar.",
+            "vi": "Mở Học tập > Hướng dẫn công việc và video. Tìm theo việc muốn làm, như theo dõi liên hệ, phân công, ghi chú lâm sàng hoặc thanh toán một phần. Dùng bộ lọc chủ đề để thu hẹp kết quả.\nĐọc mục tiêu và Trước khi bắt đầu rồi làm theo các bước. Xem video mở phần hướng dẫn; các nút chương chuyển đến một hành động cụ thể. Chọn phụ đề tiếng Anh hoặc tiếng Việt trong trình phát. Tiến độ đã đọc và đã xem thuộc tài khoản của bạn.\nLộ trình học nhóm công việc theo vai trò. Học lần lượt, làm câu hỏi kiểm tra và đọc phản hồi. Có thể sửa câu trả lời sai và thử lại. Ghi nhận hoàn tất là tiến độ học, không phải chứng chỉ chuyên môn hay quyền thực hiện hành động bị hạn chế.\nHỏi trợ lý dùng nội dung hướng dẫn đã công bố để tìm chỉ dẫn và liên kết đến bài hoặc đoạn video. Trợ lý không thực hiện công việc, không kiểm tra hoàn cảnh bệnh nhân hiện tại và không quyết định chuyên môn. Nếu không tìm được câu trả lời phù hợp, dùng tìm kiếm hoặc hỏi đồng nghiệp.\nCare Coach > Hướng dẫn và video mở trợ giúp cạnh màn hình văn phòng. Trong ứng dụng di động, Hướng dẫn mở chỉ dẫn mà không rời công việc. Dùng khi chưa rõ nút hoặc bước tiếp theo."
+          },
+          "image": "learning"
+        },
+        {
+          "key": "training",
+          "title": {
+            "en": "Training journeys and practice",
+            "vi": "Lộ trình đào tạo và thực hành"
+          },
+          "body": {
+            "en": "Learn > Training provides the separate training journey where your clinic uses lessons and stations. Follow the lesson instructions, complete the permitted activity and review feedback. Training administrators manage the published lessons and monitor the available learning records.\nFor practical exercises, use the training records and account approved by your manager. Check the environment before creating a booking, payment, message or clinical record. A practice action in the live system can still create real data or send a real message.\nA useful first-day route is: sign in and find a record; read a contact and booking; review your role's workflow; watch one matching video; complete one supervised practice task; explain the result to the trainer. Repeat the workflow until you can recognise both success and an exception.\nIf instructions and your screen differ, record the screen title, role and button label and ask for clarification. Do not improvise by using a more powerful account.",
+            "vi": "Học tập > Đào tạo cung cấp lộ trình đào tạo riêng khi phòng khám dùng bài học và trạm học. Làm theo chỉ dẫn, hoàn thành hoạt động được phép và xem phản hồi. Quản trị đào tạo quản lý bài công bố và theo dõi hồ sơ học hiện có.\nVới bài thực hành, dùng hồ sơ và tài khoản được quản lý cho phép. Kiểm tra môi trường trước khi tạo lịch hẹn, thanh toán, tin nhắn hoặc hồ sơ lâm sàng. Thực hành trong hệ thống đang dùng vẫn có thể tạo dữ liệu thật hoặc gửi tin thật.\nLộ trình ngày đầu hữu ích: đăng nhập và tìm một hồ sơ; đọc liên hệ cùng lịch hẹn; xem quy trình của vai trò; xem một video phù hợp; làm một bài có người hướng dẫn; giải thích kết quả cho người đào tạo. Lặp lại đến khi nhận ra cả kết quả đúng lẫn ngoại lệ.\nNếu hướng dẫn khác màn hình, ghi tiêu đề màn hình, vai trò và tên nút rồi hỏi lại. Không tự dùng tài khoản quyền cao hơn để xử lý."
+          },
+          "image": null
+        },
+        {
+          "key": "troubleshooting",
+          "title": {
+            "en": "When something does not work",
+            "vi": "Khi có việc không hoạt động"
+          },
+          "body": {
+            "en": "| What you see | What to check first |\n| No record found | Search text, date field, catchment, company and assignment. |\n| Button missing | Current status and your role; the action may not apply yet. |\n| Required-field error | Read the message, return to the named field and enter accurate information. |\n| Price looks wrong | Service, quantity, date/time, location, catchment, duration and approved discount. |\n| Cannot complete visit | Start state, assignment, notes and required closing answers. |\n| Payment not reflected | Correct invoice, actual saved payment and allocation/reconciliation. |\n| Video will not play | Connection, signed-in account and role; written guide remains the first fallback. |\n| Notification missing | Device permission and actual work list; ask Operations to verify assignment. |\n| Page times out after Save | Reopen/search for the record before repeating the action. |\nWhen reporting a problem, provide the screen, record reference, time, expected result and exact message. Describe what you already tried. Send only the information needed to the authorised support route. A screenshot should avoid passwords and unrelated client information.\nDo not repeatedly create records, reset prices or change permissions to make an error disappear. Keep the original reference so the responsible team can trace what happened.",
+            "vi": "| Hiện tượng | Kiểm tra trước |\n| Không tìm thấy hồ sơ | Nội dung tìm, trường ngày, khu vực, công ty và phân công. |\n| Thiếu nút | Trạng thái hiện tại và vai trò; thao tác có thể chưa áp dụng. |\n| Lỗi trường bắt buộc | Đọc thông báo, quay lại đúng trường và nhập thông tin chính xác. |\n| Giá có vẻ sai | Dịch vụ, số lượng, ngày giờ, nơi, khu vực, thời lượng và chiết khấu được duyệt. |\n| Không hoàn tất được buổi khám | Trạng thái bắt đầu, phân công, ghi chú và câu trả lời kết thúc. |\n| Chưa thấy thanh toán | Đúng hóa đơn, khoản tiền đã lưu và phân bổ/đối chiếu. |\n| Video không phát | Kết nối, tài khoản đăng nhập và vai trò; trước hết dùng bài viết. |\n| Thiếu thông báo | Quyền thiết bị và danh sách công việc thật; nhờ Điều phối xác minh. |\n| Hết thời gian chờ sau Lưu | Mở lại/tìm hồ sơ trước khi lặp thao tác. |\nKhi báo lỗi, cung cấp màn hình, mã hồ sơ, thời điểm, kết quả mong đợi và thông báo chính xác. Nêu những bước đã thử. Chỉ gửi thông tin cần thiết qua đường hỗ trợ có quyền. Ảnh chụp không nên chứa mật khẩu hoặc thông tin khách hàng không liên quan.\nKhông tạo hồ sơ lặp, đặt lại giá hoặc đổi quyền chỉ để làm mất lỗi. Giữ mã ban đầu để nhóm phụ trách truy tìm diễn biến."
+          },
+          "image": null
+        },
+        {
+          "key": "glossary",
+          "title": {
+            "en": "Plain-language glossary and daily checklist",
+            "vi": "Từ điển dễ hiểu và danh sách kiểm tra mỗi ngày"
+          },
+          "body": {
+            "en": "| Term | Plain meaning |\n| Catchment | The geographic area assigned to a clinic or staff member. |\n| Lead | An enquiry that may become a booking. |\n| Assignment | The link between a staff member and a visit. |\n| Quote | The proposed charge for the service. |\n| Invoice | The bill for the service. |\n| AR / Receivable | Money still owed to the clinic. |\n| Reconciliation | Matching a payment with the correct financial record. |\n| Consent | Recorded permission for a specified purpose. |\n| eMAR | Electronic medication administration record. |\n| EVV | Electronic record of visit verification events. |\n| Addendum | An additional correction or explanation attached to an existing final record. |\nBefore work: check identity, area, date and your assigned queue. During work: confirm the client, read the details, perform the authorised action, then verify the saved result. Before leaving: review unfinished follow-ups, notes, cash and handovers. Sign out of a shared device after confirming work is saved.\nWhen in doubt, stop at the point you do not understand and use the relevant guide or ask the responsible colleague. Accurate small steps are better than a fast sequence of unverified clicks.",
+            "vi": "| Thuật ngữ | Nghĩa dễ hiểu |\n| Khu vực phụ trách | Địa bàn được giao cho phòng khám hoặc nhân viên. |\n| Khách hàng tiềm năng | Yêu cầu có thể chuyển thành lịch hẹn. |\n| Phân công | Liên kết giữa nhân viên và buổi khám. |\n| Báo giá | Phí dịch vụ dự kiến. |\n| Hóa đơn | Chứng từ tính tiền dịch vụ. |\n| Công nợ phải thu / AR | Tiền phòng khám còn phải thu. |\n| Đối chiếu | Khớp khoản thanh toán với đúng hồ sơ tài chính. |\n| Đồng ý | Quyền được ghi nhận cho mục đích cụ thể. |\n| eMAR | Hồ sơ điện tử ghi thực hiện thuốc. |\n| EVV | Ghi nhận điện tử các sự kiện xác minh buổi khám. |\n| Phần bổ sung | Nội dung sửa hoặc giải thích thêm gắn với hồ sơ cuối đã có. |\nTrước ca: kiểm tra danh tính, khu vực, ngày và hàng đợi được giao. Trong ca: xác nhận khách hàng, đọc chi tiết, thực hiện đúng quyền rồi kiểm tra kết quả đã lưu. Trước khi nghỉ: xem việc theo dõi, ghi chú, tiền và bàn giao chưa xong. Đăng xuất thiết bị dùng chung sau khi xác nhận đã lưu.\nKhi chưa chắc, dừng ở bước chưa hiểu và dùng hướng dẫn liên quan hoặc hỏi đồng nghiệp phụ trách. Các bước nhỏ chính xác tốt hơn bấm nhanh nhiều lần mà không kiểm tra."
+          },
+          "image": null
+        }
+      ],
+      "flow": {
+        "en": [
+          "Choose question",
+          "Set scope and date",
+          "Read details",
+          "Act on evidence",
+          "Check result"
+        ],
+        "vi": [
+          "Chọn câu hỏi",
+          "Chọn phạm vi, ngày",
+          "Đọc chi tiết",
+          "Hành động theo dữ liệu",
+          "Kiểm tra kết quả"
+        ]
+      }
+    }
+  ],
+  "admin": [
+    {
+      "key": "admin-start",
+      "title": {
+        "en": "Administrator responsibilities and setup order",
+        "vi": "Trách nhiệm quản trị và thứ tự thiết lập"
+      },
+      "topics": [
+        {
+          "key": "admin-purpose",
+          "title": {
+            "en": "Who should use this manual",
+            "vi": "Ai nên dùng sổ tay này"
+          },
+          "body": {
+            "en": "This manual is for the clinic owner, authorised administrators and designated specialists who maintain configuration. It is separate from the everyday user manual because configuration can change what many people see and do. Keep distribution limited to the appropriate staff.\nAn administrator maintains the system; a clinical lead approves care content; a finance lead approves tariffs and financial procedures. Technical access does not replace those responsibilities. Ask the relevant owner to approve the business rule before changing it.\nUse Settings > Overview to reach common setup areas. People controls accounts and staff; Master data controls approved reference values; Connections controls external services; Records provides history and lifecycle tools. Your company, Clinic setup and Activity history support the clinic workspace.\nBefore a change, note the affected company, role, catchment and existing value. Make a focused change, save it, then inspect the actual screen as the affected role. A menu being visible does not prove the user can read or change its records. Keep a brief record of the reason and result.",
+            "vi": "Sổ tay này dành cho chủ phòng khám, quản trị viên được phép và người chuyên trách bảo trì cấu hình. Tài liệu tách khỏi sổ tay hằng ngày vì cấu hình có thể đổi những gì nhiều người nhìn thấy và làm được. Chỉ phân phối cho đúng người.\nQuản trị viên duy trì hệ thống; phụ trách chuyên môn duyệt nội dung chăm sóc; phụ trách tài chính duyệt biểu phí và quy trình tiền. Có quyền kỹ thuật không thay thế các trách nhiệm đó. Nhờ chủ quy tắc nghiệp vụ duyệt trước khi sửa.\nDùng Cài đặt > Tổng quan để đến các khu thiết lập thường dùng. Nhân sự quản lý tài khoản và nhân viên; Danh mục gốc quản lý giá trị được duyệt; Kết nối quản lý dịch vụ ngoài; Hồ sơ cung cấp lịch sử và vòng đời dữ liệu. Công ty của bạn, Thiết lập phòng khám và Lịch sử hoạt động hỗ trợ không gian phòng khám.\nTrước khi đổi, ghi công ty, vai trò, khu vực và giá trị cũ bị ảnh hưởng. Sửa có mục tiêu, lưu rồi kiểm tra màn hình thật bằng vai trò bị ảnh hưởng. Thấy trình đơn không chứng minh được đọc hoặc sửa hồ sơ. Ghi ngắn lý do và kết quả."
+          },
+          "image": "admin-overview"
+        },
+        {
+          "key": "clinic-setup",
+          "title": {
+            "en": "Company, facilities, areas and initial checks",
+            "vi": "Công ty, cơ sở, địa bàn và kiểm tra ban đầu"
+          },
+          "body": {
+            "en": "1. Confirm the clinic identity and company information through Your company or the available company screen. Keep display name, contact details and branding consistent.\n2. Define facilities and geographic catchments. Check the association between facilities, clients and staff before importing or assigning work.\n3. Confirm timezone, operating hours and public holidays. Review a sample appointment near a day boundary to catch timezone mistakes.\n4. Create approved reference data, service categories and pricing before asking staff to quote.\n5. Create staff profiles and individual accounts with the appropriate roles and employee links.\n6. Verify a small complete workflow: enquiry, client, booking, assignment, visit completion and invoice review. Use approved practice records and avoid unintended external messages or financial transactions.\nClinic setup may show readiness steps or incomplete items. Treat each as a prompt to inspect the actual underlying configuration, not as a substitute for checking business results. Platform-level Customers or tenancy screens, if visible to a platform operator, are outside routine clinic administration; do not use them to manage a normal client/patient.",
+            "vi": "1. Xác nhận danh tính phòng khám và thông tin công ty tại Công ty của bạn hoặc màn hình công ty hiện có. Giữ tên hiển thị, thông tin liên hệ và nhận diện nhất quán.\n2. Xác định cơ sở và địa bàn phục vụ. Kiểm tra liên kết giữa cơ sở, khách hàng và nhân viên trước khi nhập dữ liệu hoặc phân công.\n3. Xác nhận múi giờ, giờ hoạt động và ngày lễ. Xem một lịch hẹn gần ranh giới ngày để phát hiện sai múi giờ.\n4. Tạo danh mục, nhóm dịch vụ và giá được duyệt trước khi yêu cầu nhân viên báo giá.\n5. Tạo hồ sơ nhân viên và tài khoản riêng với đúng vai trò, liên kết nhân viên.\n6. Kiểm tra một quy trình nhỏ đầy đủ: yêu cầu, khách hàng, lịch hẹn, phân công, hoàn tất buổi khám và xem hóa đơn. Dùng hồ sơ thực hành được phép, tránh gửi tin ngoài hoặc giao dịch tiền ngoài ý muốn.\nThiết lập phòng khám có thể nêu bước sẵn sàng hoặc mục còn thiếu. Dùng chúng để kiểm tra cấu hình gốc, không thay cho kiểm tra kết quả nghiệp vụ. Màn hình Khách hàng nền tảng hoặc quản lý đơn vị, nếu người vận hành nền tảng thấy được, nằm ngoài quản trị phòng khám thông thường; không dùng để quản lý bệnh nhân."
+          },
+          "image": null
+        }
+      ],
+      "flow": {
+        "en": [
+          "Confirm clinic",
+          "Set areas and master data",
+          "Set staff and access",
+          "Configure approved services",
+          "Verify workflows",
+          "Support users"
+        ],
+        "vi": [
+          "Xác nhận phòng khám",
+          "Thiết lập địa bàn, danh mục",
+          "Nhân viên và quyền",
+          "Cấu hình dịch vụ đã duyệt",
+          "Kiểm tra quy trình",
+          "Hỗ trợ người dùng"
+        ]
+      }
+    },
+    {
+      "key": "access",
+      "title": {
+        "en": "People, roles and catchment access",
+        "vi": "Nhân sự, vai trò và quyền theo khu vực"
+      },
+      "topics": [
+        {
+          "key": "accounts",
+          "title": {
+            "en": "Create, change or disable an account",
+            "vi": "Tạo, sửa hoặc vô hiệu hóa tài khoản"
+          },
+          "body": {
+            "en": "Use Settings > People > Users & Roles. Search for the person first so one employee does not acquire duplicate accounts.\n1. Create the named person with a clear individual login and the approved role. Follow the available account-activation or password process; do not put passwords in shared manuals.\n2. Set company, facility and catchment as required. Link the employee record for nurse/doctor work so assignments match the login.\n3. Save and ask the person to sign in. Check their starting screen and role-specific tasks.\n4. Test one permitted action and one action they should not be allowed to perform. Check record visibility as well as menu visibility.\n5. When someone leaves or changes duties, update the role or deactivate the account through the supported control. Reassign outstanding work and retain the history under the clinic's policy.\nA login is the identity used to sign in. The employee record holds work-related details. The business role grants a defined set of functions. The catchment limits geography. All four must agree; fixing one does not automatically fix the others.",
+            "vi": "Dùng Cài đặt > Nhân sự > Người dùng và vai trò. Tìm người trước để tránh một nhân viên có tài khoản trùng.\n1. Tạo đúng người với tên đăng nhập cá nhân rõ ràng và vai trò đã duyệt. Theo quy trình kích hoạt hoặc mật khẩu hiện có; không ghi mật khẩu vào sổ tay dùng chung.\n2. Đặt công ty, cơ sở và khu vực khi cần. Liên kết hồ sơ nhân viên cho công việc điều dưỡng/bác sĩ để phân công khớp tài khoản.\n3. Lưu, yêu cầu người đó đăng nhập. Kiểm tra trang bắt đầu và công việc theo vai trò.\n4. Kiểm tra một hành động được phép và một hành động phải bị chặn. Kiểm tra quyền xem hồ sơ bên cạnh quyền thấy trình đơn.\n5. Khi nghỉ việc hoặc đổi nhiệm vụ, sửa vai trò hoặc vô hiệu hóa tài khoản bằng chức năng hỗ trợ. Chuyển việc còn lại và giữ lịch sử theo chính sách phòng khám.\nTên đăng nhập là danh tính dùng để vào hệ thống. Hồ sơ nhân viên chứa thông tin công việc. Vai trò nghiệp vụ cấp nhóm chức năng. Khu vực giới hạn địa bàn. Cả bốn cần phù hợp; sửa một mục không tự sửa các mục còn lại."
+          },
+          "image": "users"
+        },
+        {
+          "key": "role-scope",
+          "title": {
+            "en": "Access & roles, staff linkage and scope",
+            "vi": "Quyền và vai trò, liên kết nhân viên và phạm vi"
+          },
+          "body": {
+            "en": "Access & roles describes the business roles and the screens they open. Use the role intended for the job rather than adding broad groups until a screen opens. Owner/Admin access should remain separate from everyday work.\nOperations Managers must be limited to their assigned catchments. Nurses and doctors need the correct clinical role, staff link and permitted area; visit actions also depend on assignment. Finance and CRM access should match their own work. A catchment dropdown is a convenience for selecting visible data, not a substitute for server-side restrictions.\nWhen someone cannot see a record, check: active account; company; role; employee link; employee availability; facility/catchment; record's own catchment; and current assignment. Use a known permitted record and a known out-of-scope record to distinguish a filter issue from an access issue.\nHealthcare Staff holds the people who can be assigned: role, skills, facilities, service areas and other work details. Maintain these with the staffing manager. Disabling a login does not automatically resolve that person's future assignments; review the schedule separately.",
+            "vi": "Quyền và vai trò mô tả vai trò nghiệp vụ và các màn hình được mở. Dùng vai trò dành cho công việc thay vì thêm quyền rộng dần đến khi mở được màn hình. Tách quyền Chủ sở hữu/Quản trị khỏi công việc hằng ngày.\nQuản lý điều phối phải giới hạn ở khu vực được giao. Điều dưỡng và bác sĩ cần đúng vai trò lâm sàng, liên kết nhân viên và địa bàn; thao tác buổi khám còn phụ thuộc phân công. Quyền Tài chính và CRM phải phù hợp việc riêng. Bộ chọn khu vực chỉ giúp chọn dữ liệu được thấy, không thay thế hạn chế trên máy chủ.\nKhi người dùng không thấy hồ sơ, kiểm tra: tài khoản còn hoạt động; công ty; vai trò; liên kết nhân viên; thời gian làm việc; cơ sở/khu vực; khu vực của hồ sơ; phân công hiện tại. Dùng một hồ sơ chắc chắn được phép và một hồ sơ ngoài phạm vi để phân biệt lỗi lọc với lỗi quyền.\nNhân viên y tế chứa người có thể được phân công: vai trò, kỹ năng, cơ sở, địa bàn và chi tiết công việc. Duy trì cùng quản lý nhân sự. Tắt đăng nhập không tự xử lý lịch tương lai của người đó; cần kiểm tra lịch riêng."
+          },
+          "image": "staff-admin"
+        }
+      ],
+      "flow": {
+        "en": [
+          "Create staff profile",
+          "Create individual account",
+          "Assign approved role and area",
+          "Check permitted and denied work",
+          "Review or disable access"
+        ],
+        "vi": [
+          "Tạo hồ sơ nhân viên",
+          "Tạo tài khoản riêng",
+          "Gán vai trò, khu vực",
+          "Kiểm tra được phép và bị chặn",
+          "Rà soát hoặc tắt quyền"
+        ]
+      }
+    },
+    {
+      "key": "master",
+      "title": {
+        "en": "Master data, services and pricing",
+        "vi": "Danh mục gốc, dịch vụ và giá"
+      },
+      "topics": [
+        {
+          "key": "lookups",
+          "title": {
+            "en": "Maintain approved dropdown values and equipment",
+            "vi": "Duy trì danh sách chọn và thiết bị"
+          },
+          "body": {
+            "en": "Master data supplies values used across forms: facilities, catchments, service types, symptoms, referral sources, insurance, urgency, patient categories, specialties and districts where available. Different lists can be reached through the Facilities/master-data navigator and related tabs.\n1. Search the existing list, including inactive entries if permitted, before adding a value.\n2. Create a clear name and the required code or relationships. Use consistent spelling and avoid near-duplicate labels.\n3. Save, then open the actual business form and confirm the new value is available in the correct dropdown.\n4. For an obsolete value, prefer the supported archive/deactivate process when appropriate. Consider records already referring to it before deletion or renaming.\nEquipment maintains portable items that can be attached to work. Record identity, availability and relevant service details, then verify selection on the booking. Public Holidays records dates used by scheduling and pricing; check the date, location/scope and applicability. A holiday entry can affect calculations, so verify both an ordinary day and the holiday after a change.",
+            "vi": "Danh mục gốc cung cấp giá trị cho biểu mẫu: cơ sở, khu vực, loại dịch vụ, triệu chứng, nguồn giới thiệu, bảo hiểm, mức khẩn, nhóm khách hàng, chuyên khoa và quận/huyện khi có. Các danh sách có thể nằm trong bộ điều hướng Cơ sở/danh mục và thẻ liên quan.\n1. Tìm danh sách hiện có, kể cả mục ngừng dùng nếu được phép, trước khi thêm.\n2. Tạo tên rõ ràng cùng mã hoặc liên kết bắt buộc. Viết nhất quán, tránh nhãn gần trùng.\n3. Lưu rồi mở biểu mẫu nghiệp vụ thật để xác nhận giá trị xuất hiện ở đúng danh sách chọn.\n4. Với giá trị không còn dùng, ưu tiên chức năng lưu trữ/ngừng hoạt động khi phù hợp. Xem hồ sơ đang tham chiếu trước khi xóa hoặc đổi tên.\nThiết bị quản lý vật dụng di động có thể gắn vào công việc. Ghi nhận diện, tình trạng sẵn sàng và chi tiết dịch vụ rồi kiểm tra chọn được trên lịch hẹn. Ngày lễ ghi ngày dùng cho lập lịch và tính giá; kiểm tra ngày, địa điểm/phạm vi và tính áp dụng. Thêm ngày lễ có thể đổi phép tính, nên kiểm tra cả ngày thường lẫn ngày lễ sau thay đổi."
+          },
+          "image": "master-data"
+        },
+        {
+          "key": "pricing",
+          "title": {
+            "en": "Services, pricing engines and rules",
+            "vi": "Dịch vụ, bộ tính giá và quy tắc"
+          },
+          "body": {
+            "en": "Open Settings > Master data > Pricing. The area includes service/product information and pricing views such as engines, rules, quick edit and packages, depending on the selected tab.\nA service/product identifies what is sold. A pricing engine groups calculation behaviour. A rule specifies when a price or adjustment applies. Rules can distinguish catchment, service, quantity or duration, distance, time, urgency and other configured conditions. Sequence and rule level can affect calculation order.\n1. Confirm the approved tariff and effective scope with the finance owner.\n2. Locate the existing service or rule by code and catchment. Check whether the change belongs to the base service price or an adjustment rule.\n3. Update the relevant conditions and action, such as a fixed amount or surcharge. Check currency, unit, percentage and quantity interpretation.\n4. Use Submit for Approval and Approve through the authorised process where those controls apply. A saved draft rule is not necessarily an approved active tariff.\n5. Create or recalculate a suitable practice quote and inspect its breakdown. Check a case that should match the rule and one that should not.\nNever judge success by the rule screen alone. The final service, travel, time and discount breakdown must agree with the intended calculation.",
+            "vi": "Mở Cài đặt > Danh mục gốc > Giá. Khu vực gồm thông tin dịch vụ/sản phẩm và các cách xem bộ tính giá, quy tắc, sửa nhanh, gói tùy thẻ.\nDịch vụ/sản phẩm xác định thứ được bán. Bộ tính giá nhóm cách tính. Quy tắc nêu khi nào giá hoặc điều chỉnh áp dụng. Có thể phân biệt khu vực, dịch vụ, số lượng/thời lượng, khoảng cách, giờ, mức khẩn và điều kiện khác. Thứ tự và cấp quy tắc có thể ảnh hưởng trình tự tính.\n1. Xác nhận biểu phí được duyệt và phạm vi hiệu lực với phụ trách tài chính.\n2. Tìm dịch vụ hoặc quy tắc hiện có theo mã và khu vực. Xác định cần đổi giá gốc hay quy tắc phụ phí.\n3. Sửa điều kiện và hành động liên quan, như số cố định hoặc phụ phí. Kiểm tra tiền tệ, đơn vị, tỷ lệ và cách hiểu số lượng.\n4. Dùng Gửi duyệt và Phê duyệt đúng thẩm quyền khi các nút áp dụng. Quy tắc nháp đã lưu chưa chắc là biểu phí đã duyệt đang dùng.\n5. Tạo hoặc tính lại báo giá thực hành phù hợp, xem bảng phân tích. Kiểm tra một trường hợp phải khớp và một trường hợp không được khớp quy tắc.\nKhông kết luận thành công chỉ từ màn hình quy tắc. Phân tích dịch vụ, đi lại, thời gian và chiết khấu cuối cùng phải đúng cách tính dự kiến."
+          },
+          "image": "pricing"
+        },
+        {
+          "key": "price-import",
+          "title": {
+            "en": "Import a price list and maintain packages",
+            "vi": "Nhập bảng giá và duy trì gói"
+          },
+          "body": {
+            "en": "Import Price List opens the supported import wizard. Read its available template, matching options and import summary. A spreadsheet row must match the intended service or rule; identical names across different areas are not enough.\nBefore importing, retain an authorised copy of the current values and identify which codes and catchments will change. Check headings, amounts, units and duplicates in the proposed file. Import through the wizard, review errors and counts, then compare representative records against the approved file. Quick Edit changes records more rapidly but still needs the same review.\nCheck examples across ordinary weekdays, weekends, holidays, evening/night time, travel boundaries, extra hours, discounts and added services when those rules apply. Confirm no unintended duplicate rules are contributing twice. Old invoices and quotations may retain historical values; do not assume a tariff update should rewrite historical transactions.\nFor packages, define the correct included services, entitlement and validity. Check sale, payment, use on an eligible visit and remaining entitlement. Keep product definitions separate from a client's purchased package and usage history.",
+            "vi": "Nhập bảng giá (Import Price List) mở trình nhập được hỗ trợ. Đọc mẫu, cách khớp và tóm tắt nhập hiện có. Dòng bảng tính phải khớp đúng dịch vụ hoặc quy tắc; trùng tên giữa các khu vực chưa đủ.\nTrước khi nhập, giữ bản giá hiện tại được phép và xác định mã, khu vực sẽ đổi. Kiểm tra tiêu đề cột, số tiền, đơn vị và trùng lặp trong tệp. Nhập qua trình hướng dẫn, xem lỗi cùng số lượng rồi đối chiếu hồ sơ tiêu biểu với tệp được duyệt. Sửa nhanh đổi dữ liệu nhanh hơn nhưng vẫn cần kiểm tra tương tự.\nKiểm tra ví dụ ngày thường, cuối tuần, ngày lễ, tối/đêm, ranh giới khoảng cách, giờ thêm, chiết khấu và dịch vụ thêm khi có quy tắc. Bảo đảm không có quy tắc trùng cùng góp phí hai lần. Hóa đơn và báo giá cũ có thể giữ giá lịch sử; không mặc định cập nhật biểu phí phải ghi lại giao dịch cũ.\nVới gói, định nghĩa đúng dịch vụ bao gồm, quyền sử dụng và hạn. Kiểm tra bán, thanh toán, dùng tại buổi khám đủ điều kiện và phần còn lại. Tách định nghĩa sản phẩm khỏi gói khách đã mua và lịch sử sử dụng."
+          },
+          "image": null
+        }
+      ],
+      "flow": {
+        "en": [
+          "Approve definition",
+          "Maintain master record",
+          "Set rule and scope",
+          "Review and approve",
+          "Check a quote"
+        ],
+        "vi": [
+          "Duyệt định nghĩa",
+          "Cập nhật danh mục",
+          "Đặt quy tắc, phạm vi",
+          "Rà soát, phê duyệt",
+          "Kiểm tra báo giá"
+        ]
+      }
+    },
+    {
+      "key": "forms-admin",
+      "title": {
+        "en": "Forms and clinical configuration",
+        "vi": "Biểu mẫu và cấu hình lâm sàng"
+      },
+      "topics": [
+        {
+          "key": "form-studio",
+          "title": {
+            "en": "Form Studio and required fields",
+            "vi": "Form Studio và trường bắt buộc"
+          },
+          "body": {
+            "en": "Form Studio customises supported business forms and lists, including Booking, Client, Contact and Incident. Field Requirements controls when information is mandatory. These are different tools: one changes structure or placement; the other controls completion requirements.\n1. Identify the exact form/model and intended audience. Write down the business purpose, field type and label before editing.\n2. Open Form Studio, select the supported form and add or place the field using its editor. Choose an appropriate text, number, selection, date or boolean type.\n3. Review visibility, placement and available publishing controls. Preview the form before applying the layout.\n4. If the field must be mandatory, configure the correct role and state conditions in Field Requirements. Avoid making it required before staff can reasonably know the answer.\n5. Check a new record, an existing record and the relevant mobile or alternate screen. Confirm data is saved and the field does not block unrelated roles.\nChanging a dropdown label or removing a field can affect reporting and existing data. Keep the meaning stable and plan the correction with the business owner. Do not use a new custom field as a substitute for an existing standard field with the same purpose.",
+            "vi": "Form Studio tùy chỉnh biểu mẫu và danh sách được hỗ trợ, gồm Lịch hẹn, Khách hàng, Liên hệ và Sự cố. Yêu cầu trường kiểm soát khi nào thông tin bắt buộc. Hai công cụ khác nhau: một đổi cấu trúc/vị trí, một kiểm soát yêu cầu hoàn thành.\n1. Xác định đúng biểu mẫu/mô hình và người sử dụng. Ghi mục đích nghiệp vụ, kiểu và nhãn trước khi sửa.\n2. Mở Form Studio, chọn biểu mẫu được hỗ trợ và thêm hoặc đặt trường bằng trình sửa. Chọn kiểu văn bản, số, lựa chọn, ngày hoặc đúng/sai phù hợp.\n3. Xem điều kiện hiển thị, vị trí và nút công bố hiện có. Xem trước khi áp dụng bố cục.\n4. Nếu bắt buộc, cấu hình đúng điều kiện vai trò và trạng thái trong Yêu cầu trường. Tránh bắt buộc trước khi nhân viên có thể biết câu trả lời.\n5. Kiểm tra hồ sơ mới, hồ sơ cũ và màn hình di động/khác liên quan. Xác nhận lưu dữ liệu được và không chặn vai trò không liên quan.\nĐổi nhãn lựa chọn hoặc bỏ trường có thể ảnh hưởng báo cáo và dữ liệu cũ. Giữ ý nghĩa ổn định, thống nhất cách sửa với phụ trách nghiệp vụ. Không thêm trường tùy chỉnh để thay trường chuẩn đã có cùng mục đích."
+          },
+          "image": "field-requirements"
+        },
+        {
+          "key": "clinical-templates",
+          "title": {
+            "en": "Clinical form templates and medical catalogues",
+            "vi": "Mẫu lâm sàng và danh mục y khoa"
+          },
+          "body": {
+            "en": "Form Templates defines clinical assessments. A template contains questions, answer types, required flags and optional scoring bands. Publish makes an approved version available; Retire removes it from future use through the supported lifecycle; New Version supports controlled change. Preserve the meaning of completed assessments.\n1. Have the clinical owner agree the wording and scoring.\n2. Create the draft questions and options, including units and required conditions.\n3. Preview a complete example and a missing-answer example. Check the calculated band and any extracted observation mappings.\n4. Publish the approved version and verify it appears for the intended visit workflow.\nObservation Types defines structured measurement types, units and terminology links. Thresholds are clinical configuration and must be approved by the clinical lead. Medication Catalog defines medicines referenced by orders; maintaining a catalogue does not prescribe a treatment. Monitoring Devices links a device and client, with active, suspended and retired states. Check the identity, expected source and latest readings before treating incoming values as reliable.\nUse Suspend or Retire through the supported device action when appropriate. Investigate data-source errors separately from an alert about a client's condition.",
+            "vi": "Mẫu biểu lâm sàng định nghĩa bài đánh giá. Mẫu gồm câu hỏi, kiểu trả lời, cờ bắt buộc và mức điểm nếu có. Công bố đưa phiên bản đã duyệt vào sử dụng; Ngừng dùng loại khỏi sử dụng mới theo vòng đời; Phiên bản mới hỗ trợ đổi có kiểm soát. Giữ nguyên ý nghĩa bài đã hoàn tất.\n1. Nhờ phụ trách chuyên môn duyệt nội dung và tính điểm.\n2. Tạo câu hỏi, lựa chọn nháp, gồm đơn vị và điều kiện bắt buộc.\n3. Xem trước một ví dụ đầy đủ và một ví dụ thiếu câu trả lời. Kiểm tra mức điểm và ánh xạ quan sát trích xuất.\n4. Công bố bản được duyệt, xác minh xuất hiện ở đúng quy trình buổi khám.\nLoại quan sát định nghĩa phép đo, đơn vị và liên kết thuật ngữ. Ngưỡng là cấu hình lâm sàng cần phụ trách chuyên môn duyệt. Danh mục thuốc định nghĩa thuốc được y lệnh tham chiếu; duy trì danh mục không phải kê điều trị. Thiết bị theo dõi liên kết thiết bị với khách hàng, có trạng thái hoạt động, tạm dừng và ngừng dùng. Kiểm tra danh tính, nguồn dự kiến và số đo mới nhất trước khi tin vào dữ liệu đến.\nDùng Tạm dừng hoặc Ngừng dùng qua thao tác hỗ trợ khi phù hợp. Điều tra lỗi nguồn dữ liệu riêng với cảnh báo tình trạng khách hàng."
+          },
+          "image": null
+        },
+        {
+          "key": "menu-admin",
+          "title": {
+            "en": "Menu layout and clinic settings",
+            "vi": "Bố cục trình đơn và cài đặt phòng khám"
+          },
+          "body": {
+            "en": "Settings > Menu controls navigation entries, sections and grouping. A heading may group several screens; an item points to a particular action. Renaming or moving an item changes navigation, not the underlying model permissions.\nBefore changing a menu, identify its existing action and intended roles. Keep the structure understandable: area, tab, then screen. Check that a renamed item still opens the correct screen and that child screens remain reachable. Review both English and Vietnamese labels where maintained. Do not expose an administrator screen to ordinary users as a workaround for an access error.\nSettings contains company-wide options such as maps, billing and integrations, depending on installed modules. Change only the option belonging to the intended company and workflow. After a change, check a representative client or booking rather than relying on a successful Save message.\nAbout and Activity history help identify the workspace and review changes. Record the reason for a configuration change so a later administrator can understand it.",
+            "vi": "Cài đặt > Trình đơn quản lý mục điều hướng, khu vực và nhóm. Một tiêu đề có thể nhóm nhiều màn hình; một mục trỏ đến hành động cụ thể. Đổi tên hoặc di chuyển mục làm đổi điều hướng, không đổi quyền mô hình dữ liệu.\nTrước khi sửa, xác định hành động hiện có và vai trò dự kiến. Giữ cấu trúc dễ hiểu: khu vực, thẻ, màn hình. Kiểm tra mục đổi tên vẫn mở đúng nơi và các màn hình con còn truy cập được. Xem nhãn tiếng Anh và tiếng Việt khi được quản lý. Không mở màn hình quản trị cho người dùng thường để né lỗi quyền.\nCài đặt chứa tùy chọn toàn công ty như bản đồ, hóa đơn và tích hợp tùy phân hệ. Chỉ sửa tùy chọn đúng công ty và quy trình. Sau sửa, kiểm tra một khách hàng hoặc lịch hẹn tiêu biểu thay vì chỉ tin thông báo Lưu thành công.\nGiới thiệu và Lịch sử hoạt động giúp nhận diện không gian, xem thay đổi. Ghi lý do cấu hình để quản trị viên sau hiểu được."
+          },
+          "image": "menu"
+        }
+      ],
+      "flow": {
+        "en": [
+          "Agree the requirement",
+          "Design the field or template",
+          "Preview",
+          "Publish through the supported control",
+          "Check each affected role"
+        ],
+        "vi": [
+          "Thống nhất yêu cầu",
+          "Thiết kế trường hoặc mẫu",
+          "Xem trước",
+          "Công bố đúng chức năng",
+          "Kiểm tra vai trò bị ảnh hưởng"
+        ]
+      }
+    },
+    {
+      "key": "connections",
+      "title": {
+        "en": "Connections, communications and AI",
+        "vi": "Kết nối, liên lạc và AI"
+      },
+      "topics": [
+        {
+          "key": "channel-setup",
+          "title": {
+            "en": "Channels, phone and website enquiries",
+            "vi": "Kênh, điện thoại và yêu cầu website"
+          },
+          "body": {
+            "en": "Settings > Connections contains Channels (setup), Channel Go-Live, Website Connector, Phone system and Extensions where enabled. These screens configure services; seeing a menu does not mean a provider is connected.\nFor each channel, identify the clinic account, permitted purpose, responsible owner and routing destination. Follow the provider-specific connection workflow, store credentials only in the designated fields, and check connection status. Use Channel Go-Live to review the available readiness checks before actual use.\nPhone system and Extensions map the provider account and staff extensions. Verify incoming-call routing, call history and permitted recording access with the phone owner. Website Connector configures how website enquiries enter the clinic; confirm the intended site, destination and attribution fields. Google Ads application configures the provider application separately from the connected advertising account shown to CRM.\nAfter setup, use an authorised example message or enquiry and trace it through Unrouted Contacts, Channel messages, Channel audit and the resulting contact. Confirm errors and retries do not create duplicates. Live-channel operation requires the actual provider accounts and approved connection; a saved configuration alone is not evidence of live delivery.",
+            "vi": "Cài đặt > Kết nối có Kênh (thiết lập), Đưa kênh vào hoạt động, Kết nối website, Hệ thống điện thoại và Máy nhánh khi bật. Đây là màn hình cấu hình; thấy trình đơn không có nghĩa đã kết nối nhà cung cấp.\nVới mỗi kênh, xác định tài khoản phòng khám, mục đích được phép, người phụ trách và nơi định tuyến. Theo quy trình riêng nhà cung cấp, chỉ lưu thông tin xác thực trong trường dành riêng và kiểm tra trạng thái. Dùng Đưa kênh vào hoạt động để xem kiểm tra sẵn sàng trước khi dùng thật.\nHệ thống điện thoại và Máy nhánh ánh xạ tài khoản nhà cung cấp với máy nhánh nhân viên. Cùng phụ trách điện thoại xác minh định tuyến cuộc gọi đến, lịch sử và quyền nghe ghi âm. Kết nối website cấu hình cách yêu cầu web vào phòng khám; xác nhận đúng trang, nơi nhận và trường nguồn. Ứng dụng Google Ads cấu hình ứng dụng nhà cung cấp, tách khỏi tài khoản quảng cáo CRM xem.\nSau thiết lập, dùng tin hoặc yêu cầu mẫu được phép và theo dấu qua Liên hệ chưa định tuyến, Tin nhắn kênh, Nhật ký kênh và liên hệ tạo ra. Xác nhận lỗi/thử lại không tạo trùng. Vận hành trực tiếp cần tài khoản nhà cung cấp thật và kết nối được duyệt; lưu cấu hình chưa chứng minh đã giao tin thật."
+          },
+          "image": null
+        },
+        {
+          "key": "messages-admin",
+          "title": {
+            "en": "Reply templates, reminders and family access",
+            "vi": "Mẫu trả lời, nhắc lịch và quyền gia đình"
+          },
+          "body": {
+            "en": "Reply Templates provides reusable wording; Watchlist phrases supports configured recognition in channel work. Have the responsible team approve wording and language. Check placeholders and a real preview so the wrong client name or date is not sent.\nVisit Messaging maintains outgoing confirmation/reminder records and their outcomes. Its enabled setting and dry-run mode determine whether messages are actually sent. A dry-run record is a simulation, not delivery. The implemented routing can use configured Zalo ZNS, email or staff-call follow-up according to availability and outcome; inspect the record rather than assuming every channel was used.\nFamily links, portal access and self-booking invitations are tied to a client or visit. Verify recipient identity, consent, scope and validity. Use the supported revoke or token-rotation action when access should end or a link is exposed. Do not paste private links into broad group conversations.\nReview failed delivery, fallback and duplicate-prevention behaviour with the operational owner. Changing a template does not correct a message already sent; record the correction and communicate it through the approved process.",
+            "vi": "Mẫu trả lời cung cấp nội dung dùng lại; Cụm từ theo dõi hỗ trợ nhận diện được cấu hình trong công việc kênh. Nhờ nhóm phụ trách duyệt câu chữ và ngôn ngữ. Kiểm tra trường thay thế cùng bản xem trước để tránh gửi sai tên khách hàng hoặc ngày.\nTin nhắn buổi khám lưu xác nhận/nhắc lịch gửi đi và kết quả. Cài đặt bật và chế độ chạy thử quyết định có gửi thật không. Hồ sơ chạy thử là mô phỏng, không phải giao tin. Luồng có thể dùng Zalo ZNS, email hoặc hoạt động gọi cho nhân viên theo cấu hình, khả năng và kết quả; xem hồ sơ thay vì mặc định mọi kênh đều được dùng.\nLiên kết gia đình, quyền cổng khách hàng và lời mời tự đặt lịch gắn với khách hàng hoặc buổi khám. Xác minh người nhận, đồng ý, phạm vi và hạn. Dùng thu hồi hoặc đổi mã liên kết được hỗ trợ khi cần kết thúc quyền hoặc lộ liên kết. Không dán liên kết riêng vào nhóm đông người.\nCùng phụ trách vận hành xem lỗi gửi, chuyển kênh dự phòng và chống trùng. Đổi mẫu không sửa tin đã gửi; ghi việc sửa và thông báo theo quy trình được duyệt."
+          },
+          "image": null
+        },
+        {
+          "key": "ai-admin",
+          "title": {
+            "en": "AI assistance and what remains a human decision",
+            "vi": "Hỗ trợ AI và quyết định vẫn thuộc con người"
+          },
+          "body": {
+            "en": "AI functions have different purposes. Care Command may suggest a reply. Voice Notes may produce a transcript. Coding Review may suggest a medical code. Coaching may suggest a summary or action. The learning coach retrieves published instructions. Do not assume enabling one feature approves every type of data processing.\nUse the existing approved provider configuration and processing-destination controls. Identify what information each feature sends, who may use it and what consent or approval is required. Verify the feature's enabled state and failure behaviour before making it available to staff.\nThe user must review a reply before sending, a transcript before saving as the clinical note, a proposed code before approval and a coaching recommendation before adopting it. The learning coach cannot perform business actions or replace clinical judgement.\nWhen an AI feature is unavailable, use the supported manual workflow. Do not copy client records to an unrelated consumer AI service to bypass a configuration or consent restriction. Review logs only with the appropriate permissions and avoid exporting sensitive payloads unnecessarily.",
+            "vi": "Các chức năng AI có mục đích khác nhau. Care Command có thể gợi ý trả lời. Ghi chú giọng nói có thể tạo bản chép. Duyệt mã có thể đề xuất mã y khoa. Huấn luyện có thể gợi ý tóm tắt hoặc hành động. Trợ lý học tập tìm hướng dẫn đã công bố. Không mặc định bật một tính năng là duyệt mọi kiểu xử lý dữ liệu.\nDùng cấu hình nhà cung cấp đã được duyệt và kiểm soát đích xử lý hiện có. Xác định mỗi tính năng gửi gì, ai được dùng và cần đồng ý/phê duyệt nào. Kiểm tra trạng thái bật cùng cách xử lý lỗi trước khi cấp cho nhân viên.\nNgười dùng phải xem câu trả lời trước khi gửi, bản chép trước khi lưu thành ghi chú, mã đề xuất trước khi chấp thuận và khuyến nghị huấn luyện trước khi áp dụng. Trợ lý học tập không thực hiện hành động nghiệp vụ và không thay phán đoán lâm sàng.\nKhi AI không dùng được, theo quy trình thủ công hỗ trợ. Không chép hồ sơ khách hàng sang dịch vụ AI cá nhân không liên quan để né cấu hình hoặc hạn chế đồng ý. Chỉ xem nhật ký đúng quyền, tránh xuất nội dung nhạy cảm không cần thiết."
+          },
+          "image": null
+        }
+      ],
+      "flow": {
+        "en": [
+          "Confirm provider and purpose",
+          "Configure connection",
+          "Check routing and consent",
+          "Verify a controlled message",
+          "Monitor delivery"
+        ],
+        "vi": [
+          "Xác nhận nhà cung cấp, mục đích",
+          "Cấu hình kết nối",
+          "Kiểm tra tuyến và đồng ý",
+          "Kiểm tra tin có kiểm soát",
+          "Theo dõi gửi"
+        ]
+      }
+    },
+    {
+      "key": "records",
+      "title": {
+        "en": "Records, compliance and controlled corrections",
+        "vi": "Hồ sơ, tuân thủ và sửa đổi có kiểm soát"
+      },
+      "topics": [
+        {
+          "key": "audit",
+          "title": {
+            "en": "Audit Log, consent checks and data lifecycle",
+            "vi": "Nhật ký, kiểm tra đồng ý và vòng đời dữ liệu"
+          },
+          "body": {
+            "en": "Settings > Records > Audit Log helps trace who changed a record and when. Use the model, reference, person and date filters to narrow the search. Review the event and linked record together; a log entry must be interpreted in context.\nConsent Check Log records available permission checks. Use it when investigating why a sharing or processing action was allowed or blocked. Do not edit the consent simply to make a past failed action appear valid.\nData Lifecycle records supported archive, deletion and restoration activity. Archiving removes a record from ordinary active lists; it is not necessarily permanent deletion. A deletion action can have stricter permissions and requirements. Read the impact, reason and any retention hold before proceeding. Use restore only where the application offers a supported recovery route.\nFor important corrections, retain the original reference, reason, responsible person and resulting record. A final clinical record should use its permitted addendum process. Review the actual corrected output after the action, not just the absence of an error message.",
+            "vi": "Cài đặt > Hồ sơ > Nhật ký giúp truy ai đổi hồ sơ và khi nào. Dùng bộ lọc loại hồ sơ, mã, người và ngày để thu hẹp. Xem sự kiện cùng hồ sơ liên kết; phải hiểu nhật ký trong bối cảnh.\nNhật ký kiểm tra đồng ý ghi các lần kiểm tra quyền hiện có. Dùng khi tìm vì sao chia sẻ/xử lý được cho phép hoặc bị chặn. Không sửa đồng ý chỉ để làm hành động thất bại trước đây có vẻ hợp lệ.\nVòng đời dữ liệu ghi lưu trữ, xóa và khôi phục được hỗ trợ. Lưu trữ bỏ hồ sơ khỏi danh sách đang hoạt động, không nhất thiết xóa vĩnh viễn. Xóa có thể cần quyền và điều kiện chặt hơn. Đọc ảnh hưởng, lý do và lệnh giữ dữ liệu trước khi làm. Chỉ khôi phục khi ứng dụng có đường phục hồi hỗ trợ.\nVới sửa đổi quan trọng, giữ mã gốc, lý do, người phụ trách và hồ sơ kết quả. Hồ sơ lâm sàng cuối phải dùng quy trình bổ sung được phép. Kiểm tra đầu ra đã sửa thật, không chỉ việc không xuất hiện lỗi."
+          },
+          "image": "audit"
+        },
+        {
+          "key": "compliance-register",
+          "title": {
+            "en": "Compliance Register and evidence",
+            "vi": "Sổ tuân thủ và bằng chứng"
+          },
+          "body": {
+            "en": "Compliance Register organises requirements and their supporting evidence. Technical verification, operational/manual evidence and authority approval are separate dimensions. A working software feature is not, by itself, proof that an external authority has approved it.\nEvidence Artifacts records supporting documents and their scope. Enter a meaningful description, the relevant requirement, date and responsible owner. Approve after review should only be used after the authorised reviewer has checked the actual evidence. Preserve reviewed records and use the available correction process when information changes.\n1. Open the requirement and read the expected outcome.\n2. Check which evidence relates to the current company, environment and period.\n3. Add the relevant proof through the permitted evidence action.\n4. Review the separate statuses and unresolved items.\n5. Export the register only for an authorised audience and check what the export includes.\nThe register is a work and evidence tool. It does not automatically establish legal compliance or national-system acceptance. Assign an owner to unresolved requirements and track the next action.",
+            "vi": "Sổ tuân thủ tổ chức yêu cầu và bằng chứng hỗ trợ. Xác minh kỹ thuật, bằng chứng vận hành/thủ công và phê duyệt cơ quan là các mặt riêng. Phần mềm hoạt động không tự chứng minh cơ quan bên ngoài đã phê duyệt.\nTài liệu bằng chứng ghi tài liệu hỗ trợ cùng phạm vi. Nhập mô tả rõ, yêu cầu liên quan, ngày và người phụ trách. Chỉ dùng Phê duyệt sau rà soát khi người có quyền đã xem bằng chứng thực. Giữ hồ sơ đã duyệt và dùng quy trình sửa hiện có khi thông tin thay đổi.\n1. Mở yêu cầu, đọc kết quả cần đạt.\n2. Kiểm tra bằng chứng thuộc đúng công ty, môi trường và thời kỳ.\n3. Thêm chứng minh liên quan bằng thao tác được phép.\n4. Xem trạng thái riêng và mục chưa giải quyết.\n5. Chỉ xuất sổ cho đối tượng được phép, kiểm tra nội dung xuất.\nSổ là công cụ công việc và bằng chứng. Nó không tự xác lập tuân thủ pháp luật hay chấp nhận của hệ thống quốc gia. Giao người phụ trách yêu cầu còn mở và theo dõi bước tiếp theo."
+          },
+          "image": null
+        },
+        {
+          "key": "rights",
+          "title": {
+            "en": "Rights requests, calendars and retention holds",
+            "vi": "Yêu cầu về quyền, lịch xử lý và lệnh giữ dữ liệu"
+          },
+          "body": {
+            "en": "Rights Requests supports requests concerning personal information. Record the requester, subject, request type, received date, responsible owner and verified identity information through the permitted fields. Handle identity evidence through the clinic's approved process.\nRecord acknowledgement requires proof of the actual acknowledgement. Record extension notice captures an actual notice when an extension is authorised. Complete request should follow the completed outcome and its communication evidence. A computed deadline helps organise work; the responsible privacy lead must confirm the applicable requirement and any exception.\nRights Calendar maintains the relevant working/non-working-day information used by the workflow. Retention Holds prevents selected data from being removed while a legitimate hold applies. Record the scope, reason and responsible owner. Release hold only when the authorised decision permits it.\nBefore deleting or exporting information in response to a request, check identity, scope, clinical-record obligations and active holds with the responsible specialist. Keep a record of what was provided or corrected. Do not treat a request as permission to expose unrelated people's information.",
+            "vi": "Yêu cầu về quyền hỗ trợ xử lý yêu cầu liên quan dữ liệu cá nhân. Ghi người yêu cầu, chủ thể, loại, ngày nhận, người phụ trách và thông tin xác minh danh tính qua trường được phép. Xử lý bằng chứng danh tính theo quy trình phòng khám.\nGhi nhận xác nhận tiếp nhận cần bằng chứng đã thông báo thực tế. Ghi thông báo gia hạn lưu thông báo thật khi gia hạn được phép. Hoàn tất yêu cầu phải theo sau kết quả đã thực hiện và bằng chứng thông báo. Hạn tự tính giúp sắp việc; phụ trách quyền riêng tư phải xác nhận yêu cầu áp dụng và ngoại lệ.\nLịch xử lý quyền duy trì ngày làm/nghỉ liên quan mà quy trình dùng. Lệnh giữ dữ liệu ngăn xóa dữ liệu được chọn khi lệnh hợp lệ còn áp dụng. Ghi phạm vi, lý do và người phụ trách. Chỉ Giải phóng lệnh giữ khi quyết định có quyền cho phép.\nTrước khi xóa hoặc xuất theo yêu cầu, cùng người chuyên trách kiểm tra danh tính, phạm vi, nghĩa vụ hồ sơ lâm sàng và lệnh giữ. Ghi nội dung đã cung cấp hoặc sửa. Không coi yêu cầu là quyền lộ thông tin của người không liên quan."
+          },
+          "image": null
+        },
+        {
+          "key": "authority",
+          "title": {
+            "en": "Processing destinations and authority integrations",
+            "vi": "Đích xử lý và tích hợp cơ quan"
+          },
+          "body": {
+            "en": "Processing Destinations identifies recipients or services that may receive information for an approved purpose, such as AI processing or support. Review purpose, scope and supporting approval before using Approve destination. Do not grant a broad destination merely to make one integration work.\nAuthority Integrations tracks the readiness of external capabilities such as certified signing or national-health connections. Record the actual provider, contract/onboarding status and evidence. A configured adapter or locally generated file is not evidence of a successful production authority connection.\nWhere the screen distinguishes pending, configured or approved states, preserve that distinction in operational reports. Do not enter an approval state without the required proof. Review changes with the responsible clinical, privacy or integration owner.\nSecrets, access tokens and provider credentials belong only in the intended secured configuration controls. Never include them in screenshots, training examples, exported user manuals or broad chat messages.",
+            "vi": "Đích xử lý xác định người nhận hoặc dịch vụ có thể nhận thông tin cho mục đích được duyệt, như xử lý AI hoặc hỗ trợ. Xem mục đích, phạm vi và phê duyệt trước khi dùng Duyệt đích. Không cấp đích quá rộng chỉ để một tích hợp hoạt động.\nTích hợp cơ quan theo dõi mức sẵn sàng của khả năng ngoài như ký số có chứng nhận hoặc kết nối y tế quốc gia. Ghi nhà cung cấp thật, trạng thái hợp đồng/tiếp nhận và bằng chứng. Bộ kết nối đã cấu hình hoặc tệp tạo nội bộ không chứng minh có kết nối vận hành thành công với cơ quan.\nKhi màn hình phân biệt chờ, đã cấu hình hoặc đã duyệt, giữ khác biệt đó trong báo cáo. Không nhập trạng thái phê duyệt nếu thiếu chứng minh. Rà soát thay đổi với phụ trách chuyên môn, quyền riêng tư hoặc tích hợp.\nBí mật, mã truy cập và thông tin xác thực nhà cung cấp chỉ nằm trong điều khiển cấu hình bảo vệ dành riêng. Không đưa vào ảnh, ví dụ đào tạo, sổ tay xuất hoặc hội thoại đông người."
+          },
+          "image": null
+        },
+        {
+          "key": "emr-export",
+          "title": {
+            "en": "Terminology, EMR export, readiness and EVV",
+            "vi": "Thuật ngữ, xuất hồ sơ điện tử, sẵn sàng và EVV"
+          },
+          "body": {
+            "en": "Terminology contains Medical Codes, Coding Systems and Import Codes. Maintain the approved coding system and version. Check code format, descriptions and duplicates when importing. Changing a code's meaning can affect existing clinical interpretation.\nEMR (VN) > Readiness shows available checks for the Vietnam export profile. Resolve missing identity, facility or clinical information through its proper source record. Export prepares the supported file/bundle and records a submission-log entry. In the current adapter, file export is distinct from live national transport; a local export is not proof that a national service received or accepted it. Record actual acknowledgement only when supported by real evidence.\nEVV Events provides visit verification history. Inspect the linked visit, event time, location and other available evidence. The event log supports traceability; it is not a screen for silently rewriting check-in history.\nWhen investigating a missing export or verification event, preserve the reference and error, check the source data and consult the integration owner. Do not invent identity, signatures, timestamps or acknowledgement details to make a readiness check pass.",
+            "vi": "Thuật ngữ gồm Mã y khoa, Hệ thống mã và Nhập mã. Duy trì hệ thống/phiên bản được duyệt. Kiểm tra định dạng, mô tả và trùng khi nhập. Đổi ý nghĩa mã có thể ảnh hưởng cách hiểu hồ sơ cũ.\nEMR (VN) > Sẵn sàng hiển thị kiểm tra hiện có cho hồ sơ xuất Việt Nam. Sửa thiếu thông tin danh tính, cơ sở hoặc lâm sàng tại hồ sơ nguồn đúng. Xuất chuẩn bị tệp/gói hỗ trợ và ghi nhật ký gửi. Trong bộ kết nối hiện tại, xuất tệp khác với truyền trực tiếp quốc gia; xuất nội bộ không chứng minh dịch vụ quốc gia đã nhận hoặc chấp thuận. Chỉ ghi xác nhận thật khi có bằng chứng thực.\nSự kiện EVV cung cấp lịch sử xác minh buổi khám. Xem lịch hẹn liên kết, thời gian, vị trí và bằng chứng hiện có. Nhật ký hỗ trợ truy vết, không phải nơi âm thầm viết lại lịch sử vào ca khám.\nKhi điều tra thiếu tệp xuất hoặc sự kiện, giữ mã và lỗi, kiểm tra dữ liệu nguồn, hỏi phụ trách tích hợp. Không bịa danh tính, chữ ký, thời gian hoặc xác nhận để đạt kiểm tra sẵn sàng."
+          },
+          "image": null
+        }
+      ],
+      "flow": {
+        "en": [
+          "Identify record and purpose",
+          "Review evidence and permissions",
+          "Use supported action",
+          "Retain history",
+          "Verify outcome"
+        ],
+        "vi": [
+          "Xác định hồ sơ, mục đích",
+          "Xem bằng chứng và quyền",
+          "Dùng thao tác hỗ trợ",
+          "Giữ lịch sử",
+          "Xác minh kết quả"
+        ]
+      }
+    },
+    {
+      "key": "report-admin",
+      "title": {
+        "en": "Reporting and learning administration",
+        "vi": "Quản trị báo cáo và học tập"
+      },
+      "topics": [
+        {
+          "key": "data-admin",
+          "title": {
+            "en": "Analytics sources, datasets and dashboards",
+            "vi": "Nguồn phân tích, tập dữ liệu và bảng điều khiển"
+          },
+          "body": {
+            "en": "Analytics > Data groups Sources, Datasets, Refresh jobs, Pipelines, Semantic model and Glossary. These are reporting configuration tools and should be managed by the reporting administrator rather than ordinary dashboard readers.\nA source identifies where data comes from. A dataset defines the data made available for reporting. A pipeline prepares it. The semantic model defines business measures and relationships. The glossary explains terms. Refresh jobs bring the data up to date. A dashboard presents the selected result.\n1. Confirm the approved source and access scope. Use Test Connection where available without exposing credentials.\n2. Define or review the dataset and transformation. Validate before applying or publishing.\n3. Check row counts, dates, measures and role restrictions using known records.\n4. Publish only the intended dataset/dashboard and set recipients and schedules carefully.\n5. Monitor refresh outcomes; investigate errors before users rely on stale figures.\nA refreshed dataset can still contain an incorrect business definition. Compare key totals with source invoices, bookings or payments. Do not grant direct source access to solve a dashboard-permission problem.",
+            "vi": "Phân tích > Dữ liệu nhóm Nguồn, Tập dữ liệu, Tác vụ làm mới, Luồng xử lý, Mô hình ngữ nghĩa và Từ điển. Đây là công cụ cấu hình báo cáo dành cho quản trị báo cáo, không phải người chỉ đọc bảng.\nNguồn xác định dữ liệu đến từ đâu. Tập dữ liệu xác định dữ liệu cung cấp cho báo cáo. Luồng xử lý chuẩn bị dữ liệu. Mô hình ngữ nghĩa định nghĩa chỉ tiêu nghiệp vụ và quan hệ. Từ điển giải thích thuật ngữ. Tác vụ làm mới cập nhật dữ liệu. Bảng điều khiển trình bày kết quả đã chọn.\n1. Xác nhận nguồn được duyệt và phạm vi quyền. Dùng Kiểm tra kết nối khi có, không lộ thông tin xác thực.\n2. Định nghĩa/xem tập dữ liệu và chuyển đổi. Kiểm tra trước áp dụng hoặc công bố.\n3. Kiểm tra số dòng, ngày, chỉ tiêu và giới hạn vai trò bằng hồ sơ đã biết.\n4. Chỉ công bố tập/bảng dự kiến, đặt người nhận và lịch cẩn thận.\n5. Theo dõi kết quả làm mới; xử lý lỗi trước khi người dùng dựa vào số liệu cũ.\nDữ liệu đã làm mới vẫn có thể sai định nghĩa nghiệp vụ. Đối chiếu tổng chính với hóa đơn, lịch hẹn hoặc thanh toán nguồn. Không cấp quyền nguồn trực tiếp để xử lý lỗi quyền bảng điều khiển."
+          },
+          "image": null
+        },
+        {
+          "key": "learn-admin",
+          "title": {
+            "en": "Maintain training and interpret learner progress",
+            "vi": "Duy trì đào tạo và hiểu tiến độ học"
+          },
+          "body": {
+            "en": "Learn contains two related experiences. Task guides and videos uses the curated task library, role paths and guide-grounded coach. Training uses lessons and stations with its own learning records. Training admin includes Lessons, Stations, Learner progress, Learning events and Training wording where available.\nMaintain a named owner for each learning topic. When a workflow changes, check the written steps, screenshots, captions and video chapters together. Retire or update outdated instructions rather than adding contradictory notes. Review the learner-facing wording in both languages.\nUse learner progress to identify people who may need help. Reviewed, watched or quiz-completed flags do not prove clinical competence or grant application permissions. Combine them with supervised practice and the clinic's role assessment.\nThe curated task/video catalogue is maintained through the application's content release process, rather than by editing an arbitrary lesson record. Request a coordinated update for its guides, video files and role mappings. Keep videos within their intended access and provide administrator manuals only to the appropriate audience.",
+            "vi": "Học tập có hai trải nghiệm liên quan. Hướng dẫn công việc và video dùng thư viện được biên soạn, lộ trình vai trò và trợ lý dựa trên hướng dẫn. Đào tạo dùng bài học, trạm học và hồ sơ riêng. Quản trị đào tạo gồm Bài học, Trạm, Tiến độ học viên, Sự kiện học và Nội dung đào tạo khi có.\nGiao người phụ trách từng chủ đề. Khi quy trình đổi, kiểm tra đồng thời bài viết, ảnh, phụ đề và chương video. Ngừng hoặc cập nhật hướng dẫn cũ thay vì thêm ghi chú mâu thuẫn. Xem nội dung dành cho học viên ở cả hai ngôn ngữ.\nDùng tiến độ để nhận biết người cần hỗ trợ. Cờ đã đọc, đã xem hay hoàn tất câu hỏi không chứng minh năng lực lâm sàng và không cấp quyền ứng dụng. Kết hợp thực hành có giám sát với đánh giá vai trò của phòng khám.\nDanh mục hướng dẫn/video được duy trì qua quy trình phát hành nội dung ứng dụng, không bằng sửa tùy ý một hồ sơ bài học. Yêu cầu cập nhật đồng bộ bài, tệp video và ánh xạ vai trò. Giữ video đúng phạm vi, chỉ cấp sổ tay quản trị cho người phù hợp."
+          },
+          "image": null
+        },
+        {
+          "key": "admin-checklist",
+          "title": {
+            "en": "Routine review and safe troubleshooting",
+            "vi": "Rà soát định kỳ và xử lý vấn đề"
+          },
+          "body": {
+            "en": "Daily: check unresolved delivery failures, failed refresh jobs, important access reports, pending cash and operational exceptions with the responsible teams. Weekly or at the clinic's agreed interval: review leavers and changed roles, expiring consent, upcoming holidays, outdated training and unresolved compliance evidence.\nWhen a problem is reported, record the user, role, company, catchment, screen, reference, time and exact message. Reproduce with the least privilege needed. Separate missing data, wrong filters, wrong assignment, wrong permissions, stale data and a genuine software defect.\nAfter a fix, check the original case and a neighbouring case that should remain unchanged. For an access change, confirm both permitted and prohibited work. For pricing, check a matching and non-matching quote. For a form, check existing records as well as new ones. For integration, verify the external outcome as well as the local status.\nKeep regular users focused on their tasks. Share the user manual and relevant guides; keep this administrator manual in the designated restricted location. Escalate code/deployment issues to the technical operator with the evidence needed to investigate.",
+            "vi": "Hằng ngày: cùng nhóm phụ trách xem lỗi gửi chưa giải quyết, tác vụ làm mới lỗi, báo cáo quyền quan trọng, tiền chờ bàn giao và ngoại lệ vận hành. Hằng tuần hoặc theo lịch phòng khám: rà soát người nghỉ/đổi vai trò, đồng ý sắp hết hạn, ngày lễ tới, đào tạo cũ và bằng chứng tuân thủ còn thiếu.\nKhi có báo lỗi, ghi người dùng, vai trò, công ty, khu vực, màn hình, mã, thời điểm và thông báo đúng. Tái hiện bằng quyền tối thiểu cần thiết. Phân biệt dữ liệu thiếu, bộ lọc sai, phân công sai, quyền sai, dữ liệu cũ và lỗi phần mềm thật.\nSau sửa, kiểm tra trường hợp gốc và trường hợp gần đó phải giữ nguyên. Với quyền, kiểm tra cả việc được phép lẫn bị chặn. Với giá, kiểm tra báo giá khớp và không khớp quy tắc. Với biểu mẫu, kiểm tra hồ sơ cũ và mới. Với tích hợp, xác minh kết quả bên ngoài cùng trạng thái nội bộ.\nGiữ người dùng thường tập trung công việc. Chia sẻ sổ tay người dùng và hướng dẫn liên quan; giữ sổ tay quản trị tại nơi hạn chế được chỉ định. Chuyển vấn đề mã/triển khai cho người vận hành kỹ thuật cùng bằng chứng cần để điều tra."
+          },
+          "image": null
+        }
+      ],
+      "flow": {
+        "en": [
+          "Maintain approved content or data",
+          "Validate",
+          "Publish for the right audience",
+          "Monitor results",
+          "Review changes"
+        ],
+        "vi": [
+          "Duy trì nội dung hoặc dữ liệu",
+          "Kiểm tra",
+          "Công bố đúng đối tượng",
+          "Theo dõi kết quả",
+          "Rà soát thay đổi"
+        ]
+      }
+    }
+  ]
+}

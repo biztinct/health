@@ -1,0 +1,58 @@
+[
+  {
+    "file": "output/pdf/CareJiyo_Manuals/Users/CareJiyo_User_Manual_EN.pdf",
+    "pages": 55,
+    "figures": 23,
+    "chapters": 9,
+    "topics": 42,
+    "language": "en",
+    "audience": "user",
+    "sha256": "dbceef47da18cae78feb7c5f2977834347aab0721005b0949259d227e6a17883",
+    "links": 146,
+    "page_bounds_checked": true,
+    "text_and_vietnamese_checked": true,
+    "internal_link_destinations_checked": true
+  },
+  {
+    "file": "output/pdf/CareJiyo_Manuals/Users/CareJiyo_User_Manual_VI.pdf",
+    "pages": 55,
+    "figures": 23,
+    "chapters": 9,
+    "topics": 42,
+    "language": "vi",
+    "audience": "user",
+    "sha256": "1034a56dd07b7e23bb94333ce34121fef50ea98fc13de124fbaf17b416b80830",
+    "links": 146,
+    "page_bounds_checked": true,
+    "text_and_vietnamese_checked": true,
+    "internal_link_destinations_checked": true
+  },
+  {
+    "file": "output/pdf/CareJiyo_Manuals/Administrators/CareJiyo_Administrator_Manual_EN.pdf",
+    "pages": 31,
+    "figures": 8,
+    "chapters": 7,
+    "topics": 21,
+    "language": "en",
+    "audience": "admin",
+    "sha256": "a554a906a77291d57e6aabef9334fe9a2c9a2bfbd845e74dc60f7381f934195f",
+    "links": 77,
+    "page_bounds_checked": true,
+    "text_and_vietnamese_checked": true,
+    "internal_link_destinations_checked": true
+  },
+  {
+    "file": "output/pdf/CareJiyo_Manuals/Administrators/CareJiyo_Administrator_Manual_VI.pdf",
+    "pages": 31,
+    "figures": 8,
+    "chapters": 7,
+    "topics": 21,
+    "language": "vi",
+    "audience": "admin",
+    "sha256": "1060c8ecaca648719c375b86450a1fc17a01e63c0fcdfc16e22ff05f86401d57",
+    "links": 77,
+    "page_bounds_checked": true,
+    "text_and_vietnamese_checked": true,
+    "internal_link_destinations_checked": true
+  }
+]
