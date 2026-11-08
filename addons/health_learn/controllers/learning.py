@@ -50,7 +50,7 @@ class LearningController(http.Controller):
             parts.append('<h3>Check the result</h3><p>%s</p><h3>If something is wrong</h3><p>%s</p>' % (e(t['success']), e(t['trouble'])))
             if request.env['learn.task']._media_path(t['key']):
                 url = '/carejiyo/learn/media/' + e(t['key']) + '/'
-                parts.append('<div class="video"><h3>Watch the walkthrough</h3><video controls playsinline preload="none" style="width:100%" poster="/health_learn/static/src/library/poster.svg" src="%smp4"><track kind="subtitles" srclang="en" label="English" default src="%sen.vtt"><track kind="subtitles" srclang="vi" label="Tiếng Việt" src="%svi.vtt"></video></div>' % (url, url, url))
+                parts.append('<div class="video"><h3>Watch the walkthrough</h3><video controls playsinline preload="none" style="width:100%%" poster="/health_learn/static/src/library/poster.svg" src="%smp4"><track kind="subtitles" srclang="en" label="English" default src="%sen.vtt"><track kind="subtitles" srclang="vi" label="Tiếng Việt" src="%svi.vtt"></video></div>' % (url, url, url))
             parts.append('</article>')
         parts.append('<footer>CareJiyo user manual</footer></html>')
         return request.make_response(''.join(parts), headers=[('Content-Type', 'text/html; charset=utf-8'), ('Cache-Control','private, no-store'), ('X-Content-Type-Options','nosniff')])
