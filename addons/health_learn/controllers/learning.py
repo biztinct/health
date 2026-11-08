@@ -1,5 +1,6 @@
 """Authenticated media and printable manuals. No public training attachments."""
 import html
+import os
 from odoo import http
 from odoo.http import request
 from werkzeug.exceptions import NotFound
@@ -11,8 +12,15 @@ class LearningController(http.Controller):
         path = request.env['learn.task']._media_path(key, kind)
         if not path:
             raise NotFound()
-        stream = http.Stream.from_path(path)
-        stream.mimetype = 'video/mp4' if kind == 'mp4' else 'text/vtt'
+        # from_path is restricted to addon resources. These files intentionally
+        # live outside public addons; _media_path has already checked the role,
+        # allowed suffix and release-owned digest, never accepting a raw path.
+        stat = os.stat(path)
+        stream = http.Stream(type='path', path=path,
+                             mimetype='video/mp4' if kind == 'mp4' else 'text/vtt',
+                             download_name=key + '.' + kind,
+                             last_modified=stat.st_mtime, size=stat.st_size,
+                             public=False)
         response = stream.get_response()
         response.headers['Cache-Control'] = 'private, no-store'
         response.headers['X-Content-Type-Options'] = 'nosniff'

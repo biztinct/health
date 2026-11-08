@@ -1,5 +1,7 @@
 """Role-scoped learning must never become a second route to private data."""
 import json
+import tempfile
+from pathlib import Path
 from unittest.mock import patch
 from odoo.exceptions import AccessError, ValidationError
 from odoo.tests.common import TransactionCase, tagged
@@ -138,6 +140,21 @@ from odoo.tests import HttpCase, new_test_user
 
 @tagged('post_install', '-at_install')
 class TestLearningDelivery(HttpCase):
+    def test_authenticated_streaming_uses_private_media_root(self):
+        new_test_user(self.env, login='learning_stream_nurse', password='learning-stream-test',
+                      groups='base.group_user,health_base.group_healthcare_nurse')
+        self.authenticate('learning_stream_nurse', 'learning-stream-test')
+        task = next(t for t in catalog()['tasks'] if t['key'] == 'mobile.start-a-visit')
+        with tempfile.TemporaryDirectory() as folder:
+            self.env['ir.config_parameter'].sudo().set_param('health_learn.media_root', folder)
+            (Path(folder) / (task['media'] + '.mp4')).write_bytes(b'0123456789' * 100)
+            response = self.url_open('/carejiyo/learn/media/mobile.start-a-visit/mp4',
+                                     headers={'Range': 'bytes=0-9'})
+            self.assertEqual(response.status_code, 206)
+            self.assertEqual(response.content, b'0123456789')
+            self.assertIn('private', response.headers['Cache-Control'])
+            self.assertIn('no-store', response.headers['Cache-Control'])
+
     def test_nurse_help_and_manual_follow_role_access(self):
         new_test_user(self.env, login='learning_delivery_nurse', password='learning-delivery-test',
                       groups='base.group_user,health_base.group_healthcare_nurse')
