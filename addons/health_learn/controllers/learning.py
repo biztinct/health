@@ -29,7 +29,7 @@ class LearningController(http.Controller):
             raise NotFound()
         e = html.escape
         parts = ['<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">',
-                 '<title>CareJiyo User Manual</title><style>body{font:16px/1.7 sans-serif;color:#19394a;max-width:900px;margin:40px auto;padding:0 24px}h1,h2{line-height:1.2}h2{margin-top:40px}li{margin:12px 0}article{border-top:1px solid #ddd;padding:24px 0}a{color:#08786e}button{padding:10px 16px}aside{padding:12px;border-left:3px solid #bc852e}nav{columns:2} @media print{button,.video{display:none}article{break-before:page}li{break-inside:avoid}h2,h3{break-after:avoid}}@page{size:A4;margin:18mm}</style>',
+                 '<title>CareJiyo User Manual</title><style>body{font:16px/1.7 sans-serif;color:#19394a;max-width:900px;margin:40px auto;padding:0 24px}h1,h2{line-height:1.2}h2{margin-top:40px}li{margin:12px 0}article{border-top:1px solid #ddd;padding:24px 0}a{color:#08786e}button{padding:10px 16px}aside{padding:12px;border-left:3px solid #bc852e}nav{columns:2} @media print{button,.video{display:none}article{break-before:page}li{break-inside:avoid}h2,h3{break-after:avoid}}video::cue{font-size:16px;background:rgba(15,40,48,.88);color:white}@page{size:A4;margin:18mm}</style>',
                  '<button onclick="window.print()">Print or save as PDF</button><h1>CareJiyo user manual</h1>',
                  '<p>Find your task below. Read what you need first, follow the steps and check the result. Use your own staff account and work within your assigned role and catchment.</p>']
         sections = ['Getting started and enquiries', 'Bookings and operations', 'Mobile visits',

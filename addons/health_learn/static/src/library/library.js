@@ -72,7 +72,7 @@ export class TaskPanel extends Component {
     manual(key){return '/carejiyo/learn/manual'+(key?'?key='+encodeURIComponent(key):'');}
     format(n){return Math.floor(n/60)+':'+String(Math.floor(n%60)).padStart(2,'0');}
     metadata(){const v=this.video.el;if(!v)return;const p=this.startAt===null?this.progress(this.state.task.key).position||0:this.startAt;v.currentTime=Math.min(p,Math.max(0,v.duration-1));this.startAt=null;}
-    seek(start){if(this.video.el){this.video.el.currentTime=start;this.video.el.play().catch(()=>{});}}
+    seek(start){if(this.video.el){this.video.el.currentTime=start;this.video.el.scrollIntoView({block:"center",behavior:"smooth"});this.video.el.play().catch(()=>{});}}
     async save(event,position=0){const t=this.state.task;if(!t)return;try{await this.orm.call("learn.task","record",[t.key,event,position]);this.state.data.progress[t.key]={...this.progress(t.key),...(event==="position"?{position}:{[event]:true})};}catch{if(event!=="position")this.notification.add(this.label("savedError"),{type:"warning"});}}
     timeUpdate(){const now=Date.now();if(now-this.lastSave>10000&&this.video.el){this.lastSave=now;this.save("position",this.video.el.currentTime);}}
     ended(){this.save("watched");this.save("position",0);}

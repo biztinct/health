@@ -7,3 +7,5 @@
 }
 @media(max-width:700px){.cj-learning{padding:16px;.cj-filters{grid-template-columns:1fr}.cj-learn-header{flex-wrap:wrap}.cj-topic-grid{grid-template-columns:1fr}}}
 .lrn-task-panel{overflow:auto;flex:1;min-height:0}.lrn-help-tabs{display:flex;gap:8px;padding:10px 16px;border-bottom:1px solid #dde5e8;flex-shrink:0}
+
+.cj-learning video::cue{font-size:16px;background:rgba(15,40,48,.88);color:#fff}.cj-learning.cj-compact video::cue{font-size:12px}

@@ -2465,7 +2465,7 @@
       ],
       "steps": [
         "Open Finance › Invoices and find the invoice. Verify the client and outstanding amount.",
-        "Choose Pay to open Receive Payment.",
+        "In the invoice list, choose Receive Payment. If the invoice is already open, choose Pay.",
         "Select the correct journal, such as Cash for cash received or Bank for a confirmed transfer.",
         "Enter the amount actually received and the applicable payment details. Do not replace a part payment with the full invoice total.",
         "Review the amount and confirm Receive Payment once.",
@@ -2554,7 +2554,7 @@
       "steps": [
         "Open Finance › Receivables and note the client’s balance.",
         "Find the relevant invoice in Finance › Invoices and check its client and reference.",
-        "Choose Pay to open Receive Payment, then select the Bank journal.",
+        "In the invoice list, choose Receive Payment, or choose Pay on the open invoice. Select the Bank journal.",
         "Enter the confirmed amount and payment date and review the details.",
         "Confirm the payment once.",
         "Return to the invoice and inspect its linked payment and remaining balance.",
