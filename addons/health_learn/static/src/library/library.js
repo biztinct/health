@@ -1,5 +1,5 @@
 /** @odoo-module **/
-import { Component, onWillStart, onWillUpdateProps, onWillUnmount, useRef, useState } from "@odoo/owl";
+import { Component, onMounted, onWillStart, onWillUpdateProps, onWillUnmount, useRef, useState } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { user } from "@web/core/user";
@@ -34,6 +34,7 @@ const LABELS = {
     caption: ["Choose English or Vietnamese subtitles in the video controls.", "Chọn phụ đề tiếng Anh hoặc tiếng Việt trong trình phát video."],
 };
 const SECTIONS = [null, ["Getting started and enquiries","Bắt đầu và liên hệ"], ["Bookings and operations","Lịch hẹn và vận hành"], ["Mobile visits","Chăm sóc trên di động"], ["Invoices and payments","Hóa đơn và thanh toán"], ["Users and administration","Người dùng và quản trị"], ["Worked examples","Ví dụ thực hành"]];
+const normalise = (text) => text.toLocaleLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").trim();
 const ROLES = {owner:["Owner","Chủ cơ sở"],operations:["Operations Manager","Quản lý vận hành"],crm:["CRM","CRM"],clinical:["Nurse or doctor","Điều dưỡng hoặc bác sĩ"],finance:["Finance","Tài chính"]};
 
 export class TaskPanel extends Component {
@@ -44,18 +45,21 @@ export class TaskPanel extends Component {
         this.video=useRef("video"); this.lastSave=0; this.requestId=0;
         this.state=useState({ready:false,error:false,query:"",section:"",mode:"library",task:null,tab:"steps",data:{tasks:[],paths:{},quizzes:{},progress:{}},role:"",question:"",answer:null,busy:false,quizAnswer:-1,quizResult:null,all:false,lang:this.props.lang||RT.lang||((user.lang||"").startsWith("vi")?"vi":"en")});
         onWillStart(()=>this.load());
-        onWillUpdateProps((next)=>{if(next.lang&&next.lang!==this.props.lang)this.state.lang=next.lang;if(next.screen!==this.props.screen){this.stopVideo();this.state.task=null;this.state.answer=null;this.state.all=false;this.state.query="";}});
-        onWillUnmount(()=>{this.requestId++;this.stopVideo();});
+        onWillUpdateProps((next)=>{if(next.lang&&next.lang!==this.props.lang)this.state.lang=next.lang;if(next.screen!==this.props.screen){this.requestId++;this.state.busy=false;this.stopVideo();this.state.task=null;this.state.answer=null;this.state.all=false;this.state.query="";}});
+        this.onLanguage=(ev)=>{if(["en","vi"].includes(ev.detail))this.state.lang=ev.detail;};
+        onMounted(()=>window.addEventListener("carejiyo-learning-language",this.onLanguage));
+        onWillUnmount(()=>{this.requestId++;this.stopVideo();window.removeEventListener("carejiyo-learning-language",this.onLanguage);});
     }
-    toggleLang(){this.state.lang=this.state.lang==="en"?"vi":"en";RT.lang=this.state.lang;try{const prefs=JSON.parse(localStorage.getItem("cjxLearnPrefs")||"{}");prefs.lang=this.state.lang;localStorage.setItem("cjxLearnPrefs",JSON.stringify(prefs));}catch{}}
+    toggleLang(){this.state.lang=this.state.lang==="en"?"vi":"en";RT.lang=this.state.lang;window.dispatchEvent(new CustomEvent("carejiyo-learning-language",{detail:this.state.lang}));try{const prefs=JSON.parse(localStorage.getItem("cjxLearnPrefs")||"{}");prefs.lang=this.state.lang;localStorage.setItem("cjxLearnPrefs",JSON.stringify(prefs));}catch{}}
     label(key){return (LABELS[key]||[key,key])[this.state.lang==="vi"?1:0];}
     sectionName(n){return SECTIONS[n]?.[this.state.lang==="vi"?1:0]||"";}
     roleName(r){return ROLES[r]?.[this.state.lang==="vi"?1:0]||r;}
     title(t){return this.state.lang==="vi"?t.title_vi||t.title:t.title;}
-    async load(){try{this.state.data=await this.orm.call("learn.task","get_catalog",[]);this.state.role=Object.keys(this.state.data.paths)[0]||"";this.state.ready=true;this.state.error=false;if(this.props.startKey)this.select(this.props.startKey);}catch{this.state.error=true;}}
+    async load(){try{this.state.data=await this.orm.call("learn.task","get_catalog",[]);this.state.role=this.state.data.paths.owner?"owner":Object.keys(this.state.data.paths)[0]||"";this.state.ready=true;this.state.error=false;if(this.props.startKey)this.select(this.props.startKey);}catch{this.state.error=true;}}
     get sections(){return SECTIONS.map((s,i)=>i).filter(i=>i&&this.state.data.tasks.some(t=>t.section===i));}
-    get filtered(){let list=this.state.data.tasks;if(this.props.compact&&this.props.screen&&!this.state.all&&!this.state.query)list=list.filter(t=>t.screens.includes(this.props.screen));const q=this.state.query.toLocaleLowerCase();return list.filter(t=>(!this.state.section||String(t.section)===this.state.section)&&(!q||[t.title,t.title_vi,t.goal,...t.search_phrases].join(" ").toLocaleLowerCase().includes(q)));}
+    get filtered(){let list=this.state.data.tasks;if(this.props.compact&&this.props.screen&&!this.state.all&&!this.state.query)list=list.filter(t=>t.screens.includes(this.props.screen));const q=normalise(this.state.query);return list.filter(t=>(!this.state.section||String(t.section)===this.state.section)&&(!q||normalise([t.title,t.title_vi,t.goal,...t.search_phrases].join(" ")).includes(q)));}
     get pathTasks(){return (this.state.data.paths[this.state.role]||[]).map(key=>this.state.data.tasks.find(t=>t.key===key)).filter(Boolean);}
+    get practiceTask(){return this.state.data.practice?.[this.state.role];}
     get quiz(){return this.state.data.quizzes[this.state.role];}
     get pathReviewed(){return this.pathTasks.filter(t=>this.progress(t.key).reviewed).length;}
     progress(key){return this.state.data.progress[key]||{};}
@@ -73,7 +77,7 @@ export class TaskPanel extends Component {
     timeUpdate(){const now=Date.now();if(now-this.lastSave>10000&&this.video.el){this.lastSave=now;this.save("position",this.video.el.currentTime);}}
     ended(){this.save("watched");this.save("position",0);}
     async ask(){const q=this.state.question.trim();if(!q||this.state.busy)return;const req=++this.requestId;this.state.busy=true;try{const answer=await this.orm.call("learn.task","answer",[q,this.props.screen||null]);if(req===this.requestId)this.state.answer=answer;}catch{this.notification.add(this.label("error"),{type:"warning"});}finally{if(req===this.requestId)this.state.busy=false;}}
-    async checkQuiz(){if(this.state.quizAnswer<0){this.notification.add(this.label("choose"),{type:"warning"});return;}try{this.state.quizResult=await this.orm.call("learn.task","check_quiz",[this.state.role,this.state.quizAnswer]);this.state.data.progress['quiz:'+this.state.role]={quiz_passed:this.state.quizResult.correct};}catch{this.notification.add(this.label("savedError"),{type:"warning"});}}
+    async checkQuiz(){if(this.state.quizAnswer<0){this.notification.add(this.label("choose"),{type:"warning"});return;}try{const role=this.state.role;const result=await this.orm.call("learn.task","check_quiz",[role,this.state.quizAnswer]);if(this.state.role===role)this.state.quizResult=result;this.state.data.progress['quiz:'+role]={quiz_passed:result.correct};}catch{this.notification.add(this.label("savedError"),{type:"warning"});}}
     practice(){this.action.doAction("health_learn.action_learn_journey");}
 }
 

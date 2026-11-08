@@ -80,6 +80,7 @@ class LearnTask(models.AbstractModel):
             ('user_id', '=', self.env.uid), ('company_id', '=', self.env.company.id)])
         return {'tasks': tasks, 'paths': paths, 'quizzes': quizzes,
                 'version': catalog()['version'],
+                'practice': {r: p for r, p in catalog()['practice'].items() if r in paths},
                 'progress': {r.task_key: {'reviewed': r.reviewed, 'watched': r.watched,
                                           'quiz_passed': r.quiz_passed, 'position': r.position}
                              for r in rows}}
@@ -201,5 +202,6 @@ class LearnTaskProgress(models.Model):
     watched = fields.Boolean()
     quiz_passed = fields.Boolean()
     position = fields.Float()
-    _sql_constraints = [('learner_task_unique', 'unique(user_id,company_id,task_key)',
-                         'One learning activity per person and topic.')]
+    _learner_task_unique = models.Constraint(
+        'UNIQUE(user_id,company_id,task_key)',
+        'One learning activity per person and topic.')

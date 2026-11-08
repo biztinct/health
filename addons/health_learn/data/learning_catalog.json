@@ -75,13 +75,44 @@
         "administration.complete-and-configure-required-fields"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Open CRM › Contacts"
+        },
+        {
+          "start": 4.73,
+          "title": "A junk call comes in from 0904063540. Open New Contact"
+        },
+        {
+          "start": 8.46,
+          "title": "Enter only the phone number. Name and condition stay blank"
+        },
+        {
+          "start": 13.09,
+          "title": "Mark it as junk"
+        },
+        {
+          "start": 19.56,
+          "title": "Open the Spam tab and find the call"
+        },
+        {
+          "start": 28.46,
+          "title": "Reopen the record and check what was saved"
+        },
+        {
+          "start": 46.33,
+          "title": "Client Details: no client name and no condition or service"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Record a junk call",
         "Ghi nhận cuộc gọi rác"
-      ]
+      ],
+      "media": "0fb439c6702ac4518b3552b8d9753353eb6237015406a94dc253a4cf97bcb546",
+      "duration": 54.1
     },
     {
       "title": "Save an enquiry without a booking",
@@ -117,13 +148,44 @@
         "operations.handle-new-and-repeat-enquiries"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Open CRM › Contacts"
+        },
+        {
+          "start": 4.75,
+          "title": "A caller asks about a general consultation. Open New Contact"
+        },
+        {
+          "start": 15.78,
+          "title": "The caller is the client. Service interest: Medical Examination (general consultation)"
+        },
+        {
+          "start": 20.14,
+          "title": "Save the contact. No booking is made"
+        },
+        {
+          "start": 33.28,
+          "title": "The saved record: name, phone, status and service"
+        },
+        {
+          "start": 49.88,
+          "title": "Leave the record, then find it again in the list"
+        },
+        {
+          "start": 58.78,
+          "title": "Reopen it: the details are unchanged and there is no booking"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Save an enquiry without a booking",
         "Lưu yêu cầu chưa đặt lịch"
-      ]
+      ],
+      "media": "fd6046b61cbecff47a7f056a5e0ba70f2d4d9e84f19d516ad5f3b41bcd78f32f",
+      "duration": 70.2
     },
     {
       "title": "Schedule a follow-up",
@@ -159,13 +221,32 @@
         "crm.turn-an-enquiry-into-a-booking"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Open CRM › Contacts and open the enquiry “Example Quality Enquirer 3716”"
+        },
+        {
+          "start": 8.85,
+          "title": "Outcome: Pending Follow-up. Next follow-up Nov 6, 10:00 AM. Note: “Example call back requested”"
+        },
+        {
+          "start": 24.72,
+          "title": "Save, then leave the record"
+        },
+        {
+          "start": 36.05,
+          "title": "Reopen it and compare with what was entered"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Schedule a follow-up",
         "Lên lịch liên hệ lại"
-      ]
+      ],
+      "media": "2d9e70e3c746b1f0ad7d9e74626a441f97fe36030868c02b4b1bc6643d7b691c",
+      "duration": 49.9
     },
     {
       "title": "Close a follow-up without a booking",
@@ -201,13 +282,32 @@
         "operations.cancel-a-booking-with-a-reason"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Open the enquiry “Example Quality Enquirer 3716” after its follow-up call"
+        },
+        {
+          "start": 8.88,
+          "title": "The client does not proceed. Outcome: Booking Lost. Reason: “Example declined service”"
+        },
+        {
+          "start": 19.4,
+          "title": "Save, then find it under the Lost tab"
+        },
+        {
+          "start": 33.83,
+          "title": "Reopen it: closed, reason kept, history kept, no booking"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Close a follow-up without a booking",
         "Đóng yêu cầu không đặt lịch"
-      ]
+      ],
+      "media": "9cf712d0251a666b9d7a82e3438507811d05e979d78acaa35e15b1ff7f3ffa2e",
+      "duration": 56.2
     },
     {
       "title": "Turn an enquiry into a booking",
@@ -244,13 +344,60 @@
         "operations.handle-new-and-repeat-enquiries"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "A relative calls for existing client Nguyễn Văn An. Open New Contact"
+        },
+        {
+          "start": 14.02,
+          "title": "The caller is the client’s representative. Find and link Nguyễn Văn An"
+        },
+        {
+          "start": 34.79,
+          "title": "Record the follow-up: call back Nov 5, 10:00 AM"
+        },
+        {
+          "start": 55.03,
+          "title": "On the follow-up call the client books. Press Book"
+        },
+        {
+          "start": 65.42,
+          "title": "inputs: Clinic Visit, 1 hour, Hanoi clinic, at the clinic"
+        },
+        {
+          "start": 73.05,
+          "title": "Add the service: Internal examination (bs_020)"
+        },
+        {
+          "start": 88.12,
+          "title": "Choose the date: Nov 6, morning"
+        },
+        {
+          "start": 95.52,
+          "title": "Create the booking"
+        },
+        {
+          "start": 110.49,
+          "title": "The booking: same client, date and time"
+        },
+        {
+          "start": 116.33,
+          "title": "From the booking, open the contact it came from (Quick actions › Lead Dashboard)"
+        },
+        {
+          "start": 126.78,
+          "title": "The contact now shows the service was booked; the follow-up is resolved"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Turn an enquiry into a booking",
         "Chuyển yêu cầu thành lịch hẹn"
-      ]
+      ],
+      "media": "1680e5300d18072e17910ad8b8d3e9951fbcd1e78919bc70e457a79a85958c0b",
+      "duration": 140.7
     },
     {
       "title": "Sell and use a prepaid package",
@@ -290,13 +437,104 @@
         "finance.receive-cash-handed-in-by-staff"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Settings › Master Data › Package Templates › New"
+        },
+        {
+          "start": 13.92,
+          "title": "“Example Three clinic visits 0944”: Clinic Visit, 3 visits, at the clinic, 1,500,000 ₫"
+        },
+        {
+          "start": 33.91,
+          "title": "Save the template"
+        },
+        {
+          "start": 43.04,
+          "title": "Operations › Clients › open Nguyễn Văn An"
+        },
+        {
+          "start": 60.96,
+          "title": "Quick actions › Buy a package: choose the template"
+        },
+        {
+          "start": 70.21,
+          "title": "Create the invoice and record the cash payment (the invoice is settled when the cash is handed in, under Collections)"
+        },
+        {
+          "start": 99.2,
+          "title": "Quick actions › Packages"
+        },
+        {
+          "start": 108.2,
+          "title": "Visit 1: New booking — Clinic Visit at the Hanoi clinic, paid from the package"
+        },
+        {
+          "start": 127.65,
+          "title": "Assign the Hanoi nurse to the visit"
+        },
+        {
+          "start": 132.16,
+          "title": "Create the booking"
+        },
+        {
+          "start": 152.0,
+          "title": "Operations › Clients › open Nguyễn Văn An"
+        },
+        {
+          "start": 177.71,
+          "title": "Open today’s visit for Nguyễn Văn An (11:00)"
+        },
+        {
+          "start": 186.61,
+          "title": "Start Service"
+        },
+        {
+          "start": 196.48,
+          "title": "Clinical Notes › Add New Clinical Note, then save it"
+        },
+        {
+          "start": 218.8,
+          "title": "Complete Service (no next appointment needed)"
+        },
+        {
+          "start": 231.72,
+          "title": "Operations › Clients › open Nguyễn Văn An"
+        },
+        {
+          "start": 257.35,
+          "title": "Operations › Clients › open Nguyễn Văn An"
+        },
+        {
+          "start": 275.51,
+          "title": "Visit 2: New booking — Clinic Visit at the Hanoi clinic, paid from the package"
+        },
+        {
+          "start": 297.13,
+          "title": "Create the booking"
+        },
+        {
+          "start": 312.61,
+          "title": "Operations › Clients › open Nguyễn Văn An"
+        },
+        {
+          "start": 337.96,
+          "title": "The client cancels visit 2 (BK3903): More › Cancel Booking"
+        },
+        {
+          "start": 367.39,
+          "title": "Operations › Clients › open Nguyễn Văn An"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Sell and use a prepaid package",
         "Bán và sử dụng gói trả trước"
-      ]
+      ],
+      "media": "d71efa089e6847569f5edd14b66c6b32f656750f31c39d0635a93e69a16d97ff",
+      "duration": 392.4
     },
     {
       "title": "Book one visit or several dates",
@@ -336,13 +574,56 @@
         "operations.assign-a-care-team"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "A relative calls for existing client Lê Quang Cường: CRM › Contacts › New Contact"
+        },
+        {
+          "start": 44.49,
+          "title": "The caller wants one visit on Nov 5, and also Nov 6 and Nov 7. Press Book"
+        },
+        {
+          "start": 55.38,
+          "title": "Clinic Visit, 1 hour, Hanoi clinic, at the clinic; service Internal examination (bs_020)"
+        },
+        {
+          "start": 78.2,
+          "title": "Single visit: Nov 5, 10:00 (first free slot from 10:00). Create"
+        },
+        {
+          "start": 93.69,
+          "title": "Date group, date 1: Create Another — same service, clinic and duration; Nov 6, 10:00"
+        },
+        {
+          "start": 122.8,
+          "title": "Date group, date 2: Create Another — same service, clinic and duration; Nov 7, 10:00"
+        },
+        {
+          "start": 157.46,
+          "title": "Operations › Bookings, list view, search the client Lê Quang Cường"
+        },
+        {
+          "start": 189.62,
+          "title": "Open BK4029: date, time, duration and clinic; then its contact (Quick actions › Lead Dashboard)"
+        },
+        {
+          "start": 209.69,
+          "title": "Open BK4030: date, time, duration and clinic; then its contact (Quick actions › Lead Dashboard)"
+        },
+        {
+          "start": 256.27,
+          "title": "Open BK4031: date, time, duration and clinic; then its contact (Quick actions › Lead Dashboard)"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Book one visit or several dates",
         "Đặt một hoặc nhiều lịch hẹn"
-      ]
+      ],
+      "media": "8cb89216680439631f2af2e531976de90a559fbccda6952584537da6af28bba7",
+      "duration": 307.4
     },
     {
       "title": "Review client and representative details",
@@ -382,13 +663,44 @@
         "administration.work-within-your-catchment"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients: search Trần Thị Bình"
+        },
+        {
+          "start": 49.72,
+          "title": "Identity on the client record, review the details"
+        },
+        {
+          "start": 64.14,
+          "title": "Contact numbers: the worked example gives two phone numbers"
+        },
+        {
+          "start": 75.7,
+          "title": "People: the designated contact person; Healthcare Relationships: caregiver and referrer"
+        },
+        {
+          "start": 90.24,
+          "title": "Bookings tab: the first visit BK3835 and the repeat visit BK3836"
+        },
+        {
+          "start": 99.15,
+          "title": "Open BK3835: the booking points to the same client record"
+        },
+        {
+          "start": 135.12,
+          "title": "Open BK3836: the booking points to the same client record"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Review client and representative details",
         "Kiểm tra thông tin khách hàng và người đại diện"
-      ]
+      ],
+      "media": "5a540ea05d0fb3561213a65e9f2e97608505e589ede19a11cce1bd1714a36a51",
+      "duration": 167.7
     },
     {
       "title": "Add a service during a visit",
@@ -429,13 +741,60 @@
         "operations.review-a-quote-and-invoice"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › Trần Thị Bình › New booking"
+        },
+        {
+          "start": 23.84,
+          "title": "Home Visit, 1 hour, Hanoi, at the client’s home; only the services ordered at booking"
+        },
+        {
+          "start": 51.21,
+          "title": "Nov 5, 09:00; nurse the Hanoi nurse assigned and leading"
+        },
+        {
+          "start": 75.79,
+          "title": "Notifications: accept BK4044"
+        },
+        {
+          "start": 87.38,
+          "title": "Nov 5: open the visit for Trần Thị Bình (09:00)"
+        },
+        {
+          "start": 95.69,
+          "title": "At the visit: Start Service"
+        },
+        {
+          "start": 105.67,
+          "title": "The nurse also checks the blood glucose: Add service › Capillary blood glucose test (đd_220) × 1"
+        },
+        {
+          "start": 122.33,
+          "title": "Clinical Notes › Add New Clinical Note, then save it"
+        },
+        {
+          "start": 144.77,
+          "title": "View service: both lines and the re-priced total"
+        },
+        {
+          "start": 159.51,
+          "title": "BK4044 › Pricing: the initial and the visit-added lines"
+        },
+        {
+          "start": 194.75,
+          "title": "Quick actions › View Quote: the saved quote"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Add a service during a visit",
         "Thêm dịch vụ trong buổi chăm sóc"
-      ]
+      ],
+      "media": "f09bab87f3e7a5632920f5ba3462b6592b12787181d33482194017d8ad92a93e",
+      "duration": 212.4
     },
     {
       "title": "Review a quote and invoice",
@@ -476,13 +835,76 @@
         "finance.receive-part-payment"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "(Trần Thị Bình): home visit, 6 km, 3 wounds; glucose test added at the visit. Open BK3835"
+        },
+        {
+          "start": 53.3,
+          "title": "Pricing tab — each line review the details"
+        },
+        {
+          "start": 77.24,
+          "title": "parking (staff reimbursement) is a separate charge"
+        },
+        {
+          "start": 91.48,
+          "title": "Quick actions › View Invoice"
+        },
+        {
+          "start": 111.23,
+          "title": "(Phạm Thị Dung): home visit at 20:30 on the training holiday (19 Oct). Open BK3838"
+        },
+        {
+          "start": 158.88,
+          "title": "Pricing tab — each line review the details"
+        },
+        {
+          "start": 178.02,
+          "title": "Quick actions › View Invoice"
+        },
+        {
+          "start": 196.43,
+          "title": "(Đỗ Minh Giang): home visit, 3 injections and an ultrasound, 10% discount on the base price. Open BK3839"
+        },
+        {
+          "start": 237.1,
+          "title": "Pricing tab — each line review the details"
+        },
+        {
+          "start": 259.03,
+          "title": "parking (staff reimbursement) is a separate charge"
+        },
+        {
+          "start": 272.7,
+          "title": "Quick actions › View Invoice"
+        },
+        {
+          "start": 290.65,
+          "title": "(Lý Minh Tâm): Ho Chi Minh City price list, home visit on the training holiday, 2 bottles; bladder wash added at the visit. Open BK3846"
+        },
+        {
+          "start": 326.15,
+          "title": "Pricing tab — each line review the details"
+        },
+        {
+          "start": 348.24,
+          "title": "parking (staff reimbursement) is a separate charge"
+        },
+        {
+          "start": 362.49,
+          "title": "Quick actions › View Invoice"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Review a quote and invoice",
         "Kiểm tra báo giá và hóa đơn"
-      ]
+      ],
+      "media": "df1bde4fea16f0723d4e7d029b3e94f05626d1165224310ac5090d11761db1bb",
+      "duration": 379.3
     },
     {
       "title": "Handle new and repeat enquiries",
@@ -522,13 +944,56 @@
         "operations.book-one-visit-or-several-dates"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "A new person calls to book for herself: CRM › Contacts › New Contact (Client, self)"
+        },
+        {
+          "start": 47.41,
+          "title": "Book from the contact: Clinic Visit, Hanoi clinic, Nov 5 afternoon"
+        },
+        {
+          "start": 104.04,
+          "title": "BK4036: the client is the new person; Quick actions › Lead Dashboard opens the contact"
+        },
+        {
+          "start": 117.7,
+          "title": "Repeat enquiry: a relative of Phạm Thị Dung calls. New Contact, linked to the existing client"
+        },
+        {
+          "start": 175.72,
+          "title": "Book two visits from this one contact: Nov 6 and Nov 7"
+        },
+        {
+          "start": 255.29,
+          "title": "BK4038 › Lead Dashboard: the contact’s history"
+        },
+        {
+          "start": 266.9,
+          "title": "Open BK4037: same client ID 01_0000426; its contact is the new enquiry"
+        },
+        {
+          "start": 317.11,
+          "title": "Open BK4038: the same contact"
+        },
+        {
+          "start": 359.27,
+          "title": "The earlier booking BK3838: same client, but its own earlier contact"
+        },
+        {
+          "start": 399.4,
+          "title": "Operations › Clients › Phạm Thị Dung › Bookings: one client record, old and new bookings"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Handle new and repeat enquiries",
         "Xử lý yêu cầu mới và yêu cầu lặp lại"
-      ]
+      ],
+      "media": "b1c728080a17e916fe3b3c2fdf28be72ec36538473c612865eacf20205395856",
+      "duration": 449.0
     },
     {
       "title": "Assign a care team",
@@ -568,13 +1033,76 @@
         "operations.reassign-a-declined-visit"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › open Vũ Thị Khánh"
+        },
+        {
+          "start": 59.17,
+          "title": "New booking: Clinic Visit, 1 hour, HN_PK_PKGDVU, at the clinic"
+        },
+        {
+          "start": 74.05,
+          "title": "Add the service: Internal examination (bs_020)"
+        },
+        {
+          "start": 86.27,
+          "title": "Date and time: Nov 9, first free slot from 09:00"
+        },
+        {
+          "start": 94.71,
+          "title": "Create the booking"
+        },
+        {
+          "start": 113.39,
+          "title": "Next step › Assign Staff: the staff schedule opens for this booking"
+        },
+        {
+          "start": 124.26,
+          "title": "Switch to the list and press New to add an assignment"
+        },
+        {
+          "start": 141.96,
+          "title": "Nurse: the Hanoi nurse, role Lead Staff; save"
+        },
+        {
+          "start": 162.04,
+          "title": "Add the doctor too: New"
+        },
+        {
+          "start": 167.78,
+          "title": "Doctor: the Hanoi doctor, role Doctor; save"
+        },
+        {
+          "start": 186.71,
+          "title": "Reopen the booking: Operations › Bookings › BK4033"
+        },
+        {
+          "start": 218.41,
+          "title": "Overview › Care team"
+        },
+        {
+          "start": 225.95,
+          "title": "Quick actions › View Assignments"
+        },
+        {
+          "start": 237.71,
+          "title": "Open the notifications bell: the new offer"
+        },
+        {
+          "start": 251.92,
+          "title": "Day view: go to Nov 9"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Assign a care team",
         "Phân công nhóm chăm sóc"
-      ]
+      ],
+      "media": "ff92d4d2aeccf7e0fd3f22309b228479f99923ed5b78ba125689a33479f1f10e",
+      "duration": 272.3
     },
     {
       "title": "Accept an assignment",
@@ -614,18 +1142,65 @@
         "mobile.find-your-assigned-visits"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › open Vũ Thị Khánh"
+        },
+        {
+          "start": 48.19,
+          "title": "New booking: Clinic Visit, 1 hour, HN_PK_PKGDVU, at the clinic"
+        },
+        {
+          "start": 61.57,
+          "title": "Add the service: Internal examination (bs_020)"
+        },
+        {
+          "start": 73.35,
+          "title": "Date and time: Nov 10, first free slot from 09:00"
+        },
+        {
+          "start": 81.6,
+          "title": "Choose the nurse: the Hanoi nurse (assigned staff and lead)"
+        },
+        {
+          "start": 86.76,
+          "title": "Create the booking"
+        },
+        {
+          "start": 103.88,
+          "title": "Notifications bell: the offer for BK4040"
+        },
+        {
+          "start": 115.24,
+          "title": "Accept"
+        },
+        {
+          "start": 131.32,
+          "title": "Reopen the booking: Operations › Bookings › BK4040"
+        },
+        {
+          "start": 162.82,
+          "title": "Quick actions › View Assignments"
+        },
+        {
+          "start": 174.73,
+          "title": "Open the assignment: its history"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Accept an assignment",
         "Chấp nhận phân công"
-      ]
+      ],
+      "media": "5eebc3bce94a3b6ed7d89f0639b3c1da15adf9cfebf2cb77158fd96dfcf7ab46",
+      "duration": 185.6
     },
     {
       "title": "Reassign a declined visit",
       "role": "Assigned staff and Operations Manager",
-      "goal": "",
+      "goal": "Find a declined assignment and give the visit to an available, authorised staff member.",
       "before": "Confirm that replacement staff are suitable and available for this booking.",
       "success": "The decline is retained in history and the replacement accepts the visit.",
       "trouble": "If both people appear active unexpectedly, stop and review the assignment records. A second offer is not proof that the first active assignment has been removed.",
@@ -660,13 +1235,84 @@
         "operations.reschedule-a-visit-and-change-staff"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › open Vũ Thị Khánh"
+        },
+        {
+          "start": 61.82,
+          "title": "New booking: Clinic Visit, 1 hour, HN_PK_PKGDVU, at the clinic"
+        },
+        {
+          "start": 80.68,
+          "title": "Add the service: Internal examination (bs_020)"
+        },
+        {
+          "start": 93.99,
+          "title": "Date and time: Nov 10, first free slot from 14:00"
+        },
+        {
+          "start": 104.31,
+          "title": "Choose the nurse: the Hanoi nurse (assigned staff and lead)"
+        },
+        {
+          "start": 110.03,
+          "title": "Create the booking"
+        },
+        {
+          "start": 129.63,
+          "title": "Notifications bell: the offer for BK4034"
+        },
+        {
+          "start": 140.81,
+          "title": "She cannot take it: Decline"
+        },
+        {
+          "start": 158.08,
+          "title": "Reopen the booking: Operations › Bookings › BK4034"
+        },
+        {
+          "start": 205.72,
+          "title": "Quick actions › View Assignments: the nurse’s answer"
+        },
+        {
+          "start": 219.62,
+          "title": "Open it: the history says who declined"
+        },
+        {
+          "start": 231.2,
+          "title": "Back to the booking › Assign Staff › New: the Hanoi doctor, role Doctor"
+        },
+        {
+          "start": 294.23,
+          "title": "Notifications bell: the offer for BK4034"
+        },
+        {
+          "start": 304.85,
+          "title": "Accept"
+        },
+        {
+          "start": 315.11,
+          "title": "Reopen the booking: Operations › Bookings › BK4034"
+        },
+        {
+          "start": 351.9,
+          "title": "Overview › Care team"
+        },
+        {
+          "start": 359.93,
+          "title": "Quick actions › View Assignments"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Reassign a declined visit",
         "Phân công lại lịch hẹn bị từ chối"
-      ]
+      ],
+      "media": "af7f2ea356e22dcf3158da7ab22278157121d5b697108e7a8f9b97f5813a678e",
+      "duration": 371.2
     },
     {
       "title": "Cancel a booking with a reason",
@@ -706,13 +1352,56 @@
         "finance.choose-a-credit-note-or-a-cash-refund"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › open Vũ Thị Khánh"
+        },
+        {
+          "start": 79.77,
+          "title": "New booking: Clinic Visit, 1 hour, HN_PK_PKGDVU, at the clinic"
+        },
+        {
+          "start": 96.13,
+          "title": "Add the service: Internal examination (bs_020)"
+        },
+        {
+          "start": 109.2,
+          "title": "Date and time: Nov 9, first free slot from 14:00"
+        },
+        {
+          "start": 119.65,
+          "title": "Create the booking"
+        },
+        {
+          "start": 140.41,
+          "title": "The client calls to cancel: More › Cancel Booking"
+        },
+        {
+          "start": 153.53,
+          "title": "Reason “Other” and the note “Example client cancelled - the client called to cancel this visit”"
+        },
+        {
+          "start": 175.73,
+          "title": "Confirm the cancellation"
+        },
+        {
+          "start": 190.36,
+          "title": "Reopen it: Operations › Bookings › search BK4035"
+        },
+        {
+          "start": 233.77,
+          "title": "Open the Cancellation tab"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Cancel a booking with a reason",
         "Hủy lịch hẹn kèm lý do"
-      ]
+      ],
+      "media": "faf71194c09d7438257a92d8527e132807366eba93f989be4aed512c3311bbd3",
+      "duration": 251.4
     },
     {
       "title": "Reschedule a visit and change staff",
@@ -753,7 +1442,64 @@
         "operations.review-a-quote-and-invoice"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › open Vũ Thị Khánh"
+        },
+        {
+          "start": 67.53,
+          "title": "New booking: Clinic Visit, 1 hour, HN_PK_PKGDVU, at the clinic"
+        },
+        {
+          "start": 83.34,
+          "title": "Add the service: Internal examination (bs_020)"
+        },
+        {
+          "start": 96.35,
+          "title": "Date and time: Nov 12, first free slot from 09:00"
+        },
+        {
+          "start": 104.58,
+          "title": "Choose the nurse: the Hanoi nurse (assigned staff and lead)"
+        },
+        {
+          "start": 109.58,
+          "title": "Create the booking"
+        },
+        {
+          "start": 128.1,
+          "title": "The client asks to move the visit: press Reschedule"
+        },
+        {
+          "start": 135.5,
+          "title": "New date Nov 13, 11:00 AM (Vietnam time)"
+        },
+        {
+          "start": 145.92,
+          "title": "The nurse is not free that day: give the visit to the Hanoi doctor"
+        },
+        {
+          "start": 157.19,
+          "title": "Confirm Reschedule"
+        },
+        {
+          "start": 168.72,
+          "title": "Reopen it: Operations › Bookings › BK4032"
+        },
+        {
+          "start": 202.0,
+          "title": "Overview › Care team"
+        },
+        {
+          "start": 208.33,
+          "title": "Activity: the change is in the booking history"
+        },
+        {
+          "start": 215.03,
+          "title": "Quick actions › View Assignments"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
@@ -764,7 +1510,9 @@
         "doi lich hen",
         "reschedule",
         "đổi lịch"
-      ]
+      ],
+      "media": "eb2fc62ddcb79bef8bf5488f9d43b6f2ca0346855fb05a2ea12d108059bba770",
+      "duration": 226.0
     },
     {
       "title": "Find your assigned visits",
@@ -800,13 +1548,88 @@
         "mobile.review-a-visit-before-attending"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › open Vũ Thị Khánh"
+        },
+        {
+          "start": 46.47,
+          "title": "New booking: Clinic Visit, 1 hour, HN_PK_PKGDVU, at the clinic"
+        },
+        {
+          "start": 60.42,
+          "title": "Add the service: Internal examination (bs_020)"
+        },
+        {
+          "start": 72.0,
+          "title": "Date and time: Nov 11, first free slot from 09:00"
+        },
+        {
+          "start": 79.73,
+          "title": "Choose the nurse: the Hanoi nurse (assigned staff and lead)"
+        },
+        {
+          "start": 84.54,
+          "title": "Create the booking"
+        },
+        {
+          "start": 103.08,
+          "title": "Operations › Clients › open Vũ Thị Khánh"
+        },
+        {
+          "start": 161.15,
+          "title": "New booking: Clinic Visit, 1 hour, HN_PK_PKGDVU, at the clinic"
+        },
+        {
+          "start": 174.3,
+          "title": "Add the service: Internal examination (bs_020)"
+        },
+        {
+          "start": 186.01,
+          "title": "Date and time: Nov 11, first free slot from 14:00"
+        },
+        {
+          "start": 196.26,
+          "title": "Create the booking"
+        },
+        {
+          "start": 213.17,
+          "title": "Operations › Clients › open Hồ Thị Xuân"
+        },
+        {
+          "start": 254.94,
+          "title": "New booking: Home Visit, 1 hour, TPHCM_PK_CSTNVU, at home"
+        },
+        {
+          "start": 268.3,
+          "title": "Add the service: Medical Examination & Treatment at home (bs_010_tphcm)"
+        },
+        {
+          "start": 280.02,
+          "title": "Date and time: Nov 11, first free slot from 10:00"
+        },
+        {
+          "start": 287.64,
+          "title": "Create the booking"
+        },
+        {
+          "start": 304.25,
+          "title": "Day view: go to Nov 11"
+        },
+        {
+          "start": 342.38,
+          "title": "Open her visit"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Find your assigned visits",
         "Tìm lịch hẹn được phân công"
-      ]
+      ],
+      "media": "6df1860c62dddde503be395ce87e403f81115860a57997ac54c16211d09518f8",
+      "duration": 353.5
     },
     {
       "title": "Review a visit before attending",
@@ -842,13 +1665,52 @@
         "mobile.start-a-visit"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › open Đặng Thị Quỳnh"
+        },
+        {
+          "start": 18.42,
+          "title": "New booking: Home Visit, 30 minutes, TPHCM_PK_CSTNVU, at the client’s home"
+        },
+        {
+          "start": 30.6,
+          "title": "service: Intramuscular, intradermal, subcutaneous injection (đd_070_tphcm) × 2"
+        },
+        {
+          "start": 47.01,
+          "title": "Today, Nov 4: the first free time from 16:30"
+        },
+        {
+          "start": 56.47,
+          "title": "Choose the nurse: the Ho Chi Minh City nurse (assigned and leading)"
+        },
+        {
+          "start": 60.98,
+          "title": "Create the booking"
+        },
+        {
+          "start": 80.72,
+          "title": "Notifications: the new visit BK4056"
+        },
+        {
+          "start": 89.74,
+          "title": "Accept"
+        },
+        {
+          "start": 106.04,
+          "title": "Open the visit for Đặng Thị Quỳnh and compare it with the booking"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Review a visit before attending",
         "Kiểm tra thông tin trước buổi chăm sóc"
-      ]
+      ],
+      "media": "04f7cc47e7d3838dbc5f400debc1a467b04c102e54dc1553eeef9e8ee971955b",
+      "duration": 134.4
     },
     {
       "title": "Open and return to the correct visit",
@@ -882,13 +1744,32 @@
         "mobile.write-and-save-a-clinical-note"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Today, Nov 4: find the visit for Đặng Thị Quỳnh at 16:30"
+        },
+        {
+          "start": 5.87,
+          "title": "Tap it"
+        },
+        {
+          "start": 28.32,
+          "title": "Leave the visit and reload the app"
+        },
+        {
+          "start": 37.61,
+          "title": "Tap the same visit again"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Open and return to the correct visit",
         "Mở đúng lịch hẹn"
-      ]
+      ],
+      "media": "9f92f7f8c247f9a501cf55ae4af9300c7e111caefe4b2827b01ddac993a87369",
+      "duration": 49.2
     },
     {
       "title": "Start a visit",
@@ -923,13 +1804,40 @@
         "mobile.answer-the-visit-closing-questions"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "At the client’s home: open today’s visit for Đặng Thị Quỳnh (16:30)"
+        },
+        {
+          "start": 9.84,
+          "title": "Start Service"
+        },
+        {
+          "start": 20.3,
+          "title": "Leave the visit and reload the app"
+        },
+        {
+          "start": 33.81,
+          "title": "Open the visit again"
+        },
+        {
+          "start": 47.15,
+          "title": "Operations › Bookings › open BK4056"
+        },
+        {
+          "start": 71.97,
+          "title": "Execution tab: actual start"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Start a visit",
         "Bắt đầu dịch vụ"
-      ]
+      ],
+      "media": "963591ef43b85c6f3254ac6bd32b30183dfd52ed78dfcd02b4aa7bcd013f4fa3",
+      "duration": 80.4
     },
     {
       "title": "Write and save a clinical note",
@@ -965,13 +1873,44 @@
         "operations.add-a-service-during-a-visit"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Open the visit in progress for Đặng Thị Quỳnh"
+        },
+        {
+          "start": 9.86,
+          "title": "Clinical Notes › Add New Clinical Note"
+        },
+        {
+          "start": 17.68,
+          "title": "Write what was done: 2 injections, no reaction; Confirm and Save"
+        },
+        {
+          "start": 35.27,
+          "title": "Close the notes, leave the visit and reload the app"
+        },
+        {
+          "start": 46.63,
+          "title": "Open the visit again › Clinical Notes"
+        },
+        {
+          "start": 63.68,
+          "title": "Operations › Bookings › open BK4056"
+        },
+        {
+          "start": 84.01,
+          "title": "Clinical tab"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Write and save a clinical note",
         "Nhập và lưu ghi chú lâm sàng"
-      ]
+      ],
+      "media": "5b9e9e484dfb5b1c0df59dc4160a8dbc19189bf1b59f52e6a9e20ef8b6d4ebd3",
+      "duration": 92.8
     },
     {
       "title": "Answer the visit closing questions",
@@ -1009,13 +1948,64 @@
         "finance.record-cash-paid-at-the-visit"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Open the visit in progress for Đặng Thị Quỳnh"
+        },
+        {
+          "start": 5.56,
+          "title": "View service: check the services with the client"
+        },
+        {
+          "start": 19.31,
+          "title": "Note the check and Save Quote"
+        },
+        {
+          "start": 33.28,
+          "title": "Payment: the client will pay later by bank transfer; create the invoice now"
+        },
+        {
+          "start": 50.76,
+          "title": "Complete Service"
+        },
+        {
+          "start": 63.17,
+          "title": "The client does not want another visit: choose that answer"
+        },
+        {
+          "start": 66.89,
+          "title": "Submit without choosing a reason"
+        },
+        {
+          "start": 77.11,
+          "title": "Reason: Other, with an explanation; Need to Follow up left unticked"
+        },
+        {
+          "start": 91.04,
+          "title": "Submit"
+        },
+        {
+          "start": 102.35,
+          "title": "Office: Operations › Bookings › open BK4056"
+        },
+        {
+          "start": 122.66,
+          "title": "Overview tab: the Visit close card"
+        },
+        {
+          "start": 131.18,
+          "title": "Operations › Clients › open Đặng Thị Quỳnh"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Answer the visit closing questions",
         "Trả lời câu hỏi kết thúc dịch vụ"
-      ]
+      ],
+      "media": "3ac6ffcead3a13da1016ff18b78b221e4eadb5f17776cd7a0311d2648db08093",
+      "duration": 153.3
     },
     {
       "title": "Finish a visit and confirm completion",
@@ -1051,13 +2041,40 @@
         "mobile.check-the-invoice-created-at-completion"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Today’s list: the visit for Đặng Thị Quỳnh (16:30)"
+        },
+        {
+          "start": 5.87,
+          "title": "Open it"
+        },
+        {
+          "start": 15.7,
+          "title": "Leave it and reload the app"
+        },
+        {
+          "start": 29.17,
+          "title": "Operations › Bookings › open BK4056"
+        },
+        {
+          "start": 53.82,
+          "title": "Execution tab: actual start and end"
+        },
+        {
+          "start": 62.49,
+          "title": "Reload the booking: it stays Completed"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Finish a visit and confirm completion",
         "Hoàn tất và kiểm tra buổi chăm sóc"
-      ]
+      ],
+      "media": "27f6b06fc7c20b742f1ebc4a53dbed5f2408d0074a771efbbe4e4c65f72cb2c0",
+      "duration": 73.6
     },
     {
       "title": "Check the invoice created at completion",
@@ -1093,13 +2110,32 @@
         "finance.issue-an-invoice-and-review-money-owed"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Bookings › open the visit BK4056"
+        },
+        {
+          "start": 20.36,
+          "title": "Execution tab: Quote & Invoice"
+        },
+        {
+          "start": 29.11,
+          "title": "Open the invoice INV/2026/00025"
+        },
+        {
+          "start": 53.56,
+          "title": "Finance › Invoices: all invoices for Đặng Thị Quỳnh"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Check the invoice created at completion",
         "Kiểm tra hóa đơn sau khi hoàn tất"
-      ]
+      ],
+      "media": "ebf2137f93a4d244f1d63f4a2ad47d8050cfe64c445c309a2ce068a00601bcfb",
+      "duration": 71.9
     },
     {
       "title": "Issue an invoice and review money owed",
@@ -1138,13 +2174,80 @@
         "finance.review-accounting-history-and-export-for-misa"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "At the clinic: open today’s visit for Nguyễn Văn An (15:00)"
+        },
+        {
+          "start": 5.74,
+          "title": "View service: check the service and price with the client"
+        },
+        {
+          "start": 16.78,
+          "title": "discount agreed with the client: 10% with the reason"
+        },
+        {
+          "start": 29.11,
+          "title": "Note the check and Save Quote"
+        },
+        {
+          "start": 54.4,
+          "title": "Payment: the client will pay later; create the invoice now"
+        },
+        {
+          "start": 69.3,
+          "title": "Complete Service"
+        },
+        {
+          "start": 78.96,
+          "title": "The client already has a later visit booked: the app shows it; keep it (Cancel)"
+        },
+        {
+          "start": 88.41,
+          "title": "Operations › Bookings › open BK4107"
+        },
+        {
+          "start": 113.31,
+          "title": "Execution tab: Quote & Invoice"
+        },
+        {
+          "start": 122.51,
+          "title": "Open the invoice INV/2026/00030"
+        },
+        {
+          "start": 134.72,
+          "title": "Invoice lines: show the Disc.% column"
+        },
+        {
+          "start": 155.17,
+          "title": "Finance › Receivables: amounts owed by Nguyễn Văn An"
+        },
+        {
+          "start": 174.16,
+          "title": "Operations › Bookings › open BK4087"
+        },
+        {
+          "start": 203.85,
+          "title": "Execution tab: Quote & Invoice"
+        },
+        {
+          "start": 213.02,
+          "title": "Open the invoice INV/2026/00027"
+        },
+        {
+          "start": 238.65,
+          "title": "Finance › Receivables › AR Transactions: the receivable entries"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Issue an invoice and review money owed",
         "Xuất hóa đơn và kiểm tra công nợ"
-      ]
+      ],
+      "media": "35da166664187e8d5d98fc95565b7db1a0868883148626a9ad5c491a13663235",
+      "duration": 270.1
     },
     {
       "title": "Record cash paid at the visit",
@@ -1184,13 +2287,68 @@
         "finance.receive-part-payment"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "At the clinic: open today’s visit for Nguyễn Văn An (12:30)"
+        },
+        {
+          "start": 6.13,
+          "title": "View service: check the service and price with the client"
+        },
+        {
+          "start": 17.53,
+          "title": "Note the check and Save Quote"
+        },
+        {
+          "start": 46.83,
+          "title": "Payment: the client pays now, in cash (500,000 ₫); create the invoice now"
+        },
+        {
+          "start": 70.32,
+          "title": "Complete Service"
+        },
+        {
+          "start": 92.99,
+          "title": "The client already has a later visit booked: the app shows it; keep it (Cancel)"
+        },
+        {
+          "start": 103.0,
+          "title": "Operations › Bookings › open BK4087"
+        },
+        {
+          "start": 134.48,
+          "title": "Execution tab: Quote & Invoice"
+        },
+        {
+          "start": 144.03,
+          "title": "Open the invoice INV/2026/00027"
+        },
+        {
+          "start": 166.58,
+          "title": "Open that payment"
+        },
+        {
+          "start": 185.12,
+          "title": "Finance › Invoices: Nguyễn Văn An"
+        },
+        {
+          "start": 211.64,
+          "title": "Finance › Payments: the cash collected at this visit"
+        },
+        {
+          "start": 233.67,
+          "title": "Open PAY01389"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Record cash paid at the visit",
         "Ghi nhận tiền mặt tại buổi chăm sóc"
-      ]
+      ],
+      "media": "0fb905c4b0d7c1ebcc3f67279df14d7a0533c0f3340d5f0a27995802fbeba19a",
+      "duration": 254.1
     },
     {
       "title": "Receive cash handed in by staff",
@@ -1229,13 +2387,60 @@
         "finance.review-accounting-history-and-export-for-misa"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Collections › Pending Delivery"
+        },
+        {
+          "start": 17.06,
+          "title": "Open PAY01388"
+        },
+        {
+          "start": 24.28,
+          "title": "Before the hand-in: View Invoice"
+        },
+        {
+          "start": 40.6,
+          "title": "The nurse hands over the cash: Mark Cash Delivered to OM"
+        },
+        {
+          "start": 45.83,
+          "title": "The box already names the receiver: the Hanoi Operations Manager (signed in); count the cash and tick Amount Verified"
+        },
+        {
+          "start": 60.04,
+          "title": "As the instructions say: Auto-Reconcile off (the payment is already matched), no bank deposit"
+        },
+        {
+          "start": 72.65,
+          "title": "Confirm Cash Receipt"
+        },
+        {
+          "start": 89.76,
+          "title": "After the hand-in: View Invoice again"
+        },
+        {
+          "start": 101.42,
+          "title": "Finance › Receivables › AR Transactions › Cash Hand-ins"
+        },
+        {
+          "start": 125.16,
+          "title": "Open the Handover entry"
+        },
+        {
+          "start": 141.02,
+          "title": "Open the Cash Record from the Handover entry"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Receive cash handed in by staff",
         "Nhận tiền mặt bàn giao từ nhân viên"
-      ]
+      ],
+      "media": "fe6706f1aba9eb8779fa96bfd3320619c6bfa2e7a34c92a9b8b24d17911dee6e",
+      "duration": 152.5
     },
     {
       "title": "Receive a part payment after a visit",
@@ -1260,7 +2465,7 @@
       ],
       "steps": [
         "Open Finance › Invoices and find the invoice. Verify the client and outstanding amount.",
-        "Choose Receive Payment.",
+        "Choose Pay to open Receive Payment.",
         "Select the correct journal, such as Cash for cash received or Bank for a confirmed transfer.",
         "Enter the amount actually received and the applicable payment details. Do not replace a part payment with the full invoice total.",
         "Review the amount and confirm Receive Payment once.",
@@ -1275,7 +2480,40 @@
         "finance.review-accounting-history-and-export-for-misa"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Finance › Receivables: Nguyễn Văn An"
+        },
+        {
+          "start": 21.68,
+          "title": "Finance › Invoices › INV/2026/00028 › Receive Payment"
+        },
+        {
+          "start": 39.45,
+          "title": "After the visit the client pays 80,000 ₫ in cash: journal Cash, amount 80,000 ₫"
+        },
+        {
+          "start": 54.02,
+          "title": "Receive Payment"
+        },
+        {
+          "start": 66.49,
+          "title": "Back to Invoices: INV/2026/00028"
+        },
+        {
+          "start": 77.98,
+          "title": "Open INV/2026/00028"
+        },
+        {
+          "start": 94.32,
+          "title": "Open the linked payment"
+        },
+        {
+          "start": 106.72,
+          "title": "Finance › Receivables again: Nguyễn Văn An"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
@@ -1288,7 +2526,9 @@
         "partial payment",
         "part payment",
         "thanh toán một phần"
-      ]
+      ],
+      "media": "c91bc7bf760f7cbdb09a0067a413ce30a6154a398b615e193a493902a6123440",
+      "duration": 130.4
     },
     {
       "title": "Settle an invoice by bank transfer",
@@ -1314,7 +2554,7 @@
       "steps": [
         "Open Finance › Receivables and note the client’s balance.",
         "Find the relevant invoice in Finance › Invoices and check its client and reference.",
-        "Choose Receive Payment and select the Bank journal.",
+        "Choose Pay to open Receive Payment, then select the Bank journal.",
         "Enter the confirmed amount and payment date and review the details.",
         "Confirm the payment once.",
         "Return to the invoice and inspect its linked payment and remaining balance.",
@@ -1327,13 +2567,40 @@
         "finance.review-accounting-history-and-export-for-misa"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Finance › Receivables: amounts due for Đặng Thị Quỳnh"
+        },
+        {
+          "start": 18.48,
+          "title": "Finance › Invoices › INV/2026/00025 › Receive Payment"
+        },
+        {
+          "start": 33.86,
+          "title": "The client paid 210,000 ₫ by bank transfer today: journal Bank"
+        },
+        {
+          "start": 54.63,
+          "title": "Back to Invoices: INV/2026/00025 is paid"
+        },
+        {
+          "start": 65.96,
+          "title": "Open INV/2026/00025: one payment, nothing left to pay"
+        },
+        {
+          "start": 76.44,
+          "title": "Finance › Receivables again: Đặng Thị Quỳnh"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Settle an invoice by bank transfer",
         "Thanh toán hóa đơn bằng chuyển khoản"
-      ]
+      ],
+      "media": "16db03ed271e3a3dc85906d9a121e8540558f77d6e0d14e1ca08224c2f64e607",
+      "duration": 91.5
     },
     {
       "title": "Choose a credit note or a cash refund",
@@ -1372,7 +2639,48 @@
         "operations.cancel-a-booking-with-a-reason"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Finance › Invoices: Nguyễn Văn An"
+        },
+        {
+          "start": 14.77,
+          "title": "Open the unpaid invoice INV/2026/00031"
+        },
+        {
+          "start": 27.12,
+          "title": "Credit Note: the reason, then Reverse"
+        },
+        {
+          "start": 54.51,
+          "title": "Confirm the credit note"
+        },
+        {
+          "start": 88.28,
+          "title": "Back to INV/2026/00031"
+        },
+        {
+          "start": 117.88,
+          "title": "Finance › Receivables: Nguyễn Văn An"
+        },
+        {
+          "start": 134.93,
+          "title": "Finance › Invoices: the paid invoice INV/2026/00032"
+        },
+        {
+          "start": 160.4,
+          "title": "Finance › Payments › PAY01401"
+        },
+        {
+          "start": 182.3,
+          "title": "The client is given the cash back: Create Refund"
+        },
+        {
+          "start": 195.25,
+          "title": "View Invoice INV/2026/00032"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
@@ -1384,7 +2692,9 @@
         "refund",
         "credit note",
         "hoàn tiền"
-      ]
+      ],
+      "media": "3ab27b319e496777d038158b1e18c8719f513dd37e317b506a34f8f14036fc07",
+      "duration": 213.0
     },
     {
       "title": "Review accounting history and export for MISA",
@@ -1425,13 +2735,32 @@
         "finance.choose-a-credit-note-or-a-cash-refund"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Finance › Receivables › AR Transactions"
+        },
+        {
+          "start": 11.99,
+          "title": "Search the client Nguyễn Văn An; show the oldest first"
+        },
+        {
+          "start": 28.72,
+          "title": "Open the first entry, then step through them with the arrow"
+        },
+        {
+          "start": 191.33,
+          "title": "Back to AR Transactions: Export All (for the client’s manual MISA upload)"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Review accounting history and export for MISA",
         "Kiểm tra giao dịch và xuất dữ liệu kế toán"
-      ]
+      ],
+      "media": "33db4ebcbc02d6cbd222cf602a8129d893e5e91abefd860a3f0ab3971cd31a3f",
+      "duration": 220.6
     },
     {
       "title": "Review e-invoice status and logs",
@@ -1469,13 +2798,40 @@
         "finance.review-accounting-history-and-export-for-misa"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Finance › Invoices › open INV/2026/00025"
+        },
+        {
+          "start": 19.6,
+          "title": "Red Invoice tab: not sent yet (Pending)"
+        },
+        {
+          "start": 28.36,
+          "title": "Generate Red Invoice (once)"
+        },
+        {
+          "start": 50.41,
+          "title": "Red Invoice Log tab: the request sent"
+        },
+        {
+          "start": 60.06,
+          "title": "Who and when: the invoice history"
+        },
+        {
+          "start": 65.87,
+          "title": "Finance › Red Invoice Log"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Review e-invoice status and logs",
         "Kiểm tra trạng thái và nhật ký hóa đơn điện tử"
-      ]
+      ],
+      "media": "40b32b8ead552364297a732fde94ddea37db240cfd5fe73a3f4970bb5e5c13b2",
+      "duration": 77.9
     },
     {
       "title": "Add or disable a user",
@@ -1510,13 +2866,40 @@
         "administration.work-within-your-catchment"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Settings › People › Access & roles › People › Add a person"
+        },
+        {
+          "start": 43.85,
+          "title": "Language English, time zone Asia/Ho_Chi_Minh (Vietnam)"
+        },
+        {
+          "start": 74.8,
+          "title": "Job: Nurse. Area: Hà Nội. Based at HN_PK_PKGDVU"
+        },
+        {
+          "start": 100.49,
+          "title": "Add them"
+        },
+        {
+          "start": 113.89,
+          "title": "Users & Roles: find Example Video User 0511-1132"
+        },
+        {
+          "start": 159.15,
+          "title": "User menu › My Preferences: who is signed in"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Add or disable a user",
         "Thêm hoặc vô hiệu hóa người dùng"
-      ]
+      ],
+      "media": "bf970ed8db91c03a8246f214bc0a369f315e52571c8c3bc63d934396661809cc",
+      "duration": 183.3
     },
     {
       "title": "Understand roles and permitted work",
@@ -1554,13 +2937,32 @@
         "administration.add-or-disable-a-user"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Settings › People › Users & Roles: search “Client Example”"
+        },
+        {
+          "start": 38.89,
+          "title": "Open Settings: what an Operations Manager has there"
+        },
+        {
+          "start": 50.54,
+          "title": "Open BK3832 (Hà Nội) by its direct link"
+        },
+        {
+          "start": 74.22,
+          "title": "Open BK3841 (TPHCM) by its direct link"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Understand roles and permitted work",
         "Hiểu vai trò và quyền làm việc"
-      ]
+      ],
+      "media": "a223f71763f8a45887cef3cea02f38d0e7d8c9247951276ad7fd9e0c2449f650",
+      "duration": 94.9
     },
     {
       "title": "Work within your catchment",
@@ -1595,7 +2997,56 @@
         "mobile.find-your-assigned-visits"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Bookings › List view, All, All Dates"
+        },
+        {
+          "start": 17.69,
+          "title": "Search BK3832 and open it"
+        },
+        {
+          "start": 34.13,
+          "title": "Back to the list, clear the search, search BK3841 (the other area)"
+        },
+        {
+          "start": 59.31,
+          "title": "Paste the direct link to BK3841 into the address bar"
+        },
+        {
+          "start": 75.31,
+          "title": "Operations › Dashboard: facilities offered"
+        },
+        {
+          "start": 86.91,
+          "title": "Operations › Bookings › List view, All, All Dates"
+        },
+        {
+          "start": 101.75,
+          "title": "Search BK3841 and open it"
+        },
+        {
+          "start": 119.99,
+          "title": "Back to the list, clear the search, search BK3832 (the other area)"
+        },
+        {
+          "start": 144.41,
+          "title": "Paste the direct link to BK3832 into the address bar"
+        },
+        {
+          "start": 162.87,
+          "title": "Operations › Dashboard: facilities offered"
+        },
+        {
+          "start": 174.97,
+          "title": "Direct link to BK3832 (Hà Nội)"
+        },
+        {
+          "start": 191.24,
+          "title": "Direct link to BK3841 (TPHCM)"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
@@ -1604,7 +3055,9 @@
         "cannot see booking in other area",
         "another catchment",
         "khong thay lich hen khu vuc khac"
-      ]
+      ],
+      "media": "1bccafcb301077c46ea466fd6a7b604675b19749aa4cfda41d309fd8182fee11",
+      "duration": 204.5
     },
     {
       "title": "Complete and configure required fields",
@@ -1638,13 +3091,60 @@
         "administration.add-a-field-with-form-studio"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Open CRM › Contacts"
+        },
+        {
+          "start": 14.12,
+          "title": "New Contact, leave everything blank and press Next"
+        },
+        {
+          "start": 33.73,
+          "title": "Cancel the empty form: the list is unchanged"
+        },
+        {
+          "start": 44.77,
+          "title": "A caller gives a name and phone: Example FM01 Caller 0850, 0905085027"
+        },
+        {
+          "start": 60.75,
+          "title": "Create Contact"
+        },
+        {
+          "start": 83.44,
+          "title": "Settings › Master data › Field Requirements › Sales & CRM › Contacts"
+        },
+        {
+          "start": 113.0,
+          "title": "Make Email required for the CRM job: find Email, switch it on, untick Global, pick CRM"
+        },
+        {
+          "start": 134.92,
+          "title": "CRM › Contacts › open Example FM01 Caller 0850"
+        },
+        {
+          "start": 191.73,
+          "title": "Add a follow-up note and Save, still without an email"
+        },
+        {
+          "start": 217.62,
+          "title": "Enter the email Example.fm01.050850@example.com and Save"
+        },
+        {
+          "start": 234.82,
+          "title": "Reload the contact: the values are kept"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Complete and configure required fields",
         "Điền và cấu hình trường bắt buộc"
-      ]
+      ],
+      "media": "3f0ad63256fee42a2087d50f8288d266cdc34cf5528f831f42c1277b53657c0a",
+      "duration": 255.5
     },
     {
       "title": "Add an approved dropdown value",
@@ -1677,13 +3177,40 @@
         "administration.complete-and-configure-required-fields"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Settings › Master data › Contact Reasons"
+        },
+        {
+          "start": 19.32,
+          "title": "New: enter the agreed code and name, then Save."
+        },
+        {
+          "start": 38.35,
+          "title": "CRM › Contacts › New Contact: Example FM02 Caller 1106, 0905110610"
+        },
+        {
+          "start": 55.95,
+          "title": "Contact Reason: choose the new example entry."
+        },
+        {
+          "start": 64.27,
+          "title": "Create Contact and open it"
+        },
+        {
+          "start": 86.42,
+          "title": "Reload the contact"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Add an approved dropdown value",
         "Thêm giá trị danh sách được phê duyệt"
-      ]
+      ],
+      "media": "4716c67286711f735008bf256079cbf8e522b82ed9e7659f2a291c5f4bcfa982",
+      "duration": 98.9
     },
     {
       "title": "Add a field with Form Studio",
@@ -1717,13 +3244,60 @@
         "administration.review-who-changed-a-record"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › open Nguyễn Văn An (01_0000126)"
+        },
+        {
+          "start": 25.38,
+          "title": "Press Studio (top right) to change the Client form"
+        },
+        {
+          "start": 38.05,
+          "title": "Drag “Dropdown” into the Care card"
+        },
+        {
+          "start": 42.0,
+          "title": "Name it “Preferred visit time” (Vietnamese “Khung giờ thăm ưu tiên”) with three options"
+        },
+        {
+          "start": 63.94,
+          "title": "Who sees it: Everyone. Press Add field"
+        },
+        {
+          "start": 75.81,
+          "title": "Publish › Publish for everyone"
+        },
+        {
+          "start": 90.64,
+          "title": "Back on the client: reload the page"
+        },
+        {
+          "start": 101.77,
+          "title": "Operations › Clients › Nguyễn Văn An"
+        },
+        {
+          "start": 126.49,
+          "title": "Choose “Afternoon” and Save"
+        },
+        {
+          "start": 139.42,
+          "title": "Reload the client: the value is kept"
+        },
+        {
+          "start": 148.71,
+          "title": "Another client, Trần Thị Bình, has the same field"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Add a field with Form Studio",
         "Thêm trường bằng Form Studio"
-      ]
+      ],
+      "media": "c85a896e3b781cc1157e933455e92592e8d92f3f8b76878564626a3a890c84cf",
+      "duration": 173.3
     },
     {
       "title": "Review who changed a record",
@@ -1756,13 +3330,36 @@
         "operations.reschedule-a-visit-and-change-staff"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Bookings › BK4032 › Activity"
+        },
+        {
+          "start": 76.94,
+          "title": "Finance › Invoices › INV/2026/00025 › history"
+        },
+        {
+          "start": 123.47,
+          "title": "Settings › Records › Audit Log: the system-wide change log"
+        },
+        {
+          "start": 134.66,
+          "title": "Search the Record column for BK4032"
+        },
+        {
+          "start": 164.57,
+          "title": "Open: from the log line to the booking"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Review who changed a record",
         "Kiểm tra người thay đổi hồ sơ"
-      ]
+      ],
+      "media": "e9fe2b1d08d01fb06253f4fb374a021497585cb939c9d2431d378d287a379008",
+      "duration": 177.1
     },
     {
       "title": "Preview the current MOH report",
@@ -1794,13 +3391,28 @@
         "administration.review-who-changed-a-record"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Bookings › BK3832"
+        },
+        {
+          "start": 50.23,
+          "title": "Back to the list, tick the booking, open Print"
+        },
+        {
+          "start": 91.41,
+          "title": "Open the MOH Report preview on screen"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Preview the current MOH report",
         "Xem trước báo cáo Bộ Y tế"
-      ]
+      ],
+      "media": "2a6411a73b7a8950c3a68d26ef9a41ee21f5cbb12e0d66d0a8cd41bdb0493d72",
+      "duration": 118.8
     },
     {
       "title": "Use an existing private conversation",
@@ -1836,13 +3448,40 @@
         "administration.understand-roles-and-permitted-work"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Messages (chat icon, top right)"
+        },
+        {
+          "start": 18.66,
+          "title": "Open it, then Actions › Open in Discuss › Members"
+        },
+        {
+          "start": 46.59,
+          "title": "Messages"
+        },
+        {
+          "start": 60.31,
+          "title": "Open it in Discuss and show the members"
+        },
+        {
+          "start": 79.38,
+          "title": "Messages: her conversations"
+        },
+        {
+          "start": 91.0,
+          "title": "Open Discuss and search for the existing private conversation."
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Use an existing private conversation",
         "Sử dụng cuộc trò chuyện riêng"
-      ]
+      ],
+      "media": "0d8d6763151459302b1eb90a06923928bc537aa9c7cb38a9bbcf95552ea01122",
+      "duration": 117.8
     },
     {
       "title": "Review contacts for a date",
@@ -1957,13 +3596,60 @@
         "finance.issue-an-invoice-and-review-money-owed"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › Nguyễn Văn An"
+        },
+        {
+          "start": 37.95,
+          "title": "New booking: Clinic Visit, 1 hour, HN_PK_PKGDVU, at the clinic (as on Wed 14 Oct)"
+        },
+        {
+          "start": 49.1,
+          "title": "Add the services: Internal examination (bs_020) × 1"
+        },
+        {
+          "start": 64.5,
+          "title": "Date: Wed 18 Nov, 10:00. No staff"
+        },
+        {
+          "start": 71.55,
+          "title": "Create the booking"
+        },
+        {
+          "start": 91.66,
+          "title": "Location Details: driving distance 0 km as in the worked example"
+        },
+        {
+          "start": 98.76,
+          "title": "Quick actions › View Quote: taxes and total"
+        },
+        {
+          "start": 115.52,
+          "title": "Pricing tab: each line, the rules applied and the total review the details"
+        },
+        {
+          "start": 135.38,
+          "title": "The original booking BK3832 (Wed 14 Oct 10:00, completed): Operations › Bookings"
+        },
+        {
+          "start": 181.11,
+          "title": "Quick actions › View Invoice › INV/2026/00001"
+        },
+        {
+          "start": 202.24,
+          "title": "Close: cancel the re-booking BK4092 (More › Cancel Booking), it was for the price check only"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Weekday clinic examination",
         "Khám tại phòng khám ngày thường"
-      ]
+      ],
+      "media": "333dd2478fd713395dc1e80454aac7752cb89e150789eaa1e8f0c411de624778",
+      "duration": 258.3
     },
     {
       "title": "Clinic ultrasound and ECG with a discount",
@@ -1999,13 +3685,60 @@
         "finance.issue-an-invoice-and-review-money-owed"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › Nguyễn Văn An"
+        },
+        {
+          "start": 31.39,
+          "title": "New booking: Clinic Visit, 1 hour, HN_PK_PKGDVU, at the clinic (as on Wed 21 Oct)"
+        },
+        {
+          "start": 42.05,
+          "title": "Add the services: Ultrasound + reading results (bs_040) × 1; ECG + reading results (bs_050) × 1"
+        },
+        {
+          "start": 61.4,
+          "title": "Date: Wed 25 Nov, 14:00. No staff"
+        },
+        {
+          "start": 70.57,
+          "title": "Create the booking"
+        },
+        {
+          "start": 90.49,
+          "title": "Location Details: driving distance 0 km as in the worked example"
+        },
+        {
+          "start": 96.09,
+          "title": "Quick actions › View Quote: enter the 10% client discount on bs_040 and bs_050 with its reason"
+        },
+        {
+          "start": 134.85,
+          "title": "Pricing tab: each line, the rules applied and the total review the details"
+        },
+        {
+          "start": 162.13,
+          "title": "The original booking BK3833 (Wed 21 Oct 14:00, completed): Operations › Bookings"
+        },
+        {
+          "start": 188.52,
+          "title": "Quick actions › View Invoice › INV/2026/00003"
+        },
+        {
+          "start": 209.4,
+          "title": "Close: cancel the re-booking BK4095 (More › Cancel Booking), it was for the price check only"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Clinic ultrasound and ECG with a discount",
         "Siêu âm và điện tim có chiết khấu"
-      ]
+      ],
+      "media": "00ca49b26ef3a090a590b5a5118e1e9a73db5ae1e1a48322636f3f1beb4f19da",
+      "duration": 257.7
     },
     {
       "title": "Online examination with a discount",
@@ -2041,13 +3774,60 @@
         "finance.issue-an-invoice-and-review-money-owed"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › Nguyễn Văn An"
+        },
+        {
+          "start": 20.88,
+          "title": "New booking: Clinic Visit, 30 minutes, HN_PK_PKGDVU, at the clinic (as on Wed 28 Oct)"
+        },
+        {
+          "start": 31.44,
+          "title": "Add the services: Online internal examination (bs_030) × 1"
+        },
+        {
+          "start": 46.1,
+          "title": "Date: Wed 2 Dec, 11:00. No staff"
+        },
+        {
+          "start": 54.83,
+          "title": "Create the booking"
+        },
+        {
+          "start": 73.86,
+          "title": "Location Details: driving distance 0 km as in the worked example"
+        },
+        {
+          "start": 79.15,
+          "title": "Quick actions › View Quote: enter the 10% client discount on bs_030 with its reason"
+        },
+        {
+          "start": 106.39,
+          "title": "Pricing tab: each line, the rules applied and the total review the details"
+        },
+        {
+          "start": 127.67,
+          "title": "The original booking BK3834 (Wed 28 Oct 11:00, completed): Operations › Bookings"
+        },
+        {
+          "start": 153.07,
+          "title": "Quick actions › View Invoice › INV/2026/00002"
+        },
+        {
+          "start": 173.07,
+          "title": "Close: cancel the re-booking BK4100 (More › Cancel Booking), it was for the price check only"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Online examination with a discount",
         "Khám trực tuyến có chiết khấu"
-      ]
+      ],
+      "media": "282c44527575170bf7ef36bdf7f0567ba8e47e781aac5e6d31fe937a29433b56",
+      "duration": 218.7
     },
     {
       "title": "Home wound care and a glucose test at six kilometres",
@@ -2083,13 +3863,64 @@
         "finance.issue-an-invoice-and-review-money-owed"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › Trần Thị Bình"
+        },
+        {
+          "start": 20.8,
+          "title": "New booking: Home Visit, 1 hour, HN_PK_PKGDVU, at home (as on Thu 15 Oct)"
+        },
+        {
+          "start": 31.38,
+          "title": "Add the services: Change wound dressing < 5cm (đd_020) × 3; Capillary blood glucose test (đd_220) × 1"
+        },
+        {
+          "start": 54.36,
+          "title": "Date: Thu 19 Nov, 09:00. No staff"
+        },
+        {
+          "start": 61.32,
+          "title": "Create the booking"
+        },
+        {
+          "start": 80.41,
+          "title": "Location Details: driving distance 6 km as in the worked example"
+        },
+        {
+          "start": 85.72,
+          "title": "Parking 100,000 ₫ (staff reimbursement): Additional charges › Parking Charge, Save"
+        },
+        {
+          "start": 99.07,
+          "title": "Quick actions › View Quote: taxes and total"
+        },
+        {
+          "start": 116.25,
+          "title": "Pricing tab: each line, the rules applied and the total review the details"
+        },
+        {
+          "start": 139.25,
+          "title": "The original booking BK3835 (Thu 15 Oct 09:00, completed): Operations › Bookings"
+        },
+        {
+          "start": 164.42,
+          "title": "Quick actions › View Invoice › INV/2026/00019"
+        },
+        {
+          "start": 184.34,
+          "title": "Close: cancel the re-booking BK4102 (More › Cancel Booking), it was for the price check only"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Home wound care and a glucose test at six kilometres",
         "Chăm sóc vết thương và thử đường huyết tại nhà"
-      ]
+      ],
+      "media": "3024ef289156fb4e49a0798910a6c41db770ecc0828f8894accf2d585cc007d8",
+      "duration": 227.3
     },
     {
       "title": "Sunday home wound care and extra nursing hours",
@@ -2125,13 +3956,64 @@
         "finance.issue-an-invoice-and-review-money-owed"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › Trần Thị Bình"
+        },
+        {
+          "start": 26.09,
+          "title": "New booking: Home Visit, 2 hours (the nearest step; set to 150 minutes after booking), HN_PK_PKGDVU, at home (as on Sun 25 Oct)"
+        },
+        {
+          "start": 37.11,
+          "title": "Add the services: Change wound dressing < 5cm (đd_020) × 1; Nursing fee (Additional hours) (đd_240) × 2"
+        },
+        {
+          "start": 59.16,
+          "title": "Date: Sun 29 Nov, 14:00. No staff"
+        },
+        {
+          "start": 68.37,
+          "title": "Create the booking"
+        },
+        {
+          "start": 84.56,
+          "title": "Quick Booking offers whole hours only: type the exact duration, 150 minutes (2.5 hours), in Visit › Scheduled Duration (Minutes)"
+        },
+        {
+          "start": 88.04,
+          "title": "Location Details › Driving Distance shows 6 km; set 0 km: this visit is at another address, 0 km per the client's data"
+        },
+        {
+          "start": 107.14,
+          "title": "Quick actions › View Quote: enter the 10% client discount on đd_020 and đd_240 with its reason"
+        },
+        {
+          "start": 147.29,
+          "title": "Pricing tab: each line, the rules applied and the total review the details"
+        },
+        {
+          "start": 174.77,
+          "title": "The original booking BK3836 (Sun 25 Oct 14:00, completed): Operations › Bookings"
+        },
+        {
+          "start": 200.2,
+          "title": "Quick actions › View Invoice › INV/2026/00004"
+        },
+        {
+          "start": 220.34,
+          "title": "Close: cancel the re-booking BK4104 (More › Cancel Booking), it was for the price check only"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Sunday home wound care and extra nursing hours",
         "Chăm sóc tại nhà vào Chủ nhật và thêm giờ điều dưỡng"
-      ]
+      ],
+      "media": "c3b4a7313aad615eb56ab62a3ec23a408436c4799527fa7138b116624dba35ae",
+      "duration": 263.5
     },
     {
       "title": "Saturday evening home examination",
@@ -2167,13 +4049,64 @@
         "finance.issue-an-invoice-and-review-money-owed"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › Lê Quang Cường"
+        },
+        {
+          "start": 27.48,
+          "title": "New booking: Home Visit, 1 hour, HN_PK_PKGDVU, at home (as on Sat 17 Oct)"
+        },
+        {
+          "start": 37.82,
+          "title": "Add the services: Internal examination (bs_020) × 1"
+        },
+        {
+          "start": 52.39,
+          "title": "Date: Sat 21 Nov, 19:00. No staff"
+        },
+        {
+          "start": 61.45,
+          "title": "Create the booking"
+        },
+        {
+          "start": 80.9,
+          "title": "Location Details: driving distance 6 km as in the worked example"
+        },
+        {
+          "start": 86.45,
+          "title": "Parking 100,000 ₫ (staff reimbursement): Additional charges › Parking Charge, Save"
+        },
+        {
+          "start": 100.21,
+          "title": "Quick actions › View Quote: taxes and total"
+        },
+        {
+          "start": 117.96,
+          "title": "Pricing tab: each line, the rules applied and the total review the details"
+        },
+        {
+          "start": 135.61,
+          "title": "The original booking BK3837 (Sat 17 Oct 19:00, completed): Operations › Bookings"
+        },
+        {
+          "start": 163.33,
+          "title": "Quick actions › View Invoice › INV/2026/00005"
+        },
+        {
+          "start": 183.76,
+          "title": "Close: cancel the re-booking BK4106 (More › Cancel Booking), it was for the price check only"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Saturday evening home examination",
         "Khám tại nhà tối thứ Bảy"
-      ]
+      ],
+      "media": "9eed389b020ca61f70e3f65897b4adfcba3aa6f7cb92f9c435af323de4cc1d46",
+      "duration": 231.8
     },
     {
       "title": "Public holiday home examination at night",
@@ -2209,13 +4142,64 @@
         "finance.issue-an-invoice-and-review-money-owed"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Review the configured public holiday under Settings › Master Data › Public Holidays."
+        },
+        {
+          "start": 21.91,
+          "title": "Operations › Clients › Phạm Thị Dung"
+        },
+        {
+          "start": 58.44,
+          "title": "New booking: Home Visit, 1 hour, HN_PK_PKGDVU, at home (as on Mon 19 Oct (example holiday))"
+        },
+        {
+          "start": 68.85,
+          "title": "Add the services: Internal examination (bs_020) × 1"
+        },
+        {
+          "start": 83.67,
+          "title": "Date: Mon 23 Nov, 20:30. No staff"
+        },
+        {
+          "start": 92.81,
+          "title": "Create the booking"
+        },
+        {
+          "start": 112.24,
+          "title": "Location Details: driving distance 0 km as in the worked example"
+        },
+        {
+          "start": 117.97,
+          "title": "Quick actions › View Quote: taxes and total"
+        },
+        {
+          "start": 131.66,
+          "title": "Pricing tab: each line, the rules applied and the total review the details"
+        },
+        {
+          "start": 149.5,
+          "title": "The original booking BK3838 (Mon 19 Oct (example holiday) 20:30, completed): Operations › Bookings"
+        },
+        {
+          "start": 182.47,
+          "title": "Quick actions › View Invoice › INV/2026/00006"
+        },
+        {
+          "start": 202.67,
+          "title": "Close: cancel the re-booking BK4108 (More › Cancel Booking), it was for the price check only"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Public holiday home examination at night",
         "Khám tại nhà ban đêm vào ngày lễ"
-      ]
+      ],
+      "media": "2b19ff790ecc54170a4aacc3fa6925389e8291a158c8ac4250f20cf7ed990bad",
+      "duration": 250.9
     },
     {
       "title": "Home injections and ultrasound with a discount",
@@ -2251,13 +4235,68 @@
         "finance.issue-an-invoice-and-review-money-owed"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › Đỗ Minh Giang"
+        },
+        {
+          "start": 25.66,
+          "title": "New booking: Home Visit, 2 hours (the nearest step; set to 90 minutes after booking), HN_PK_PKGDVU, at home (as on Wed 21 Oct)"
+        },
+        {
+          "start": 36.11,
+          "title": "Add the services: Intramuscular/intradermal/subcutaneous injection (đd_060) × 3; Ultrasound + reading results (bs_040) × 1"
+        },
+        {
+          "start": 57.85,
+          "title": "Date: Wed 25 Nov, 10:00. No staff"
+        },
+        {
+          "start": 64.95,
+          "title": "Create the booking"
+        },
+        {
+          "start": 80.9,
+          "title": "Quick Booking offers whole hours only: type the exact duration, 90 minutes (1.5 hours), in Visit › Scheduled Duration (Minutes)"
+        },
+        {
+          "start": 96.8,
+          "title": "Location Details: driving distance 0 km as in the worked example"
+        },
+        {
+          "start": 102.53,
+          "title": "Parking 100,000 ₫ (staff reimbursement): Additional charges › Parking Charge, Save"
+        },
+        {
+          "start": 116.5,
+          "title": "Quick actions › View Quote: enter the 10% client discount on đd_060 and bs_040 with its reason"
+        },
+        {
+          "start": 161.15,
+          "title": "Pricing tab: each line, the rules applied and the total review the details"
+        },
+        {
+          "start": 190.45,
+          "title": "The original booking BK3839 (Wed 21 Oct 10:00, completed): Operations › Bookings"
+        },
+        {
+          "start": 225.58,
+          "title": "Quick actions › View Invoice › INV/2026/00007"
+        },
+        {
+          "start": 246.24,
+          "title": "Close: cancel the re-booking BK4110 (More › Cancel Booking), it was for the price check only"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Home injections and ultrasound with a discount",
         "Tiêm và siêu âm tại nhà có chiết khấu"
-      ]
+      ],
+      "media": "9b6a57e417d0e2ff736e9e8c08df9486204bad529d64d773694cd927c0fecf63",
+      "duration": 295.7
     },
     {
       "title": "Four hours of personal care with travel",
@@ -2293,13 +4332,60 @@
         "finance.issue-an-invoice-and-review-money-owed"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › Vũ Thị Khánh"
+        },
+        {
+          "start": 25.28,
+          "title": "New booking: Home Visit, 4 hours, HN_PK_PKGDVU, at home (as on Thu 22 Oct)"
+        },
+        {
+          "start": 35.91,
+          "title": "Add the services: Daytime personal care (minimum 3 hours) (đd_190) × 4"
+        },
+        {
+          "start": 55.14,
+          "title": "Date: Thu 26 Nov, 08:00. No staff"
+        },
+        {
+          "start": 62.27,
+          "title": "Create the booking"
+        },
+        {
+          "start": 82.62,
+          "title": "Location Details: driving distance 6 km as in the worked example"
+        },
+        {
+          "start": 88.55,
+          "title": "Quick actions › View Quote: taxes and total"
+        },
+        {
+          "start": 102.5,
+          "title": "Pricing tab: each line, the rules applied and the total review the details"
+        },
+        {
+          "start": 120.66,
+          "title": "The original booking BK3840 (Thu 22 Oct 08:00, completed): Operations › Bookings"
+        },
+        {
+          "start": 152.96,
+          "title": "Quick actions › View Invoice › INV/2026/00008"
+        },
+        {
+          "start": 174.17,
+          "title": "Close: cancel the re-booking BK4112 (More › Cancel Booking), it was for the price check only"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Four hours of personal care with travel",
         "Chăm sóc cá nhân bốn giờ có phí di chuyển"
-      ]
+      ],
+      "media": "d39c049d3ef9a28f7bb6f0ff08062bd6d1f39b6edba417cea08efe612d1537ce",
+      "duration": 228.7
     },
     {
       "title": "Weekday doctor visit at the clinic",
@@ -2335,13 +4421,52 @@
         "finance.issue-an-invoice-and-review-money-owed"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › open Ngô Thanh Mai"
+        },
+        {
+          "start": 18.23,
+          "title": "New booking: Clinic Visit, TPHCM_PK_CSTNVU, location Clinic, 1 hour"
+        },
+        {
+          "start": 30.43,
+          "title": "Services as in the worked example: bs_010_tphcm × 1"
+        },
+        {
+          "start": 42.18,
+          "title": "Date: the client’s Wed 14 Oct, 10:00 → five weeks later, same weekday and time: Wed 18 Nov, 10:00"
+        },
+        {
+          "start": 57.33,
+          "title": "Create the booking (no staff: this booking only re-runs the price)"
+        },
+        {
+          "start": 79.93,
+          "title": "Quick actions › View Quote: VAT and total"
+        },
+        {
+          "start": 93.18,
+          "title": "Pricing tab: each line, the rules applied and the total, review the details"
+        },
+        {
+          "start": 118.37,
+          "title": "Review the completed booking: Operations › Bookings › BK3841"
+        },
+        {
+          "start": 145.71,
+          "title": "Quick actions › View Invoice › INV/2026/00009"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Weekday doctor visit at the clinic",
         "Khám bác sĩ tại phòng khám ngày thường"
-      ]
+      ],
+      "media": "3bdfe62c80928ceae72da1262f2caa6ebebe5c1d5540734b56f91796d664d274",
+      "duration": 169.5
     },
     {
       "title": "Doctor home visit with a glucose test",
@@ -2377,13 +4502,60 @@
         "finance.issue-an-invoice-and-review-money-owed"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › open Bùi Văn Nam"
+        },
+        {
+          "start": 27.02,
+          "title": "New booking: Home Visit, TPHCM_PK_CSTNVU, location Patient Home"
+        },
+        {
+          "start": 41.0,
+          "title": "Services as in the worked example: bs_015_tphcm × 1, đd_290_tphcm × 1"
+        },
+        {
+          "start": 57.05,
+          "title": "Date: the client’s Thu 15 Oct, 09:00 → five weeks later, same weekday and time: Thu 19 Nov, 09:00"
+        },
+        {
+          "start": 73.4,
+          "title": "Create the booking (no staff: this booking only re-runs the price)"
+        },
+        {
+          "start": 88.99,
+          "title": "As in the worked example: duration 90 minutes; staff parking 100,000 ₫ (Additional charges); Save"
+        },
+        {
+          "start": 109.3,
+          "title": "Quick actions › View Quote: VAT and total"
+        },
+        {
+          "start": 123.14,
+          "title": "Pricing tab: each line, the rules applied and the total, review the details"
+        },
+        {
+          "start": 151.95,
+          "title": "Parking 100,000 ₫ is the nurse’s reimbursement: shown apart from the client price"
+        },
+        {
+          "start": 158.13,
+          "title": "Review the completed booking: Operations › Bookings › BK3842"
+        },
+        {
+          "start": 187.69,
+          "title": "Quick actions › View Invoice › INV/2026/00010"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Doctor home visit with a glucose test",
         "Khám bác sĩ tại nhà và thử đường huyết"
-      ]
+      ],
+      "media": "e90d84de4cf2e5698b9f940c3fbe2a05d73b04d35225437fa47d00456c82a1e5",
+      "duration": 211.7
     },
     {
       "title": "Saturday home examination with a discount",
@@ -2419,13 +4591,56 @@
         "finance.issue-an-invoice-and-review-money-owed"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › open Bùi Văn Nam"
+        },
+        {
+          "start": 48.02,
+          "title": "New booking: Home Visit, TPHCM_PK_CSTNVU, location Patient Home, 1 hour"
+        },
+        {
+          "start": 62.18,
+          "title": "Services as in the worked example: bs_015_tphcm × 1"
+        },
+        {
+          "start": 75.67,
+          "title": "Date: the client’s Sat 24 Oct, 10:00 → five weeks later, same weekday and time: Sat 28 Nov, 10:00"
+        },
+        {
+          "start": 93.74,
+          "title": "Create the booking (no staff: this booking only re-runs the price)"
+        },
+        {
+          "start": 112.35,
+          "title": "As in the worked example: driving distance 0 km (the booking took the client’s stored 6 km); Save"
+        },
+        {
+          "start": 131.28,
+          "title": "Quick actions › View Quote: client discount 10% on bs_015_tphcm with its reason; Save"
+        },
+        {
+          "start": 166.56,
+          "title": "Pricing tab: each line, the rules applied and the total, review the details"
+        },
+        {
+          "start": 199.32,
+          "title": "Review the completed booking: Operations › Bookings › BK3843"
+        },
+        {
+          "start": 232.95,
+          "title": "Quick actions › View Invoice › INV/2026/00011"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Saturday home examination with a discount",
         "Khám tại nhà thứ Bảy có chiết khấu"
-      ]
+      ],
+      "media": "d26060cbe361e147a8b84e2819683ac77156ea3adaa2f1abfd31b5a5a23ea0fb",
+      "duration": 260.9
     },
     {
       "title": "Two injections at home",
@@ -2461,13 +4676,52 @@
         "finance.issue-an-invoice-and-review-money-owed"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › open Đặng Thị Quỳnh"
+        },
+        {
+          "start": 24.34,
+          "title": "New booking: Home Visit, TPHCM_PK_CSTNVU, location Patient Home, 30 minutes"
+        },
+        {
+          "start": 37.11,
+          "title": "Services as in the worked example: đd_070_tphcm × 2"
+        },
+        {
+          "start": 49.97,
+          "title": "Date: the client’s Fri 16 Oct, 14:00 → five weeks later, same weekday and time: Fri 20 Nov, 14:00"
+        },
+        {
+          "start": 67.98,
+          "title": "Create the booking (no staff: this booking only re-runs the price)"
+        },
+        {
+          "start": 91.55,
+          "title": "Quick actions › View Quote: VAT and total"
+        },
+        {
+          "start": 105.12,
+          "title": "Pricing tab: each line, the rules applied and the total, review the details"
+        },
+        {
+          "start": 130.42,
+          "title": "Review the completed booking: Operations › Bookings › BK3844"
+        },
+        {
+          "start": 156.71,
+          "title": "Quick actions › View Invoice › INV/2026/00012"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Two injections at home",
         "Hai mũi tiêm tại nhà"
-      ]
+      ],
+      "media": "0189cd49d414bdfc351abe0c33d17d9a421321bdcec17a3a8b51c3aabc054137",
+      "duration": 180.6
     },
     {
       "title": "Twelve hours of night care with a discount",
@@ -2503,13 +4757,60 @@
         "finance.issue-an-invoice-and-review-money-owed"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › open Đặng Thị Quỳnh"
+        },
+        {
+          "start": 56.86,
+          "title": "New booking: Home Visit, TPHCM_PK_CSTNVU, location Patient Home"
+        },
+        {
+          "start": 72.38,
+          "title": "Services as in the worked example: đd_270_tphcm × 1"
+        },
+        {
+          "start": 84.84,
+          "title": "Date: the client’s Tue 27 Oct, 19:00 → five weeks later, same weekday and time: Tue 1 Dec, 19:00"
+        },
+        {
+          "start": 106.51,
+          "title": "Create the booking (no staff: this booking only re-runs the price)"
+        },
+        {
+          "start": 124.54,
+          "title": "As in the worked example: duration 720 minutes; staff parking 100,000 ₫ (Additional charges); Save"
+        },
+        {
+          "start": 150.53,
+          "title": "Quick actions › View Quote: client discount 10% on đd_270_tphcm with its reason; Save"
+        },
+        {
+          "start": 194.15,
+          "title": "Pricing tab: each line, the rules applied and the total, review the details"
+        },
+        {
+          "start": 228.44,
+          "title": "Parking 100,000 ₫ is the nurse’s reimbursement: shown apart from the client price"
+        },
+        {
+          "start": 235.12,
+          "title": "Review the completed booking: Operations › Bookings › BK3845"
+        },
+        {
+          "start": 279.53,
+          "title": "Quick actions › View Invoice › INV/2026/00013"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Twelve hours of night care with a discount",
         "Chăm sóc đêm mười hai giờ có chiết khấu"
-      ]
+      ],
+      "media": "a7c058cb335c9878febab7a633e335bea01e214552c7deeb5540a2696f6c7eea",
+      "duration": 307.2
     },
     {
       "title": "Public holiday infusions and bladder wash",
@@ -2545,13 +4846,64 @@
         "finance.issue-an-invoice-and-review-money-owed"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Settings › Master Data › Public Holidays: the example holiday used by this case"
+        },
+        {
+          "start": 22.01,
+          "title": "Operations › Clients › open Lý Minh Tâm"
+        },
+        {
+          "start": 46.71,
+          "title": "New booking: Home Visit, TPHCM_PK_CSTNVU, location Patient Home"
+        },
+        {
+          "start": 60.62,
+          "title": "Services as in the worked example: đd_060_tphcm × 2, đd_120_tphcm × 1"
+        },
+        {
+          "start": 79.78,
+          "title": "Date: the client’s Mon 19 Oct, 10:00 → five weeks later, same weekday and time: Mon 23 Nov, 10:00"
+        },
+        {
+          "start": 95.49,
+          "title": "Create the booking (no staff: this booking only re-runs the price)"
+        },
+        {
+          "start": 111.08,
+          "title": "As in the worked example: duration 150 minutes; staff parking 100,000 ₫ (Additional charges); Save"
+        },
+        {
+          "start": 131.18,
+          "title": "Quick actions › View Quote: VAT and total"
+        },
+        {
+          "start": 144.69,
+          "title": "Pricing tab: each line, the rules applied and the total, review the details"
+        },
+        {
+          "start": 172.71,
+          "title": "Parking 100,000 ₫ is the nurse’s reimbursement: shown apart from the client price"
+        },
+        {
+          "start": 178.65,
+          "title": "Review the completed booking: Operations › Bookings › BK3846"
+        },
+        {
+          "start": 206.1,
+          "title": "Quick actions › View Invoice › INV/2026/00014"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Public holiday infusions and bladder wash",
         "Truyền dịch và rửa bàng quang vào ngày lễ"
-      ]
+      ],
+      "media": "bc940604040bb1347560ad88a91e2a84c5f3fc6cc2bc097b173021f8236a4420",
+      "duration": 230.2
     },
     {
       "title": "Clinic consultation after twenty thirty",
@@ -2587,13 +4939,52 @@
         "finance.issue-an-invoice-and-review-money-owed"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › open Trịnh Văn Vinh"
+        },
+        {
+          "start": 34.92,
+          "title": "New booking: Clinic Visit, TPHCM_PK_CSTNVU, location Clinic, 30 minutes"
+        },
+        {
+          "start": 47.76,
+          "title": "Services as in the worked example: bs_020_tphcm × 1"
+        },
+        {
+          "start": 59.27,
+          "title": "Date: the client’s Wed 21 Oct, 20:30 → five weeks later, same weekday and time: Wed 25 Nov, 20:30"
+        },
+        {
+          "start": 77.91,
+          "title": "Create the booking (no staff: this booking only re-runs the price)"
+        },
+        {
+          "start": 102.05,
+          "title": "Quick actions › View Quote: VAT and total"
+        },
+        {
+          "start": 116.24,
+          "title": "Pricing tab: each line, the rules applied and the total, review the details"
+        },
+        {
+          "start": 142.18,
+          "title": "Review the completed booking: Operations › Bookings › BK3847"
+        },
+        {
+          "start": 170.98,
+          "title": "Quick actions › View Invoice › INV/2026/00015"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Clinic consultation after twenty thirty",
         "Khám tại phòng khám sau 20 giờ 30"
-      ]
+      ],
+      "media": "74bb3e2414f714c399fe0a02eb315dbd5fd037e529d1d0914fde5342af99b254",
+      "duration": 195.2
     },
     {
       "title": "Home wound dressing and a service added during the visit",
@@ -2629,13 +5020,52 @@
         "finance.issue-an-invoice-and-review-money-owed"
       ],
       "video": true,
-      "chapters": [],
+      "chapters": [
+        {
+          "start": 0,
+          "title": "Operations › Clients › open Hồ Thị Xuân"
+        },
+        {
+          "start": 50.47,
+          "title": "New booking: Home Visit, TPHCM_PK_CSTNVU, location Patient Home, 1 hour"
+        },
+        {
+          "start": 64.81,
+          "title": "Services as in the worked example: đd_020_tphcm × 2, đd_290_tphcm × 1"
+        },
+        {
+          "start": 85.23,
+          "title": "Date: the client’s Thu 29 Oct, 15:00 → five weeks later, same weekday and time: Thu 3 Dec, 15:00"
+        },
+        {
+          "start": 106.57,
+          "title": "Create the booking (no staff: this booking only re-runs the price)"
+        },
+        {
+          "start": 131.56,
+          "title": "Quick actions › View Quote: client discount 10% on đd_020_tphcm and đd_290_tphcm with its reason; Save"
+        },
+        {
+          "start": 176.43,
+          "title": "Pricing tab: each line, the rules applied and the total, review the details"
+        },
+        {
+          "start": 213.54,
+          "title": "Review the completed booking: Operations › Bookings › BK3848"
+        },
+        {
+          "start": 243.29,
+          "title": "Quick actions › View Invoice › INV/2026/00016"
+        }
+      ],
       "language": "en",
       "version": "2026-11-08",
       "search_phrases": [
         "Home wound dressing and a service added during the visit",
         "Thay băng tại nhà và thêm dịch vụ"
-      ]
+      ],
+      "media": "f893e3ee10c79be6c5091276cdfa6519823cb2c1bcaf87789e01ce265fcca1b4",
+      "duration": 268.1
     }
   ],
   "paths": {
@@ -2739,6 +5169,58 @@
       ],
       "correct": 1,
       "explanation": "Use individual accounts and the approved role and catchment; do not widen access to bypass a problem."
+    }
+  },
+  "practice": {
+    "crm": {
+      "title": "Follow an enquiry through to a booking",
+      "steps": [
+        "Ask your trainer for a synthetic caller and an existing practice client in the training clinic.",
+        "Create a new contact and link that existing client; keep the caller and client distinct.",
+        "Schedule a follow-up with a reason and time. Reopen the contact and find the follow-up.",
+        "Create the agreed booking from the enquiry. Check the contact, client and booking links with your trainer."
+      ],
+      "check": "There is one new enquiry linked to the existing client, and the booking can be traced back to that enquiry."
+    },
+    "operations": {
+      "title": "Reschedule an assigned visit",
+      "steps": [
+        "Ask your trainer for an unstarted practice booking in your catchment. Use the training clinic.",
+        "Record its original visit time, assigned staff and quoted total.",
+        "Reschedule it to the agreed time and check staff availability. Replace staff only if authorised.",
+        "Reopen the booking and compare its new date, assignment and pricing conditions with the intended change."
+      ],
+      "check": "The booking is in the correct catchment, has the agreed time and available staff, and any pricing change has been reviewed."
+    },
+    "clinical": {
+      "title": "Complete a practice visit",
+      "steps": [
+        "Use a synthetic visit assigned to you in the training clinic; ask your trainer to confirm it is safe to complete.",
+        "Review the client and visit details, accept the assignment and use Start Service when the practice visit begins.",
+        "Enter a practice note containing no real patient information and save it. Reopen it to check the saved text.",
+        "Answer the closing questions, complete the visit and review the final status with your trainer."
+      ],
+      "check": "The correct visit has a saved note, the required closing answers and the expected completed status."
+    },
+    "finance": {
+      "title": "Record a part payment and check the remainder",
+      "steps": [
+        "Ask your trainer for an authorised practice invoice of 180,000 VND in the training clinic. Do not send money or a real payment request.",
+        "Record the agreed practice payment of 80,000 VND using the training payment method.",
+        "Reopen the invoice and compare total, paid amount and amount due.",
+        "Review the payment reference and accounting history with your trainer, then follow the training clinic’s cleanup procedure."
+      ],
+      "check": "The invoice total is 180,000 VND, the recorded payment is 80,000 VND and the remaining amount due is 100,000 VND."
+    },
+    "owner": {
+      "title": "Review a staff member’s access",
+      "steps": [
+        "Ask your trainer for a practice staff account and the approved role, catchment and employee linkage in the training clinic.",
+        "Open Users & Roles and compare the account with that access plan.",
+        "With the trainer, verify one permitted task and one record outside the assigned catchment.",
+        "Record any mismatch for the administrator. Keep the account’s permissions limited to its intended job."
+      ],
+      "check": "The staff member can do the assigned work and cannot read records outside their permitted scope."
     }
   }
 }

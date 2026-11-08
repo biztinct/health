@@ -55,6 +55,8 @@ class TestTaskLibrary(TransactionCase):
         data = self.task('finance').get_catalog()
         self.assertTrue(data['progress'][self.fin_key]['reviewed'])
         self.assertEqual(data['progress'][self.fin_key]['position'], 42)
+        self.env.cr.execute("SELECT conname FROM pg_constraint WHERE conrelid='learn_task_progress'::regclass AND contype='u'")
+        self.assertTrue(self.env.cr.fetchone(), 'Progress requires a database uniqueness constraint')
         self.assertNotIn(self.fin_key, self.task('owner').get_catalog()['progress'])
         progress = self.env['learn.task.progress'].with_user(self.people['owner'])
         self.assertFalse(progress.search([('user_id', '=', self.people['finance'].id)]))

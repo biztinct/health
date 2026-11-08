@@ -64,6 +64,9 @@ export class CoachHost extends Component {
 
         this.bundle = null;
         this._onKey = this._onKey.bind(this);
+        this._onLearningLanguage = (ev) => {
+            if (["en", "vi"].includes(ev.detail)) this.state.lang = ev.detail;
+        };
 
         onWillStart(async () => {
             this._restoreLang();
@@ -84,8 +87,12 @@ export class CoachHost extends Component {
         onMounted(() => {
             this._resolveScreen();
             document.addEventListener("keydown", this._onKey);
+            window.addEventListener("carejiyo-learning-language", this._onLearningLanguage);
         });
-        onWillUnmount(() => document.removeEventListener("keydown", this._onKey));
+        onWillUnmount(() => {
+            document.removeEventListener("keydown", this._onKey);
+            window.removeEventListener("carejiyo-learning-language", this._onLearningLanguage);
+        });
     }
 
     // ---------------------------------------------------------------- context
@@ -148,6 +155,7 @@ export class CoachHost extends Component {
     }
 
     toggle() {
+        this.state.lang = RT.lang;
         this.state.open = !this.state.open;
         if (this.state.open) {
             this._log("coach_open");
@@ -425,6 +433,7 @@ export class CoachHost extends Component {
     toggleLang() {
         RT.lang = RT.lang === "en" ? "vi" : "en";
         this.state.lang = RT.lang;
+        window.dispatchEvent(new CustomEvent("carejiyo-learning-language", { detail: RT.lang }));
         try {
             const p = JSON.parse(window.localStorage.getItem(LOCAL_PREFS) || "{}");
             p.lang = RT.lang;
