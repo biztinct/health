@@ -120,7 +120,8 @@ class Workspace(models.AbstractModel):
             'workspace': ('health.workspace.audit', 'happened_at', 'subject'),
             'clinical': ('health.audit.log.view', 'date', 'field_name'),
             'access': ('biz.access.delegation', 'create_date', 'display_name'),
-            'api': ('api.audit.log', 'create_date', 'display_name'),
+            # API audit disables automatic access fields and records time in ts.
+            'api': ('api.audit.log', 'ts', 'display_name'),
             'support': ('biz.support.session', 'issued_at', 'reason'),
             'channels': ('care.channel.audit', 'create_date', 'display_name'),
         }

@@ -83,6 +83,35 @@ class TestTenantWorkspace(TransactionCase):
         for r in data['rows']:
             if r['source']!='workspace':self.assertFalse(r['detail'])
 
+    def test_history_api_uses_event_timestamp(self):
+        if 'api.audit.log' not in self.env:
+            self.skipTest('API gateway is optional for the workspace')
+        self.admin.write({'group_ids': [(4, self.env.ref('health_api_gateway.group_gateway_admin').id)]})
+        # Create out of chronological order so sorting by id cannot pass.
+        newer, older = self.env['api.audit.log'].sudo().create([
+            {'ts': '2099-01-02 12:00:00', 'route': '/workspace-history-regression/newer'},
+            {'ts': '2099-01-01 12:00:00', 'route': '/workspace-history-regression/older'},
+        ])
+        for source in ('api', 'all'):
+            with self.subTest(source=source):
+                data = self.facade.history(source=source, query='workspace-history-regression')
+                rows = [row for row in data['rows'] if row['source'] == 'api']
+                self.assertEqual([row['key'] for row in rows], ['api:%s' % newer.id, 'api:%s' % older.id])
+                self.assertEqual([row['date'] for row in rows], [fields.Datetime.to_string(newer.ts), fields.Datetime.to_string(older.ts)])
+                self.assertEqual([row['title'] for row in rows], [newer.route, older.route])
+                self.assertTrue(all(not row['detail'] for row in rows))
+
+    def test_history_api_preserves_source_access(self):
+        if 'api.audit.log' not in self.env:
+            self.skipTest('API gateway is optional for the workspace')
+        self.assertFalse(self.admin.has_group('health_api_gateway.group_gateway_admin'))
+        for source in ('api', 'all'):
+            with self.subTest(source=source):
+                data = self.facade.history(source=source)
+                self.assertFalse(any(row['source'] == 'api' for row in data['rows']))
+                status = next(item['status'] for item in data['sources'] if item['source'] == 'api')
+                self.assertEqual(status, 'Restricted by your access')
+
 from odoo.tests import HttpCase
 from lxml import html
 
