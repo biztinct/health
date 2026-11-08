@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <template id="pwa_learning_help" inherit_id="health_pwa.app_shell" name="CareJiyo mobile learning">
+    <xpath expr="//div[@id='health-pwa-app']" position="after">
+      <link t-attf-href="/health_learn/static/src/library/pwa_help.css?v=#{pwa_asset_version}" rel="stylesheet"/>
+      <div id="carejiyo-mobile-learning" t-translation="off">
+        <button id="cj-mobile-help-open" type="button" aria-controls="cj-mobile-help-panel" aria-expanded="false">Help</button>
+        <aside id="cj-mobile-help-panel" hidden="hidden" role="dialog" aria-label="CareJiyo Learning">
+          <header><strong>CareJiyo Learning</strong><button id="cj-mobile-help-close" type="button" aria-label="Close">×</button></header>
+          <label id="cj-mobile-topic-label" for="cj-mobile-topic">Choose a task</label>
+          <select id="cj-mobile-topic"/>
+          <p id="cj-mobile-offline" hidden="hidden"/>
+          <iframe id="cj-mobile-help-frame" title="CareJiyo task instructions and video"/>
+          <a id="cj-mobile-library" href="/web#action=health_learn.action_learning_library" target="_blank" rel="noopener">All guides and learning paths</a>
+        </aside>
+      </div>
+      <script t-attf-src="/health_learn/static/src/library/pwa_help.js?v=#{pwa_asset_version}"/>
+    </xpath>
+  </template>
+</odoo>

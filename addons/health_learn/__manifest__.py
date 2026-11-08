@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'CareJiyo Learning',
-    'version': '19.0.6.0.0',
+    'version': '19.0.6.1.0',
     'category': 'Healthcare',
     'summary': 'Task guides, private videos, contextual help, learning paths and a grounded coach',
     'author': 'Biztinct',
@@ -11,6 +11,7 @@ guidance. English instructions with Vietnamese navigation and video captions.
     """,
     'depends': [
         'ai_egress',
+        'health_pwa',
         # The sidebar leaf the Journey hangs off, and the menu inventory the
         # content teaches. Pulls health_crm transitively.
         'health_cms_sidebar',
@@ -51,6 +52,7 @@ guidance. English instructions with Vietnamese navigation and video captions.
         'data/learn_missions.xml',
         # Hand-written.
         'views/learn_actions.xml',
+        'views/learn_pwa.xml',
         'data/learn_sidebar_item.xml',
         'views/learn_content_views.xml',
         'views/learn_override_views.xml',

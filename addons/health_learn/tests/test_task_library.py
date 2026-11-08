@@ -131,3 +131,31 @@ class TestTaskLibrary(TransactionCase):
                 self.assertNotIn(phrase, visible)
         for path in data['paths'].values():
             self.assertTrue(set(path) <= keys)
+
+
+from odoo.tests import HttpCase, new_test_user
+
+
+@tagged('post_install', '-at_install')
+class TestLearningDelivery(HttpCase):
+    def test_nurse_help_and_manual_follow_role_access(self):
+        new_test_user(self.env, login='learning_delivery_nurse', password='learning-delivery-test',
+                      groups='base.group_user,health_base.group_healthcare_nurse')
+        self.authenticate('learning_delivery_nurse', 'learning-delivery-test')
+        response = self.url_open('/health_pwa')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('id="carejiyo-mobile-learning"', response.text)
+        self.assertIn('pwa_help.js?v=1.21.7', response.text)
+        response = self.url_open('/carejiyo/learn/manual?key=mobile.start-a-visit')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('CareJiyo user manual', response.text)
+        self.assertIn('Start Service', response.text)
+        response = self.url_open('/carejiyo/learn/manual?key=administration.add-or-disable-a-user')
+        self.assertEqual(response.status_code, 403)
+        response = self.url_open('/carejiyo/learn/media/administration.add-or-disable-a-user/mp4')
+        self.assertEqual(response.status_code, 403)
+
+    def test_anonymous_media_requires_sign_in(self):
+        response = self.url_open('/carejiyo/learn/media/mobile.start-a-visit/mp4', allow_redirects=False)
+        self.assertIn(response.status_code, (302, 303, 401, 403))
+        self.assertNotIn('video/mp4', response.headers.get('Content-Type', ''))
