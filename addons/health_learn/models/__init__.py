@@ -8,3 +8,4 @@ from . import learn_intent
 from . import learn_mission
 from . import learn_tenant_override
 from . import learn_progress
+from . import learn_task

@@ -8155,3 +8155,13 @@ msgstr "“Thư rác?” làm hai việc, không phải một"
 #: model:learn.tenant.override,value:health_learn.slot_currency
 msgid "₫"
 msgstr "₫"
+
+#. module: health_learn
+#: model:ir.actions.client,name:health_learn.action_learning_library
+msgid "CareJiyo Learning"
+msgstr "Học cùng CareJiyo"
+
+#. module: health_learn
+#: model:cms.sidebar.item,name:health_learn.item_learning_library
+msgid "Task guides and videos"
+msgstr "Hướng dẫn và video"

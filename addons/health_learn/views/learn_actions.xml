@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="action_learning_library" model="ir.actions.client">
+        <field name="name">CareJiyo Learning</field>
+        <field name="tag">carejiyo_learning_library</field>
+        <field name="target">current</field>
+    </record>
 
     <!-- The Guided Journey. An OWL client action, following the same shape as
          Channel Center and the CRM dashboard: an ir.actions.client whose tag is

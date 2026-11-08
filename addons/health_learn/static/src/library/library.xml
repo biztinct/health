@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="health_learn.LearningLibrary"><div class="cj-learning-action"><TaskPanel startKey="startKey"/></div></t>
+<t t-name="health_learn.TaskPanel">
+<div class="cj-learning" t-att-class="{'cj-compact':props.compact}">
+  <header class="cj-learn-header"><div><h1 t-if="!props.compact" t-esc="label('title')"/><strong t-else="" t-esc="label('context')"/><p t-if="!props.compact" t-esc="label('intro')"/></div><button class="cj-btn" t-if="!props.lang" t-on-click="toggleLang" t-esc="state.lang==='en'?'Tiếng Việt':'English'"/></header>
+  <p t-if="state.error" role="alert"><t t-esc="label('error')"/> <button class="cj-btn" t-on-click="load" t-esc="label('retryLoad')"/></p>
+  <t t-if="state.ready">
+  <nav class="cj-learn-tabs" t-att-aria-label="label('views')"><button t-foreach="['library','paths','coach']" t-as="mode" t-key="mode" class="cj-btn" t-att-aria-pressed="state.mode===mode" t-on-click="()=>this.changeMode(mode)" t-esc="label(mode)"/><a t-att-href="manual()" target="_blank" rel="noopener" t-esc="label('manual')"/></nav>
+  <t t-if="state.task">
+    <button class="cj-btn" t-on-click="back" t-esc="label('back')"/>
+    <h2 t-esc="title(state.task)"/><p t-esc="state.task.goal"/>
+    <p t-if="state.lang==='vi'" class="cj-small" t-esc="label('english')"/>
+    <div class="cj-learn-tabs"><button class="cj-btn" t-att-aria-pressed="state.tab==='steps'" t-on-click="()=>this.changeTab('steps')" t-esc="label('steps')"/><button t-if="state.task.video" class="cj-btn" t-att-aria-pressed="state.tab==='watch'" t-on-click="()=>this.changeTab('watch')" t-esc="label('watch')"/></div>
+    <div t-if="state.tab==='watch'" class="cj-player" t-key="state.task.key">
+      <video controls="controls" playsinline="playsinline" preload="metadata" t-ref="video" t-att-src="media('mp4')" t-on-loadedmetadata="metadata" t-on-timeupdate="timeUpdate" t-on-ended="ended">
+        <track kind="subtitles" srclang="en" label="English" t-att-src="media('en.vtt')" t-att-default="state.lang==='en'"/>
+        <track kind="subtitles" srclang="vi" label="Tiếng Việt" t-att-src="media('vi.vtt')" t-att-default="state.lang==='vi'"/>
+      </video><p class="cj-small" t-esc="label('caption')"/><h3 t-esc="label('chapters')"/>
+      <ol class="cj-chapters"><li t-foreach="state.task.chapters" t-as="c" t-key="c_index"><button t-on-click="()=>this.seek(c.start)"><time t-esc="format(c.start)"/> <t t-esc="c.title"/></button></li></ol>
+    </div>
+    <div t-else="" class="cj-instructions"><h3 t-esc="label('before')"/><p t-esc="state.task.before"/><aside t-if="state.task.warning" t-esc="state.task.warning"/><h3 t-esc="label('steps')"/><ol><li t-foreach="state.task.steps" t-as="step" t-key="step_index" t-esc="step"/></ol><h3 t-esc="label('result')"/><p t-esc="state.task.success"/><h3 t-esc="label('trouble')"/><p t-esc="state.task.trouble"/><p t-if="!state.task.video" class="cj-small" t-esc="label('noVideo')"/></div>
+    <div class="cj-task-footer"><button class="cj-btn cj-primary" t-on-click="()=>this.save('reviewed')" t-esc="progress(state.task.key).reviewed?label('reviewed'):label('read')"/><span t-if="progress(state.task.key).watched" t-esc="label('watched')"/><a t-att-href="manual(state.task.key)" target="_blank" rel="noopener" t-esc="label('manual')"/></div>
+    <h3 t-if="state.task.related.length" t-esc="label('related')"/><div class="cj-related"><t t-foreach="state.task.related" t-as="key" t-key="key"><t t-set="related" t-value="state.data.tasks.find(t=>t.key===key)"/><button t-if="related" class="cj-btn" t-on-click="()=>this.select(key)" t-esc="title(related)"/></t></div>
+  </t>
+  <t t-elif="state.mode==='library'">
+    <div class="cj-filters"><label><t t-esc="label('search')"/><input type="search" t-model="state.query" t-att-placeholder="label('search')"/></label><label><t t-esc="label('section')"/><select t-model="state.section"><option value="" t-esc="label('all')"/><option t-foreach="sections" t-as="section" t-key="section" t-att-value="section" t-esc="sectionName(section)"/></select></label></div>
+    <button t-if="props.compact and !state.all" class="cj-btn" t-on-click="()=>state.all=true" t-esc="label('showAll')"/>
+    <p t-if="!filtered.length" t-esc="label('empty')"/>
+    <div class="cj-topic-grid"><article t-foreach="filtered" t-as="task" t-key="task.key"><p class="cj-small" t-esc="sectionName(task.section)"/><h3 t-esc="title(task)"/><p t-esc="task.goal"/><div class="cj-topic-actions"><button class="cj-btn" t-on-click="()=>this.select(task.key)" t-esc="label('openGuide')"/><button t-if="task.video" class="cj-btn" t-on-click="()=>this.select(task.key,0)" t-esc="label('watch')"/><span t-if="progress(task.key).reviewed" class="cj-small" t-esc="label('reviewed')"/></div></article></div>
+  </t>
+  <t t-elif="state.mode==='paths'">
+    <label><t t-esc="label('role')"/><select t-model="state.role" t-on-change="()=>{state.quizAnswer=-1;state.quizResult=null;}"><option t-foreach="Object.keys(state.data.paths)" t-as="role" t-key="role" t-att-value="role" t-esc="roleName(role)"/></select></label>
+    <p><t t-esc="pathReviewed"/> / <t t-esc="pathTasks.length"/> <t t-esc="label('reviewed')"/></p>
+    <ol class="cj-path"><li t-foreach="pathTasks" t-as="task" t-key="task.key"><button class="cj-btn" t-on-click="()=>this.select(task.key)" t-esc="title(task)"/><span t-if="progress(task.key).reviewed" t-esc="label('reviewed')"/><span t-if="progress(task.key).watched" t-esc="label('watched')"/></li></ol>
+    <section t-if="quiz" class="cj-quiz"><h3 t-esc="label('quiz')"/><p t-if="state.lang==='vi'" class="cj-small" t-esc="label('english')"/><p t-esc="quiz.question"/><label t-foreach="quiz.options" t-as="option" t-key="option_index"><input type="radio" name="learning-quiz" t-att-checked="state.quizAnswer===option_index" t-on-change="()=>state.quizAnswer=option_index"/> <t t-esc="option"/></label><button class="cj-btn" t-on-click="checkQuiz" t-esc="label('submit')"/><p t-if="state.quizResult" role="status"><b t-esc="state.quizResult.correct?label('correct'):label('retry')"/>. <t t-esc="state.quizResult.explanation"/></p><p t-if="progress('quiz:'+state.role).quiz_passed" t-esc="label('passed')"/></section>
+    <p t-esc="label('practice')"/><button class="cj-btn" t-on-click="practice" t-esc="label('guided')"/>
+  </t>
+  <t t-else=""><form t-on-submit.prevent="ask"><label><t t-esc="label('question')"/><textarea rows="3" maxlength="400" t-model="state.question"/></label><button class="cj-btn cj-primary" t-att-disabled="state.busy" t-esc="state.busy?label('asking'):label('ask')"/></form>
+    <div t-if="state.answer" class="cj-answer" aria-live="polite"><t t-if="state.answer.matched"><h2 t-esc="title(state.answer)"/><p t-esc="state.answer.body"/><p t-if="state.answer.warning" t-esc="state.answer.warning"/><ol><li t-foreach="state.answer.steps.slice(0,4)" t-as="step" t-key="step_index" t-esc="step"/></ol><button class="cj-btn" t-on-click="()=>this.select(state.answer.key)" t-esc="label('openGuide')"/><p t-if="state.answer.chapter" class="cj-small"><t t-esc="format(state.answer.chapter.start)"/> · <t t-esc="state.answer.chapter.title"/></p><button t-if="state.answer.video" class="cj-btn" t-on-click="()=>this.select(state.answer.key,state.answer.chapter?.start||0)" t-esc="label('watch')"/></t><p t-else="" t-esc="state.answer.message||label('empty')"/></div>
+  </t>
+  </t>
+</div>
+</t>
+</templates>

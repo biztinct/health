@@ -44,6 +44,12 @@
                 </button>
             </header>
 
+            <nav class="lrn-help-tabs">
+                <button class="lrn-btn sm" data-act="c-guides" t-att-aria-pressed="state.guides" t-esc="state.lang === 'vi' ? 'Hướng dẫn và video' : 'Guides and videos'"/>
+                <button class="lrn-btn sm" data-act="c-screen-help" t-att-aria-pressed="!state.guides" t-esc="state.lang === 'vi' ? 'Giải thích màn hình' : 'Explain this screen'"/>
+            </nav>
+            <div t-if="state.guides" class="lrn-task-panel"><TaskPanel compact="true" screen="state.screen || ''" lang="state.lang"/></div>
+            <t t-else="">
             <!-- The standing promise, on screen rather than in a policy doc. -->
             <p class="lrn-dhonest">
                 <svg class="lrn-ic" aria-hidden="true"><use href="#lrn-i-shield-check"/></svg>
@@ -60,6 +66,7 @@
                     <svg class="lrn-ic" aria-hidden="true"><use href="#lrn-i-send"/></svg>
                 </button>
             </form>
+            </t>
         </aside>
     </div>
 </t>

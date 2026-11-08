@@ -6,3 +6,5 @@ from . import test_coach
 from . import test_mission
 from . import test_tenant_override
 from . import test_progress_security
+
+from . import test_task_library

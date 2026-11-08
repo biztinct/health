@@ -15,7 +15,7 @@ from odoo.tests.common import TransactionCase, tagged
 # template literals included.
 BRACE_SPACE_RE = re.compile(r"\$\{[^{}]*\}[ ]+(?=\S)")
 
-JS_DIRS = ('static/src/engine', 'static/src/journey', 'static/src/coach')
+JS_DIRS = ('static/src/engine', 'static/src/journey', 'static/src/coach', 'static/src/library')
 
 
 @tagged('post_install', '-at_install')

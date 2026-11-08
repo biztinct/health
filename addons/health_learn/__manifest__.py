@@ -1,22 +1,13 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'Health Learn — CareJioX in-app learning',
-    'version': '19.0.5.4.0',
+    'name': 'CareJiyo Learning',
+    'version': '19.0.6.0.0',
     'category': 'Healthcare',
-    'summary': 'Guided Journey, bilingual lesson spine and anchor registry for the CRM desk',
+    'summary': 'Task guides, private videos, contextual help, learning paths and a grounded coach',
     'author': 'Biztinct',
-    'description': """
-CareJioX Learn — Phase 1: the content spine.
-============================================
-
-One content model feeds every learning surface. Phase 1 ships the spine, the
-anchor registry and the Guided Journey; the always-on Care Coach (Phase 2) and
-the practice missions (Phase 3) add rows to these same tables rather than new
-ones.
-
-Design: docs/learn/PHASE1_DESIGN.md
-Authoring surface: docs/tutorial_crm/ (the prototype; content is generated from
-it, never hand-edited here).
+    'description': """CareJiyo Learning: task guides, chaptered videos, contextual
+help, role learning paths, knowledge checks and a coach grounded in published
+guidance. English instructions with Vietnamese navigation and video captions.
     """,
     'depends': [
         'ai_egress',
@@ -67,6 +58,9 @@ it, never hand-edited here).
     ],
     'assets': {
         'web.assets_backend': [
+            'health_learn/static/src/library/library.scss',
+            'health_learn/static/src/library/library.js',
+            'health_learn/static/src/library/library.xml',
             'health_learn/static/src/journey/journey.scss',
             'health_learn/static/src/engine/*.js',
             'health_learn/static/src/journey/journey.js',

@@ -1,0 +1,2744 @@
+{
+  "version": "2026-11-08",
+  "tasks": [
+    {
+      "title": "Record a walk-in enquiry",
+      "role": "CRM / authorised reception staff",
+      "goal": "Record an in-person enquiry so it can be followed up or booked.",
+      "before": "Have the caller or representative details, the intended client and the clinic ready.",
+      "success": "One contact records the enquiry and its clinic. An enquiry does not require a booking.",
+      "trouble": "If Walk-in is not available, ask the administrator to check the configured channels. Do not substitute an unrelated live channel.",
+      "key": "crm.record-a-walk-in-enquiry",
+      "title_vi": "Ghi nhận khách đến trực tiếp",
+      "section": 1,
+      "roles": [
+        "crm",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "contacts",
+        "carecommand"
+      ],
+      "steps": [
+        "Open carejiox.com and sign in with your own account. Expand CRM in the left menu and open Contacts.",
+        "Choose New Contact. Select Walk-in as the contact channel.",
+        "Enter the details requested on the form. If the person is a representative, identify the client separately; use an existing client record where appropriate.",
+        "Choose the correct clinic and record the service interest or condition information supplied by the caller. Complete the required fields.",
+        "Save the contact. Return to Contacts and search for the entry using the caller details.",
+        "Open the saved entry and confirm that Walk-in and the intended clinic are retained. Continue to Book only if a visit is agreed."
+      ],
+      "warning": "",
+      "related": [
+        "crm.save-an-enquiry-without-a-booking",
+        "crm.turn-an-enquiry-into-a-booking"
+      ],
+      "video": false,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Record a walk-in enquiry",
+        "Ghi nhận khách đến trực tiếp"
+      ]
+    },
+    {
+      "title": "Record a junk call",
+      "role": "CRM",
+      "goal": "Keep a record of a junk call without inventing a client or a condition.",
+      "before": "Have the incoming phone number if it is available.",
+      "success": "The call is retained as junk without a booking.",
+      "trouble": "If saving is blocked, read the required-field message and ask the administrator whether the rule should apply to junk calls. Do not enter made-up patient information.",
+      "key": "crm.record-a-junk-call",
+      "title_vi": "Ghi nhận cuộc gọi rác",
+      "section": 1,
+      "roles": [
+        "crm",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "contacts",
+        "carecommand"
+      ],
+      "steps": [
+        "Open CRM › Contacts and choose New Contact.",
+        "Enter the phone number supplied by the call. Leave the client name and condition blank when they are genuinely unknown.",
+        "Use the junk action shown on the new-contact form. Do not create a booking for the call.",
+        "Return to Contacts and open the Spam tab.",
+        "Find the call by its phone number and reopen it.",
+        "Check that the number is saved and that Client Details does not contain an invented name, condition or service."
+      ],
+      "warning": "",
+      "related": [
+        "crm.save-an-enquiry-without-a-booking",
+        "administration.complete-and-configure-required-fields"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Record a junk call",
+        "Ghi nhận cuộc gọi rác"
+      ]
+    },
+    {
+      "title": "Save an enquiry without a booking",
+      "role": "CRM",
+      "goal": "Keep the caller information and service interest while the client is deciding.",
+      "before": "Identify whether the caller is the client or a representative.",
+      "success": "The enquiry remains available for follow-up without creating a visit.",
+      "trouble": "If a caller asks for several dates, record the enquiry once and use the booking process for each date. A later separate enquiry gets its own contact.",
+      "key": "crm.save-an-enquiry-without-a-booking",
+      "title_vi": "Lưu yêu cầu chưa đặt lịch",
+      "section": 1,
+      "roles": [
+        "crm",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "contacts",
+        "carecommand"
+      ],
+      "steps": [
+        "Open CRM › Contacts › New Contact.",
+        "Enter the caller name and phone number and identify their relationship to the client.",
+        "Find and link the existing client if this enquiry concerns someone already registered. Check identity before selecting a similarly named person.",
+        "Select the condition or service interest described by the caller and the correct clinic. Fill in all required fields.",
+        "Save or Create Contact. Do not choose Book while no appointment has been agreed.",
+        "Return to the Contacts list and search for the entry.",
+        "Reopen it. Read back the contact details and service interest and confirm that there is no booking."
+      ],
+      "warning": "",
+      "related": [
+        "crm.schedule-a-follow-up",
+        "operations.handle-new-and-repeat-enquiries"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Save an enquiry without a booking",
+        "Lưu yêu cầu chưa đặt lịch"
+      ]
+    },
+    {
+      "title": "Schedule a follow-up",
+      "role": "CRM",
+      "goal": "Record when to contact the person again and why.",
+      "before": "Open the correct enquiry and agree a callback time with the caller.",
+      "success": "The enquiry retains the planned callback information.",
+      "trouble": "If the time appears wrong, check your profile time zone before changing the callback.",
+      "key": "crm.schedule-a-follow-up",
+      "title_vi": "Lên lịch liên hệ lại",
+      "section": 1,
+      "roles": [
+        "crm",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "contacts",
+        "carecommand"
+      ],
+      "steps": [
+        "Open CRM › Contacts and find the enquiry by caller details.",
+        "Open the record and verify the linked client.",
+        "Set the outcome to Pending Follow-up.",
+        "Enter the next follow-up date and time in Vietnam local time. Add a short note explaining the next action.",
+        "Save the record and return to the list.",
+        "Reopen it and check the outcome, date, time and note.",
+        "When the follow-up is performed, record its outcome using either the booking or no-booking procedure."
+      ],
+      "warning": "",
+      "related": [
+        "crm.close-a-follow-up-without-a-booking",
+        "crm.turn-an-enquiry-into-a-booking"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Schedule a follow-up",
+        "Lên lịch liên hệ lại"
+      ]
+    },
+    {
+      "title": "Close a follow-up without a booking",
+      "role": "CRM",
+      "goal": "Record that the enquiry ended without an appointment.",
+      "before": "Complete the follow-up conversation and obtain the reason the client is not proceeding.",
+      "success": "The enquiry is closed with a reason and remains in its history.",
+      "trouble": "If the client wants a later callback rather than closing, use Pending Follow-up instead. If a booking already exists, closing the enquiry is not the booking-cancellation process.",
+      "key": "crm.close-a-follow-up-without-a-booking",
+      "title_vi": "Đóng yêu cầu không đặt lịch",
+      "section": 1,
+      "roles": [
+        "crm",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "contacts",
+        "carecommand"
+      ],
+      "steps": [
+        "Find the enquiry in CRM › Contacts and open it.",
+        "Verify the caller and linked client to avoid closing another enquiry.",
+        "Change the outcome to Booking Lost.",
+        "Enter a clear reason reflecting the conversation. Do not replace a specific reason with a placeholder note.",
+        "Save the change.",
+        "Open the Lost tab in Contacts and find the enquiry.",
+        "Reopen it and check the outcome, reason and history. Confirm that no visit was created by this action."
+      ],
+      "warning": "",
+      "related": [
+        "crm.schedule-a-follow-up",
+        "operations.cancel-a-booking-with-a-reason"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Close a follow-up without a booking",
+        "Đóng yêu cầu không đặt lịch"
+      ]
+    },
+    {
+      "title": "Turn an enquiry into a booking",
+      "role": "CRM / Operations Manager with booking access",
+      "goal": "Book a visit while preserving the link to the original enquiry.",
+      "before": "Have the client identity, service, clinic or home location, duration and agreed date ready.",
+      "success": "The booking and contact link to each other and to the correct client.",
+      "trouble": "If you cannot book with your role, pass the contact reference to the Operations Manager. If a save appears slow, search for the new booking before retrying.",
+      "key": "crm.turn-an-enquiry-into-a-booking",
+      "title_vi": "Chuyển yêu cầu thành lịch hẹn",
+      "section": 1,
+      "roles": [
+        "crm",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "contacts",
+        "carecommand"
+      ],
+      "steps": [
+        "Open the enquiry in CRM › Contacts. If a relative is calling, verify the representative and linked client separately.",
+        "If needed, use the client lookup to link the existing client. Do not create a duplicate client for a new caller.",
+        "Choose Book on the enquiry.",
+        "Select the visit type, facility, service location and duration. Add each requested service with the appropriate quantity or units.",
+        "Choose the agreed date and a suitable available time. Check the displayed time and clinic before continuing.",
+        "Review the booking information and create the booking once. Record its booking reference.",
+        "Open the booking and check its client, date and time. Use Quick actions › Lead Dashboard to return to the originating contact.",
+        "Confirm that the contact shows Service Booked and the follow-up is resolved. Its history should show the booking."
+      ],
+      "warning": "",
+      "related": [
+        "operations.book-one-visit-or-several-dates",
+        "operations.handle-new-and-repeat-enquiries"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Turn an enquiry into a booking",
+        "Chuyển yêu cầu thành lịch hẹn"
+      ]
+    },
+    {
+      "title": "Sell and use a prepaid package",
+      "role": "Owner for templates; Operations Manager and assigned nurse for use",
+      "goal": "Track a purchased package and how completed or cancelled visits affect its balance.",
+      "before": "Use an approved package template. Confirm its services, location, visit count, price and payment policy.",
+      "success": "Package usage follows the linked visits; a cancelled reservation is released.",
+      "trouble": "A package balance is not proof of cash reconciliation. Check the package invoice and Collections if cash is still awaiting hand-in. Ask Finance to investigate discrepancies before selling a replacement package.",
+      "key": "crm.sell-and-use-a-prepaid-package",
+      "title_vi": "Bán và sử dụng gói trả trước",
+      "section": 1,
+      "roles": [
+        "crm",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "ops_collections",
+        "fin_cash_transit",
+        "ops_clients"
+      ],
+      "steps": [
+        "Owner: open Settings › Master Data › Package Templates. Create or review the approved template and save its visit count, visit type, location and price.",
+        "Operations Manager: open Operations › Clients, find the client and choose Quick actions › Buy a package.",
+        "Choose the correct template. Review the package details, create its invoice and record payment through the permitted workflow. Check the invoice and collection status separately.",
+        "Open Quick actions › Packages on the client and review the package balance.",
+        "Create a new booking for an eligible package visit, choosing payment from the package. Check the service and clinic and assign staff.",
+        "The assigned nurse accepts, starts and completes the visit in the nurse app, including required notes and closing answers.",
+        "Return to the client package and check usage against that completed visit.",
+        "If another reserved package visit is cancelled, use More › Cancel Booking on that booking with a reason. Recheck the package to confirm the reservation is released.",
+        "For the three-visit example, one completed visit and one cancelled reserved visit leave two visits available."
+      ],
+      "warning": "Use the current approved package template and check the package balance separately from payment status.",
+      "related": [
+        "operations.cancel-a-booking-with-a-reason",
+        "mobile.finish-a-visit-and-confirm-completion",
+        "finance.receive-cash-handed-in-by-staff"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Sell and use a prepaid package",
+        "Bán và sử dụng gói trả trước"
+      ]
+    },
+    {
+      "title": "Book one visit or several dates",
+      "role": "Operations Manager / authorised booking staff",
+      "goal": "Create one booking for each agreed date without duplicates.",
+      "before": "Start with the enquiry and the correct existing or new client.",
+      "success": "Every agreed date appears once and remains linked to the enquiry.",
+      "trouble": "If a booking seems missing, clear filters and check the time range before creating another. If staff are unavailable, agree an alternative time rather than creating overlapping assignments.",
+      "key": "operations.book-one-visit-or-several-dates",
+      "title_vi": "Đặt một hoặc nhiều lịch hẹn",
+      "section": 2,
+      "roles": [
+        "operations",
+        "owner",
+        "crm",
+        "clinical",
+        "finance"
+      ],
+      "screens": [
+        "ops_bookings",
+        "ops_schedule",
+        "ops_clients"
+      ],
+      "steps": [
+        "Open CRM › Contacts, find the enquiry and choose Book.",
+        "Select the visit type, clinic or home location, duration and services. Verify quantities and the client.",
+        "Choose the first agreed date and time. Check the slot actually offered by the scheduler; it may differ from a requested starting time.",
+        "Review the information and create the first booking once.",
+        "For an additional date, choose Create Another. Recheck the service, facility and duration, then select the next date and time.",
+        "Repeat Create Another for each remaining agreed date. Keep each booking reference.",
+        "Open Operations › Bookings in list view and search for the client. Set a date range that includes every new visit.",
+        "Open each booking and verify its date, time and duration. Use Quick actions › Lead Dashboard to check the originating contact."
+      ],
+      "warning": "",
+      "related": [
+        "operations.handle-new-and-repeat-enquiries",
+        "operations.assign-a-care-team"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Book one visit or several dates",
+        "Đặt một hoặc nhiều lịch hẹn"
+      ]
+    },
+    {
+      "title": "Review client and representative details",
+      "role": "Operations Manager / authorised client staff",
+      "goal": "Keep the client identity and relationships consistent across repeat visits.",
+      "before": "Use the client details supplied through the clinic’s normal identification process.",
+      "success": "One client record holds the correct personal details and the relevant relationships.",
+      "trouble": "Do not make a second client just because a different relative called. If two client records already exist, ask an authorised administrator to review them before changing links.",
+      "key": "operations.review-client-and-representative-details",
+      "title_vi": "Kiểm tra thông tin khách hàng và người đại diện",
+      "section": 2,
+      "roles": [
+        "operations",
+        "owner",
+        "crm",
+        "clinical",
+        "finance"
+      ],
+      "screens": [
+        "ops_bookings",
+        "ops_schedule",
+        "ops_clients"
+      ],
+      "steps": [
+        "Open Operations › Clients and search for the person.",
+        "Open the correct client after checking identifying details, rather than relying on the name alone.",
+        "Review the identity and contact information. Where multiple phone numbers are supplied, verify the appropriate fields.",
+        "Review People for the designated contact person.",
+        "Review Healthcare Relationships for the caregiver and referrer, where present.",
+        "Open the Bookings tab and select a current or previous visit.",
+        "Confirm that the booking points to this same client record. Repeat for a repeat booking if resolving an identity issue.",
+        "If a correction is needed, make it only within your permissions, save, and reopen the client to confirm it was retained."
+      ],
+      "warning": "",
+      "related": [
+        "operations.handle-new-and-repeat-enquiries",
+        "administration.work-within-your-catchment"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Review client and representative details",
+        "Kiểm tra thông tin khách hàng và người đại diện"
+      ]
+    },
+    {
+      "title": "Add a service during a visit",
+      "role": "Assigned nurse or doctor; Operations Manager reviews",
+      "goal": "Record an additional service and its units so the saved quote reflects the work.",
+      "before": "Any clinical decision follows the clinic’s clinical process.",
+      "success": "The additional service appears with the correct units and price alongside the original service.",
+      "trouble": "If a service is missing from the selector, do not substitute a similarly named item. Ask the Operations Manager to check the service catalogue and catchment.",
+      "key": "operations.add-a-service-during-a-visit",
+      "title_vi": "Thêm dịch vụ trong buổi chăm sóc",
+      "section": 2,
+      "roles": [
+        "operations",
+        "owner",
+        "crm",
+        "clinical",
+        "finance"
+      ],
+      "screens": [
+        "ops_bookings",
+        "ops_schedule",
+        "ops_clients"
+      ],
+      "steps": [
+        "In the nurse app, open the assigned visit and verify the client and booking time.",
+        "Accept the offer if it has not been accepted and use Start Service when the visit actually begins.",
+        "Choose Add service and select the service that was provided. Verify the exact service and units or quantity.",
+        "Save the addition. Add the required clinical note through Clinical Notes › Add New Clinical Note, then confirm and save.",
+        "Open View service and check that the original and additional lines are present.",
+        "Review the updated total with the client through the permitted quote workflow before completing the visit.",
+        "In the office, open the same booking in Operations › Bookings and select Pricing.",
+        "Check both service lines and the recalculated total. Use Quick actions › View Quote to inspect the saved quote."
+      ],
+      "warning": "",
+      "related": [
+        "mobile.write-and-save-a-clinical-note",
+        "mobile.answer-the-visit-closing-questions",
+        "operations.review-a-quote-and-invoice"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Add a service during a visit",
+        "Thêm dịch vụ trong buổi chăm sóc"
+      ]
+    },
+    {
+      "title": "Review a quote and invoice",
+      "role": "Operations Manager for the booking; Finance for invoicing",
+      "goal": "Confirm that services and approved pricing flow through to the invoice.",
+      "before": "Have the booking reference and the current approved price rules. Use the worked examples to understand the calculation, then check the current clinic price list for actual work.",
+      "success": "The invoice matches the approved services and quote, with a separately understood payment balance.",
+      "trouble": "Review the price inputs before changing a price rule.",
+      "key": "operations.review-a-quote-and-invoice",
+      "title_vi": "Kiểm tra báo giá và hóa đơn",
+      "section": 2,
+      "roles": [
+        "operations",
+        "owner",
+        "crm",
+        "clinical",
+        "finance"
+      ],
+      "screens": [
+        "ops_bookings",
+        "ops_schedule",
+        "ops_clients"
+      ],
+      "steps": [
+        "Open Operations › Bookings and find the booking.",
+        "Open Pricing and read each service line. Check service code, quantity or units, base price and any additional charges.",
+        "Check the inputs that affect price: catchment, clinic or home, date and time, distance, duration and approved discount.",
+        "If a discount is entered through View Quote, record its reason and review the resulting total before saving.",
+        "Check parking or staff reimbursement separately. In these worked examples parking is not a customer invoice line.",
+        "Open Quick actions › View Invoice, or Execution › Quote & Invoice when shown on the booking.",
+        "Compare the invoice client, booking reference, service lines, discount, tax and total with the saved quote.",
+        "Check the invoice status and balance separately; the invoice total does not tell you whether the client has paid.",
+        "If any line is unexpected, retain the booking and invoice references and ask Finance or the pricing administrator to investigate before posting or collecting."
+      ],
+      "warning": "Use the approved tariff and tax settings for the actual visit. The invoice total and the remaining balance are different values.",
+      "related": [
+        "finance.issue-an-invoice-and-review-money-owed",
+        "finance.receive-part-payment"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Review a quote and invoice",
+        "Kiểm tra báo giá và hóa đơn"
+      ]
+    },
+    {
+      "title": "Handle new and repeat enquiries",
+      "role": "CRM / Operations Manager",
+      "goal": "Keep a separate contact for each new enquiry while retaining the same client.",
+      "before": "Establish who is calling and who needs care.",
+      "success": "One client can have multiple enquiries; each enquiry can lead to one or more bookings.",
+      "trouble": "Do not overwrite an old enquiry to represent a new call. If a booking is linked incorrectly, ask an authorised user to review the record history before correcting it.",
+      "key": "operations.handle-new-and-repeat-enquiries",
+      "title_vi": "Xử lý yêu cầu mới và yêu cầu lặp lại",
+      "section": 2,
+      "roles": [
+        "operations",
+        "owner",
+        "crm",
+        "clinical",
+        "finance"
+      ],
+      "screens": [
+        "ops_bookings",
+        "ops_schedule",
+        "ops_clients"
+      ],
+      "steps": [
+        "For a new enquiry, open CRM › Contacts › New Contact even when the client has used the clinic before.",
+        "If the caller is the client, record that relationship. If the caller is a relative, record the caller and link the existing client separately.",
+        "Search the existing clients carefully before allowing a new client to be created.",
+        "Choose Book from this new contact and enter the agreed visit details.",
+        "Use Create Another if this single enquiry requests several visit dates.",
+        "Open each new booking and use Quick actions › Lead Dashboard to confirm that it links to this enquiry.",
+        "Open an older booking for the same client when checking continuity. It should still link to its own earlier contact.",
+        "Open Operations › Clients › Bookings and confirm the old and new visits belong to the same client."
+      ],
+      "warning": "",
+      "related": [
+        "crm.turn-an-enquiry-into-a-booking",
+        "operations.book-one-visit-or-several-dates"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Handle new and repeat enquiries",
+        "Xử lý yêu cầu mới và yêu cầu lặp lại"
+      ]
+    },
+    {
+      "title": "Assign a care team",
+      "role": "Operations Manager",
+      "goal": "Offer the booking to the appropriate staff and identify the lead.",
+      "before": "Use a saved booking in your catchment. Confirm staff suitability and availability.",
+      "success": "The booking care team and assignment records agree.",
+      "trouble": "If the correct staff member is unavailable or absent from the list, check catchment, staff setup and schedule with the administrator. Do not bypass an availability restriction.",
+      "key": "operations.assign-a-care-team",
+      "title_vi": "Phân công nhóm chăm sóc",
+      "section": 2,
+      "roles": [
+        "operations",
+        "owner",
+        "crm",
+        "clinical",
+        "finance"
+      ],
+      "screens": [
+        "ops_bookings",
+        "ops_schedule",
+        "ops_clients"
+      ],
+      "steps": [
+        "Open the booking in Operations › Bookings and verify its client, location and time.",
+        "Choose Assign Staff from the next-step action. The staff schedule opens for this booking.",
+        "Where using the list workflow, switch to list view and choose New to create an assignment.",
+        "Select the nurse and choose Lead Staff when this person is the lead. Save the assignment.",
+        "If a doctor is also required, add another assignment, select the doctor and choose Doctor. Save.",
+        "Reopen the booking and review Overview › Care team.",
+        "Choose Quick actions › View Assignments and compare the staff and roles with the intended team.",
+        "Ask the assigned person to check the notification in the nurse app."
+      ],
+      "warning": "",
+      "related": [
+        "operations.accept-an-assignment",
+        "operations.reassign-a-declined-visit"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Assign a care team",
+        "Phân công nhóm chăm sóc"
+      ]
+    },
+    {
+      "title": "Accept an assignment",
+      "role": "Assigned nurse or doctor; Operations Manager monitors",
+      "goal": "Confirm that you can perform an offered visit.",
+      "before": "Review the offered date, time, location and service before accepting.",
+      "success": "The assignment remains accepted and is visible to the office.",
+      "trouble": "If you cannot attend, decline rather than accepting and leaving the office unaware. If the result is unclear, reload and confirm status before retrying.",
+      "key": "operations.accept-an-assignment",
+      "title_vi": "Chấp nhận phân công",
+      "section": 2,
+      "roles": [
+        "operations",
+        "owner",
+        "crm",
+        "clinical",
+        "finance"
+      ],
+      "screens": [
+        "ops_bookings",
+        "ops_schedule",
+        "ops_clients"
+      ],
+      "steps": [
+        "Sign in to the nurse app with your own staff account.",
+        "Open the notifications bell and find the offer for the booking.",
+        "Verify the booking reference and visit details.",
+        "Choose Accept once.",
+        "Return to your day view and open the visit to confirm it appears in your schedule.",
+        "Operations Manager: reopen the booking in Operations › Bookings.",
+        "Check that the booking shows Assigned and Staff Confirmed, then review Quick actions › View Assignments.",
+        "Open the assignment history if you need to confirm who accepted and when."
+      ],
+      "warning": "",
+      "related": [
+        "operations.reassign-a-declined-visit",
+        "mobile.find-your-assigned-visits"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Accept an assignment",
+        "Chấp nhận phân công"
+      ]
+    },
+    {
+      "title": "Reassign a declined visit",
+      "role": "Assigned staff and Operations Manager",
+      "goal": "",
+      "before": "Confirm that replacement staff are suitable and available for this booking.",
+      "success": "The decline is retained in history and the replacement accepts the visit.",
+      "trouble": "If both people appear active unexpectedly, stop and review the assignment records. A second offer is not proof that the first active assignment has been removed.",
+      "key": "operations.reassign-a-declined-visit",
+      "title_vi": "Phân công lại lịch hẹn bị từ chối",
+      "section": 2,
+      "roles": [
+        "operations",
+        "owner",
+        "crm",
+        "clinical",
+        "finance"
+      ],
+      "screens": [
+        "ops_bookings",
+        "ops_schedule",
+        "ops_clients"
+      ],
+      "steps": [
+        "Assigned staff: open the offer through the nurse-app notification and choose Decline if you cannot attend.",
+        "Operations Manager: open the same booking and choose Quick actions › View Assignments.",
+        "Review the declined assignment and its history to confirm the staff response.",
+        "Return to the booking and choose Assign Staff. Add the suitable replacement with the appropriate role.",
+        "The replacement signs in to their own nurse-app account, opens the notification and reviews the offer.",
+        "The replacement chooses Accept.",
+        "Operations Manager: reopen Overview › Care team and View Assignments.",
+        "Check that the active assignment reflects the intended replacement and that the declined person has not remained incorrectly active."
+      ],
+      "warning": "",
+      "related": [
+        "operations.assign-a-care-team",
+        "operations.reschedule-a-visit-and-change-staff"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Reassign a declined visit",
+        "Phân công lại lịch hẹn bị từ chối"
+      ]
+    },
+    {
+      "title": "Cancel a booking with a reason",
+      "role": "Operations Manager",
+      "goal": "Record an agreed cancellation without losing its reason or history.",
+      "before": "Verify the exact booking and the client’s cancellation request. Consider package and billing consequences.",
+      "success": "The booking is cancelled and the reason and history remain visible.",
+      "trouble": "Cancelling a visit is not the same as cancelling a posted charge or refunding cash. Do not assume that all billing has been reversed.",
+      "key": "operations.cancel-a-booking-with-a-reason",
+      "title_vi": "Hủy lịch hẹn kèm lý do",
+      "section": 2,
+      "roles": [
+        "operations",
+        "owner",
+        "crm",
+        "clinical",
+        "finance"
+      ],
+      "screens": [
+        "ops_bookings",
+        "ops_schedule",
+        "ops_clients"
+      ],
+      "steps": [
+        "Open Operations › Bookings and search for the booking reference.",
+        "Confirm the client, date and time before choosing a cancellation action.",
+        "Open More › Cancel Booking.",
+        "Choose the appropriate reason. If using Other, enter a clear explanatory note.",
+        "Read the confirmation and confirm only when this booking should actually be cancelled.",
+        "Return to the bookings list and reopen the same reference.",
+        "Open the Cancellation tab and check the reason, note, user and timestamp.",
+        "If the visit used a package, recheck the available balance. If an invoice or payment already exists, ask Finance to handle that separately."
+      ],
+      "warning": "",
+      "related": [
+        "crm.sell-and-use-a-prepaid-package",
+        "finance.choose-a-credit-note-or-a-cash-refund"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Cancel a booking with a reason",
+        "Hủy lịch hẹn kèm lý do"
+      ]
+    },
+    {
+      "title": "Reschedule a visit and change staff",
+      "role": "Operations Manager",
+      "goal": "Move an existing booking while retaining its history.",
+      "before": "Agree the replacement time and confirm staff availability.",
+      "success": "The existing booking has the new time and intended staff, with a history of the change.",
+      "trouble": "If an offered time is unavailable, agree another time. Do not create a second booking as a workaround unless the original is deliberately handled to avoid duplicates.",
+      "key": "operations.reschedule-a-visit-and-change-staff",
+      "title_vi": "Đổi lịch hẹn và nhân viên",
+      "section": 2,
+      "roles": [
+        "operations",
+        "owner",
+        "crm",
+        "clinical",
+        "finance"
+      ],
+      "screens": [
+        "ops_bookings",
+        "ops_schedule",
+        "ops_clients"
+      ],
+      "steps": [
+        "Open the booking and confirm the client and current date and time.",
+        "Choose Reschedule.",
+        "Enter the new date and time using Vietnam local time.",
+        "If the original person cannot attend, select the appropriate replacement staff.",
+        "Review the new schedule and staff before confirming Reschedule.",
+        "Reopen the booking from Operations › Bookings.",
+        "Check the new date and time and review Overview › Care team.",
+        "Open Activity to read the change history, then Quick actions › View Assignments to confirm the active assignment.",
+        "Check pricing again when the move crosses a weekday, after-hours period or holiday."
+      ],
+      "warning": "",
+      "related": [
+        "operations.reassign-a-declined-visit",
+        "operations.review-a-quote-and-invoice"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Reschedule a visit and change staff",
+        "Đổi lịch hẹn và nhân viên",
+        "move an appointment",
+        "change booking date",
+        "doi lich hen",
+        "reschedule",
+        "đổi lịch"
+      ]
+    },
+    {
+      "title": "Find your assigned visits",
+      "role": "Assigned nurse or doctor",
+      "goal": "See the visits allocated to you for the selected day.",
+      "before": "Use your own staff login and check the selected date.",
+      "success": "Your own assigned visits appear; unassigned visits and other staff’s visits are not your work list.",
+      "trouble": "An empty day does not necessarily mean no bookings exist at the clinic. Check assignment and date rather than trying another person’s login.",
+      "key": "mobile.find-your-assigned-visits",
+      "title_vi": "Tìm lịch hẹn được phân công",
+      "section": 3,
+      "roles": [
+        "clinical",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "mobile"
+      ],
+      "steps": [
+        "Open https://carejiox.com/health_pwa in the phone browser or your installed nurse app.",
+        "Sign in with the account provided by your administrator. Do not use another person’s account.",
+        "Open the Booking tab and choose Day.",
+        "Use Today, the date picker or the previous and next date controls to select the visit day.",
+        "Review the visit cards, including time, client and status.",
+        "Open the notifications bell to review new offers and respond to them.",
+        "Open a visit card to review the details before travelling.",
+        "If the expected visit is missing, confirm the day and ask the Operations Manager to check your assignment and catchment."
+      ],
+      "warning": "",
+      "related": [
+        "operations.accept-an-assignment",
+        "mobile.review-a-visit-before-attending"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Find your assigned visits",
+        "Tìm lịch hẹn được phân công"
+      ]
+    },
+    {
+      "title": "Review a visit before attending",
+      "role": "Assigned nurse or doctor",
+      "goal": "Confirm where to go, when to attend and what is booked.",
+      "before": "Have accepted the appropriate offer and selected the correct day.",
+      "success": "The displayed client, location, time and services are understood before the visit.",
+      "trouble": "If the location or services are wrong, ask the office to correct the booking. Viewing the details does not authorise a clinical treatment.",
+      "key": "mobile.review-a-visit-before-attending",
+      "title_vi": "Kiểm tra thông tin trước buổi chăm sóc",
+      "section": 3,
+      "roles": [
+        "clinical",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "mobile"
+      ],
+      "steps": [
+        "Open the Booking day view and select the visit.",
+        "Check the client name and identifier against the intended booking.",
+        "Read the scheduled date, time and duration.",
+        "Review the address or clinic and whether the service is at home or at the clinic.",
+        "Read the service list and each quantity or unit. Do not infer units from a similar service name.",
+        "Check the contact details and relevant instructions supplied for the visit.",
+        "If the details differ from what you were told, contact the office and resolve the discrepancy before starting.",
+        "Return to the day view when finished reviewing."
+      ],
+      "warning": "",
+      "related": [
+        "mobile.open-and-return-to-the-correct-visit",
+        "mobile.start-a-visit"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Review a visit before attending",
+        "Kiểm tra thông tin trước buổi chăm sóc"
+      ]
+    },
+    {
+      "title": "Open and return to the correct visit",
+      "role": "Assigned nurse or doctor",
+      "goal": "Avoid entering information against the wrong appointment.",
+      "before": "Use the correct date in the Booking view.",
+      "success": "The selected visit opens consistently, including after a refresh.",
+      "trouble": "When two visits have the same client name, use the time and reference to distinguish them. Never assume that the last open visit is still selected.",
+      "key": "mobile.open-and-return-to-the-correct-visit",
+      "title_vi": "Mở đúng lịch hẹn",
+      "section": 3,
+      "roles": [
+        "clinical",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "mobile"
+      ],
+      "steps": [
+        "Find the visit by its client and scheduled time, checking the reference if the person has several visits.",
+        "Tap the visit card to open it.",
+        "Verify the client and time again in the detail view before making any change.",
+        "Return to the day list when you need a different visit.",
+        "If the app has been refreshed or reopened, select the date again and open the intended visit.",
+        "Confirm that you are back on the same booking before adding a note or starting service."
+      ],
+      "warning": "",
+      "related": [
+        "mobile.review-a-visit-before-attending",
+        "mobile.write-and-save-a-clinical-note"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Open and return to the correct visit",
+        "Mở đúng lịch hẹn"
+      ]
+    },
+    {
+      "title": "Start a visit",
+      "role": "Assigned nurse or doctor",
+      "goal": "Record the actual start of the service.",
+      "before": "Be at the visit and ready to begin, with the correct booking accepted.",
+      "success": "The visit is In Progress and the office can see the actual start.",
+      "trouble": "Do not start a visit just to test the button on a live booking. If the start time is wrong, report the booking reference and observed time to the Operations Manager.",
+      "key": "mobile.start-a-visit",
+      "title_vi": "Bắt đầu dịch vụ",
+      "section": 3,
+      "roles": [
+        "clinical",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "mobile"
+      ],
+      "steps": [
+        "Open the assigned visit in the nurse app.",
+        "Verify the client, time and services before starting.",
+        "Tap Start Service once when the service begins.",
+        "Check that the status changes to In Progress and the timer or start indicator appears.",
+        "If you leave and return to the visit, confirm it still shows In Progress.",
+        "Operations Manager: open the same booking and check Execution for the actual start time.",
+        "If no saved start is visible, refresh and investigate the connection or assignment before attempting another action."
+      ],
+      "warning": "",
+      "related": [
+        "mobile.write-and-save-a-clinical-note",
+        "mobile.answer-the-visit-closing-questions"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Start a visit",
+        "Bắt đầu dịch vụ"
+      ]
+    },
+    {
+      "title": "Write and save a clinical note",
+      "role": "Assigned nurse or doctor",
+      "goal": "Record the note in the correct visit and confirm it is retained.",
+      "before": "Use a visit you are authorised to document. Follow the clinic’s documentation requirements.",
+      "success": "The note is retained on the visit and visible to authorised office staff.",
+      "trouble": "If the note is absent after reopening the visit, restore the connection and confirm whether it was saved before entering another note.",
+      "key": "mobile.write-and-save-a-clinical-note",
+      "title_vi": "Nhập và lưu ghi chú lâm sàng",
+      "section": 3,
+      "roles": [
+        "clinical",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "mobile"
+      ],
+      "steps": [
+        "Open the correct visit in progress and confirm the client.",
+        "Choose Clinical Notes › Add New Clinical Note.",
+        "Enter an accurate account of the service and observations in the available fields. Use your clinical knowledge and clinic policy for the content.",
+        "Choose Confirm and Save as shown in the example workflow.",
+        "Close the note panel, leave the visit and reopen it.",
+        "Open Clinical Notes again and confirm your note is present and complete.",
+        "An authorised office user can open the same booking and review the Clinical tab.",
+        "If the saved note is missing, check the connection and report the problem before entering a duplicate."
+      ],
+      "warning": "",
+      "related": [
+        "mobile.answer-the-visit-closing-questions",
+        "operations.add-a-service-during-a-visit"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Write and save a clinical note",
+        "Nhập và lưu ghi chú lâm sàng"
+      ]
+    },
+    {
+      "title": "Answer the visit closing questions",
+      "role": "Assigned nurse or doctor",
+      "goal": "Save the agreed follow-up outcome before closing the visit.",
+      "before": "Finish documenting the work, including services, quantities and notes.",
+      "success": "The required closing answers are saved and incomplete answers cannot be submitted.",
+      "trouble": "If Submit is blocked, read the field message and complete the reason or other required answer. Do not bypass the closing questions with an arbitrary choice.",
+      "key": "mobile.answer-the-visit-closing-questions",
+      "title_vi": "Trả lời câu hỏi kết thúc dịch vụ",
+      "section": 3,
+      "roles": [
+        "clinical",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "mobile"
+      ],
+      "steps": [
+        "Open the visit in progress and choose View service.",
+        "Review the service lines and total with the client. Enter the required confirmation note and Save Quote.",
+        "Select the appropriate payment choice based on what actually happened. Choose Create Invoice Now only when the invoice should be created.",
+        "Choose Complete Service to open the closing questions.",
+        "Record whether another appointment is wanted, already exists or is not wanted, following the options shown.",
+        "If no further appointment is wanted, select the required reason. If choosing Other, explain it in the note.",
+        "Set Need to Follow up only when a follow-up is actually required. Review the answers and Submit.",
+        "If an existing later appointment is offered for change, retain it when that is the intended outcome; do not accidentally cancel the client’s existing visit.",
+        "Office: check the booking Overview › Visit close card and the client record for the saved answers."
+      ],
+      "warning": "",
+      "related": [
+        "mobile.finish-a-visit-and-confirm-completion",
+        "mobile.check-the-invoice-created-at-completion",
+        "finance.record-cash-paid-at-the-visit"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Answer the visit closing questions",
+        "Trả lời câu hỏi kết thúc dịch vụ"
+      ]
+    },
+    {
+      "title": "Finish a visit and confirm completion",
+      "role": "Assigned nurse or doctor",
+      "goal": "Close the service and verify its final state.",
+      "before": "The visit must be in progress. Review services, notes, quote, payment choice and closing questions first.",
+      "success": "The visit remains Completed with start and end times recorded.",
+      "trouble": "If completion is blocked, inspect the required closing fields. If the app and office disagree after refreshing, report the booking reference and avoid repeated invoice creation.",
+      "key": "mobile.finish-a-visit-and-confirm-completion",
+      "title_vi": "Hoàn tất và kiểm tra buổi chăm sóc",
+      "section": 3,
+      "roles": [
+        "clinical",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "mobile"
+      ],
+      "steps": [
+        "Open the visit and verify the client and booking time.",
+        "Complete the service review, required notes and payment choices using the closing procedure in the related guide.",
+        "Choose Complete Service and submit all required closing answers.",
+        "Wait for the save result. Return to the day list and check the visit status.",
+        "Reopen the visit and confirm Completed.",
+        "If you refresh the app, confirm that it remains Completed; do not submit completion a second time when the first save succeeded.",
+        "Operations Manager: open the booking and check Execution for actual start and end times.",
+        "Review any linked invoice through the invoicing procedure rather than assuming that Completed means Paid."
+      ],
+      "warning": "",
+      "related": [
+        "mobile.answer-the-visit-closing-questions",
+        "mobile.check-the-invoice-created-at-completion"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Finish a visit and confirm completion",
+        "Hoàn tất và kiểm tra buổi chăm sóc"
+      ]
+    },
+    {
+      "title": "Check the invoice created at completion",
+      "role": "Assigned staff completes; Finance or authorised office user verifies",
+      "goal": "Confirm that a completed visit produced the intended invoice once.",
+      "before": "Choose Create Invoice Now in the completion workflow only when appropriate.",
+      "success": "The invoice is linked to the correct visit and agrees with its saved quote.",
+      "trouble": "If there is no invoice, check whether invoice creation was requested before creating one manually. If duplicates exist, ask Finance to review their status before cancelling anything.",
+      "key": "mobile.check-the-invoice-created-at-completion",
+      "title_vi": "Kiểm tra hóa đơn sau khi hoàn tất",
+      "section": 3,
+      "roles": [
+        "clinical",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "mobile"
+      ],
+      "steps": [
+        "Complete the visit using the service review and closing-question procedure.",
+        "An authorised office user opens Operations › Bookings and finds the visit.",
+        "Open Execution › Quote & Invoice and follow the linked invoice.",
+        "Check the invoice client and booking reference.",
+        "Review the service lines, quantities, discount, tax and total against the saved quote.",
+        "Open Finance › Invoices and search for the client or invoice reference.",
+        "Check that the intended booking has one invoice rather than a duplicate created by repeated completion attempts.",
+        "Review payment status separately and route an unpaid invoice to the usual collection process."
+      ],
+      "warning": "",
+      "related": [
+        "operations.review-a-quote-and-invoice",
+        "finance.issue-an-invoice-and-review-money-owed"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Check the invoice created at completion",
+        "Kiểm tra hóa đơn sau khi hoàn tất"
+      ]
+    },
+    {
+      "title": "Issue an invoice and review money owed",
+      "role": "Assigned staff initiates; Finance or authorised Owner reviews",
+      "goal": "Understand how an unpaid posted invoice appears in receivables.",
+      "before": "Use the approved services and quote. Check whether the client will pay now or later.",
+      "success": "The unpaid posted invoice is reflected in the client’s outstanding amount.",
+      "trouble": "The client’s total balance may include several invoices. Compare the individual invoice first before expecting the whole client balance to equal one visit.",
+      "key": "finance.issue-an-invoice-and-review-money-owed",
+      "title_vi": "Xuất hóa đơn và kiểm tra công nợ",
+      "section": 4,
+      "roles": [
+        "finance",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "fin_invoices",
+        "fin_ar_management",
+        "fin_payments",
+        "fin_ar_transactions"
+      ],
+      "steps": [
+        "At visit completion, review View service and the quote with the client. Apply only an authorised discount and record its reason.",
+        "Save the quote and choose Pay Later if the client has not paid. Choose Create Invoice Now when appropriate.",
+        "Complete the service and required closing questions.",
+        "Finance or an authorised Owner: find the booking and open Execution › Quote & Invoice.",
+        "Open the linked invoice and check client, service lines, discount, tax, total and posting status.",
+        "Open Finance › Receivables and find the client.",
+        "Review the outstanding balance and use AR Transactions to inspect the linked receivable entry.",
+        "Use the invoice reference to distinguish this charge from other visits for the same client."
+      ],
+      "warning": "",
+      "related": [
+        "finance.receive-part-payment",
+        "finance.review-accounting-history-and-export-for-misa"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Issue an invoice and review money owed",
+        "Xuất hóa đơn và kiểm tra công nợ"
+      ]
+    },
+    {
+      "title": "Record cash paid at the visit",
+      "role": "Assigned nurse or doctor; Finance verifies",
+      "goal": "Record payment accurately and retain the cash custody trail.",
+      "before": "Count the cash actually received and confirm the amount due for this visit.",
+      "success": "For a full payment, the example invoice is paid with zero remaining balance, while the cash custody record remains traceable.",
+      "trouble": "If the amount is less than the invoice, use the appropriate part-payment process and check the residual amount. Do not mark full payment when cash was not received.",
+      "key": "finance.record-cash-paid-at-the-visit",
+      "title_vi": "Ghi nhận tiền mặt tại buổi chăm sóc",
+      "section": 4,
+      "roles": [
+        "finance",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "fin_invoices",
+        "fin_ar_management",
+        "fin_payments",
+        "fin_ar_transactions"
+      ],
+      "steps": [
+        "Open the correct visit and review View service with the client.",
+        "Confirm the services and total, enter the required review note and Save Quote.",
+        "In the payment step, choose Pay Now and Cash.",
+        "Enter or confirm the amount actually received. Check it against the amount due before proceeding.",
+        "Choose Create Invoice Now when required and complete the service with the closing answers.",
+        "Finance or an authorised Owner: open the linked invoice and check its status and remaining balance.",
+        "Open the linked payment and verify the cash amount, method and visit.",
+        "Review Finance › Payments to identify the cash held by the collecting staff member.",
+        "Hand the cash to the designated receiver through the Collections procedure; payment by the client and cash hand-in are separate events."
+      ],
+      "warning": "",
+      "related": [
+        "finance.receive-cash-handed-in-by-staff",
+        "finance.receive-part-payment"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Record cash paid at the visit",
+        "Ghi nhận tiền mặt tại buổi chăm sóc"
+      ]
+    },
+    {
+      "title": "Receive cash handed in by staff",
+      "role": "Operations Manager / authorised cash receiver",
+      "goal": "Record custody of cash already collected from a client.",
+      "before": "Match the physical cash to the staff payment record and count it before confirmation.",
+      "success": "The cash handover is recorded once with the receiver and receipt, without double-counting client payment.",
+      "trouble": "If the cash differs, do not tick Amount Verified. Record and resolve the discrepancy with the collecting staff member and Finance before confirming.",
+      "key": "finance.receive-cash-handed-in-by-staff",
+      "title_vi": "Nhận tiền mặt bàn giao từ nhân viên",
+      "section": 4,
+      "roles": [
+        "finance",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "ops_collections",
+        "fin_cash_transit",
+        "ops_clients"
+      ],
+      "steps": [
+        "Open Operations › Collections › Pending Delivery.",
+        "Open the payment being handed in. Verify staff, client, amount and reference.",
+        "Use View Invoice to check the linked invoice and its current balance.",
+        "Choose Mark Cash Delivered to OM.",
+        "Check the named receiver. Count the physical money and select Amount Verified only if it matches.",
+        "Review Auto-Reconcile and bank-deposit options. In the example Auto-Reconcile is off because the payment is already matched, and no bank deposit is being made. Use the clinic’s approved setting for the actual situation.",
+        "Choose Confirm Cash Receipt once.",
+        "Reopen the invoice to confirm that recording custody has not created a second client payment.",
+        "Review the cash record and, with permission, Receivables › AR Transactions › Cash Hand-ins for the receiver, time and handover receipt."
+      ],
+      "warning": "",
+      "related": [
+        "finance.record-cash-paid-at-the-visit",
+        "finance.review-accounting-history-and-export-for-misa"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Receive cash handed in by staff",
+        "Nhận tiền mặt bàn giao từ nhân viên"
+      ]
+    },
+    {
+      "title": "Receive a part payment after a visit",
+      "role": "Finance / authorised Owner",
+      "goal": "Apply the amount received and keep the remaining balance visible.",
+      "before": "Have the invoice reference, amount received, payment date and correct cash or bank journal.",
+      "success": "The invoice shows the payment and the correct unpaid remainder.",
+      "trouble": "If the payment was already entered, do not enter it again. Search linked payments and use Finance’s correction process.",
+      "key": "finance.receive-part-payment",
+      "title_vi": "Nhận thanh toán một phần sau dịch vụ",
+      "section": 4,
+      "roles": [
+        "finance",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "fin_invoices",
+        "fin_ar_management",
+        "fin_payments",
+        "fin_ar_transactions"
+      ],
+      "steps": [
+        "Open Finance › Invoices and find the invoice. Verify the client and outstanding amount.",
+        "Choose Receive Payment.",
+        "Select the correct journal, such as Cash for cash received or Bank for a confirmed transfer.",
+        "Enter the amount actually received and the applicable payment details. Do not replace a part payment with the full invoice total.",
+        "Review the amount and confirm Receive Payment once.",
+        "Reopen the invoice and review payment status and remaining amount.",
+        "Open the linked payment to confirm the amount and journal.",
+        "Return to Finance › Receivables and confirm that the client’s balance has reduced by this payment.",
+        "In the worked example, 80,000 VND received against 180,000 VND leaves 100,000 VND due."
+      ],
+      "warning": "",
+      "related": [
+        "finance.settle-an-invoice-by-bank-transfer",
+        "finance.review-accounting-history-and-export-for-misa"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Receive a part payment after a visit",
+        "Nhận thanh toán một phần sau dịch vụ",
+        "How do I record a part payment?",
+        "pay part of an invoice",
+        "thanh toan mot phan",
+        "tra mot phan hoa don",
+        "partial payment",
+        "part payment",
+        "thanh toán một phần"
+      ]
+    },
+    {
+      "title": "Settle an invoice by bank transfer",
+      "role": "Finance / authorised Owner",
+      "goal": "Match a confirmed transfer to the correct invoice and verify the balance.",
+      "before": "Confirm receipt of the bank transfer through the clinic’s finance process.",
+      "success": "The transfer is recorded once against the intended invoice.",
+      "trouble": "A promise to transfer is not a received payment. If the amount only partly settles the invoice, retain the remaining balance.",
+      "key": "finance.settle-an-invoice-by-bank-transfer",
+      "title_vi": "Thanh toán hóa đơn bằng chuyển khoản",
+      "section": 4,
+      "roles": [
+        "finance",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "fin_invoices",
+        "fin_ar_management",
+        "fin_payments",
+        "fin_ar_transactions"
+      ],
+      "steps": [
+        "Open Finance › Receivables and note the client’s balance.",
+        "Find the relevant invoice in Finance › Invoices and check its client and reference.",
+        "Choose Receive Payment and select the Bank journal.",
+        "Enter the confirmed amount and payment date and review the details.",
+        "Confirm the payment once.",
+        "Return to the invoice and inspect its linked payment and remaining balance.",
+        "For a full settlement, check that the invoice is Paid with nothing left to pay.",
+        "Return to Receivables and check that the balance decreased by the received amount, taking other invoices into account."
+      ],
+      "warning": "",
+      "related": [
+        "finance.receive-part-payment",
+        "finance.review-accounting-history-and-export-for-misa"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Settle an invoice by bank transfer",
+        "Thanh toán hóa đơn bằng chuyển khoản"
+      ]
+    },
+    {
+      "title": "Choose a credit note or a cash refund",
+      "role": "Finance / authorised Owner",
+      "goal": "Distinguish cancelling a charge from giving back money that was paid.",
+      "before": "Confirm the business reason and obtain the clinic’s approval for the correct accounting action.",
+      "success": "A credit note reverses a charge; a payment refund returns money and can reopen the amount due.",
+      "trouble": "If the client is shown as owing money after a cash refund, check whether the charge was meant to remain valid. Do not create an unrelated adjustment to hide the balance.",
+      "key": "finance.choose-a-credit-note-or-a-cash-refund",
+      "title_vi": "Chọn chứng từ giảm trừ hoặc hoàn tiền",
+      "section": 4,
+      "roles": [
+        "finance",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "fin_invoices",
+        "fin_ar_management",
+        "fin_payments",
+        "fin_ar_transactions"
+      ],
+      "steps": [
+        "Identify whether the charge itself is being cancelled or whether money is being returned while the invoice remains valid.",
+        "To cancel the unpaid charge: open the invoice in Finance › Invoices and choose Credit Note.",
+        "Enter the reason, choose Reverse and review the credit note.",
+        "Confirm the credit note only after verifying its client, amount and linked original invoice. Reopen the original invoice and check the remaining balance.",
+        "For the separate cash-return example: open the paid invoice and identify its linked cash payment.",
+        "Open that payment in Finance › Payments and choose Create Refund using the approved refund details.",
+        "Review the invoice again. In the cash-refund flow, returning the payment makes the invoice owed again.",
+        "Check Receivables and AR Transactions to understand the resulting balance and trace the related documents."
+      ],
+      "warning": "Ask Finance to confirm whether the charge is being cancelled, money is being returned, or both. Apply the approved process for that intention.",
+      "related": [
+        "finance.review-accounting-history-and-export-for-misa",
+        "operations.cancel-a-booking-with-a-reason"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Choose a credit note or a cash refund",
+        "Chọn chứng từ giảm trừ hoặc hoàn tiền",
+        "difference between refund and credit note",
+        "hoan tien va giam tru",
+        "return cash",
+        "refund",
+        "credit note",
+        "hoàn tiền"
+      ]
+    },
+    {
+      "title": "Review accounting history and export for MISA",
+      "role": "Finance / authorised Owner",
+      "goal": "Trace money movements and prepare an export for the separate MISA process.",
+      "before": "Know the client, invoice or payment reference and reporting period.",
+      "success": "The export can be traced to the selected accounting entries and their source documents.",
+      "trouble": "Exporting is not proof of a MISA import or reconciliation. If a row is unexpected, inspect its source document rather than editing the transaction log.",
+      "key": "finance.review-accounting-history-and-export-for-misa",
+      "title_vi": "Kiểm tra giao dịch và xuất dữ liệu kế toán",
+      "section": 4,
+      "roles": [
+        "finance",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "fin_invoices",
+        "fin_ar_management",
+        "fin_payments",
+        "fin_ar_transactions"
+      ],
+      "steps": [
+        "Open Finance › Receivables › AR Transactions.",
+        "Search for the client or relevant reference and set the intended period.",
+        "Sort by date when reviewing the sequence of events.",
+        "Open each relevant entry and review its type, amount, accounts, source document, booking, user and timestamp.",
+        "Follow the source link to compare the invoice, payment, credit note, refund or handover that created the entry.",
+        "Return to the filtered list and confirm the export scope.",
+        "Choose Export All to download the file.",
+        "Review the downloaded rows and totals before handing it to the authorised person performing the manual MISA upload.",
+        "Retain the exported file and the reconciliation reference according to the clinic’s process."
+      ],
+      "warning": "",
+      "related": [
+        "finance.issue-an-invoice-and-review-money-owed",
+        "finance.receive-cash-handed-in-by-staff",
+        "finance.choose-a-credit-note-or-a-cash-refund"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Review accounting history and export for MISA",
+        "Kiểm tra giao dịch và xuất dữ liệu kế toán"
+      ]
+    },
+    {
+      "title": "Review e-invoice status and logs",
+      "role": "Finance / authorised Owner",
+      "goal": "Check the status of an e-invoice request and locate its response.",
+      "before": "Use the invoice intended for submission and the provider configured by your clinic.",
+      "success": "You can identify the invoice status, provider response and any action still needed.",
+      "trouble": "If a request fails, read its response and ask the integration owner to investigate before submitting it again.",
+      "key": "finance.review-e-invoice-status",
+      "title_vi": "Kiểm tra trạng thái và nhật ký hóa đơn điện tử",
+      "section": 4,
+      "roles": [
+        "finance",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "fin_invoices",
+        "fin_ar_management",
+        "fin_payments",
+        "fin_ar_transactions"
+      ],
+      "steps": [
+        "Open Finance › Invoices and verify the intended client, invoice reference and total.",
+        "Open the Red Invoice tab and review the current status.",
+        "If issuance is required and the configured provider is ready, choose Generate Red Invoice once.",
+        "Review the response and any returned number.",
+        "Open the Red Invoice Log tab to inspect the request and response.",
+        "Check the invoice history for the user and time.",
+        "Use Finance › Red Invoice Log for the central view.",
+        "If the status is unclear, ask the integration owner to verify the receiving system before retrying."
+      ],
+      "warning": "Generate an e-invoice only when the clinic has an approved, configured provider. A local status alone does not establish acceptance by the receiving authority.",
+      "related": [
+        "finance.review-accounting-history-and-export-for-misa"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Review e-invoice status and logs",
+        "Kiểm tra trạng thái và nhật ký hóa đơn điện tử"
+      ]
+    },
+    {
+      "title": "Add or disable a user",
+      "role": "Owner / authorised administrator",
+      "goal": "Give a staff member their own access with the correct job and catchment.",
+      "before": "Have the approved job, area, facility and staff linkage. Deliver initial credentials privately.",
+      "success": "The person has their own login and the intended access.",
+      "trouble": "If the user sees the wrong menus or catchment, review their role and employee linkage. Do not give Owner access merely to work around a missing permission.",
+      "key": "administration.add-or-disable-a-user",
+      "title_vi": "Thêm hoặc vô hiệu hóa người dùng",
+      "section": 5,
+      "roles": [
+        "owner"
+      ],
+      "screens": [
+        "admin_access"
+      ],
+      "steps": [
+        "Open Settings › People › Access & roles › People and choose Add a person.",
+        "Enter the person’s name, a unique login and the initial password through the approved credential process.",
+        "Set the language and time zone. For Vietnam work use Asia/Ho_Chi_Minh.",
+        "Select the approved job, area and base facility. Review any required staff or employee linkage.",
+        "Review the information and choose Add them.",
+        "Open Users & Roles and find the new user to confirm the role and area.",
+        "Have the person sign in with their own login and verify their name in My Preferences and their intended menus.",
+        "If the account is only a temporary temporary account or access is being withdrawn, an authorised administrator can find it in Users & Roles and choose Switch off.",
+        "Keep the account’s business history; disabling access is different from deleting records."
+      ],
+      "warning": "Share initial credentials privately. Disable an account only when access should end.",
+      "related": [
+        "administration.understand-roles-and-permitted-work",
+        "administration.work-within-your-catchment"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Add or disable a user",
+        "Thêm hoặc vô hiệu hóa người dùng"
+      ]
+    },
+    {
+      "title": "Understand roles and permitted work",
+      "role": "All users; Owner maintains roles",
+      "goal": "Know which work belongs to each role and when to request help.",
+      "before": "Use your own login and the job assigned by the administrator.",
+      "success": "Each person understands the work they can perform and who can handle restricted actions.",
+      "trouble": "A visible menu is not a grant to every record. An Owner may have actions that are unavailable to a more restricted role.",
+      "key": "administration.understand-roles-and-permitted-work",
+      "title_vi": "Hiểu vai trò và quyền làm việc",
+      "section": 5,
+      "roles": [
+        "crm",
+        "operations",
+        "clinical",
+        "finance",
+        "owner"
+      ],
+      "screens": [
+        "admin_access"
+      ],
+      "steps": [
+        "Open your user menu and My Preferences to confirm who is signed in.",
+        "Review the available menu sections; these differ by role.",
+        "CRM users handle enquiries and follow-ups through their permitted screens.",
+        "Operations Managers coordinate clients, bookings and staff within their assigned catchment.",
+        "Assigned nurses and doctors use their own nurse-app visits. Finance users use permitted invoicing, payments and receivable screens.",
+        "Owner users administer access and can review both catchments.",
+        "If a needed action is unavailable, give the administrator your job, the screen and the intended task so they can review the permission.",
+        "Owner: use Settings › People › Users & Roles to check the configured job, area and linkage before changing access."
+      ],
+      "warning": "",
+      "related": [
+        "administration.work-within-your-catchment",
+        "administration.add-or-disable-a-user"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Understand roles and permitted work",
+        "Hiểu vai trò và quyền làm việc"
+      ]
+    },
+    {
+      "title": "Work within your catchment",
+      "role": "Operations Manager; Owner for cross-area review",
+      "goal": "Find authorised work without bypassing catchment restrictions.",
+      "before": "Confirm your assigned catchment with the administrator.",
+      "success": "Operations Managers are limited to their assigned area.",
+      "trouble": "Do not share a colleague’s login or change a URL to try to bypass access. A missing record can result from date filters, assignment or catchment; identify the cause before creating a duplicate.",
+      "key": "administration.work-within-your-catchment",
+      "title_vi": "Làm việc trong khu vực phụ trách",
+      "section": 5,
+      "roles": [
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "admin_access"
+      ],
+      "steps": [
+        "Open Operations › Bookings in list view.",
+        "Set the relevant status and date range. Use All and All Dates when investigating a missing booking within your area.",
+        "Search for the booking reference and open it if it belongs to your assigned area.",
+        "If it is not found, check spelling and filters before assuming it is absent.",
+        "A booking in another catchment should remain unavailable through both search and a direct link.",
+        "Review the facility choices in Operations › Dashboard to confirm the area you are working in.",
+        "If work genuinely requires another catchment, contact the Owner to review or reassign the task through an authorised process.",
+        "Owner users can review the two catchments with their own approved account."
+      ],
+      "warning": "",
+      "related": [
+        "operations.review-client-and-representative-details",
+        "mobile.find-your-assigned-visits"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Work within your catchment",
+        "Làm việc trong khu vực phụ trách",
+        "cannot see booking in other area",
+        "another catchment",
+        "khong thay lich hen khu vuc khac"
+      ]
+    },
+    {
+      "title": "Complete and configure required fields",
+      "role": "All form users; Owner configures rules",
+      "goal": "Understand why an incomplete record cannot be saved and how an approved rule is maintained.",
+      "before": "An administrator should agree the field, form and affected jobs before changing a requirement.",
+      "success": "The configured requirement applies to the intended form and role.",
+      "trouble": "If existing records suddenly cannot be edited, review whether a new requirement applies to older records. Resolve the rule or collect the missing information rather than bypassing it.",
+      "key": "administration.complete-and-configure-required-fields",
+      "title_vi": "Điền và cấu hình trường bắt buộc",
+      "section": 5,
+      "roles": [
+        "owner"
+      ],
+      "screens": [
+        "admin_access"
+      ],
+      "steps": [
+        "When saving is blocked, read the validation message and identify the missing field.",
+        "Enter accurate information and save again. Do not use placeholder patient details solely to satisfy validation.",
+        "Owner: open Settings › Master data › Field Requirements.",
+        "Choose the relevant area and form, such as Sales & CRM › Contacts.",
+        "Find the field and enable its required setting. Review Global versus the selected job scope; in the example Email is required only for CRM.",
+        "Save the rule and have a user with the affected job try the form with and without a valid value in an approved practice record.",
+        "Verify that the intended role is blocked only when the required value is absent and can save when it is present.",
+        "For normal operations retain the approved rule."
+      ],
+      "warning": "",
+      "related": [
+        "crm.record-a-junk-call",
+        "administration.add-a-field-with-form-studio"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Complete and configure required fields",
+        "Điền và cấu hình trường bắt buộc"
+      ]
+    },
+    {
+      "title": "Add an approved dropdown value",
+      "role": "Owner / authorised administrator",
+      "goal": "Make a new contact reason available without replacing existing meanings.",
+      "before": "Agree the new value and check that an equivalent value does not already exist.",
+      "success": "The new reason is available in the dropdown and saved on the contact.",
+      "trouble": "If a value is missing, refresh the form and confirm it was saved in the intended master-data list. Do not add several nearly identical codes.",
+      "key": "administration.add-an-approved-dropdown-value",
+      "title_vi": "Thêm giá trị danh sách được phê duyệt",
+      "section": 5,
+      "roles": [
+        "owner"
+      ],
+      "screens": [
+        "admin_access"
+      ],
+      "steps": [
+        "Open Settings › Master data › Contact Reasons.",
+        "Search existing reasons before adding one.",
+        "Choose New and enter a unique code and clear name.",
+        "Save the reason.",
+        "An authorised CRM user opens New Contact and finds the new value in Contact Reason.",
+        "Select it, complete the other required fields and create the contact.",
+        "Reopen the contact and check that the value is retained.",
+        "Use a consistent naming and translation convention for further values."
+      ],
+      "warning": "",
+      "related": [
+        "administration.complete-and-configure-required-fields"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Add an approved dropdown value",
+        "Thêm giá trị danh sách được phê duyệt"
+      ]
+    },
+    {
+      "title": "Add a field with Form Studio",
+      "role": "Owner / authorised form administrator",
+      "goal": "Add an agreed field to the client form and verify that its value is saved.",
+      "before": "Agree the field purpose, type, label, options and audience. Check whether a suitable field already exists.",
+      "success": "The published field is available to its intended users and retains values.",
+      "trouble": "Do not delete a real field simply because the video ends with cleanup. Review data and reporting dependencies before removing it.",
+      "key": "administration.add-a-field-with-form-studio",
+      "title_vi": "Thêm trường bằng Form Studio",
+      "section": 5,
+      "roles": [
+        "owner"
+      ],
+      "screens": [
+        "admin_access"
+      ],
+      "steps": [
+        "Open Operations › Clients and select a client to open the form layout.",
+        "Choose Studio at the top right.",
+        "For a choice field, drag Dropdown into the intended card, such as Care.",
+        "Enter the field name and the Vietnamese label where required. Add the agreed options.",
+        "Set Who sees it to the intended audience. Review the field before choosing Add field.",
+        "Choose Publish and the appropriate publishing action. Use Publish for everyone only when the field is intended for the whole clinic.",
+        "Reload the form. An authorised Operations Manager selects a value on a practice client and saves.",
+        "Reopen the client to confirm the value is retained, and check another client to confirm the field is on the shared form."
+      ],
+      "warning": "Before deleting a field, review its saved data and reporting dependencies.",
+      "related": [
+        "administration.complete-and-configure-required-fields",
+        "administration.review-who-changed-a-record"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Add a field with Form Studio",
+        "Thêm trường bằng Form Studio"
+      ]
+    },
+    {
+      "title": "Review who changed a record",
+      "role": "Owner / authorised audit reviewer",
+      "goal": "Trace a change through record history and the audit log.",
+      "before": "Know the booking or invoice reference and the approximate time of the change.",
+      "success": "The change can be traced to a user, time and affected record.",
+      "trouble": "A history summary and a field-level audit entry may show different detail. If you cannot locate the event, expand the time range and ask the administrator about the audited model and fields.",
+      "key": "administration.review-who-changed-a-record",
+      "title_vi": "Kiểm tra người thay đổi hồ sơ",
+      "section": 5,
+      "roles": [
+        "owner"
+      ],
+      "screens": [
+        "admin_access"
+      ],
+      "steps": [
+        "Open the booking and select Activity to review its history.",
+        "For a billing change, open the invoice and review its history as well.",
+        "Open Settings › Records › Audit Log for the wider change log.",
+        "Search the Record column for the booking or other relevant reference.",
+        "Read the timestamp, user, changed field and old and new values where shown.",
+        "Follow the log link back to the source record and compare the current state.",
+        "Record the relevant reference when escalating a discrepancy. Do not attempt to edit the audit history."
+      ],
+      "warning": "",
+      "related": [
+        "administration.add-or-disable-a-user",
+        "operations.reschedule-a-visit-and-change-staff"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Review who changed a record",
+        "Kiểm tra người thay đổi hồ sơ"
+      ]
+    },
+    {
+      "title": "Preview the current MOH report",
+      "role": "Owner / authorised report user",
+      "goal": "Generate the available booking report for review.",
+      "before": "Select the correct booking. The client must still approve the official report layout.",
+      "success": "The current report preview opens with the booking information.",
+      "trouble": "If a required field is missing, review the booking information and ask the administrator to check the approved report layout.",
+      "key": "administration.preview-the-current-moh-report",
+      "title_vi": "Xem trước báo cáo Bộ Y tế",
+      "section": 5,
+      "roles": [
+        "owner"
+      ],
+      "screens": [
+        "admin_access"
+      ],
+      "steps": [
+        "Open Operations › Bookings and find the visit.",
+        "Review the client, clinic, service and clinical note information on the booking.",
+        "Return to the list and select the booking using its checkbox.",
+        "Open Print and choose MOH Report.",
+        "Review the preview for clinic, booking, date, doctor, patient, services and notes.",
+        "If a field is missing, check the underlying record and report mapping with the administrator.",
+        "Use the report for review according to the clinic’s process and retain the booking reference with any requested correction."
+      ],
+      "warning": "Use the report layout approved by your clinic for the intended submission. Preview the patient and visit information before printing.",
+      "related": [
+        "administration.review-who-changed-a-record"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Preview the current MOH report",
+        "Xem trước báo cáo Bộ Y tế"
+      ]
+    },
+    {
+      "title": "Use an existing private conversation",
+      "role": "Members of the conversation",
+      "goal": "Read and contribute only within the intended private group.",
+      "before": "Be a member of the existing conversation and confirm its intended participants.",
+      "success": "The conversation is available to its members and is not found by an unrelated user.",
+      "trouble": "Check the selected record and your permissions. Ask the responsible team member to review the reference and the unexpected result.",
+      "key": "administration.use-an-existing-private-conversation",
+      "title_vi": "Sử dụng cuộc trò chuyện riêng",
+      "section": 5,
+      "roles": [
+        "crm",
+        "operations",
+        "clinical",
+        "finance",
+        "owner"
+      ],
+      "screens": [
+        "messages"
+      ],
+      "steps": [
+        "Open Messages using the chat icon at the top right.",
+        "Select the intended private conversation.",
+        "Use Actions › Open in Discuss to open the wider conversation view.",
+        "Open Members and check the participant list before sharing information.",
+        "Use the conversation only for the intended work and recipients.",
+        "If it is absent, use Search conversations in Discuss to check the name.",
+        "If you are not a member, ask the conversation owner to review whether access is appropriate. Do not use another member’s account."
+      ],
+      "warning": "",
+      "related": [
+        "administration.understand-roles-and-permitted-work"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Use an existing private conversation",
+        "Sử dụng cuộc trò chuyện riêng"
+      ]
+    },
+    {
+      "title": "Review contacts for a date",
+      "role": "CRM",
+      "goal": "Find the contact records for today or another date.",
+      "before": "Know the date and clinic you need to review.",
+      "success": "The date-filtered list supports review of the selected contacts.",
+      "trouble": "Check the selected date, time zone, status filters and catchment. Ask the reporting owner about any additional fields required for your clinic.",
+      "key": "crm.review-contacts-for-a-date",
+      "title_vi": "Xem liên hệ theo ngày",
+      "section": 1,
+      "roles": [
+        "crm",
+        "operations",
+        "owner"
+      ],
+      "screens": [
+        "contacts",
+        "carecommand"
+      ],
+      "steps": [
+        "Open CRM › Contacts.",
+        "Select Today to review the current day.",
+        "To review a different day, use the available date filter and select the required date.",
+        "Review the displayed records and clear unrelated search text or status filters if the list is unexpectedly empty.",
+        "Open individual records to inspect their details.",
+        "For a report requested in Pancake format, obtain the approved field list before asserting that the list or export is equivalent."
+      ],
+      "warning": "",
+      "related": [],
+      "video": false,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Review contacts for a date",
+        "Xem liên hệ theo ngày"
+      ]
+    },
+    {
+      "title": "Review bookings for a visit date",
+      "role": "Operations Manager",
+      "goal": "Find the visits scheduled for today or another date.",
+      "before": "Work within your assigned catchment and know the visit date.",
+      "success": "The list shows bookings for the selected visit date within your access.",
+      "trouble": "Check the selected date, time zone, status filters and catchment. Ask the reporting owner about any additional fields required for your clinic.",
+      "key": "operations.review-bookings-for-a-visit-date",
+      "title_vi": "Xem lịch hẹn theo ngày",
+      "section": 2,
+      "roles": [
+        "operations",
+        "owner",
+        "crm",
+        "clinical",
+        "finance"
+      ],
+      "screens": [
+        "ops_bookings",
+        "ops_schedule",
+        "ops_clients"
+      ],
+      "steps": [
+        "Open Operations › Bookings.",
+        "Choose Today or the required visit-date filter.",
+        "Review any status, facility and search filters together with the date.",
+        "Open a booking to verify the visit time and client.",
+        "If an expected visit is missing, clear unrelated filters and check whether it belongs to your catchment.",
+        "For a requested Pancake-style report, compare only against the approved field and export specification."
+      ],
+      "warning": "",
+      "related": [],
+      "video": false,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Review bookings for a visit date",
+        "Xem lịch hẹn theo ngày"
+      ]
+    },
+    {
+      "title": "Weekday clinic examination",
+      "role": "Operations Manager for the relevant catchment; assigned staff; Finance",
+      "goal": "Understand how the booking inputs flow into the quote and invoice.",
+      "before": "Use a synthetic client in the approved training environment. For real visits, use your clinic’s current tariff.",
+      "success": "Total 500,000 VND. Examination at the clinic on a weekday: no extra charges. VAT 0. Nothing owed.",
+      "trouble": "Compare the service code, quantity, location, catchment, date and time, distance and discount basis before asking the pricing administrator to investigate a difference.",
+      "key": "examples.weekday-clinic-examination",
+      "title_vi": "Khám tại phòng khám ngày thường",
+      "section": 6,
+      "roles": [
+        "operations",
+        "finance",
+        "owner"
+      ],
+      "screens": [
+        "ops_bookings",
+        "fin_invoices"
+      ],
+      "steps": [
+        "Choose the Hanoi catchment and review the example breakdown below.",
+        "Open the practice client and create a booking with the services, quantities and location described in the example.",
+        "Choose a date and time with the applicable weekday, evening or holiday conditions. Use approved training calendar settings.",
+        "Review the distance, duration and service units before confirming the quote.",
+        "If a discount applies, enter the agreed percentage and reason through View Quote.",
+        "Review Pricing line by line and compare the components with the worked example.",
+        "Open the linked invoice and check the client, lines, tax, total and remaining balance. Keep staff parking reimbursement separate from customer charges."
+      ],
+      "warning": "The amounts below are a worked learning example. Use the current approved tariff and tax settings for real visits.",
+      "related": [
+        "operations.review-a-quote-and-invoice",
+        "finance.issue-an-invoice-and-review-money-owed"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Weekday clinic examination",
+        "Khám tại phòng khám ngày thường"
+      ]
+    },
+    {
+      "title": "Clinic ultrasound and ECG with a discount",
+      "role": "Operations Manager for the relevant catchment; assigned staff; Finance",
+      "goal": "Understand how the booking inputs flow into the quote and invoice.",
+      "before": "Use a synthetic client in the approved training environment. For real visits, use your clinic’s current tariff.",
+      "success": "Total 540,000 VND. Ultrasound 270,000 + ECG 270,000 (each 300,000 less 10% discount). At the clinic, so no home charge. VAT 0. Nothing owed.",
+      "trouble": "Compare the service code, quantity, location, catchment, date and time, distance and discount basis before asking the pricing administrator to investigate a difference.",
+      "key": "examples.clinic-ultrasound-and-ecg-with-a-discount",
+      "title_vi": "Siêu âm và điện tim có chiết khấu",
+      "section": 6,
+      "roles": [
+        "operations",
+        "finance",
+        "owner"
+      ],
+      "screens": [
+        "ops_bookings",
+        "fin_invoices"
+      ],
+      "steps": [
+        "Choose the Hanoi catchment and review the example breakdown below.",
+        "Open the practice client and create a booking with the services, quantities and location described in the example.",
+        "Choose a date and time with the applicable weekday, evening or holiday conditions. Use approved training calendar settings.",
+        "Review the distance, duration and service units before confirming the quote.",
+        "If a discount applies, enter the agreed percentage and reason through View Quote.",
+        "Review Pricing line by line and compare the components with the worked example.",
+        "Open the linked invoice and check the client, lines, tax, total and remaining balance. Keep staff parking reimbursement separate from customer charges."
+      ],
+      "warning": "The amounts below are a worked learning example. Use the current approved tariff and tax settings for real visits.",
+      "related": [
+        "operations.review-a-quote-and-invoice",
+        "finance.issue-an-invoice-and-review-money-owed"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Clinic ultrasound and ECG with a discount",
+        "Siêu âm và điện tim có chiết khấu"
+      ]
+    },
+    {
+      "title": "Online examination with a discount",
+      "role": "Operations Manager for the relevant catchment; assigned staff; Finance",
+      "goal": "Understand how the booking inputs flow into the quote and invoice.",
+      "before": "Use a synthetic client in the approved training environment. For real visits, use your clinic’s current tariff.",
+      "success": "Total 180,000 VND. Online examination: 200,000 less 10% discount. VAT 0. 180,000 VND still owed.",
+      "trouble": "Compare the service code, quantity, location, catchment, date and time, distance and discount basis before asking the pricing administrator to investigate a difference.",
+      "key": "examples.online-examination-with-a-discount",
+      "title_vi": "Khám trực tuyến có chiết khấu",
+      "section": 6,
+      "roles": [
+        "operations",
+        "finance",
+        "owner"
+      ],
+      "screens": [
+        "ops_bookings",
+        "fin_invoices"
+      ],
+      "steps": [
+        "Choose the Hanoi catchment and review the example breakdown below.",
+        "Open the practice client and create a booking with the services, quantities and location described in the example.",
+        "Choose a date and time with the applicable weekday, evening or holiday conditions. Use approved training calendar settings.",
+        "Review the distance, duration and service units before confirming the quote.",
+        "If a discount applies, enter the agreed percentage and reason through View Quote.",
+        "Review Pricing line by line and compare the components with the worked example.",
+        "Open the linked invoice and check the client, lines, tax, total and remaining balance. Keep staff parking reimbursement separate from customer charges."
+      ],
+      "warning": "The amounts below are a worked learning example. Use the current approved tariff and tax settings for real visits.",
+      "related": [
+        "operations.review-a-quote-and-invoice",
+        "finance.issue-an-invoice-and-review-money-owed"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Online examination with a discount",
+        "Khám trực tuyến có chiết khấu"
+      ]
+    },
+    {
+      "title": "Home wound care and a glucose test at six kilometres",
+      "role": "Operations Manager for the relevant catchment; assigned staff; Finance",
+      "goal": "Understand how the booking inputs flow into the quote and invoice.",
+      "before": "Use a synthetic client in the approved training environment. For real visits, use your clinic’s current tariff.",
+      "success": "Total 400,000 VND. Dressing 3 wounds 350,000 (200,000 + 50,000 for each extra wound + 50,000 for 6 km travel). Glucose test 50,000 (added by the nurse at the visit). VAT 0. Nothing owed. Parking 100,000 is paid to staff, not charged to the client.",
+      "trouble": "Compare the service code, quantity, location, catchment, date and time, distance and discount basis before asking the pricing administrator to investigate a difference.",
+      "key": "examples.home-wound-care-and-a-glucose-test-at-six-kilometres",
+      "title_vi": "Chăm sóc vết thương và thử đường huyết tại nhà",
+      "section": 6,
+      "roles": [
+        "operations",
+        "finance",
+        "owner"
+      ],
+      "screens": [
+        "ops_bookings",
+        "fin_invoices"
+      ],
+      "steps": [
+        "Choose the Hanoi catchment and review the example breakdown below.",
+        "Open the practice client and create a booking with the services, quantities and location described in the example.",
+        "Choose a date and time with the applicable weekday, evening or holiday conditions. Use approved training calendar settings.",
+        "Review the distance, duration and service units before confirming the quote.",
+        "If a discount applies, enter the agreed percentage and reason through View Quote.",
+        "Review Pricing line by line and compare the components with the worked example.",
+        "Open the linked invoice and check the client, lines, tax, total and remaining balance. Keep staff parking reimbursement separate from customer charges."
+      ],
+      "warning": "The amounts below are a worked learning example. Use the current approved tariff and tax settings for real visits.",
+      "related": [
+        "operations.review-a-quote-and-invoice",
+        "finance.issue-an-invoice-and-review-money-owed"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Home wound care and a glucose test at six kilometres",
+        "Chăm sóc vết thương và thử đường huyết tại nhà"
+      ]
+    },
+    {
+      "title": "Sunday home wound care and extra nursing hours",
+      "role": "Operations Manager for the relevant catchment; assigned staff; Finance",
+      "goal": "Understand how the booking inputs flow into the quote and invoice.",
+      "before": "Use a synthetic client in the approved training environment. For real visits, use your clinic’s current tariff.",
+      "success": "Total 500,000 VND. Wound dressing 180,000 (200,000 less 10%). 2 extra nursing hours 320,000 (2 × 150,000 + 50,000 Sunday charge, less 10% of the base price). VAT 0. Nothing owed.",
+      "trouble": "Compare the service code, quantity, location, catchment, date and time, distance and discount basis before asking the pricing administrator to investigate a difference.",
+      "key": "examples.sunday-home-wound-care-and-extra-nursing-hours",
+      "title_vi": "Chăm sóc tại nhà vào Chủ nhật và thêm giờ điều dưỡng",
+      "section": 6,
+      "roles": [
+        "operations",
+        "finance",
+        "owner"
+      ],
+      "screens": [
+        "ops_bookings",
+        "fin_invoices"
+      ],
+      "steps": [
+        "Choose the Hanoi catchment and review the example breakdown below.",
+        "Open the practice client and create a booking with the services, quantities and location described in the example.",
+        "Choose a date and time with the applicable weekday, evening or holiday conditions. Use approved training calendar settings.",
+        "Review the distance, duration and service units before confirming the quote.",
+        "If a discount applies, enter the agreed percentage and reason through View Quote.",
+        "Review Pricing line by line and compare the components with the worked example.",
+        "Open the linked invoice and check the client, lines, tax, total and remaining balance. Keep staff parking reimbursement separate from customer charges."
+      ],
+      "warning": "The amounts below are a worked learning example. Use the current approved tariff and tax settings for real visits.",
+      "related": [
+        "operations.review-a-quote-and-invoice",
+        "finance.issue-an-invoice-and-review-money-owed"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Sunday home wound care and extra nursing hours",
+        "Chăm sóc tại nhà vào Chủ nhật và thêm giờ điều dưỡng"
+      ]
+    },
+    {
+      "title": "Saturday evening home examination",
+      "role": "Operations Manager for the relevant catchment; assigned staff; Finance",
+      "goal": "Understand how the booking inputs flow into the quote and invoice.",
+      "before": "Use a synthetic client in the approved training environment. For real visits, use your clinic’s current tariff.",
+      "success": "Total 650,000 VND. Home examination on Saturday evening: 500,000 + 150,000 weekend charge. No night charge (starts before 20:00). No distance charge (under 10 km). VAT 0. 650,000 VND still owed. Parking 100,000 is paid to staff, not charged to the client.",
+      "trouble": "Compare the service code, quantity, location, catchment, date and time, distance and discount basis before asking the pricing administrator to investigate a difference.",
+      "key": "examples.saturday-evening-home-examination",
+      "title_vi": "Khám tại nhà tối thứ Bảy",
+      "section": 6,
+      "roles": [
+        "operations",
+        "finance",
+        "owner"
+      ],
+      "screens": [
+        "ops_bookings",
+        "fin_invoices"
+      ],
+      "steps": [
+        "Choose the Hanoi catchment and review the example breakdown below.",
+        "Open the practice client and create a booking with the services, quantities and location described in the example.",
+        "Choose a date and time with the applicable weekday, evening or holiday conditions. Use approved training calendar settings.",
+        "Review the distance, duration and service units before confirming the quote.",
+        "If a discount applies, enter the agreed percentage and reason through View Quote.",
+        "Review Pricing line by line and compare the components with the worked example.",
+        "Open the linked invoice and check the client, lines, tax, total and remaining balance. Keep staff parking reimbursement separate from customer charges."
+      ],
+      "warning": "The amounts below are a worked learning example. Use the current approved tariff and tax settings for real visits.",
+      "related": [
+        "operations.review-a-quote-and-invoice",
+        "finance.issue-an-invoice-and-review-money-owed"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Saturday evening home examination",
+        "Khám tại nhà tối thứ Bảy"
+      ]
+    },
+    {
+      "title": "Public holiday home examination at night",
+      "role": "Operations Manager for the relevant catchment; assigned staff; Finance",
+      "goal": "Understand how the booking inputs flow into the quote and invoice.",
+      "before": "Use a synthetic client in the approved training environment. For real visits, use your clinic’s current tariff.",
+      "success": "Total 2,700,000 VND. Home examination at night on a public holiday: (500,000 + 150,000 after hours + 250,000 after 20:00) × 3 for the holiday. VAT 0. Nothing owed.",
+      "trouble": "Compare the service code, quantity, location, catchment, date and time, distance and discount basis before asking the pricing administrator to investigate a difference.",
+      "key": "examples.public-holiday-home-examination-at-night",
+      "title_vi": "Khám tại nhà ban đêm vào ngày lễ",
+      "section": 6,
+      "roles": [
+        "operations",
+        "finance",
+        "owner"
+      ],
+      "screens": [
+        "ops_bookings",
+        "fin_invoices"
+      ],
+      "steps": [
+        "Choose the Hanoi catchment and review the example breakdown below.",
+        "Open the practice client and create a booking with the services, quantities and location described in the example.",
+        "Choose a date and time with the applicable weekday, evening or holiday conditions. Use approved training calendar settings.",
+        "Review the distance, duration and service units before confirming the quote.",
+        "If a discount applies, enter the agreed percentage and reason through View Quote.",
+        "Review Pricing line by line and compare the components with the worked example.",
+        "Open the linked invoice and check the client, lines, tax, total and remaining balance. Keep staff parking reimbursement separate from customer charges."
+      ],
+      "warning": "The amounts below are a worked learning example. Use the current approved tariff and tax settings for real visits.",
+      "related": [
+        "operations.review-a-quote-and-invoice",
+        "finance.issue-an-invoice-and-review-money-owed"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Public holiday home examination at night",
+        "Khám tại nhà ban đêm vào ngày lễ"
+      ]
+    },
+    {
+      "title": "Home injections and ultrasound with a discount",
+      "role": "Operations Manager for the relevant catchment; assigned staff; Finance",
+      "goal": "Understand how the booking inputs flow into the quote and invoice.",
+      "before": "Use a synthetic client in the approved training environment. For real visits, use your clinic’s current tariff.",
+      "success": "Total 675,000 VND. 3 injections 205,000 (150,000 + 50,000 for each extra injection, less 10% of the base price). Ultrasound at home 470,000 (300,000 + 200,000 home charge, less 10% of the base price). VAT 0. Nothing owed. Parking 100,000 is paid to staff, not charged to the client.",
+      "trouble": "Compare the service code, quantity, location, catchment, date and time, distance and discount basis before asking the pricing administrator to investigate a difference.",
+      "key": "examples.home-injections-and-ultrasound-with-a-discount",
+      "title_vi": "Tiêm và siêu âm tại nhà có chiết khấu",
+      "section": 6,
+      "roles": [
+        "operations",
+        "finance",
+        "owner"
+      ],
+      "screens": [
+        "ops_bookings",
+        "fin_invoices"
+      ],
+      "steps": [
+        "Choose the Hanoi catchment and review the example breakdown below.",
+        "Open the practice client and create a booking with the services, quantities and location described in the example.",
+        "Choose a date and time with the applicable weekday, evening or holiday conditions. Use approved training calendar settings.",
+        "Review the distance, duration and service units before confirming the quote.",
+        "If a discount applies, enter the agreed percentage and reason through View Quote.",
+        "Review Pricing line by line and compare the components with the worked example.",
+        "Open the linked invoice and check the client, lines, tax, total and remaining balance. Keep staff parking reimbursement separate from customer charges."
+      ],
+      "warning": "The amounts below are a worked learning example. Use the current approved tariff and tax settings for real visits.",
+      "related": [
+        "operations.review-a-quote-and-invoice",
+        "finance.issue-an-invoice-and-review-money-owed"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Home injections and ultrasound with a discount",
+        "Tiêm và siêu âm tại nhà có chiết khấu"
+      ]
+    },
+    {
+      "title": "Four hours of personal care with travel",
+      "role": "Operations Manager for the relevant catchment; assigned staff; Finance",
+      "goal": "Understand how the booking inputs flow into the quote and invoice.",
+      "before": "Use a synthetic client in the approved training environment. For real visits, use your clinic’s current tariff.",
+      "success": "Total 450,000 VND. 4 hours of personal care at home 400,000 + 50,000 for 6 km travel. VAT 0. 450,000 VND still owed.",
+      "trouble": "Compare the service code, quantity, location, catchment, date and time, distance and discount basis before asking the pricing administrator to investigate a difference.",
+      "key": "examples.four-hours-of-personal-care-with-travel",
+      "title_vi": "Chăm sóc cá nhân bốn giờ có phí di chuyển",
+      "section": 6,
+      "roles": [
+        "operations",
+        "finance",
+        "owner"
+      ],
+      "screens": [
+        "ops_bookings",
+        "fin_invoices"
+      ],
+      "steps": [
+        "Choose the Hanoi catchment and review the example breakdown below.",
+        "Open the practice client and create a booking with the services, quantities and location described in the example.",
+        "Choose a date and time with the applicable weekday, evening or holiday conditions. Use approved training calendar settings.",
+        "Review the distance, duration and service units before confirming the quote.",
+        "If a discount applies, enter the agreed percentage and reason through View Quote.",
+        "Review Pricing line by line and compare the components with the worked example.",
+        "Open the linked invoice and check the client, lines, tax, total and remaining balance. Keep staff parking reimbursement separate from customer charges."
+      ],
+      "warning": "The amounts below are a worked learning example. Use the current approved tariff and tax settings for real visits.",
+      "related": [
+        "operations.review-a-quote-and-invoice",
+        "finance.issue-an-invoice-and-review-money-owed"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Four hours of personal care with travel",
+        "Chăm sóc cá nhân bốn giờ có phí di chuyển"
+      ]
+    },
+    {
+      "title": "Weekday doctor visit at the clinic",
+      "role": "Operations Manager for the relevant catchment; assigned staff; Finance",
+      "goal": "Understand how the booking inputs flow into the quote and invoice.",
+      "before": "Use a synthetic client in the approved training environment. For real visits, use your clinic’s current tariff.",
+      "success": "Total 200,000 VND. Doctor visit at the clinic on a weekday: no extra charges. VAT 0. Nothing owed.",
+      "trouble": "Compare the service code, quantity, location, catchment, date and time, distance and discount basis before asking the pricing administrator to investigate a difference.",
+      "key": "examples.weekday-doctor-visit-at-the-clinic",
+      "title_vi": "Khám bác sĩ tại phòng khám ngày thường",
+      "section": 6,
+      "roles": [
+        "operations",
+        "finance",
+        "owner"
+      ],
+      "screens": [
+        "ops_bookings",
+        "fin_invoices"
+      ],
+      "steps": [
+        "Choose the Ho Chi Minh City catchment and review the example breakdown below.",
+        "Open the practice client and create a booking with the services, quantities and location described in the example.",
+        "Choose a date and time with the applicable weekday, evening or holiday conditions. Use approved training calendar settings.",
+        "Review the distance, duration and service units before confirming the quote.",
+        "If a discount applies, enter the agreed percentage and reason through View Quote.",
+        "Review Pricing line by line and compare the components with the worked example.",
+        "Open the linked invoice and check the client, lines, tax, total and remaining balance. Keep staff parking reimbursement separate from customer charges."
+      ],
+      "warning": "The amounts below are a worked learning example. Use the current approved tariff and tax settings for real visits.",
+      "related": [
+        "operations.review-a-quote-and-invoice",
+        "finance.issue-an-invoice-and-review-money-owed"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Weekday doctor visit at the clinic",
+        "Khám bác sĩ tại phòng khám ngày thường"
+      ]
+    },
+    {
+      "title": "Doctor home visit with a glucose test",
+      "role": "Operations Manager for the relevant catchment; assigned staff; Finance",
+      "goal": "Understand how the booking inputs flow into the quote and invoice.",
+      "before": "Use a synthetic client in the approved training environment. For real visits, use your clinic’s current tariff.",
+      "success": "Total 650,000 VND. Doctor home visit 600,000 + glucose test 50,000. No distance charge (under 8 km). VAT 0. Nothing owed. Parking 100,000 is paid to staff, not charged to the client.",
+      "trouble": "Compare the service code, quantity, location, catchment, date and time, distance and discount basis before asking the pricing administrator to investigate a difference.",
+      "key": "examples.doctor-home-visit-with-a-glucose-test",
+      "title_vi": "Khám bác sĩ tại nhà và thử đường huyết",
+      "section": 6,
+      "roles": [
+        "operations",
+        "finance",
+        "owner"
+      ],
+      "screens": [
+        "ops_bookings",
+        "fin_invoices"
+      ],
+      "steps": [
+        "Choose the Ho Chi Minh City catchment and review the example breakdown below.",
+        "Open the practice client and create a booking with the services, quantities and location described in the example.",
+        "Choose a date and time with the applicable weekday, evening or holiday conditions. Use approved training calendar settings.",
+        "Review the distance, duration and service units before confirming the quote.",
+        "If a discount applies, enter the agreed percentage and reason through View Quote.",
+        "Review Pricing line by line and compare the components with the worked example.",
+        "Open the linked invoice and check the client, lines, tax, total and remaining balance. Keep staff parking reimbursement separate from customer charges."
+      ],
+      "warning": "The amounts below are a worked learning example. Use the current approved tariff and tax settings for real visits.",
+      "related": [
+        "operations.review-a-quote-and-invoice",
+        "finance.issue-an-invoice-and-review-money-owed"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Doctor home visit with a glucose test",
+        "Khám bác sĩ tại nhà và thử đường huyết"
+      ]
+    },
+    {
+      "title": "Saturday home examination with a discount",
+      "role": "Operations Manager for the relevant catchment; assigned staff; Finance",
+      "goal": "Understand how the booking inputs flow into the quote and invoice.",
+      "before": "Use a synthetic client in the approved training environment. For real visits, use your clinic’s current tariff.",
+      "success": "Total 740,000 VND. Doctor home visit on Saturday: 600,000 + 200,000 weekend charge, less 10% of the base price. VAT 0. Nothing owed.",
+      "trouble": "Compare the service code, quantity, location, catchment, date and time, distance and discount basis before asking the pricing administrator to investigate a difference.",
+      "key": "examples.saturday-home-examination-with-a-discount",
+      "title_vi": "Khám tại nhà thứ Bảy có chiết khấu",
+      "section": 6,
+      "roles": [
+        "operations",
+        "finance",
+        "owner"
+      ],
+      "screens": [
+        "ops_bookings",
+        "fin_invoices"
+      ],
+      "steps": [
+        "Choose the Ho Chi Minh City catchment and review the example breakdown below.",
+        "Open the practice client and create a booking with the services, quantities and location described in the example.",
+        "Choose a date and time with the applicable weekday, evening or holiday conditions. Use approved training calendar settings.",
+        "Review the distance, duration and service units before confirming the quote.",
+        "If a discount applies, enter the agreed percentage and reason through View Quote.",
+        "Review Pricing line by line and compare the components with the worked example.",
+        "Open the linked invoice and check the client, lines, tax, total and remaining balance. Keep staff parking reimbursement separate from customer charges."
+      ],
+      "warning": "The amounts below are a worked learning example. Use the current approved tariff and tax settings for real visits.",
+      "related": [
+        "operations.review-a-quote-and-invoice",
+        "finance.issue-an-invoice-and-review-money-owed"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Saturday home examination with a discount",
+        "Khám tại nhà thứ Bảy có chiết khấu"
+      ]
+    },
+    {
+      "title": "Two injections at home",
+      "role": "Operations Manager for the relevant catchment; assigned staff; Finance",
+      "goal": "Understand how the booking inputs flow into the quote and invoice.",
+      "before": "Use a synthetic client in the approved training environment. For real visits, use your clinic’s current tariff.",
+      "success": "Total 210,000 VND. 2 injections at home: 90,000 + 50,000 for the second + 70,000 home charge. VAT 0. Nothing owed.",
+      "trouble": "Compare the service code, quantity, location, catchment, date and time, distance and discount basis before asking the pricing administrator to investigate a difference.",
+      "key": "examples.two-injections-at-home",
+      "title_vi": "Hai mũi tiêm tại nhà",
+      "section": 6,
+      "roles": [
+        "operations",
+        "finance",
+        "owner"
+      ],
+      "screens": [
+        "ops_bookings",
+        "fin_invoices"
+      ],
+      "steps": [
+        "Choose the Ho Chi Minh City catchment and review the example breakdown below.",
+        "Open the practice client and create a booking with the services, quantities and location described in the example.",
+        "Choose a date and time with the applicable weekday, evening or holiday conditions. Use approved training calendar settings.",
+        "Review the distance, duration and service units before confirming the quote.",
+        "If a discount applies, enter the agreed percentage and reason through View Quote.",
+        "Review Pricing line by line and compare the components with the worked example.",
+        "Open the linked invoice and check the client, lines, tax, total and remaining balance. Keep staff parking reimbursement separate from customer charges."
+      ],
+      "warning": "The amounts below are a worked learning example. Use the current approved tariff and tax settings for real visits.",
+      "related": [
+        "operations.review-a-quote-and-invoice",
+        "finance.issue-an-invoice-and-review-money-owed"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Two injections at home",
+        "Hai mũi tiêm tại nhà"
+      ]
+    },
+    {
+      "title": "Twelve hours of night care with a discount",
+      "role": "Operations Manager for the relevant catchment; assigned staff; Finance",
+      "goal": "Understand how the booking inputs flow into the quote and invoice.",
+      "before": "Use a synthetic client in the approved training environment. For real visits, use your clinic’s current tariff.",
+      "success": "Total 1,080,000 VND. 12-hour night care: 1,200,000 less 10% discount. VAT 0. 1,080,000 VND still owed. Parking 100,000 is paid to staff, not charged to the client.",
+      "trouble": "Compare the service code, quantity, location, catchment, date and time, distance and discount basis before asking the pricing administrator to investigate a difference.",
+      "key": "examples.twelve-hours-of-night-care-with-a-discount",
+      "title_vi": "Chăm sóc đêm mười hai giờ có chiết khấu",
+      "section": 6,
+      "roles": [
+        "operations",
+        "finance",
+        "owner"
+      ],
+      "screens": [
+        "ops_bookings",
+        "fin_invoices"
+      ],
+      "steps": [
+        "Choose the Ho Chi Minh City catchment and review the example breakdown below.",
+        "Open the practice client and create a booking with the services, quantities and location described in the example.",
+        "Choose a date and time with the applicable weekday, evening or holiday conditions. Use approved training calendar settings.",
+        "Review the distance, duration and service units before confirming the quote.",
+        "If a discount applies, enter the agreed percentage and reason through View Quote.",
+        "Review Pricing line by line and compare the components with the worked example.",
+        "Open the linked invoice and check the client, lines, tax, total and remaining balance. Keep staff parking reimbursement separate from customer charges."
+      ],
+      "warning": "The amounts below are a worked learning example. Use the current approved tariff and tax settings for real visits.",
+      "related": [
+        "operations.review-a-quote-and-invoice",
+        "finance.issue-an-invoice-and-review-money-owed"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Twelve hours of night care with a discount",
+        "Chăm sóc đêm mười hai giờ có chiết khấu"
+      ]
+    },
+    {
+      "title": "Public holiday infusions and bladder wash",
+      "role": "Operations Manager for the relevant catchment; assigned staff; Finance",
+      "goal": "Understand how the booking inputs flow into the quote and invoice.",
+      "before": "Use a synthetic client in the approved training environment. For real visits, use your clinic’s current tariff.",
+      "success": "Total 2,700,000 VND. Public holiday, so × 3. 2 infusions at home 2,100,000 ((2 × 250,000 + 50,000 home + 150,000 second bottle) × 3). Bladder wash 600,000 (200,000 home price with another service × 3). VAT 0. Nothing owed. Parking 100,000 is paid to staff, not charged to the client.",
+      "trouble": "Compare the service code, quantity, location, catchment, date and time, distance and discount basis before asking the pricing administrator to investigate a difference.",
+      "key": "examples.public-holiday-infusions-and-bladder-wash",
+      "title_vi": "Truyền dịch và rửa bàng quang vào ngày lễ",
+      "section": 6,
+      "roles": [
+        "operations",
+        "finance",
+        "owner"
+      ],
+      "screens": [
+        "ops_bookings",
+        "fin_invoices"
+      ],
+      "steps": [
+        "Choose the Ho Chi Minh City catchment and review the example breakdown below.",
+        "Open the practice client and create a booking with the services, quantities and location described in the example.",
+        "Choose a date and time with the applicable weekday, evening or holiday conditions. Use approved training calendar settings.",
+        "Review the distance, duration and service units before confirming the quote.",
+        "If a discount applies, enter the agreed percentage and reason through View Quote.",
+        "Review Pricing line by line and compare the components with the worked example.",
+        "Open the linked invoice and check the client, lines, tax, total and remaining balance. Keep staff parking reimbursement separate from customer charges."
+      ],
+      "warning": "The amounts below are a worked learning example. Use the current approved tariff and tax settings for real visits.",
+      "related": [
+        "operations.review-a-quote-and-invoice",
+        "finance.issue-an-invoice-and-review-money-owed"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Public holiday infusions and bladder wash",
+        "Truyền dịch và rửa bàng quang vào ngày lễ"
+      ]
+    },
+    {
+      "title": "Clinic consultation after twenty thirty",
+      "role": "Operations Manager for the relevant catchment; assigned staff; Finance",
+      "goal": "Understand how the booking inputs flow into the quote and invoice.",
+      "before": "Use a synthetic client in the approved training environment. For real visits, use your clinic’s current tariff.",
+      "success": "Total 500,000 VND. Consultation at 20:30: 200,000 + 200,000 after hours + 100,000 after 20:00. VAT 0. Nothing owed.",
+      "trouble": "Compare the service code, quantity, location, catchment, date and time, distance and discount basis before asking the pricing administrator to investigate a difference.",
+      "key": "examples.clinic-consultation-after-twenty-thirty",
+      "title_vi": "Khám tại phòng khám sau 20 giờ 30",
+      "section": 6,
+      "roles": [
+        "operations",
+        "finance",
+        "owner"
+      ],
+      "screens": [
+        "ops_bookings",
+        "fin_invoices"
+      ],
+      "steps": [
+        "Choose the Ho Chi Minh City catchment and review the example breakdown below.",
+        "Open the practice client and create a booking with the services, quantities and location described in the example.",
+        "Choose a date and time with the applicable weekday, evening or holiday conditions. Use approved training calendar settings.",
+        "Review the distance, duration and service units before confirming the quote.",
+        "If a discount applies, enter the agreed percentage and reason through View Quote.",
+        "Review Pricing line by line and compare the components with the worked example.",
+        "Open the linked invoice and check the client, lines, tax, total and remaining balance. Keep staff parking reimbursement separate from customer charges."
+      ],
+      "warning": "The amounts below are a worked learning example. Use the current approved tariff and tax settings for real visits.",
+      "related": [
+        "operations.review-a-quote-and-invoice",
+        "finance.issue-an-invoice-and-review-money-owed"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Clinic consultation after twenty thirty",
+        "Khám tại phòng khám sau 20 giờ 30"
+      ]
+    },
+    {
+      "title": "Home wound dressing and a service added during the visit",
+      "role": "Operations Manager for the relevant catchment; assigned staff; Finance",
+      "goal": "Understand how the booking inputs flow into the quote and invoice.",
+      "before": "Use a synthetic client in the approved training environment. For real visits, use your clinic’s current tariff.",
+      "success": "Total 295,000 VND. 2 wound dressings at home 250,000 (150,000 + 50,000 second wound + 80,000 home charge, less 10% of the base price). Glucose test 45,000 (50,000 less 10%, added by the nurse at the visit). VAT 0. Nothing owed.",
+      "trouble": "Compare the service code, quantity, location, catchment, date and time, distance and discount basis before asking the pricing administrator to investigate a difference.",
+      "key": "examples.home-wound-dressing-and-a-service-added-during-the-visit",
+      "title_vi": "Thay băng tại nhà và thêm dịch vụ",
+      "section": 6,
+      "roles": [
+        "operations",
+        "finance",
+        "owner"
+      ],
+      "screens": [
+        "ops_bookings",
+        "fin_invoices"
+      ],
+      "steps": [
+        "Choose the Ho Chi Minh City catchment and review the example breakdown below.",
+        "Open the practice client and create a booking with the services, quantities and location described in the example.",
+        "Choose a date and time with the applicable weekday, evening or holiday conditions. Use approved training calendar settings.",
+        "Review the distance, duration and service units before confirming the quote.",
+        "If a discount applies, enter the agreed percentage and reason through View Quote.",
+        "Review Pricing line by line and compare the components with the worked example.",
+        "Open the linked invoice and check the client, lines, tax, total and remaining balance. Keep staff parking reimbursement separate from customer charges."
+      ],
+      "warning": "The amounts below are a worked learning example. Use the current approved tariff and tax settings for real visits.",
+      "related": [
+        "operations.review-a-quote-and-invoice",
+        "finance.issue-an-invoice-and-review-money-owed"
+      ],
+      "video": true,
+      "chapters": [],
+      "language": "en",
+      "version": "2026-11-08",
+      "search_phrases": [
+        "Home wound dressing and a service added during the visit",
+        "Thay băng tại nhà và thêm dịch vụ"
+      ]
+    }
+  ],
+  "paths": {
+    "operations": [
+      "administration.work-within-your-catchment",
+      "operations.review-client-and-representative-details",
+      "operations.book-one-visit-or-several-dates",
+      "operations.assign-a-care-team",
+      "operations.reassign-a-declined-visit",
+      "operations.reschedule-a-visit-and-change-staff",
+      "operations.cancel-a-booking-with-a-reason",
+      "finance.receive-cash-handed-in-by-staff"
+    ],
+    "crm": [
+      "crm.record-a-walk-in-enquiry",
+      "crm.record-a-junk-call",
+      "crm.save-an-enquiry-without-a-booking",
+      "crm.schedule-a-follow-up",
+      "crm.close-a-follow-up-without-a-booking",
+      "crm.turn-an-enquiry-into-a-booking",
+      "operations.handle-new-and-repeat-enquiries"
+    ],
+    "clinical": [
+      "mobile.find-your-assigned-visits",
+      "mobile.review-a-visit-before-attending",
+      "operations.accept-an-assignment",
+      "mobile.start-a-visit",
+      "operations.add-a-service-during-a-visit",
+      "mobile.write-and-save-a-clinical-note",
+      "mobile.answer-the-visit-closing-questions",
+      "mobile.finish-a-visit-and-confirm-completion"
+    ],
+    "finance": [
+      "operations.review-a-quote-and-invoice",
+      "finance.issue-an-invoice-and-review-money-owed",
+      "finance.record-cash-paid-at-the-visit",
+      "finance.receive-part-payment",
+      "finance.settle-an-invoice-by-bank-transfer",
+      "finance.receive-cash-handed-in-by-staff",
+      "finance.choose-a-credit-note-or-a-cash-refund",
+      "finance.review-accounting-history-and-export-for-misa"
+    ],
+    "owner": [
+      "administration.add-or-disable-a-user",
+      "administration.understand-roles-and-permitted-work",
+      "administration.work-within-your-catchment",
+      "administration.complete-and-configure-required-fields",
+      "administration.add-an-approved-dropdown-value",
+      "administration.add-a-field-with-form-studio",
+      "administration.review-who-changed-a-record",
+      "administration.preview-the-current-moh-report"
+    ]
+  },
+  "quizzes": {
+    "operations": {
+      "question": "A visit moves to a different day. What should you check?",
+      "options": [
+        "Only the client name",
+        "The new time, active staff assignment, history and pricing conditions",
+        "Create a second visit and leave the old one active"
+      ],
+      "correct": 1,
+      "explanation": "Reschedule the existing visit and check staff, history and any changed pricing conditions."
+    },
+    "crm": {
+      "question": "A relative calls again for an existing client. What should you do?",
+      "options": [
+        "Create a new client for every enquiry",
+        "Overwrite the previous enquiry",
+        "Create a new contact and link the existing client"
+      ],
+      "correct": 2,
+      "explanation": "A new enquiry has its own contact. The same client record can have several contacts and bookings."
+    },
+    "clinical": {
+      "question": "When should you use Start Service?",
+      "options": [
+        "When the assignment arrives",
+        "When the actual visit begins",
+        "After the invoice is paid"
+      ],
+      "correct": 1,
+      "explanation": "Accepting confirms the assignment; Start Service records the actual beginning of the visit."
+    },
+    "finance": {
+      "question": "A client pays 80,000 VND against a 180,000 VND invoice. What should remain due?",
+      "options": [
+        "0 VND",
+        "80,000 VND",
+        "100,000 VND"
+      ],
+      "correct": 2,
+      "explanation": "Record only the money received. The unpaid remainder is 100,000 VND."
+    },
+    "owner": {
+      "question": "A staff member needs access to their assigned catchment. What is the correct approach?",
+      "options": [
+        "Give everyone Owner access",
+        "Review the approved job, catchment and staff linkage",
+        "Share another person’s login"
+      ],
+      "correct": 1,
+      "explanation": "Use individual accounts and the approved role and catchment; do not widen access to bypass a problem."
+    }
+  }
+}

@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="item_learning_library" model="cms.sidebar.item">
+        <field name="name">Task guides and videos</field>
+        <field name="section_id" ref="health_cms_sidebar.section_learn"/>
+        <field name="sequence">5</field>
+        <field name="icon">fa fa-play-circle</field>
+        <field name="action_xmlid">health_learn.action_learning_library</field>
+        <field name="action_tag">carejiyo_learning_library</field>
+        <field name="match_action_tags">carejiyo_learning_library</field>
+    </record>
 
     <!-- The Journey's front door.
 

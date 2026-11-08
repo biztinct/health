@@ -27,6 +27,7 @@ import { useBus, useService } from "@web/core/utils/hooks";
 import { RT, T, tx, esc, ic } from "../engine/runtime";
 import { flashRing } from "../engine/spotlight";
 import { calcHTML, calcKpiHTML } from "../engine/visuals";
+import { TaskPanel } from "../library/library";
 
 /* Shared with the Journey: one language preference for the whole system. */
 const LOCAL_PREFS = "cjxLearnPrefs";
@@ -35,12 +36,13 @@ const LOCAL_PREFS = "cjxLearnPrefs";
    compares the rendered HTML against exactly this set. */
 export const COACH_ACTIONS = new Set([
     "c-close", "c-ask", "c-suggest", "c-show", "c-simpler", "c-lesson", "c-back",
-    "c-lang",
+    "c-lang", "c-guides", "c-screen-help",
 ]);
 
 export class CoachHost extends Component {
     static template = "health_learn.CoachHost";
     static props = {};
+    static components = { TaskPanel };
 
     setup() {
         this.orm = useService("orm");
@@ -49,6 +51,7 @@ export class CoachHost extends Component {
 
         this.state = useState({
             open: false,
+            guides: true,
             ready: false,
             screen: null,        // learn.screen key, or null when off-map
             busy: false,
@@ -383,6 +386,8 @@ export class CoachHost extends Component {
 
     // ------------------------------------------------------------ delegation
     onClick(ev) {
+        // TaskPanel owns its controls; the delegated legacy controls below
+        // only handle buttons bearing a recognised data-act attribute.
         const el = ev.target.closest("[data-act]");
         if (!el) {
             return;
@@ -404,6 +409,10 @@ export class CoachHost extends Component {
             this.openLesson();
         } else if (act === "c-back") {
             this.state.answer = null;
+        } else if (act === "c-guides") {
+            this.state.guides = true;
+        } else if (act === "c-screen-help") {
+            this.state.guides = false;
         } else if (act === "c-lang") {
             this.toggleLang();
         }
