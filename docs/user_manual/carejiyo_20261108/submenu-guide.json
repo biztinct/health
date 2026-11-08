@@ -1,0 +1,2382 @@
+[
+  {
+    "menu_id": 191,
+    "path_en": "Home > Home",
+    "path_vi": "Trang chủ > Trang chủ (Home)",
+    "action_xmlid": null,
+    "action_tag": "cms_home",
+    "audience": "user",
+    "pages": {
+      "en": 57,
+      "vi": 57
+    },
+    "overview": {
+      "en": "Home opens the starting workspace for your role. Use it when you have finished a task or lost your place. It does not give extra permissions. If the starting screen looks unfamiliar, check your account and current company before opening records.",
+      "vi": "Trang chủ mở không gian làm việc theo vai trò của bạn. Dùng khi hoàn tất công việc hoặc không biết đang ở đâu. Trang chủ không cấp thêm quyền. Nếu màn hình đầu khác thường, kiểm tra tài khoản và công ty trước khi mở hồ sơ."
+    },
+    "review": "Role landing definition and destination screen"
+  },
+  {
+    "menu_id": 1,
+    "path_en": "CRM > Dashboard",
+    "path_vi": "CRM > Tổng quan (Dashboard)",
+    "action_xmlid": "health_crm.action_crm_dashboard",
+    "action_tag": "crm_dashboard",
+    "audience": "user",
+    "pages": {
+      "en": 58,
+      "vi": 58
+    },
+    "overview": {
+      "en": "Start the enquiry day here. Read the contact totals, follow-up workload and status breakdown for the chosen period and catchment. Open a tile to inspect the underlying contacts. A total is a starting point for investigation; check the records and date filters before reporting it.",
+      "vi": "Bắt đầu ngày tiếp nhận yêu cầu tại đây. Xem tổng liên hệ, việc cần theo dõi và phân bố trạng thái theo thời gian, khu vực đã chọn. Mở ô thống kê để xem liên hệ bên dưới. Trước khi báo cáo số liệu, kiểm tra hồ sơ và bộ lọc ngày."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 2,
+    "path_en": "CRM > Contacts > All contacts",
+    "path_vi": "CRM > Liên hệ (Contacts) > Tất cả liên hệ (All contacts)",
+    "action_xmlid": "health_crm.action_crm_contact_list_native",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 60,
+      "vi": 60
+    },
+    "overview": {
+      "en": "All contacts is the enquiry register. Search before New, confirm caller versus care recipient, and complete the catchment and follow-up details. Book starts booking; Log activity records a contact attempt; Escalate requests further handling; Spam removes irrelevant enquiries from normal work. Read the contact's status and next follow-up before leaving.",
+      "vi": "Tất cả liên hệ là sổ yêu cầu. Tìm trước khi New, phân biệt người gọi và người được chăm sóc, điền khu vực và việc theo dõi. Book bắt đầu đặt lịch; Log activity ghi lần liên hệ; Escalate chuyển xử lý; Spam loại yêu cầu không phù hợp khỏi công việc thường. Kiểm tra trạng thái, lần theo dõi tiếp theo trước khi rời."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 78,
+    "path_en": "CRM > Channels > Channel Center",
+    "path_vi": "CRM > Kênh (Channels) > Trung tâm kênh (Channel Center)",
+    "action_xmlid": "health_care_command_channels.action_channel_center",
+    "action_tag": "channel_center",
+    "audience": "user",
+    "pages": {
+      "en": 58,
+      "vi": 58
+    },
+    "overview": {
+      "en": "Channel Center summarises the clinic's connected communication channels. Use it to understand which channels need attention and open the relevant workspace. Check the displayed connection and routing status. Channel setup and provider credentials are maintained by an administrator; an available menu alone does not mean messages are being delivered.\nProvider cards show received/sent activity and setup progress. Manage or Manage account opens connection details; Add another account starts another connection. Pause/Resume changes whether a connection is used. Review Google Ads website leads and campaign reporting separately. Use these configuration controls only when authorised.",
+      "vi": "Trung tâm kênh tổng hợp các kênh liên lạc đã kết nối. Dùng để biết kênh nào cần chú ý và mở nơi xử lý tương ứng. Kiểm tra trạng thái kết nối, định tuyến. Quản trị viên quản lý cấu hình và thông tin nhà cung cấp; có trình đơn không có nghĩa tin nhắn đang được gửi thành công.\nThẻ nhà cung cấp hiển thị lần nhận/gửi, tiến độ cấu hình. Manage/Manage account mở chi tiết; Add another account bắt đầu kết nối thêm. Pause/Resume đổi việc dùng kết nối. Xem riêng yêu cầu website và báo cáo Google Ads. Chỉ dùng điều khiển cấu hình khi được phép."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 79,
+    "path_en": "CRM > Web & Ads > Web Touchpoints",
+    "path_vi": "CRM > Web & quảng cáo (Web & Ads) > Điểm chạm web (Web Touchpoints)",
+    "action_xmlid": "health_web_leads.action_health_lead_touchpoint",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 60,
+      "vi": 60
+    },
+    "overview": {
+      "en": "Web Touchpoints shows individual website interactions and submissions associated with enquiries. Inspect occurrence and receipt times, source, campaign, page and catchment verdict. One person can have several touchpoints, so this count is not a count of unique clients. Use the linked lead to check how the enquiry progressed.",
+      "vi": "Điểm chạm web hiển thị tương tác và lần gửi trên website gắn với yêu cầu. Xem giờ phát sinh, giờ nhận, nguồn, chiến dịch, trang và kết quả xác định khu vực. Một người có thể có nhiều điểm chạm nên số này không phải số khách hàng duy nhất. Mở liên hệ để xem quá trình xử lý."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 186,
+    "path_en": "CRM > Phone > Calls",
+    "path_vi": "CRM > Điện thoại (Phone) > Cuộc gọi (Calls)",
+    "action_xmlid": "health_voip24h.action_voip_call_session",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 59,
+      "vi": 59
+    },
+    "overview": {
+      "en": "Calls brings together the business view of each phone call. Read direction, ringing/answer/end times, outcome, duration and the matched person. The call form also shows callback ownership and write-up. Use Open the person's record to continue CRM work. Confirm the match before using the caller's history.",
+      "vi": "Cuộc gọi tập hợp thông tin nghiệp vụ của từng cuộc gọi. Xem chiều gọi, giờ đổ chuông/nhấc máy/kết thúc, kết quả, thời lượng và người được ghép. Biểu mẫu còn có người gọi lại và nội dung ghi nhận. Dùng Open the person's record để tiếp tục CRM. Xác nhận ghép đúng người trước khi đọc lịch sử."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 77,
+    "path_en": "CRM > Care Command",
+    "path_vi": "CRM > Care Command",
+    "action_xmlid": "health_care_command.action_care_command",
+    "action_tag": "care_command",
+    "audience": "user",
+    "pages": {
+      "en": 58,
+      "vi": 58
+    },
+    "overview": {
+      "en": "Care Command is the conversation workspace. Find the conversation, confirm the person, read its history and choose the appropriate reply or follow-up. Check the channel, owner and escalation before sending. Incoming messages, contact records and bookings are related but separate; a reply does not itself confirm an appointment.\nMine and Everyone change the conversation scope. CLAIM assigns an unclaimed conversation to you. Unrouted opens the exception queue; Walk-in and New Contact start the corresponding enquiry flow. Channel buttons filter the inbox; a coming-soon label means that channel is not currently available.",
+      "vi": "Care Command là nơi xử lý hội thoại. Tìm hội thoại, xác nhận đúng người, đọc lịch sử rồi chọn trả lời hoặc theo dõi. Kiểm tra kênh, người phụ trách và việc chuyển xử lý trước khi gửi. Tin nhắn, liên hệ và lịch hẹn là các hồ sơ liên kết riêng; trả lời không tự xác nhận lịch hẹn.\nMine và Everyone đổi phạm vi hội thoại. CLAIM nhận hội thoại chưa có phụ trách. Unrouted mở hàng chờ ngoại lệ; Walk-in, New Contact bắt đầu luồng yêu cầu tương ứng. Nút kênh lọc hộp thư; nhãn coming soon nghĩa kênh chưa sẵn sàng."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 82,
+    "path_en": "CRM > Web & Ads > Lead Analysis",
+    "path_vi": "CRM > Web & quảng cáo (Web & Ads) > Phân tích khách tiềm năng (Lead Analysis)",
+    "action_xmlid": "health_web_leads.action_web_leads_funnel",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 61,
+      "vi": 60
+    },
+    "overview": {
+      "en": "Lead Analysis compares enquiry outcomes by catchment, contact status or channel. Change filters, grouping and available list, graph or pivot views to answer a specific question. Open underlying records to explain a number. Keep the same date range and counting basis when comparing campaigns or clinics.",
+      "vi": "Phân tích khách tiềm năng so sánh kết quả theo khu vực, trạng thái hoặc kênh. Đổi bộ lọc, nhóm và chế độ danh sách, biểu đồ, bảng tổng hợp để trả lời câu hỏi cụ thể. Mở hồ sơ bên dưới để giải thích số liệu. Giữ cùng khoảng ngày và cách đếm khi so sánh chiến dịch, cơ sở."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 86,
+    "path_en": "CRM > Contacts > Relationships",
+    "path_vi": "CRM > Liên hệ (Contacts) > Mối quan hệ (Relationships)",
+    "action_xmlid": "health_crm.action_health_client_relation",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 60,
+      "vi": 60
+    },
+    "overview": {
+      "en": "Relationships records who represents, pays for or receives updates about a client. Check the client, representative, relationship, active dates and specific permissions. Set as Primary identifies the main relationship for its purpose. Being a relative or payer does not automatically permit medical decisions or disclosure; use the recorded authority.",
+      "vi": "Mối quan hệ ghi người đại diện, trả tiền hoặc nhận cập nhật của khách hàng. Kiểm tra khách hàng, người đại diện, quan hệ, thời hạn và từng quyền. Set as Primary xác định mối quan hệ chính cho mục đích đó. Là người thân hoặc người trả tiền không tự cho phép quyết định y tế hay nhận thông tin; dựa vào quyền đã ghi."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 103,
+    "path_en": "CRM > Channels > Unrouted Contacts",
+    "path_vi": "CRM > Kênh (Channels) > Liên hệ chưa phân luồng (Unrouted Contacts)",
+    "action_xmlid": "health_care_command_channels.action_care_contact_capture",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 58,
+      "vi": 58
+    },
+    "overview": {
+      "en": "Review enquiries that arrived but could not be routed into the normal conversation flow. Check the reason, sender, source connection, time and message preview. Convert to conversation once you know the correct destination. Dismiss only when the item should not become work, and record the reason. Check existing conversations first to avoid duplicates.",
+      "vi": "Xem yêu cầu đã đến nhưng chưa vào được luồng hội thoại thông thường. Kiểm tra lý do, người gửi, kết nối nguồn, giờ và nội dung xem trước. Dùng Convert to conversation khi xác định đúng nơi xử lý. Chỉ Dismiss mục không cần xử lý và ghi lý do. Kiểm tra hội thoại cũ trước để tránh trùng."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 185,
+    "path_en": "CRM > Phone > Call backs",
+    "path_vi": "CRM > Điện thoại (Phone) > Gọi lại (Call backs)",
+    "action_xmlid": "health_voip24h.action_voip_callbacks",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 59,
+      "vi": 59
+    },
+    "overview": {
+      "en": "Call backs focuses on calls needing a return call. Check the owner, due time, attempts and resolution. Contact the correct person, write what happened, then use Mark as called back when the callback has actually been handled. Closing the row without contacting or resolving it can hide unfinished work.",
+      "vi": "Gọi lại tập trung vào cuộc gọi cần liên hệ lại. Kiểm tra người phụ trách, hạn, số lần thử và cách giải quyết. Liên hệ đúng người, ghi kết quả rồi dùng Mark as called back khi đã thực sự xử lý. Đóng dòng khi chưa liên hệ hoặc giải quyết có thể làm mất dấu việc còn tồn."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 141,
+    "path_en": "CRM > Channels > Channel audit",
+    "path_vi": "CRM > Kênh (Channels) > Nhật ký kênh (Channel audit)",
+    "action_xmlid": "health_care_command_channels.action_care_channel_audit",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 59,
+      "vi": 58
+    },
+    "overview": {
+      "en": "Channel audit is the operational event log for communication connections. Filter by time, channel or connection and read the event and redacted detail. Use it to investigate routing or delivery problems with your administrator. It is an event history, not the screen for replying to a patient.",
+      "vi": "Nhật ký kênh ghi sự kiện vận hành của các kết nối liên lạc. Lọc theo giờ, kênh hoặc kết nối rồi đọc sự kiện và chi tiết đã che thông tin nhạy cảm. Dùng cùng quản trị viên để tìm lỗi định tuyến, gửi nhận. Đây là lịch sử sự kiện, không phải nơi trả lời khách hàng."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 181,
+    "path_en": "CRM > Web & Ads > Google Ads",
+    "path_vi": "CRM > Web & quảng cáo (Web & Ads) > Google Ads",
+    "action_xmlid": "health_google_ads.action_google_ads_accounts",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 61,
+      "vi": 60
+    },
+    "overview": {
+      "en": "Google Ads separates website lead capture from campaign reporting. An account shows website status, reporting connection, last sync and campaign figures. View leads and View touches inspect enquiries; Open report inspects campaign results. Sync now refreshes reporting when authorised. A healthy website pipeline does not prove advertising reporting is connected, and reporting totals may use a different time basis.",
+      "vi": "Google Ads tách tiếp nhận yêu cầu web khỏi báo cáo chiến dịch. Tài khoản hiển thị trạng thái website, kết nối báo cáo, lần đồng bộ và số liệu chiến dịch. View leads, View touches xem yêu cầu; Open report xem kết quả chiến dịch. Sync now làm mới khi được phép. Luồng website tốt không chứng minh báo cáo quảng cáo đã kết nối; thời điểm tính số có thể khác."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 188,
+    "path_en": "CRM > Phone > Recordings",
+    "path_vi": "CRM > Điện thoại (Phone) > Bản ghi âm (Recordings)",
+    "action_xmlid": "health_voip24h.action_voip_call_recording",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 59,
+      "vi": 59
+    },
+    "overview": {
+      "en": "Recordings lists audio linked to phone calls. Check the call, duration, availability and state before Listen. Fetch or Fetch a copy retrieves available audio from the configured provider. The form records who listened and when. Availability depends on the provider and retention; a missing recording does not mean the call never happened.",
+      "vi": "Bản ghi âm liệt kê âm thanh gắn với cuộc gọi. Kiểm tra cuộc gọi, thời lượng, khả dụng và trạng thái trước khi Listen. Fetch hoặc Fetch a copy lấy âm thanh từ nhà cung cấp đã cấu hình. Biểu mẫu ghi người nghe và thời điểm. Khả dụng tùy nhà cung cấp, thời hạn lưu; thiếu bản ghi không có nghĩa chưa có cuộc gọi."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 192,
+    "path_en": "CRM > Channels",
+    "path_vi": "CRM > Kênh (Channels)",
+    "action_xmlid": null,
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 58,
+      "vi": 58
+    },
+    "overview": {
+      "en": "Channels groups the channel overview, unrouted enquiries, delivery records and attention phrases. Start with Channel Center, then use the specific queue or log for the question you are investigating.",
+      "vi": "Kênh nhóm tổng quan, yêu cầu chưa định tuyến, bản ghi gửi nhận và cụm từ cần chú ý. Bắt đầu ở Trung tâm kênh rồi chọn hàng chờ hoặc nhật ký phù hợp."
+    },
+    "review": "Menu heading and child entries"
+  },
+  {
+    "menu_id": 142,
+    "path_en": "CRM > Channels > Channel messages",
+    "path_vi": "CRM > Kênh (Channels) > Tin nhắn kênh (Channel messages)",
+    "action_xmlid": "health_care_command_channels.action_care_channel_message",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 59,
+      "vi": 59
+    },
+    "overview": {
+      "en": "Channel messages lists individual inbound and outbound messages. Check direction, conversation, time, state and any error. Open the linked conversation for context before deciding whether a follow-up is needed. An outbound row may be queued or failed; use its status rather than assuming the recipient has received it.",
+      "vi": "Tin nhắn kênh liệt kê từng tin đến và đi. Kiểm tra chiều, hội thoại, giờ, trạng thái và lỗi. Mở hội thoại liên quan để hiểu tình huống trước khi theo dõi. Một dòng tin đi có thể đang chờ hoặc đã lỗi; dựa vào trạng thái thay vì cho rằng người nhận đã nhận được."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 184,
+    "path_en": "CRM > Phone",
+    "path_vi": "CRM > Điện thoại (Phone)",
+    "action_xmlid": null,
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 59,
+      "vi": 59
+    },
+    "overview": {
+      "en": "Phone groups the everyday call view, callback queue, recordings and original provider logs. These are different views of related phone activity, not four separate calls.",
+      "vi": "Điện thoại nhóm góc nhìn cuộc gọi, hàng chờ gọi lại, ghi âm và nhật ký nhà cung cấp. Đây là các góc nhìn hoạt động liên quan, không phải bốn cuộc gọi riêng."
+    },
+    "review": "Menu heading and child entries"
+  },
+  {
+    "menu_id": 187,
+    "path_en": "CRM > Phone > Records from the phone system",
+    "path_vi": "CRM > Điện thoại (Phone) > Dữ liệu từ tổng đài (Records from the phone system)",
+    "action_xmlid": "health_voip24h.action_voip_call_log",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 60,
+      "vi": 59
+    },
+    "overview": {
+      "en": "Records from the phone system shows the original call-log view. Use it to investigate phone numbers, provider status and matching. Match Contact connects an existing person; Create Lead and Create Activity start follow-up records when needed. Check for an existing contact before creating one. Calls is usually the easier everyday view.",
+      "vi": "Bản ghi từ hệ thống điện thoại hiển thị nhật ký cuộc gọi gốc. Dùng để kiểm tra số điện thoại, trạng thái nhà cung cấp và ghép liên hệ. Match Contact nối người hiện có; Create Lead và Create Activity tạo hồ sơ theo dõi khi cần. Tìm liên hệ trước khi tạo. Calls thường dễ dùng hơn cho công việc hằng ngày."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 143,
+    "path_en": "CRM > Channels > Watchlist phrases",
+    "path_vi": "CRM > Kênh (Channels) > Cụm từ cần theo dõi (Watchlist phrases)",
+    "action_xmlid": "health_care_command.action_care_watch_phrase",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 59,
+      "vi": 59
+    },
+    "overview": {
+      "en": "Watchlist phrases holds words or phrases used to draw attention to conversations. Review the exact phrase and whether it is active. Add or change phrases only under the clinic's agreed process, then check a representative example. A match is a prompt for human review, not a diagnosis or an automatic clinical decision.",
+      "vi": "Cụm từ theo dõi chứa từ hoặc câu giúp nhận diện hội thoại cần chú ý. Kiểm tra nội dung chính xác và trạng thái hoạt động. Chỉ thêm, sửa theo quy trình phòng khám rồi kiểm tra ví dụ phù hợp. Kết quả khớp là lời nhắc con người xem xét, không phải chẩn đoán hay quyết định lâm sàng tự động."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 193,
+    "path_en": "CRM > Contacts",
+    "path_vi": "CRM > Liên hệ (Contacts)",
+    "action_xmlid": null,
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 60,
+      "vi": 59
+    },
+    "overview": {
+      "en": "Contacts groups enquiry records and the relationships between a care recipient and other people. Create the enquiry in All contacts; define representation and communication authority in Relationships.",
+      "vi": "Liên hệ nhóm hồ sơ yêu cầu và quan hệ người được chăm sóc với người khác. Tạo yêu cầu ở Tất cả liên hệ; định nghĩa đại diện, quyền liên lạc ở Mối quan hệ."
+    },
+    "review": "Menu heading and child entries"
+  },
+  {
+    "menu_id": 5,
+    "path_en": "CRM > Activities",
+    "path_vi": "CRM > Hoạt động (Activities)",
+    "action_xmlid": "health_crm.action_crm_activity_list",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 60,
+      "vi": 60
+    },
+    "overview": {
+      "en": "Activities gathers contact follow-up work. Use the activity or list view to find who should do what and by when. Open the contact, read previous notes, perform the work and record the outcome and next action. Reschedule deliberately when unfinished; do not mark an activity done just to remove an overdue reminder.",
+      "vi": "Hoạt động tập hợp việc theo dõi liên hệ. Dùng chế độ hoạt động hoặc danh sách để biết ai làm gì, hạn nào. Mở liên hệ, đọc ghi chú cũ, thực hiện rồi ghi kết quả và bước tiếp theo. Chủ động đổi hạn nếu chưa xong; không đánh dấu hoàn tất chỉ để xóa nhắc quá hạn."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 194,
+    "path_en": "CRM > Web & Ads",
+    "path_vi": "CRM > Web & quảng cáo (Web & Ads)",
+    "action_xmlid": null,
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 60,
+      "vi": 60
+    },
+    "overview": {
+      "en": "Web & Ads connects website interactions, enquiry analysis and advertising reporting. Compare the same dates and distinguish submissions, unique enquiries and campaign statistics.",
+      "vi": "Web và quảng cáo nối tương tác website, phân tích yêu cầu, báo cáo quảng cáo. So cùng ngày, phân biệt lượt gửi, yêu cầu duy nhất và số liệu chiến dịch."
+    },
+    "review": "Menu heading and child entries"
+  },
+  {
+    "menu_id": 6,
+    "path_en": "Operations > Dashboard",
+    "path_vi": "Điều phối > Tổng quan (Dashboard)",
+    "action_xmlid": "health_fieldservice.action_ops_command_center",
+    "action_tag": "ops_command_center",
+    "audience": "user",
+    "pages": {
+      "en": 62,
+      "vi": 61
+    },
+    "overview": {
+      "en": "The Operations dashboard helps the coordinator spot today's work and exceptions. Check the date and catchment, then open the bookings or staffing issue behind a tile. Prioritise unassigned, late or incomplete visits. Follow the underlying record through to resolution; changing a filter or reading a tile does not resolve the work.",
+      "vi": "Bảng điều phối giúp thấy việc hôm nay và ngoại lệ. Kiểm tra ngày, khu vực rồi mở lịch hẹn hoặc vấn đề nhân sự phía sau ô thống kê. Ưu tiên buổi chưa phân công, trễ hoặc chưa hoàn tất. Xử lý trên hồ sơ liên quan; đổi bộ lọc hay đọc ô thống kê không giải quyết công việc."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 11,
+    "path_en": "Operations > Schedule > Staff Schedule",
+    "path_vi": "Điều phối > Lịch làm việc (Schedule) > Lịch nhân sự (Staff Schedule)",
+    "action_xmlid": "health_fieldservice.action_staff_schedule",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 62,
+      "vi": 61
+    },
+    "overview": {
+      "en": "Staff Schedule places assignments on a staff timeline. Check the date, person and booking before changing a slot. Open an assignment to inspect planned times, role, travel and confirmation. Confirm Assignment and Staff Confirmed are assignment controls, not invoice controls. Check overlaps and the booking after any schedule change.",
+      "vi": "Lịch nhân viên đặt phân công trên dòng thời gian. Kiểm tra ngày, người và lịch hẹn trước khi đổi ô. Mở phân công để xem giờ dự kiến, vai trò, di chuyển và xác nhận. Confirm Assignment, Staff Confirmed thuộc phân công, không phải hóa đơn. Kiểm tra trùng giờ và lịch hẹn sau thay đổi."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 155,
+    "path_en": "Operations > Exceptions > First-visit offers",
+    "path_vi": "Điều phối > Ngoại lệ (Exceptions) > Ưu đãi lượt đầu (First-visit offers)",
+    "action_xmlid": "health_workflow_auto.action_visit_offer",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 63,
+      "vi": 62
+    },
+    "overview": {
+      "en": "First-visit offers tracks appointment choices offered to a contact. Read the expiry, offered slots, staff and whether a slot was taken, then check any linked booking and outbound message. An offer is not yet a confirmed visit. Before making another offer, check whether the person already selected a slot or the original offer expired.",
+      "vi": "Đề nghị buổi đầu theo dõi lựa chọn giờ gửi cho liên hệ. Xem hạn, các giờ đề nghị, nhân viên, giờ đã chọn rồi kiểm tra lịch hẹn và tin đi liên kết. Đề nghị chưa phải buổi khám đã xác nhận. Trước khi gửi thêm, kiểm tra người đó đã chọn giờ hay đề nghị cũ đã hết hạn."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 157,
+    "path_en": "Operations > Development > Employee development",
+    "path_vi": "Điều phối > Phát triển (Development) > Phát triển nhân viên (Employee development)",
+    "action_xmlid": "hr_development_ai.action_hr_development_dashboard",
+    "action_tag": "hr_development_dashboard",
+    "audience": "user",
+    "pages": {
+      "en": 64,
+      "vi": 63
+    },
+    "overview": {
+      "en": "Employee development brings learning and performance information together for staff review. Select the correct employee and review period, read the underlying observations and discuss the next development action. Use it to support a documented conversation. Treat automated summaries as aids for a manager to review, not as a complete assessment of a person.\nThe dashboard includes skills, learning paths, certifications, coaching sessions, mentorships and active development plans, plus skill categories, learning progress and recent activity. AI Coaching Chat opens coaching support. Review the person whose dashboard is displayed before interpreting the figures.",
+      "vi": "Phát triển nhân viên tập hợp thông tin học tập, hiệu quả để đánh giá. Chọn đúng người, kỳ xem xét, đọc dữ liệu gốc và trao đổi bước phát triển tiếp theo. Dùng để hỗ trợ cuộc trao đổi có ghi nhận. Tóm tắt tự động chỉ hỗ trợ quản lý xem xét, không phải đánh giá đầy đủ một người.\nBảng có kỹ năng, lộ trình học, chứng nhận, phiên huấn luyện, cố vấn, kế hoạch phát triển hoạt động; thêm nhóm kỹ năng, tiến độ, hoạt động gần đây. AI Coaching Chat mở hỗ trợ. Xác nhận bảng của ai trước khi hiểu số liệu."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 7,
+    "path_en": "Operations > Bookings",
+    "path_vi": "Điều phối > Lịch hẹn (Bookings)",
+    "action_xmlid": "health_fieldservice.action_ops_booking_list_native",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 62,
+      "vi": 61
+    },
+    "overview": {
+      "en": "Bookings is the appointment queue and calendar. Search by client, date, catchment or status. Open a booking to check Overview, Pricing, Clinical, Planning, Execution and Tracking, plus communication and completion sections where available. Assign Staff, Reschedule, Start Service and completion controls depend on state and permission. Confirm the correct booking before any action.",
+      "vi": "Lịch hẹn là hàng chờ và lịch các buổi chăm sóc. Tìm theo khách hàng, ngày, khu vực hoặc trạng thái. Mở lịch để kiểm tra Tổng quan, Giá, Lâm sàng, Kế hoạch, Thực hiện, Theo dõi và các phần liên lạc, hoàn tất nếu có. Nút phân công, đổi lịch, bắt đầu và hoàn tất phụ thuộc trạng thái, quyền. Xác nhận đúng lịch trước khi thao tác."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 41,
+    "path_en": "Operations > Schedule > Time Off",
+    "path_vi": "Điều phối > Lịch làm việc (Schedule) > Nghỉ phép (Time Off)",
+    "action_xmlid": "health_fieldservice.action_health_staff_timeoff",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 62,
+      "vi": 61
+    },
+    "overview": {
+      "en": "Time Off records staff absence. Check employee, leave type, dates, duration and approval status. Follow the available request and approval controls for your role. After approval, inspect affected future assignments and arrange cover. A leave request and a confirmed replacement assignment are separate records.",
+      "vi": "Nghỉ phép ghi thời gian nhân viên vắng mặt. Kiểm tra người, loại nghỉ, ngày, thời lượng và trạng thái duyệt. Dùng chức năng đề nghị, phê duyệt theo vai trò. Sau duyệt, kiểm tra phân công tương lai bị ảnh hưởng và bố trí thay thế. Đề nghị nghỉ và phân công người thay là hai hồ sơ riêng."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 156,
+    "path_en": "Operations > Exceptions > Timecard mismatches",
+    "path_vi": "Điều phối > Ngoại lệ (Exceptions) > Chấm công không khớp (Timecard mismatches)",
+    "action_xmlid": "health_workflow_auto.action_timecard_mismatch",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 63,
+      "vi": 62
+    },
+    "overview": {
+      "en": "Timecard mismatches brings together discrepancies between expected visit/assignment times and recorded time. Open the item, compare its linked records and follow the available resolution workflow. Correct the underlying cause and record why. Do not assume a discrepancy proves misconduct; incomplete synchronisation or a scheduling change may need investigation.",
+      "vi": "Sai lệch chấm công tập hợp khác biệt giữa giờ lịch/phân công dự kiến và giờ đã ghi. Mở mục, đối chiếu hồ sơ liên kết rồi xử lý theo luồng hiện có. Sửa nguyên nhân và ghi lý do. Không coi sai lệch là bằng chứng vi phạm; có thể cần kiểm tra đồng bộ chưa xong hoặc lịch đã đổi."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 158,
+    "path_en": "Operations > Development > Coaching",
+    "path_vi": "Điều phối > Phát triển (Development) > Huấn luyện (Coaching)",
+    "action_xmlid": "hr_development_ai.action_bfsi_coaching_workspace",
+    "action_tag": "bfsi_coaching_workspace",
+    "audience": "user",
+    "pages": {
+      "en": 64,
+      "vi": 63
+    },
+    "overview": {
+      "en": "Coaching provides the workspace for a coaching session and follow-up. Choose the person or topic, review the relevant evidence and agree a practical next step. Keep notes factual and check any generated suggestions before using them. Return to agreed actions at the next review instead of treating a generated summary as completion.\nThe workspace has Home, Team, Coaching, Performance and Analytics tabs. Home summarises the branch/region; Team focuses on people; Coaching supports sessions; Performance and Analytics review outcomes. Open cockpit enters the selected branch. Any Settings tab is for authorised configuration rather than an ordinary coaching action.",
+      "vi": "Huấn luyện cung cấp nơi làm phiên hướng dẫn và theo dõi. Chọn người hoặc chủ đề, xem bằng chứng phù hợp và thống nhất bước tiếp theo cụ thể. Ghi khách quan, kiểm tra gợi ý tự động trước khi dùng. Xem lại việc đã thống nhất ở lần sau thay vì coi có bản tóm tắt là hoàn tất.\nKhông gian có Home, Team, Coaching, Performance, Analytics. Home tổng hợp chi nhánh/khu vực; Team tập trung nhân sự; Coaching hỗ trợ phiên; Performance, Analytics xem kết quả. Open cockpit mở chi nhánh chọn. Thẻ Settings nếu có dành cấu hình được phép, không phải thao tác huấn luyện thường."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 8,
+    "path_en": "Operations > Clients",
+    "path_vi": "Điều phối > Khách hàng (Clients)",
+    "action_xmlid": "health_fieldservice.action_ops_client_list_native",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 62,
+      "vi": 61
+    },
+    "overview": {
+      "en": "Clients is the care-recipient register. Search before creating a person. The record links identity and contact details with relationships, visits and clinical information. Use the related-record tabs or counters to reach the client's existing work. Keep the patient distinct from the caller or payer, and check matching identifiers before opening or updating sensitive information.",
+      "vi": "Khách hàng là sổ người được chăm sóc. Tìm trước khi tạo người mới. Hồ sơ nối danh tính, liên lạc với quan hệ, buổi khám và thông tin lâm sàng. Dùng thẻ hoặc bộ đếm hồ sơ liên quan để mở việc hiện có. Phân biệt bệnh nhân với người gọi, trả tiền; kiểm tra định danh trước khi đọc hoặc sửa thông tin nhạy cảm."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 13,
+    "path_en": "Operations > Schedule > Workload",
+    "path_vi": "Điều phối > Lịch làm việc (Schedule) > Khối lượng công việc (Workload)",
+    "action_xmlid": "health_fieldservice.action_staff_workload_dashboard",
+    "action_tag": "staff_workload_dashboard",
+    "audience": "user",
+    "pages": {
+      "en": 63,
+      "vi": 62
+    },
+    "overview": {
+      "en": "Workload helps compare how much work is allocated to staff. Select a comparable period and area, then inspect the underlying assignments before moving work. Consider availability, required skills and travel as well as the displayed totals. A lower number alone does not prove somebody can safely take the next visit.\nAssigned, Confirmed and In Progress filter assignment states. Date buttons include All time, Today, This week, This month and Custom. The staff selector narrows the people; sort and hide-empty controls help focus the list. Refresh reloads the figures.",
+      "vi": "Khối lượng công việc giúp so sánh việc đã phân cho nhân viên. Chọn cùng kỳ, khu vực và xem phân công bên dưới trước khi chuyển việc. Cân nhắc thời gian rảnh, kỹ năng, di chuyển cùng số thống kê. Số thấp hơn không tự chứng minh người đó có thể nhận buổi tiếp theo.\nAssigned, Confirmed, In Progress lọc trạng thái phân công. Ngày có All time, Today, This week, This month, Custom. Bộ chọn nhân viên thu hẹp người; sắp xếp, ẩn người không có việc giúp tập trung. Refresh tải lại số liệu."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 195,
+    "path_en": "Operations > Schedule",
+    "path_vi": "Điều phối > Lịch làm việc (Schedule)",
+    "action_xmlid": null,
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 62,
+      "vi": 61
+    },
+    "overview": {
+      "en": "Schedule groups who is assigned, who is unavailable and how work is distributed. Review all three before moving a visit to another staff member.",
+      "vi": "Lịch nhóm phân công, người vắng và phân bố công việc. Xem cả ba trước khi chuyển buổi sang nhân viên khác."
+    },
+    "review": "Menu heading and child entries"
+  },
+  {
+    "menu_id": 12,
+    "path_en": "Operations > Collections",
+    "path_vi": "Điều phối > Thu tiền (Collections)",
+    "action_xmlid": "health_invoicing.action_ops_cash_collections",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 63,
+      "vi": 62
+    },
+    "overview": {
+      "en": "Collections is the operational view of money collected during visits. Check collector, client, amount, method and linked booking/invoice. For cash, record the physical handover with Mark Cash Delivered to OM only when the office has received it. Check the receipt and delivery date. Do not create a second payment for the same collection.",
+      "vi": "Thu tiền là góc nhìn điều phối về tiền nhận trong buổi khám. Kiểm tra người thu, khách hàng, số tiền, phương thức và lịch/hóa đơn liên kết. Với tiền mặt, chỉ dùng Mark Cash Delivered to OM khi văn phòng đã nhận tiền thực tế. Kiểm tra biên nhận, ngày bàn giao. Không tạo thanh toán thứ hai cho cùng lần thu."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 90,
+    "path_en": "Operations > Family Inbox",
+    "path_vi": "Điều phối > Hộp thư người nhà (Family Inbox)",
+    "action_xmlid": "health_family_messages.action_family_messages",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 63,
+      "vi": 62
+    },
+    "overview": {
+      "en": "Family Inbox groups messages from the client's authorised family contacts. Open the thread, confirm the client and sender relationship, read the history and respond or route the question to the right team. Check permissions before sharing care details. A message requesting a change is not a completed reschedule; update the booking separately.",
+      "vi": "Hộp thư gia đình nhóm tin từ người thân được phép. Mở luồng, xác nhận khách hàng, quan hệ người gửi, đọc lịch sử rồi trả lời hoặc chuyển đúng nhóm. Kiểm tra quyền trước khi chia sẻ thông tin chăm sóc. Tin yêu cầu đổi giờ không phải đã đổi lịch; cập nhật lịch hẹn riêng."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 91,
+    "path_en": "Operations > Routes",
+    "path_vi": "Điều phối > Tuyến đường (Routes)",
+    "action_xmlid": "health_routes.action_route_transition",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 63,
+      "vi": 62
+    },
+    "overview": {
+      "en": "Routes shows travel transitions between work locations or visits. Inspect origin, destination, timing and feasibility information before assigning consecutive visits. Use the result to spot unrealistic travel gaps and coordinate changes. Route information supports planning; check real conditions and the actual staff schedule before confirming.",
+      "vi": "Lộ trình hiển thị chặng di chuyển giữa nơi làm việc hoặc buổi khám. Xem điểm đi, đến, thời gian và tính khả thi trước khi xếp buổi liên tiếp. Dùng kết quả để phát hiện khoảng di chuyển không hợp lý và điều chỉnh. Thông tin lộ trình hỗ trợ kế hoạch; kiểm tra thực tế, lịch nhân viên trước khi xác nhận."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 196,
+    "path_en": "Operations > Exceptions",
+    "path_vi": "Điều phối > Ngoại lệ (Exceptions)",
+    "action_xmlid": null,
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 63,
+      "vi": 62
+    },
+    "overview": {
+      "en": "Exceptions brings together first-visit offers and timecard discrepancies requiring follow-up outside the normal booking flow.",
+      "vi": "Ngoại lệ tập hợp đề nghị buổi đầu và sai lệch chấm công cần theo dõi ngoài luồng lịch hẹn thường."
+    },
+    "review": "Menu heading and child entries"
+  },
+  {
+    "menu_id": 197,
+    "path_en": "Operations > Development",
+    "path_vi": "Điều phối > Phát triển (Development)",
+    "action_xmlid": null,
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 64,
+      "vi": 63
+    },
+    "overview": {
+      "en": "Development groups employee development and coaching. Use the information to agree and follow up practical development actions.",
+      "vi": "Phát triển nhóm phát triển nhân viên, huấn luyện. Dùng thông tin để thống nhất, theo dõi hành động phát triển thực tế."
+    },
+    "review": "Menu heading and child entries"
+  },
+  {
+    "menu_id": 15,
+    "path_en": "Finance > Dashboard",
+    "path_vi": "Tài chính > Tổng quan (Dashboard)",
+    "action_xmlid": "health_invoicing.action_fin_dashboard",
+    "action_tag": "fin_dashboard",
+    "audience": "user",
+    "pages": {
+      "en": 65,
+      "vi": 64
+    },
+    "overview": {
+      "en": "Finance Dashboard is the starting view for billing and collections. Set the period and area, review totals and open the supporting invoices or payment records. Separate invoiced amounts, money received and outstanding balances. Check whether a figure includes drafts or only posted items before comparing it with another report.",
+      "vi": "Bảng tài chính là điểm bắt đầu xem hóa đơn, thu tiền. Đặt kỳ, khu vực, xem tổng rồi mở hóa đơn hoặc thanh toán liên quan. Phân biệt số đã lập hóa đơn, tiền đã nhận và dư còn nợ. Kiểm tra số liệu gồm nháp hay chỉ chứng từ đã ghi sổ trước khi so với báo cáo khác."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 17,
+    "path_en": "Finance > Receivables > AR Dashboard",
+    "path_vi": "Tài chính > Phải thu (Receivables) > Tổng quan phải thu (AR Dashboard)",
+    "action_xmlid": "health_invoicing.action_fin_ar_dashboard",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 65,
+      "vi": 64
+    },
+    "overview": {
+      "en": "AR Dashboard shows receivable balances and their accounting basis. Filter or group the entries to understand who owes money. Check due dates, outstanding amounts and the linked invoice before contacting a client. Compare the same period and company when reconciling with invoice or payment reports.",
+      "vi": "Bảng công nợ phải thu hiển thị số dư và căn cứ kế toán. Lọc, nhóm dòng để biết ai còn nợ. Kiểm tra hạn, số còn lại, hóa đơn liên kết trước khi liên hệ khách hàng. Dùng cùng kỳ, công ty khi đối chiếu báo cáo hóa đơn hoặc thanh toán."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 19,
+    "path_en": "Finance > Payments > All payments",
+    "path_vi": "Tài chính > Thanh toán (Payments) > Tất cả thanh toán (All payments)",
+    "action_xmlid": "health_invoicing.action_fin_payment_list",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 66,
+      "vi": 65
+    },
+    "overview": {
+      "en": "All payments lists clinic payment transactions. Check amount, method, status, collector and linked invoice or booking. Open a transaction to inspect processing information, related records and payment proof. Use the appropriate action on that record when further processing is required. A recorded transaction may still need reconciliation or physical cash handover.",
+      "vi": "Tất cả thanh toán liệt kê giao dịch của phòng khám. Kiểm tra số tiền, phương thức, trạng thái, người thu, hóa đơn hoặc lịch liên kết. Mở giao dịch để xem xử lý, hồ sơ liên quan và chứng từ. Dùng thao tác phù hợp nếu còn bước xử lý. Giao dịch đã ghi có thể vẫn cần đối chiếu hoặc bàn giao tiền mặt."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 16,
+    "path_en": "Finance > Invoices",
+    "path_vi": "Tài chính > Hóa đơn (Invoices)",
+    "action_xmlid": "health_invoicing.action_fin_invoice_list",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 65,
+      "vi": 64
+    },
+    "overview": {
+      "en": "Invoices lists charges and their payment states. Open the correct invoice, review client, lines, tax and due date, then use the permitted posting, payment or credit-note action. Invoice Lines explains the charge; Other Info and local e-invoice sections hold supporting details. Posting confirms the bill; payment and external e-invoice delivery have their own states.",
+      "vi": "Hóa đơn liệt kê khoản phải trả và trạng thái thanh toán. Mở đúng hóa đơn, xem khách hàng, dòng, thuế, hạn rồi dùng chức năng ghi sổ, thanh toán hoặc điều chỉnh được phép. Invoice Lines giải thích khoản thu; Other Info và phần hóa đơn điện tử chứa chi tiết hỗ trợ. Ghi sổ, thanh toán và gửi hóa đơn điện tử có trạng thái riêng."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 22,
+    "path_en": "Finance > Receivables > AR Transactions",
+    "path_vi": "Tài chính > Phải thu (Receivables) > Giao dịch phải thu (AR Transactions)",
+    "action_xmlid": "health_invoicing.action_fin_ar_transactions",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 65,
+      "vi": 64
+    },
+    "overview": {
+      "en": "AR Transactions is the history of receivable-related movements. Read the transaction date, client, amount, type and linked source to explain how a balance changed. It helps trace payments, adjustments and related activity; it is not a substitute for checking whether the underlying invoice and payment were correctly reconciled.",
+      "vi": "Giao dịch công nợ là lịch sử biến động liên quan khoản phải thu. Xem ngày, khách hàng, số tiền, loại và nguồn để giải thích số dư thay đổi. Dùng truy vết thanh toán, điều chỉnh và hoạt động liên quan; vẫn phải kiểm tra hóa đơn, thanh toán gốc đã đối chiếu đúng."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 42,
+    "path_en": "Finance > Payments > Account Payment",
+    "path_vi": "Tài chính > Thanh toán (Payments) > Thanh toán tài khoản (Account Payment)",
+    "action_xmlid": "health_invoicing.action_fin_account_payment",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 66,
+      "vi": 65
+    },
+    "overview": {
+      "en": "Account Payment opens the payment-collection form. Choose the correct client and invoice or balance, enter the amount and method, review the allocation and confirm only after money has actually been received. For a partial payment, check the remaining balance afterwards. Reopen existing transactions before retrying after an interruption to avoid duplicate collection.",
+      "vi": "Thanh toán tài khoản mở biểu mẫu thu tiền. Chọn đúng khách hàng, hóa đơn hoặc công nợ, nhập số tiền, phương thức, kiểm tra phân bổ và chỉ xác nhận khi thực nhận tiền. Nếu trả một phần, kiểm tra dư sau đó. Xem giao dịch hiện có trước khi thử lại sau gián đoạn để tránh thu trùng."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 20,
+    "path_en": "Finance > Receivables > Overdue Clients",
+    "path_vi": "Tài chính > Phải thu (Receivables) > Khách hàng quá hạn (Overdue Clients)",
+    "action_xmlid": "health_invoicing.action_fin_overdue",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 65,
+      "vi": 64
+    },
+    "overview": {
+      "en": "Overdue Clients focuses on invoices whose payment is late. Check the due date, current balance and recent payments before following up. Open the invoice or client, record the agreed next action and revisit the balance. A client may have several invoices with different due dates; do not assume every invoice is overdue.",
+      "vi": "Khách hàng quá hạn tập trung hóa đơn chậm thanh toán. Kiểm tra hạn, dư hiện tại và tiền vừa nhận trước khi nhắc. Mở hóa đơn hoặc khách hàng, ghi bước tiếp theo đã thống nhất rồi xem lại dư. Một khách hàng có thể có nhiều hóa đơn, hạn khác nhau; không coi tất cả đều quá hạn."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 43,
+    "path_en": "Finance > Payments > Cash In Transit",
+    "path_vi": "Tài chính > Thanh toán (Payments) > Tiền đang chuyển (Cash In Transit)",
+    "action_xmlid": "health_invoicing.action_fin_cash_collections",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 66,
+      "vi": 65
+    },
+    "overview": {
+      "en": "Cash In Transit identifies collected cash still awaiting office handover. Compare collector, amount and linked invoice with the actual cash and proof. Use Mark Cash Delivered to OM when the handover is complete and check recipient, receipt and date. This step tracks custody of cash; it must not double the client's payment.",
+      "vi": "Tiền đang chuyển xác định tiền mặt đã thu còn chờ bàn giao văn phòng. Đối chiếu người thu, số tiền, hóa đơn với tiền thực tế và chứng từ. Dùng Mark Cash Delivered to OM khi bàn giao xong, kiểm tra người nhận, biên nhận, ngày. Bước này theo dõi người giữ tiền, không được ghi đôi thanh toán khách hàng."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 199,
+    "path_en": "Finance > Receivables",
+    "path_vi": "Tài chính > Phải thu (Receivables)",
+    "action_xmlid": null,
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 65,
+      "vi": 64
+    },
+    "overview": {
+      "en": "Receivables groups outstanding balances, their movement history and overdue invoices. Start with the balance, trace transactions, then decide the follow-up.",
+      "vi": "Công nợ phải thu nhóm số dư, lịch sử biến động, hóa đơn quá hạn. Bắt đầu từ dư, truy giao dịch rồi quyết định theo dõi."
+    },
+    "review": "Menu heading and child entries"
+  },
+  {
+    "menu_id": 44,
+    "path_en": "Finance > Payments > Refund / Credit",
+    "path_vi": "Tài chính > Thanh toán (Payments) > Hoàn tiền / Ghi có (Refund / Credit)",
+    "action_xmlid": "health_invoicing.action_fin_refund_credit",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 66,
+      "vi": 65
+    },
+    "overview": {
+      "en": "Refund / Credit opens the invoice/credit workflow used for an authorised correction. Inspect the original invoice, reason and amount before creating a credit note or processing the associated refund. A credit note reduces a charge; returning money is a separate financial event. Confirm both records and remaining balances with Finance.",
+      "vi": "Hoàn tiền/ghi giảm mở luồng hóa đơn, điều chỉnh được phép. Xem hóa đơn gốc, lý do, số tiền trước khi tạo chứng từ ghi giảm hoặc hoàn tiền liên quan. Chứng từ ghi giảm giảm khoản phải trả; trả tiền là sự kiện tài chính riêng. Cùng kế toán kiểm tra hai hồ sơ và số dư còn lại."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 200,
+    "path_en": "Finance > Payments",
+    "path_vi": "Tài chính > Thanh toán (Payments)",
+    "action_xmlid": null,
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 65,
+      "vi": 64
+    },
+    "overview": {
+      "en": "Payments groups transaction records, collection, cash handover and refund/credit work. Select the screen for the actual financial event rather than recording the same money twice.",
+      "vi": "Thanh toán nhóm giao dịch, thu tiền, bàn giao tiền mặt, hoàn/ghi giảm. Chọn màn hình theo sự kiện thực, tránh ghi cùng tiền hai lần."
+    },
+    "review": "Menu heading and child entries"
+  },
+  {
+    "menu_id": 21,
+    "path_en": "Finance > VAT Log",
+    "path_vi": "Tài chính > Nhật ký VAT (VAT Log)",
+    "action_xmlid": "health_invoicing.action_fin_vat_log",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 66,
+      "vi": 65
+    },
+    "overview": {
+      "en": "VAT Log gathers invoice tax and local submission information. Review customer tax details, taxable amount, tax, totals and displayed submission/sync states. Open the invoice for supporting information. A row in this log is not proof that the tax authority or an external accounting service accepted the invoice.",
+      "vi": "Nhật ký VAT tập hợp thông tin thuế và gửi hóa đơn. Kiểm tra thông tin thuế khách hàng, tiền tính thuế, thuế, tổng, trạng thái gửi/đồng bộ. Mở hóa đơn để xem chi tiết. Có dòng trong nhật ký không chứng minh cơ quan thuế hay dịch vụ kế toán ngoài đã chấp nhận hóa đơn."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 99,
+    "path_en": "Finance > BHYT Claims",
+    "path_vi": "Tài chính > Hồ sơ BHYT (BHYT Claims)",
+    "action_xmlid": "health_bhyt.action_bhyt_claim",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 66,
+      "vi": 65
+    },
+    "overview": {
+      "en": "BHYT Claims prepares the visit's insurance-coverage record. Check the client/card snapshot, visit, invoice, eligible lines and patient/insurance split. Mark Ready records that preparation is complete; Reset to Draft or Cancel supports authorised corrections. This screen does not itself demonstrate a national claims submission or acceptance.",
+      "vi": "Hồ sơ BHYT chuẩn bị thông tin bảo hiểm của buổi khám. Kiểm tra ảnh chụp thông tin khách hàng/thẻ, lịch, hóa đơn, dòng đủ điều kiện và phần bảo hiểm/người bệnh trả. Mark Ready ghi chuẩn bị xong; Reset to Draft, Cancel hỗ trợ sửa được phép. Màn hình này không tự chứng minh đã gửi hay được hệ thống quốc gia chấp nhận."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 100,
+    "path_en": "Finance > Service Packages",
+    "path_vi": "Tài chính > Gói dịch vụ (Service Packages)",
+    "action_xmlid": "health_invoicing.action_fin_package_list",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 66,
+      "vi": 65
+    },
+    "overview": {
+      "en": "Service Packages tracks a client's purchased bundle of services. Check total, consumed and remaining services, price, expiry and linked invoice. Create Service Booking starts use of the package; inspect consumption after completion. Refund Unused Services follows the authorised refund workflow. Do not edit the remaining count simply to hide an incorrect consumption record.",
+      "vi": "Gói dịch vụ theo dõi nhóm dịch vụ khách đã mua. Kiểm tra tổng, đã dùng, còn lại, giá, hạn, hóa đơn liên kết. Create Service Booking bắt đầu dùng gói; kiểm tra lần trừ sau hoàn tất. Refund Unused Services theo luồng hoàn được phép. Không sửa số còn để che hồ sơ sử dụng sai."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 101,
+    "path_en": "Finance > Red Invoice Log",
+    "path_vi": "Tài chính > Nhật ký hóa đơn đỏ (Red Invoice Log)",
+    "action_xmlid": "health_redinvoice.action_redinvoice_requests",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 67,
+      "vi": 65
+    },
+    "overview": {
+      "en": "Red Invoice Log records requests sent to the configured electronic-invoice service. Check the linked invoice, request state, endpoint, response code and retry count. Read the response or error before asking Finance or support to retry. Multiple attempts can relate to one invoice; a request log is not a second customer invoice.",
+      "vi": "Nhật ký hóa đơn điện tử ghi yêu cầu gửi dịch vụ đã cấu hình. Kiểm tra hóa đơn liên kết, trạng thái yêu cầu, điểm nhận, mã phản hồi, số lần thử. Đọc phản hồi hoặc lỗi trước khi nhờ kế toán/hỗ trợ thử lại. Nhiều lần thử có thể thuộc một hóa đơn; nhật ký yêu cầu không phải hóa đơn khách hàng thứ hai."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 46,
+    "path_en": "Clinical > Observations",
+    "path_vi": "Lâm sàng > Quan sát (Observations)",
+    "action_xmlid": "health_vitals.action_health_observation",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 69,
+      "vi": 67
+    },
+    "overview": {
+      "en": "Observations stores measured or recorded clinical values. Check client, observation type, value, unit, measurement time, performer and visit link. Graph and pivot views help review trends. Mark Entered in Error identifies an incorrect entry without pretending it never existed. Read the original measurements and follow the clinic's clinical process when a value needs attention.",
+      "vi": "Quan sát lưu giá trị lâm sàng đã đo hoặc ghi. Kiểm tra khách hàng, loại, giá trị, đơn vị, giờ đo, người ghi và buổi khám. Biểu đồ, bảng tổng hợp giúp xem xu hướng. Mark Entered in Error đánh dấu nhập sai nhưng vẫn giữ dấu vết. Đọc số đo gốc và theo quy trình lâm sàng khi cần xử lý."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 51,
+    "path_en": "Clinical > Medications > Orders",
+    "path_vi": "Lâm sàng > Thuốc (Medications) > Y lệnh thuốc (Orders)",
+    "action_xmlid": "health_emar.action_health_medication_order",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 69,
+      "vi": 67
+    },
+    "overview": {
+      "en": "Orders records prescribed medication instructions. Review client, medicine, dose/unit, route, frequency, period, prescriber and safety warnings. Activate makes the order active; Put On Hold and Resume change its availability; Complete or Cancel ends it appropriately. Only authorised clinicians should change an order. An active prescription is not proof that a dose was administered.",
+      "vi": "Y lệnh thuốc ghi chỉ định dùng thuốc. Xem khách hàng, thuốc, liều/đơn vị, đường dùng, tần suất, thời hạn, người kê, cảnh báo. Activate kích hoạt; Put On Hold, Resume tạm dừng, tiếp tục; Complete hoặc Cancel kết thúc phù hợp. Chỉ người có quyền chuyên môn sửa y lệnh. Đơn đang hoạt động không chứng minh đã cho dùng thuốc."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 58,
+    "path_en": "Clinical > Incidents > Register",
+    "path_vi": "Lâm sàng > Sự cố (Incidents) > Sổ sự cố (Register)",
+    "action_xmlid": "health_incident.action_health_incident",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 70,
+      "vi": 68
+    },
+    "overview": {
+      "en": "Register records incidents and their investigation. Capture what happened, when, who was affected and immediate action. The form separates investigation, findings, corrective actions, notifications and evidence. Start Review, Start Investigation, Assign Actions and Close move the case forward. Check outstanding actions and required information before closing; use Reopen when further investigation is needed.",
+      "vi": "Sổ sự cố ghi sự việc và điều tra. Ghi chuyện gì, khi nào, ai bị ảnh hưởng và xử lý ngay. Biểu mẫu tách điều tra, kết luận, khắc phục, thông báo, bằng chứng. Start Review, Start Investigation, Assign Actions, Close chuyển giai đoạn. Kiểm tra việc còn mở, thông tin bắt buộc trước khi đóng; Reopen khi cần điều tra thêm."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 73,
+    "path_en": "Clinical > Care Intelligence > Worklist",
+    "path_vi": "Lâm sàng > Theo dõi sát (Care Intelligence) > Danh sách cần theo dõi (Worklist)",
+    "action_xmlid": "health_twin.action_health_twin_risk",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 69,
+      "vi": 67
+    },
+    "overview": {
+      "en": "Worklist prioritises clients using available risk information. Read risk band, score, trend, latest assessment and how recently the information was calculated. Open the client and underlying observations or alerts to understand the reason. Forecasts and scores support review; an old or incomplete score must not be treated as a fresh clinical assessment.",
+      "vi": "Danh sách công việc ưu tiên khách hàng theo thông tin nguy cơ hiện có. Xem mức, điểm, xu hướng, đánh giá mới và thời gian tính. Mở khách hàng, quan sát hoặc cảnh báo gốc để hiểu lý do. Dự báo, điểm hỗ trợ xem xét; điểm cũ hoặc thiếu không phải đánh giá lâm sàng mới."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 93,
+    "path_en": "Clinical > Notes > Unsigned Notes",
+    "path_vi": "Lâm sàng > Ghi chép (Notes) > Ghi chép chưa ký (Unsigned Notes)",
+    "action_xmlid": "health_emr.action_unsigned_clinical_notes",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 71,
+      "vi": 69
+    },
+    "overview": {
+      "en": "Unsigned Notes is the clinical-note completion queue. Open the correct note, confirm client, visit, author and content, then use the available signing/finalisation control when authorised. Resolve missing information before signing. Saving a draft makes the text available but does not mean the clinical record is final.",
+      "vi": "Ghi chú chưa ký là hàng chờ hoàn tất ghi chú lâm sàng. Mở đúng ghi chú, xác nhận khách hàng, buổi khám, tác giả, nội dung rồi ký/hoàn tất khi có quyền. Bổ sung thông tin thiếu trước khi ký. Lưu nháp giữ văn bản nhưng chưa làm hồ sơ lâm sàng thành cuối cùng."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 52,
+    "path_en": "Clinical > Medications > Administration Register",
+    "path_vi": "Lâm sàng > Thuốc (Medications) > Sổ thực hiện thuốc (Administration Register)",
+    "action_xmlid": "health_emar.action_health_medication_administration",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 70,
+      "vi": 68
+    },
+    "overview": {
+      "en": "Administration Register records individual medication administrations against an order. Compare planned and actual times, client, dose, staff and linked visit. Record the actual outcome and a reason for missed or other exceptional administration using the available controls. Check the order before recording the dose; do not use a register entry to silently change a prescription.",
+      "vi": "Sổ dùng thuốc ghi từng lần thực hiện y lệnh. Đối chiếu giờ dự kiến, thực tế, khách hàng, liều, nhân viên, buổi khám. Ghi kết quả thực tế và lý do bỏ hoặc ngoại lệ bằng chức năng hiện có. Kiểm tra y lệnh trước khi ghi liều; không dùng dòng trong sổ để âm thầm thay đơn."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 59,
+    "path_en": "Clinical > Incidents > Corrective Actions",
+    "path_vi": "Lâm sàng > Sự cố (Incidents) > Hành động khắc phục (Corrective Actions)",
+    "action_xmlid": "health_incident.action_health_incident_action",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 70,
+      "vi": 68
+    },
+    "overview": {
+      "en": "Corrective Actions lists tasks raised from incidents. Check the linked incident, assignee, due date and expected action. Start marks work underway; Mark Done records completion; Cancel Action stops an action with the appropriate explanation. Record the effectiveness review where required. Completing one task does not automatically close the whole incident.",
+      "vi": "Hành động khắc phục liệt kê việc từ sự cố. Kiểm tra sự cố liên kết, người làm, hạn, yêu cầu. Start ghi bắt đầu; Mark Done ghi hoàn tất; Cancel Action dừng với giải thích phù hợp. Ghi đánh giá hiệu quả khi cần. Xong một việc không tự đóng toàn bộ sự cố."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 72,
+    "path_en": "Clinical > Care Intelligence",
+    "path_vi": "Lâm sàng > Theo dõi sát (Care Intelligence)",
+    "action_xmlid": null,
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 69,
+      "vi": 67
+    },
+    "overview": {
+      "en": "Care Intelligence groups the client-priority worklist, individual alerts and calculated NEWS2 scores. Review source evidence before deciding the clinical response.",
+      "vi": "Thông tin chăm sóc nhóm danh sách ưu tiên, cảnh báo, điểm NEWS2. Xem bằng chứng nguồn trước khi quyết định xử lý lâm sàng."
+    },
+    "review": "Menu heading and child entries"
+  },
+  {
+    "menu_id": 74,
+    "path_en": "Clinical > Care Intelligence > Alerts",
+    "path_vi": "Lâm sàng > Theo dõi sát (Care Intelligence) > Cảnh báo (Alerts)",
+    "action_xmlid": "health_telemonitoring.action_health_monitor_alert",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 69,
+      "vi": 67
+    },
+    "overview": {
+      "en": "Alerts is the queue of monitoring items requiring attention. Check client, severity, rule, evidence and current state. Acknowledge records that somebody has taken responsibility; Resolve records that the issue was handled; Dismiss records a justified non-action. Add the closing explanation and follow the clinic's escalation process. Acknowledgement alone does not resolve the concern.",
+      "vi": "Cảnh báo là hàng chờ mục theo dõi cần chú ý. Xem khách hàng, mức độ, quy tắc, bằng chứng, trạng thái. Acknowledge ghi đã có người nhận trách nhiệm; Resolve ghi đã xử lý; Dismiss ghi lý do không xử lý. Điền giải thích kết thúc và theo quy trình chuyển cấp. Xác nhận tiếp nhận chưa giải quyết vấn đề."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 94,
+    "path_en": "Clinical > Notes > Voice Notes",
+    "path_vi": "Lâm sàng > Ghi chép (Notes) > Ghi chép bằng giọng nói (Voice Notes)",
+    "action_xmlid": "health_scribe.action_scribe_job",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 71,
+      "vi": 69
+    },
+    "overview": {
+      "en": "Voice Notes shows transcription jobs linked to clinical notes. Check audio, client, note, state, attempts and any error. Transcribe now requests processing where available. Review the transcript against what was said and correct it before using it in the note. A finished transcription is not a signed clinical note.",
+      "vi": "Ghi chú giọng nói hiển thị tác vụ chuyển âm thanh gắn ghi chú lâm sàng. Kiểm tra âm thanh, khách hàng, ghi chú, trạng thái, lần thử, lỗi. Transcribe now yêu cầu xử lý khi có. Đối chiếu bản chép với lời nói, sửa trước khi dùng. Chuyển âm thanh xong chưa phải ghi chú lâm sàng đã ký."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 50,
+    "path_en": "Clinical > Medications",
+    "path_vi": "Lâm sàng > Thuốc (Medications)",
+    "action_xmlid": null,
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 69,
+      "vi": 67
+    },
+    "overview": {
+      "en": "Medications separates the instruction to give a medicine from the record of a dose actually given or missed.",
+      "vi": "Thuốc tách chỉ định dùng thuốc khỏi hồ sơ liều thực tế đã dùng hoặc bỏ."
+    },
+    "review": "Menu heading and child entries"
+  },
+  {
+    "menu_id": 60,
+    "path_en": "Clinical > Incidents > Analysis",
+    "path_vi": "Lâm sàng > Sự cố (Incidents) > Phân tích (Analysis)",
+    "action_xmlid": "health_incident.action_health_incident_analysis",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 70,
+      "vi": 68
+    },
+    "overview": {
+      "en": "Analysis groups incidents into charts and pivot tables. Filter a period and compare type, severity or facility. Open underlying cases before drawing conclusions from totals. Check whether the report includes open and closed incidents, and use the same definitions across periods. Changes in reporting activity can affect counts as well as changes in actual events.",
+      "vi": "Phân tích nhóm sự cố thành biểu đồ, bảng tổng hợp. Lọc kỳ, so sánh loại, mức độ hoặc cơ sở. Mở ca gốc trước khi kết luận từ tổng. Kiểm tra báo cáo gồm ca mở, đóng nào và dùng cùng định nghĩa giữa các kỳ. Thay đổi việc báo cáo cũng ảnh hưởng số lượng, không chỉ thay đổi sự cố thực tế."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 76,
+    "path_en": "Clinical > Care Intelligence > NEWS2",
+    "path_vi": "Lâm sàng > Theo dõi sát (Care Intelligence) > NEWS2",
+    "action_xmlid": "health_telemonitoring.action_health_ews_score",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 69,
+      "vi": 67
+    },
+    "overview": {
+      "en": "NEWS2 lists calculated early-warning scores and their component measurements. Check score time, client, visit, individual values and any defaulted or superseded information. Use the linked observations to verify the inputs. The system records the score; qualified staff determine the appropriate response under the clinic's protocol.",
+      "vi": "NEWS2 liệt kê điểm cảnh báo sớm và các số đo thành phần. Kiểm tra giờ, khách hàng, buổi khám, từng giá trị và thông tin mặc định hoặc đã thay thế. Mở quan sát liên kết để xác minh đầu vào. Hệ thống ghi điểm; nhân viên đủ chuyên môn quyết định xử lý theo quy trình phòng khám."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 95,
+    "path_en": "Clinical > Notes > Coding Review",
+    "path_vi": "Lâm sàng > Ghi chép (Notes) > Duyệt mã bệnh (Coding Review)",
+    "action_xmlid": "health_ai_coding.action_ai_code_suggestion",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 71,
+      "vi": 69
+    },
+    "overview": {
+      "en": "Coding Review lists suggested medical codes for human review. Read the code, supporting evidence, linked note and confidence. Approve or Reject records the reviewer's decision; bulk actions require checking every selected suggestion. A confidence percentage is not proof of correctness. Keep the approved code consistent with the clinician's documented diagnosis.",
+      "vi": "Duyệt mã liệt kê mã y khoa gợi ý để người dùng xem xét. Đọc mã, bằng chứng, ghi chú liên kết, độ tin cậy. Approve, Reject ghi quyết định; thao tác hàng loạt cần kiểm tra từng gợi ý được chọn. Tỷ lệ tin cậy không chứng minh đúng. Mã duyệt phải phù hợp chẩn đoán đã ghi của bác sĩ."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 55,
+    "path_en": "Clinical > Assessments",
+    "path_vi": "Lâm sàng > Đánh giá (Assessments)",
+    "action_xmlid": "health_forms.action_health_form_instance",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 70,
+      "vi": 68
+    },
+    "overview": {
+      "en": "Assessments stores completed or in-progress clinical forms. Select the correct client, visit and template version, then answer the form. Complete finalises the assessment after review; Cancel marks an abandoned one. Inspect calculated scores, extracted observations and photos/signatures where present. The template defines the questions; patient answers belong in the assessment instance.",
+      "vi": "Đánh giá lưu biểu mẫu lâm sàng đang làm hoặc đã xong. Chọn đúng khách hàng, buổi khám, phiên bản mẫu rồi trả lời. Complete hoàn tất sau kiểm tra; Cancel đánh dấu bỏ. Xem điểm tính, quan sát trích xuất, ảnh/chữ ký nếu có. Mẫu định nghĩa câu hỏi; câu trả lời của bệnh nhân thuộc bản đánh giá."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 57,
+    "path_en": "Clinical > Incidents",
+    "path_vi": "Lâm sàng > Sự cố (Incidents)",
+    "action_xmlid": null,
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 70,
+      "vi": 68
+    },
+    "overview": {
+      "en": "Incidents separates case management, assigned corrective work and aggregate analysis. Use the register for an individual case and Analysis for patterns.",
+      "vi": "Sự cố tách quản lý ca, việc khắc phục, phân tích tổng hợp. Dùng Sổ cho từng ca, Phân tích để xem xu hướng."
+    },
+    "review": "Menu heading and child entries"
+  },
+  {
+    "menu_id": 63,
+    "path_en": "Clinical > Consents",
+    "path_vi": "Lâm sàng > Đồng thuận (Consents)",
+    "action_xmlid": "health_consent.action_health_consent_expiring",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 70,
+      "vi": 68
+    },
+    "overview": {
+      "en": "Consents highlights consent records, including expiry-related follow-up. Check type, scope, effective/expiry dates, representative authority and supporting evidence. Grant records an authorised consent; Withdraw records withdrawal; Print Consent Evidence produces the record for review. Never infer consent solely from a booking or family relationship. Check the actual consent for the proposed activity.",
+      "vi": "Đồng ý hiển thị hồ sơ và việc theo dõi hạn. Kiểm tra loại, phạm vi, ngày hiệu lực/hết hạn, thẩm quyền người đại diện, bằng chứng. Grant ghi sự đồng ý hợp lệ; Withdraw ghi rút lại; Print Consent Evidence tạo bản xem xét. Không suy ra đồng ý chỉ từ lịch hẹn hay quan hệ gia đình. Kiểm tra hồ sơ cho hoạt động dự kiến."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 198,
+    "path_en": "Clinical > Notes",
+    "path_vi": "Lâm sàng > Ghi chép (Notes)",
+    "action_xmlid": null,
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 71,
+      "vi": 68
+    },
+    "overview": {
+      "en": "Notes groups work still requiring signature, audio transcription and review of suggested medical codes. These queues support the final clinical record.",
+      "vi": "Ghi chú nhóm việc chờ ký, chuyển giọng nói, duyệt mã gợi ý. Các hàng chờ hỗ trợ hồ sơ lâm sàng cuối cùng."
+    },
+    "review": "Menu heading and child entries"
+  },
+  {
+    "menu_id": 64,
+    "path_en": "Compliance > Terminology",
+    "path_vi": "Tuân thủ > Thuật ngữ (Terminology)",
+    "action_xmlid": null,
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 33,
+      "vi": 33
+    },
+    "overview": {
+      "en": "Terminology groups medical codes, the coding systems they belong to and controlled code import. Keep vocabulary maintenance separate from coding an individual patient note.",
+      "vi": "Thuật ngữ nhóm mã y khoa, hệ mã và nhập mã có kiểm soát. Tách duy trì từ vựng khỏi gán mã cho ghi chú bệnh nhân."
+    },
+    "review": "Menu heading and child entries"
+  },
+  {
+    "menu_id": 65,
+    "path_en": "Compliance > Terminology > Medical Codes",
+    "path_vi": "Tuân thủ > Thuật ngữ (Terminology) > Mã y tế (Medical Codes)",
+    "action_xmlid": "health_fhir_terminology.action_medical_code",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 33,
+      "vi": 33
+    },
+    "overview": {
+      "en": "Medical Codes is the terminology catalogue used when selecting clinical codes. Search by code or description and check the coding system and active status. Use a defined code rather than creating a duplicate label. Catalogue maintenance belongs to the responsible administrator or terminology owner.",
+      "vi": "Mã y khoa là danh mục dùng khi chọn mã lâm sàng. Tìm bằng mã hoặc mô tả, kiểm tra hệ mã, trạng thái hoạt động. Dùng mã đã định nghĩa thay vì tạo nhãn trùng. Người quản trị hoặc phụ trách thuật ngữ duy trì danh mục."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 68,
+    "path_en": "Compliance > EMR (VN) > Export",
+    "path_vi": "Tuân thủ > EMR (VN) > Xuất dữ liệu (Export)",
+    "action_xmlid": "health_fhir_adapter_base.action_fhir_submission_log",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 33,
+      "vi": 33
+    },
+    "overview": {
+      "en": "Export records prepared EMR/FHIR export submissions and their outcomes. Inspect client or record references, destination, state and error details before retrying. Follow the configured export workflow and check the resulting file or response. Creating an export file is separate from delivery to, and acceptance by, an external authority.",
+      "vi": "Xuất ghi việc chuẩn bị, kết quả xuất hồ sơ EMR/FHIR. Xem khách hàng/hồ sơ, nơi nhận, trạng thái, lỗi trước khi thử lại. Theo luồng đã cấu hình, kiểm tra tệp hoặc phản hồi. Tạo tệp xuất khác với gửi đến và được cơ quan ngoài chấp nhận."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 66,
+    "path_en": "Compliance > Terminology > Coding Systems",
+    "path_vi": "Tuân thủ > Thuật ngữ (Terminology) > Hệ thống mã (Coding Systems)",
+    "action_xmlid": "health_fhir_terminology.action_medical_coding_system",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 33,
+      "vi": 33
+    },
+    "overview": {
+      "en": "Coding Systems defines the vocabularies to which medical codes belong. Check the system name and identifiers before importing or interpreting codes. The same-looking code can mean something different in another system. Maintain this catalogue with the terminology owner so reports and exported records use the intended vocabulary.",
+      "vi": "Hệ mã định nghĩa bộ thuật ngữ chứa mã y khoa. Kiểm tra tên, định danh hệ trước khi nhập hoặc diễn giải mã. Mã giống nhau có thể mang nghĩa khác ở hệ khác. Duy trì cùng người phụ trách để báo cáo, hồ sơ xuất dùng đúng thuật ngữ."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 69,
+    "path_en": "Compliance > EMR (VN) > Readiness",
+    "path_vi": "Tuân thủ > EMR (VN) > Mức sẵn sàng (Readiness)",
+    "action_xmlid": "health_fhir_adapter_vn.action_vn_emr_readiness",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 33,
+      "vi": 33
+    },
+    "overview": {
+      "en": "Readiness checks whether required information is present for the configured Vietnamese EMR export. Read missing items and resolve them in their source records, then recheck. A readiness result concerns the implemented checks; it does not by itself certify legal compliance or external-system acceptance.",
+      "vi": "Mức sẵn sàng kiểm tra thông tin cần cho xuất EMR Việt Nam đã cấu hình. Đọc mục thiếu, sửa hồ sơ nguồn rồi kiểm tra lại. Kết quả chỉ phản ánh kiểm tra được triển khai; không tự chứng nhận tuân thủ pháp lý hoặc việc hệ thống ngoài chấp nhận."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 201,
+    "path_en": "Compliance > EMR (VN)",
+    "path_vi": "Tuân thủ > EMR (VN)",
+    "action_xmlid": null,
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 33,
+      "vi": 33
+    },
+    "overview": {
+      "en": "EMR (VN) groups export history and readiness checks. Fix missing source information before preparing the next export.",
+      "vi": "EMR (VN) nhóm lịch sử xuất và kiểm tra sẵn sàng. Sửa thông tin nguồn thiếu trước khi chuẩn bị xuất tiếp."
+    },
+    "review": "Menu heading and child entries"
+  },
+  {
+    "menu_id": 67,
+    "path_en": "Compliance > Terminology > Import Codes",
+    "path_vi": "Tuân thủ > Thuật ngữ (Terminology) > Nhập mã (Import Codes)",
+    "action_xmlid": "health_fhir_terminology.action_medical_code_import",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 33,
+      "vi": 33
+    },
+    "overview": {
+      "en": "Import Codes loads an approved terminology file into the selected coding system. Confirm file format, system and expected scope, then use the import form and review its result. Check sample codes afterwards. Importing clinical terminology changes shared lookup data, so obtain the clinic's approval and avoid duplicate or unverified files.",
+      "vi": "Nhập mã đưa tệp thuật ngữ đã duyệt vào hệ mã đã chọn. Xác nhận định dạng, hệ, phạm vi rồi dùng biểu mẫu nhập, kiểm tra kết quả. Xem mẫu mã sau đó. Nhập thuật ngữ thay dữ liệu dùng chung, cần duyệt của phòng khám và tránh tệp trùng hoặc chưa xác minh."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 70,
+    "path_en": "Compliance > Visit Messaging",
+    "path_vi": "Tuân thủ > Tin nhắn lượt thăm (Visit Messaging)",
+    "action_xmlid": "health_messaging.action_outbound_message",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 34,
+      "vi": 33
+    },
+    "overview": {
+      "en": "Visit Messaging is the outbound-message queue for visit-related communication. Check recipient, related visit, channel, scheduled time, state and error before following up. Verify consent and recipient details in the source record. Do not repeatedly resend a queued item without checking whether the provider has already accepted it.",
+      "vi": "Tin nhắn buổi khám là hàng chờ tin đi liên quan lịch. Kiểm tra người nhận, buổi, kênh, giờ dự kiến, trạng thái, lỗi trước khi theo dõi. Xác minh đồng ý, thông tin người nhận trên hồ sơ nguồn. Không gửi lặp mục đang chờ khi chưa biết nhà cung cấp đã nhận chưa."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 71,
+    "path_en": "Compliance > EVV Events",
+    "path_vi": "Tuân thủ > Sự kiện EVV (EVV Events)",
+    "action_xmlid": "health_evv.action_health_evv_event",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 34,
+      "vi": 34
+    },
+    "overview": {
+      "en": "EVV Events records electronic visit-verification events such as check-in and check-out. Inspect event time, visit, worker and available location or verification information. Compare exceptions with the assignment and actual visit record. It is an evidence log; a missing or unusual event needs investigation rather than an invented replacement timestamp.",
+      "vi": "Sự kiện EVV ghi xác minh điện tử buổi khám như đến, rời. Xem giờ, buổi, nhân viên, vị trí hoặc thông tin xác minh hiện có. Đối chiếu ngoại lệ với phân công và buổi thực tế. Đây là nhật ký bằng chứng; sự kiện thiếu hoặc lạ cần kiểm tra, không tự tạo giờ thay thế."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 209,
+    "path_en": "Compliance > Compliance Register",
+    "path_vi": "Tuân thủ > Sổ đăng ký tuân thủ (Compliance Register)",
+    "action_xmlid": "health_compliance.action_requirement",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 34,
+      "vi": 34
+    },
+    "overview": {
+      "en": "Compliance Register separates technical implementation, manual clinic action and external authority dependencies for each requirement. Open an item to read applicability, owner, outstanding action and evidence. Export register creates a review copy. Do not treat a technical status alone as confirmation that the clinic's operational or external obligations are complete.",
+      "vi": "Sổ tuân thủ tách triển khai kỹ thuật, việc thủ công của phòng khám và phụ thuộc cơ quan ngoài cho từng yêu cầu. Mở để xem áp dụng, người phụ trách, việc còn lại, bằng chứng. Export register tạo bản xem xét. Trạng thái kỹ thuật riêng không xác nhận đã xong nghĩa vụ vận hành hay bên ngoài."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 210,
+    "path_en": "Compliance > Evidence Artifacts",
+    "path_vi": "Tuân thủ > Hồ sơ bằng chứng (Evidence Artifacts)",
+    "action_xmlid": "health_compliance.action_evidence",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 34,
+      "vi": 34
+    },
+    "overview": {
+      "en": "Evidence Artifacts stores supporting files and summaries for compliance requirements. Check the linked requirement, kind, environment, release, limitations and expiry. Approve after review records an explicit review decision. The file should support the stated claim; uploading a document alone does not prove the requirement has been satisfied.",
+      "vi": "Tài liệu bằng chứng lưu tệp, tóm tắt hỗ trợ yêu cầu tuân thủ. Kiểm tra yêu cầu, loại, môi trường, phiên bản, giới hạn, hạn. Approve after review ghi quyết định xem xét rõ ràng. Tệp phải hỗ trợ nhận định; tải tài liệu lên chưa chứng minh đáp ứng yêu cầu."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 211,
+    "path_en": "Compliance > Rights Requests",
+    "path_vi": "Tuân thủ > Yêu cầu quyền dữ liệu cá nhân (Rights Requests)",
+    "action_xmlid": "health_compliance.action_rights",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 34,
+      "vi": 34
+    },
+    "overview": {
+      "en": "Rights Requests tracks an individual's information-rights request. Verify identity and scope, assign an owner and check acknowledgement and completion due dates. Record acknowledgement and Record extension notice retain supporting proof. Complete request records the outcome and evidence. Use the clinic's authorised process for the decision; this register tracks it.",
+      "vi": "Yêu cầu quyền cá nhân theo dõi đề nghị về thông tin. Xác minh danh tính, phạm vi, giao phụ trách, kiểm tra hạn xác nhận và hoàn tất. Record acknowledgement, Record extension notice giữ bằng chứng. Complete request ghi kết quả, chứng từ. Quyết định theo quy trình được phép; sổ này theo dõi việc đó."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 212,
+    "path_en": "Compliance > Retention Holds",
+    "path_vi": "Tuân thủ > Lệnh lưu giữ hồ sơ (Retention Holds)",
+    "action_xmlid": "health_compliance.action_hold",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 34,
+      "vi": 34
+    },
+    "overview": {
+      "en": "Retention Holds records instructions to retain a record class or client's records. Check scope, retain-until date, reason and active status. Release hold requires the appropriate release reason and authority. A hold affects retention decisions; it is not a request to erase the record or an instruction to bypass the clinic's policy.",
+      "vi": "Giữ lưu trữ ghi yêu cầu giữ loại hồ sơ hoặc hồ sơ khách hàng. Kiểm tra phạm vi, ngày giữ đến, lý do, trạng thái. Release hold cần lý do và thẩm quyền phù hợp. Mục giữ ảnh hưởng quyết định lưu trữ, không phải yêu cầu xóa hoặc bỏ qua chính sách phòng khám."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 213,
+    "path_en": "Compliance > Rights Calendar",
+    "path_vi": "Tuân thủ > Lịch xử lý yêu cầu (Rights Calendar)",
+    "action_xmlid": "health_compliance.action_holiday",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 34,
+      "vi": 34
+    },
+    "overview": {
+      "en": "Rights Calendar maintains non-working dates used by the rights-request deadline process. Check date and name before adding or correcting an entry. This calendar is separate from staff leave and the public-holiday pricing calendar. After an authorised correction, review affected request deadlines rather than assuming every date has been recalculated.",
+      "vi": "Lịch quyền cá nhân duy trì ngày nghỉ dùng tính hạn yêu cầu. Kiểm tra ngày, tên trước khi thêm hoặc sửa. Lịch này khác nghỉ nhân viên và lịch ngày lễ dùng tính giá. Sau sửa được phép, kiểm tra hạn yêu cầu bị ảnh hưởng, không giả định mọi ngày đã tính lại."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 214,
+    "path_en": "Compliance > Processing Destinations",
+    "path_vi": "Tuân thủ > Điểm đến xử lý dữ liệu (Processing Destinations)",
+    "action_xmlid": "health_compliance.action_destination",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 35,
+      "vi": 34
+    },
+    "overview": {
+      "en": "Processing Destinations records where information may be processed or sent. Check endpoint, country, purpose, legal basis, processor terms and validity. Approve destination records the authorised review. A registered destination is not automatically an active connection; check the corresponding integration and intended data flow separately.",
+      "vi": "Nơi xử lý ghi địa điểm thông tin có thể được xử lý hoặc gửi. Kiểm tra điểm nhận, quốc gia, mục đích, căn cứ, điều khoản xử lý, hiệu lực. Approve destination ghi duyệt được phép. Nơi đã đăng ký không tự là kết nối đang hoạt động; kiểm tra tích hợp và luồng dữ liệu riêng."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 215,
+    "path_en": "Compliance > Authority Integrations",
+    "path_vi": "Tuân thủ > Tích hợp với cơ quan nhà nước (Authority Integrations)",
+    "action_xmlid": "health_compliance.action_integration",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 35,
+      "vi": 34
+    },
+    "overview": {
+      "en": "Authority Integrations records external integration readiness: provider, status, specifications, onboarding evidence and pending action. Keep credential location as a reference, not a place to paste secrets into general notes. Review supporting evidence before changing status. This register describes readiness; it does not itself transmit data to an authority.",
+      "vi": "Tích hợp cơ quan ghi mức sẵn sàng: nhà cung cấp, trạng thái, đặc tả, bằng chứng tham gia, việc còn lại. Vị trí thông tin xác thực chỉ là tham chiếu, không dán bí mật vào ghi chú chung. Xem bằng chứng trước khi đổi trạng thái. Sổ mô tả mức sẵn sàng, không tự gửi dữ liệu cho cơ quan."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 105,
+    "path_en": "Analytics > Analytics",
+    "path_vi": "Phân tích > Phân tích (Analytics)",
+    "action_xmlid": "biz_bi_cms.action_bi_hub",
+    "action_tag": "biz_bi.hub",
+    "audience": "user",
+    "pages": {
+      "en": 72,
+      "vi": 70
+    },
+    "overview": {
+      "en": "Analytics is the reporting hub. Choose a dashboard or analysis relevant to your role, set its filters and check when the data was refreshed. Use drill-downs to understand a figure before sharing it. Saved reports can use different definitions from operational screens; compare their dates, scope and calculation rules.\nSearch dashboards finds a saved report. Continue where you left off opens recent work. Workspaces group General Analytics, Operations, Finance and Growth reports. Create Report or Create one starts report creation for a permitted user.",
+      "vi": "Phân tích là trung tâm báo cáo. Chọn bảng hoặc phân tích theo vai trò, đặt bộ lọc, kiểm tra lần làm mới dữ liệu. Mở chi tiết để hiểu số trước khi chia sẻ. Báo cáo lưu có thể dùng định nghĩa khác màn hình vận hành; so ngày, phạm vi, quy tắc tính.\nSearch dashboards tìm báo cáo lưu. Continue where you left off mở việc gần đây. Các không gian nhóm General Analytics, Operations, Finance, Growth. Create Report/Create one bắt đầu tạo báo cáo cho người có quyền."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 168,
+    "path_en": "Analytics > Data > Sources",
+    "path_vi": "Phân tích > Dữ liệu (Data) > Nguồn dữ liệu (Sources)",
+    "action_xmlid": "biz_bi.action_bi_source",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 36,
+      "vi": 35
+    },
+    "overview": {
+      "en": "Sources defines where analytical data comes from. Check source type, model or view, connection and sync status. Test Connection checks connectivity; Sync Now requests a refresh; Pipeline Editor opens transformation steps where supported. Keep connection secrets restricted and review the intended data scope before applying a source change.",
+      "vi": "Nguồn định nghĩa nơi lấy dữ liệu phân tích. Kiểm tra loại nguồn, mô hình/bảng, kết nối, trạng thái đồng bộ. Test Connection kiểm tra kết nối; Sync Now yêu cầu làm mới; Pipeline Editor mở bước biến đổi khi hỗ trợ. Hạn chế bí mật kết nối và xem phạm vi dữ liệu trước khi áp dụng thay đổi."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 165,
+    "path_en": "Analytics > Explore",
+    "path_vi": "Phân tích > Khám phá (Explore)",
+    "action_xmlid": "biz_bi.action_bi_explore",
+    "action_tag": "biz_bi.explore",
+    "audience": "user",
+    "pages": {
+      "en": 72,
+      "vi": 70
+    },
+    "overview": {
+      "en": "Explore is for asking a reporting question with a dataset. Choose the dataset, measures, grouping and filters, then run the analysis and inspect the result. Save or add a chart to a dashboard where the controls permit. Check the grain - what one row represents - so a join or grouping does not make a total misleading.",
+      "vi": "Khám phá dùng đặt câu hỏi trên bộ dữ liệu. Chọn bộ dữ liệu, chỉ số, nhóm, lọc, chạy và xem kết quả. Lưu hoặc thêm biểu đồ vào bảng khi được phép. Kiểm tra mỗi dòng đại diện điều gì để phép nối, nhóm không làm tổng sai nghĩa."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 169,
+    "path_en": "Analytics > Data > Datasets",
+    "path_vi": "Phân tích > Dữ liệu (Data) > Bộ dữ liệu (Datasets)",
+    "action_xmlid": "biz_bi.action_bi_dataset",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 36,
+      "vi": 35
+    },
+    "overview": {
+      "en": "Datasets defines a reporting model built from sources. Review nodes, relationships, fields, row grain and company scope. Visual Modeler helps inspect the structure; Scan Fields refreshes field discovery. Publish or Re-publish makes the model available to reports; Unpublish removes that availability. Check totals and joins before publishing a changed dataset.",
+      "vi": "Bộ dữ liệu định nghĩa mô hình báo cáo từ nguồn. Xem nút, quan hệ, trường, mức dòng, phạm vi công ty. Visual Modeler giúp xem cấu trúc; Scan Fields dò trường. Publish/Re-publish đưa mô hình vào báo cáo; Unpublish ngừng cung cấp. Kiểm tra tổng, phép nối trước khi công bố thay đổi."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 166,
+    "path_en": "Analytics > Dashboards & schedules",
+    "path_vi": "Phân tích > Bảng số liệu (Dashboards & schedules)",
+    "action_xmlid": "biz_bi.action_bi_dashboard_backend",
+    "action_tag": null,
+    "audience": "user",
+    "pages": {
+      "en": 72,
+      "vi": 70
+    },
+    "overview": {
+      "en": "Dashboards & schedules manages saved dashboards and scheduled delivery. Open a dashboard to review its owner, sharing mode, refresh interval and schedule. Check recipient list, interval and send time before enabling a schedule. The report can contain private information, so only share with authorised recipients and verify filters first.",
+      "vi": "Bảng điều khiển và lịch gửi quản lý bảng đã lưu, gửi định kỳ. Mở để xem chủ sở hữu, cách chia sẻ, khoảng làm mới, lịch. Kiểm tra người nhận, chu kỳ, giờ trước khi bật. Báo cáo có thể chứa thông tin riêng; chỉ chia sẻ đúng người được phép, kiểm tra bộ lọc trước."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 171,
+    "path_en": "Analytics > Data > Refresh jobs",
+    "path_vi": "Phân tích > Dữ liệu (Data) > Lịch làm mới (Refresh jobs)",
+    "action_xmlid": "biz_bi.action_bi_refresh_job",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 36,
+      "vi": 35
+    },
+    "overview": {
+      "en": "Refresh jobs controls scheduled dataset refresh. Check dataset, interval, state, last refresh, duration and next run. Refresh Now requests an immediate update when permitted. After running, inspect success and freshness rather than assuming the dashboard changed. A failed refresh can leave an otherwise working report showing older data.",
+      "vi": "Tác vụ làm mới điều khiển lịch cập nhật bộ dữ liệu. Kiểm tra bộ, chu kỳ, trạng thái, lần trước, thời lượng, lần tới. Refresh Now yêu cầu cập nhật ngay khi được phép. Sau chạy, xem thành công và độ mới, không giả định bảng đã đổi. Lỗi làm mới có thể khiến báo cáo vẫn hiện dữ liệu cũ."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 167,
+    "path_en": "Analytics > Data",
+    "path_vi": "Phân tích > Dữ liệu (Data)",
+    "action_xmlid": null,
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 36,
+      "vi": 35
+    },
+    "overview": {
+      "en": "Data groups the reporting foundation: sources, datasets, refresh jobs, pipelines, model and glossary. Administrators maintain these; report readers use the resulting dashboards.",
+      "vi": "Dữ liệu nhóm nền tảng báo cáo: nguồn, bộ dữ liệu, làm mới, luồng, mô hình, thuật ngữ. Quản trị duy trì; người đọc dùng bảng kết quả."
+    },
+    "review": "Menu heading and child entries"
+  },
+  {
+    "menu_id": 172,
+    "path_en": "Analytics > Data > Pipelines",
+    "path_vi": "Phân tích > Dữ liệu (Data) > Luồng dữ liệu (Pipelines)",
+    "action_xmlid": "biz_bi.action_bi_pipeline_editor",
+    "action_tag": "biz_bi.pipeline",
+    "audience": "admin",
+    "pages": {
+      "en": 36,
+      "vi": 35
+    },
+    "overview": {
+      "en": "Pipelines is the visual editor for preparing source data. Inspect each transformation in order, including filters, calculated values and joins. Validate before applying a change, then compare sample rows and totals. A pipeline affects downstream datasets and reports; coordinate changes with the reporting owner.\nChoose the source at the top. + Add Step inserts a transformation. Validate & Apply checks and applies the pipeline; the cleaned-data preview shows the result. Review the preview before relying on downstream reports.",
+      "vi": "Luồng dữ liệu là trình biên tập chuẩn bị dữ liệu nguồn. Xem từng phép biến đổi theo thứ tự, gồm lọc, giá trị tính, nối. Kiểm tra hợp lệ trước khi áp dụng rồi so dòng mẫu, tổng. Luồng ảnh hưởng bộ dữ liệu, báo cáo phía sau; phối hợp người phụ trách báo cáo khi sửa.\nChọn nguồn phía trên. + Add Step thêm phép biến đổi. Validate & Apply kiểm tra, áp dụng; phần xem trước dữ liệu sạch hiện kết quả. Xem trước khi dùng báo cáo phía sau."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 173,
+    "path_en": "Analytics > Data > Semantic model",
+    "path_vi": "Phân tích > Dữ liệu (Data) > Mô hình ngữ nghĩa (Semantic model)",
+    "action_xmlid": "biz_bi.action_bi_modeler",
+    "action_tag": "biz_bi.modeler",
+    "audience": "admin",
+    "pages": {
+      "en": 37,
+      "vi": 35
+    },
+    "overview": {
+      "en": "Semantic model explains how reporting sources relate and how fields are used. Review the root, relationships, cardinality, dimensions and measures. Use it to keep business definitions consistent rather than building a different meaning into every chart. Validate duplicate counting and company scope before publishing or using a changed model.\nOpen in Explore opens the selected model for analysis. Rescan Fields refreshes discovered fields. Inspect business name, type, role, default aggregation, folder and visibility in the field panel. Re-publish updates the published model after review.",
+      "vi": "Mô hình ngữ nghĩa mô tả quan hệ nguồn và cách dùng trường trong báo cáo. Xem gốc, quan hệ, số lượng liên kết, chiều và chỉ số. Dùng để giữ định nghĩa nghiệp vụ thống nhất thay vì mỗi biểu đồ một nghĩa. Kiểm tra đếm trùng, phạm vi công ty trước khi công bố hoặc dùng mô hình sửa.\nOpen in Explore mở mô hình chọn để phân tích. Rescan Fields dò lại trường. Xem tên nghiệp vụ, kiểu, vai trò, tổng hợp mặc định, thư mục, hiển thị trong khung trường. Re-publish cập nhật mô hình công bố sau xem xét."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 174,
+    "path_en": "Analytics > Data > Glossary",
+    "path_vi": "Phân tích > Dữ liệu (Data) > Bảng thuật ngữ (Glossary)",
+    "action_xmlid": "biz_bi.action_bi_glossary",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 37,
+      "vi": 36
+    },
+    "overview": {
+      "en": "Glossary is the shared dictionary for report terms. Search the term and read its definition, formula note and owner. Use the same meaning when presenting a dashboard or comparing clinics. If a definition is unclear, ask its owner before changing it; wording alone does not automatically change a dataset calculation.",
+      "vi": "Thuật ngữ là từ điển dùng chung cho báo cáo. Tìm từ, đọc định nghĩa, ghi chú công thức, người phụ trách. Dùng cùng nghĩa khi trình bày hoặc so cơ sở. Nếu chưa rõ, hỏi người phụ trách trước khi sửa; đổi câu chữ không tự đổi phép tính bộ dữ liệu."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 244,
+    "path_en": "Learn > Task guides and videos",
+    "path_vi": "Học tập > Hướng dẫn và video (Task guides and videos)",
+    "action_xmlid": "health_learn.action_learning_library",
+    "action_tag": "carejiyo_learning_library",
+    "audience": "user",
+    "pages": {
+      "en": 73,
+      "vi": 71
+    },
+    "overview": {
+      "en": "Task guides and videos is the on-demand learning library. Search by task or module, open a guide, read the steps and play its video or relevant chapter. Use the contextual help and coaching links where available. Watching a guide does not execute the task; return to your own record and check its details before acting.",
+      "vi": "Hướng dẫn và video là thư viện học khi cần. Tìm theo việc hoặc phân hệ, mở hướng dẫn, đọc bước, xem video hoặc đoạn phù hợp. Dùng trợ giúp theo ngữ cảnh, hướng dẫn khi có. Xem hướng dẫn không thực hiện việc; trở lại hồ sơ của bạn và kiểm tra trước khi thao tác."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 107,
+    "path_en": "Learn > Training",
+    "path_vi": "Học tập > Đào tạo (Training)",
+    "action_xmlid": "health_learn.action_learn_journey",
+    "action_tag": "learn_journey",
+    "audience": "user",
+    "pages": {
+      "en": 73,
+      "vi": 71
+    },
+    "overview": {
+      "en": "Training is the structured learning journey. Open a station, read why and when the task matters, work through its lessons and answer the understanding checks. Progress helps you resume learning. A completed lesson records learning progress, not authorisation for a clinical or financial action and not completion of a real client's work.",
+      "vi": "Đào tạo là lộ trình học có cấu trúc. Mở chặng, đọc mục đích, thời điểm, làm bài học, trả lời kiểm tra hiểu. Tiến độ giúp tiếp tục học. Hoàn tất bài ghi việc học, không cấp quyền thao tác lâm sàng/tài chính và không hoàn tất công việc của khách hàng thật."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 160,
+    "path_en": "Learn > Training admin > Lessons",
+    "path_vi": "Học tập > Quản lý đào tạo (Training admin) > Bài học (Lessons)",
+    "action_xmlid": "health_learn.action_learn_lesson",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 38,
+      "vi": 37
+    },
+    "overview": {
+      "en": "Lessons maintains the content within a training station. Review goal, duration, ordered steps, tips and understanding checks. Each check needs the intended answers and useful feedback. Preview the learner experience after changes. Keep screen names and instructions aligned with the application and maintain both languages.",
+      "vi": "Bài học duy trì nội dung trong chặng đào tạo. Xem mục tiêu, thời lượng, bước theo thứ tự, mẹo, câu hỏi kiểm tra. Mỗi câu cần đáp án dự kiến và phản hồi hữu ích. Xem thử trải nghiệm sau sửa. Giữ tên màn hình, chỉ dẫn đúng ứng dụng và duy trì hai ngôn ngữ."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 159,
+    "path_en": "Learn > Training admin",
+    "path_vi": "Học tập > Quản lý đào tạo (Training admin)",
+    "action_xmlid": null,
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 38,
+      "vi": 37
+    },
+    "overview": {
+      "en": "Training admin groups learning content, journey structure, progress, activity records and clinic wording. It is separate from the learner's Training screen.",
+      "vi": "Quản trị đào tạo nhóm nội dung, cấu trúc, tiến độ, sự kiện, câu chữ phòng khám. Khác màn hình Đào tạo của người học."
+    },
+    "review": "Menu heading and child entries"
+  },
+  {
+    "menu_id": 161,
+    "path_en": "Learn > Training admin > Stations",
+    "path_vi": "Học tập > Quản lý đào tạo (Training admin) > Trạm học (Stations)",
+    "action_xmlid": "health_learn.action_learn_station",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 38,
+      "vi": 37
+    },
+    "overview": {
+      "en": "Stations organises the training journey. Set the title, section, sequence, duration and prerequisite or previous station where supported. The outline explains what, why, when and prerequisites; lessons supply the steps. Check active and required settings and preview the journey so learners are not sent to a missing or unsuitable next station.",
+      "vi": "Chặng tổ chức lộ trình đào tạo. Đặt tên, phần, thứ tự, thời lượng, điều kiện hoặc chặng trước khi hỗ trợ. Đề cương giải thích việc, lý do, thời điểm, điều kiện; bài học có bước. Kiểm tra hoạt động, bắt buộc, xem thử để người học không vào chặng thiếu hoặc không phù hợp."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 162,
+    "path_en": "Learn > Training admin > Learner progress",
+    "path_vi": "Học tập > Quản lý đào tạo (Training admin) > Tiến độ học viên (Learner progress)",
+    "action_xmlid": "health_learn.action_learn_progress",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 38,
+      "vi": 37
+    },
+    "overview": {
+      "en": "Learner progress shows each person's station state, position, attempts and completion time. Use it to identify who may need help or where to resume. Compare the actual learning activity before interpreting repeated attempts. Do not treat course completion alone as proof of competence or permission to perform restricted work.",
+      "vi": "Tiến độ người học cho biết trạng thái chặng, vị trí, lần thử, giờ hoàn tất. Dùng tìm người cần giúp hoặc chỗ tiếp tục. Xem hoạt động học thực tế trước khi diễn giải nhiều lần thử. Hoàn tất khóa riêng không chứng minh năng lực hay quyền làm việc hạn chế."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 163,
+    "path_en": "Learn > Training admin > Learning events",
+    "path_vi": "Học tập > Quản lý đào tạo (Training admin) > Sự kiện học tập (Learning events)",
+    "action_xmlid": "health_learn.action_learn_event",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 38,
+      "vi": 37
+    },
+    "overview": {
+      "en": "Learning events is the timeline of learning interactions. Filter by learner, station, event kind, screen, language or time to investigate progress or usability questions. It supports the progress record but is not a clinical record. Limit access to those responsible for learning support and use the event context before drawing conclusions.",
+      "vi": "Sự kiện học là dòng thời gian tương tác học tập. Lọc người, chặng, loại, màn hình, ngôn ngữ, giờ để kiểm tra tiến độ hoặc trải nghiệm. Nó hỗ trợ tiến độ, không phải hồ sơ lâm sàng. Giới hạn cho người phụ trách hỗ trợ và đọc ngữ cảnh trước khi kết luận."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 164,
+    "path_en": "Learn > Training admin > Training wording",
+    "path_vi": "Học tập > Quản lý đào tạo (Training admin) > Từ ngữ đào tạo (Training wording)",
+    "action_xmlid": "health_learn.action_learn_override",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 38,
+      "vi": 37
+    },
+    "overview": {
+      "en": "Training wording stores clinic-specific wording overrides. Check the key, value, note and company before editing. Change only the intended phrase and preview affected lessons in each language. An override changes the explanation shown to learners; it does not change the underlying business workflow or access permissions.",
+      "vi": "Câu chữ đào tạo lưu nội dung thay riêng của phòng khám. Kiểm tra khóa, giá trị, ghi chú, công ty trước khi sửa. Chỉ đổi câu cần và xem thử bài bị ảnh hưởng ở mỗi ngôn ngữ. Thay câu chữ đổi giải thích cho người học, không đổi luồng nghiệp vụ hay quyền truy cập."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 24,
+    "path_en": "Settings > Overview",
+    "path_vi": "Cài đặt > Tổng quan (Overview)",
+    "action_xmlid": "health_landing.action_admin_dashboard",
+    "action_tag": "admin_dashboard",
+    "audience": "admin",
+    "pages": {
+      "en": 39,
+      "vi": 38
+    },
+    "overview": {
+      "en": "Overview is the administrator's starting dashboard. Use its shortcuts to the relevant setup area and inspect any attention items. Confirm the current company before editing shared data. This overview points to work; each linked configuration screen has its own save, approval or validation process.",
+      "vi": "Tổng quan là bảng bắt đầu của quản trị viên. Dùng lối tắt đến khu vực cấu hình, xem mục cần chú ý. Xác nhận công ty trước khi sửa dữ liệu dùng chung. Tổng quan chỉ dẫn đến việc; từng màn hình cấu hình có cách lưu, duyệt, kiểm tra riêng."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 25,
+    "path_en": "Settings > People > Users & Roles",
+    "path_vi": "Cài đặt > Nhân sự (People) > Người dùng & vai trò (Users & Roles)",
+    "action_xmlid": "health_landing.action_admin_users",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 39,
+      "vi": 38
+    },
+    "overview": {
+      "en": "Users & Roles maintains named login accounts. Search for the person first, then check active status, login, company and assigned access. Use the supported creation or deactivation process and link the correct staff record. Account changes and staff scheduling are separate: when disabling someone, review future assignments and delegated access too.",
+      "vi": "Người dùng và vai trò duy trì tài khoản đăng nhập cá nhân. Tìm người trước, kiểm tra hoạt động, tên đăng nhập, công ty, quyền. Dùng quy trình tạo hoặc tắt được hỗ trợ, nối đúng nhân viên. Tài khoản và điều phối riêng nhau: khi tắt người, xem cả phân công tương lai, quyền ủy quyền."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 26,
+    "path_en": "Settings > Master data > Facilities",
+    "path_vi": "Cài đặt > Danh mục (Master data) > Cơ sở (Facilities)",
+    "action_xmlid": "health_landing.action_admin_facilities",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 39,
+      "vi": 38
+    },
+    "overview": {
+      "en": "Facilities defines the clinic locations used by staffing and care workflows. Check name, address, contact and associated geographic information. Search before adding another facility with a similar name. Review affected staff and client links after a correction so reports and appointments continue to point to the intended location.",
+      "vi": "Cơ sở định nghĩa địa điểm dùng cho nhân sự, chăm sóc. Kiểm tra tên, địa chỉ, liên lạc, địa lý liên quan. Tìm trước khi thêm cơ sở tên gần giống. Xem lại liên kết nhân viên, khách hàng sau sửa để báo cáo, lịch vẫn trỏ đúng nơi."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 31,
+    "path_en": "Settings > Records > Audit Log",
+    "path_vi": "Cài đặt > Hồ sơ (Records) > Nhật ký kiểm tra (Audit Log)",
+    "action_xmlid": "health_landing.action_admin_audit",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 43,
+      "vi": 41
+    },
+    "overview": {
+      "en": "Audit Log records supported changes to business records. Filter by time, model, record or user, then inspect the recorded action and details. Use it to investigate what changed and follow the link to the source when authorised. Audit coverage depends on what the application records; the absence of a row is not proof that nothing happened.",
+      "vi": "Nhật ký kiểm toán ghi thay đổi được hỗ trợ của hồ sơ nghiệp vụ. Lọc giờ, loại, hồ sơ hoặc người rồi xem hành động, chi tiết. Dùng tìm điều đã đổi và mở nguồn khi có quyền. Phạm vi tùy ứng dụng ghi gì; không có dòng chưa chứng minh không có sự kiện."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 83,
+    "path_en": "Settings > Connections > Channels (setup)",
+    "path_vi": "Cài đặt > Kết nối (Connections) > Thiết lập kênh (Channels (setup))",
+    "action_xmlid": "health_care_command_channels.action_care_channel_connection",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 41,
+      "vi": 40
+    },
+    "overview": {
+      "en": "Channels (setup) maintains provider connections and routing. Check channel, company, connected resource and connection status. Configure credentials only through the intended restricted fields, then validate inbound routing and authorised outbound delivery. Keep setup separate from the day-to-day conversation queue; a saved connection may still need provider approval or configuration.",
+      "vi": "Kênh (cấu hình) duy trì kết nối nhà cung cấp, định tuyến. Kiểm tra kênh, công ty, tài nguyên, trạng thái. Chỉ đặt thông tin xác thực trong trường hạn chế phù hợp rồi xác minh định tuyến đến, gửi đi được phép. Tách cấu hình khỏi hàng chờ hội thoại; kết nối đã lưu có thể còn cần duyệt hoặc cấu hình phía nhà cung cấp."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 27,
+    "path_en": "Settings > Master data > Pricing",
+    "path_vi": "Cài đặt > Danh mục (Master data) > Bảng giá (Pricing)",
+    "action_xmlid": "health_landing.action_admin_services",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 40,
+      "vi": 39
+    },
+    "overview": {
+      "en": "Pricing opens the service/product catalogue and its pricing workflow. Check service, unit, active status and linked rules before changing a price. Use the relevant effective dates, area, staff/service conditions and approval controls. Validate a representative quote after an authorised change. A catalogue label, a price rule and an already posted invoice are different records.",
+      "vi": "Giá mở danh mục dịch vụ/sản phẩm và luồng tính giá. Kiểm tra dịch vụ, đơn vị, hoạt động, quy tắc trước khi sửa. Dùng ngày hiệu lực, khu vực, điều kiện nhân viên/dịch vụ, duyệt phù hợp. Kiểm tra báo giá mẫu sau sửa được phép. Nhãn danh mục, quy tắc giá, hóa đơn ghi sổ là hồ sơ khác nhau."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 84,
+    "path_en": "Settings > Connections > Reply Templates",
+    "path_vi": "Cài đặt > Kết nối (Connections) > Mẫu trả lời (Reply Templates)",
+    "action_xmlid": "health_care_command.action_care_reply_template",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 41,
+      "vi": 40
+    },
+    "overview": {
+      "en": "Reply Templates maintains reusable message wording. Review the title, content, language and intended situation before saving. Check any placeholders against the actual client or conversation when using the template. A template saves typing; it does not replace consent, recipient checks or the staff member's responsibility to review the message.",
+      "vi": "Mẫu trả lời duy trì câu chữ tái sử dụng. Xem tên, nội dung, ngôn ngữ, tình huống trước khi lưu. Khi dùng, kiểm tra chỗ thay giá trị với khách hàng hoặc hội thoại thực. Mẫu tiết kiệm gõ, không thay đồng ý, xác nhận người nhận hay trách nhiệm đọc lại của nhân viên."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 102,
+    "path_en": "Settings > Records > Data Lifecycle",
+    "path_vi": "Cài đặt > Hồ sơ (Records) > Vòng đời dữ liệu (Data Lifecycle)",
+    "action_xmlid": "health_base.action_health_archive_log",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 43,
+      "vi": 41
+    },
+    "overview": {
+      "en": "Data Lifecycle is the archive/lifecycle history. Review the affected record, action, actor and time to understand retention or archival activity. Check the source and applicable holds before taking further lifecycle action. Archiving, recoverable deletion and permanent removal have different consequences; use the clinic's approved procedure for each.",
+      "vi": "Vòng đời dữ liệu là lịch sử lưu trữ/xử lý vòng đời. Xem hồ sơ, hành động, người, giờ để hiểu việc lưu giữ, lưu trữ. Kiểm tra nguồn và mục giữ áp dụng trước khi xử lý tiếp. Lưu trữ, xóa có thể khôi phục, xóa vĩnh viễn khác hậu quả; dùng quy trình được duyệt cho từng loại."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 140,
+    "path_en": "Settings > People > Access & roles",
+    "path_vi": "Cài đặt > Nhân sự (People) > Quyền truy cập & vai trò (Access & roles)",
+    "action_xmlid": "biz_access.action_biz_access_home",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 39,
+      "vi": 38
+    },
+    "overview": {
+      "en": "Access & roles opens the Access & delegation workspace. Its current CareJiyo tabs are Roles, People, Screens and Hand-overs. Use Roles to understand abilities, People to inspect an individual, Screens to explain menu visibility, and Hand-overs to review temporary cover. See it as previews another person's access without signing in as them. The detailed access walkthrough follows this directory.",
+      "vi": "Quyền và vai trò mở không gian Quyền và ủy quyền. CareJiyo hiện có thẻ Roles, People, Screens, Hand-overs. Roles giải thích khả năng; People xem cá nhân; Screens giải thích thấy trình đơn; Hand-overs xem thay tạm thời. See it as xem trước quyền người khác, không đăng nhập thành họ. Hướng dẫn chi tiết nằm sau danh mục này."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 202,
+    "path_en": "Settings > People",
+    "path_vi": "Cài đặt > Nhân sự (People)",
+    "action_xmlid": null,
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 39,
+      "vi": 38
+    },
+    "overview": {
+      "en": "People separates login accounts, access explanations and assignable healthcare staff profiles. Check all three when onboarding or changing a person's duties.",
+      "vi": "Nhân sự tách tài khoản đăng nhập, giải thích quyền, hồ sơ nhân viên y tế để phân công. Kiểm tra cả ba khi tiếp nhận hoặc đổi nhiệm vụ."
+    },
+    "review": "Menu heading and child entries"
+  },
+  {
+    "menu_id": 28,
+    "path_en": "Settings > People > Healthcare Staff",
+    "path_vi": "Cài đặt > Nhân sự (People) > Nhân viên y tế (Healthcare Staff)",
+    "action_xmlid": "health_landing.action_admin_staff",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 39,
+      "vi": 38
+    },
+    "overview": {
+      "en": "Healthcare Staff maintains the work profile used for assignment: employee, role, skills, facility, service area and availability details. Confirm its link to the person's login before assigning visits. Changing a staff record does not automatically grant every menu permission; check business roles and catchment access separately.",
+      "vi": "Nhân viên y tế duy trì hồ sơ dùng phân công: nhân viên, vai trò, kỹ năng, cơ sở, địa bàn, thời gian. Xác nhận liên kết đăng nhập trước khi giao buổi. Sửa hồ sơ nhân viên không tự cấp mọi quyền trình đơn; kiểm tra vai trò nghiệp vụ và quyền khu vực riêng."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 29,
+    "path_en": "Settings > Master data > Equipment",
+    "path_vi": "Cài đặt > Danh mục (Master data) > Thiết bị (Equipment)",
+    "action_xmlid": "health_landing.action_admin_equipment",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 40,
+      "vi": 39
+    },
+    "overview": {
+      "en": "Equipment is the portable-equipment register used by the clinic. Review identification, type, location, availability and related operational details shown on the form. Keep an existing item's identity stable when updating its status. Check the affected visit or assignment when equipment availability changes.",
+      "vi": "Thiết bị là sổ thiết bị di động phòng khám. Xem định danh, loại, vị trí, khả dụng và chi tiết vận hành trên biểu mẫu. Giữ định danh của vật hiện có ổn định khi đổi trạng thái. Kiểm tra buổi hoặc phân công liên quan khi khả dụng thay đổi."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 98,
+    "path_en": "Settings > Records > Consent Check Log",
+    "path_vi": "Cài đặt > Hồ sơ (Records) > Nhật ký kiểm tra đồng thuận (Consent Check Log)",
+    "action_xmlid": "health_consent.action_health_consent_check_log",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 43,
+      "vi": 41
+    },
+    "overview": {
+      "en": "Consent Check Log records whether a consent check passed or failed for an attempted activity. Inspect client reference, type, scope, result, consent, user and source. Use it to explain why a communication or other action was permitted or blocked. Correct consent in its own record; this log is evidence of the check, not the consent itself.",
+      "vi": "Nhật ký kiểm tra đồng ý ghi đạt/không đạt khi thử hoạt động. Xem tham chiếu khách hàng, loại, phạm vi, kết quả, đồng ý, người, nguồn. Dùng giải thích hành động được phép hay chặn. Sửa đồng ý trên hồ sơ riêng; nhật ký là bằng chứng kiểm tra, không phải sự đồng ý."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 104,
+    "path_en": "Settings > Connections > Channel Go-Live",
+    "path_vi": "Cài đặt > Kết nối (Connections) > Đưa kênh vào hoạt động (Channel Go-Live)",
+    "action_xmlid": "health_care_command_channels.action_channel_golive_studio",
+    "action_tag": "channel_golive_studio",
+    "audience": "admin",
+    "pages": {
+      "en": 42,
+      "vi": 40
+    },
+    "overview": {
+      "en": "Channel Go-Live is the guided readiness workspace for channel activation. Follow the displayed steps to review connection, routing and readiness evidence. Distinguish a local configuration check from an actual provider exchange. Resolve failed checks before relying on the channel for clients, and verify results in Channel messages and Channel audit.\nProvider cards cover Meta, Zalo, Google and Microsoft. Start or Continue opens that provider's guided application-registration steps. The Calls section links to Channel Center because phone setup follows a different provider process. Read readiness and pending steps rather than assuming all providers are enabled.",
+      "vi": "Kích hoạt kênh là không gian hướng dẫn kiểm tra sẵn sàng. Theo bước để xem kết nối, định tuyến, bằng chứng. Phân biệt kiểm tra cấu hình nội bộ với trao đổi thật qua nhà cung cấp. Xử lý mục lỗi trước khi dùng cho khách, xác minh ở Tin nhắn kênh và Nhật ký kênh.\nThẻ nhà cung cấp gồm Meta, Zalo, Google, Microsoft. Start/Continue mở bước đăng ký ứng dụng của nhà cung cấp đó. Phần Calls nối Trung tâm kênh vì thiết lập điện thoại theo quy trình khác. Đọc mức sẵn sàng, bước còn lại thay vì cho rằng tất cả đã bật."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 203,
+    "path_en": "Settings > Master data",
+    "path_vi": "Cài đặt > Danh mục (Master data)",
+    "action_xmlid": null,
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 39,
+      "vi": 38
+    },
+    "overview": {
+      "en": "Master data contains reusable definitions used throughout the clinic: facilities, prices, equipment, calendars, clinical catalogues and form controls. Review downstream records before changing a shared definition.",
+      "vi": "Dữ liệu gốc chứa định nghĩa dùng chung: cơ sở, giá, thiết bị, lịch, danh mục lâm sàng, điều khiển biểu mẫu. Xem hồ sơ dùng định nghĩa trước khi sửa."
+    },
+    "review": "Menu heading and child entries"
+  },
+  {
+    "menu_id": 30,
+    "path_en": "Settings > Master data > Public Holidays",
+    "path_vi": "Cài đặt > Danh mục (Master data) > Ngày nghỉ lễ (Public Holidays)",
+    "action_xmlid": "health_landing.action_admin_holidays",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 40,
+      "vi": 39
+    },
+    "overview": {
+      "en": "Public Holidays maintains calendar exceptions used in scheduling and related rules. Confirm the date range, description and applicable calendar. Review holiday-sensitive quotes and staff planning after a change. This is not the Rights Calendar used for information-rights request deadlines.",
+      "vi": "Ngày lễ duy trì ngoại lệ lịch dùng điều phối và quy tắc liên quan. Xác nhận khoảng ngày, mô tả, lịch áp dụng. Xem báo giá có yếu tố ngày lễ và kế hoạch nhân viên sau sửa. Đây không phải Lịch quyền cá nhân dùng hạn yêu cầu thông tin."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 80,
+    "path_en": "Settings > Connections > Website Connector",
+    "path_vi": "Cài đặt > Kết nối (Connections) > Kết nối website (Website Connector)",
+    "action_xmlid": "health_web_leads.action_web_leads_connector",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 42,
+      "vi": 41
+    },
+    "overview": {
+      "en": "Website Connector defines how authorised website forms send enquiries to the clinic. Check website/origin, connection settings, field and catchment mapping, and the displayed validation results. Confirm that a submission creates or links the intended contact and touchpoint. Keep integration secrets out of public page content and avoid mapping the caller as the patient by mistake.",
+      "vi": "Kết nối website định nghĩa cách biểu mẫu được phép gửi yêu cầu vào phòng khám. Kiểm tra website/nguồn, cấu hình, ghép trường/khu vực, kết quả xác minh. Xác nhận lần gửi tạo hoặc nối đúng liên hệ, điểm chạm. Không để bí mật tích hợp trong trang công khai và tránh ghép nhầm người gọi thành bệnh nhân."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 204,
+    "path_en": "Settings > Connections",
+    "path_vi": "Cài đặt > Kết nối (Connections)",
+    "action_xmlid": null,
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 41,
+      "vi": 40
+    },
+    "overview": {
+      "en": "Connections groups messaging, website, advertising and telephone setup. Keep provider credentials and activation work with authorised administrators.",
+      "vi": "Kết nối nhóm cấu hình tin nhắn, website, quảng cáo, điện thoại. Giao thông tin xác thực, kích hoạt nhà cung cấp cho quản trị có quyền."
+    },
+    "review": "Menu heading and child entries"
+  },
+  {
+    "menu_id": 48,
+    "path_en": "Settings > Master data > Observation Types",
+    "path_vi": "Cài đặt > Danh mục (Master data) > Loại quan sát (Observation Types)",
+    "action_xmlid": "health_vitals.action_health_vitals_type",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 40,
+      "vi": 39
+    },
+    "overview": {
+      "en": "Observation Types defines what a measurement means: name, value type, units and coding details. Maintain the catalogue with clinical oversight. Check existing observations and forms that use a type before changing it. A unit or type change can alter interpretation; do not repurpose an existing type for a different measurement.",
+      "vi": "Loại quan sát định nghĩa ý nghĩa số đo: tên, kiểu giá trị, đơn vị, mã. Duy trì dưới giám sát lâm sàng. Xem quan sát, biểu mẫu dùng loại trước khi sửa. Đổi đơn vị hoặc kiểu có thể đổi cách hiểu; không dùng lại loại cũ cho phép đo khác."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 183,
+    "path_en": "Settings > Connections > Google Ads application",
+    "path_vi": "Cài đặt > Kết nối (Connections) > Ứng dụng Google Ads (Google Ads application)",
+    "action_xmlid": "health_google_ads.action_google_ads_platform_config",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 42,
+      "vi": 41
+    },
+    "overview": {
+      "en": "Google Ads application is the restricted platform configuration for the advertising integration. Its credentials and application-level settings are separate from the clinic's advertising account and reports. Platform administrators maintain it. Clinic staff should use CRM > Web & Ads > Google Ads and ask the administrator to resolve application-connection issues.",
+      "vi": "Ứng dụng Google Ads là cấu hình nền tảng hạn chế của tích hợp quảng cáo. Thông tin xác thực, thiết lập cấp ứng dụng khác tài khoản quảng cáo, báo cáo phòng khám. Quản trị nền tảng duy trì. Nhân viên dùng CRM > Web & Ads > Google Ads và nhờ quản trị xử lý lỗi kết nối cấp ứng dụng."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 205,
+    "path_en": "Settings > Records",
+    "path_vi": "Cài đặt > Hồ sơ (Records)",
+    "action_xmlid": null,
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 42,
+      "vi": 41
+    },
+    "overview": {
+      "en": "Records groups business audit history, archival history and consent-check evidence. Choose the log matching the event you are investigating.",
+      "vi": "Hồ sơ nhóm lịch sử kiểm toán nghiệp vụ, lưu trữ, bằng chứng kiểm tra đồng ý. Chọn nhật ký đúng sự kiện cần tìm."
+    },
+    "review": "Menu heading and child entries"
+  },
+  {
+    "menu_id": 38,
+    "path_en": "Settings > Menu",
+    "path_vi": "Cài đặt > Menu",
+    "action_xmlid": "health_cms_sidebar.action_cms_sidebar_item",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 43,
+      "vi": 42
+    },
+    "overview": {
+      "en": "Menu maintains the navigation entries: label, section, parent, order and destination action. Check both the top-level tab and its child entries before changing placement. Menu configuration determines where a screen appears; access rules determine who may use it. Preview the affected roles and confirm links still open the intended screen after a change.",
+      "vi": "Trình đơn duy trì mục điều hướng: nhãn, khu vực, cha, thứ tự, nơi mở. Kiểm tra cả thẻ chính, mục con trước khi đổi vị trí. Cấu hình trình đơn quyết định nơi xuất hiện; quy tắc quyền quyết định ai dùng. Xem thử vai trò bị ảnh hưởng, xác nhận liên kết vẫn mở đúng màn hình sau đổi."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 53,
+    "path_en": "Settings > Master data > Medication Catalog",
+    "path_vi": "Cài đặt > Danh mục (Master data) > Danh mục thuốc (Medication Catalog)",
+    "action_xmlid": "health_emar.action_health_medication_emar",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 40,
+      "vi": 39
+    },
+    "overview": {
+      "en": "Medication Catalog defines medicines that prescribers can select. Check the medicine identity, units and available safety/reference information. Avoid duplicate spellings for the same medicine and follow the clinic's approval process. Updating the catalogue does not itself authorise a prescription or record an administration.",
+      "vi": "Danh mục thuốc định nghĩa thuốc để chọn khi kê. Kiểm tra định danh, đơn vị, thông tin an toàn/tham chiếu hiện có. Tránh nhiều cách viết trùng cho một thuốc và theo quy trình duyệt. Cập nhật danh mục không tự cho phép kê hay ghi đã dùng thuốc."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 190,
+    "path_en": "Settings > Connections > Phone system",
+    "path_vi": "Cài đặt > Kết nối (Connections) > Tổng đài điện thoại (Phone system)",
+    "action_xmlid": "health_voip24h.action_voip_config",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 42,
+      "vi": 41
+    },
+    "overview": {
+      "en": "Phone system maintains the connection to the telephony provider. Check provider settings, connection state and synchronisation options in the form. Coordinate changes with the phone administrator and confirm calls appear with correct direction, matching and timing. Configuring a provider does not automatically assign every extension to a staff member.",
+      "vi": "Hệ thống điện thoại duy trì kết nối nhà cung cấp. Kiểm tra thiết lập, trạng thái, tùy chọn đồng bộ trên biểu mẫu. Phối hợp quản trị điện thoại khi đổi, xác nhận cuộc gọi có đúng chiều, ghép, giờ. Cấu hình nhà cung cấp không tự gán mọi máy nhánh cho nhân viên."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 33,
+    "path_en": "Settings > Settings",
+    "path_vi": "Cài đặt > Cài đặt (Settings)",
+    "action_xmlid": "health_landing.action_admin_settings",
+    "action_tag": "admin_settings",
+    "audience": "admin",
+    "pages": {
+      "en": 43,
+      "vi": 42
+    },
+    "overview": {
+      "en": "Settings opens the clinic's configuration workspace. Use the named categories and read each setting's explanation before changing it. Record the business purpose and verify the affected workflow after saving. Not every option belongs to everyday clinic users; leave technical or provider-specific settings to the responsible administrator.\nIts tiles are General Settings, Company Profile, Access & roles, Pricing Engines, Field Requirements and Form Studio. General Settings opens system-wide options; Pricing Engines opens pricing-rule configuration. The other tiles lead to the corresponding dedicated screens described in this guide.",
+      "vi": "Cài đặt mở không gian cấu hình phòng khám. Dùng nhóm có tên và đọc giải thích trước khi sửa. Ghi mục đích nghiệp vụ, kiểm tra luồng bị ảnh hưởng sau lưu. Không phải tùy chọn nào cũng dành cho nhân viên thường; giao thiết lập kỹ thuật, nhà cung cấp cho quản trị phụ trách.\nCác ô là General Settings, Company Profile, Access & roles, Pricing Engines, Field Requirements, Form Studio. General Settings mở tùy chọn toàn hệ thống; Pricing Engines mở cấu hình quy tắc giá. Các ô khác dẫn màn hình riêng được giải thích trong hướng dẫn."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 56,
+    "path_en": "Settings > Master data > Form Templates",
+    "path_vi": "Cài đặt > Danh mục (Master data) > Mẫu biểu (Form Templates)",
+    "action_xmlid": "health_forms.action_health_form_template",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 40,
+      "vi": 39
+    },
+    "overview": {
+      "en": "Form Templates defines assessment questions and scoring. Review Questions, Scoring Bands, Description and Preview; maintain English and Vietnamese labels. Publish makes an approved version available, Retire stops its use, and New Version supports controlled changes. Existing assessments keep their captured template context; do not rewrite historical answers by changing a template.",
+      "vi": "Mẫu biểu định nghĩa câu hỏi, điểm đánh giá. Xem Questions, Scoring Bands, Description, Preview; duy trì nhãn Anh, Việt. Publish cung cấp bản đã duyệt, Retire ngừng dùng, New Version hỗ trợ thay đổi có kiểm soát. Đánh giá cũ giữ ngữ cảnh mẫu đã chụp; không sửa đáp án lịch sử qua đổi mẫu."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 189,
+    "path_en": "Settings > Connections > Extensions",
+    "path_vi": "Cài đặt > Kết nối (Connections) > Máy nhánh (Extensions)",
+    "action_xmlid": "health_voip24h.action_voip_extension",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 42,
+      "vi": 41
+    },
+    "overview": {
+      "en": "Extensions maps phone extensions to the appropriate user or staff member. Verify extension number, owner and active status before saving. Review reassignment when somebody changes duties or leaves. Correct extension ownership helps route callbacks and explain call activity; it does not change the person's clinical or finance role.",
+      "vi": "Máy nhánh ghép số nội bộ với người dùng hoặc nhân viên phù hợp. Xác minh số, chủ, hoạt động trước khi lưu. Xem lại khi đổi nhiệm vụ hoặc nghỉ. Đúng chủ giúp chuyển gọi lại, giải thích hoạt động cuộc gọi; không đổi vai trò lâm sàng hay tài chính."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 75,
+    "path_en": "Settings > Master data > Monitoring Devices",
+    "path_vi": "Cài đặt > Danh mục (Master data) > Thiết bị theo dõi (Monitoring Devices)",
+    "action_xmlid": "health_telemonitoring.action_health_monitor_device",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 40,
+      "vi": 39
+    },
+    "overview": {
+      "en": "Monitoring Devices links a device to the correct client and external identifier. Check device type, vendor, state, last reading and receipts. Suspend pauses an unsuitable device; Reactivate restores it; Retire ends its use. Recheck the client mapping before accepting readings after reassignment. Device registration alone does not prove readings are arriving.",
+      "vi": "Thiết bị theo dõi nối thiết bị với đúng khách hàng và định danh ngoài. Kiểm tra loại, hãng, trạng thái, lần đo cuối, biên nhận. Suspend tạm dừng; Reactivate mở lại; Retire ngừng dùng. Kiểm tra ghép khách hàng trước khi nhận số đo sau đổi người. Đăng ký thiết bị chưa chứng minh có dữ liệu đến."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 178,
+    "path_en": "Settings > About Viet Uc Care",
+    "path_vi": "Cài đặt > Giới thiệu (About Viet Uc Care)",
+    "action_xmlid": "biz_tenancy.action_biz_tenancy_about",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 44,
+      "vi": 42
+    },
+    "overview": {
+      "en": "About Viet Uc Care identifies the current clinic workspace and available system information. Use it when reporting a support issue so the correct organisation and environment are identified. The menu name can reflect the clinic's branding; CareJiyo is the product name. This information screen is separate from editing company setup.\nThe release timeline explains listed updates. Support access can be switched on or off by an authorised person; enabling it allows the platform support process to create time-limited support access with a recorded reason. Review the displayed support-session history. This switch changes access and should follow the clinic's approval process.",
+      "vi": "Giới thiệu Viet Uc Care xác định không gian phòng khám và thông tin hệ thống hiện có. Dùng khi báo hỗ trợ để xác định đúng tổ chức, môi trường. Tên trình đơn có thể theo thương hiệu phòng khám; CareJiyo là tên sản phẩm. Màn hình thông tin khác nơi sửa thiết lập công ty.\nDòng phiên bản giải thích cập nhật đã liệt kê. Người có quyền có thể bật/tắt Support access; bật cho phép quy trình hỗ trợ nền tảng tạo truy cập có thời hạn, ghi lý do. Xem lịch sử phiên hỗ trợ hiển thị. Công tắc này thay quyền, cần theo quy trình duyệt phòng khám."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 206,
+    "path_en": "Settings > Your company",
+    "path_vi": "Cài đặt > Your company",
+    "action_xmlid": "health_tenant_workspace.action_company",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 44,
+      "vi": 42
+    },
+    "overview": {
+      "en": "Your company is the clinic organisation profile. Review identity, contact, address and the available company information before editing. Use the provided save controls and check the displayed result. This is where company information is maintained; it does not replace facilities, staff, prices or integration setup.\nThe form includes company name, address, phone, email, website, tax/registration numbers, country and logo. Save company details saves the profile; Refresh reloads it. The document preview shows the entered identity. Currency and platform settings are managed separately by the platform administrator.",
+      "vi": "Công ty của bạn là hồ sơ tổ chức phòng khám. Xem danh tính, liên lạc, địa chỉ, thông tin công ty hiện có trước khi sửa. Dùng nút lưu, kiểm tra kết quả. Nơi này duy trì thông tin công ty, không thay cơ sở, nhân viên, giá hay tích hợp.\nBiểu mẫu có tên công ty, địa chỉ, điện thoại, email, website, mã thuế/đăng ký, quốc gia, logo. Save company details lưu; Refresh tải lại. Xem trước tài liệu thể hiện danh tính đã nhập. Tiền tệ, thiết lập nền tảng do quản trị nền tảng quản lý riêng."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 207,
+    "path_en": "Settings > Clinic setup",
+    "path_vi": "Cài đặt > Clinic setup",
+    "action_xmlid": "health_tenant_workspace.action_setup",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 44,
+      "vi": 42
+    },
+    "overview": {
+      "en": "Clinic setup is the guided starting checklist for preparing a clinic workspace. Open each setup area, review what is complete and follow the link to maintain the underlying record. Return to check the result. A checklist helps coordinate preparation; it does not prove every clinical, billing or external integration workflow has been verified.\nThe six steps are Company, Facilities, People, Services, Connections and Review. Select a step or use Previous step/Next step. Open takes you to the related configuration; Setup notes and Save progress keep the checklist notes/progress. Refresh updates the displayed readiness.",
+      "vi": "Thiết lập phòng khám là danh sách hướng dẫn chuẩn bị không gian làm việc. Mở từng khu vực, xem mục xong, theo liên kết sửa hồ sơ gốc. Trở lại kiểm tra. Danh sách hỗ trợ phối hợp chuẩn bị, không chứng minh mọi luồng lâm sàng, hóa đơn, tích hợp đã được xác minh.\nSáu bước: Company, Facilities, People, Services, Connections, Review. Chọn bước hoặc Previous step/Next step. Open đưa đến cấu hình liên quan; Setup notes, Save progress giữ ghi chú/tiến độ. Refresh cập nhật mức sẵn sàng."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 208,
+    "path_en": "Settings > Activity history",
+    "path_vi": "Cài đặt > Activity history",
+    "action_xmlid": "health_tenant_workspace.action_history",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 44,
+      "vi": 43
+    },
+    "overview": {
+      "en": "Activity history combines several permitted history sources into one timeline. Search summaries, choose a source and use Refresh, Previous or Next to review events. Source availability is shown separately. Access still follows each original record's rules; detailed clinical content and full request payloads are not displayed in this overview.",
+      "vi": "Lịch sử hoạt động kết hợp nguồn lịch sử được phép thành dòng thời gian. Tìm tóm tắt, chọn nguồn, dùng Refresh, Previous, Next xem sự kiện. Tính khả dụng từng nguồn hiển thị riêng. Quyền vẫn theo hồ sơ gốc; nội dung lâm sàng chi tiết, toàn bộ nội dung yêu cầu không hiện trong tổng quan này."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 216,
+    "path_en": "Settings > Master data > Form Studio",
+    "path_vi": "Cài đặt > Danh mục (Master data) > Form Studio",
+    "action_xmlid": "biz_form_studio.action_fs_library",
+    "action_tag": "biz_form_studio.library",
+    "audience": "admin",
+    "pages": {
+      "en": 41,
+      "vi": 40
+    },
+    "overview": {
+      "en": "Form Studio is the visual editor for supported business forms. Choose the form, add or place fields, set type, English/Vietnamese label and options, then preview and apply through the available controls. The field palette includes text, numbers, dates, money, yes/no, dropdowns, links and files. Review existing records and role visibility after changing a layout.\nThe landing library lists custom fields across All screens, Contact, Booking, Incident and Client. Open Contact/Booking/Incident/Client in Studio opens the corresponding editor. An empty library means no custom fields are listed; it does not mean those business forms are missing.",
+      "vi": "Form Studio biên tập trực quan biểu mẫu nghiệp vụ được hỗ trợ. Chọn mẫu, thêm hoặc đặt trường, chọn kiểu, nhãn Anh/Việt, lựa chọn, xem trước rồi áp dụng bằng chức năng hiện có. Bảng trường có chữ, số, ngày, tiền, có/không, danh sách, liên kết, tệp. Xem hồ sơ cũ, quyền thấy theo vai trò sau sửa bố cục.\nThư viện đầu liệt kê trường tùy chỉnh ở All screens, Contact, Booking, Incident, Client. Open ... in Studio mở trình sửa tương ứng. Thư viện trống nghĩa chưa liệt kê trường tùy chỉnh, không phải thiếu biểu mẫu nghiệp vụ."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 32,
+    "path_en": "Settings > Master data > Field Requirements",
+    "path_vi": "Cài đặt > Danh mục (Master data) > Trường bắt buộc (Field Requirements)",
+    "action_xmlid": "health_landing.action_admin_field_req",
+    "action_tag": "field_requirements_dashboard",
+    "audience": "admin",
+    "pages": {
+      "en": 41,
+      "vi": 40
+    },
+    "overview": {
+      "en": "Field Requirements controls when information must be supplied. Select the supported record type and review the role/state conditions for each requirement. Require information only at a stage when the user can reasonably provide it. Check a new record, an existing record and the relevant mobile workflow after a change; a misplaced requirement can block completion.\nThe first screen groups the configurable sections into Sales & CRM, Bookings & Assignments, Finance and Admin. Choose the section and record type before editing requirements.",
+      "vi": "Yêu cầu trường điều khiển khi nào phải điền thông tin. Chọn loại hồ sơ, xem điều kiện vai trò/trạng thái. Chỉ bắt buộc ở giai đoạn người dùng có thể biết thông tin. Kiểm tra hồ sơ mới, cũ và luồng di động sau sửa; yêu cầu đặt sai có thể chặn hoàn tất.\nMàn hình đầu nhóm phần cấu hình thành Sales & CRM, Bookings & Assignments, Finance, Admin. Chọn phần, loại hồ sơ trước khi sửa yêu cầu."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  },
+  {
+    "menu_id": 179,
+    "path_en": "Settings > Customers",
+    "path_vi": "Cài đặt > Khách hàng nền tảng (Customers)",
+    "action_xmlid": "biz_tenants.action_biz_tenants",
+    "action_tag": null,
+    "audience": "admin",
+    "pages": {
+      "en": 45,
+      "vi": 43
+    },
+    "overview": {
+      "en": "Customers is the restricted workspace for managing customer/tenant organisations. It is intended for platform-level administration, not for registering patients. Clinic care recipients belong in Operations > Clients. If this menu is visible to you, confirm your platform responsibility before changing an organisation or its service settings.\nRefresh reloads customer health. Alerts shows attention items. Rollout manages releases; What each customer has reviews installed capabilities; Plans and invoices manages service plans; In step with master compares versions. New customer starts provisioning. Customer rows link to the workspace and messaging controls. These are platform operations and can affect other organisations.",
+      "vi": "Khách hàng nền tảng là không gian hạn chế quản lý tổ chức sử dụng hệ thống. Dành cho quản trị nền tảng, không đăng ký bệnh nhân. Người được chăm sóc thuộc Điều phối > Khách hàng. Nếu thấy mục này, xác nhận trách nhiệm nền tảng trước khi đổi tổ chức hoặc dịch vụ.\nRefresh tải sức khỏe khách hàng. Alerts hiện việc cần chú ý. Rollout quản lý phiên bản; What each customer has xem khả năng cài; Plans and invoices quản lý gói; In step with master so phiên bản. New customer bắt đầu tạo hệ thống. Dòng tổ chức nối không gian, điều khiển thông báo. Đây là vận hành nền tảng, có thể ảnh hưởng tổ chức khác."
+    },
+    "review": "Chrome screen/dialog and implemented action"
+  }
+]
