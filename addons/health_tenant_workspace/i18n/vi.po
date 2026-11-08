@@ -601,3 +601,249 @@ msgstr "Tiếp"
 #: code:addons/health_tenant_workspace/models/navigation.py:0
 msgid "About %s"
 msgstr "Giới thiệu %s"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Connection setup started"
+msgstr "Đã bắt đầu thiết lập kết nối"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Connection sign-in completed"
+msgstr "Đã đăng nhập kết nối"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Connection sign-in declined"
+msgstr "Đăng nhập kết nối bị từ chối"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Connection sign-in failed"
+msgstr "Đăng nhập kết nối thất bại"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Connection account selected"
+msgstr "Đã chọn tài khoản kết nối"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Incoming updates enabled"
+msgstr "Đã bật nhận cập nhật"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Connection test passed"
+msgstr "Kiểm tra kết nối thành công"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Connection test failed"
+msgstr "Kiểm tra kết nối thất bại"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Reconnection started"
+msgstr "Đã bắt đầu kết nối lại"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Connection disconnected"
+msgstr "Đã ngắt kết nối"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Connection credentials updated"
+msgstr "Đã cập nhật thông tin xác thực kết nối"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Connection access renewed"
+msgstr "Đã gia hạn quyền truy cập kết nối"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Connection access renewal failed"
+msgstr "Gia hạn quyền truy cập kết nối thất bại"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Connection status changed"
+msgstr "Trạng thái kết nối đã thay đổi"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Connection check recorded"
+msgstr "Đã ghi nhận kiểm tra kết nối"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Incoming update ignored"
+msgstr "Đã bỏ qua cập nhật đến"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Message could not be sent"
+msgstr "Không gửi được tin nhắn"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Incoming update setup failed"
+msgstr "Thiết lập nhận cập nhật thất bại"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Provider permissions checked"
+msgstr "Đã kiểm tra quyền với nhà cung cấp"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Connection verification set up"
+msgstr "Đã thiết lập xác minh kết nối"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Connection readiness checked"
+msgstr "Đã kiểm tra mức độ sẵn sàng của kết nối"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Incoming connection verified"
+msgstr "Đã xác minh kết nối đến"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Unverified connection request received"
+msgstr "Đã nhận yêu cầu kết nối chưa xác minh"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Connection setup invitation sent"
+msgstr "Đã gửi lời mời thiết lập kết nối"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Connection setup invitation opened"
+msgstr "Đã mở lời mời thiết lập kết nối"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Connection setup invitation withdrawn"
+msgstr "Đã thu hồi lời mời thiết lập kết nối"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Incoming update forwarded to the clinic"
+msgstr "Đã chuyển cập nhật đến phòng khám"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Incoming update could not reach the clinic"
+msgstr "Không chuyển được cập nhật đến phòng khám"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Connection sign-in directed to the clinic"
+msgstr "Đã chuyển đăng nhập kết nối đến phòng khám"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Shared connection settings applied"
+msgstr "Đã áp dụng cài đặt kết nối dùng chung"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Phone server settings saved"
+msgstr "Đã lưu cài đặt máy chủ điện thoại"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Phone extension saved"
+msgstr "Đã lưu máy nhánh điện thoại"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Phone extension removed"
+msgstr "Đã xóa máy nhánh điện thoại"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Incoming update ignored because the connection is disabled"
+msgstr "Đã bỏ qua cập nhật đến vì kết nối đã bị tắt"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Connection check failed"
+msgstr "Kiểm tra kết nối thất bại"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Connection activity recorded"
+msgstr "Đã ghi nhận hoạt động kết nối"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "Connection"
+msgstr "Kết nối"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "%(channel)s (%(account)s)"
+msgstr "%(channel)s (%(account)s)"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "%(connection)s: %(event)s"
+msgstr "%(connection)s: %(event)s"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "System"
+msgstr "Hệ thống"
+
+#. module: health_tenant_workspace
+#. odoo-python
+#: code:addons/health_tenant_workspace/models/history.py:0
+msgid "External service"
+msgstr "Dịch vụ bên ngoài"

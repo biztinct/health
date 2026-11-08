@@ -1,6 +1,7 @@
 import json
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, ValidationError
+from odoo.fields import Domain
 from .identity import clean_image, clean_identity
 
 COMPANY_FIELDS = ('name', 'street', 'street2', 'city', 'zip', 'phone', 'email', 'website', 'vat', 'company_registry')
@@ -123,7 +124,7 @@ class Workspace(models.AbstractModel):
             # API audit disables automatic access fields and records time in ts.
             'api': ('api.audit.log', 'ts', 'display_name'),
             'support': ('biz.support.session', 'issued_at', 'reason'),
-            'channels': ('care.channel.audit', 'create_date', 'display_name'),
+            'channels': ('care.channel.audit', 'ts', 'display_name'),
         }
         if source not in ('all', *sources):
             raise ValidationError(_('Choose a history source.'))
@@ -135,22 +136,30 @@ class Workspace(models.AbstractModel):
                 availability.append({'source': key, 'status': _('Not installed')});continue
             obj = self.env[model]
             dom = [('company_id','=',company.id)] if 'company_id' in obj._fields else []
-            if query and titlefield != 'display_name':
+            if query and key == 'channels':
+                dom = Domain(dom) & self._channel_history_domain(query)
+            elif query and titlefield != 'display_name':
                 dom.append((titlefield, 'ilike', str(query)[:100]))
             try:
                 records = obj.search(dom, order=datefield+' desc, id desc', limit=limit)
                 for r in records:
-                    title = str(r[titlefield] or '')
-                    if query and titlefield == 'display_name' and query.lower() not in title.lower():
-                        continue
                     actor = r.actor_id.name if model == 'health.workspace.audit' else r.create_uid.name if 'create_uid' in r._fields else ''
+                    if key == 'channels':
+                        title, actor = self._channel_history_summary(r)
+                        if query and not all(word in title.casefold() for word in str(query)[:100].casefold().split()):
+                            continue
+                    else:
+                        title = str(r[titlefield] or '')
+                        if query and titlefield == 'display_name' and query.lower() not in title.lower():
+                            continue
                     # Summary only: no clinical text, API payloads, bank details or tokens.
                     detail = r.detail if model == 'health.workspace.audit' else ''
                     rows.append({'key': key+':'+str(r.id), 'source': key, 'date': fields.Datetime.to_string(r[datefield]), 'title': title, 'actor': actor or '', 'detail': detail})
                 availability.append({'source': key, 'status': _('Available')})
             except AccessError:
                 availability.append({'source': key, 'status': _('Restricted by your access')})
-        rows.sort(key=lambda r: (r['date'] or '', r['key']), reverse=True)
+        # Match each source's numeric id ordering when timestamps are equal.
+        rows.sort(key=lambda r: (r['date'] or '', r['source'], int(r['key'].split(':')[1])), reverse=True)
         return {'rows': rows[offset:offset+50], 'more': len(rows)>offset+50, 'sources': availability}
 
     @api.model

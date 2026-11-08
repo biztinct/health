@@ -1,5 +1,6 @@
 from . import identity
 from . import workspace
+from . import history
 from . import audit
 from . import base
 from . import ir_ui_view
