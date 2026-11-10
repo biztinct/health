@@ -67,6 +67,29 @@ Website record 1 on `carejiox` (serves carejiyo.com) had its logo set to
 `carejiyo-lockup.svg` by a one-off shell script on 2026-11-10 (previously the
 Viet Uc flower). Not module data, because hhh/template must keep their logos.
 
+### Book a demo + back office (platform only), since 19.0.4.0.0
+
+Every "Book a demo" button opens a native `<dialog id="book-demo">` whose form
+posts (CSRF, FormData) to `POST /carejiyo/demo-request` (`controllers/demo.py`,
+404 off the platform database). A valid request becomes a `crm.lead` (type
+lead, Sales team, tag "CareJiyo demo request", utm source "carejiyo.com",
+medium Website) plus a queued `mail.mail` to hello@carejiyo.com (reply-to the
+visitor). The mail is queued, never sent inline: outgoing mail is switched off
+on purpose (owner, 2026-11-10), so those queued mails will fail and stay failed
+until mail is configured; the leads are the record. Overseas phones fail the
+CRM's Vietnamese-number check, so a phone the CRM rejects lives only in the
+lead description. health_crm defaults country to Vietnam on these leads.
+Spam rails: honeypot `company_website`, 3-second minimum fill (client
+timestamp), same-email replay within 10 minutes answered ok without a second
+lead, 40-per-hour global cap (429). Module now depends on `crm` (installed on
+all three databases).
+
+The hero's "nurse on the way" card is a small SVG map with a SMIL
+`animateMotion` scooter from clinic A to home B; the motion switch calls
+`pauseAnimations()`. On phones it sits under the picture instead of over it.
+Section `#office` ("Behind every visit") shows illustrative roster, invoice,
+report and AI-note screens. Contact address on the page is hello@carejiyo.com.
+
 ### Client (Việt Úc)
 
 A locally rendered canvas care network, floating interface cards, waveform

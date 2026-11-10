@@ -1,6 +1,7 @@
 from lxml import html
 from odoo.tests import HttpCase, tagged
 from ..controllers.home import homepage_brand
+from ..controllers.demo import INBOX, TAG_NAME, validate_demo_request
 
 
 @tagged('post_install', '-at_install')
@@ -45,7 +46,7 @@ class TestPublicHomepages(HttpCase):
             other = html.fromstring(self.url_open('/?site_lang=vi&brand=client').content)
             self.assertEqual(other.get('lang'), 'en')
             self.assertNotIn('1800 6896', doc.text_content())
-            self.assertIn('ash@biztinct.com', doc.text_content())
+            self.assertIn('hello@carejiyo.com', doc.text_content())
         else:
             self.assertIn('One team.', doc.text_content())
             self.assertNotIn('THE OPERATING SYSTEM FOR CONNECTED CARE', doc.text_content())
@@ -95,7 +96,12 @@ class TestPublicHomepages(HttpCase):
                 self.assertIsNotNone(img.get('alt'), img.get('src'))
             links = doc.xpath('//a/@href')
             self.assertIn('/web/login', links)
-            self.assertTrue(any(link.startswith('mailto:ash@biztinct.com') for link in links))
+            self.assertGreaterEqual(links.count('#book-demo'), 3)
+            form = doc.xpath('//dialog[@id="book-demo"]//form[@action="/carejiyo/demo-request"]')
+            self.assertEqual(len(form), 1)
+            self.assertTrue(form[0].xpath('.//input[@name="csrf_token"]/@value'))
+            self.assertEqual(len(doc.xpath('//svg[contains(@class,"route-map")]//animatemotion')), 1)
+            self.assertEqual(len(doc.xpath('//section[@id="office"]//article')), 4)
 
     def test_sign_in_shell(self):
         """CareJiyo frames sign-in on the platform only; the stock form is kept intact."""
@@ -125,3 +131,60 @@ class TestPublicHomepages(HttpCase):
             doc = html.fromstring(self.url_open('/web/login').content)
             self.assertTrue(doc.xpath('//form[contains(@class,"oe_login_form")]//input[@name="password"]'))
             self.assertIn('Welcome back', doc.text_content())
+
+    def _demo_post(self, **fields):
+        page = html.fromstring(self.url_open('/').content)
+        token = page.xpath('//form[@action="/carejiyo/demo-request"]//input[@name="csrf_token"]/@value')[0]
+        data = {'csrf_token': token, 'started': '', 'name': 'Test Person', 'email': 'demo.test@example.com',
+                'organisation': 'Test Care Co', 'phone': '+61 400 000 000', 'care_type': 'both',
+                'message': 'We run 30 nurses.'}
+        data.update(fields)
+        return self.url_open('/carejiyo/demo-request', data=data)
+
+    def test_demo_request_validation(self):
+        data, errors = validate_demo_request({'name': ' A ', 'email': 'nope', 'organisation': '', 'phone': 'abc'})
+        self.assertEqual(set(errors), {'name', 'email', 'organisation', 'phone'})
+        data, errors = validate_demo_request({'name': 'Mai Tran', 'email': 'Mai@Example.com ',
+                                              'organisation': 'Clinic', 'care_type': 'evil'})
+        self.assertFalse(errors)
+        self.assertEqual(data['email'], 'mai@example.com')
+        self.assertEqual(data['care_type'], '')
+
+    def test_demo_request_creates_lead_and_queues_email(self):
+        brand = homepage_brand(self.env.cr.dbname)
+        if brand != 'platform':
+            response = self.url_open('/carejiyo/demo-request', data={'name': 'x'})
+            self.assertIn(response.status_code, (400, 404))
+            self.assertFalse(self.env['crm.lead'].search([('tag_ids.name', '=', TAG_NAME)]).filtered(
+                lambda l: l.email_from == 'demo.test@example.com'))
+            return
+        Lead = self.env['crm.lead'].sudo()
+        before = Lead.search_count([('email_from', '=', 'demo.test@example.com')])
+        response = self._demo_post()
+        self.assertEqual(response.status_code, 200, response.text)
+        self.assertTrue(response.json()['ok'])
+        lead = Lead.search([('email_from', '=', 'demo.test@example.com')], order='id desc', limit=1)
+        self.assertEqual(Lead.search_count([('email_from', '=', 'demo.test@example.com')]), before + 1)
+        self.assertEqual(lead.type, 'lead')
+        self.assertIn(TAG_NAME, lead.tag_ids.mapped('name'))
+        self.assertEqual(lead.partner_name, 'Test Care Co')
+        self.assertEqual(lead.source_id.name, 'carejiyo.com')
+        self.assertIn('+61 400 000 000', lead.description)  # overseas phone kept in the notes
+        mail = self.env['mail.mail'].sudo().search([('model', '=', 'crm.lead'), ('res_id', '=', lead.id)])
+        self.assertEqual(mail.email_to, INBOX)
+        self.assertIn('Test Care Co', mail.subject)
+        # A replay within 10 minutes is answered "ok" without a second lead.
+        self.assertTrue(self._demo_post().json()['ok'])
+        self.assertEqual(Lead.search_count([('email_from', '=', 'demo.test@example.com')]), before + 1)
+        # Honeypot: a filled hidden field is accepted silently and never stored.
+        self.assertTrue(self._demo_post(email='bot@example.com', company_website='spam.example').json()['ok'])
+        self.assertFalse(Lead.search_count([('email_from', '=', 'bot@example.com')]))
+        # Missing details come back as plain field messages, nothing stored.
+        bad = self._demo_post(email='not-an-email', name='')
+        self.assertEqual(bad.status_code, 400)
+        self.assertEqual(set(bad.json()['errors']), {'name', 'email'})
+        # No CSRF token: refused.
+        refused = self.url_open('/carejiyo/demo-request', data={'name': 'x', 'email': 'csrf@example.com',
+                                                               'organisation': 'Org'})
+        self.assertNotEqual(refused.status_code, 200)
+        self.assertFalse(Lead.search_count([('email_from', '=', 'csrf@example.com')]))

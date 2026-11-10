@@ -65,7 +65,7 @@
               </div>
               <div class="cj-auth-links">
                 <a href="/"><span aria-hidden="true">←</span> Back to home</a>
-                <a href="mailto:ash@biztinct.com?subject=CareJiyo%20sign-in%20help">Need help signing in?</a>
+                <a href="mailto:hello@carejiyo.com?subject=CareJiyo%20sign-in%20help">Need help signing in?</a>
               </div>
             </div>
             <p class="cj-auth-foot">© <t t-out="datetime.date.today().year"/> CareJiyo · Your information is private and protected.</p>

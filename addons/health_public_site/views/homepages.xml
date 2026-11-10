@@ -23,8 +23,8 @@
         <meta name="twitter:image" content="https://carejiox.com/health_public_site/static/img/carejiyo-social.jpg"/>
         <link rel="icon" href="/health_public_site/static/img/carejiyo-mark.svg"/>
         <link rel="preload" href="/health_public_site/static/fonts/dm-sans-700.ttf" as="font" type="font/ttf" crossorigin="anonymous"/>
-        <link rel="stylesheet" href="/health_public_site/static/src/platform.css?v=1"/>
-        <script defer="defer" src="/health_public_site/static/src/platform.js?v=1"/>
+        <link rel="stylesheet" href="/health_public_site/static/src/platform.css?v=3"/>
+        <script defer="defer" src="/health_public_site/static/src/platform.js?v=2"/>
       </head>
       <body class="cj-platform">
         <a class="skip" href="#main">Skip to content</a>
@@ -42,7 +42,7 @@
             </nav>
             <div class="header-actions">
               <a class="sign-in" href="/web/login">Sign in</a>
-              <a class="button primary small" href="mailto:ash@biztinct.com?subject=CareJiyo%20demo%20enquiry">Book a demo</a>
+              <a class="button primary small" href="#book-demo" data-demo="open">Book a demo</a>
               <button class="menu-toggle" aria-controls="main-nav" aria-expanded="false" aria-label="Menu">
                 <span/>
                 <span/>
@@ -58,7 +58,7 @@
                 <h1>Care that comes <span class="accent">to&#160;people.</span></h1>
                 <p class="lead">CareJiyo helps nurses, doctors and care teams book visits, care for people at home and in the clinic, and keep families in the loop. All in one simple app.</p>
                 <div class="hero-actions">
-                  <a class="button primary" href="mailto:ash@biztinct.com?subject=CareJiyo%20demo%20enquiry">Book a demo</a>
+                  <a class="button primary" href="#book-demo" data-demo="open">Book a demo</a>
                   <a class="button quiet" href="#how">See how a visit works <span aria-hidden="true">→</span></a>
                 </div>
                 <ul class="hero-points">
@@ -73,9 +73,31 @@
                   <span class="float-icon blue"><span class="icon i-calendar"/></span>
                   <span><strong>Visit booked</strong><small>Tuesday, 9:00 am</small></span>
                 </div>
-                <div class="float-card card-b" aria-hidden="true">
-                  <span class="float-icon orange"><span class="icon i-navigation"/></span>
-                  <span><strong>Nurse on the way</strong><small>Arriving in about 12 min</small></span>
+                <div class="float-card card-b route-card" aria-hidden="true">
+                  <svg class="route-map" viewBox="0 0 240 140" width="240" height="140">
+                    <rect width="240" height="140" rx="12" fill="#F1ECE2"/>
+                    <path d="M-10 30C40 18 80 44 130 34S210 10 250 22" fill="none" stroke="#DCEAFB" stroke-width="14"/>
+                    <rect x="150" y="84" width="74" height="44" rx="8" fill="#DDEFD9"/>
+                    <circle cx="172" cy="104" r="7" fill="#B9DDB0"/>
+                    <circle cx="196" cy="110" r="9" fill="#B9DDB0"/>
+                    <path d="M0 112H240M70 0V140M60 56H240M206 0V84" stroke="#FFFFFF" stroke-width="9"/>
+                    <path id="route-path" d="M34 112H70V56H206" fill="none" stroke="#1565C0" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 7"/>
+                    <circle cx="34" cy="112" r="11" fill="#1565C0"/>
+                    <text x="34" y="116" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF" font-family="DM Sans, sans-serif">A</text>
+                    <circle cx="206" cy="56" r="11" fill="#FB8C00"/>
+                    <text x="206" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF" font-family="DM Sans, sans-serif">B</text>
+                    <g class="route-scooter">
+                      <circle r="12" fill="#FFFFFF" stroke="#13233F" stroke-opacity=".12"/>
+                      <path d="M-7 3c0-5 3-7 7-7h2l3 7h-12z" fill="#FB8C00"/>
+                      <circle cx="-5" cy="4" r="2.6" fill="#13233F"/>
+                      <circle cx="6" cy="4" r="2.6" fill="#13233F"/>
+                      <circle cx="-1" cy="-7" r="3" fill="#2A9D8F"/>
+                      <animateMotion dur="7s" repeatCount="indefinite" keyPoints="0;1;1" keyTimes="0;0.8;1" calcMode="linear">
+                        <mpath href="#route-path"/>
+                      </animateMotion>
+                    </g>
+                  </svg>
+                  <span class="route-text"><span class="float-icon orange"><span class="icon i-navigation"/></span><span><strong>Nurse on the way</strong><small>Clinic A to home B · 12 min</small></span></span>
                 </div>
                 <div class="float-card card-c" aria-hidden="true">
                   <span class="float-icon teal"><span class="icon i-check"/></span>
@@ -259,7 +281,77 @@
             </div>
           </section>
 
-          <section class="section band" id="features">
+          <section class="section band" id="office">
+            <div class="shell">
+              <div class="section-heading reveal">
+                <span class="eyebrow">Behind every visit</span>
+                <h2>Rosters, invoices and reports, without the paperwork.</h2>
+                <p>The work that keeps a care service running happens in the same place as the care itself.</p>
+              </div>
+              <div class="office-grid">
+                <article class="office-card reveal">
+                  <div class="office-visual" aria-hidden="true">
+                    <div class="roster">
+                      <div class="roster-head"><strong>Roster</strong><small>This week</small></div>
+                      <div class="roster-row roster-days"><span/><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span></div>
+                      <div class="roster-row"><span class="who"><i class="av a1"/>Nurse A</span><b class="s am">AM</b><b class="s am">AM</b><b class="s off"/><b class="s pm">PM</b><b class="s am">AM</b></div>
+                      <div class="roster-row"><span class="who"><i class="av a2"/>Nurse B</span><b class="s pm">PM</b><b class="s off"/><b class="s pm">PM</b><b class="s pm">PM</b><b class="s gap">Open</b></div>
+                      <div class="roster-row"><span class="who"><i class="av a3"/>Doctor C</span><b class="s cl">Clinic</b><b class="s cl">Clinic</b><b class="s am">AM</b><b class="s off"/><b class="s cl">Clinic</b></div>
+                    </div>
+                  </div>
+                  <span class="tag blue">Operations</span>
+                  <h3>Plan the week’s roster</h3>
+                  <p>See who works when, spot an open shift and fill it before it becomes a missed visit.</p>
+                </article>
+                <article class="office-card reveal">
+                  <div class="office-visual" aria-hidden="true">
+                    <div class="invoice">
+                      <div class="invoice-head"><span><strong>Invoice INV-0142</strong><small>4 visits in November</small></span><span class="stamp">Paid</span></div>
+                      <div class="invoice-line"><span>Home visit × 4</span><span>1,600,000 ₫</span></div>
+                      <div class="invoice-line"><span>Wound dressing × 2</span><span>400,000 ₫</span></div>
+                      <div class="invoice-total"><span>Total</span><strong>2,000,000 ₫</strong></div>
+                      <div class="invoice-foot"><span class="dot-ok"/>E-invoice issued</div>
+                    </div>
+                  </div>
+                  <span class="tag orange">Accounts</span>
+                  <h3>Visits turn into invoices</h3>
+                  <p>Finished visits become invoices. Track payments and issue e&#8209;invoices where your country needs them.</p>
+                </article>
+                <article class="office-card reveal">
+                  <div class="office-visual" aria-hidden="true">
+                    <div class="report">
+                      <div class="report-head"><span><small>Visits per week</small><strong>128</strong></span><span class="report-kpi">On time <strong>94%</strong></span></div>
+                      <div class="bars">
+                        <i style="--h:46%"/><i style="--h:58%"/><i style="--h:52%"/><i style="--h:66%"/><i style="--h:61%"/><i style="--h:74%"/><i style="--h:70%"/><i class="now" style="--h:86%"/>
+                      </div>
+                      <div class="bars-axis"><span>8 weeks ago</span><span>This week</span></div>
+                    </div>
+                  </div>
+                  <span class="tag teal">Insights</span>
+                  <h3>Reports at a glance</h3>
+                  <p>See visits, staff hours and income in simple charts, and drill into the detail when you need it.</p>
+                </article>
+                <article class="office-card reveal">
+                  <div class="office-visual" aria-hidden="true">
+                    <div class="ai-note">
+                      <div class="ai-listen"><span class="mic"><span class="icon i-mic"/></span><span class="wave"><i/><i/><i/><i/><i/><i/><i/><i/><i/></span><small>Listening</small></div>
+                      <div class="ai-draft">
+                        <small>Draft visit note</small>
+                        <p>Blood pressure 128/82. Wound healing well. Next visit Friday.</p>
+                      </div>
+                      <div class="ai-suggest"><span class="icon i-sparkles"/><span>Suggested code: <strong>I10</strong></span><span class="pill">Review</span></div>
+                    </div>
+                  </div>
+                  <span class="tag blue">AI help</span>
+                  <h3>Notes that draft themselves</h3>
+                  <p>Speak during the visit and CareJiyo drafts the note and suggests codes. A person always checks and approves.</p>
+                </article>
+              </div>
+              <p class="fine-print">Example screens. No real patient information is shown.</p>
+            </div>
+          </section>
+
+          <section class="section" id="features">
             <div class="shell">
               <div class="section-heading reveal">
                 <span class="eyebrow">Everything in one place</span>
@@ -301,12 +393,53 @@
                 <h2>Let’s talk about your care team.</h2>
                 <p>Tell us how your nurses, doctors and clinics work today. We will show you how CareJiyo fits.</p>
                 <div class="hero-actions center">
-                  <a class="button primary" href="mailto:ash@biztinct.com?subject=CareJiyo%20demo%20enquiry">Book a demo</a>
+                  <a class="button primary" href="#book-demo" data-demo="open">Book a demo</a>
                   <a class="button quiet" href="/web/login">Sign in to your workspace <span aria-hidden="true">→</span></a>
                 </div>
               </div>
             </div>
           </section>
+          <dialog class="demo-dialog" id="book-demo" aria-labelledby="demo-title">
+            <div class="demo-shell">
+              <button class="demo-close" type="button" data-demo="close" aria-label="Close">×</button>
+              <div class="demo-body">
+                <h2 id="demo-title">Book a demo</h2>
+                <p class="demo-lead">Tell us a little about your team. We will get back to you to find a time that suits you.</p>
+                <form class="demo-form" id="demo-form" action="/carejiyo/demo-request" method="post" novalidate="novalidate">
+                  <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                  <input type="hidden" name="started" value=""/>
+                  <div class="hp" aria-hidden="true"><label for="demo-company-website">Company website</label><input type="text" id="demo-company-website" name="company_website" tabindex="-1" autocomplete="off"/></div>
+                  <div class="field-row">
+                    <div class="field"><label for="demo-name">Your name</label><input id="demo-name" name="name" type="text" autocomplete="name" required="required" maxlength="80"/><small class="field-error" data-for="name"/></div>
+                    <div class="field"><label for="demo-organisation">Organisation</label><input id="demo-organisation" name="organisation" type="text" autocomplete="organization" required="required" maxlength="120"/><small class="field-error" data-for="organisation"/></div>
+                  </div>
+                  <div class="field-row">
+                    <div class="field"><label for="demo-email">Work email</label><input id="demo-email" name="email" type="email" autocomplete="email" required="required" maxlength="120"/><small class="field-error" data-for="email"/></div>
+                    <div class="field"><label for="demo-phone">Phone <span class="optional">(optional)</span></label><input id="demo-phone" name="phone" type="tel" autocomplete="tel" maxlength="30"/><small class="field-error" data-for="phone"/></div>
+                  </div>
+                  <fieldset class="field choice">
+                    <legend>What kind of care do you provide? <span class="optional">(optional)</span></legend>
+                    <div class="chips">
+                      <label><input type="radio" name="care_type" value="home"/><span>Home care</span></label>
+                      <label><input type="radio" name="care_type" value="clinic"/><span>Clinic</span></label>
+                      <label><input type="radio" name="care_type" value="both"/><span>Both</span></label>
+                      <label><input type="radio" name="care_type" value="other"/><span>Something else</span></label>
+                    </div>
+                  </fieldset>
+                  <div class="field"><label for="demo-message">Anything we should know? <span class="optional">(optional)</span></label><textarea id="demo-message" name="message" rows="3" maxlength="1000"></textarea></div>
+                  <p class="form-error" role="alert" hidden="hidden"/>
+                  <button class="button primary demo-submit" type="submit">Send request</button>
+                  <p class="demo-privacy">We use these details only to reply to your request.</p>
+                </form>
+                <div class="demo-done" hidden="hidden" tabindex="-1">
+                  <span class="done-icon"><span class="icon i-check" aria-hidden="true"/></span>
+                  <h2>Thank you!</h2>
+                  <p>We have your request and will be in touch soon. If it is urgent, email <a href="mailto:hello@carejiyo.com">hello@carejiyo.com</a>.</p>
+                  <button class="button primary" type="button" data-demo="close">Close</button>
+                </div>
+              </div>
+            </div>
+          </dialog>
         </main>
         <footer class="site-footer">
           <div class="shell footer-shell">
@@ -315,7 +448,7 @@
               <p>Care that comes to people.</p>
             </div>
             <div class="footer-links">
-              <a href="mailto:ash@biztinct.com">ash@biztinct.com</a>
+              <a href="mailto:hello@carejiyo.com">hello@carejiyo.com</a>
               <a href="/web/login">Workspace sign in</a>
             </div>
           </div>

@@ -10,6 +10,9 @@
     let paused = reduced.matches;
     const paintMotion = () => {
         document.body.classList.toggle('motion-paused', paused);
+        document.querySelectorAll('svg.route-map').forEach(svg => {
+            try { paused ? svg.pauseAnimations() : svg.unpauseAnimations(); } catch (error) { /* decoration only */ }
+        });
         if (!motionButton) return;
         motionButton.setAttribute('aria-pressed', String(paused));
         motionButton.querySelector('.motion-label').textContent = paused ? 'Play motion' : 'Pause motion';
@@ -65,6 +68,83 @@
             });
         });
     });
+
+    // Book a demo: a native dialog; the form posts to the CareJiyo intake.
+    const dialog = document.getElementById('book-demo');
+    if (dialog && typeof dialog.showModal === 'function') {
+        const form = dialog.querySelector('.demo-form');
+        const done = dialog.querySelector('.demo-done');
+        const formError = form.querySelector('.form-error');
+        const submit = form.querySelector('.demo-submit');
+        let opener = null;
+        const clearErrors = () => {
+            formError.hidden = true;
+            form.querySelectorAll('.field-error').forEach(node => { node.textContent = ''; });
+            form.querySelectorAll('[aria-invalid]').forEach(node => node.removeAttribute('aria-invalid'));
+        };
+        const open = trigger => {
+            opener = trigger || null;
+            if (done.hidden === false) { form.reset(); form.hidden = false; done.hidden = true; }
+            clearErrors();
+            form.elements.started.value = String(Date.now());
+            if (!dialog.open) dialog.showModal();
+            form.elements.name.focus();
+        };
+        const close = () => { if (dialog.open) dialog.close(); };
+        dialog.addEventListener('close', () => {
+            if (location.hash === '#book-demo') history.replaceState(null, '', location.pathname + location.search);
+            opener?.focus();
+        });
+        document.addEventListener('click', event => {
+            const trigger = event.target.closest('[data-demo="open"], a[href="#book-demo"]');
+            if (trigger) { event.preventDefault(); open(trigger); return; }
+            if (event.target.closest('[data-demo="close"]')) { event.preventDefault(); close(); return; }
+            if (event.target === dialog) close(); // backdrop
+        });
+        if (location.hash === '#book-demo') open(null);
+        form.addEventListener('submit', async event => {
+            event.preventDefault();
+            clearErrors();
+            submit.disabled = true;
+            const label = submit.textContent;
+            submit.textContent = 'Sending…';
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST', body: new FormData(form), credentials: 'same-origin',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                });
+                const result = await response.json().catch(() => ({}));
+                if (response.ok && result.ok) {
+                    form.hidden = true;
+                    done.hidden = false;
+                    done.focus();
+                    return;
+                }
+                const errors = result.errors || {};
+                let first = null;
+                Object.entries(errors).forEach(([field, message]) => {
+                    const slot = form.querySelector(`.field-error[data-for="${field}"]`);
+                    const input = form.elements[field];
+                    if (slot && input) {
+                        slot.textContent = message;
+                        input.setAttribute('aria-invalid', 'true');
+                        first = first || input;
+                    }
+                });
+                if (errors.form || !first) {
+                    formError.textContent = errors.form || 'Something went wrong. Please try again, or email hello@carejiyo.com.';
+                    formError.hidden = false;
+                }
+                first?.focus();
+            } catch (error) {
+                formError.textContent = 'We could not send your request. Please check your connection and try again.';
+                formError.hidden = false;
+            } finally {
+                submit.disabled = false;
+                submit.textContent = label;
+            }
+        });
+    }
 
     // Gentle reveal as sections scroll into view.
     const items = document.querySelectorAll('.reveal');
