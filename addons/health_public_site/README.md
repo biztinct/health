@@ -1,8 +1,8 @@
-# CareJiox and Việt Úc homepages
+# CareJiyo and Việt Úc homepages
 
 Two independent public QWeb documents, served at `/` by the existing Odoo
 website controller. Database identity selects the page: `carejiox` is the
-English software platform; `hhh` is the bilingual Việt Úc client. Other
+English CareJiyo software platform (served on both carejiox.com and carejiyo.com); `hhh` is the bilingual Việt Úc client. Other
 customers (including `carejiox_template`) retain the original website route.
 Neither a host header nor a visitor query can select another tenant's page.
 
@@ -13,13 +13,40 @@ metadata. Staff application language, login, portal and booking routes are
 unchanged. The standalone public templates load only their own local assets;
 there are no external fonts, scripts, analytics or patient-data API calls.
 
-CareJiox demo links open a draft in the visitor's email client addressed to
+CareJiyo demo links open a draft in the visitor's email client addressed to
 `ash@biztinct.com`; they do not send a message. The hhh page is an
 application entry point, not a healthcare service brochure. Its parent website
 remains https://pkgdvietuc.com/. Workspace and mobile links use existing login
 redirects to `/bizapp` and `/health_pwa`. Families use their issued care links.
 
 ## Visual experience and assets
+
+### Platform (CareJiyo), since 19.0.3.0.0
+
+A warm, people-first page: cream background, brand blue `#1565C0`, the logo's
+orange `#FB8C00` and a scrubs teal. Flat single colours only (no gradients).
+It has its own `static/src/platform.css` and `platform.js`; it no longer loads
+`home.css`/`home.js`, which now serve only the client page.
+
+Scenes are hand-drawn flat SVGs in `static/img/site/` (home visit, nurse on a
+scooter, nurse at the front door, doctor with patient). Every person and screen
+is illustrative; the page says so. Floating status cards over the hero pause
+with the motion switch and under reduced-motion. Role tabs (nurses & doctors,
+coordinators, families, clinic managers) support click, arrows, Home/End.
+
+Brand: `carejiyo-lockup.svg` (+ `-dark`) keeps the Care Pulse mark unchanged;
+the wordmark is Montserrat Bold outlined to paths ("carejiyo", orange j-dot).
+`carejiyo-mark.svg` is the favicon; `carejiyo-social.jpg` is the share card.
+The old `carejiox-*` files stay for the client page and other references.
+Canonical/og URLs still point at carejiox.com until the domain switch phase
+(see `ops/carejiyo-domain/README.md`).
+
+Copy is plain English and avoids unsupported claims: features named are the
+shipped ones (booking, scheduling, field app with offline/glove/sun modes,
+"On my way" with family notice, care records, medicines, video visits, family
+messages, invoicing/claims with government filing where configured).
+
+### Client (Việt Úc)
 
 A locally rendered canvas care network, floating interface cards, waveform
 animation, orbital feature graphics and scroll reveals create the experience.
@@ -30,14 +57,7 @@ All previews are illustrative and contain no patient data.
 
 The client logo comes from its existing public website. Previously downloaded
 clinic photos remain as assets but are not used by the application homepage.
-CareJiox marks and Lucide icons reuse existing repository assets. DM Sans fonts
-are local. The existing CareJiox social card is a generated JPEG.
-
-Platform feature descriptions follow the existing health modules: CRM,
-Care Command, scheduling/rosters, field service, care plans/EMR/eMAR,
-patient/family portals, telehealth, pricing/invoicing, claims/submissions,
-monitoring, analytics and assisted notes. Regional adapters are described as
-configuration-dependent, without unsupported global compliance claims.
+DM Sans fonts are local.
 
 ## Deployment and verification
 

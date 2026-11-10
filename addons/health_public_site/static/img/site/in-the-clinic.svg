@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" width="400" height="260">
+  <!-- CareJiyo: a doctor talking with a patient in the clinic. -->
+  <rect width="400" height="260" fill="#DDF1EE"/>
+  <!-- wall details -->
+  <rect x="34" y="30" width="96" height="76" rx="8" fill="#FFFFFF"/>
+  <path d="M82 46v44M60 68h44" stroke="#2A9D8F" stroke-width="12" stroke-linecap="round"/>
+  <rect x="268" y="28" width="100" height="84" rx="10" fill="#B9E2DB"/>
+  <path d="M268 70h100M318 28v84" stroke="#FFFFFF" stroke-width="6"/>
+  <!-- plant -->
+  <path d="M30 232l-6-34h40l-6 34z" fill="#E8836B"/>
+  <ellipse cx="36" cy="176" rx="10" ry="26" fill="#5FA97A" transform="rotate(-18 36 176)"/>
+  <ellipse cx="54" cy="174" rx="10" ry="28" fill="#3F8A5E" transform="rotate(16 54 174)"/>
+  <!-- floor -->
+  <rect y="232" width="400" height="28" fill="#B9E2DB"/>
+  <!-- doctor behind desk -->
+  <path d="M96 140c0-16 12-28 28-28h28c16 0 28 12 28 28v40H96z" fill="#FFFFFF"/>
+  <path d="M128 112l10 22 10-22z" fill="#1565C0"/>
+  <path d="M138 134v46" stroke="#DCEAFB" stroke-width="3"/>
+  <path d="M118 116c-6 18-2 34 10 40M158 116c6 18 2 34-10 40" fill="none" stroke="#13233F" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="138" cy="160" r="6" fill="#13233F"/>
+  <rect x="128" y="96" width="20" height="18" rx="7" fill="#C98C68"/>
+  <circle cx="138" cy="80" r="24" fill="#D9A37F"/>
+  <path d="M114 80c-2-20 10-30 24-30s26 10 24 26c-6-8-14-12-24-12s-18 6-24 16z" fill="#2B2118"/>
+  <circle cx="130" cy="84" r="2.6" fill="#13233F"/>
+  <circle cx="146" cy="84" r="2.6" fill="#13233F"/>
+  <path d="M131 94q7 5 14 0" fill="none" stroke="#7A4B33" stroke-width="2.6" stroke-linecap="round"/>
+  <!-- desk -->
+  <rect x="70" y="172" width="210" height="14" rx="5" fill="#C9A77C"/>
+  <rect x="82" y="186" width="12" height="46" fill="#C9A77C"/>
+  <rect x="256" y="186" width="12" height="46" fill="#C9A77C"/>
+  <!-- doctor hands on desk -->
+  <path d="M104 150c0 14 6 20 18 22M172 150c4 14 10 20 22 20" fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="126" cy="170" r="7" fill="#D9A37F"/>
+  <circle cx="198" cy="168" r="7" fill="#D9A37F"/>
+  <!-- tablet on desk showing the care pulse -->
+  <rect x="190" y="144" width="54" height="30" rx="4" fill="#13233F" transform="rotate(-8 217 159)"/>
+  <path d="M202 162h8l4-8 5 14 4-6h10" fill="none" stroke="#8CC2FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" transform="rotate(-8 217 159)"/>
+  <!-- patient chair -->
+  <rect x="300" y="182" width="64" height="12" rx="6" fill="#1565C0"/>
+  <rect x="348" y="124" width="14" height="70" rx="7" fill="#1565C0"/>
+  <rect x="306" y="194" width="8" height="38" fill="#13233F"/>
+  <rect x="350" y="194" width="8" height="38" fill="#13233F"/>
+  <!-- patient (side view, facing the doctor) -->
+  <path d="M342 184h-40l-6 44" fill="none" stroke="#13233F" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <ellipse cx="290" cy="230" rx="14" ry="6" fill="#13233F"/>
+  <path d="M316 132c0-10 8-18 18-18h4c10 0 16 8 16 18v50h-38z" fill="#FB8C00"/>
+  <path d="M322 140c-8 14-14 24-22 28" fill="none" stroke="#FB8C00" stroke-width="14" stroke-linecap="round"/>
+  <circle cx="298" cy="170" r="7" fill="#7A4B33"/>
+  <rect x="324" y="98" width="16" height="20" rx="6" fill="#6A402B"/>
+  <circle cx="330" cy="86" r="21" fill="#7A4B33"/>
+  <path d="M326 64c14-2 26 8 26 22 0 6-2 10-4 14-2-12-8-18-18-20-4 0-8 2-10 4-2-8 0-16 6-20z" fill="#2B2118"/>
+  <circle cx="318" cy="86" r="2.6" fill="#13233F"/>
+  <path d="M312 98q5 3 10 0" fill="none" stroke="#3A2015" stroke-width="2.6" stroke-linecap="round"/>
+  <!-- speech -->
+  <rect x="196" y="40" width="58" height="34" rx="12" fill="#FFFFFF"/>
+  <path d="M212 74l-4 12 14-12z" fill="#FFFFFF"/>
+  <circle cx="212" cy="57" r="4" fill="#2A9D8F"/>
+  <circle cx="225" cy="57" r="4" fill="#2A9D8F"/>
+  <circle cx="238" cy="57" r="4" fill="#2A9D8F"/>
+</svg>

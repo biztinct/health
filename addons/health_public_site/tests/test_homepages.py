@@ -71,7 +71,8 @@ class TestPublicHomepages(HttpCase):
         if not brand:
             return
         doc = html.fromstring(self.url_open('/?site_lang=en').content)
-        self.assertEqual(len(doc.xpath('//canvas[@aria-hidden="true"]')), 1)
+        # The client keeps its decorative canvas; the platform home uses drawn scenes instead.
+        self.assertEqual(len(doc.xpath('//canvas[@aria-hidden="true"]')), 1 if brand == 'client' else 0)
         self.assertEqual(len(doc.xpath('//button[contains(@class,"motion-toggle")]')), 1)
         for tab in doc.xpath('//*[@role="tab"]'):
             self.assertEqual(len(doc.xpath('//*[@id="%s"]' % tab.get('aria-controls'))), 1)
@@ -83,4 +84,15 @@ class TestPublicHomepages(HttpCase):
             self.assertFalse(any(link.startswith('tel:') for link in links))
             self.assertIn('Use the personal care link shared by your care team', doc.text_content())
         else:
-            self.assertIn('filing to government agencies where required and configured', doc.text_content())
+            text = doc.text_content()
+            self.assertIn('filing to government agencies where required and configured', text)
+            # White-label rule and the CareJiyo rename: neither old nor platform names leak.
+            self.assertIn('CareJiyo', text)
+            self.assertNotIn('CareJiox', text)
+            self.assertNotIn('Odoo', text)
+            self.assertEqual(len(doc.xpath('//*[@role="tab"]')), 4)
+            for img in doc.xpath('//img[@src]'):
+                self.assertIsNotNone(img.get('alt'), img.get('src'))
+            links = doc.xpath('//a/@href')
+            self.assertIn('/web/login', links)
+            self.assertTrue(any(link.startswith('mailto:ash@biztinct.com') for link in links))

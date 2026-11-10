@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" width="400" height="260">
+  <!-- CareJiyo: a nurse on a scooter on the way to a home visit. -->
+  <rect width="400" height="260" fill="#DCEAFB"/>
+  <circle cx="318" cy="62" r="26" fill="#FDE7CC"/>
+  <!-- town -->
+  <rect x="20" y="96" width="46" height="110" rx="6" fill="#C4D8F0"/>
+  <rect x="72" y="126" width="38" height="80" rx="6" fill="#B5CDEB"/>
+  <rect x="270" y="110" width="40" height="96" rx="6" fill="#B5CDEB"/>
+  <rect x="316" y="132" width="58" height="74" rx="6" fill="#C4D8F0"/>
+  <path d="M30 112h10M48 112h10M30 130h10M48 130h10M30 148h10M48 148h10M326 148h12M350 148h12M326 166h12M350 166h12" stroke="#FFFFFF" stroke-width="7"/>
+  <!-- destination pin and route -->
+  <path d="M252 104s-20-20-20-34a20 20 0 0 1 40 0c0 14-20 34-20 34z" fill="#FB8C00"/>
+  <circle cx="252" cy="70" r="7" fill="#FFFFFF"/>
+  <!-- road -->
+  <rect y="204" width="400" height="56" fill="#8DB8EC"/>
+  <path d="M10 236h40M90 236h40M170 236h40M250 236h40M330 236h40" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+  <!-- speed lines -->
+  <path d="M30 150h34M18 168h42M36 186h26" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+  <!-- scooter -->
+  <circle cx="122" cy="206" r="24" fill="#13233F"/>
+  <circle cx="122" cy="206" r="9" fill="#C4D8F0"/>
+  <circle cx="262" cy="206" r="24" fill="#13233F"/>
+  <circle cx="262" cy="206" r="9" fill="#C4D8F0"/>
+  <path d="M92 196c0-26 18-40 44-40h40c6 0 10 4 12 10l8 24h30l24-76h14l-24 86c-2 8-8 12-16 12H104c-8 0-12-6-12-16z" fill="#FB8C00"/>
+  <path d="M244 116l18-6" stroke="#13233F" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="258" cy="134" r="7" fill="#FFF3C4"/>
+  <!-- medical box -->
+  <rect x="78" y="118" width="56" height="44" rx="8" fill="#FFFFFF"/>
+  <path d="M106 128v24M94 140h24" stroke="#E8836B" stroke-width="7" stroke-linecap="round"/>
+  <!-- seat -->
+  <rect x="132" y="148" width="62" height="14" rx="7" fill="#13233F"/>
+  <!-- rider: leg -->
+  <path d="M168 154l40 4 4 30" fill="none" stroke="#1F7A6F" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  <ellipse cx="220" cy="192" rx="14" ry="7" fill="#FFFFFF"/>
+  <!-- rider: torso -->
+  <path d="M150 100c2-12 12-20 24-20h4c12 0 20 10 20 22l-6 56h-46z" fill="#2A9D8F"/>
+  <!-- rider: arm to handlebar -->
+  <path d="M184 104l34 20 22-6" fill="none" stroke="#2A9D8F" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="242" cy="117" r="8" fill="#D9A37F"/>
+  <!-- rider: head + helmet -->
+  <circle cx="178" cy="62" r="24" fill="#D9A37F"/>
+  <path d="M152 62c0-18 12-30 28-30s28 12 28 28l-6 2h-50z" fill="#FFFFFF"/>
+  <path d="M154 54h52" stroke="#1565C0" stroke-width="5"/>
+  <circle cx="192" cy="68" r="3" fill="#13233F"/>
+  <path d="M188 78q6 4 12 0" fill="none" stroke="#7A4B33" stroke-width="3" stroke-linecap="round"/>
+  <path d="M156 66c-4 12 0 22 8 28" fill="none" stroke="#2B2118" stroke-width="9" stroke-linecap="round"/>
+</svg>

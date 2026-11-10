@@ -1,8 +1,8 @@
 {
-    'name': 'CareJiox & Việt Úc Public Homepages',
-    'version': '19.0.2.0.0',
+    'name': 'CareJiyo & Việt Úc Public Homepages',
+    'version': '19.0.3.0.0',
     'category': 'Website',
-    'summary': 'Separate premium platform and bilingual client homepages',
+    'summary': 'People-first CareJiyo platform home and bilingual client homepage',
     'license': 'LGPL-3',
     'author': 'I Am Dream Catcher Ltd',
     'depends': ['website'],

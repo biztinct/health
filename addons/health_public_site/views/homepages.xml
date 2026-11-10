@@ -1,45 +1,48 @@
 <?xml version='1.0' encoding='utf-8'?>
 <odoo>
-  <template id="platform" name="CareJiox product home">
+  <template id="platform" name="CareJiyo product home">
     <t t-out="doctype"/>
     <html lang="en">
       <head>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
-        <meta name="theme-color" content="#070c19"/>
-        <title>CareJiox | Care, in perfect sync.</title>
-        <meta name="description" content="Connect clinical care, people, scheduling, billing and insight in one exceptional care management platform."/>
+        <meta name="theme-color" content="#FBF7F1"/>
+        <meta name="color-scheme" content="light"/>
+        <title>CareJiyo | Care that comes to people</title>
+        <meta name="description" content="CareJiyo helps nurses, doctors and care teams book visits, care for people at home and in the clinic, and keep families in the loop, all in one simple app."/>
         <link rel="canonical" href="https://carejiox.com/"/>
         <meta property="og:type" content="website"/>
-        <meta property="og:title" content="CareJiox | Care, in perfect sync."/>
-        <meta property="og:description" content="Connect clinical care, people, scheduling, billing and insight in one exceptional care management platform."/>
+        <meta property="og:site_name" content="CareJiyo"/>
+        <meta property="og:title" content="CareJiyo | Care that comes to people"/>
+        <meta property="og:description" content="Book visits, care for people at home and in the clinic, and keep families in the loop, all in one simple app."/>
         <meta property="og:url" content="https://carejiox.com/"/>
-        <meta property="og:image" content="https://carejiox.com/health_public_site/static/img/carejiox-social.jpg"/>
+        <meta property="og:image" content="https://carejiox.com/health_public_site/static/img/carejiyo-social.jpg"/>
         <meta name="twitter:card" content="summary_large_image"/>
-        <meta name="twitter:title" content="CareJiox | Care, in perfect sync."/>
-        <meta name="twitter:description" content="Connect clinical care, people, scheduling, billing and insight in one exceptional care management platform."/>
-        <meta name="twitter:image" content="https://carejiox.com/health_public_site/static/img/carejiox-social.jpg"/>
-        <link rel="icon" href="/health_public_site/static/img/carejiox-mark.svg"/>
+        <meta name="twitter:title" content="CareJiyo | Care that comes to people"/>
+        <meta name="twitter:description" content="Book visits, care for people at home and in the clinic, and keep families in the loop, all in one simple app."/>
+        <meta name="twitter:image" content="https://carejiox.com/health_public_site/static/img/carejiyo-social.jpg"/>
+        <link rel="icon" href="/health_public_site/static/img/carejiyo-mark.svg"/>
         <link rel="preload" href="/health_public_site/static/fonts/dm-sans-700.ttf" as="font" type="font/ttf" crossorigin="anonymous"/>
-        <link rel="stylesheet" href="/health_public_site/static/src/home.css?v=3"/>
-        <script defer="defer" src="/health_public_site/static/src/home.js?v=4"/>
+        <link rel="stylesheet" href="/health_public_site/static/src/platform.css?v=1"/>
+        <script defer="defer" src="/health_public_site/static/src/platform.js?v=1"/>
       </head>
       <body class="cj-platform">
         <a class="skip" href="#main">Skip to content</a>
         <header class="site-header">
-          <div class="header-shell">
-            <a class="brand" href="/" aria-label="CareJiox home">
-              <img src="/health_public_site/static/img/carejiox-mark.svg" alt="" width="40" height="40"/>
-              <span>carejiox<span class="brand-dot">.</span></span>
+          <div class="shell header-shell">
+            <a class="brand" href="/" aria-label="CareJiyo home">
+              <img src="/health_public_site/static/img/carejiyo-lockup.svg" alt="CareJiyo" width="158" height="44"/>
             </a>
             <nav id="main-nav" aria-label="Main navigation">
-              <a href="#platform">Platform</a>
-              <a href="#flow">How it flows</a>
-              <a href="#product">Explore the product</a>
+              <a href="#where">Home &amp; clinic care</a>
+              <a href="#how">How a visit works</a>
+              <a href="#team">For your team</a>
+              <a href="#features">Features</a>
+              <a class="nav-sign-in" href="/web/login">Sign in</a>
             </nav>
             <div class="header-actions">
-              <a class="sign-in" href="/web/login">Sign in <span class="arrow" aria-hidden="true">↗</span></a>
-              <a class="button primary small" href="mailto:ash@biztinct.com?subject=CareJiox%20demo%20enquiry">Book a demo<span class="arrow" aria-hidden="true">↗</span></a>
+              <a class="sign-in" href="/web/login">Sign in</a>
+              <a class="button primary small" href="mailto:ash@biztinct.com?subject=CareJiyo%20demo%20enquiry">Book a demo</a>
               <button class="menu-toggle" aria-controls="main-nav" aria-expanded="false" aria-label="Menu">
                 <span/>
                 <span/>
@@ -48,419 +51,278 @@
           </div>
         </header>
         <main id="main">
-          <section class="hero " id="workspace">
-            <div class="hero-aurora aurora-one"/>
-            <div class="hero-aurora aurora-two"/>
-            <div class="hero-grid"/>
+          <section class="hero">
             <div class="shell hero-layout">
               <div class="hero-copy">
-                <div class="eyebrow"><span class="status-dot"/>THE OPERATING SYSTEM FOR CONNECTED CARE</div>
-                <h1>Care, in<br/><span class="gradient-text">perfect sync.</span></h1>
-                <p class="hero-description">From the first conversation to the next clinical decision. Connect your people, care and operations in one extraordinary workspace.</p>
+                <span class="eyebrow">Software for home care and clinic teams</span>
+                <h1>Care that comes <span class="accent">to&#160;people.</span></h1>
+                <p class="lead">CareJiyo helps nurses, doctors and care teams book visits, care for people at home and in the clinic, and keep families in the loop. All in one simple app.</p>
                 <div class="hero-actions">
-                  <a class="button primary" href="#product">See CareJiox in action<span class="arrow" aria-hidden="true">↗</span></a>
-                  <a class="button ghost" href="mailto:ash@biztinct.com?subject=CareJiox%20demo%20enquiry">Let’s talk<span class="arrow" aria-hidden="true">↗</span></a>
+                  <a class="button primary" href="mailto:ash@biztinct.com?subject=CareJiyo%20demo%20enquiry">Book a demo</a>
+                  <a class="button quiet" href="#how">See how a visit works <span aria-hidden="true">→</span></a>
                 </div>
-                <div class="hero-proof">
-                  <span class="proof-stack">
-                    <span class="icon i-users" aria-hidden="true"/>
-                    <span class="icon i-heart-pulse" aria-hidden="true"/>
-                    <span class="icon i-globe" aria-hidden="true"/>
-                  </span>
-                  <span>Clinical depth. Operational clarity.<br/><strong>Human connection.</strong></span>
-                </div>
+                <ul class="hero-points">
+                  <li><span class="dot-icon"><span class="icon i-house" aria-hidden="true"/></span>Home visits</li>
+                  <li><span class="dot-icon"><span class="icon i-stethoscope" aria-hidden="true"/></span>Clinic appointments</li>
+                  <li><span class="dot-icon"><span class="icon i-users" aria-hidden="true"/></span>Families kept informed</li>
+                </ul>
               </div>
-              <div class="network-scene" data-scene="true">
-                <div class="scene-halo"/>
-                <canvas class="network-canvas" aria-hidden="true"/>
-                <div class="scene-content">
-                  <div class="core-node">
-                    <div class="core-ring"/>
-                    <div class="core-face">
-                      <span class="icon i-heart-pulse" aria-hidden="true"/>
-                      <span>CAREJIOX</span>
-                    </div>
-                  </div>
-                  <div class="scene-card scene-clinical">
-                    <span class="scene-icon">
-                      <span class="icon i-activity" aria-hidden="true"/>
-                    </span>
-                    <div>
-                      <small>CLINICAL WORKSPACE</small>
-                      <strong>The complete care picture</strong>
-                    </div>
-                    <div class="vital-wave" aria-hidden="true">
-                      <i/>
-                      <i/>
-                      <i/>
-                      <i/>
-                      <i/>
-                      <i/>
-                      <i/>
-                      <i/>
-                      <i/>
-                      <i/>
-                      <i/>
-                      <i/>
-                      <i/>
-                      <i/>
-                      <i/>
-                      <i/>
-                      <i/>
-                      <i/>
-                      <i/>
-                      <i/>
-                      <i/>
-                      <i/>
-                    </div>
-                    <div class="scene-card-foot">
-                      <span>Care plans</span>
-                      <span>Vitals</span>
-                      <span>Visit notes</span>
-                    </div>
-                  </div>
-                  <div class="scene-card scene-visit">
-                    <span class="scene-icon mint">
-                      <span class="icon i-calendar" aria-hidden="true"/>
-                    </span>
-                    <div>
-                      <small>CARE COORDINATION</small>
-                      <strong>Every visit, in sync.</strong>
-                    </div>
-                    <div class="mini-calendar" aria-hidden="true">
-                      <span class="">M</span>
-                      <span class="">T</span>
-                      <span class="selected">W</span>
-                      <span class="">T</span>
-                      <span class="">F</span>
-                    </div>
-                    <div class="mini-appointment">
-                      <span class="mini-avatar">
-                        <span class="icon i-users" aria-hidden="true"/>
-                      </span>
-                      <span>Care team assigned</span>
-                      <span class="icon i-check" aria-hidden="true"/>
-                    </div>
-                  </div>
-                  <div class="scene-card scene-billing">
-                    <span class="scene-icon violet">
-                      <span class="icon i-credit-card" aria-hidden="true"/>
-                    </span>
-                    <div>
-                      <small>CONNECTED OPERATIONS</small>
-                      <strong>From care to completion.</strong>
-                    </div>
-                    <div class="billing-progress">
-                      <span/>
-                    </div>
-                    <div class="scene-card-foot">
-                      <span>Visit</span>
-                      <span>Invoice</span>
-                      <span>Follow-up</span>
-                    </div>
-                  </div>
-                  <div class="orbit-label label-one"><span class="icon i-shield-check" aria-hidden="true"/>Role-based access</div>
-                  <div class="orbit-label label-two"><span class="icon i-message-square" aria-hidden="true"/>One shared context</div>
-                  <div class="scene-spark spark-one"/>
-                  <div class="scene-spark spark-two"/>
+              <div class="hero-art">
+                <img class="hero-picture" src="/health_public_site/static/img/site/hero-home-visit.svg" alt="A nurse holds an older woman's hand while checking her blood pressure in her living room." width="600" height="520"/>
+                <div class="float-card card-a" aria-hidden="true">
+                  <span class="float-icon blue"><span class="icon i-calendar"/></span>
+                  <span><strong>Visit booked</strong><small>Tuesday, 9:00 am</small></span>
                 </div>
-                <div class="scene-caption">A connected workflow, illustrated.</div>
+                <div class="float-card card-b" aria-hidden="true">
+                  <span class="float-icon orange"><span class="icon i-navigation"/></span>
+                  <span><strong>Nurse on the way</strong><small>Arriving in about 12 min</small></span>
+                </div>
+                <div class="float-card card-c" aria-hidden="true">
+                  <span class="float-icon teal"><span class="icon i-check"/></span>
+                  <span><strong>Blood pressure recorded</strong><small>Update sent to the family</small></span>
+                </div>
               </div>
             </div>
-            <div class="shell hero-bottom">
-              <a class="scroll-cue" href="#platform"><span class="scroll-line"/>Discover what’s connected<span aria-hidden="true">↓</span></a>
-              <button class="motion-toggle" aria-pressed="false" data-pause="Pause motion" data-play="Play motion">
+            <div class="shell hero-foot">
+              <p class="made-for"><span>Made for</span> home nursing · doctor home visits · clinics · elder care · recovery at home</p>
+              <button class="motion-toggle" type="button" aria-pressed="false">
                 <span class="motion-symbol" aria-hidden="true">Ⅱ</span>
                 <span class="motion-label">Pause motion</span>
               </button>
             </div>
           </section>
-          <div class="capability-ribbon">
-            <div class="shell">
-              <span><span class="icon i-calendar" aria-hidden="true"/>Scheduling</span>
-              <span><span class="icon i-clipboard-check" aria-hidden="true"/>Clinical records</span>
-              <span><span class="icon i-users" aria-hidden="true"/>Care teams</span>
-              <span><span class="icon i-credit-card" aria-hidden="true"/>Billing</span>
-              <span><span class="icon i-message-square" aria-hidden="true"/>Family connection</span>
-              <span><span class="icon i-gauge" aria-hidden="true"/>Insights</span>
-            </div>
-          </div>
-          <section class="section shell" id="platform">
-            <div class="section-heading reveal">
-              <span class="eyebrow">EVERYTHING MOVES TOGETHER</span>
-              <h2>Many moving parts. One beautiful flow.</h2>
-              <p>Purpose-built tools for the people who make care happen.</p>
-            </div>
-            <div class="bento-grid">
-              <article class="bento reveal bento-0">
-                <div class="bento-art" aria-hidden="true">
-                  <div class="graphic-orbits">
-                    <span>
-                      <span class="icon i-calendar" aria-hidden="true"/>
-                    </span>
-                    <i/>
-                    <b/>
-                  </div>
-                </div>
-                <span class="feature-icon">
-                  <span class="icon i-calendar" aria-hidden="true"/>
-                </span>
-                <h3>Coordination, without the chaos.</h3>
-                <p>Bring enquiries, schedules, rosters and care teams into one connected working day.</p>
-                <small>SCHEDULE → ASSIGN → VISIT</small>
-              </article>
-              <article class="bento reveal bento-1">
-                <div class="bento-art" aria-hidden="true">
-                  <div class="graphic-orbits">
-                    <span>
-                      <span class="icon i-heart-pulse" aria-hidden="true"/>
-                    </span>
-                    <i/>
-                    <b/>
-                  </div>
-                </div>
-                <span class="feature-icon">
-                  <span class="icon i-heart-pulse" aria-hidden="true"/>
-                </span>
-                <h3>A richer picture of care.</h3>
-                <p>Clinical records, care plans, medication workflows and visit notes keep context close to every decision.</p>
-                <small>RECORDS · PLANS · MEDICATIONS</small>
-              </article>
-              <article class="bento reveal bento-2">
-                <div class="bento-art" aria-hidden="true">
-                  <div class="graphic-bars">
-                    <i style="--bar:32%"/>
-                    <i style="--bar:55%"/>
-                    <i style="--bar:42%"/>
-                    <i style="--bar:75%"/>
-                    <i style="--bar:63%"/>
-                    <i style="--bar:90%"/>
-                    <i style="--bar:78%"/>
-                    <i style="--bar:100%"/>
-                  </div>
-                </div>
-                <span class="feature-icon">
-                  <span class="icon i-credit-card" aria-hidden="true"/>
-                </span>
-                <h3>Care meets operational clarity.</h3>
-                <p>Create invoices, manage payments and claims, and support filing to government agencies where required and configured.</p>
-                <small>VISITS → INVOICES → INSIGHT</small>
-              </article>
-              <article class="bento reveal bento-3">
-                <div class="bento-art" aria-hidden="true">
-                  <div class="graphic-orbits">
-                    <span>
-                      <span class="icon i-message-square" aria-hidden="true"/>
-                    </span>
-                    <i/>
-                    <b/>
-                  </div>
-                </div>
-                <span class="feature-icon">
-                  <span class="icon i-message-square" aria-hidden="true"/>
-                </span>
-                <h3>Keep the human connection.</h3>
-                <p>Support family communication, shared care information, telehealth and follow-up across the care journey.</p>
-                <small>TEAM · PERSON · FAMILY</small>
-              </article>
-            </div>
-          </section>
-          <section class="product-section section" id="product">
+
+          <section class="section" id="where">
             <div class="shell">
               <div class="section-heading reveal">
-                <span class="eyebrow">YOUR WORK, CONNECTED</span>
-                <h2>Find your rhythm.</h2>
+                <span class="eyebrow">Where care happens</span>
+                <h2>One team. Every place care happens.</h2>
+                <p>Whether your nurses travel across town or your doctors see people in the clinic, everyone works from the same picture of each person’s care.</p>
               </div>
-              <div class="product-demo reveal">
-                <div class="demo-top">
-                  <span class="demo-dots" aria-hidden="true">● ● ●</span>
-                  <span>WORKSPACE EXPLORER</span>
-                  <span class="demo-caption">Illustrative preview</span>
-                </div>
-                <div class="demo-tabs" role="tablist" aria-label="Workspace preview">
-                  <button role="tab" id="tab-0" aria-controls="panel-0" aria-selected="true" tabindex="0">Coordinate</button>
-                  <button role="tab" id="tab-1" aria-controls="panel-1" aria-selected="false" tabindex="-1">Deliver care</button>
-                  <button role="tab" id="tab-2" aria-controls="panel-2" aria-selected="false" tabindex="-1">Manage operations</button>
-                </div>
-                <div class="demo-panel" role="tabpanel" id="panel-0" aria-labelledby="tab-0">
-                  <div class="demo-copy">
-                    <span class="feature-icon">
-                      <span class="icon i-calendar" aria-hidden="true"/>
-                    </span>
-                    <h3>A care day, beautifully aligned.</h3>
-                    <p>See the schedule. Assign the right people. Keep the next step clear.</p>
-                    <span class="demo-note">One shared context. A clearer next step.</span>
+              <div class="place-grid">
+                <article class="place-card reveal">
+                  <img src="/health_public_site/static/img/site/on-the-way.svg" alt="A nurse rides a scooter through town towards a map pin." width="400" height="260" loading="lazy"/>
+                  <div class="place-body">
+                    <span class="tag blue">On the road</span>
+                    <h3>The day’s visits, in order</h3>
+                    <p>Nurses see where to go next, get directions and tap “On my way”, so families know when to expect them.</p>
                   </div>
-                  <div class="demo-schedule">
-                    <div class="schedule-row">
-                      <span class="schedule-time">09:00</span>
-                      <div>
-                        <strong>Home visit</strong>
-                        <small>Care team assigned</small>
-                      </div>
-                      <span class="row-check">
-                        <span class="icon i-check" aria-hidden="true"/>
-                      </span>
-                    </div>
-                    <div class="schedule-row">
-                      <span class="schedule-time">11:30</span>
-                      <div>
-                        <strong>Care review</strong>
-                        <small>Clinical review</small>
-                      </div>
-                      <span class="row-check">
-                        <span class="icon i-check" aria-hidden="true"/>
-                      </span>
-                    </div>
-                    <div class="schedule-row">
-                      <span class="schedule-time">14:00</span>
-                      <div>
-                        <strong>Follow-up</strong>
-                        <small>Ready to coordinate</small>
-                      </div>
-                      <span class="row-check">
-                        <span class="icon i-check" aria-hidden="true"/>
-                      </span>
-                    </div>
+                </article>
+                <article class="place-card reveal">
+                  <img src="/health_public_site/static/img/site/at-the-door.svg" alt="A nurse with a care bag waves to a family member opening the front door." width="400" height="260" loading="lazy"/>
+                  <div class="place-body">
+                    <span class="tag orange">At home</span>
+                    <h3>Care at the bedside</h3>
+                    <p>Record checks, notes and medicines during the visit. Weak signal? Keep working. It all saves when you are back online.</p>
                   </div>
-                </div>
-                <div class="demo-panel" role="tabpanel" id="panel-1" aria-labelledby="tab-1" hidden="hidden">
-                  <div class="demo-copy">
-                    <span class="feature-icon">
-                      <span class="icon i-heart-pulse" aria-hidden="true"/>
-                    </span>
-                    <h3>Context for every clinical moment.</h3>
-                    <p>Bring the care plan, observations and visit documentation into view.</p>
-                    <span class="demo-note">One shared context. A clearer next step.</span>
+                </article>
+                <article class="place-card reveal">
+                  <img src="/health_public_site/static/img/site/in-the-clinic.svg" alt="A doctor in a white coat talks with a patient across a clinic desk." width="400" height="260" loading="lazy"/>
+                  <div class="place-body">
+                    <span class="tag teal">In the clinic</span>
+                    <h3>The whole story, before they sit down</h3>
+                    <p>Doctors see care plans, past visits and medicines in one place, including what happened at home.</p>
                   </div>
-                  <div class="demo-schedule">
-                    <div class="schedule-row">
-                      <span class="schedule-time">01</span>
-                      <div>
-                        <strong>Care plan</strong>
-                        <small>Goals and interventions</small>
-                      </div>
-                      <span class="row-check">
-                        <span class="icon i-check" aria-hidden="true"/>
-                      </span>
-                    </div>
-                    <div class="schedule-row">
-                      <span class="schedule-time">02</span>
-                      <div>
-                        <strong>Observations</strong>
-                        <small>Vitals and progress</small>
-                      </div>
-                      <span class="row-check">
-                        <span class="icon i-check" aria-hidden="true"/>
-                      </span>
-                    </div>
-                    <div class="schedule-row">
-                      <span class="schedule-time">03</span>
-                      <div>
-                        <strong>Visit notes</strong>
-                        <small>Document the next step</small>
-                      </div>
-                      <span class="row-check">
-                        <span class="icon i-check" aria-hidden="true"/>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div class="demo-panel" role="tabpanel" id="panel-2" aria-labelledby="tab-2" hidden="hidden">
-                  <div class="demo-copy">
-                    <span class="feature-icon">
-                      <span class="icon i-gauge" aria-hidden="true"/>
-                    </span>
-                    <h3>From delivered care to clear insight.</h3>
-                    <p>Connect service activity with invoicing, payments and reporting.</p>
-                    <span class="demo-note">One shared context. A clearer next step.</span>
-                  </div>
-                  <div class="demo-schedule">
-                    <div class="schedule-row">
-                      <span class="schedule-time">01</span>
-                      <div>
-                        <strong>Service activity</strong>
-                        <small>Review completed visits</small>
-                      </div>
-                      <span class="row-check">
-                        <span class="icon i-check" aria-hidden="true"/>
-                      </span>
-                    </div>
-                    <div class="schedule-row">
-                      <span class="schedule-time">02</span>
-                      <div>
-                        <strong>Invoices</strong>
-                        <small>Prepare and review</small>
-                      </div>
-                      <span class="row-check">
-                        <span class="icon i-check" aria-hidden="true"/>
-                      </span>
-                    </div>
-                    <div class="schedule-row">
-                      <span class="schedule-time">03</span>
-                      <div>
-                        <strong>Reporting</strong>
-                        <small>Understand operations</small>
-                      </div>
-                      <span class="row-check">
-                        <span class="icon i-check" aria-hidden="true"/>
-                      </span>
-                    </div>
-                  </div>
-                </div>
+                </article>
               </div>
-              <p class="product-disclaimer">Workflow illustrations, not live patient data. Available tools depend on your organisation’s configuration and your role.</p>
             </div>
           </section>
-          <section class="section shell" id="flow">
-            <div class="section-heading reveal">
-              <span class="eyebrow">FROM FIRST HELLO TO WHAT’S NEXT</span>
-              <h2>Care doesn’t stand still.<br/><span class="gradient-text">Neither should your software.</span></h2>
-            </div>
-            <div class="journey reveal">
-              <article>
-                <span class="journey-number">01</span>
-                <h3>Connect</h3>
-                <p>Capture enquiries and build the relationship.</p>
-              </article>
-              <article>
-                <span class="journey-number">02</span>
-                <h3>Coordinate</h3>
-                <p>Shape the plan and bring the team together.</p>
-              </article>
-              <article>
-                <span class="journey-number">03</span>
-                <h3>Care</h3>
-                <p>Record visits, clinical context and progress.</p>
-              </article>
-              <article>
-                <span class="journey-number">04</span>
-                <h3>Complete</h3>
-                <p>Bring billing, follow-up and insight together.</p>
-              </article>
+
+          <section class="section band" id="how">
+            <div class="shell">
+              <div class="section-heading center reveal">
+                <span class="eyebrow">A visit, start to finish</span>
+                <h2>From the first call to the follow-up.</h2>
+                <p>Every step is connected, so nothing falls through the gaps and nobody has to ask twice.</p>
+              </div>
+              <ol class="steps reveal">
+                <li>
+                  <span class="step-icon"><span class="icon i-calendar" aria-hidden="true"/></span>
+                  <span class="step-number">Step 1</span>
+                  <h3>Book</h3>
+                  <p>A family calls, sends a message or books online. Every request lands in one place.</p>
+                </li>
+                <li>
+                  <span class="step-icon"><span class="icon i-users" aria-hidden="true"/></span>
+                  <span class="step-number">Step 2</span>
+                  <h3>Match</h3>
+                  <p>Your coordinator picks the right nurse or doctor, by skills, availability and travel time.</p>
+                </li>
+                <li>
+                  <span class="step-icon"><span class="icon i-navigation" aria-hidden="true"/></span>
+                  <span class="step-number">Step 3</span>
+                  <h3>On the way</h3>
+                  <p>The nurse taps “On my way” and the family gets a message.</p>
+                </li>
+                <li>
+                  <span class="step-icon"><span class="icon i-heart-pulse" aria-hidden="true"/></span>
+                  <span class="step-number">Step 4</span>
+                  <h3>Care</h3>
+                  <p>Checks, notes and medicines are recorded during the visit, safely and privately.</p>
+                </li>
+                <li>
+                  <span class="step-icon"><span class="icon i-message-square" aria-hidden="true"/></span>
+                  <span class="step-number">Step 5</span>
+                  <h3>Follow up</h3>
+                  <p>The family gets an update, the invoice goes out and the next visit is booked.</p>
+                </li>
+              </ol>
             </div>
           </section>
-          <section class="final-cta shell reveal">
-            <div class="cta-glow"/>
-            <span class="eyebrow">MAKE SPACE FOR BETTER CARE</span>
-            <h2>Your next chapter.<br/>Perfectly connected.</h2>
-            <p>Explore how CareJiox fits your people, services and way of working.</p>
-            <a class="button primary" href="mailto:ash@biztinct.com?subject=CareJiox%20demo%20enquiry">Let’s build your care workspace<span class="arrow" aria-hidden="true">↗</span></a>
+
+          <section class="section" id="team">
+            <div class="shell">
+              <div class="section-heading reveal">
+                <span class="eyebrow">For everyone in the circle of care</span>
+                <h2>Simple for each person. Connected for all.</h2>
+              </div>
+              <div class="roles reveal">
+                <div class="role-tabs" role="tablist" aria-label="Who uses CareJiyo">
+                  <button role="tab" id="tab-0" aria-controls="panel-0" aria-selected="true" tabindex="0"><span class="icon i-stethoscope" aria-hidden="true"/>Nurses &amp; doctors</button>
+                  <button role="tab" id="tab-1" aria-controls="panel-1" aria-selected="false" tabindex="-1"><span class="icon i-calendar" aria-hidden="true"/>Coordinators</button>
+                  <button role="tab" id="tab-2" aria-controls="panel-2" aria-selected="false" tabindex="-1"><span class="icon i-house" aria-hidden="true"/>Families</button>
+                  <button role="tab" id="tab-3" aria-controls="panel-3" aria-selected="false" tabindex="-1"><span class="icon i-building-2" aria-hidden="true"/>Clinic managers</button>
+                </div>
+                <div class="role-panel" role="tabpanel" id="panel-0" aria-labelledby="tab-0">
+                  <div class="role-copy">
+                    <h3>Your day, in your pocket.</h3>
+                    <ul class="ticks">
+                      <li>Today’s visits in order, with addresses and directions</li>
+                      <li>Big, easy buttons that work with gloves and in bright sun</li>
+                      <li>Keep working when the signal drops</li>
+                    </ul>
+                  </div>
+                  <div class="role-visual" aria-hidden="true">
+                    <div class="phone">
+                      <div class="phone-head"><strong>Today</strong><small>3 visits</small></div>
+                      <div class="visit-row done"><span class="time">09:00</span><span><strong>Home visit</strong><small>Dressing · 2.1&#160;km</small></span><span class="pill teal">Done</span></div>
+                      <div class="visit-row now"><span class="time">11:00</span><span><strong>Home visit</strong><small>Medicines · 4.3&#160;km</small></span><span class="pill orange">On my way</span></div>
+                      <div class="visit-row"><span class="time">14:30</span><span><strong>Clinic</strong><small>Follow-up check</small></span><span class="pill">Later</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="role-panel" role="tabpanel" id="panel-1" aria-labelledby="tab-1" hidden="hidden">
+                  <div class="role-copy">
+                    <h3>Everyone in the right place.</h3>
+                    <ul class="ticks">
+                      <li>One calendar for every nurse, doctor and clinic room</li>
+                      <li>Drag a visit to move it to another time or person</li>
+                      <li>See travel-time warnings before they turn into late arrivals</li>
+                    </ul>
+                  </div>
+                  <div class="role-visual" aria-hidden="true">
+                    <div class="planner">
+                      <div class="planner-head"><span/><span>8</span><span>10</span><span>12</span><span>14</span><span>16</span></div>
+                      <div class="planner-row"><span class="who"><i class="av a1"/>Nurse A</span><span class="slot blue" style="--s:4;--w:26">Home visit</span><span class="slot teal" style="--s:42;--w:24">Home visit</span></div>
+                      <div class="planner-row"><span class="who"><i class="av a2"/>Nurse B</span><span class="slot orange" style="--s:16;--w:30">Wound care</span><span class="slot blue" style="--s:62;--w:22">Check-up</span></div>
+                      <div class="planner-row"><span class="who"><i class="av a3"/>Doctor C</span><span class="slot teal" style="--s:0;--w:44">Clinic</span><span class="slot orange" style="--s:56;--w:30">Home visit</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="role-panel" role="tabpanel" id="panel-2" aria-labelledby="tab-2" hidden="hidden">
+                  <div class="role-copy">
+                    <h3>Peace of mind at home.</h3>
+                    <ul class="ticks">
+                      <li>Know when the nurse is coming</li>
+                      <li>A short, clear update after each visit</li>
+                      <li>Message the care team and book the next visit</li>
+                    </ul>
+                  </div>
+                  <div class="role-visual" aria-hidden="true">
+                    <div class="phone chat">
+                      <div class="phone-head"><strong>Mum’s care team</strong><small>Messages</small></div>
+                      <p class="bubble in">Your nurse is on the way and should arrive in about 12 minutes.</p>
+                      <p class="bubble in">Visit finished. Mum is comfortable and her next visit is on Friday at 9:00.</p>
+                      <p class="bubble out">Thank you so much! See you Friday.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="role-panel" role="tabpanel" id="panel-3" aria-labelledby="tab-3" hidden="hidden">
+                  <div class="role-copy">
+                    <h3>Run the whole service with clarity.</h3>
+                    <ul class="ticks">
+                      <li>Invoices and payments straight from finished visits</li>
+                      <li>Insurance claims, with filing to government agencies where required and configured</li>
+                      <li>Simple reports on visits, staff and income</li>
+                    </ul>
+                  </div>
+                  <div class="role-visual" aria-hidden="true">
+                    <div class="stats">
+                      <div class="stat"><small>Visits this week</small><strong>128</strong><span class="bar"><i style="--v:80%"/></span></div>
+                      <div class="stat"><small>On-time arrivals</small><strong>94%</strong><span class="bar"><i style="--v:94%"/></span></div>
+                      <div class="stat"><small>Invoices sent</small><strong>112</strong><span class="bar"><i style="--v:70%"/></span></div>
+                    </div>
+                  </div>
+                </div>
+                <p class="fine-print">Example screens. No real patient information is shown.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="section band" id="features">
+            <div class="shell">
+              <div class="section-heading reveal">
+                <span class="eyebrow">Everything in one place</span>
+                <h2>All the tools a care team needs.</h2>
+              </div>
+              <div class="feature-grid">
+                <article class="feature reveal"><span class="feature-icon blue"><span class="icon i-calendar" aria-hidden="true"/></span><h3>Bookings and schedules</h3><p>Home visits, rosters and clinic appointments on one calendar.</p></article>
+                <article class="feature reveal"><span class="feature-icon teal"><span class="icon i-clipboard-check" aria-hidden="true"/></span><h3>Care records</h3><p>Care plans, visit notes and history for every person you care for.</p></article>
+                <article class="feature reveal"><span class="feature-icon orange"><span class="icon i-pill" aria-hidden="true"/></span><h3>Medicines</h3><p>Plan and record medicines so nothing is missed.</p></article>
+                <article class="feature reveal"><span class="feature-icon blue"><span class="icon i-video" aria-hidden="true"/></span><h3>Video visits</h3><p>See people from home when a trip isn’t needed.</p></article>
+                <article class="feature reveal"><span class="feature-icon teal"><span class="icon i-message-square" aria-hidden="true"/></span><h3>Family updates</h3><p>Messages and visit updates for the people who care most.</p></article>
+                <article class="feature reveal"><span class="feature-icon orange"><span class="icon i-credit-card" aria-hidden="true"/></span><h3>Billing and claims</h3><p>Invoices, payments and claims, with filing to government agencies where required and configured.</p></article>
+                <article class="feature reveal"><span class="feature-icon blue"><span class="icon i-wifi-off" aria-hidden="true"/></span><h3>Works with weak signal</h3><p>Nurses keep working on the road and catch up when they reconnect.</p></article>
+                <article class="feature reveal"><span class="feature-icon teal"><span class="icon i-lock" aria-hidden="true"/></span><h3>Private and secure</h3><p>Health records are protected, and each person sees only what their role allows.</p></article>
+              </div>
+            </div>
+          </section>
+
+          <section class="section">
+            <div class="shell">
+              <div class="promise reveal">
+                <div>
+                  <h2>Less time on screens. More time with people.</h2>
+                  <p>CareJiyo handles the paperwork in the background, so your team can give their full attention to the person in front of them.</p>
+                </div>
+                <ul>
+                  <li><span class="icon i-languages" aria-hidden="true"/>In English and Vietnamese</li>
+                  <li><span class="icon i-smartphone" aria-hidden="true"/>On phone, tablet and computer</li>
+                  <li><span class="icon i-house" aria-hidden="true"/>Made for home care and clinics</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section class="section cta-section">
+            <div class="shell">
+              <div class="cta reveal">
+                <img src="/health_public_site/static/img/carejiyo-mark.svg" alt="" width="72" height="72"/>
+                <h2>Let’s talk about your care team.</h2>
+                <p>Tell us how your nurses, doctors and clinics work today. We will show you how CareJiyo fits.</p>
+                <div class="hero-actions center">
+                  <a class="button primary" href="mailto:ash@biztinct.com?subject=CareJiyo%20demo%20enquiry">Book a demo</a>
+                  <a class="button quiet" href="/web/login">Sign in to your workspace <span aria-hidden="true">→</span></a>
+                </div>
+              </div>
+            </div>
           </section>
         </main>
-        <footer class="site-footer shell">
-          <div>
-            <a class="brand" href="/" aria-label="CareJiox home">
-              <img src="/health_public_site/static/img/carejiox-mark.svg" alt="" width="40" height="40"/>
-              <span>carejiox<span class="brand-dot">.</span></span>
-            </a>
-            <p>Care, in perfect sync.</p>
+        <footer class="site-footer">
+          <div class="shell footer-shell">
+            <div class="footer-brand">
+              <img src="/health_public_site/static/img/carejiyo-lockup.svg" alt="CareJiyo" width="144" height="40"/>
+              <p>Care that comes to people.</p>
+            </div>
+            <div class="footer-links">
+              <a href="mailto:ash@biztinct.com">ash@biztinct.com</a>
+              <a href="/web/login">Workspace sign in</a>
+            </div>
           </div>
-          <div class="footer-links">
-            <a href="mailto:ash@biztinct.com">ash@biztinct.com <span class="arrow" aria-hidden="true">↗</span></a>
-            <a href="/web/login">Workspace sign in <span class="arrow" aria-hidden="true">↗</span></a>
+          <div class="shell footer-base">
+            <small>© <t t-out="year"/> CareJiyo</small>
+            <small>Pictures are illustrations. No real patient information is shown.</small>
           </div>
-          <small>© <t t-out="year"/> CareJiox</small>
         </footer>
       </body>
     </html>
@@ -1162,7 +1024,7 @@
               <t t-out="'Mở ứng dụng' if site_lang == 'vi' else 'Open workspace'"/>
               <span class="arrow" aria-hidden="true">↗</span>
             </a>
-            <a href="https://carejiox.com/">Powered by CareJiox <span class="arrow" aria-hidden="true">↗</span></a>
+            <a href="https://carejiox.com/">Powered by CareJiyo <span class="arrow" aria-hidden="true">↗</span></a>
           </div>
           <small>© <t t-out="year"/> Việt Úc</small>
         </footer>
