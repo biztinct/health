@@ -1,0 +1,131 @@
+/* CareJiyo sign-in shell (platform database only). Scoped under .cj-auth so the
+   form markup from web.login / auth_signup / auth_passkey keeps working as is. */
+@font-face { font-family: 'DM Sans'; src: url('/health_public_site/static/fonts/dm-sans-400.ttf') format('truetype'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'DM Sans'; src: url('/health_public_site/static/fonts/dm-sans-700.ttf') format('truetype'); font-weight: 700; font-display: swap; }
+
+.cj-auth {
+  --paper: #FBF7F1; --paper-deep: #F3E9DC; --card: #FFFFFF;
+  --ink: #13233F; --ink-soft: #4C5A72; --ink-faint: #7A8598; --line: #E3D8C8;
+  --blue: #1565C0; --blue-dark: #0F4F99; --blue-soft: #DCEAFB;
+  --orange: #FB8C00; --orange-ink: #B35F00; --teal-ink: #1F7A6F;
+  display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  min-height: 100vh; min-height: 100dvh;
+  background: var(--card); color: var(--ink);
+  font: 400 16px/1.55 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+body:has(.cj-auth) { background: #FFFFFF; }
+.cj-auth a { text-decoration: none; }
+.cj-auth :focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+.cj-auth .form-control:focus-visible { outline: none; }
+
+/* left: the care story */
+.cj-auth-story {
+  position: relative; display: flex; flex-direction: column; justify-content: center;
+  padding: 40px clamp(32px, 5vw, 72px); background: var(--paper); overflow: hidden;
+}
+.cj-auth-home { position: absolute; top: 32px; left: clamp(32px, 5vw, 72px); }
+.cj-auth-home img { width: 150px; height: auto; }
+.cj-auth-scene { position: relative; width: 100%; max-width: 520px; margin: 40px auto 24px; }
+.cj-auth-scene > img { width: 100%; height: auto; display: block; }
+.cj-auth-chip {
+  position: absolute; display: inline-flex; align-items: center; gap: 8px;
+  background: var(--card); border-radius: 999px; padding: 8px 14px;
+  font-size: 14px; font-weight: 700; color: var(--ink);
+  box-shadow: 0 1px 2px rgba(19, 35, 63, .06), 0 10px 24px rgba(19, 35, 63, .1);
+}
+.chip-a { top: 8%; left: 0; }
+.chip-b { top: 42%; right: -2%; }
+.cj-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.cj-dot.blue { background: var(--blue); }
+.cj-dot.orange { background: var(--orange); }
+.cj-auth-quote { color: var(--ink); margin: 0 auto; max-width: 520px; width: 100%; font-size: clamp(30px, 3.2vw, 42px); font-weight: 700; line-height: 1.1; letter-spacing: -.02em; }
+.cj-auth-quote span { color: var(--blue); }
+.cj-auth-sub { margin: 12px auto 0; max-width: 520px; width: 100%; color: var(--ink-soft); font-size: 17px; }
+
+/* right: the form */
+.cj-auth-panel { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 48px 24px 24px; }
+.cj-auth-card { width: 100%; max-width: 400px; margin: auto 0; }
+.cj-auth-brand { display: none; margin-bottom: 28px; }
+.cj-auth-brand img { width: 150px; height: auto; }
+.cj-auth-title { margin: 0; font-family: inherit; font-size: 34px; font-weight: 700; letter-spacing: -.02em; line-height: 1.15; color: var(--ink); }
+.cj-auth-lead { margin: 8px 0 28px; color: var(--ink-soft); font-size: 17px; }
+.cj-auth-foot { margin: 32px 0 0; font-size: 13px; color: var(--ink-faint); text-align: center; }
+
+/* the stock form, restyled */
+.cj-auth-form { font-family: inherit; }
+.cj-auth-form .oe_login_form, .cj-auth-form .oe_signup_form, .cj-auth-form .oe_reset_password_form { max-width: none; margin: 0; }
+.cj-auth-form .form-label, .cj-auth-form .col-form-label {
+  font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 8px; padding: 0;
+  align-items: center;
+}
+.cj-auth-form .form-control {
+  height: 52px; padding: 0 16px; border-radius: 14px; border: 1.5px solid var(--line);
+  background: var(--card); color: var(--ink); font-size: 16px; box-shadow: none;
+}
+.cj-auth-form .form-control::placeholder { color: #A3ABB9; }
+.cj-auth-form .form-control:focus { border-color: var(--blue); box-shadow: 0 0 0 4px var(--blue-soft); }
+.cj-auth-form .mb-3 { margin-bottom: 20px !important; }
+.cj-auth-form .input-group > .form-control { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.cj-auth-form .o_show_password {
+  width: 52px; border: 1.5px solid var(--line) !important; border-left: 0 !important;
+  border-radius: 0 14px 14px 0 !important; background: var(--card); color: var(--ink-faint); box-shadow: none;
+}
+.cj-auth-form .o_show_password:hover { color: var(--ink); }
+.cj-auth-form .input-group:focus-within .o_show_password { border-color: var(--blue) !important; }
+
+/* "Reset Password" sits in the password label row */
+.cj-auth-form label .btn-link, .cj-auth-form .btn-link {
+  padding: 0; border: 0; background: none; box-shadow: none; font-size: 14px; font-weight: 700; color: var(--blue);
+}
+.cj-auth-form label .btn-link:hover, .cj-auth-form .btn-link:hover { color: var(--blue-dark); text-decoration: underline; }
+
+.cj-auth-form .btn-primary {
+  height: 54px; border-radius: 14px; border: 0; background: var(--blue); color: #FFFFFF;
+  font-size: 17px; font-weight: 700; box-shadow: none; transition: background-color .2s;
+}
+.cj-auth-form .btn-primary:hover, .cj-auth-form .btn-primary:focus { background: var(--blue-dark); }
+.cj-auth-form .oe_login_buttons { padding-top: 12px !important; }
+.cj-auth-form .oe_login_buttons a:not(.btn) { color: var(--blue); font-weight: 700; }
+
+/* "- or -" + passkey */
+.cj-auth-form .o_login_auth em {
+  display: flex !important; align-items: center; gap: 12px; margin: 22px 0 !important;
+  font-style: normal; font-size: 13px; color: var(--ink-faint) !important;
+}
+.cj-auth-form .o_login_auth em::before, .cj-auth-form .o_login_auth em::after { content: ''; flex: 1; border-top: 1px solid var(--line); }
+.cj-auth-form .o_login_auth .list-group { border-radius: 14px; }
+.cj-auth-form .o_login_auth .list-group-item {
+  min-height: 52px; border: 1.5px solid var(--line); border-radius: 14px !important;
+  font-weight: 700; color: var(--ink) !important; background: var(--card);
+}
+.cj-auth-form .o_login_auth .list-group-item:hover { border-color: var(--blue); color: var(--blue) !important; background: var(--card); }
+.cj-auth-form .o_login_auth .list-group-item .fa { color: var(--ink-faint); }
+.cj-auth-form .o_login_auth .list-group-item + .list-group-item { margin-top: 10px; }
+
+/* "Choose a user" (remembered accounts) */
+.cj-auth-form .o_user_switch, .cj-auth-form [class*="user_switch"] { font-family: inherit; }
+.cj-auth-form .o_user_switch .list-group-item, .cj-auth-form .o_user_switch button { border-radius: 14px; }
+
+.cj-auth-form .alert { border-radius: 14px; border: 0; font-size: 15px; }
+.cj-auth-form .alert-danger { background: #FDECEA; color: #8A1F11; }
+.cj-auth-form .alert-success { background: #E3F4EF; color: var(--teal-ink); }
+
+.cj-auth-links { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 14px; }
+.cj-auth-links a { color: var(--ink-soft); font-weight: 700; }
+.cj-auth-links a:hover { color: var(--blue); }
+
+/* tablet and phone: one column, a short warm band on top */
+@media (max-width: 960px) {
+  .cj-auth { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .cj-auth-story { padding: 20px 24px 0; justify-content: flex-start; }
+  .cj-auth-home { position: static; }
+  .cj-auth-scene { max-width: 300px; margin: 8px auto -6px; }
+  .cj-auth-chip, .cj-auth-quote, .cj-auth-sub { display: none; }
+  .cj-auth-panel { padding: 32px 16px 24px; justify-content: flex-start; }
+  .cj-auth-title { font-size: 28px; }
+}
+@media (max-width: 600px) {
+  .cj-auth-scene { max-width: 220px; }
+  .cj-auth-lead { margin-bottom: 22px; }
+}

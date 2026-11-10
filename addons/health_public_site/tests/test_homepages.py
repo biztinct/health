@@ -96,3 +96,32 @@ class TestPublicHomepages(HttpCase):
             links = doc.xpath('//a/@href')
             self.assertIn('/web/login', links)
             self.assertTrue(any(link.startswith('mailto:ash@biztinct.com') for link in links))
+
+    def test_sign_in_shell(self):
+        """CareJiyo frames sign-in on the platform only; the stock form is kept intact."""
+        brand = homepage_brand(self.env.cr.dbname)
+        for path in ('/web/login', '/web/reset_password'):
+            response = self.url_open(path)
+            self.assertEqual(response.status_code, 200, path)
+            doc = html.fromstring(response.content)
+            visible = html.fromstring(response.content)
+            for node in visible.xpath('//script | //style'):
+                node.drop_tree()
+            text = visible.text_content()
+            self.assertTrue(doc.xpath('//form//input[@name="csrf_token"]'), path)
+            self.assertTrue(doc.xpath('//input[@name="login"]'), path)
+            shell = doc.xpath('//div[contains(@class,"cj-auth")]')
+            if brand == 'platform':
+                self.assertTrue(shell, path)
+                self.assertIn('CareJiyo', doc.findtext('.//title'))
+                self.assertNotIn('Odoo', text)
+                self.assertNotIn('555-555-5556', text)
+                self.assertFalse(doc.xpath('//header[@id="top"]'), path)
+                for src in doc.xpath('//div[contains(@class,"cj-auth")]//img/@src | //link[contains(@href,"login.css")]/@href'):
+                    self.assertEqual(self.url_open(src).status_code, 200, src)
+            else:
+                self.assertFalse(shell, path)
+        if brand == 'platform':
+            doc = html.fromstring(self.url_open('/web/login').content)
+            self.assertTrue(doc.xpath('//form[contains(@class,"oe_login_form")]//input[@name="password"]'))
+            self.assertIn('Welcome back', doc.text_content())

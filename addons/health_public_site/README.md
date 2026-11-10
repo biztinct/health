@@ -46,6 +46,27 @@ shipped ones (booking, scheduling, field app with offline/glove/sun modes,
 "On my way" with family notice, care records, medicines, video visits, family
 messages, invoicing/claims with government filing where configured).
 
+### Sign-in pages (platform only), since 19.0.3.1.0
+
+`views/login.xml` inherits `web.login_layout` after `website.login_layout`.
+For every database except `carejiox` the website frame is kept as is (tenants
+keep their own sign-in page and identity). On `carejiox` a two-panel CareJiyo
+screen replaces the website header/footer (which carried the stock
++1 555-555-5556 sample phone): care scene on the left, form on the right,
+one column with a short picture band on phones. The form markup from
+`web.login` and its inherits (User ID label, "Choose a user", reset link,
+passkey) is untouched and restyled only by `static/src/login.css`, scoped
+under `.cj-auth`. The same shell frames reset-password, signup and
+second-factor pages. Bump the `login.css?v=` query when the CSS changes.
+
+Headless Chrome keeps the login form `d-none` (the user-switch component
+never boots under virtual time) on every database; check it in a real
+browser, e.g. a same-origin 390px iframe.
+
+Website record 1 on `carejiox` (serves carejiyo.com) had its logo set to
+`carejiyo-lockup.svg` by a one-off shell script on 2026-11-10 (previously the
+Viet Uc flower). Not module data, because hhh/template must keep their logos.
+
 ### Client (Việt Úc)
 
 A locally rendered canvas care network, floating interface cards, waveform

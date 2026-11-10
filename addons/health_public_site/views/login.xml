@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+  <!--
+    CareJiyo sign-in shell, platform database only.
+
+    `website.login_layout` (priority 20) has already replaced the body of
+    `web.login_layout` with `<t t-call="website.layout">`. We keep that call for
+    every other database (tenants keep their own sign-in page and identity) and
+    add a t-else sibling that renders the CareJiyo two-panel screen on the
+    platform database. The database test mirrors controllers/home.py
+    homepage_brand(): 'carejiox' -> platform.
+
+    The form itself (`web.login` and every inherit on it: User ID label, user
+    switch, reset link, passkey, tenant identity) is untouched; it arrives here
+    as t-out="0". The same shell therefore also frames reset-password, signup
+    and second-factor pages on the platform database.
+  -->
+  <template id="platform_login_layout" inherit_id="web.login_layout" priority="60" name="CareJiyo sign-in layout">
+    <xpath expr="t[@t-call]" position="attributes">
+      <attribute name="t-if">not (request and request.db == 'carejiox')</attribute>
+    </xpath>
+    <xpath expr="t[@t-call]" position="after">
+      <t t-else="" t-call="website.layout">
+        <t t-set="no_header" t-value="True"/>
+        <t t-set="no_footer" t-value="True"/>
+        <t t-set="cj_path" t-value="request.httprequest.path"/>
+        <t t-set="title" t-value="'Reset your password | CareJiyo' if cj_path.startswith('/web/reset_password') else 'Create your account | CareJiyo' if cj_path.startswith('/web/signup') else 'Sign in | CareJiyo'"/>
+        <t t-set="head">
+          <link rel="preload" href="/health_public_site/static/fonts/dm-sans-700.ttf" as="font" type="font/ttf" crossorigin="anonymous"/>
+          <link rel="stylesheet" href="/health_public_site/static/src/login.css?v=3"/>
+          <meta name="theme-color" content="#FBF7F1"/>
+        </t>
+        <div class="cj-auth">
+          <aside class="cj-auth-story" aria-hidden="true">
+            <a class="cj-auth-home" href="/" tabindex="-1">
+              <img src="/health_public_site/static/img/carejiyo-lockup.svg" alt="" width="150" height="42"/>
+            </a>
+            <div class="cj-auth-scene">
+              <img src="/health_public_site/static/img/site/hero-home-visit.svg" alt="" width="600" height="520"/>
+              <div class="cj-auth-chip chip-a"><span class="cj-dot blue"/>Today: 3 visits</div>
+              <div class="cj-auth-chip chip-b"><span class="cj-dot orange"/>Nurse on the way</div>
+            </div>
+            <p class="cj-auth-quote">Care that comes <span>to people.</span></p>
+            <p class="cj-auth-sub">Today’s visits, care records and family updates, ready when you are.</p>
+          </aside>
+          <section class="cj-auth-panel">
+            <div class="cj-auth-card">
+              <a class="cj-auth-brand" href="/" aria-label="CareJiyo home">
+                <img src="/health_public_site/static/img/carejiyo-lockup.svg" alt="CareJiyo" width="150" height="42"/>
+              </a>
+              <t t-if="cj_path.startswith('/web/reset_password')">
+                <h1 class="cj-auth-title">Reset your password</h1>
+                <p class="cj-auth-lead">Enter the email for your account and we will send you a link to choose a new password.</p>
+              </t>
+              <t t-elif="cj_path.startswith('/web/signup')">
+                <h1 class="cj-auth-title">Create your account</h1>
+                <p class="cj-auth-lead">Set up your CareJiyo sign-in.</p>
+              </t>
+              <t t-elif="cj_path == '/web/login'">
+                <h1 class="cj-auth-title">Welcome back</h1>
+                <p class="cj-auth-lead">Sign in to your CareJiyo workspace.</p>
+              </t>
+              <div class="cj-auth-form oe_website_login_container">
+                <t t-out="0"/>
+              </div>
+              <div class="cj-auth-links">
+                <a href="/"><span aria-hidden="true">←</span> Back to home</a>
+                <a href="mailto:ash@biztinct.com?subject=CareJiyo%20sign-in%20help">Need help signing in?</a>
+              </div>
+            </div>
+            <p class="cj-auth-foot">© <t t-out="datetime.date.today().year"/> CareJiyo · Your information is private and protected.</p>
+          </section>
+        </div>
+      </t>
+    </xpath>
+  </template>
+</odoo>
