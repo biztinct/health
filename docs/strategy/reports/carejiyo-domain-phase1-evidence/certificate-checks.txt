@@ -1,0 +1,19 @@
+Certificate: /etc/letsencrypt/live/carejiyo.com/fullchain.pem
+Issuer: Let's Encrypt YE1
+SANs: carejiyo.com, www.carejiyo.com, hhh.carejiyo.com
+Valid from: 2026-11-09 23:33:15 UTC
+Valid until: 2027-02-07 23:33:14 UTC
+Authenticator: webroot /var/www/carejiyo-acme
+Renewal service: snap.certbot.renew.timer (active)
+Deploy hook: systemctl reload nginx
+
+After final TLS configuration:
+certbot renew --cert-name carejiyo.com --dry-run --no-random-sleep-on-renew
+Congratulations, all simulated renewals succeeded:
+  /etc/letsencrypt/live/carejiyo.com/fullchain.pem (success)
+
+Initial activation check ran before nginx had finished its asynchronous reload
+and received the old default certificate. The guarded activation restored the
+HTTP-only bootstrap site. Retrying activation with bounded readiness checks
+passed for all three hosts; certificate verification was never disabled.
+Old application hosts remained available during this operation.

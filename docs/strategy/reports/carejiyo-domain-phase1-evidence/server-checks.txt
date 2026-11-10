@@ -1,0 +1,60 @@
+PASS all pre-existing nginx files unchanged: compared against pre-migration hashes
+PASS platform apex configuration unchanged: /etc/biz-tenants.conf
+PASS carejiox canonical/channel settings unchanged: exact match
+PASS carejiox_template canonical/channel settings unchanged: exact match
+PASS hhh canonical/channel settings unchanged: exact match
+PASS deployed carejiyo.conf matches committed snapshot: /etc/nginx/sites-available/carejiyo.com
+PASS deployed proxy.conf matches committed snapshot: /etc/nginx/snippets/carejiyo-proxy.conf
+PASS carejiyo.com/: HTTP 200 expected 200
+PASS carejiyo.com/web/login: HTTP 200 expected 200
+PASS carejiyo.com/health_public_site/static/src/home.css?v=3: HTTP 200 expected 200
+PASS carejiyo.com/web/database/manager: HTTP 404 expected 404
+PASS carejiyo.com/web/database/selector: HTTP 404 expected 404
+PASS carejiyo.com HTTP redirect /web/login?redirect=%2Fodoo: 301 https://carejiyo.com/web/login?redirect=%2Fodoo
+PASS carejiyo.com HTTP redirect /some/path?probe=domain: 301 https://carejiyo.com/some/path?probe=domain
+PASS www.carejiyo.com/: HTTP 200 expected 200
+PASS www.carejiyo.com/web/login: HTTP 200 expected 200
+PASS www.carejiyo.com/health_public_site/static/src/home.css?v=3: HTTP 200 expected 200
+PASS www.carejiyo.com/web/database/manager: HTTP 404 expected 404
+PASS www.carejiyo.com/web/database/selector: HTTP 404 expected 404
+PASS www.carejiyo.com HTTP redirect /web/login?redirect=%2Fodoo: 301 https://www.carejiyo.com/web/login?redirect=%2Fodoo
+PASS www.carejiyo.com HTTP redirect /some/path?probe=domain: 301 https://www.carejiyo.com/some/path?probe=domain
+PASS hhh.carejiyo.com/: HTTP 200 expected 200
+PASS hhh.carejiyo.com/web/login: HTTP 200 expected 200
+PASS hhh.carejiyo.com/health_public_site/static/src/home.css?v=3: HTTP 200 expected 200
+PASS hhh.carejiyo.com/web/database/manager: HTTP 404 expected 404
+PASS hhh.carejiyo.com/web/database/selector: HTTP 404 expected 404
+PASS hhh.carejiyo.com HTTP redirect /web/login?redirect=%2Fodoo: 301 https://hhh.carejiyo.com/web/login?redirect=%2Fodoo
+PASS hhh.carejiyo.com HTTP redirect /some/path?probe=domain: 301 https://hhh.carejiyo.com/some/path?probe=domain
+PASS carejiox.com/: HTTP 200 expected 200
+PASS carejiox.com/web/login: HTTP 200 expected 200
+PASS carejiox.com/health_public_site/static/src/home.css?v=3: HTTP 200 expected 200
+PASS carejiox.com/web/database/manager: HTTP 404 expected 404
+PASS carejiox.com/web/database/selector: HTTP 404 expected 404
+PASS carejiox.com HTTP redirect /web/login?redirect=%2Fodoo: 301 https://carejiox.com/web/login?redirect=%2Fodoo
+PASS carejiox.com HTTP redirect /some/path?probe=domain: 301 https://carejiox.com/some/path?probe=domain
+PASS www.carejiox.com/: HTTP 200 expected 200
+PASS www.carejiox.com/web/login: HTTP 200 expected 200
+PASS www.carejiox.com/health_public_site/static/src/home.css?v=3: HTTP 200 expected 200
+PASS www.carejiox.com/web/database/manager: HTTP 404 expected 404
+PASS www.carejiox.com/web/database/selector: HTTP 404 expected 404
+PASS www.carejiox.com HTTP redirect /web/login?redirect=%2Fodoo: 301 https://www.carejiox.com/web/login?redirect=%2Fodoo
+PASS www.carejiox.com HTTP redirect /some/path?probe=domain: 301 https://www.carejiox.com/some/path?probe=domain
+PASS hhh.carejiox.com/: HTTP 200 expected 200
+PASS hhh.carejiox.com/web/login: HTTP 200 expected 200
+PASS hhh.carejiox.com/health_public_site/static/src/home.css?v=3: HTTP 200 expected 200
+PASS hhh.carejiox.com/web/database/manager: HTTP 404 expected 404
+PASS hhh.carejiox.com/web/database/selector: HTTP 404 expected 404
+PASS hhh.carejiox.com HTTP redirect /web/login?redirect=%2Fodoo: 301 https://hhh.carejiox.com/web/login?redirect=%2Fodoo
+PASS hhh.carejiox.com HTTP redirect /some/path?probe=domain: 301 https://hhh.carejiox.com/some/path?probe=domain
+PASS reject carejiox_template.carejiyo.com: connection closed without content
+PASS reject hhh-staging.carejiyo.com: connection closed without content
+PASS reject unknown.carejiyo.com: connection closed without content
+PASS carejiyo.com websocket upstream reachable: HTTP 400 for non-upgrade request
+PASS hhh.carejiyo.com websocket upstream reachable: HTTP 400 for non-upgrade request
+PASS carejiox.com websocket upstream reachable: HTTP 400 for non-upgrade request
+PASS hhh.carejiox.com websocket upstream reachable: HTTP 400 for non-upgrade request
+PASS nginx active: active
+PASS odoo-server active: active
+PASS snap.certbot.renew.timer active: active
+SUMMARY 59 / 59

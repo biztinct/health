@@ -1,0 +1,28 @@
+Chrome UI checks — 2026-11-10 (Australia/Sydney)
+
+1. Open https://carejiyo.com/ in a new Chrome tab.
+   PASS: public homepage renders without a certificate interstitial.
+2. Click Deliver care in the public workspace preview.
+   PASS: panel changes to Context for every clinical moment.
+3. Click Sign in from the page navigation.
+   PASS: https://carejiyo.com/web/login renders User ID, password and Log in.
+4. Open https://hhh.carejiyo.com/ in a separate new tab.
+   PASS: HHH / Viet Uc public homepage renders.
+5. Click EN in the page language navigation.
+   PASS: URL stays on hhh.carejiyo.com with ?site_lang=en; English page renders.
+6. Click Open workspace.
+   PASS: hhh.carejiyo.com/web/login?redirect=%2Fbizapp renders the login form.
+7. On the authenticated existing carejiox.com application, click CRM then
+   Care Command.
+   PASS: carejiox.com/bizapp/action-1680 displays the Care Command heading.
+
+No new-domain credentials were entered in Chrome; separate HTTP authentication
+checks used the documented existing uat_owner account on carejiyo.com and
+www.carejiyo.com, verified database carejiox, and destroyed both test sessions.
+No messages, calls, OAuth reconnects, provider subscriptions, or clinical data
+were created or modified. No live provider delivery test was performed.
+No new authenticated HHH browser test was performed.
+
+Screenshots were inspected in memory through Computer Use; no screenshot/PNG
+files were saved. No existing product assets or user screenshots were deleted.
+Public branding and canonical URLs remain CareJiox/old-domain in this phase.
